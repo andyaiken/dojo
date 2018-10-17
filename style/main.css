@@ -293,7 +293,7 @@ button {
 
 .right-pane .card {
     width: calc(((100% - 1px) / 4) - 12px);
-    min-width: 302px;
+    min-width: 30px;
     margin: 10px 5px;
 }
 
