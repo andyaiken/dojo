@@ -113,7 +113,7 @@ class MonsterLibraryScreen extends React.Component {
                     <div className="left-pane scrollable">
                         {help}
                         <div className="group">
-                            <button onClick={() => this.props.addMonsterGroup("New Group")}>add a new monster group</button>
+                            <button onClick={() => this.props.addMonsterGroup("new group")}>add a new monster group</button>
                         </div>
                         <div className="group">
                             <input type="text" placeholder="filter" value={this.state.filter} onChange={event => this.setFilter(event.target.value)} />

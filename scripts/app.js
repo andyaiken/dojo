@@ -2498,12 +2498,7 @@ var MonsterGroupCard = function (_React$Component) {
                                         return _this2.props.sortMonsters();
                                     } },
                                 "sort monsters"
-                            )
-                        ),
-                        React.createElement("div", { className: "divider" }),
-                        React.createElement(
-                            "div",
-                            { className: "section" },
+                            ),
                             React.createElement(ConfirmButton, { text: "delete group", callback: function callback() {
                                     return _this2.props.removeMonsterGroup();
                                 } })
@@ -7484,7 +7479,7 @@ var EncounterBuilderScreen = function (_React$Component) {
                             React.createElement(
                                 "button",
                                 { onClick: function onClick() {
-                                        return _this2.props.addEncounter("New Encounter");
+                                        return _this2.props.addEncounter("new encounter");
                                     } },
                                 "add a new encounter"
                             )
@@ -7780,7 +7775,7 @@ var MonsterLibraryScreen = function (_React$Component) {
                             React.createElement(
                                 "button",
                                 { onClick: function onClick() {
-                                        return _this3.props.addMonsterGroup("New Group");
+                                        return _this3.props.addMonsterGroup("new group");
                                     } },
                                 "add a new monster group"
                             )
@@ -7931,7 +7926,7 @@ var PartiesScreen = function (_React$Component) {
                             React.createElement(
                                 "button",
                                 { onClick: function onClick() {
-                                        return _this2.props.addParty("New Party");
+                                        return _this2.props.addParty("new party");
                                     } },
                                 "add a new party"
                             )

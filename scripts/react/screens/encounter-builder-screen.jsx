@@ -211,7 +211,7 @@ class EncounterBuilderScreen extends React.Component {
                     <div className="left-pane scrollable">
                         {help}
                         <div className="group">
-                            <button onClick={() => this.props.addEncounter("New Encounter")}>add a new encounter</button>
+                            <button onClick={() => this.props.addEncounter("new encounter")}>add a new encounter</button>
                         </div>
                         {encounters}
                     </div>

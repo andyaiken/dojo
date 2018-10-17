@@ -72,7 +72,7 @@ class PartiesScreen extends React.Component {
                     <div className="left-pane scrollable">
                         {help}
                         <div className="group">
-                            <button onClick={() => this.props.addParty("New Party")}>add a new party</button>
+                            <button onClick={() => this.props.addParty("new party")}>add a new party</button>
                         </div>
                         {parties}
                     </div>

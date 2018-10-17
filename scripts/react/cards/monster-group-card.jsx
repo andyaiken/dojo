@@ -20,9 +20,6 @@ class MonsterGroupCard extends React.Component {
                         <div className="section">
                             <button className={this.props.filter ? "disabled" : ""} onClick={() => this.props.addMonster("new monster")}>add a new monster</button>
                             <button className={this.props.filter ? "disabled" : ""} onClick={() => this.props.sortMonsters()}>sort monsters</button>
-                        </div>
-                        <div className="divider"></div>
-                        <div className="section">
                             <ConfirmButton text="delete group" callback={() => this.props.removeMonsterGroup()} />
                         </div>
                     </div>
