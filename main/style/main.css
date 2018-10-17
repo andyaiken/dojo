@@ -1,0 +1,732 @@
+﻿* {
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+}
+
+body {
+    font-size: 12px;
+    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    background: white;
+    color: #404040;
+}
+
+b {
+    font-weight: 600;
+    color: #000000;
+}
+
+input[type=checkbox] {
+    vertical-align: middle;
+}
+
+input[type=text],
+textarea {
+    margin: 3px 0px;
+    padding: 5px 8px;
+    border: 1px solid #C3C3C3;
+    width: calc(100% - 18px);
+    font-size: 12px;
+    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -webkit-user-select: text;
+}
+
+textarea {
+    min-height: 64px;
+    resize: vertical;
+}
+
+ul {
+    padding-left: 20px;
+}
+
+li {
+    margin: 5px 0px;
+}
+
+a {
+    color: royalblue;
+    text-decoration: none;
+}
+
+    a:visited {
+        color: royalblue;
+    }
+
+html,
+body,
+#root,
+.dojo {
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    overflow: hidden;
+}
+
+.page-content {
+    height: calc(100% - 40px);
+}
+
+.home,
+.parties,
+.monster-library,
+.encounter-builder,
+.combat-manager,
+.about {
+    height: 100%;
+}
+
+.left-pane {
+    display: inline-block;
+    width: 330px;
+    vertical-align: top;
+}
+
+.right-pane {
+    display: inline-block;
+    width: calc(100% - 390px);
+    vertical-align: top;
+}
+
+.scrollable {
+    height: 100%;
+    padding: 0 15px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.column {
+    display: inline-block;
+    width: calc((100% - 21px) / 3);
+    vertical-align: top;
+}
+
+.column-divider {
+    display: inline-block;
+    width: 10px;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 10;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal {
+    width: 90%;
+    height: calc(100% - 100px);
+    margin: 50px auto;
+}
+
+.blur {
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+:focus {
+    outline: none;
+}
+
+a:focus,
+input:focus,
+textarea:focus {
+    border-color: cornflowerblue;
+    box-shadow: 0px 0px 5px 0px cornflowerblue;
+}
+
+.heading {
+    border-bottom: 1px solid #C3C3C3;
+    padding: 5px 5px 5px 10px;
+    margin: 10px 5px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.divider {
+    margin: 10px 20px;
+    height: 0px;
+    border-top: 1px solid #404040;
+}
+
+.group {
+    padding: 5px 0px;
+    margin: 5px;
+}
+
+    .group .heading {
+        margin: 2px 0;
+    }
+
+    .group .text {
+        margin: 7px;
+    }
+
+        .group .text.warning {
+            color: #B00000;
+            font-weight: 600;
+            border: 1px solid #500000;
+            padding: 5px;
+        }
+
+.list-item {
+    margin: 3px 0px;
+    padding: 3px;
+    cursor: pointer;
+    user-select: none;
+    border-left: 3px solid #404040;
+}
+
+    .list-item.selected {
+        cursor: default;
+    }
+
+    .list-item.selected,
+    .list-item:hover {
+        background: #EEEEEE;
+    }
+
+    .list-item .heading {
+        margin-left: -3px;
+        margin-right: -3px;
+        margin-top: -3px;
+    }
+
+button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    font-size: 12px;
+    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    background: white;
+    border: 1px solid #C3C3C3;
+    margin: 3px 0px;
+    padding: 5px 8px;
+    cursor: pointer;
+}
+
+    button:hover {
+        background: #EEEEEE;
+    }
+
+    button.disabled {
+        background: rgb(235, 235, 235);
+        color: rgb(180, 180, 180);
+        cursor: default;
+    }
+
+    button .destructive, button .non-destructive {
+        background-color: white;
+        border: 1px solid #C3C3C3;
+        margin: 3px 0px;
+        padding: 5px 8px;
+        cursor: pointer;
+    }
+
+    button .destructive {
+        border-color: red;
+    }
+
+    button .destructive:hover {
+        background: rgba(255, 0, 0, 0.3);
+    }
+
+    button .confirm {
+        height: 16px;
+    }
+
+        button .confirm .image {
+            margin-top: -3px;
+        }
+
+    button .title {
+        width: calc(100% - 21px);
+        display: inline-block;
+        height: 16px;
+    }
+
+    button .image {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+        vertical-align: middle;
+        padding-left: 5px;
+    }
+
+.card-group {
+    margin-bottom: 20px;
+    padding-left: 5px;
+}
+
+    .card-group .heading .title {
+        width: calc(100% - 16px);
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .card-group .heading .image {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+.left-pane .card {
+    width: 100%;
+    margin: 10px 0;
+}
+
+.right-pane .card {
+    width: calc(((100% - 1px) / 4) - 12px);
+    margin: 10px 5px;
+}
+
+.card {
+    display: inline-block;
+    vertical-align: top;
+    background: #F5F5F5;
+    border: 1px solid #656565;
+}
+
+    .card.centered {
+        display: block;
+        width: 300px;
+        margin: 10px auto;
+    }
+
+    .card.wide {
+        width: 90%;
+    }
+
+    .card.welcome {
+        margin-top: 100px;
+    }
+
+    .card.pc,
+    .card.monster {
+        background: beige;
+    }
+
+    .card.pc {
+        border: 1px solid #006500;
+    }
+
+    .card.monster {
+        border: 1px solid #650000;
+    }
+
+    .card.error {
+        background: red;
+        color: white;
+        font-weight: 600;
+    }
+
+    .card .heading {
+        font-size: 15px;
+        margin: 0px;
+        border-bottom: none;
+        background: #656565;
+        color: white;
+    }
+
+        .card .heading .title {
+            width: calc(100% - 20px);
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+    .card.pc .heading {
+        background: #006500;
+    }
+
+    .card.monster .heading {
+        background: #650000;
+    }
+
+    .card .card-content {
+        padding: 5px 10px;
+    }
+
+    .card .subheading {
+        font-weight: 600;
+        font-size: 14px;
+        padding: 3px 0px;
+        color: #656565;
+    }
+
+    .card.pc .subheading {
+        color: #006500;
+    }
+
+    .card.monster .subheading {
+        color: #650000;
+    }
+
+    .card .divider {
+        border-top: 1px solid #656565;
+    }
+
+    .card.pc .divider {
+        border-top: 1px solid #006500;
+    }
+
+    .card.monster .divider {
+        border-top: 1px solid #650000;
+    }
+
+    .card .section {
+        margin: 5px 0px;
+    }
+
+        .card .section.centered {
+            text-align: center;
+        }
+
+        .card .section .ability-score {
+            display: inline-block;
+            width: calc((100% - 1px) / 6);
+        }
+
+            .card .section .ability-score .spin {
+                margin: 0px 20px;
+            }
+
+                .card .section .ability-score .spin .ability-spin {
+                    display: inline-block;
+                    text-align: center;
+                    vertical-align: middle;
+                    width: calc((100% - 1px) / 3);
+                }
+
+        .card .section .key-stat {
+            display: inline-block;
+            width: calc((100% - 1px) / 3);
+            vertical-align: top;
+        }
+
+            .card .section .key-stat.wide {
+                width: calc(2 * (100% - 1px) / 3);
+            }
+
+            .card .section .ability-score .ability-heading,
+            .card .section .key-stat .stat-heading {
+                text-align: center;
+                font-weight: 600;
+            }
+
+            .card .section .ability-score .ability-value,
+            .card .section .key-stat .stat-value {
+                text-align: center;
+            }
+
+        .card .section .ability-score .ability-value {
+            padding-top: 5px;
+        }
+
+        .card .section .key-stat .stat-value {
+            font-size: 20px;
+            font-weight: 600;
+            padding-top: 5px;
+        }
+
+    .card .toggle {
+        cursor: pointer;
+        user-select: none;
+    }
+
+        .card .toggle:hover {
+            background: #DDDDDD;
+        }
+
+    .card .spin .spin-value .spin-label {
+        font-weight: 600;
+    }
+
+    .card .table {
+        background: white;
+        border: 1px solid #C3C3C3;
+        margin: 8px 0px;
+        padding: 3px 0px;
+    }
+
+        .card .table .cell {
+            display: inline-block;
+            padding: 2px 0px;
+            text-align: center;
+        }
+
+            .card .table .cell.three {
+                width: calc((100% - 1px) / 3);
+            }
+
+            .card .table .cell.four {
+                width: calc((100% - 1px) / 4);
+            }
+
+    .card .heading .image {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .card .spin .image {
+        width: 20px;
+        height: 20px;
+        padding: 10px 0px;
+        vertical-align: middle;
+    }
+
+    .card .mini-card {
+        background: white;
+        border: 1px solid #000065;
+        margin: 5px 0px;
+    }
+
+        .card .mini-card .heading {
+            background: #000065;
+            font-size: 12px;
+            padding: 5px;
+        }
+
+            .card .mini-card .heading .title {
+                width: calc(100% - 16px);
+                display: inline-block;
+                vertical-align: middle;
+            }
+
+            .card .mini-card .heading .image {
+                width: 16px;
+                height: 16px;
+                display: inline-block;
+                vertical-align: middle;
+            }
+
+        .card .mini-card .mini-card-content {
+            margin: 5px;
+        }
+
+        .card .mini-card .divider {
+            border-top: 1px solid #000065;
+        }
+
+.chart {
+    height: 300px;
+    border: 1px solid #C3C3C3;
+    background: white;
+}
+
+    .chart .plot {
+        height: calc(100% - 20px);
+        width: calc(100% - 20px);
+        margin: 10px;
+        border-bottom: 1px solid #C3C3C3;
+    }
+
+        .chart .plot .bar-container {
+            display: inline-block;
+            height: 100%;
+        }
+
+            .chart .plot .bar-container .bar {
+                background: lightsteelblue;
+                border-top: 1px solid steelblue;
+                vertical-align: bottom;
+            }
+
+            .chart .plot .bar-container:hover .bar {
+                background: steelblue;
+            }
+
+            .chart .plot .bar-container:hover .bar-space {
+                background: #EEEEEE;
+            }
+
+.dropdown .dropdown-button {
+    cursor: pointer;
+}
+
+    .dropdown .dropdown-button .title {
+        width: calc(100% - 21px);
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .dropdown .dropdown-button .image {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+.dropdown .dropdown-content {
+    display: none;
+    background: white;
+    border: 1px solid grey;
+    max-height: 236px;
+    box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.3);
+    margin-top: -4px;
+    overflow-y: auto;
+}
+
+    .dropdown .dropdown-content.open {
+        display: block;
+    }
+
+    .dropdown .dropdown-content .dropdown-item {
+        padding: 6px;
+        cursor: pointer;
+        border-left: 3px solid #404040;
+        margin: 5px;
+    }
+
+        .dropdown .dropdown-content .dropdown-item.selected,
+        .dropdown .dropdown-content .dropdown-item:hover {
+            background: #EEEEEE
+        }
+
+        .dropdown .dropdown-content .dropdown-item.selected {
+            font-weight: 600;
+        }
+
+.hp-gauge {
+    margin: 5px 5px 10px 5px;
+    height: 5px;
+    background: lightgrey;
+}
+
+    .hp-gauge .bar {
+        float: left;
+        height: 100%;
+    }
+
+        .hp-gauge .bar.unhurt {
+            background: green;
+        }
+
+        .hp-gauge .bar.injured {
+            background: orange;
+        }
+
+        .hp-gauge .bar.bloodied {
+            background: crimson;
+        }
+
+        .hp-gauge .bar.temp {
+            background: cornflowerblue;
+        }
+
+.checkbox {
+    border: 1px solid #C3C3C3;
+    margin: 3px 0px;
+    padding: 3px;
+    cursor: pointer;
+}
+
+    .checkbox:hover {
+        background: #EEEEEE;
+    }
+
+    .checkbox .image {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        padding-left: 5px;
+        vertical-align: middle;
+    }
+
+    .checkbox .text {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+.titlebar {
+    height: 30px;
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+    .titlebar .navigator-item {
+        display: inline-block;
+        padding: 6px;
+        cursor: pointer;
+        margin: 0 10px;
+        height: 20px;
+        width: 120px;
+        border-left: 3px solid #404040;
+    }
+
+        .titlebar .navigator-item.disabled {
+            cursor: default;
+            color: #808080;
+            border-left: 3px solid #808080;
+        }
+
+        .titlebar .navigator-item.selected,
+        .titlebar .navigator-item:hover {
+            background: #EEEEEE
+        }
+
+        .titlebar .navigator-item.disabled:hover {
+            background: white;
+        }
+
+    .titlebar .action {
+        float: right;
+    }
+
+        .titlebar .action .section {
+            display: inline-block;
+            margin: 0 10px;
+        }
+
+.spin .spin-button {
+    display: inline-block;
+    width: 15%;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+    .spin .spin-button:hover {
+        background: #EEEEEE;
+    }
+
+    .spin .spin-button.wide {
+        width: 30%;
+    }
+
+    .spin .spin-button .spin-delta {
+        vertical-align: middle;
+        margin: 0px 2px;
+    }
+
+.spin .spin-value {
+    display: inline-block;
+    width: 40%;
+    vertical-align: middle;
+}
+
+    .spin .spin-value .spin-label {
+        text-align: center;
+        padding: 1px 0px;
+    }
+
+.image.rotate {
+    transform: rotate(-180deg);
+}

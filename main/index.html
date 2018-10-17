@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>DM Dojo</title>
+
+    <!-- React.js -->
+    <script src="scripts/packages/react.js"></script>
+    <script src="scripts/packages/react-dom.js"></script>
+
+    <!-- Styling -->
+    <link rel="stylesheet" type="text/css" href="style/main.css">
+
+    <script src="scripts/code.js"></script>
+    <script src="scripts/dnd.js"></script>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script src="scripts/app.js"></script>
+    <script>
+        ReactDOM.render(
+            React.createElement(Dojo, null),
+            document.getElementById('root')
+        );
+    </script>
+</body>
+
+</html>
