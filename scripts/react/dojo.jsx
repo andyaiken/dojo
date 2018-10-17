@@ -1145,20 +1145,8 @@ class Dojo extends React.Component {
                         />
                     );
                     if (combat) {
-                        var xp = 0;
-                        combat.combatants.forEach(combatant => {
-                            if (combatant.type === "monster") {
-                                xp += experience(combatant.challenge);
-                            }
-                        });
                         action = (
                             <div>
-                                <div className="section text">
-                                    <b>round</b> {combat.round}
-                                </div>
-                                <div className="section text">
-                                    <b>encounter xp</b> {xp}
-                                </div>
                                 <div className="section">
                                     <button onClick={() => this.pauseEncounter()}>pause encounter</button>
                                 </div>

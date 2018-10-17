@@ -293,6 +293,7 @@ button {
 
 .right-pane .card {
     width: calc(((100% - 1px) / 4) - 12px);
+    min-width: 302px;
     margin: 10px 5px;
 }
 
@@ -672,7 +673,7 @@ button {
         display: inline-block;
         padding: 6px;
         cursor: pointer;
-        margin: 0 10px;
+        margin: 0 5px;
         height: 20px;
         width: 120px;
         border-left: 3px solid #404040;
@@ -699,7 +700,7 @@ button {
 
         .titlebar .action .section {
             display: inline-block;
-            margin: 0 10px;
+            margin: 0 5px;
         }
 
 .spin .spin-button {

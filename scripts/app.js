@@ -4852,37 +4852,9 @@ var Dojo = function (_React$Component) {
                             }
                         });
                         if (combat) {
-                            var xp = 0;
-                            combat.combatants.forEach(function (combatant) {
-                                if (combatant.type === "monster") {
-                                    xp += experience(combatant.challenge);
-                                }
-                            });
                             action = React.createElement(
                                 "div",
                                 null,
-                                React.createElement(
-                                    "div",
-                                    { className: "section text" },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "round"
-                                    ),
-                                    " ",
-                                    combat.round
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "section text" },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "encounter xp"
-                                    ),
-                                    " ",
-                                    xp
-                                ),
                                 React.createElement(
                                     "div",
                                     { className: "section" },
