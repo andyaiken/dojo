@@ -276,12 +276,16 @@ var DemographicsCard = function (_React$Component) {
 
                 return React.createElement(
                     "div",
-                    { className: "card wide centered" },
+                    { className: "card wide" },
                     React.createElement(
                         "div",
                         { className: "heading" },
-                        "demographics",
-                        React.createElement("img", { className: "right image", src: "content/close-white.svg", onClick: function onClick() {
+                        React.createElement(
+                            "div",
+                            { className: "title" },
+                            "demographics"
+                        ),
+                        React.createElement("img", { className: "image", src: "content/close-white.svg", onClick: function onClick() {
                                 return _this2.props.close();
                             } })
                     ),
@@ -1284,7 +1288,7 @@ var MonsterCard = function (_React$Component) {
             try {
                 var style = "card monster";
                 if (this.props.mode.indexOf("editor") !== -1) {
-                    style += " wide centered";
+                    style += " wide";
                 }
 
                 var categories = ["aberration", "beast", "celestial", "construct", "dragon", "elemental", "fey", "fiend", "giant", "humanoid", "monstrosity", "ooze", "plant", "undead"];

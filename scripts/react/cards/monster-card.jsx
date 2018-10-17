@@ -118,7 +118,7 @@ class MonsterCard extends React.Component {
         try {
             var style = "card monster";
             if (this.props.mode.indexOf("editor") !== -1) {
-                style += " wide centered";
+                style += " wide";
             }
 
             var categories = ["aberration", "beast", "celestial", "construct", "dragon", "elemental", "fey", "fiend", "giant", "humanoid", "monstrosity", "ooze", "plant", "undead"];

@@ -161,10 +161,10 @@ class DemographicsCard extends React.Component {
             }
 
             return (
-                <div className="card wide centered">
+                <div className="card wide">
                     <div className="heading">
-                        demographics
-                        <img className="right image" src="content/close-white.svg" onClick={() => this.props.close()} />
+                        <div className="title">demographics</div>
+                        <img className="image" src="content/close-white.svg" onClick={() => this.props.close()} />
                     </div>
                     <div className="card-content">
                         {demographics}
