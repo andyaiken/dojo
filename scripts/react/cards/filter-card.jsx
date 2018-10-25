@@ -85,7 +85,7 @@ class FilterCard extends React.Component {
                                     <img className="image" src="content/minus.svg" />
                                 </div>
                                 <div className="spin-value">
-                                    <div className="spin-label">min challege</div>
+                                    <div className="spin-label">min challenge</div>
                                     <div className="spin-label">{challenge(this.props.filter.challengeMin)}</div>
                                 </div>
                                 <div className="spin-button wide toggle" onClick={() => this.props.nudgeValue("challengeMin", +1)}>
@@ -97,7 +97,7 @@ class FilterCard extends React.Component {
                                     <img className="image" src="content/minus.svg" />
                                 </div>
                                 <div className="spin-value">
-                                    <div className="spin-label">max challege</div>
+                                    <div className="spin-label">max challenge</div>
                                     <div className="spin-label">{challenge(this.props.filter.challengeMax)}</div>
                                 </div>
                                 <div className="spin-button wide toggle" onClick={() => this.props.nudgeValue("challengeMax", +1)}>
