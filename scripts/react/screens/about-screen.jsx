@@ -14,7 +14,7 @@ class AboutScreen extends React.Component {
                             <ConfirmButton text="clear all data" callback={() => this.props.resetAll()} />
                             <div className="checkbox" onClick={() => this.props.changeOption("showHelp", !this.props.options.showHelp)}>
                                 <img className="image" src={this.props.options.showHelp ? "content/checked.svg" : "content/unchecked.svg"} />
-                                <div className="text">show help cards</div>
+                                <div className="checkbox-text">show help cards</div>
                             </div>
                         </div>
                     </div>

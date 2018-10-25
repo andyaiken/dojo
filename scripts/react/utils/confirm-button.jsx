@@ -23,8 +23,9 @@ class ConfirmButton extends React.Component {
             if (this.state.pressed) {
                 content = (
                     <div>
-                        {this.props.text} - are you sure?
-                        <div className="group">
+                        <div className="title">{this.props.text} - are you sure?</div>
+                        <img className="image" src="content/warning.svg" />
+                        <div className="confirmation">
                             <div className="destructive" onClick={() => this.perform()}>yes</div>
                             <div className="non-destructive" onClick={() => this.toggle()}>no</div>
                         </div>
@@ -32,7 +33,7 @@ class ConfirmButton extends React.Component {
                 );
             } else {
                 content = (
-                    <div className="confirm">
+                    <div>
                         <div className="title">{this.props.text}</div>
                         <img className="image" src="content/warning.svg" />
                     </div>

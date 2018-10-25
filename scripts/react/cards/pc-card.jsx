@@ -44,8 +44,10 @@ class PCCard extends React.Component {
                 stats = (
                     <div className="stats">
                         <div className="section">
-                            <input type="text" placeholder="character name" value={this.props.combatant.name} onChange={event => this.props.changeValue(this.props.combatant, "name", event.target.value)} />
-                            <input type="text" placeholder="player name" value={this.props.combatant.player} onChange={event => this.props.changeValue(this.props.combatant, "player", event.target.value)} />
+                            <div className="input-label" style={{ display: this.state.showDetails ? "" : "none" }}>character name:</div>
+                            <input type="text" value={this.props.combatant.name} onChange={event => this.props.changeValue(this.props.combatant, "name", event.target.value)} />
+                            <div className="input-label" style={{ display: this.state.showDetails ? "" : "none" }}>player name:</div>
+                            <input type="text" value={this.props.combatant.player} onChange={event => this.props.changeValue(this.props.combatant, "player", event.target.value)} />
                         </div>
                         <div style={{ display: this.state.showDetails ? "none" : "" }}>
                             <div className="divider"></div>
@@ -59,9 +61,12 @@ class PCCard extends React.Component {
                         <div style={{ display: this.state.showDetails ? "" : "none" }}>
                             <div className="divider"></div>
                             <div className="section">
-                                <input type="text" placeholder="race" value={this.props.combatant.race} onChange={event => this.props.changeValue(this.props.combatant, "race", event.target.value)} />
-                                <input type="text" placeholder="class" value={this.props.combatant.classes} onChange={event => this.props.changeValue(this.props.combatant, "classes", event.target.value)} />
-                                <input type="text" placeholder="background" value={this.props.combatant.background} onChange={event => this.props.changeValue(this.props.combatant, "background", event.target.value)} />
+                                <div className="input-label">race:</div>
+                                <input type="text" value={this.props.combatant.race} onChange={event => this.props.changeValue(this.props.combatant, "race", event.target.value)} />
+                                <div className="input-label">class:</div>
+                                <input type="text" value={this.props.combatant.classes} onChange={event => this.props.changeValue(this.props.combatant, "classes", event.target.value)} />
+                                <div className="input-label">background:</div>
+                                <input type="text" value={this.props.combatant.background} onChange={event => this.props.changeValue(this.props.combatant, "background", event.target.value)} />
                             </div>
                             <div className="divider"></div>
                             <div className="section spin">
@@ -88,11 +93,13 @@ class PCCard extends React.Component {
                             </div>
                             <div className="divider"></div>
                             <div className="section">
-                                <input type="text" placeholder="languages" value={this.props.combatant.languages} onChange={event => this.props.changeValue(this.props.combatant, "languages", event.target.value)} />
+                                <div className="input-label">languages:</div>
+                                <input type="text" value={this.props.combatant.languages} onChange={event => this.props.changeValue(this.props.combatant, "languages", event.target.value)} />
                             </div>
                             <div className="divider"></div>
                             <div className="section">
-                                <input type="text" placeholder="d&d beyond link" value={this.props.combatant.url} onChange={event => this.props.changeValue(this.props.combatant, "url", event.target.value)} />
+                            <div className="input-label">d&d beyond link:</div>
+                                <input type="text" value={this.props.combatant.url} onChange={event => this.props.changeValue(this.props.combatant, "url", event.target.value)} />
                             </div>
                             <div className="divider"></div>
                             <div className="section subheading">passive skills</div>
@@ -204,36 +211,30 @@ class PCCard extends React.Component {
                                 </div>
                             </div>
                         </div>
+                        <div className="divider"></div>
+                        <div className="section centered">
+                            <div>level {this.props.combatant.level} {this.props.combatant.race || 'race'} {this.props.combatant.classes || 'class'}</div>
+                            <div style={{ display: this.props.combatant.url ? "" : "none" }}>
+                                <a href={this.props.combatant.url} target="_blank">d&d beyond character sheet</a>
+                            </div>
+                        </div>
                         <div style={{ display: (this.state.showDetails || this.props.combatant.current) ? "" : "none" }}>
                             <div className="divider"></div>
+                            <div className="section subheading">languages</div>
                             <div className="section">
-                                <div style={{ display: this.props.combatant.race ? "" : "none" }}>
-                                    <b>race</b> {this.props.combatant.race}
-                                </div>
-                                <div style={{ display: this.props.combatant.classes ? "" : "none" }}>
-                                    <b>class</b> {this.props.combatant.classes}
-                                </div>
-                                <div style={{ display: this.props.combatant.background ? "" : "none" }}>
-                                    <b>background</b> {this.props.combatant.background}
-                                </div>
-                                <div>
-                                    <b>level</b> {this.props.combatant.level}
-                                </div>
+                                    {this.props.combatant.languages || "none"}
                             </div>
-                            <div className="section">
-                                <div style={{ display: this.props.combatant.languages ? "" : "none" }}>
-                                    <b>languages</b> {this.props.combatant.languages}
-                                </div>
-                            </div>
-                            <div className="section">
+                            <div className="section subheading">passive skills</div>
+                            <div className="table">
                                 <div>
-                                    <b>passive insight</b> {this.props.combatant.passiveInsight}
+                                    <div className="cell three"><b>insight</b></div>
+                                    <div className="cell three"><b>investigation</b></div>
+                                    <div className="cell three"><b>perception</b></div>
                                 </div>
                                 <div>
-                                    <b>passive investigation</b> {this.props.combatant.passiveInvestigation}
-                                </div>
-                                <div>
-                                    <b>passive perception</b> {this.props.combatant.passivePerception}
+                                    <div className="cell three">{this.props.combatant.passiveInsight}</div>
+                                    <div className="cell three">{this.props.combatant.passiveInvestigation}</div>
+                                    <div className="cell three">{this.props.combatant.passivePerception}</div>
                                 </div>
                             </div>
                         </div>
