@@ -1231,17 +1231,20 @@ class Dojo extends React.Component {
             return (
                 <div className="dojo">
                     <Titlebar
-                        view={this.state.view}
-                        parties={this.state.parties}
-                        library={this.state.library}
-                        encounters={this.state.encounters}
                         action={action}
                         blur={modal !== null}
-                        setView={view => this.setView(view)}
                     />
                     <div className={contentStyle}>
                         {content}
                     </div>
+                    <Navbar
+                        view={this.state.view}
+                        parties={this.state.parties}
+                        library={this.state.library}
+                        encounters={this.state.encounters}
+                        blur={modal !== null}
+                        setView={view => this.setView(view)}
+                    />
                     {modal}
                 </div>
             );

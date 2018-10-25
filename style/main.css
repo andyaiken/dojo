@@ -64,7 +64,8 @@ body,
 }
 
 .page-content {
-    height: calc(100% - 51px);
+    height: calc(100% - 112px);
+    margin: 5px 0;
 }
 
 .home,
@@ -321,7 +322,7 @@ button {
     }
 
     .card.welcome {
-        margin-top: 200px;
+        margin-top: 190px;
     }
 
     .card.pc,
@@ -678,36 +679,21 @@ button {
 
 .titlebar {
     height: 30px;
-    font-size: 14px;
     padding: 10px 5px;
-    border-bottom: 1px solid #999999;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    background-color: #404040;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
 }
 
-    .titlebar .navigator-item {
-        display: inline-block;
-        padding: 6px;
-        cursor: pointer;
+    .titlebar .app-name {
+        padding: 5px 6px 7px 6px;
         margin: 0 5px;
         height: 20px;
-        width: 120px;
-        border-left: 3px solid #404040;
+        line-height: 20px;
+        font-size: 20px;
+        font-weight: 600;
+        color: white;
+        border-left: 3px solid white;
     }
-
-        .titlebar .navigator-item.disabled {
-            cursor: default;
-            color: #999999;
-            border-left: 3px solid #999999;
-        }
-
-        .titlebar .navigator-item.selected,
-        .titlebar .navigator-item:hover {
-            background-color: #EEEEEE
-        }
-
-        .titlebar .navigator-item.disabled:hover {
-            background-color: white;
-        }
 
     .titlebar .action {
         position: absolute;
@@ -718,6 +704,42 @@ button {
         .titlebar .action .section {
             display: inline-block;
             margin: 0 5px;
+        }
+
+.navbar {
+    height: 30px;
+    padding: 10px 5px;
+    text-align: center;
+    background-color: #404040;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+}
+
+    .navbar .navigator-item {
+        display: inline-block;
+        padding: 5px 6px 7px 6px;
+        cursor: pointer;
+        margin: 0 5px;
+        height: 20px;
+        width: 150px;
+        text-align: left;
+        font-size: 14px;
+        color: white;
+        border-left: 3px solid white;
+    }
+
+        .navbar .navigator-item.disabled {
+            cursor: default;
+            color: #999999;
+            border-left: 3px solid #999999;
+        }
+
+        .navbar .navigator-item.selected,
+        .navbar .navigator-item:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .navbar .navigator-item.disabled:hover {
+            background-color: #404040;
         }
 
 .spin .spin-button {

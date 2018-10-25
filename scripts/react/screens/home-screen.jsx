@@ -8,7 +8,7 @@ class HomeScreen extends React.Component {
                             <div className="section">welcome to <b>dm dojo</b></div>
                             <div className="divider"></div>
                             <div className="section">
-                                <div>dm dojo is an encounter manager for dungeons and dragons fifth edition</div>
+                                <div>dm dojo is an app for dms of dungeons and dragons fifth edition</div>
                             </div>
                             <div className="section">
                                 <div>
@@ -19,6 +19,10 @@ class HomeScreen extends React.Component {
                                         <li>run combat without the book-keeping</li>
                                     </ul>
                                 </div>
+                            </div>
+                            <div className="divider"></div>
+                            <div className="section">
+                                <div>use the buttons at the bottom of the screen to access the app's features</div>
                             </div>
                         </div>
                     } />

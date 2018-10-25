@@ -5065,21 +5065,24 @@ var Dojo = function (_React$Component) {
                     "div",
                     { className: "dojo" },
                     React.createElement(Titlebar, {
-                        view: this.state.view,
-                        parties: this.state.parties,
-                        library: this.state.library,
-                        encounters: this.state.encounters,
                         action: action,
-                        blur: modal !== null,
-                        setView: function setView(view) {
-                            return _this5.setView(view);
-                        }
+                        blur: modal !== null
                     }),
                     React.createElement(
                         "div",
                         { className: contentStyle },
                         content
                     ),
+                    React.createElement(Navbar, {
+                        view: this.state.view,
+                        parties: this.state.parties,
+                        library: this.state.library,
+                        encounters: this.state.encounters,
+                        blur: modal !== null,
+                        setView: function setView(view) {
+                            return _this5.setView(view);
+                        }
+                    }),
                     modal
                 );
             } catch (e) {
@@ -6425,16 +6428,16 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Titlebar = function (_React$Component) {
-    _inherits(Titlebar, _React$Component);
+var Navbar = function (_React$Component) {
+    _inherits(Navbar, _React$Component);
 
-    function Titlebar() {
-        _classCallCheck(this, Titlebar);
+    function Navbar() {
+        _classCallCheck(this, Navbar);
 
-        return _possibleConstructorReturn(this, (Titlebar.__proto__ || Object.getPrototypeOf(Titlebar)).apply(this, arguments));
+        return _possibleConstructorReturn(this, (Navbar.__proto__ || Object.getPrototypeOf(Navbar)).apply(this, arguments));
     }
 
-    _createClass(Titlebar, [{
+    _createClass(Navbar, [{
         key: "render",
         value: function render() {
             var _this2 = this;
@@ -6455,18 +6458,9 @@ var Titlebar = function (_React$Component) {
                     combatStyle += " disabled";
                 }
 
-                var actionSection = null;
-                if (this.props.action) {
-                    actionSection = React.createElement(
-                        "div",
-                        { className: "action" },
-                        this.props.action
-                    );
-                };
-
                 return React.createElement(
                     "div",
-                    { className: this.props.blur ? "titlebar blur" : "titlebar" },
+                    { className: this.props.blur ? "navbar blur" : "navbar" },
                     React.createElement(
                         "div",
                         { className: partiesStyle, onClick: function onClick() {
@@ -6501,6 +6495,55 @@ var Titlebar = function (_React$Component) {
                                 return _this2.props.setView("about");
                             } },
                         "about"
+                    )
+                );
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return Navbar;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Titlebar = function (_React$Component) {
+    _inherits(Titlebar, _React$Component);
+
+    function Titlebar() {
+        _classCallCheck(this, Titlebar);
+
+        return _possibleConstructorReturn(this, (Titlebar.__proto__ || Object.getPrototypeOf(Titlebar)).apply(this, arguments));
+    }
+
+    _createClass(Titlebar, [{
+        key: "render",
+        value: function render() {
+            try {
+                var actionSection = null;
+                if (this.props.action) {
+                    actionSection = React.createElement(
+                        "div",
+                        { className: "action" },
+                        this.props.action
+                    );
+                };
+
+                return React.createElement(
+                    "div",
+                    { className: this.props.blur ? "titlebar blur" : "titlebar" },
+                    React.createElement(
+                        "div",
+                        { className: "app-name" },
+                        "dm dojo"
                     ),
                     actionSection
                 );
@@ -7672,7 +7715,7 @@ var HomeScreen = function (_React$Component) {
                                     React.createElement(
                                         "div",
                                         null,
-                                        "dm dojo is an encounter manager for dungeons and dragons fifth edition"
+                                        "dm dojo is an app for dms of dungeons and dragons fifth edition"
                                     )
                                 ),
                                 React.createElement(
@@ -7701,6 +7744,16 @@ var HomeScreen = function (_React$Component) {
                                                 "run combat without the book-keeping"
                                             )
                                         )
+                                    )
+                                ),
+                                React.createElement("div", { className: "divider" }),
+                                React.createElement(
+                                    "div",
+                                    { className: "section" },
+                                    React.createElement(
+                                        "div",
+                                        null,
+                                        "use the buttons at the bottom of the screen to access the app's features"
                                     )
                                 )
                             );
