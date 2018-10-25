@@ -6,7 +6,7 @@
 body {
     font-size: 12px;
     font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-    background: white;
+    background-color: white;
     color: #404040;
 }
 
@@ -22,7 +22,7 @@ input[type=checkbox] {
 input[type=text],
 textarea {
     height: 20px;
-    margin: 3px 0px;
+    margin: 3px 0;
     padding: 5px 8px;
     border: 1px solid #C3C3C3;
     width: calc(100% - 18px);
@@ -41,7 +41,7 @@ ul {
 }
 
 li {
-    margin: 5px 0px;
+    margin: 5px 0;
 }
 
 a {
@@ -57,8 +57,8 @@ html,
 body,
 #root,
 .dojo {
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
     height: 100%;
     overflow: hidden;
 }
@@ -145,7 +145,7 @@ a:focus,
 input:focus,
 textarea:focus {
     border-color: cornflowerblue;
-    box-shadow: 0px 0px 5px 0px cornflowerblue;
+    box-shadow: 0 0 5px 0 cornflowerblue;
 }
 
 .heading {
@@ -158,12 +158,12 @@ textarea:focus {
 
 .divider {
     margin: 10px 20px;
-    height: 0px;
+    height: 0;
     border-top: 1px solid #404040;
 }
 
 .group {
-    padding: 5px 0px;
+    padding: 5px 0;
     margin: 5px;
 }
 
@@ -183,7 +183,7 @@ textarea:focus {
         }
 
 .list-item {
-    margin: 3px 0px;
+    margin: 3px 0;
     padding: 3px;
     cursor: pointer;
     user-select: none;
@@ -196,7 +196,7 @@ textarea:focus {
 
     .list-item.selected,
     .list-item:hover {
-        background: #EEEEEE;
+        background-color: #EEEEEE;
     }
 
     .list-item .heading {
@@ -217,17 +217,17 @@ button {
     background-color: #FAFAFA;
     border: 1px solid #C3C3C3;
     border-left-width: 5px;
-    margin: 3px 0px;
+    margin: 3px 0;
     padding: 5px 8px 7px 8px;
     cursor: pointer;
 }
 
     button:hover {
-        background: #EEEEEE;
+        background-color: #EEEEEE;
     }
 
     button.disabled {
-        background: rgb(235, 235, 235);
+        background-color: rgb(235, 235, 235);
         color: rgb(180, 180, 180);
         cursor: default;
     }
@@ -236,7 +236,7 @@ button {
         background-color: white;
         border: 1px solid #C3C3C3;
         border-left-width: 5px;
-        margin: 3px 0px;
+        margin: 3px 0;
         padding: 5px 8px;
         height: 20px;
         line-height: 18px;
@@ -248,7 +248,7 @@ button {
     }
 
     button .destructive:hover {
-        background: rgba(255, 0, 0, 0.3);
+        background-color: rgba(255, 0, 0, 0.3);
     }
 
     button .title {
@@ -304,7 +304,7 @@ button {
 .card {
     display: inline-block;
     vertical-align: top;
-    background: #F5F5F5;
+    background-color: #F5F5F5;
     border: 1px solid #656565;
 }
 
@@ -326,7 +326,7 @@ button {
 
     .card.pc,
     .card.monster {
-        background: beige;
+        background-color: beige;
     }
 
     .card.pc {
@@ -338,7 +338,7 @@ button {
     }
 
     .card.error {
-        background: red;
+        background-color: red;
         color: white;
         font-weight: 600;
     }
@@ -346,10 +346,10 @@ button {
     .card .heading {
         height: 25px;
         font-size: 15px;
-        margin: 0px;
+        margin: 0;
         padding-left: 8px;
         border-bottom: none;
-        background: #656565;
+        background-color: #656565;
         color: white;
     }
 
@@ -360,11 +360,11 @@ button {
         }
 
     .card.pc .heading {
-        background: #006500;
+        background-color: #006500;
     }
 
     .card.monster .heading {
-        background: #650000;
+        background-color: #650000;
     }
 
     .card .card-content {
@@ -374,7 +374,7 @@ button {
     .card .subheading {
         font-weight: 600;
         font-size: 14px;
-        padding: 3px 0px;
+        padding: 3px 0;
         color: #656565;
     }
 
@@ -399,7 +399,7 @@ button {
     }
 
     .card .section {
-        margin: 5px 0px;
+        margin: 5px 0;
     }
 
         .card .section.centered {
@@ -412,7 +412,7 @@ button {
         }
 
             .card .section .ability-score .spin {
-                margin: 0px 20px;
+                margin: 0 20px;
             }
 
                 .card .section .ability-score .spin .ability-spin {
@@ -464,7 +464,7 @@ button {
     }
 
         .card .toggle:hover {
-            background: #DDDDDD;
+            background-color: #DDDDDD;
         }
 
     .card .spin .spin-value .spin-label {
@@ -472,15 +472,15 @@ button {
     }
 
     .card .table {
-        background: white;
+        background-color: white;
         border: 1px solid #C3C3C3;
-        margin: 8px 0px;
-        padding: 3px 0px;
+        margin: 8px 0;
+        padding: 3px 0;
     }
 
         .card .table .cell {
             display: inline-block;
-            padding: 2px 0px;
+            padding: 2px 0;
             text-align: center;
         }
 
@@ -503,19 +503,19 @@ button {
     .card .spin .image {
         width: 20px;
         height: 20px;
-        padding: 10px 0px;
+        padding: 10px 0;
         vertical-align: middle;
     }
 
     .card .mini-card {
-        background: white;
+        background-color: white;
         border: 1px solid #000065;
-        margin: 5px 0px;
+        margin: 5px 0;
     }
 
         .card .mini-card .heading {
             height: 20px;
-            background: #000065;
+            background-color: #000065;
             font-size: 12px;
             padding: 5px;
             cursor: pointer;
@@ -549,7 +549,7 @@ button {
 .chart {
     height: 300px;
     border: 1px solid #C3C3C3;
-    background: white;
+    background-color: white;
 }
 
     .chart .plot {
@@ -565,17 +565,17 @@ button {
         }
 
             .chart .plot .bar-container .bar {
-                background: lightsteelblue;
+                background-color: lightsteelblue;
                 border-top: 1px solid steelblue;
                 vertical-align: bottom;
             }
 
             .chart .plot .bar-container:hover .bar {
-                background: steelblue;
+                background-color: steelblue;
             }
 
             .chart .plot .bar-container:hover .bar-space {
-                background: #EEEEEE;
+                background-color: #EEEEEE;
             }
 
 .dropdown .dropdown-button {
@@ -598,10 +598,10 @@ button {
 
 .dropdown .dropdown-content {
     display: none;
-    background: white;
+    background-color: white;
     border: 1px solid grey;
     max-height: 236px;
-    box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.3);
     margin-top: -4px;
     overflow-y: auto;
 }
@@ -619,7 +619,7 @@ button {
 
         .dropdown .dropdown-content .dropdown-item.selected,
         .dropdown .dropdown-content .dropdown-item:hover {
-            background: #EEEEEE
+            background-color: #EEEEEE
         }
 
         .dropdown .dropdown-content .dropdown-item.selected {
@@ -629,7 +629,7 @@ button {
 .hp-gauge {
     margin: 5px 5px 10px 5px;
     height: 5px;
-    background: lightgrey;
+    background-color: lightgrey;
 }
 
     .hp-gauge .bar {
@@ -638,29 +638,29 @@ button {
     }
 
         .hp-gauge .bar.unhurt {
-            background: green;
+            background-color: green;
         }
 
         .hp-gauge .bar.injured {
-            background: orange;
+            background-color: orange;
         }
 
         .hp-gauge .bar.bloodied {
-            background: crimson;
+            background-color: crimson;
         }
 
         .hp-gauge .bar.temp {
-            background: cornflowerblue;
+            background-color: cornflowerblue;
         }
 
 .checkbox {
     border: 1px solid #C3C3C3;
-    margin: 3px 0px;
+    margin: 3px 0;
     cursor: pointer;
 }
 
     .checkbox:hover {
-        background: #EEEEEE;
+        background-color: #EEEEEE;
     }
 
     .checkbox .image {
@@ -681,7 +681,7 @@ button {
     font-size: 14px;
     padding: 10px 5px;
     border-bottom: 1px solid #999999;
-    box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
 }
 
     .titlebar .navigator-item {
@@ -702,11 +702,11 @@ button {
 
         .titlebar .navigator-item.selected,
         .titlebar .navigator-item:hover {
-            background: #EEEEEE
+            background-color: #EEEEEE
         }
 
         .titlebar .navigator-item.disabled:hover {
-            background: white;
+            background-color: white;
         }
 
     .titlebar .action {
@@ -729,7 +729,7 @@ button {
 }
 
     .spin .spin-button:hover {
-        background: #DDDDDD;
+        background-color: #DDDDDD;
     }
 
     .spin .spin-button.wide {
@@ -738,7 +738,7 @@ button {
 
     .spin .spin-button .spin-delta {
         vertical-align: middle;
-        margin: 0px 2px;
+        margin: 0 2px;
     }
 
 .spin .spin-value {
@@ -749,7 +749,7 @@ button {
 
     .spin .spin-value .spin-label {
         text-align: center;
-        padding: 1px 0px;
+        padding: 1px 0;
     }
 
 .image.rotate {

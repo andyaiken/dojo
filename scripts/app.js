@@ -6656,7 +6656,7 @@ var TraitsPanel = function (_React$Component) {
                     } else {
                         item = React.createElement(
                             "div",
-                            { key: action.id, className: "section" },
+                            { key: action.id, className: "section trait" },
                             React.createElement(
                                 "b",
                                 null,

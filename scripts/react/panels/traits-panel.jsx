@@ -26,7 +26,7 @@ class TraitsPanel extends React.Component {
                         removeTrait={action => this.props.removeTrait(action)} />
                 } else {
                     item = (
-                        <div key={action.id} className="section">
+                        <div key={action.id} className="section trait">
                             <b>{heading}</b> {action.text}
                         </div>
                     );

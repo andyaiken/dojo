@@ -43,7 +43,7 @@ class Dojo extends React.Component {
             this.state.selectedMonsterGroupID = null;
             this.state.selectedEncounterID = null;
             this.state.selectedCombatID = null;
-    }
+        }
     }
 
     componentDidUpdate() {
