@@ -903,7 +903,7 @@ var FilterCard = function (_React$Component) {
                                     React.createElement(
                                         "div",
                                         { className: "spin-label" },
-                                        "min challege"
+                                        "min challenge"
                                     ),
                                     React.createElement(
                                         "div",
@@ -935,7 +935,7 @@ var FilterCard = function (_React$Component) {
                                     React.createElement(
                                         "div",
                                         { className: "spin-label" },
-                                        "max challege"
+                                        "max challenge"
                                     ),
                                     React.createElement(
                                         "div",
@@ -1355,45 +1355,59 @@ var MonsterCard = function (_React$Component) {
                     }
                 }
                 if (this.props.mode.indexOf("combat") !== -1) {
-                    if (this.props.combatant.defeated) {
+                    if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
                         options.push(React.createElement(
                             "button",
-                            { key: "makeActive", onClick: function onClick() {
+                            { key: "makeAdd", onClick: function onClick() {
                                     return _this2.props.makeActive(_this2.props.combatant);
                                 } },
                             "add to encounter"
                         ));
                     }
-                    if (!this.props.combatant.current) {
-                        options.push(React.createElement(
-                            "button",
-                            { key: "makeCurrent", onClick: function onClick() {
-                                    return _this2.props.makeCurrent(_this2.props.combatant);
-                                } },
-                            "start turn"
-                        ));
+                    if (!this.props.combatant.pending && this.props.combatant.active && !this.props.combatant.defeated) {
+                        if (this.props.combatant.current) {
+                            options.push(React.createElement(
+                                "button",
+                                { key: "endTurn", onClick: function onClick() {
+                                        return _this2.props.endTurn(_this2.props.combatant);
+                                    } },
+                                "end turn"
+                            ));
+                            options.push(React.createElement(
+                                "button",
+                                { key: "makeDefeated", onClick: function onClick() {
+                                        return _this2.props.makeDefeated(_this2.props.combatant);
+                                    } },
+                                "mark as defeated and end turn"
+                            ));
+                        } else {
+                            options.push(React.createElement(
+                                "button",
+                                { key: "makeCurrent", onClick: function onClick() {
+                                        return _this2.props.makeCurrent(_this2.props.combatant);
+                                    } },
+                                "start turn"
+                            ));
+                            options.push(React.createElement(
+                                "button",
+                                { key: "makeDefeated", onClick: function onClick() {
+                                        return _this2.props.makeDefeated(_this2.props.combatant);
+                                    } },
+                                "mark as defeated"
+                            ));
+                            options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
+                                    return _this2.props.removeCombatant(_this2.props.combatant);
+                                } }));
+                        }
                     }
-                    if (!this.props.combatant.defeated) {
+                    if (!this.props.combatant.pending && !this.props.combatant.active && this.props.combatant.defeated) {
                         options.push(React.createElement(
                             "button",
-                            { key: "makeDefeated", onClick: function onClick() {
-                                    return _this2.props.makeDefeated(_this2.props.combatant);
+                            { key: "makeActive", onClick: function onClick() {
+                                    return _this2.props.makeActive(_this2.props.combatant);
                                 } },
-                            "mark as defeated"
+                            "mark as active"
                         ));
-                    }
-                    if (this.props.combatant.current) {
-                        options.push(React.createElement(
-                            "button",
-                            { key: "endTurn", onClick: function onClick() {
-                                    return _this2.props.endTurn(_this2.props.combatant);
-                                } },
-                            "end turn"
-                        ));
-                    } else {
-                        options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
-                                return _this2.props.removeCombatant(_this2.props.combatant);
-                            } }));
                     }
                 }
 
@@ -2944,36 +2958,59 @@ var PCCard = function (_React$Component) {
                         } }));
                 }
                 if (this.props.mode.indexOf("combat") !== -1) {
-                    if (this.props.combatant.initiative !== null && !this.props.combatant.active) {
+                    if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
                         options.push(React.createElement(
                             "button",
-                            { key: "makeActive", onClick: function onClick() {
+                            { key: "makeAdd", onClick: function onClick() {
                                     return _this2.props.makeActive(_this2.props.combatant);
                                 } },
                             "add to encounter"
                         ));
                     }
-                    if (this.props.combatant.active && !this.props.combatant.current) {
-                        options.push(React.createElement(
-                            "button",
-                            { key: "makeCurrent", onClick: function onClick() {
-                                    return _this2.props.makeCurrent(_this2.props.combatant);
-                                } },
-                            "start turn"
-                        ));
+                    if (!this.props.combatant.pending && this.props.combatant.active && !this.props.combatant.defeated) {
+                        if (this.props.combatant.current) {
+                            options.push(React.createElement(
+                                "button",
+                                { key: "endTurn", onClick: function onClick() {
+                                        return _this2.props.endTurn(_this2.props.combatant);
+                                    } },
+                                "end turn"
+                            ));
+                            options.push(React.createElement(
+                                "button",
+                                { key: "makeDefeated", onClick: function onClick() {
+                                        return _this2.props.makeDefeated(_this2.props.combatant);
+                                    } },
+                                "mark as defeated and end turn"
+                            ));
+                        } else {
+                            options.push(React.createElement(
+                                "button",
+                                { key: "makeCurrent", onClick: function onClick() {
+                                        return _this2.props.makeCurrent(_this2.props.combatant);
+                                    } },
+                                "start turn"
+                            ));
+                            options.push(React.createElement(
+                                "button",
+                                { key: "makeDefeated", onClick: function onClick() {
+                                        return _this2.props.makeDefeated(_this2.props.combatant);
+                                    } },
+                                "mark as defeated"
+                            ));
+                            options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
+                                    return _this2.props.removeCombatant(_this2.props.combatant);
+                                } }));
+                        }
                     }
-                    if (this.props.combatant.current) {
+                    if (!this.props.combatant.pending && !this.props.combatant.active && this.props.combatant.defeated) {
                         options.push(React.createElement(
                             "button",
-                            { key: "endTurn", onClick: function onClick() {
-                                    return _this2.props.endTurn(_this2.props.combatant);
+                            { key: "makeActive", onClick: function onClick() {
+                                    return _this2.props.makeActive(_this2.props.combatant);
                                 } },
-                            "end turn"
+                            "mark as active"
                         ));
-                    } else {
-                        options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
-                                return _this2.props.removeCombatant(_this2.props.combatant);
-                            } }));
                     }
                 }
 
@@ -4312,6 +4349,7 @@ var Dojo = function (_React$Component) {
             // Add flags to all combatants
             combat.combatants.forEach(function (combatant) {
                 combatant.current = false;
+                combatant.pending = combatant.type === "pc";
                 combatant.active = combatant.type === "monster";
                 combatant.defeated = false;
             });
@@ -4359,7 +4397,9 @@ var Dojo = function (_React$Component) {
             combat.combatants.forEach(function (combatant) {
                 combatant.current = false;
             });
-            combatant.current = true;
+            if (combatant) {
+                combatant.current = true;
+            }
 
             if (newRound) {
                 combat.round += 1;
@@ -4372,6 +4412,7 @@ var Dojo = function (_React$Component) {
     }, {
         key: "makeActive",
         value: function makeActive(combatant) {
+            combatant.pending = false;
             combatant.active = true;
             combatant.defeated = false;
 
@@ -4385,11 +4426,17 @@ var Dojo = function (_React$Component) {
     }, {
         key: "makeDefeated",
         value: function makeDefeated(combatant) {
+            combatant.pending = false;
+            combatant.active = false;
             combatant.defeated = true;
 
-            this.setState({
-                combats: this.state.combats
-            });
+            if (combatant.current) {
+                this.endTurn(combatant);
+            } else {
+                this.setState({
+                    combats: this.state.combats
+                });
+            }
         }
     }, {
         key: "removeCombatant",
@@ -4407,15 +4454,23 @@ var Dojo = function (_React$Component) {
         value: function endTurn(combatant) {
             var combat = this.getCombat(this.state.selectedCombatID);
             var active = combat.combatants.filter(function (combatant) {
-                return combatant.current || combatant.active && !combatant.pending && !combatant.defeated;
+                return combatant.current || !combatant.pending && combatant.active && !combatant.defeated;
             });
-            var index = active.indexOf(combatant) + 1;
-            var newRound = false;
-            if (index >= active.length) {
-                index = 0;
-                newRound = true;
+            if (active.length === 0) {
+                // There's no-one left in the fight
+                this.makeCurrent(null, false);
+            } else if (active.length === 1 && active[0].defeated) {
+                // The only person in the fight is me, and I'm defeated
+                this.makeCurrent(null, false);
+            } else {
+                var index = active.indexOf(combatant) + 1;
+                var newRound = false;
+                if (index >= active.length) {
+                    index = 0;
+                    newRound = true;
+                }
+                this.makeCurrent(active[index], newRound);
             }
-            this.makeCurrent(active[index], newRound);
         }
     }, {
         key: "addCondition",
@@ -7103,15 +7158,21 @@ var CombatManagerScreen = function (_React$Component) {
                         var combatant = this.props.combat.combatants[index];
                         if (combatant.current) {
                             current.push(this.createCard(index, combatant));
+                        }
+                        if (combatant.pending && !combatant.active && !combatant.defeated) {
+                            pending.push(this.createCard(index, combatant, function (combatant) {
+                                return combatant.current;
+                            }));
+                        }
+                        if (!combatant.pending && combatant.active && !combatant.defeated) {
                             active.push(this.createCard(index, combatant, function (combatant) {
                                 return combatant.current;
                             }));
-                        } else if (!combatant.active) {
-                            pending.push(this.createCard(index, combatant));
-                        } else if (combatant.defeated) {
-                            defeated.push(this.createCard(index, combatant));
-                        } else {
-                            active.push(this.createCard(index, combatant));
+                        }
+                        if (!combatant.pending && !combatant.active && combatant.defeated) {
+                            defeated.push(this.createCard(index, combatant, function (combatant) {
+                                return combatant.current;
+                            }));
                         }
                     }
 

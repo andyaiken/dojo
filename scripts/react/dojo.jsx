@@ -663,6 +663,7 @@ class Dojo extends React.Component {
         // Add flags to all combatants
         combat.combatants.forEach(combatant => {
             combatant.current = false;
+            combatant.pending = (combatant.type === "pc");
             combatant.active = (combatant.type === "monster");
             combatant.defeated = false;
         });
@@ -706,7 +707,9 @@ class Dojo extends React.Component {
         combat.combatants.forEach(combatant => {
             combatant.current = false;
         });
-        combatant.current = true;
+        if (combatant) {
+            combatant.current = true;
+        }
 
         if (newRound) {
             combat.round += 1;
@@ -718,6 +721,7 @@ class Dojo extends React.Component {
     }
 
     makeActive(combatant) {
+        combatant.pending = false;
         combatant.active = true;
         combatant.defeated = false;
 
@@ -730,11 +734,17 @@ class Dojo extends React.Component {
     }
 
     makeDefeated(combatant) {
+        combatant.pending = false;
+        combatant.active = false;
         combatant.defeated = true;
 
-        this.setState({
-            combats: this.state.combats
-        });
+        if (combatant.current) {
+            this.endTurn(combatant);
+        } else {
+            this.setState({
+                combats: this.state.combats
+            });
+        }
     }
 
     removeCombatant(combatant) {
@@ -750,15 +760,23 @@ class Dojo extends React.Component {
     endTurn(combatant) {
         var combat = this.getCombat(this.state.selectedCombatID);
         var active = combat.combatants.filter(combatant => {
-            return combatant.current || (combatant.active && !combatant.pending && !combatant.defeated);
+            return combatant.current || (!combatant.pending && combatant.active && !combatant.defeated);
         });
-        var index = active.indexOf(combatant) + 1;
-        var newRound = false;
-        if (index >= active.length) {
-            index = 0;
-            newRound = true;
+        if (active.length === 0) {
+            // There's no-one left in the fight
+            this.makeCurrent(null, false);
+        } else if ((active.length === 1) && (active[0].defeated)) {
+            // The only person in the fight is me, and I'm defeated
+            this.makeCurrent(null, false);
+        } else {
+            var index = active.indexOf(combatant) + 1;
+            var newRound = false;
+            if (index >= active.length) {
+                index = 0;
+                newRound = true;
+            }
+            this.makeCurrent(active[index], newRound);
         }
-        this.makeCurrent(active[index], newRound);
     }
 
     addCondition(combatant, condition) {

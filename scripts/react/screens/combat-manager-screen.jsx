@@ -64,13 +64,15 @@ class CombatManagerScreen extends React.Component {
                     var combatant = this.props.combat.combatants[index];
                     if (combatant.current) {
                         current.push(this.createCard(index, combatant));
+                    }
+                    if (combatant.pending && !combatant.active && !combatant.defeated) {
+                        pending.push(this.createCard(index, combatant, combatant => combatant.current));
+                    }
+                    if (!combatant.pending && combatant.active && !combatant.defeated) {
                         active.push(this.createCard(index, combatant, combatant => combatant.current));
-                    } else if (!combatant.active) {
-                        pending.push(this.createCard(index, combatant));
-                    } else if (combatant.defeated) {
-                        defeated.push(this.createCard(index, combatant));
-                    } else {
-                        active.push(this.createCard(index, combatant));
+                    }
+                    if (!combatant.pending && !combatant.active && combatant.defeated) {
+                        defeated.push(this.createCard(index, combatant, combatant => combatant.current));
                     }
                 }
 

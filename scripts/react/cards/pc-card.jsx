@@ -26,16 +26,21 @@ class PCCard extends React.Component {
                 options.push(<ConfirmButton key="remove" text="delete pc" callback={() => this.props.removeCombatant(this.props.combatant)} />);
             }
             if (this.props.mode.indexOf("combat") !== -1) {
-                if (this.props.combatant.initiative !== null && !this.props.combatant.active) {
-                    options.push(<button key="makeActive" onClick={() => this.props.makeActive(this.props.combatant)}>add to encounter</button>);
+                if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
+                    options.push(<button key="makeAdd" onClick={() => this.props.makeActive(this.props.combatant)}>add to encounter</button>);
                 }
-                if (this.props.combatant.active && !this.props.combatant.current) {
-                    options.push(<button key="makeCurrent" onClick={() => this.props.makeCurrent(this.props.combatant)}>start turn</button>);
+                if (!this.props.combatant.pending && this.props.combatant.active && !this.props.combatant.defeated) {
+                    if (this.props.combatant.current) {
+                        options.push(<button key="endTurn" onClick={() => this.props.endTurn(this.props.combatant)}>end turn</button>);
+                        options.push(<button key="makeDefeated" onClick={() => this.props.makeDefeated(this.props.combatant)}>mark as defeated and end turn</button>);
+                    } else {
+                        options.push(<button key="makeCurrent" onClick={() => this.props.makeCurrent(this.props.combatant)}>start turn</button>);
+                        options.push(<button key="makeDefeated" onClick={() => this.props.makeDefeated(this.props.combatant)}>mark as defeated</button>);
+                        options.push(<ConfirmButton key="remove" text="remove from encounter" callback={() => this.props.removeCombatant(this.props.combatant)} />);
+                    }
                 }
-                if (this.props.combatant.current) {
-                    options.push(<button key="endTurn" onClick={() => this.props.endTurn(this.props.combatant)}>end turn</button>);
-                } else {
-                    options.push(<ConfirmButton key="remove" text="remove from encounter" callback={() => this.props.removeCombatant(this.props.combatant)} />);
+                if (!this.props.combatant.pending && !this.props.combatant.active && this.props.combatant.defeated) {
+                    options.push(<button key="makeActive" onClick={() => this.props.makeActive(this.props.combatant)}>mark as active</button>);
                 }
             }
 
