@@ -18,7 +18,7 @@ class ConditionPanel extends React.Component {
             if (this.state.showDetails) {
                 if (this.props.condition.name === "exhausted") {
                     details.push(
-                        <div className="section spin">
+                        <div key="spin" className="section spin">
                             <div className="spin-button wide toggle" onClick={() => this.props.nudgeConditionValue(this.props.condition, "level", -1)}>
                                 <img className="image" src="content/minus.svg" />
                             </div>
@@ -35,11 +35,11 @@ class ConditionPanel extends React.Component {
                 }
                 var text = conditionText(this.props.condition);
                 for (var n = 0; n != text.length; ++n) {
-                    details.push(<div key={n}>{text[n]}</div>);
+                    details.push(<div key={n} className="condition-text">{text[n]}</div>);
                 }
                 details.push(<div key="div2" className="divider"></div>);
                 details.push(
-                    <div className="section">
+                    <div key="remove" className="section">
                         <ConfirmButton key="remove" text="remove condition" callback={() => this.props.removeCondition(this.props.condition)} />
                     </div>
                 );
@@ -62,9 +62,9 @@ class ConditionPanel extends React.Component {
 
             return (
                 <div className="mini-card">
-                    <div className="heading">
+                    <div className="heading" onClick={() => this.toggleDetails()}>
                         <div className="title">{name}</div>
-                        <img className={imageStyle} src="content/down-arrow.svg" onClick={() => this.toggleDetails()} />
+                        <img className={imageStyle} src="content/down-arrow.svg" />
                     </div>
                     {content}
                 </div>

@@ -1239,51 +1239,9 @@ var MonsterCard = function (_React$Component) {
             return description.toLowerCase();
         }
     }, {
-        key: "offensiveCR",
-        value: function offensiveCR() {
-            var details = challengeDetails();
-
-            // TODO: Calculate DPR
-            var dpr = 100;
-            var cr = details.find(function (s) {
-                return s.dmgMin <= dpr && s.dmgMax >= dpr;
-            });
-
-            // TODO: Use attack bonus or save DC
-            // TODO: Calculate attack bonus or save DC
-            var attack = 5;
-            var diff = (attack - cr.attack) / 2;
-            var delta = diff > 0 ? Math.floor(diff) : Math.ceil(diff);
-
-            return cr.cr + delta;
-        }
-    }, {
-        key: "defensiveCR",
-        value: function defensiveCR() {
-            var _this2 = this;
-
-            var details = challengeDetails();
-
-            var cr = details.find(function (s) {
-                return s.hpMin <= _this2.props.combatant.hpMax && s.hpMax >= _this2.props.combatant.hpMax;
-            });
-
-            var diff = (this.props.combatant.ac - cr.ac) / 2;
-            var delta = diff > 0 ? Math.floor(diff) : Math.ceil(diff);
-
-            return cr.cr + delta;
-        }
-    }, {
-        key: "suggestedCR",
-        value: function suggestedCR() {
-            var off = this.offensiveCR();
-            var def = this.defensiveCR();
-            return (off + def) / 2;
-        }
-    }, {
         key: "render",
         value: function render() {
-            var _this3 = this;
+            var _this2 = this;
 
             try {
                 var style = "card monster";
@@ -1298,9 +1256,9 @@ var MonsterCard = function (_React$Component) {
                         key: category,
                         text: category,
                         item: category,
-                        selected: _this3.props.combatant.category === category,
+                        selected: _this2.props.combatant.category === category,
                         onSelect: function onSelect(item) {
-                            return _this3.selectCategory(item);
+                            return _this2.selectCategory(item);
                         } }));
                 });
 
@@ -1311,9 +1269,9 @@ var MonsterCard = function (_React$Component) {
                         key: size,
                         text: size,
                         item: size,
-                        selected: _this3.props.combatant.size === size,
+                        selected: _this2.props.combatant.size === size,
                         onSelect: function onSelect(item) {
-                            return _this3.selectSize(item);
+                            return _this2.selectSize(item);
                         } }));
                 });
 
@@ -1326,28 +1284,28 @@ var MonsterCard = function (_React$Component) {
                         options.push(React.createElement(
                             "button",
                             { key: "edit", onClick: function onClick() {
-                                    return _this3.props.editMonster(_this3.props.combatant);
+                                    return _this2.props.editMonster(_this2.props.combatant);
                                 } },
                             "edit monster"
                         ));
                         options.push(React.createElement(
                             "button",
                             { key: "clone", onClick: function onClick() {
-                                    return _this3.props.cloneMonster(_this3.props.combatant);
+                                    return _this2.props.cloneMonster(_this2.props.combatant);
                                 } },
                             "clone monster"
                         ));
 
                         var groups = [];
                         this.props.library.forEach(function (group) {
-                            if (group.monsters.indexOf(_this3.props.combatant) === -1) {
+                            if (group.monsters.indexOf(_this2.props.combatant) === -1) {
                                 groups.push(React.createElement(DropdownItem, {
                                     key: group.id,
                                     text: group.name,
                                     item: group,
                                     selected: false,
                                     onSelect: function onSelect(item) {
-                                        return _this3.selectGroup(item);
+                                        return _this2.selectGroup(item);
                                     } }));
                             }
                         });
@@ -1357,7 +1315,7 @@ var MonsterCard = function (_React$Component) {
                             React.createElement(
                                 "button",
                                 { className: "dropdown-button", onClick: function onClick() {
-                                        return _this3.selectGroup();
+                                        return _this2.selectGroup();
                                     } },
                                 React.createElement(
                                     "div",
@@ -1374,14 +1332,14 @@ var MonsterCard = function (_React$Component) {
                         ));
 
                         options.push(React.createElement(ConfirmButton, { key: "remove", text: "delete monster", callback: function callback() {
-                                return _this3.props.removeCombatant(_this3.props.combatant);
+                                return _this2.props.removeCombatant(_this2.props.combatant);
                             } }));
                     } else {
                         if (!this.props.slot) {
                             options.push(React.createElement(
                                 "button",
                                 { key: "add", onClick: function onClick() {
-                                        return _this3.props.addEncounterSlot(_this3.props.combatant);
+                                        return _this2.props.addEncounterSlot(_this2.props.combatant);
                                     } },
                                 "add to encounter"
                             ));
@@ -1389,7 +1347,7 @@ var MonsterCard = function (_React$Component) {
                             options.push(React.createElement(
                                 "button",
                                 { key: "remove", onClick: function onClick() {
-                                        return _this3.props.removeEncounterSlot(_this3.props.slot);
+                                        return _this2.props.removeEncounterSlot(_this2.props.slot);
                                     } },
                                 "remove from encounter"
                             ));
@@ -1401,7 +1359,7 @@ var MonsterCard = function (_React$Component) {
                         options.push(React.createElement(
                             "button",
                             { key: "makeActive", onClick: function onClick() {
-                                    return _this3.props.makeActive(_this3.props.combatant);
+                                    return _this2.props.makeActive(_this2.props.combatant);
                                 } },
                             "add to encounter"
                         ));
@@ -1410,7 +1368,7 @@ var MonsterCard = function (_React$Component) {
                         options.push(React.createElement(
                             "button",
                             { key: "makeCurrent", onClick: function onClick() {
-                                    return _this3.props.makeCurrent(_this3.props.combatant);
+                                    return _this2.props.makeCurrent(_this2.props.combatant);
                                 } },
                             "start turn"
                         ));
@@ -1419,7 +1377,7 @@ var MonsterCard = function (_React$Component) {
                         options.push(React.createElement(
                             "button",
                             { key: "makeDefeated", onClick: function onClick() {
-                                    return _this3.props.makeDefeated(_this3.props.combatant);
+                                    return _this2.props.makeDefeated(_this2.props.combatant);
                                 } },
                             "mark as defeated"
                         ));
@@ -1428,62 +1386,34 @@ var MonsterCard = function (_React$Component) {
                         options.push(React.createElement(
                             "button",
                             { key: "endTurn", onClick: function onClick() {
-                                    return _this3.props.endTurn(_this3.props.combatant);
+                                    return _this2.props.endTurn(_this2.props.combatant);
                                 } },
                             "end turn"
                         ));
                     } else {
                         options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
-                                return _this3.props.removeCombatant(_this3.props.combatant);
+                                return _this2.props.removeCombatant(_this2.props.combatant);
                             } }));
                     }
                 }
 
                 var stats = null;
                 if (this.props.mode.indexOf("editor") !== -1) {
-                    var cr = null;
-                    if (false) {
-                        cr = React.createElement(
-                            "div",
-                            { className: "section centered" },
-                            React.createElement(
-                                "div",
-                                null,
-                                React.createElement(
-                                    "b",
-                                    null,
-                                    "suggested cr"
-                                ),
-                                " ",
-                                challenge(this.suggestedCR()),
-                                " (defensive ",
-                                challenge(this.defensiveCR()),
-                                " / offensive ",
-                                challenge(this.offensiveCR()),
-                                ")"
-                            )
-                        );
-                    }
-
                     stats = React.createElement(
                         "div",
                         { className: "stats" },
                         React.createElement(
                             "div",
                             { className: "section" },
-                            React.createElement("input", { type: "text", placeholder: "name", value: this.props.combatant.name, onChange: function onChange(event) {
-                                    return _this3.props.changeValue(_this3.props.combatant, "name", event.target.value);
+                            React.createElement(
+                                "div",
+                                { className: "input-label" },
+                                "name:"
+                            ),
+                            React.createElement("input", { type: "text", value: this.props.combatant.name, onChange: function onChange(event) {
+                                    return _this2.props.changeValue(_this2.props.combatant, "name", event.target.value);
                                 } })
                         ),
-                        React.createElement("div", { className: "divider" }),
-                        React.createElement(AbilityScorePanel, {
-                            edit: true,
-                            combatant: this.props.combatant,
-                            nudgeValue: function nudgeValue(type, delta) {
-                                return _this3.props.nudgeValue(_this3.props.combatant, type, delta);
-                            }
-                        }),
-                        React.createElement("div", { className: "divider" }),
                         React.createElement(
                             "div",
                             { className: "column" },
@@ -1492,11 +1422,16 @@ var MonsterCard = function (_React$Component) {
                                 { className: "section" },
                                 React.createElement(
                                     "div",
+                                    { className: "input-label" },
+                                    "size:"
+                                ),
+                                React.createElement(
+                                    "div",
                                     { className: "dropdown" },
                                     React.createElement(
                                         "button",
                                         { className: "dropdown-button", onClick: function onClick() {
-                                                return _this3.selectSize();
+                                                return _this2.selectSize();
                                             } },
                                         React.createElement(
                                             "div",
@@ -1510,6 +1445,20 @@ var MonsterCard = function (_React$Component) {
                                         { className: this.state.sizeDropdownOpen ? "dropdown-content open" : "dropdown-content" },
                                         sizeDropdownItems
                                     )
+                                )
+                            )
+                        ),
+                        React.createElement("div", { className: "column-divider" }),
+                        React.createElement(
+                            "div",
+                            { className: "column" },
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "div",
+                                    { className: "input-label" },
+                                    "category:"
                                 ),
                                 React.createElement(
                                     "div",
@@ -1517,7 +1466,7 @@ var MonsterCard = function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         { className: "dropdown-button", onClick: function onClick() {
-                                                return _this3.selectCategory();
+                                                return _this2.selectCategory();
                                             } },
                                         React.createElement(
                                             "div",
@@ -1531,35 +1480,96 @@ var MonsterCard = function (_React$Component) {
                                         { className: this.state.categoryDropdownOpen ? "dropdown-content open" : "dropdown-content" },
                                         categoryDropdownItems
                                     )
-                                ),
-                                React.createElement("input", { type: "text", placeholder: "tag", value: this.props.combatant.tag, onChange: function onChange(event) {
-                                        return _this3.props.changeValue(_this3.props.combatant, "tag", event.target.value);
-                                    } }),
-                                React.createElement("input", { type: "text", placeholder: "alignment", value: this.props.combatant.alignment, onChange: function onChange(event) {
-                                        return _this3.props.changeValue(_this3.props.combatant, "alignment", event.target.value);
-                                    } })
-                            ),
-                            React.createElement("div", { className: "divider" }),
+                                )
+                            )
+                        ),
+                        React.createElement("div", { className: "column-divider" }),
+                        React.createElement(
+                            "div",
+                            { className: "column" },
                             React.createElement(
                                 "div",
                                 { className: "section" },
-                                React.createElement("input", { type: "text", placeholder: "speed", value: this.props.combatant.speed, onChange: function onChange(event) {
-                                        return _this3.props.changeValue(_this3.props.combatant, "speed", event.target.value);
+                                React.createElement(
+                                    "div",
+                                    { className: "input-label" },
+                                    "tag:"
+                                ),
+                                React.createElement("input", { type: "text", value: this.props.combatant.tag, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "tag", event.target.value);
+                                    } })
+                            )
+                        ),
+                        React.createElement("div", { className: "divider" }),
+                        React.createElement(AbilityScorePanel, {
+                            edit: true,
+                            combatant: this.props.combatant,
+                            nudgeValue: function nudgeValue(type, delta) {
+                                return _this2.props.nudgeValue(_this2.props.combatant, type, delta);
+                            }
+                        }),
+                        React.createElement("div", { className: "divider" }),
+                        React.createElement(
+                            "div",
+                            { className: "column" },
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "div",
+                                    { className: "input-label" },
+                                    "alignment:"
+                                ),
+                                React.createElement("input", { type: "text", value: this.props.combatant.alignment, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "alignment", event.target.value);
                                     } }),
-                                React.createElement("input", { type: "text", placeholder: "saving throws", value: this.props.combatant.savingThrows, onChange: function onChange(event) {
-                                        return _this3.props.changeValue(_this3.props.combatant, "savingThrows", event.target.value);
+                                React.createElement(
+                                    "div",
+                                    { className: "input-label" },
+                                    "speed:"
+                                ),
+                                React.createElement("input", { type: "text", value: this.props.combatant.speed, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "speed", event.target.value);
                                     } }),
-                                React.createElement("input", { type: "text", placeholder: "skills", value: this.props.combatant.skills, onChange: function onChange(event) {
-                                        return _this3.props.changeValue(_this3.props.combatant, "skills", event.target.value);
+                                React.createElement(
+                                    "div",
+                                    { className: "input-label" },
+                                    "saving throws:"
+                                ),
+                                React.createElement("input", { type: "text", value: this.props.combatant.savingThrows, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "savingThrows", event.target.value);
                                     } }),
-                                React.createElement("input", { type: "text", placeholder: "senses", value: this.props.combatant.senses, onChange: function onChange(event) {
-                                        return _this3.props.changeValue(_this3.props.combatant, "senses", event.target.value);
+                                React.createElement(
+                                    "div",
+                                    { className: "input-label" },
+                                    "skills:"
+                                ),
+                                React.createElement("input", { type: "text", value: this.props.combatant.skills, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "skills", event.target.value);
                                     } }),
-                                React.createElement("input", { type: "text", placeholder: "languages", value: this.props.combatant.languages, onChange: function onChange(event) {
-                                        return _this3.props.changeValue(_this3.props.combatant, "languages", event.target.value);
+                                React.createElement(
+                                    "div",
+                                    { className: "input-label" },
+                                    "senses:"
+                                ),
+                                React.createElement("input", { type: "text", value: this.props.combatant.senses, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "senses", event.target.value);
                                     } }),
-                                React.createElement("input", { type: "text", placeholder: "equipment", value: this.props.combatant.equipment, onChange: function onChange(event) {
-                                        return _this3.props.changeValue(_this3.props.combatant, "equipment", event.target.value);
+                                React.createElement(
+                                    "div",
+                                    { className: "input-label" },
+                                    "languages:"
+                                ),
+                                React.createElement("input", { type: "text", value: this.props.combatant.languages, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "languages", event.target.value);
+                                    } }),
+                                React.createElement(
+                                    "div",
+                                    { className: "input-label" },
+                                    "equipment:"
+                                ),
+                                React.createElement("input", { type: "text", value: this.props.combatant.equipment, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "equipment", event.target.value);
                                     } })
                             )
                         ),
@@ -1573,7 +1583,7 @@ var MonsterCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "spin-button wide toggle", onClick: function onClick() {
-                                            return _this3.props.nudgeValue(_this3.props.combatant, "challenge", -1);
+                                            return _this2.props.nudgeValue(_this2.props.combatant, "challenge", -1);
                                         } },
                                     React.createElement("img", { className: "image", src: "content/minus.svg" })
                                 ),
@@ -1594,12 +1604,11 @@ var MonsterCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "spin-button wide toggle", onClick: function onClick() {
-                                            return _this3.props.nudgeValue(_this3.props.combatant, "challenge", +1);
+                                            return _this2.props.nudgeValue(_this2.props.combatant, "challenge", +1);
                                         } },
                                     React.createElement("img", { className: "image", src: "content/plus.svg" })
                                 )
                             ),
-                            cr,
                             React.createElement("div", { className: "divider" }),
                             React.createElement(
                                 "div",
@@ -1607,7 +1616,7 @@ var MonsterCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "spin-button wide toggle", onClick: function onClick() {
-                                            return _this3.props.nudgeValue(_this3.props.combatant, "ac", -1);
+                                            return _this2.props.nudgeValue(_this2.props.combatant, "ac", -1);
                                         } },
                                     React.createElement("img", { className: "image", src: "content/minus.svg" })
                                 ),
@@ -1617,7 +1626,7 @@ var MonsterCard = function (_React$Component) {
                                     React.createElement(
                                         "div",
                                         { className: "spin-label" },
-                                        "ac"
+                                        "armor class"
                                     ),
                                     React.createElement(
                                         "div",
@@ -1628,7 +1637,7 @@ var MonsterCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "spin-button wide toggle", onClick: function onClick() {
-                                            return _this3.props.nudgeValue(_this3.props.combatant, "ac", +1);
+                                            return _this2.props.nudgeValue(_this2.props.combatant, "ac", +1);
                                         } },
                                     React.createElement("img", { className: "image", src: "content/plus.svg" })
                                 )
@@ -1640,7 +1649,7 @@ var MonsterCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "spin-button wide toggle", onClick: function onClick() {
-                                            return _this3.props.nudgeValue(_this3.props.combatant, "hitDice", -1);
+                                            return _this2.props.nudgeValue(_this2.props.combatant, "hitDice", -1);
                                         } },
                                     React.createElement("img", { className: "image", src: "content/minus.svg" })
                                 ),
@@ -1661,7 +1670,7 @@ var MonsterCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "spin-button wide toggle", onClick: function onClick() {
-                                            return _this3.props.nudgeValue(_this3.props.combatant, "hitDice", +1);
+                                            return _this2.props.nudgeValue(_this2.props.combatant, "hitDice", +1);
                                         } },
                                     React.createElement("img", { className: "image", src: "content/plus.svg" })
                                 )
@@ -1690,17 +1699,37 @@ var MonsterCard = function (_React$Component) {
                             React.createElement(
                                 "div",
                                 { className: "section" },
-                                React.createElement("input", { type: "text", placeholder: "damage resistances", value: this.props.combatant.damage.resist, onChange: function onChange(event) {
-                                        return _this3.props.changeValue(_this3.props.combatant, "damage.resist", event.target.value);
+                                React.createElement(
+                                    "div",
+                                    { className: "input-label" },
+                                    "damage resistances:"
+                                ),
+                                React.createElement("input", { type: "text", value: this.props.combatant.damage.resist, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "damage.resist", event.target.value);
                                     } }),
-                                React.createElement("input", { type: "text", placeholder: "damage vulnerabilities", value: this.props.combatant.damage.vulnerable, onChange: function onChange(event) {
-                                        return _this3.props.changeValue(_this3.props.combatant, "damage.vulnerable", event.target.value);
+                                React.createElement(
+                                    "div",
+                                    { className: "input-label" },
+                                    "damage vulnerabilities:"
+                                ),
+                                React.createElement("input", { type: "text", value: this.props.combatant.damage.vulnerable, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "damage.vulnerable", event.target.value);
                                     } }),
-                                React.createElement("input", { type: "text", placeholder: "damage immunities", value: this.props.combatant.damage.immune, onChange: function onChange(event) {
-                                        return _this3.props.changeValue(_this3.props.combatant, "damage.immune", event.target.value);
+                                React.createElement(
+                                    "div",
+                                    { className: "input-label" },
+                                    "damage immunities:"
+                                ),
+                                React.createElement("input", { type: "text", value: this.props.combatant.damage.immune, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "damage.immune", event.target.value);
                                     } }),
-                                React.createElement("input", { type: "text", placeholder: "condition immunities", value: this.props.combatant.conditionImmunities, onChange: function onChange(event) {
-                                        return _this3.props.changeValue(_this3.props.combatant, "conditionImmunities", event.target.value);
+                                React.createElement(
+                                    "div",
+                                    { className: "input-label" },
+                                    "condition immunities:"
+                                ),
+                                React.createElement("input", { type: "text", value: this.props.combatant.conditionImmunities, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "conditionImmunities", event.target.value);
                                     } })
                             )
                         ),
@@ -1711,14 +1740,14 @@ var MonsterCard = function (_React$Component) {
                             React.createElement(TraitsPanel, {
                                 combatant: this.props.combatant,
                                 edit: true,
-                                addTrait: function addTrait() {
-                                    return _this3.props.addTrait(_this3.props.combatant);
+                                addTrait: function addTrait(type) {
+                                    return _this2.props.addTrait(_this2.props.combatant, type);
                                 },
                                 removeTrait: function removeTrait(trait) {
-                                    return _this3.props.removeTrait(_this3.props.combatant, trait);
+                                    return _this2.props.removeTrait(_this2.props.combatant, trait);
                                 },
                                 changeTrait: function changeTrait(trait, type, value) {
-                                    return _this3.props.changeTrait(trait, type, value);
+                                    return _this2.props.changeTrait(trait, type, value);
                                 }
                             })
                         )
@@ -1737,7 +1766,7 @@ var MonsterCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "spin-button wide toggle", onClick: function onClick() {
-                                            return _this3.props.nudgeValue(_this3.props.slot, "count", -1);
+                                            return _this2.props.nudgeValue(_this2.props.slot, "count", -1);
                                         } },
                                     React.createElement("img", { className: "image", src: "content/minus.svg" })
                                 ),
@@ -1758,7 +1787,7 @@ var MonsterCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "spin-button wide toggle", onClick: function onClick() {
-                                            return _this3.props.nudgeValue(_this3.props.slot, "count", +1);
+                                            return _this2.props.nudgeValue(_this2.props.slot, "count", +1);
                                         } },
                                     React.createElement("img", { className: "image", src: "content/plus.svg" })
                                 )
@@ -1961,7 +1990,7 @@ var MonsterCard = function (_React$Component) {
                             React.createElement(
                                 "div",
                                 { className: "key-stat toggle", onClick: function onClick() {
-                                        return _this3.toggleInit();
+                                        return _this2.toggleInit();
                                     } },
                                 React.createElement(
                                     "div",
@@ -1991,7 +2020,7 @@ var MonsterCard = function (_React$Component) {
                             React.createElement(
                                 "div",
                                 { className: "key-stat toggle", onClick: function onClick() {
-                                        return _this3.toggleHP();
+                                        return _this2.toggleHP();
                                     } },
                                 React.createElement(
                                     "div",
@@ -2015,7 +2044,7 @@ var MonsterCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this3.props.nudgeValue(_this3.props.combatant, "initiative", -5);
+                                            return _this2.props.nudgeValue(_this2.props.combatant, "initiative", -5);
                                         } },
                                     React.createElement("img", { className: "image", src: "content/minus.svg" }),
                                     React.createElement(
@@ -2027,7 +2056,7 @@ var MonsterCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this3.props.nudgeValue(_this3.props.combatant, "initiative", -1);
+                                            return _this2.props.nudgeValue(_this2.props.combatant, "initiative", -1);
                                         } },
                                     React.createElement("img", { className: "image", src: "content/minus.svg" }),
                                     React.createElement(
@@ -2053,7 +2082,7 @@ var MonsterCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this3.props.nudgeValue(_this3.props.combatant, "initiative", +1);
+                                            return _this2.props.nudgeValue(_this2.props.combatant, "initiative", +1);
                                         } },
                                     React.createElement("img", { className: "image", src: "content/plus.svg" }),
                                     React.createElement(
@@ -2065,7 +2094,7 @@ var MonsterCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this3.props.nudgeValue(_this3.props.combatant, "initiative", +5);
+                                            return _this2.props.nudgeValue(_this2.props.combatant, "initiative", +5);
                                         } },
                                     React.createElement("img", { className: "image", src: "content/plus.svg" }),
                                     React.createElement(
@@ -2086,7 +2115,7 @@ var MonsterCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this3.props.nudgeValue(_this3.props.combatant, "hp", +5);
+                                            return _this2.props.nudgeValue(_this2.props.combatant, "hp", +5);
                                         } },
                                     React.createElement("img", { className: "image", src: "content/minus.svg" }),
                                     React.createElement(
@@ -2098,7 +2127,7 @@ var MonsterCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this3.props.nudgeValue(_this3.props.combatant, "hp", +1);
+                                            return _this2.props.nudgeValue(_this2.props.combatant, "hp", +1);
                                         } },
                                     React.createElement("img", { className: "image", src: "content/minus.svg" }),
                                     React.createElement(
@@ -2124,7 +2153,7 @@ var MonsterCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this3.props.nudgeValue(_this3.props.combatant, "hp", -1);
+                                            return _this2.props.nudgeValue(_this2.props.combatant, "hp", -1);
                                         } },
                                     React.createElement("img", { className: "image", src: "content/plus.svg" }),
                                     React.createElement(
@@ -2136,7 +2165,7 @@ var MonsterCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this3.props.nudgeValue(_this3.props.combatant, "hp", -5);
+                                            return _this2.props.nudgeValue(_this2.props.combatant, "hp", -5);
                                         } },
                                     React.createElement("img", { className: "image", src: "content/plus.svg" }),
                                     React.createElement(
@@ -2152,7 +2181,7 @@ var MonsterCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this3.props.nudgeValue(_this3.props.combatant, "hpTemp", -5);
+                                            return _this2.props.nudgeValue(_this2.props.combatant, "hpTemp", -5);
                                         } },
                                     React.createElement("img", { className: "image", src: "content/minus.svg" }),
                                     React.createElement(
@@ -2164,7 +2193,7 @@ var MonsterCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this3.props.nudgeValue(_this3.props.combatant, "hpTemp", -1);
+                                            return _this2.props.nudgeValue(_this2.props.combatant, "hpTemp", -1);
                                         } },
                                     React.createElement("img", { className: "image", src: "content/minus.svg" }),
                                     React.createElement(
@@ -2190,7 +2219,7 @@ var MonsterCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this3.props.nudgeValue(_this3.props.combatant, "hpTemp", +1);
+                                            return _this2.props.nudgeValue(_this2.props.combatant, "hpTemp", +1);
                                         } },
                                     React.createElement("img", { className: "image", src: "content/plus.svg" }),
                                     React.createElement(
@@ -2202,7 +2231,7 @@ var MonsterCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this3.props.nudgeValue(_this3.props.combatant, "hpTemp", +5);
+                                            return _this2.props.nudgeValue(_this2.props.combatant, "hpTemp", +5);
                                         } },
                                     React.createElement("img", { className: "image", src: "content/plus.svg" }),
                                     React.createElement(
@@ -2256,13 +2285,13 @@ var MonsterCard = function (_React$Component) {
                         React.createElement(ConditionsPanel, {
                             combatant: this.props.combatant,
                             addCondition: function addCondition(condition) {
-                                return _this3.props.addCondition(_this3.props.combatant, condition);
+                                return _this2.props.addCondition(_this2.props.combatant, condition);
                             },
                             removeCondition: function removeCondition(condition) {
-                                return _this3.props.removeCondition(_this3.props.combatant, condition);
+                                return _this2.props.removeCondition(_this2.props.combatant, condition);
                             },
                             nudgeConditionValue: function nudgeConditionValue(condition, type, delta) {
-                                return _this3.props.nudgeConditionValue(condition, type, delta);
+                                return _this2.props.nudgeConditionValue(condition, type, delta);
                             }
                         }),
                         React.createElement(
@@ -2394,12 +2423,12 @@ var MonsterCard = function (_React$Component) {
                 if (this.props.mode.indexOf("editor") === -1 && !this.props.combatant.current) {
                     var imageStyle = this.state.showDetails ? "image rotate" : "image";
                     toggle = React.createElement("img", { className: imageStyle, src: "content/down-arrow.svg", onClick: function onClick() {
-                            return _this3.toggleDetails();
+                            return _this2.toggleDetails();
                         } });
                 }
                 if (this.props.mode.indexOf("editor") !== -1) {
                     toggle = React.createElement("img", { className: "image", src: "content/close-white.svg", onClick: function onClick() {
-                            return _this3.props.closeEditor();
+                            return _this2.props.closeEditor();
                         } });
                 }
 
@@ -3891,12 +3920,12 @@ var Dojo = function (_React$Component) {
         }
     }, {
         key: "addTrait",
-        value: function addTrait(combatant) {
+        value: function addTrait(combatant, type) {
             var trait = {
                 id: this.guid(),
                 name: "New trait",
                 usage: "",
-                type: "action",
+                type: type,
                 text: ""
             };
             var trait = combatant.traits.push(trait);
@@ -4736,8 +4765,8 @@ var Dojo = function (_React$Component) {
                             nudgeValue: function nudgeValue(combatant, type, delta) {
                                 return _this5.nudgeValue(combatant, type, delta);
                             },
-                            addTrait: function addTrait(combatant) {
-                                return _this5.addTrait(combatant);
+                            addTrait: function addTrait(combatant, type) {
+                                return _this5.addTrait(combatant, type);
                             },
                             removeTrait: function removeTrait(combatant, trait) {
                                 return _this5.removeTrait(combatant, trait);
@@ -4922,8 +4951,8 @@ var Dojo = function (_React$Component) {
                             changeTrait: function changeTrait(trait, type, value) {
                                 return _this5.changeValue(trait, type, value);
                             },
-                            addTrait: function addTrait(combatant) {
-                                return _this5.addTrait(combatant);
+                            addTrait: function addTrait(combatant, type) {
+                                return _this5.addTrait(combatant, type);
                             },
                             removeTrait: function removeTrait(combatant, trait) {
                                 return _this5.removeTrait(combatant, trait);
@@ -6049,7 +6078,7 @@ var ConditionPanel = function (_React$Component) {
                     if (this.props.condition.name === "exhausted") {
                         details.push(React.createElement(
                             "div",
-                            { className: "section spin" },
+                            { key: "spin", className: "section spin" },
                             React.createElement(
                                 "div",
                                 { className: "spin-button wide toggle", onClick: function onClick() {
@@ -6085,14 +6114,14 @@ var ConditionPanel = function (_React$Component) {
                     for (var n = 0; n != text.length; ++n) {
                         details.push(React.createElement(
                             "div",
-                            { key: n },
+                            { key: n, className: "condition-text" },
                             text[n]
                         ));
                     }
                     details.push(React.createElement("div", { key: "div2", className: "divider" }));
                     details.push(React.createElement(
                         "div",
-                        { className: "section" },
+                        { key: "remove", className: "section" },
                         React.createElement(ConfirmButton, { key: "remove", text: "remove condition", callback: function callback() {
                                 return _this2.props.removeCondition(_this2.props.condition);
                             } })
@@ -6119,15 +6148,15 @@ var ConditionPanel = function (_React$Component) {
                     { className: "mini-card" },
                     React.createElement(
                         "div",
-                        { className: "heading" },
+                        { className: "heading", onClick: function onClick() {
+                                return _this2.toggleDetails();
+                            } },
                         React.createElement(
                             "div",
                             { className: "title" },
                             name
                         ),
-                        React.createElement("img", { className: imageStyle, src: "content/down-arrow.svg", onClick: function onClick() {
-                                return _this2.toggleDetails();
-                            } })
+                        React.createElement("img", { className: imageStyle, src: "content/down-arrow.svg" })
                     ),
                     content
                 );
@@ -6505,7 +6534,7 @@ var TraitPanel = function (_React$Component) {
                                     return _this2.props.changeTrait(_this2.props.trait, "text", event.target.value);
                                 } }),
                             React.createElement("div", { className: "divider" }),
-                            React.createElement(ConfirmButton, { text: "delete trait", callback: function callback() {
+                            React.createElement(ConfirmButton, { text: "delete", callback: function callback() {
                                     return _this2.props.removeTrait(_this2.props.trait);
                                 } })
                         )
@@ -6524,15 +6553,15 @@ var TraitPanel = function (_React$Component) {
                     { className: "mini-card" },
                     React.createElement(
                         "div",
-                        { className: "heading" },
+                        { className: "heading", onClick: function onClick() {
+                                return _this2.toggleDetails();
+                            } },
                         React.createElement(
                             "div",
                             { className: "title" },
-                            traitType(this.props.trait.type) + ": " + name
+                            name
                         ),
-                        React.createElement("img", { className: imageStyle, src: "content/down-arrow.svg", onClick: function onClick() {
-                                return _this2.toggleDetails();
-                            } })
+                        React.createElement("img", { className: imageStyle, src: "content/down-arrow.svg" })
                     ),
                     details
                 );
@@ -6569,53 +6598,35 @@ var TraitsPanel = function (_React$Component) {
             var _this2 = this;
 
             try {
-                var result = null;
+                var traits = [];
+                var actions = [];
+                var legendaryActions = [];
+                var lairActions = [];
+                var regionalEffects = [];
 
-                if (this.props.edit) {
-                    var traits = [];
-                    for (var n = 0; n != this.props.combatant.traits.length; ++n) {
-                        var trait = this.props.combatant.traits[n];
-                        traits.push(React.createElement(TraitPanel, {
-                            key: trait.id,
-                            trait: trait,
-                            changeTrait: function changeTrait(trait, type, value) {
-                                return _this2.props.changeTrait(trait, type, value);
-                            },
-                            removeTrait: function removeTrait(trait) {
-                                return _this2.props.removeTrait(trait);
-                            } }));
+                for (var n = 0; n != this.props.combatant.traits.length; ++n) {
+                    var action = this.props.combatant.traits[n];
+                    var heading = action.name;
+                    if (!heading) {
+                        heading = "unnamed " + traitType(action.type);
                     }
-                    traits.push(React.createElement(
-                        "button",
-                        { key: "add", onClick: function onClick() {
-                                return _this2.props.addTrait();
-                            } },
-                        "add a new trait"
-                    ));
+                    if (action.usage) {
+                        heading += " (" + action.usage + ")";
+                    }
 
-                    result = React.createElement(
-                        "div",
-                        { className: "section" },
-                        traits
-                    );
-                } else {
-                    var traits = [];
-                    var actions = [];
-                    var legendaryActions = [];
-                    var lairActions = [];
-                    var regionalEffects = [];
-
-                    for (var n = 0; n != this.props.combatant.traits.length; ++n) {
-                        var action = this.props.combatant.traits[n];
-                        var heading = action.name;
-                        if (!heading) {
-                            heading = "unnamed " + traitType(action.type);
-                        }
-                        if (action.usage) {
-                            heading += " (" + action.usage + ")";
-                        }
-
-                        var item = React.createElement(
+                    var item = null;
+                    if (this.props.edit) {
+                        item = React.createElement(TraitPanel, {
+                            key: action.id,
+                            trait: action,
+                            changeTrait: function changeTrait(action, type, value) {
+                                return _this2.props.changeTrait(action, type, value);
+                            },
+                            removeTrait: function removeTrait(action) {
+                                return _this2.props.removeTrait(action);
+                            } });
+                    } else {
+                        item = React.createElement(
                             "div",
                             { key: action.id, className: "section" },
                             React.createElement(
@@ -6626,83 +6637,119 @@ var TraitsPanel = function (_React$Component) {
                             " ",
                             action.text
                         );
-
-                        switch (action.type) {
-                            case "trait":
-                                traits.push(item);
-                                break;
-                            case "action":
-                                actions.push(item);
-                                break;
-                            case "legendary":
-                                legendaryActions.push(item);
-                                break;
-                            case "lair":
-                                lairActions.push(item);
-                                break;
-                            case "regional":
-                                regionalEffects.push(item);
-                                break;
-                        }
                     }
 
-                    result = React.createElement(
-                        "div",
-                        null,
-                        React.createElement(
-                            "div",
-                            { style: { display: traits.length > 0 ? "" : "none" } },
-                            React.createElement(
-                                "div",
-                                { className: "section subheading" },
-                                "traits"
-                            ),
-                            traits
-                        ),
-                        React.createElement(
-                            "div",
-                            { style: { display: actions.length > 0 ? "" : "none" } },
-                            React.createElement(
-                                "div",
-                                { className: "section subheading" },
-                                "actions"
-                            ),
-                            actions
-                        ),
-                        React.createElement(
-                            "div",
-                            { style: { display: legendaryActions.length > 0 ? "" : "none" } },
-                            React.createElement(
-                                "div",
-                                { className: "section subheading" },
-                                "legendary actions"
-                            ),
-                            legendaryActions
-                        ),
-                        React.createElement(
-                            "div",
-                            { style: { display: lairActions.length > 0 ? "" : "none" } },
-                            React.createElement(
-                                "div",
-                                { className: "section subheading" },
-                                "lair actions"
-                            ),
-                            lairActions
-                        ),
-                        React.createElement(
-                            "div",
-                            { style: { display: regionalEffects.length > 0 ? "" : "none" } },
-                            React.createElement(
-                                "div",
-                                { className: "section subheading" },
-                                "regional effects"
-                            ),
-                            regionalEffects
-                        )
-                    );
+                    switch (action.type) {
+                        case "trait":
+                            traits.push(item);
+                            break;
+                        case "action":
+                            actions.push(item);
+                            break;
+                        case "legendary":
+                            legendaryActions.push(item);
+                            break;
+                        case "lair":
+                            lairActions.push(item);
+                            break;
+                        case "regional":
+                            regionalEffects.push(item);
+                            break;
+                    }
                 }
 
-                return result;
+                if (this.props.edit) {
+                    traits.push(React.createElement(
+                        "button",
+                        { key: "add", onClick: function onClick() {
+                                return _this2.props.addTrait("trait");
+                            } },
+                        "add a new trait"
+                    ));
+                    actions.push(React.createElement(
+                        "button",
+                        { key: "add", onClick: function onClick() {
+                                return _this2.props.addTrait("action");
+                            } },
+                        "add a new action"
+                    ));
+                    legendaryActions.push(React.createElement(
+                        "button",
+                        { key: "add", onClick: function onClick() {
+                                return _this2.props.addTrait("legendary");
+                            } },
+                        "add a new legendary action"
+                    ));
+                    lairActions.push(React.createElement(
+                        "button",
+                        { key: "add", onClick: function onClick() {
+                                return _this2.props.addTrait("lair");
+                            } },
+                        "add a new lair action"
+                    ));
+                    regionalEffects.push(React.createElement(
+                        "button",
+                        { key: "add", onClick: function onClick() {
+                                return _this2.props.addTrait("regional");
+                            } },
+                        "add a new regional effect"
+                    ));
+                }
+
+                return React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "div",
+                        { style: { display: traits.length > 0 ? "" : "none" } },
+                        React.createElement(
+                            "div",
+                            { className: "section subheading" },
+                            "traits"
+                        ),
+                        traits
+                    ),
+                    React.createElement(
+                        "div",
+                        { style: { display: actions.length > 0 ? "" : "none" } },
+                        React.createElement(
+                            "div",
+                            { className: "section subheading" },
+                            "actions"
+                        ),
+                        actions
+                    ),
+                    React.createElement(
+                        "div",
+                        { style: { display: legendaryActions.length > 0 ? "" : "none" } },
+                        React.createElement(
+                            "div",
+                            { className: "section subheading" },
+                            "legendary actions"
+                        ),
+                        legendaryActions
+                    ),
+                    React.createElement(
+                        "div",
+                        { style: { display: lairActions.length > 0 ? "" : "none" } },
+                        React.createElement(
+                            "div",
+                            { className: "section subheading" },
+                            "lair actions"
+                        ),
+                        lairActions
+                    ),
+                    React.createElement(
+                        "div",
+                        { style: { display: regionalEffects.length > 0 ? "" : "none" } },
+                        React.createElement(
+                            "div",
+                            { className: "section subheading" },
+                            "regional effects"
+                        ),
+                        regionalEffects
+                    )
+                );
             } catch (e) {
                 console.error(e);
             }
@@ -7699,8 +7746,8 @@ var MonsterLibraryScreen = function (_React$Component) {
                             changeTrait: function changeTrait(trait, type, value) {
                                 return _this3.props.changeValue(trait, type, value);
                             },
-                            addTrait: function addTrait(combatant) {
-                                return _this3.props.addTrait(combatant);
+                            addTrait: function addTrait(combatant, type) {
+                                return _this3.props.addTrait(combatant, type);
                             },
                             removeTrait: function removeTrait(combatant, trait) {
                                 return _this3.props.removeTrait(combatant, trait);

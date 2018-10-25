@@ -60,7 +60,7 @@ class TraitPanel extends React.Component {
                             <input type="text" placeholder="usage" value={this.props.trait.usage} onChange={event => this.props.changeTrait(this.props.trait, "usage", event.target.value)} />
                             <textarea placeholder="details" value={this.props.trait.text} onChange={event => this.props.changeTrait(this.props.trait, "text", event.target.value)} />
                             <div className="divider"></div>
-                            <ConfirmButton text="delete trait" callback={() => this.props.removeTrait(this.props.trait)} />
+                            <ConfirmButton text="delete" callback={() => this.props.removeTrait(this.props.trait)} />
                         </div>
                     </div>
                 );
@@ -75,9 +75,9 @@ class TraitPanel extends React.Component {
 
             return (
                 <div className="mini-card">
-                    <div className="heading">
-                        <div className="title">{traitType(this.props.trait.type) + ": " + name}</div>
-                        <img className={imageStyle} src="content/down-arrow.svg" onClick={() => this.toggleDetails()} />
+                    <div className="heading" onClick={() => this.toggleDetails()}>
+                        <div className="title">{name}</div>
+                        <img className={imageStyle} src="content/down-arrow.svg" />
                     </div>
                     {details}
                 </div>

@@ -21,6 +21,7 @@ input[type=checkbox] {
 
 input[type=text],
 textarea {
+    height: 20px;
     margin: 3px 0px;
     padding: 5px 8px;
     border: 1px solid #C3C3C3;
@@ -63,7 +64,7 @@ body,
 }
 
 .page-content {
-    height: calc(100% - 40px);
+    height: calc(100% - 51px);
 }
 
 .home,
@@ -207,15 +208,17 @@ textarea:focus {
 
 button {
     display: block;
+    min-height: 32px;
     width: 100%;
     text-align: left;
     font-size: 12px;
     font-family: "Segoe UI", Helvetica, Arial, sans-serif;
     font-weight: 600;
-    background-color: white;
+    background-color: #FAFAFA;
     border: 1px solid #C3C3C3;
+    border-left-width: 5px;
     margin: 3px 0px;
-    padding: 5px 8px;
+    padding: 5px 8px 7px 8px;
     cursor: pointer;
 }
 
@@ -317,7 +320,7 @@ button {
     }
 
     .card.welcome {
-        margin-top: 100px;
+        margin-top: 200px;
     }
 
     .card.pc,
@@ -449,6 +452,11 @@ button {
             padding-top: 5px;
         }
 
+        .card .section .input-label {
+            padding-top: 5px;
+            font-weight: 600;
+        }
+
     .card .toggle {
         cursor: pointer;
         user-select: none;
@@ -509,6 +517,7 @@ button {
             background: #000065;
             font-size: 12px;
             padding: 5px;
+            cursor: pointer;
         }
 
             .card .mini-card .heading .title {
@@ -530,6 +539,10 @@ button {
 
         .card .mini-card .divider {
             border-top: 1px solid #000065;
+        }
+
+        .card .mini-card .condition-text {
+            padding: 2px 0;
         }
 
 .chart {
@@ -666,7 +679,9 @@ button {
 .titlebar {
     height: 30px;
     font-size: 14px;
-    margin: 5px 0;
+    padding: 10px 5px;
+    border-bottom: 1px solid #999999;
+    box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.2);
 }
 
     .titlebar .navigator-item {
@@ -681,8 +696,8 @@ button {
 
         .titlebar .navigator-item.disabled {
             cursor: default;
-            color: #808080;
-            border-left: 3px solid #808080;
+            color: #999999;
+            border-left: 3px solid #999999;
         }
 
         .titlebar .navigator-item.selected,
@@ -695,7 +710,9 @@ button {
         }
 
     .titlebar .action {
-        float: right;
+        position: absolute;
+        right: 5px;
+        top: 7px;
     }
 
         .titlebar .action .section {

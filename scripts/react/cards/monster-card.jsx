@@ -81,39 +81,6 @@ class MonsterCard extends React.Component {
         return description.toLowerCase();
     }
 
-    offensiveCR() {
-        var details = challengeDetails();
-
-        // TODO: Calculate DPR
-        var dpr = 100;
-        var cr = details.find(s => (s.dmgMin <= dpr) && (s.dmgMax >= dpr));
-
-        // TODO: Use attack bonus or save DC
-        // TODO: Calculate attack bonus or save DC
-        var attack = 5;
-        var diff = (attack - cr.attack) / 2;
-        var delta = (diff > 0) ? Math.floor(diff) : Math.ceil(diff);
-
-        return cr.cr + delta;
-    }
-
-    defensiveCR() {
-        var details = challengeDetails();
-
-        var cr = details.find(s => (s.hpMin <= this.props.combatant.hpMax) && (s.hpMax >= this.props.combatant.hpMax));
-
-        var diff = (this.props.combatant.ac - cr.ac) / 2;
-        var delta = (diff > 0) ? Math.floor(diff) : Math.ceil(diff);
-
-        return cr.cr + delta;
-    }
-
-    suggestedCR() {
-        var off = this.offensiveCR();
-        var def = this.defensiveCR();
-        return (off + def) / 2;
-    }
-
     render() {
         try {
             var style = "card monster";
@@ -209,19 +176,47 @@ class MonsterCard extends React.Component {
 
             var stats = null;
             if (this.props.mode.indexOf("editor") !== -1) {
-                var cr = null;
-                if (false) {
-                    cr = (
-                        <div className="section centered">
-                            <div><b>suggested cr</b> {challenge(this.suggestedCR())} (defensive {challenge(this.defensiveCR())} / offensive {challenge(this.offensiveCR())})</div>
-                        </div>
-                    );
-                }
-
                 stats = (
                     <div className="stats">
                         <div className="section">
-                            <input type="text" placeholder="name" value={this.props.combatant.name} onChange={event => this.props.changeValue(this.props.combatant, "name", event.target.value)} />
+                            <div className="input-label">name:</div>
+                            <input type="text" value={this.props.combatant.name} onChange={event => this.props.changeValue(this.props.combatant, "name", event.target.value)} />
+                        </div>
+                        <div className="column">
+                            <div className="section">
+                                <div className="input-label">size:</div>
+                                <div className="dropdown">
+                                    <button className="dropdown-button" onClick={() => this.selectSize()}>
+                                        <div className="title">{this.props.combatant.size}</div>
+                                        <img className="image" src="content/ellipsis.svg" />
+                                    </button>
+                                    <div className={this.state.sizeDropdownOpen ? "dropdown-content open" : "dropdown-content"}>
+                                        {sizeDropdownItems}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="column-divider"></div>
+                        <div className="column">
+                            <div className="section">
+                                <div className="input-label">category:</div>
+                                <div className="dropdown">
+                                    <button className="dropdown-button" onClick={() => this.selectCategory()}>
+                                        <div className="title">{this.props.combatant.category}</div>
+                                        <img className="image" src="content/ellipsis.svg" />
+                                    </button>
+                                    <div className={this.state.categoryDropdownOpen ? "dropdown-content open" : "dropdown-content"}>
+                                        {categoryDropdownItems}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="column-divider"></div>
+                        <div className="column">
+                            <div className="section">
+                                <div className="input-label">tag:</div>
+                                <input type="text" value={this.props.combatant.tag} onChange={event => this.props.changeValue(this.props.combatant, "tag", event.target.value)} />
+                            </div>
                         </div>
                         <div className="divider"></div>
                         <AbilityScorePanel
@@ -232,35 +227,20 @@ class MonsterCard extends React.Component {
                         <div className="divider"></div>
                         <div className="column">
                             <div className="section">
-                                <div className="dropdown">
-                                    <button className="dropdown-button" onClick={() => this.selectSize()}>
-                                        <div className="title">{this.props.combatant.size}</div>
-                                        <img className="image" src="content/ellipsis.svg" />
-                                    </button>
-                                    <div className={this.state.sizeDropdownOpen ? "dropdown-content open" : "dropdown-content"}>
-                                        {sizeDropdownItems}
-                                    </div>
-                                </div>
-                                <div className="dropdown">
-                                    <button className="dropdown-button" onClick={() => this.selectCategory()}>
-                                        <div className="title">{this.props.combatant.category}</div>
-                                        <img className="image" src="content/ellipsis.svg" />
-                                    </button>
-                                    <div className={this.state.categoryDropdownOpen ? "dropdown-content open" : "dropdown-content"}>
-                                        {categoryDropdownItems}
-                                    </div>
-                                </div>
-                                <input type="text" placeholder="tag" value={this.props.combatant.tag} onChange={event => this.props.changeValue(this.props.combatant, "tag", event.target.value)} />
-                                <input type="text" placeholder="alignment" value={this.props.combatant.alignment} onChange={event => this.props.changeValue(this.props.combatant, "alignment", event.target.value)} />
-                            </div>
-                            <div className="divider"></div>
-                            <div className="section">
-                                <input type="text" placeholder="speed" value={this.props.combatant.speed} onChange={event => this.props.changeValue(this.props.combatant, "speed", event.target.value)} />
-                                <input type="text" placeholder="saving throws" value={this.props.combatant.savingThrows} onChange={event => this.props.changeValue(this.props.combatant, "savingThrows", event.target.value)} />
-                                <input type="text" placeholder="skills" value={this.props.combatant.skills} onChange={event => this.props.changeValue(this.props.combatant, "skills", event.target.value)} />
-                                <input type="text" placeholder="senses" value={this.props.combatant.senses} onChange={event => this.props.changeValue(this.props.combatant, "senses", event.target.value)} />
-                                <input type="text" placeholder="languages" value={this.props.combatant.languages} onChange={event => this.props.changeValue(this.props.combatant, "languages", event.target.value)} />
-                                <input type="text" placeholder="equipment" value={this.props.combatant.equipment} onChange={event => this.props.changeValue(this.props.combatant, "equipment", event.target.value)} />
+                                <div className="input-label">alignment:</div>
+                                <input type="text" value={this.props.combatant.alignment} onChange={event => this.props.changeValue(this.props.combatant, "alignment", event.target.value)} />
+                                <div className="input-label">speed:</div>
+                                <input type="text" value={this.props.combatant.speed} onChange={event => this.props.changeValue(this.props.combatant, "speed", event.target.value)} />
+                                <div className="input-label">saving throws:</div>
+                                <input type="text" value={this.props.combatant.savingThrows} onChange={event => this.props.changeValue(this.props.combatant, "savingThrows", event.target.value)} />
+                                <div className="input-label">skills:</div>
+                                <input type="text" value={this.props.combatant.skills} onChange={event => this.props.changeValue(this.props.combatant, "skills", event.target.value)} />
+                                <div className="input-label">senses:</div>
+                                <input type="text" value={this.props.combatant.senses} onChange={event => this.props.changeValue(this.props.combatant, "senses", event.target.value)} />
+                                <div className="input-label">languages:</div>
+                                <input type="text" value={this.props.combatant.languages} onChange={event => this.props.changeValue(this.props.combatant, "languages", event.target.value)} />
+                                <div className="input-label">equipment:</div>
+                                <input type="text" value={this.props.combatant.equipment} onChange={event => this.props.changeValue(this.props.combatant, "equipment", event.target.value)} />
                             </div>
                         </div>
                         <div className="column-divider"></div>
@@ -277,14 +257,13 @@ class MonsterCard extends React.Component {
                                     <img className="image" src="content/plus.svg" />
                                 </div>
                             </div>
-                            {cr}
                             <div className="divider"></div>
                             <div className="section spin">
                                 <div className="spin-button wide toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "ac", -1)}>
                                     <img className="image" src="content/minus.svg" />
                                 </div>
                                 <div className="spin-value">
-                                    <div className="spin-label">ac</div>
+                                    <div className="spin-label">armor class</div>
                                     <div className="spin-label">{this.props.combatant.ac}</div>
                                 </div>
                                 <div className="spin-button wide toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "ac", +1)}>
@@ -309,10 +288,14 @@ class MonsterCard extends React.Component {
                             </div>
                             <div className="divider"></div>
                             <div className="section">
-                                <input type="text" placeholder="damage resistances" value={this.props.combatant.damage.resist} onChange={event => this.props.changeValue(this.props.combatant, "damage.resist", event.target.value)} />
-                                <input type="text" placeholder="damage vulnerabilities" value={this.props.combatant.damage.vulnerable} onChange={event => this.props.changeValue(this.props.combatant, "damage.vulnerable", event.target.value)} />
-                                <input type="text" placeholder="damage immunities" value={this.props.combatant.damage.immune} onChange={event => this.props.changeValue(this.props.combatant, "damage.immune", event.target.value)} />
-                                <input type="text" placeholder="condition immunities" value={this.props.combatant.conditionImmunities} onChange={event => this.props.changeValue(this.props.combatant, "conditionImmunities", event.target.value)} />
+                                <div className="input-label">damage resistances:</div>
+                                <input type="text" value={this.props.combatant.damage.resist} onChange={event => this.props.changeValue(this.props.combatant, "damage.resist", event.target.value)} />
+                                <div className="input-label">damage vulnerabilities:</div>
+                                <input type="text" value={this.props.combatant.damage.vulnerable} onChange={event => this.props.changeValue(this.props.combatant, "damage.vulnerable", event.target.value)} />
+                                <div className="input-label">damage immunities:</div>
+                                <input type="text" value={this.props.combatant.damage.immune} onChange={event => this.props.changeValue(this.props.combatant, "damage.immune", event.target.value)} />
+                                <div className="input-label">condition immunities:</div>
+                                <input type="text" value={this.props.combatant.conditionImmunities} onChange={event => this.props.changeValue(this.props.combatant, "conditionImmunities", event.target.value)} />
                             </div>
                         </div>
                         <div className="column-divider"></div>
@@ -320,7 +303,7 @@ class MonsterCard extends React.Component {
                             <TraitsPanel
                                 combatant={this.props.combatant}
                                 edit={true}
-                                addTrait={() => this.props.addTrait(this.props.combatant)}
+                                addTrait={type => this.props.addTrait(this.props.combatant, type)}
                                 removeTrait={trait => this.props.removeTrait(this.props.combatant, trait)}
                                 changeTrait={(trait, type, value) => this.props.changeTrait(trait, type, value)}
                             />

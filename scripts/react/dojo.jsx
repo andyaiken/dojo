@@ -289,12 +289,12 @@ class Dojo extends React.Component {
         });
     }
 
-    addTrait(combatant) {
+    addTrait(combatant, type) {
         var trait = {
             id: this.guid(),
             name: "New trait",
             usage: "",
-            type: "action",
+            type: type,
             text: ""
         }
         var trait = combatant.traits.push(trait);
@@ -1082,7 +1082,7 @@ class Dojo extends React.Component {
                             sortMonsters={() => this.sortMonsters()}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                             nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
-                            addTrait={combatant => this.addTrait(combatant)}
+                            addTrait={(combatant, type) => this.addTrait(combatant, type)}
                             removeTrait={(combatant, trait) => this.removeTrait(combatant, trait)}
                             editMonster={combatant => this.setModal(combatant)}
                             cloneMonster={combatant => this.cloneMonster(combatant)}
@@ -1190,7 +1190,7 @@ class Dojo extends React.Component {
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                             nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
                             changeTrait={(trait, type, value) => this.changeValue(trait, type, value)}
-                            addTrait={combatant => this.addTrait(combatant)}
+                            addTrait={(combatant, type) => this.addTrait(combatant, type)}
                             removeTrait={(combatant, trait) => this.removeTrait(combatant, trait)}
                             closeEditor={() => this.setModal(null)}
                         />
