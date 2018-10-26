@@ -517,54 +517,6 @@ button {
                 background-color: #EEEEEE;
             }
 
-.dropdown .dropdown-button {
-    cursor: pointer;
-}
-
-    .dropdown .dropdown-button .title {
-        width: calc(100% - 21px);
-        display: inline-block;
-        vertical-align: middle;
-    }
-
-    .dropdown .dropdown-button .image {
-        width: 16px;
-        height: 16px;
-        cursor: pointer;
-        display: inline-block;
-        vertical-align: middle;
-    }
-
-.dropdown .dropdown-content {
-    display: none;
-    background-color: white;
-    border: 1px solid grey;
-    max-height: 236px;
-    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.3);
-    margin-top: -4px;
-    overflow-y: auto;
-}
-
-    .dropdown .dropdown-content.open {
-        display: block;
-    }
-
-    .dropdown .dropdown-content .dropdown-item {
-        padding: 6px;
-        cursor: pointer;
-        border-left: 3px solid #404040;
-        margin: 5px;
-    }
-
-        .dropdown .dropdown-content .dropdown-item.selected,
-        .dropdown .dropdown-content .dropdown-item:hover {
-            background-color: #EEEEEE
-        }
-
-        .dropdown .dropdown-content .dropdown-item.selected {
-            font-weight: 600;
-        }
-
 .hp-gauge {
     margin: 5px 5px 10px 5px;
     height: 5px;

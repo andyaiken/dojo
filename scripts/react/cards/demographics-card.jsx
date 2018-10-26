@@ -2,22 +2,14 @@ class DemographicsCard extends React.Component {
     constructor() {
         super();
         this.state = {
-            chart: "challenge",
-            chartDropdownOpen: false,
+            chart: "challenge"
         };
     }
 
     selectChart(chart) {
-        if (chart) {
-            this.setState({
-                chart: chart,
-                chartDropdownOpen: false
-            });
-        } else {
-            this.setState({
-                chartDropdownOpen: !this.state.chartDropdownOpen
-            });
-        }
+        this.setState({
+            chart: chart
+        });
     }
 
     render() {
@@ -124,33 +116,28 @@ class DemographicsCard extends React.Component {
                     );
                 };
 
+                var chartOptions = [
+                    {
+                        id: "challenge",
+                        text: "challenge rating"
+                    },
+                    {
+                        id: "size",
+                        text: "size"
+                    },
+                    {
+                        id: "type",
+                        text: "type"
+                    }
+                ]
+
                 demographics = (
                     <div>
-                        <div className="section">
-                            <div className="dropdown">
-                                <button className="dropdown-button" onClick={() => this.selectChart()}>
-                                    <div className="title">{this.state.chart}</div>
-                                    <img className="image" src="content/ellipsis.svg" />
-                                </button>
-                                <div className={this.state.chartDropdownOpen ? "dropdown-content open" : "dropdown-content"}>
-                                    <DropdownItem
-                                        text={"challenge rating"}
-                                        item={"challenge"}
-                                        selected={this.state.chart === "challenge"}
-                                        onSelect={item => this.selectChart(item)} />
-                                    <DropdownItem
-                                        text={"size"}
-                                        item={"size"}
-                                        selected={this.state.chart === "size"}
-                                        onSelect={item => this.selectChart(item)} />
-                                    <DropdownItem
-                                        text={"type"}
-                                        item={"type"}
-                                        selected={this.state.chart === "type"}
-                                        onSelect={item => this.selectChart(item)} />
-                                </div>
-                            </div>
-                        </div>
+                        <Dropdown
+                            options={chartOptions}
+                            selectedID={this.state.chart}
+                            select={optionID => this.selectChart(optionID)}
+                        />
                         <div className="section">
                             <div className="chart">
                                 <div className="plot">{bars}</div>

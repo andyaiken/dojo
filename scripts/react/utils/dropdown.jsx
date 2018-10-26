@@ -67,7 +67,7 @@ class Dropdown extends React.Component {
             content.push(
                 <div key="selection" className={selectedTextStyle} title={title}>
                     <div className="item-text">{selectedText}</div>
-                    <img className={this.state.open ? "arrow open" : "arrow"} src="resources/icons/chevron.svg" />
+                    <img className={this.state.open ? "arrow open" : "arrow"} src="content/down-arrow-black.svg" />
                 </div>
             );
 
@@ -85,7 +85,7 @@ class Dropdown extends React.Component {
                     );
                 });
 
-                content.push(<hr key="divider" />);
+                //content.push(<hr key="divider" />);
                 content.push(
                     <div key="options" className="dropdown-options">
                         {items}

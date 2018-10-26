@@ -2,44 +2,26 @@ class CombatStartPanel extends React.Component {
     constructor() {
         super();
         this.state = {
-            partyDropdownOpen: false,
-            party: null,
-            encounterDropdownOpen: false,
-            encounter: null
+            partyID: null,
+            encounterID: null
         };
     }
 
-    selectParty(party) {
-        if (party) {
-            this.setState({
-                partyDropdownOpen: false,
-                party: party
-            });
-        } else {
-            this.setState({
-                partyDropdownOpen: !this.state.partyDropdownOpen,
-                encounterDropdownOpen: false
-            });
-        }
+    selectParty(partyID) {
+        this.setState({
+            partyID: partyID
+        });
     }
 
-    selectEncounter(encounter) {
-        if (encounter) {
-            this.setState({
-                encounterDropdownOpen: false,
-                encounter: encounter
-            });
-        } else {
-            this.setState({
-                partyDropdownOpen: false,
-                encounterDropdownOpen: !this.state.encounterDropdownOpen
-            });
-        }
+    selectEncounter(encounterID) {
+        this.setState({
+            encounterID: encounterID
+        });
     }
 
     startEncounter() {
-        if (this.state.party && this.state.encounter) {
-            this.props.startEncounter(this.state.party, this.state.encounter);
+        if (this.state.partyID && this.state.encounterID) {
+            this.props.startEncounter(this.state.partyID, this.state.encounterID);
         }
     }
 
@@ -50,33 +32,30 @@ class CombatStartPanel extends React.Component {
             if (this.props.parties.length === 0) {
                 items.push(<div key="no-parties" className="text">you have not defined any pcs</div>);
             } else {
-                var partyDropdownItems = [];
+                var partyOptions = [];
                 for (var n = 0; n !== this.props.parties.length; ++n) {
                     var party = this.props.parties[n];
                     var partyName = party.name;
                     if (!partyName) {
                         partyName = "unnamed party";
                     }
-                    partyDropdownItems.push(
-                        <DropdownItem
-                            key={party.id}
-                            text={partyName}
-                            item={party}
-                            selected={this.state.party === party}
-                            onSelect={item => this.selectParty(item)} />
-                    );
+                    partyOptions.push({
+                        id: party.id,
+                        text: partyName
+                    });
                 }
 
                 var partyName = "select party";
                 var partyContent = null;
-                if (this.state.party) {
-                    partyName = this.state.party.name;
+                if (this.state.partyID) {
+                    var selectedParty = this.props.parties.find(p => p.id === this.state.partyID);
+                    partyName = selectedParty.name;
                     if (!partyName) {
                         partyName = "unnamed party";
                     }
                     var pcs = [];
-                    for (var n = 0; n !== this.state.party.pcs.length; ++n) {
-                        var pc = this.state.party.pcs[n];
+                    for (var n = 0; n !== selectedParty.pcs.length; ++n) {
+                        var pc = selectedParty.pcs[n];
                         var name = pc.name;
                         if (!name) {
                             name = "unnamed pc";
@@ -91,15 +70,12 @@ class CombatStartPanel extends React.Component {
                     );
                 }
                 items.push(
-                    <div key="partySelect" className="dropdown">
-                        <button className="dropdown-button" onClick={() => this.selectParty()}>
-                            <div className="title">{partyName}</div>
-                            <img className="image" src="content/ellipsis.svg" />
-                        </button>
-                        <div className={this.state.partyDropdownOpen ? "dropdown-content open" : "dropdown-content"}>
-                            {partyDropdownItems}
-                        </div>
-                    </div>
+                    <Dropdown
+                        key="party-dropdown"
+                        options={partyOptions}
+                        selectedID={this.state.partyId}
+                        select={optionID => this.selectParty(optionID)}
+                    />
                 );
                 items.push(
                     <div key="party" className="">
@@ -111,33 +87,30 @@ class CombatStartPanel extends React.Component {
             if (this.props.encounters.length === 0) {
                 items.push(<div key="no-encounters" className="text">you have not built any encounters</div>);
             } else {
-                var encounterDropdownItems = [];
+                var encounterOptions = [];
                 for (var n = 0; n !== this.props.encounters.length; ++n) {
                     var encounter = this.props.encounters[n];
                     var encounterName = encounter.name;
                     if (!encounterName) {
                         encounterName = "unnamed encounter";
                     }
-                    encounterDropdownItems.push(
-                        <DropdownItem
-                            key={encounter.id}
-                            text={encounterName}
-                            item={encounter}
-                            selected={this.state.encounter === encounter}
-                            onSelect={item => this.selectEncounter(item)} />
-                    );
+                    encounterOptions.push({
+                        id: encounter.id,
+                        text: encounterName
+                    });
                 }
 
                 var encounterName = "select encounter";
                 var encounterContent = null;
-                if (this.state.encounter) {
-                    encounterName = this.state.encounter.name;
+                if (this.state.encounterID) {
+                    var selectedEncounter = this.props.encounters.find(e => e.id === this.state.encounterID);
+                    encounterName = selectedEncounter.name;
                     if (!encounterName) {
                         encounterName = "unnamed encounter";
                     }
                     var monsters = [];
-                    for (var n = 0; n !== this.state.encounter.slots.length; ++n) {
-                        var slot = this.state.encounter.slots[n];
+                    for (var n = 0; n !== selectedEncounter.slots.length; ++n) {
+                        var slot = selectedEncounter.slots[n];
                         var name = slot.monsterName;
                         if (!name) {
                             name = "unnamed monster";
@@ -155,15 +128,12 @@ class CombatStartPanel extends React.Component {
                     );
                 }
                 items.push(
-                    <div key="encounterSelect" className="dropdown">
-                        <button className="dropdown-button" onClick={() => this.selectEncounter()}>
-                            <div className="title">{encounterName}</div>
-                            <img className="image" src="content/ellipsis.svg" />
-                        </button>
-                        <div className={this.state.encounterDropdownOpen ? "dropdown-content open" : "dropdown-content"}>
-                            {encounterDropdownItems}
-                        </div>
-                    </div>
+                    <Dropdown
+                        key="encounter-dropdown"
+                        options={encounterOptions}
+                        selectedID={this.state.encounterID}
+                        select={optionID => this.selectEncounter(optionID)}
+                    />
                 );
                 items.push(
                     <div key="encounter" className="">
@@ -173,7 +143,7 @@ class CombatStartPanel extends React.Component {
             }
 
             items.push(<div key="start-div" className="divider"></div>);
-            items.push(<button key="start" className={this.state.party && this.state.encounter ? "" : "disabled"} onClick={() => this.startEncounter()}>start encounter</button>);
+            items.push(<button key="start" className={this.state.partyID && this.state.encounterID ? "" : "disabled"} onClick={() => this.startEncounter()}>start encounter</button>);
 
             return (
                 <div className="group options-group">

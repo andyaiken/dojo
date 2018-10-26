@@ -78,7 +78,7 @@ class MonsterLibraryScreen extends React.Component {
                             combatant={monster}
                             mode={"view editable"}
                             library={this.props.library}
-                            moveToGroup={(combatant, group) => this.props.moveToGroup(combatant, group)}
+                            moveToGroup={(combatant, groupID) => this.props.moveToGroup(combatant, groupID)}
                             changeValue={(combatant, type, value) => this.props.changeValue(combatant, type, value)}
                             nudgeValue={(combatant, type, delta) => this.props.nudgeValue(combatant, type, delta)}
                             changeTrait={(trait, type, value) => this.props.changeValue(trait, type, value)}

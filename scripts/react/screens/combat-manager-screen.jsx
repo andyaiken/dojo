@@ -168,7 +168,7 @@ class CombatManagerScreen extends React.Component {
                         <CombatStartPanel
                             parties={this.props.parties}
                             encounters={this.props.encounters}
-                            startEncounter={(party, encounter) => this.props.startEncounter(party, encounter)}
+                            startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
                         />
                         {combats}
                     </div>

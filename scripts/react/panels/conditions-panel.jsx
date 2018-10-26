@@ -1,25 +1,9 @@
 class ConditionsPanel extends React.Component {
-    constructor() {
-        super();
-        this.state = {
-            conditionDropDown: false
-        };
-    }
-
     addCondition(condition) {
-        if (condition) {
-            this.props.addCondition({
-                name: condition,
-                level: 1
-            });
-            this.setState({
-                conditionDropdownOpen: false
-            });
-        } else {
-            this.setState({
-                conditionDropdownOpen: !this.state.conditionDropdownOpen
-            });
-        }
+        this.props.addCondition({
+            name: condition,
+            level: 1
+        });
     }
 
     render() {
@@ -41,17 +25,8 @@ class ConditionsPanel extends React.Component {
                 "stunned",
                 "unconscious"
             ];
-            var conditionDropdownItems = [];
-            conditions.forEach(condition => {
-                conditionDropdownItems.push(
-                    <DropdownItem
-                        key={condition}
-                        text={condition}
-                        item={condition}
-                        selected={false}
-                        onSelect={item => this.addCondition(item)} />
-                )
-            });
+            var options = conditions.map(c => { return { id: c, text: c }; });
+
             var conditions = [];
             for (var n = 0; n != this.props.combatant.conditions.length; ++n) {
                 var condition = this.props.combatant.conditions[n];
@@ -68,15 +43,10 @@ class ConditionsPanel extends React.Component {
             return (
                 <div className="section">
                     {conditions}
-                    <div className="dropdown">
-                        <button className="dropdown-button" onClick={() => this.addCondition()}>
-                            <div className="title">add condition</div>
-                            <img className="image" src="content/ellipsis.svg" />
-                        </button>
-                        <div className={this.state.conditionDropdownOpen ? "dropdown-content open" : "dropdown-content"}>
-                            {conditionDropdownItems}
-                        </div>
-                    </div>
+                    <Dropdown
+                        options={options}
+                        select={optionID => this.addCondition(optionID)}
+                    />
                 </div>
             );
         } catch (e) {

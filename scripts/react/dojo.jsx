@@ -221,11 +221,12 @@ class Dojo extends React.Component {
         });
     }
 
-    moveToGroup(monster, group) {
+    moveToGroup(monster, groupID) {
         var sourceGroup = this.findMonster(monster);
         var index = sourceGroup.monsters.indexOf(monster);
 
         sourceGroup.monsters.splice(index, 1);
+        var group = this.getMonsterGroup(groupID);
         group.monsters.push(monster);
         this.sort(group.monsters);
 
@@ -612,11 +613,13 @@ class Dojo extends React.Component {
     /////////////////////////////////////////////////////////////////////////////
     // Combat screen
 
-    startEncounter(party, encounter) {
+    startEncounter(partyID, encounterID) {
+        var party = this.getParty(partyID);
         var partyName = party.name;
         if (!partyName) {
             partyName = "unnamed party";
         }
+        var encounter = this.getEncounter(encounterID);
         var encounterName = encounter.name;
         if (!encounterName) {
             encounterName = "unnamed encounter";
@@ -1119,7 +1122,7 @@ class Dojo extends React.Component {
                             removeTrait={(combatant, trait) => this.removeTrait(combatant, trait)}
                             editMonster={combatant => this.setModal(combatant)}
                             cloneMonster={combatant => this.cloneMonster(combatant)}
-                            moveToGroup={(combatant, group) => this.moveToGroup(combatant, group)}
+                            moveToGroup={(combatant, groupID) => this.moveToGroup(combatant, groupID)}
                             addOpenGameContent={() => this.addOpenGameContent()}
                         />
                     );
@@ -1163,7 +1166,7 @@ class Dojo extends React.Component {
                             combats={this.state.combats}
                             combat={combat}
                             showHelp={this.state.options.showHelp}
-                            startEncounter={(party, encounter) => this.startEncounter(party, encounter)}
+                            startEncounter={(partyID, encounterID) => this.startEncounter(partyID, encounterID)}
                             pauseEncounter={() => this.pauseEncounter()}
                             resumeEncounter={combat => this.resumeEncounter(combat)}
                             endEncounter={() => this.endEncounter()}

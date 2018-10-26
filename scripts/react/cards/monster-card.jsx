@@ -2,51 +2,10 @@ class MonsterCard extends React.Component {
     constructor() {
         super();
         this.state = {
-            groupDropdownOpen: false,
-            categoryDropdownOpen: false,
-            sizeDropdownOpen: false,
             showInit: false,
             showHP: false,
             showDetails: false
         };
-    }
-
-    selectGroup(group) {
-        if (group) {
-            this.props.moveToGroup(this.props.combatant, group);
-        } else {
-            this.setState({
-                groupDropdownOpen: !this.state.groupDropdownOpen
-            });
-        }
-    }
-
-    selectCategory(category) {
-        if (category) {
-            this.props.changeTrait(this.props.combatant, "category", category);
-            this.setState({
-                categoryDropdownOpen: false
-            });
-        } else {
-            this.setState({
-                categoryDropdownOpen: !this.state.categoryDropdownOpen,
-                sizeDropdownOpen: false
-            });
-        }
-    }
-
-    selectSize(size) {
-        if (size) {
-            this.props.changeTrait(this.props.combatant, "size", size);
-            this.setState({
-                sizeDropdownOpen: false
-            });
-        } else {
-            this.setState({
-                categoryDropdownOpen: false,
-                sizeDropdownOpen: !this.state.sizeDropdownOpen
-            });
-        }
     }
 
     toggleInit() {
@@ -89,30 +48,10 @@ class MonsterCard extends React.Component {
             }
 
             var categories = ["aberration", "beast", "celestial", "construct", "dragon", "elemental", "fey", "fiend", "giant", "humanoid", "monstrosity", "ooze", "plant", "undead"];
-            var categoryDropdownItems = [];
-            categories.forEach(category => {
-                categoryDropdownItems.push(
-                    <DropdownItem
-                        key={category}
-                        text={category}
-                        item={category}
-                        selected={this.props.combatant.category === category}
-                        onSelect={item => this.selectCategory(item)} />
-                )
-            });
+            var catOptions = categories.map(cat => { return { id: cat, text: cat }; });
 
             var sizes = ["tiny", "small", "medium", "large", "huge", "gargantuan"];
-            var sizeDropdownItems = [];
-            sizes.forEach(size => {
-                sizeDropdownItems.push(
-                    <DropdownItem
-                        key={size}
-                        text={size}
-                        item={size}
-                        selected={this.props.combatant.size === size}
-                        onSelect={item => this.selectSize(item)} />
-                )
-            });
+            var sizeOptions = sizes.map(size => { return { id: size, text: size }; });
 
             var options = [];
             if (this.props.mode.indexOf("editor") !== -1) {
@@ -123,29 +62,21 @@ class MonsterCard extends React.Component {
                     options.push(<button key="edit" onClick={() => this.props.editMonster(this.props.combatant)}>edit monster</button>);
                     options.push(<button key="clone" onClick={() => this.props.cloneMonster(this.props.combatant)}>clone monster</button>);
 
-                    var groups = [];
+                    var groupOptions = [];
                     this.props.library.forEach(group => {
                         if (group.monsters.indexOf(this.props.combatant) === -1) {
-                            groups.push(
-                                <DropdownItem
-                                    key={group.id}
-                                    text={group.name}
-                                    item={group}
-                                    selected={false}
-                                    onSelect={item => this.selectGroup(item)} />
-                            );
+                            groupOptions.push({
+                                id: group.id,
+                                text: group.name
+                            });
                         }
                     });
                     options.push(
-                        <div key="move" className="dropdown">
-                            <button className="dropdown-button" onClick={() => this.selectGroup()}>
-                                <div className="title">move to group</div>
-                                <img className="image" src="content/ellipsis.svg" />
-                            </button>
-                            <div className={this.state.groupDropdownOpen ? "dropdown-content open" : "dropdown-content"}>
-                                {groups}
-                            </div>
-                        </div>
+                        <Dropdown
+                            key="move"
+                            options={groupOptions}
+                            select={optionID => this.props.moveToGroup(this.props.combatant, optionID)}
+                        />
                     );
 
                     options.push(<ConfirmButton key="remove" text="delete monster" callback={() => this.props.removeCombatant(this.props.combatant)} />);
@@ -187,30 +118,22 @@ class MonsterCard extends React.Component {
                         <div className="column">
                             <div className="section">
                                 <div className="input-label">size:</div>
-                                <div className="dropdown">
-                                    <button className="dropdown-button" onClick={() => this.selectSize()}>
-                                        <div className="title">{this.props.combatant.size}</div>
-                                        <img className="image" src="content/ellipsis.svg" />
-                                    </button>
-                                    <div className={this.state.sizeDropdownOpen ? "dropdown-content open" : "dropdown-content"}>
-                                        {sizeDropdownItems}
-                                    </div>
-                                </div>
+                                <Dropdown
+                                    options={sizeOptions}
+                                    selectedID={this.props.combatant.size}
+                                    select={optionID => this.props.changeTrait(this.props.combatant, "size", optionID)}
+                                />
                             </div>
                         </div>
                         <div className="column-divider"></div>
                         <div className="column">
                             <div className="section">
                                 <div className="input-label">category:</div>
-                                <div className="dropdown">
-                                    <button className="dropdown-button" onClick={() => this.selectCategory()}>
-                                        <div className="title">{this.props.combatant.category}</div>
-                                        <img className="image" src="content/ellipsis.svg" />
-                                    </button>
-                                    <div className={this.state.categoryDropdownOpen ? "dropdown-content open" : "dropdown-content"}>
-                                        {categoryDropdownItems}
-                                    </div>
-                                </div>
+                                <Dropdown
+                                    options={catOptions}
+                                    selectedID={this.props.combatant.category}
+                                    select={optionID => this.props.changeTrait(this.props.combatant, "category", optionID)}
+                                />
                             </div>
                         </div>
                         <div className="column-divider"></div>

@@ -2,9 +2,7 @@ class FilterCard extends React.Component {
     constructor() {
         super();
         this.state = {
-            showAll: false,
-            categoryDropdownOpen: false,
-            sizeDropdownOpen: false,
+            showAll: false
         };
     }
 
@@ -14,63 +12,13 @@ class FilterCard extends React.Component {
         })
     }
 
-    selectCategory(category) {
-        if (category) {
-            this.setState({
-                categoryDropdownOpen: false
-            });
-            this.props.changeValue("category", category);
-        } else {
-            this.setState({
-                categoryDropdownOpen: !this.state.categoryDropdownOpen,
-                sizeDropdownOpen: false
-            });
-        }
-    }
-
-    selectSize(size) {
-        if (size) {
-            this.setState({
-                sizeDropdownOpen: false
-            });
-            this.props.changeValue("size", size);
-        } else {
-            this.setState({
-                categoryDropdownOpen: false,
-                sizeDropdownOpen: !this.state.sizeDropdownOpen
-            });
-        }
-    }
-
     render() {
         try {
             var sizes = ["all sizes", "tiny", "small", "medium", "large", "huge", "gargantuan"];
-            var sizeDropdownItems = [];
-            sizes.forEach(size => {
-                sizeDropdownItems.push(
-                    <DropdownItem
-                        key={size}
-                        text={size}
-                        item={size}
-                        selected={this.props.filter.size === size}
-                        onSelect={item => this.selectSize(item)} />
-                )
-            });
-
+            var sizeOptions = sizes.map(size => { return { id: size, text: size }; });
+            
             var categories = ["all types", "aberration", "beast", "celestial", "construct", "dragon", "elemental", "fey", "fiend", "giant", "humanoid", "monstrosity", "ooze", "plant", "undead"];
-            var categoryDropdownItems = [];
-            categories.forEach(category => {
-                categoryDropdownItems.push(
-                    <DropdownItem
-                        key={category}
-                        text={category}
-                        item={category}
-                        selected={this.props.filter.category === category}
-                        onSelect={item => this.selectCategory(item)} />
-                )
-            });
-
-            var imageStyle = this.state.showAll ? "image rotate" : "image";
+            var catOptions = categories.map(cat => { return { id: cat, text: cat }; });
 
             var content = null;
             if (this.state.showAll) {
@@ -93,26 +41,16 @@ class FilterCard extends React.Component {
                             display={value => challenge(value)}
                             nudgeValue={delta => this.props.nudgeValue("challengeMax", delta)}
                         />
-                        <div className="section">
-                            <div className="dropdown">
-                                <button className="dropdown-button" onClick={() => this.selectSize()}>
-                                    <div className="title">{this.props.filter.size}</div>
-                                    <img className="image" src="content/ellipsis.svg" />
-                                </button>
-                                <div className={this.state.sizeDropdownOpen ? "dropdown-content open" : "dropdown-content"}>
-                                    {sizeDropdownItems}
-                                </div>
-                            </div>
-                            <div className="dropdown">
-                                <button className="dropdown-button" onClick={() => this.selectCategory()}>
-                                    <div className="title">{this.props.filter.category}</div>
-                                    <img className="image" src="content/ellipsis.svg" />
-                                </button>
-                                <div className={this.state.categoryDropdownOpen ? "dropdown-content open" : "dropdown-content"}>
-                                    {categoryDropdownItems}
-                                </div>
-                            </div>
-                        </div>
+                        <Dropdown
+                            options={sizeOptions}
+                            selectedID={this.props.filter.size}
+                            select={optionID => this.props.changeValue("size", optionID)}
+                        />
+                        <Dropdown
+                            options={catOptions}
+                            selectedID={this.props.filter.category}
+                            select={optionID => this.props.changeValue("category", optionID)}
+                        />
                         <div className="divider"></div>
                         <div className="section">
                             <button onClick={() => this.props.resetFilter()}>clear filter</button>
@@ -143,7 +81,7 @@ class FilterCard extends React.Component {
                 <div className="card">
                     <div className="heading">
                         <div className="title">filter</div>
-                        <img className={imageStyle} src="content/down-arrow.svg" onClick={() => this.toggleAll()} />
+                        <img className={this.state.showAll ? "image rotate" : "image"} src="content/down-arrow.svg" onClick={() => this.toggleAll()} />
                     </div>
                     <div className="card-content">
                         {content}

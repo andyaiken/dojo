@@ -3,8 +3,7 @@ class EncounterCard extends React.Component {
         super();
         this.state = {
             showDetails: false,
-            dropdownOpen: false,
-            party: null
+            partyId: null
         };
     }
 
@@ -14,17 +13,10 @@ class EncounterCard extends React.Component {
         })
     }
 
-    selectParty(party) {
-        if (party) {
-            this.setState({
-                dropdownOpen: false,
-                party: party
-            });
-        } else {
-            this.setState({
-                dropdownOpen: !this.state.dropdownOpen
-            });
-        }
+    selectParty(partyId) {
+        this.setState({
+            partyId: partyId
+        });
     }
 
     render() {
@@ -33,18 +25,14 @@ class EncounterCard extends React.Component {
             var content = null;
 
             if (this.props.selection) {
-                var dropdownItems = [];
+                var partyOptions = [];
                 if (this.props.parties) {
                     for (var n = 0; n !== this.props.parties.length; ++n) {
                         var party = this.props.parties[n];
-                        dropdownItems.push(
-                            <DropdownItem
-                                key={party.id}
-                                text={party.name}
-                                item={party}
-                                selected={this.state.party === party}
-                                onSelect={item => this.selectParty(item)} />
-                        );
+                        partyOptions.push({
+                            id: party.id,
+                            text: party.name
+                        });
                     }
                 }
 
@@ -64,14 +52,16 @@ class EncounterCard extends React.Component {
 
                 adjustedXp = monsterXp * experienceFactor(monsterCount);
 
-                if (this.state.party) {
+                if (this.state.partyID) {
+                    var selectedParty = this.props.parties.find(p => p.id === this.state.partyId);
+
                     var xpEasy = 0;
                     var xpMedium = 0;
                     var xpHard = 0;
                     var xpDeadly = 0;
 
-                    for (var n = 0; n != this.state.party.pcs.length; ++n) {
-                        var pc = this.state.party.pcs[n];
+                    for (var n = 0; n != selectedParty.pcs.length; ++n) {
+                        var pc = selectedParty.pcs[n];
                         xpEasy += pcExperience(pc.level, "easy");
                         xpMedium += pcExperience(pc.level, "medium");
                         xpHard += pcExperience(pc.level, "hard");
@@ -93,8 +83,8 @@ class EncounterCard extends React.Component {
                             difficulty = "deadly";
                         }
 
-                        if ((this.state.party.pcs.length < 3) || (this.state.party.pcs.length > 5)) {
-                            var small = this.state.party.pcs.length < 3;
+                        if ((selectedParty.pcs.length < 3) || (selectedParty.pcs.length > 5)) {
+                            var small = selectedParty.pcs.length < 3;
                             switch (difficulty) {
                                 case "trivial":
                                     adjustedDifficulty = small ? "easy" : "trivial";
@@ -121,18 +111,14 @@ class EncounterCard extends React.Component {
                         <div className="section">
                             <div className="subheading">difficulty</div>
                         </div>
-                        <div className="section" style={{ display: this.props.parties.length !== 0 ? "" : "none" }}>
-                            <div className="dropdown">
-                                <button className="dropdown-button" onClick={() => this.selectParty()}>
-                                    <div className="title">{this.state.party ? this.state.party.name : "select party"}</div>
-                                    <img className="image" src="content/ellipsis.svg" />
-                                </button>
-                                <div className={this.state.dropdownOpen ? "dropdown-content open" : "dropdown-content"}>
-                                    {dropdownItems}
-                                </div>
-                            </div>
+                        <div style={{ display: this.props.parties.length !== 0 ? "" : "none" }}>
+                            <Dropdown
+                                options={partyOptions}
+                                selectedID={this.state.partyId}
+                                select={optionID => this.selectParty(optionID)}
+                            />
                         </div>
-                        <div className="table" style={{ display: this.state.party ? "" : "none" }}>
+                        <div className="table" style={{ display: selectedParty ? "" : "none" }}>
                             <div>
                                 <div className="cell four"><b>easy</b></div>
                                 <div className="cell four"><b>medium</b></div>

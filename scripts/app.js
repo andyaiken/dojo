@@ -71,8 +71,7 @@ var DemographicsCard = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (DemographicsCard.__proto__ || Object.getPrototypeOf(DemographicsCard)).call(this));
 
         _this.state = {
-            chart: "challenge",
-            chartDropdownOpen: false
+            chart: "challenge"
         };
         return _this;
     }
@@ -80,16 +79,9 @@ var DemographicsCard = function (_React$Component) {
     _createClass(DemographicsCard, [{
         key: "selectChart",
         value: function selectChart(chart) {
-            if (chart) {
-                this.setState({
-                    chart: chart,
-                    chartDropdownOpen: false
-                });
-            } else {
-                this.setState({
-                    chartDropdownOpen: !this.state.chartDropdownOpen
-                });
-            }
+            this.setState({
+                chart: chart
+            });
         }
     }, {
         key: "render",
@@ -210,54 +202,27 @@ var DemographicsCard = function (_React$Component) {
                         ));
                     };
 
+                    var chartOptions = [{
+                        id: "challenge",
+                        text: "challenge rating"
+                    }, {
+                        id: "size",
+                        text: "size"
+                    }, {
+                        id: "type",
+                        text: "type"
+                    }];
+
                     demographics = React.createElement(
                         "div",
                         null,
-                        React.createElement(
-                            "div",
-                            { className: "section" },
-                            React.createElement(
-                                "div",
-                                { className: "dropdown" },
-                                React.createElement(
-                                    "button",
-                                    { className: "dropdown-button", onClick: function onClick() {
-                                            return _this2.selectChart();
-                                        } },
-                                    React.createElement(
-                                        "div",
-                                        { className: "title" },
-                                        this.state.chart
-                                    ),
-                                    React.createElement("img", { className: "image", src: "content/ellipsis.svg" })
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: this.state.chartDropdownOpen ? "dropdown-content open" : "dropdown-content" },
-                                    React.createElement(DropdownItem, {
-                                        text: "challenge rating",
-                                        item: "challenge",
-                                        selected: this.state.chart === "challenge",
-                                        onSelect: function onSelect(item) {
-                                            return _this2.selectChart(item);
-                                        } }),
-                                    React.createElement(DropdownItem, {
-                                        text: "size",
-                                        item: "size",
-                                        selected: this.state.chart === "size",
-                                        onSelect: function onSelect(item) {
-                                            return _this2.selectChart(item);
-                                        } }),
-                                    React.createElement(DropdownItem, {
-                                        text: "type",
-                                        item: "type",
-                                        selected: this.state.chart === "type",
-                                        onSelect: function onSelect(item) {
-                                            return _this2.selectChart(item);
-                                        } })
-                                )
-                            )
-                        ),
+                        React.createElement(Dropdown, {
+                            options: chartOptions,
+                            selectedID: this.state.chart,
+                            select: function select(optionID) {
+                                return _this2.selectChart(optionID);
+                            }
+                        }),
                         React.createElement(
                             "div",
                             { className: "section" },
@@ -389,8 +354,7 @@ var EncounterCard = function (_React$Component) {
 
         _this.state = {
             showDetails: false,
-            dropdownOpen: false,
-            party: null
+            partyId: null
         };
         return _this;
     }
@@ -404,17 +368,10 @@ var EncounterCard = function (_React$Component) {
         }
     }, {
         key: "selectParty",
-        value: function selectParty(party) {
-            if (party) {
-                this.setState({
-                    dropdownOpen: false,
-                    party: party
-                });
-            } else {
-                this.setState({
-                    dropdownOpen: !this.state.dropdownOpen
-                });
-            }
+        value: function selectParty(partyId) {
+            this.setState({
+                partyId: partyId
+            });
         }
     }, {
         key: "render",
@@ -426,18 +383,14 @@ var EncounterCard = function (_React$Component) {
                 var content = null;
 
                 if (this.props.selection) {
-                    var dropdownItems = [];
+                    var partyOptions = [];
                     if (this.props.parties) {
                         for (var n = 0; n !== this.props.parties.length; ++n) {
                             var party = this.props.parties[n];
-                            dropdownItems.push(React.createElement(DropdownItem, {
-                                key: party.id,
-                                text: party.name,
-                                item: party,
-                                selected: this.state.party === party,
-                                onSelect: function onSelect(item) {
-                                    return _this2.selectParty(item);
-                                } }));
+                            partyOptions.push({
+                                id: party.id,
+                                text: party.name
+                            });
                         }
                     }
 
@@ -457,14 +410,18 @@ var EncounterCard = function (_React$Component) {
 
                     adjustedXp = monsterXp * experienceFactor(monsterCount);
 
-                    if (this.state.party) {
+                    if (this.state.partyID) {
+                        var selectedParty = this.props.parties.find(function (p) {
+                            return p.id === _this2.state.partyId;
+                        });
+
                         var xpEasy = 0;
                         var xpMedium = 0;
                         var xpHard = 0;
                         var xpDeadly = 0;
 
-                        for (var n = 0; n != this.state.party.pcs.length; ++n) {
-                            var pc = this.state.party.pcs[n];
+                        for (var n = 0; n != selectedParty.pcs.length; ++n) {
+                            var pc = selectedParty.pcs[n];
                             xpEasy += pcExperience(pc.level, "easy");
                             xpMedium += pcExperience(pc.level, "medium");
                             xpHard += pcExperience(pc.level, "hard");
@@ -486,8 +443,8 @@ var EncounterCard = function (_React$Component) {
                                 difficulty = "deadly";
                             }
 
-                            if (this.state.party.pcs.length < 3 || this.state.party.pcs.length > 5) {
-                                var small = this.state.party.pcs.length < 3;
+                            if (selectedParty.pcs.length < 3 || selectedParty.pcs.length > 5) {
+                                var small = selectedParty.pcs.length < 3;
                                 switch (difficulty) {
                                     case "trivial":
                                         adjustedDifficulty = small ? "easy" : "trivial";
@@ -523,32 +480,18 @@ var EncounterCard = function (_React$Component) {
                         ),
                         React.createElement(
                             "div",
-                            { className: "section", style: { display: this.props.parties.length !== 0 ? "" : "none" } },
-                            React.createElement(
-                                "div",
-                                { className: "dropdown" },
-                                React.createElement(
-                                    "button",
-                                    { className: "dropdown-button", onClick: function onClick() {
-                                            return _this2.selectParty();
-                                        } },
-                                    React.createElement(
-                                        "div",
-                                        { className: "title" },
-                                        this.state.party ? this.state.party.name : "select party"
-                                    ),
-                                    React.createElement("img", { className: "image", src: "content/ellipsis.svg" })
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: this.state.dropdownOpen ? "dropdown-content open" : "dropdown-content" },
-                                    dropdownItems
-                                )
-                            )
+                            { style: { display: this.props.parties.length !== 0 ? "" : "none" } },
+                            React.createElement(Dropdown, {
+                                options: partyOptions,
+                                selectedID: this.state.partyId,
+                                select: function select(optionID) {
+                                    return _this2.selectParty(optionID);
+                                }
+                            })
                         ),
                         React.createElement(
                             "div",
-                            { className: "table", style: { display: this.state.party ? "" : "none" } },
+                            { className: "table", style: { display: selectedParty ? "" : "none" } },
                             React.createElement(
                                 "div",
                                 null,
@@ -794,9 +737,7 @@ var FilterCard = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (FilterCard.__proto__ || Object.getPrototypeOf(FilterCard)).call(this));
 
         _this.state = {
-            showAll: false,
-            categoryDropdownOpen: false,
-            sizeDropdownOpen: false
+            showAll: false
         };
         return _this;
     }
@@ -809,68 +750,20 @@ var FilterCard = function (_React$Component) {
             });
         }
     }, {
-        key: "selectCategory",
-        value: function selectCategory(category) {
-            if (category) {
-                this.setState({
-                    categoryDropdownOpen: false
-                });
-                this.props.changeValue("category", category);
-            } else {
-                this.setState({
-                    categoryDropdownOpen: !this.state.categoryDropdownOpen,
-                    sizeDropdownOpen: false
-                });
-            }
-        }
-    }, {
-        key: "selectSize",
-        value: function selectSize(size) {
-            if (size) {
-                this.setState({
-                    sizeDropdownOpen: false
-                });
-                this.props.changeValue("size", size);
-            } else {
-                this.setState({
-                    categoryDropdownOpen: false,
-                    sizeDropdownOpen: !this.state.sizeDropdownOpen
-                });
-            }
-        }
-    }, {
         key: "render",
         value: function render() {
             var _this2 = this;
 
             try {
                 var sizes = ["all sizes", "tiny", "small", "medium", "large", "huge", "gargantuan"];
-                var sizeDropdownItems = [];
-                sizes.forEach(function (size) {
-                    sizeDropdownItems.push(React.createElement(DropdownItem, {
-                        key: size,
-                        text: size,
-                        item: size,
-                        selected: _this2.props.filter.size === size,
-                        onSelect: function onSelect(item) {
-                            return _this2.selectSize(item);
-                        } }));
+                var sizeOptions = sizes.map(function (size) {
+                    return { id: size, text: size };
                 });
 
                 var categories = ["all types", "aberration", "beast", "celestial", "construct", "dragon", "elemental", "fey", "fiend", "giant", "humanoid", "monstrosity", "ooze", "plant", "undead"];
-                var categoryDropdownItems = [];
-                categories.forEach(function (category) {
-                    categoryDropdownItems.push(React.createElement(DropdownItem, {
-                        key: category,
-                        text: category,
-                        item: category,
-                        selected: _this2.props.filter.category === category,
-                        onSelect: function onSelect(item) {
-                            return _this2.selectCategory(item);
-                        } }));
+                var catOptions = categories.map(function (cat) {
+                    return { id: cat, text: cat };
                 });
-
-                var imageStyle = this.state.showAll ? "image rotate" : "image";
 
                 var content = null;
                 if (this.state.showAll) {
@@ -906,52 +799,20 @@ var FilterCard = function (_React$Component) {
                                 return _this2.props.nudgeValue("challengeMax", delta);
                             }
                         }),
-                        React.createElement(
-                            "div",
-                            { className: "section" },
-                            React.createElement(
-                                "div",
-                                { className: "dropdown" },
-                                React.createElement(
-                                    "button",
-                                    { className: "dropdown-button", onClick: function onClick() {
-                                            return _this2.selectSize();
-                                        } },
-                                    React.createElement(
-                                        "div",
-                                        { className: "title" },
-                                        this.props.filter.size
-                                    ),
-                                    React.createElement("img", { className: "image", src: "content/ellipsis.svg" })
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: this.state.sizeDropdownOpen ? "dropdown-content open" : "dropdown-content" },
-                                    sizeDropdownItems
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "dropdown" },
-                                React.createElement(
-                                    "button",
-                                    { className: "dropdown-button", onClick: function onClick() {
-                                            return _this2.selectCategory();
-                                        } },
-                                    React.createElement(
-                                        "div",
-                                        { className: "title" },
-                                        this.props.filter.category
-                                    ),
-                                    React.createElement("img", { className: "image", src: "content/ellipsis.svg" })
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: this.state.categoryDropdownOpen ? "dropdown-content open" : "dropdown-content" },
-                                    categoryDropdownItems
-                                )
-                            )
-                        ),
+                        React.createElement(Dropdown, {
+                            options: sizeOptions,
+                            selectedID: this.props.filter.size,
+                            select: function select(optionID) {
+                                return _this2.props.changeValue("size", optionID);
+                            }
+                        }),
+                        React.createElement(Dropdown, {
+                            options: catOptions,
+                            selectedID: this.props.filter.category,
+                            select: function select(optionID) {
+                                return _this2.props.changeValue("category", optionID);
+                            }
+                        }),
                         React.createElement("div", { className: "divider" }),
                         React.createElement(
                             "div",
@@ -1005,7 +866,7 @@ var FilterCard = function (_React$Component) {
                             { className: "title" },
                             "filter"
                         ),
-                        React.createElement("img", { className: imageStyle, src: "content/down-arrow.svg", onClick: function onClick() {
+                        React.createElement("img", { className: this.state.showAll ? "image rotate" : "image", src: "content/down-arrow.svg", onClick: function onClick() {
                                 return _this2.toggleAll();
                             } })
                     ),
@@ -1109,9 +970,6 @@ var MonsterCard = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (MonsterCard.__proto__ || Object.getPrototypeOf(MonsterCard)).call(this));
 
         _this.state = {
-            groupDropdownOpen: false,
-            categoryDropdownOpen: false,
-            sizeDropdownOpen: false,
             showInit: false,
             showHP: false,
             showDetails: false
@@ -1120,47 +978,6 @@ var MonsterCard = function (_React$Component) {
     }
 
     _createClass(MonsterCard, [{
-        key: "selectGroup",
-        value: function selectGroup(group) {
-            if (group) {
-                this.props.moveToGroup(this.props.combatant, group);
-            } else {
-                this.setState({
-                    groupDropdownOpen: !this.state.groupDropdownOpen
-                });
-            }
-        }
-    }, {
-        key: "selectCategory",
-        value: function selectCategory(category) {
-            if (category) {
-                this.props.changeTrait(this.props.combatant, "category", category);
-                this.setState({
-                    categoryDropdownOpen: false
-                });
-            } else {
-                this.setState({
-                    categoryDropdownOpen: !this.state.categoryDropdownOpen,
-                    sizeDropdownOpen: false
-                });
-            }
-        }
-    }, {
-        key: "selectSize",
-        value: function selectSize(size) {
-            if (size) {
-                this.props.changeTrait(this.props.combatant, "size", size);
-                this.setState({
-                    sizeDropdownOpen: false
-                });
-            } else {
-                this.setState({
-                    categoryDropdownOpen: false,
-                    sizeDropdownOpen: !this.state.sizeDropdownOpen
-                });
-            }
-        }
-    }, {
         key: "toggleInit",
         value: function toggleInit() {
             this.setState({
@@ -1208,29 +1025,13 @@ var MonsterCard = function (_React$Component) {
                 }
 
                 var categories = ["aberration", "beast", "celestial", "construct", "dragon", "elemental", "fey", "fiend", "giant", "humanoid", "monstrosity", "ooze", "plant", "undead"];
-                var categoryDropdownItems = [];
-                categories.forEach(function (category) {
-                    categoryDropdownItems.push(React.createElement(DropdownItem, {
-                        key: category,
-                        text: category,
-                        item: category,
-                        selected: _this2.props.combatant.category === category,
-                        onSelect: function onSelect(item) {
-                            return _this2.selectCategory(item);
-                        } }));
+                var catOptions = categories.map(function (cat) {
+                    return { id: cat, text: cat };
                 });
 
                 var sizes = ["tiny", "small", "medium", "large", "huge", "gargantuan"];
-                var sizeDropdownItems = [];
-                sizes.forEach(function (size) {
-                    sizeDropdownItems.push(React.createElement(DropdownItem, {
-                        key: size,
-                        text: size,
-                        item: size,
-                        selected: _this2.props.combatant.size === size,
-                        onSelect: function onSelect(item) {
-                            return _this2.selectSize(item);
-                        } }));
+                var sizeOptions = sizes.map(function (size) {
+                    return { id: size, text: size };
                 });
 
                 var options = [];
@@ -1254,40 +1055,22 @@ var MonsterCard = function (_React$Component) {
                             "clone monster"
                         ));
 
-                        var groups = [];
+                        var groupOptions = [];
                         this.props.library.forEach(function (group) {
                             if (group.monsters.indexOf(_this2.props.combatant) === -1) {
-                                groups.push(React.createElement(DropdownItem, {
-                                    key: group.id,
-                                    text: group.name,
-                                    item: group,
-                                    selected: false,
-                                    onSelect: function onSelect(item) {
-                                        return _this2.selectGroup(item);
-                                    } }));
+                                groupOptions.push({
+                                    id: group.id,
+                                    text: group.name
+                                });
                             }
                         });
-                        options.push(React.createElement(
-                            "div",
-                            { key: "move", className: "dropdown" },
-                            React.createElement(
-                                "button",
-                                { className: "dropdown-button", onClick: function onClick() {
-                                        return _this2.selectGroup();
-                                    } },
-                                React.createElement(
-                                    "div",
-                                    { className: "title" },
-                                    "move to group"
-                                ),
-                                React.createElement("img", { className: "image", src: "content/ellipsis.svg" })
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: this.state.groupDropdownOpen ? "dropdown-content open" : "dropdown-content" },
-                                groups
-                            )
-                        ));
+                        options.push(React.createElement(Dropdown, {
+                            key: "move",
+                            options: groupOptions,
+                            select: function select(optionID) {
+                                return _this2.props.moveToGroup(_this2.props.combatant, optionID);
+                            }
+                        }));
 
                         options.push(React.createElement(ConfirmButton, { key: "remove", text: "delete monster", callback: function callback() {
                                 return _this2.props.removeCombatant(_this2.props.combatant);
@@ -1397,27 +1180,13 @@ var MonsterCard = function (_React$Component) {
                                     { className: "input-label" },
                                     "size:"
                                 ),
-                                React.createElement(
-                                    "div",
-                                    { className: "dropdown" },
-                                    React.createElement(
-                                        "button",
-                                        { className: "dropdown-button", onClick: function onClick() {
-                                                return _this2.selectSize();
-                                            } },
-                                        React.createElement(
-                                            "div",
-                                            { className: "title" },
-                                            this.props.combatant.size
-                                        ),
-                                        React.createElement("img", { className: "image", src: "content/ellipsis.svg" })
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: this.state.sizeDropdownOpen ? "dropdown-content open" : "dropdown-content" },
-                                        sizeDropdownItems
-                                    )
-                                )
+                                React.createElement(Dropdown, {
+                                    options: sizeOptions,
+                                    selectedID: this.props.combatant.size,
+                                    select: function select(optionID) {
+                                        return _this2.props.changeTrait(_this2.props.combatant, "size", optionID);
+                                    }
+                                })
                             )
                         ),
                         React.createElement("div", { className: "column-divider" }),
@@ -1432,27 +1201,13 @@ var MonsterCard = function (_React$Component) {
                                     { className: "input-label" },
                                     "category:"
                                 ),
-                                React.createElement(
-                                    "div",
-                                    { className: "dropdown" },
-                                    React.createElement(
-                                        "button",
-                                        { className: "dropdown-button", onClick: function onClick() {
-                                                return _this2.selectCategory();
-                                            } },
-                                        React.createElement(
-                                            "div",
-                                            { className: "title" },
-                                            this.props.combatant.category
-                                        ),
-                                        React.createElement("img", { className: "image", src: "content/ellipsis.svg" })
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: this.state.categoryDropdownOpen ? "dropdown-content open" : "dropdown-content" },
-                                        categoryDropdownItems
-                                    )
-                                )
+                                React.createElement(Dropdown, {
+                                    options: catOptions,
+                                    selectedID: this.props.combatant.category,
+                                    select: function select(optionID) {
+                                        return _this2.props.changeTrait(_this2.props.combatant, "category", optionID);
+                                    }
+                                })
                             )
                         ),
                         React.createElement("div", { className: "column-divider" }),
@@ -3316,11 +3071,12 @@ var Dojo = function (_React$Component) {
         }
     }, {
         key: "moveToGroup",
-        value: function moveToGroup(monster, group) {
+        value: function moveToGroup(monster, groupID) {
             var sourceGroup = this.findMonster(monster);
             var index = sourceGroup.monsters.indexOf(monster);
 
             sourceGroup.monsters.splice(index, 1);
+            var group = this.getMonsterGroup(groupID);
             group.monsters.push(monster);
             this.sort(group.monsters);
 
@@ -3699,13 +3455,15 @@ var Dojo = function (_React$Component) {
 
     }, {
         key: "startEncounter",
-        value: function startEncounter(party, encounter) {
+        value: function startEncounter(partyID, encounterID) {
             var _this4 = this;
 
+            var party = this.getParty(partyID);
             var partyName = party.name;
             if (!partyName) {
                 partyName = "unnamed party";
             }
+            var encounter = this.getEncounter(encounterID);
             var encounterName = encounter.name;
             if (!encounterName) {
                 encounterName = "unnamed encounter";
@@ -4278,8 +4036,8 @@ var Dojo = function (_React$Component) {
                             cloneMonster: function cloneMonster(combatant) {
                                 return _this5.cloneMonster(combatant);
                             },
-                            moveToGroup: function moveToGroup(combatant, group) {
-                                return _this5.moveToGroup(combatant, group);
+                            moveToGroup: function moveToGroup(combatant, groupID) {
+                                return _this5.moveToGroup(combatant, groupID);
                             },
                             addOpenGameContent: function addOpenGameContent() {
                                 return _this5.addOpenGameContent();
@@ -4344,8 +4102,8 @@ var Dojo = function (_React$Component) {
                             combats: this.state.combats,
                             combat: combat,
                             showHelp: this.state.options.showHelp,
-                            startEncounter: function startEncounter(party, encounter) {
-                                return _this5.startEncounter(party, encounter);
+                            startEncounter: function startEncounter(partyID, encounterID) {
+                                return _this5.startEncounter(partyID, encounterID);
                             },
                             pauseEncounter: function pauseEncounter() {
                                 return _this5.pauseEncounter();
@@ -5150,49 +4908,31 @@ var CombatStartPanel = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (CombatStartPanel.__proto__ || Object.getPrototypeOf(CombatStartPanel)).call(this));
 
         _this.state = {
-            partyDropdownOpen: false,
-            party: null,
-            encounterDropdownOpen: false,
-            encounter: null
+            partyID: null,
+            encounterID: null
         };
         return _this;
     }
 
     _createClass(CombatStartPanel, [{
         key: "selectParty",
-        value: function selectParty(party) {
-            if (party) {
-                this.setState({
-                    partyDropdownOpen: false,
-                    party: party
-                });
-            } else {
-                this.setState({
-                    partyDropdownOpen: !this.state.partyDropdownOpen,
-                    encounterDropdownOpen: false
-                });
-            }
+        value: function selectParty(partyID) {
+            this.setState({
+                partyID: partyID
+            });
         }
     }, {
         key: "selectEncounter",
-        value: function selectEncounter(encounter) {
-            if (encounter) {
-                this.setState({
-                    encounterDropdownOpen: false,
-                    encounter: encounter
-                });
-            } else {
-                this.setState({
-                    partyDropdownOpen: false,
-                    encounterDropdownOpen: !this.state.encounterDropdownOpen
-                });
-            }
+        value: function selectEncounter(encounterID) {
+            this.setState({
+                encounterID: encounterID
+            });
         }
     }, {
         key: "startEncounter",
         value: function startEncounter() {
-            if (this.state.party && this.state.encounter) {
-                this.props.startEncounter(this.state.party, this.state.encounter);
+            if (this.state.partyID && this.state.encounterID) {
+                this.props.startEncounter(this.state.partyID, this.state.encounterID);
             }
         }
     }, {
@@ -5210,33 +4950,32 @@ var CombatStartPanel = function (_React$Component) {
                         "you have not defined any pcs"
                     ));
                 } else {
-                    var partyDropdownItems = [];
+                    var partyOptions = [];
                     for (var n = 0; n !== this.props.parties.length; ++n) {
                         var party = this.props.parties[n];
                         var partyName = party.name;
                         if (!partyName) {
                             partyName = "unnamed party";
                         }
-                        partyDropdownItems.push(React.createElement(DropdownItem, {
-                            key: party.id,
-                            text: partyName,
-                            item: party,
-                            selected: this.state.party === party,
-                            onSelect: function onSelect(item) {
-                                return _this2.selectParty(item);
-                            } }));
+                        partyOptions.push({
+                            id: party.id,
+                            text: partyName
+                        });
                     }
 
                     var partyName = "select party";
                     var partyContent = null;
-                    if (this.state.party) {
-                        partyName = this.state.party.name;
+                    if (this.state.partyID) {
+                        var selectedParty = this.props.parties.find(function (p) {
+                            return p.id === _this2.state.partyID;
+                        });
+                        partyName = selectedParty.name;
                         if (!partyName) {
                             partyName = "unnamed party";
                         }
                         var pcs = [];
-                        for (var n = 0; n !== this.state.party.pcs.length; ++n) {
-                            var pc = this.state.party.pcs[n];
+                        for (var n = 0; n !== selectedParty.pcs.length; ++n) {
+                            var pc = selectedParty.pcs[n];
                             var name = pc.name;
                             if (!name) {
                                 name = "unnamed pc";
@@ -5260,27 +4999,14 @@ var CombatStartPanel = function (_React$Component) {
                             pcs
                         );
                     }
-                    items.push(React.createElement(
-                        "div",
-                        { key: "partySelect", className: "dropdown" },
-                        React.createElement(
-                            "button",
-                            { className: "dropdown-button", onClick: function onClick() {
-                                    return _this2.selectParty();
-                                } },
-                            React.createElement(
-                                "div",
-                                { className: "title" },
-                                partyName
-                            ),
-                            React.createElement("img", { className: "image", src: "content/ellipsis.svg" })
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: this.state.partyDropdownOpen ? "dropdown-content open" : "dropdown-content" },
-                            partyDropdownItems
-                        )
-                    ));
+                    items.push(React.createElement(Dropdown, {
+                        key: "party-dropdown",
+                        options: partyOptions,
+                        selectedID: this.state.partyId,
+                        select: function select(optionID) {
+                            return _this2.selectParty(optionID);
+                        }
+                    }));
                     items.push(React.createElement(
                         "div",
                         { key: "party", className: "" },
@@ -5295,33 +5021,32 @@ var CombatStartPanel = function (_React$Component) {
                         "you have not built any encounters"
                     ));
                 } else {
-                    var encounterDropdownItems = [];
+                    var encounterOptions = [];
                     for (var n = 0; n !== this.props.encounters.length; ++n) {
                         var encounter = this.props.encounters[n];
                         var encounterName = encounter.name;
                         if (!encounterName) {
                             encounterName = "unnamed encounter";
                         }
-                        encounterDropdownItems.push(React.createElement(DropdownItem, {
-                            key: encounter.id,
-                            text: encounterName,
-                            item: encounter,
-                            selected: this.state.encounter === encounter,
-                            onSelect: function onSelect(item) {
-                                return _this2.selectEncounter(item);
-                            } }));
+                        encounterOptions.push({
+                            id: encounter.id,
+                            text: encounterName
+                        });
                     }
 
                     var encounterName = "select encounter";
                     var encounterContent = null;
-                    if (this.state.encounter) {
-                        encounterName = this.state.encounter.name;
+                    if (this.state.encounterID) {
+                        var selectedEncounter = this.props.encounters.find(function (e) {
+                            return e.id === _this2.state.encounterID;
+                        });
+                        encounterName = selectedEncounter.name;
                         if (!encounterName) {
                             encounterName = "unnamed encounter";
                         }
                         var monsters = [];
-                        for (var n = 0; n !== this.state.encounter.slots.length; ++n) {
-                            var slot = this.state.encounter.slots[n];
+                        for (var n = 0; n !== selectedEncounter.slots.length; ++n) {
+                            var slot = selectedEncounter.slots[n];
                             var name = slot.monsterName;
                             if (!name) {
                                 name = "unnamed monster";
@@ -5348,27 +5073,14 @@ var CombatStartPanel = function (_React$Component) {
                             monsters
                         );
                     }
-                    items.push(React.createElement(
-                        "div",
-                        { key: "encounterSelect", className: "dropdown" },
-                        React.createElement(
-                            "button",
-                            { className: "dropdown-button", onClick: function onClick() {
-                                    return _this2.selectEncounter();
-                                } },
-                            React.createElement(
-                                "div",
-                                { className: "title" },
-                                encounterName
-                            ),
-                            React.createElement("img", { className: "image", src: "content/ellipsis.svg" })
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: this.state.encounterDropdownOpen ? "dropdown-content open" : "dropdown-content" },
-                            encounterDropdownItems
-                        )
-                    ));
+                    items.push(React.createElement(Dropdown, {
+                        key: "encounter-dropdown",
+                        options: encounterOptions,
+                        selectedID: this.state.encounterID,
+                        select: function select(optionID) {
+                            return _this2.selectEncounter(optionID);
+                        }
+                    }));
                     items.push(React.createElement(
                         "div",
                         { key: "encounter", className: "" },
@@ -5379,7 +5091,7 @@ var CombatStartPanel = function (_React$Component) {
                 items.push(React.createElement("div", { key: "start-div", className: "divider" }));
                 items.push(React.createElement(
                     "button",
-                    { key: "start", className: this.state.party && this.state.encounter ? "" : "disabled", onClick: function onClick() {
+                    { key: "start", className: this.state.partyID && this.state.encounterID ? "" : "disabled", onClick: function onClick() {
                             return _this2.startEncounter();
                         } },
                     "start encounter"
@@ -5483,30 +5195,16 @@ var ConditionsPanel = function (_React$Component) {
     function ConditionsPanel() {
         _classCallCheck(this, ConditionsPanel);
 
-        var _this = _possibleConstructorReturn(this, (ConditionsPanel.__proto__ || Object.getPrototypeOf(ConditionsPanel)).call(this));
-
-        _this.state = {
-            conditionDropDown: false
-        };
-        return _this;
+        return _possibleConstructorReturn(this, (ConditionsPanel.__proto__ || Object.getPrototypeOf(ConditionsPanel)).apply(this, arguments));
     }
 
     _createClass(ConditionsPanel, [{
         key: "addCondition",
         value: function addCondition(condition) {
-            if (condition) {
-                this.props.addCondition({
-                    name: condition,
-                    level: 1
-                });
-                this.setState({
-                    conditionDropdownOpen: false
-                });
-            } else {
-                this.setState({
-                    conditionDropdownOpen: !this.state.conditionDropdownOpen
-                });
-            }
+            this.props.addCondition({
+                name: condition,
+                level: 1
+            });
         }
     }, {
         key: "render",
@@ -5515,17 +5213,10 @@ var ConditionsPanel = function (_React$Component) {
 
             try {
                 var conditions = ["blinded", "charmed", "deafened", "exhausted", "frightened", "grappled", "incapacitated", "invisible", "paralyzed", "petrified", "poisoned", "prone", "restrained", "stunned", "unconscious"];
-                var conditionDropdownItems = [];
-                conditions.forEach(function (condition) {
-                    conditionDropdownItems.push(React.createElement(DropdownItem, {
-                        key: condition,
-                        text: condition,
-                        item: condition,
-                        selected: false,
-                        onSelect: function onSelect(item) {
-                            return _this2.addCondition(item);
-                        } }));
+                var options = conditions.map(function (c) {
+                    return { id: c, text: c };
                 });
+
                 var conditions = [];
                 for (var n = 0; n != this.props.combatant.conditions.length; ++n) {
                     var condition = this.props.combatant.conditions[n];
@@ -5545,27 +5236,12 @@ var ConditionsPanel = function (_React$Component) {
                     "div",
                     { className: "section" },
                     conditions,
-                    React.createElement(
-                        "div",
-                        { className: "dropdown" },
-                        React.createElement(
-                            "button",
-                            { className: "dropdown-button", onClick: function onClick() {
-                                    return _this2.addCondition();
-                                } },
-                            React.createElement(
-                                "div",
-                                { className: "title" },
-                                "add condition"
-                            ),
-                            React.createElement("img", { className: "image", src: "content/ellipsis.svg" })
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: this.state.conditionDropdownOpen ? "dropdown-content open" : "dropdown-content" },
-                            conditionDropdownItems
-                        )
-                    )
+                    React.createElement(Dropdown, {
+                        options: options,
+                        select: function select(optionID) {
+                            return _this2.addCondition(optionID);
+                        }
+                    })
                 );
             } catch (e) {
                 console.error(e);
@@ -6445,8 +6121,8 @@ var CombatManagerScreen = function (_React$Component) {
                         React.createElement(CombatStartPanel, {
                             parties: this.props.parties,
                             encounters: this.props.encounters,
-                            startEncounter: function startEncounter(party, encounter) {
-                                return _this3.props.startEncounter(party, encounter);
+                            startEncounter: function startEncounter(partyID, encounterID) {
+                                return _this3.props.startEncounter(partyID, encounterID);
                             }
                         }),
                         combats
@@ -6989,8 +6665,8 @@ var MonsterLibraryScreen = function (_React$Component) {
                             combatant: monster,
                             mode: "view editable",
                             library: _this3.props.library,
-                            moveToGroup: function moveToGroup(combatant, group) {
-                                return _this3.props.moveToGroup(combatant, group);
+                            moveToGroup: function moveToGroup(combatant, groupID) {
+                                return _this3.props.moveToGroup(combatant, groupID);
                             },
                             changeValue: function changeValue(combatant, type, value) {
                                 return _this3.props.changeValue(combatant, type, value);
@@ -7403,53 +7079,6 @@ var ConfirmButton = function (_React$Component) {
     return ConfirmButton;
 }(React.Component);
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var DropdownItem = function (_React$Component) {
-    _inherits(DropdownItem, _React$Component);
-
-    function DropdownItem() {
-        _classCallCheck(this, DropdownItem);
-
-        return _possibleConstructorReturn(this, (DropdownItem.__proto__ || Object.getPrototypeOf(DropdownItem)).apply(this, arguments));
-    }
-
-    _createClass(DropdownItem, [{
-        key: "onSelect",
-        value: function onSelect(item) {
-            this.props.onSelect(item);
-        }
-    }, {
-        key: "render",
-        value: function render() {
-            var _this2 = this;
-
-            try {
-                var style = this.props.selected ? "dropdown-item selected" : "dropdown-item";
-
-                return React.createElement(
-                    "div",
-                    { className: style, onClick: function onClick() {
-                            return _this2.onSelect(_this2.props.item);
-                        } },
-                    this.props.text
-                );
-            } catch (ex) {
-                console.error(ex);
-                return null;
-            }
-        }
-    }]);
-
-    return DropdownItem;
-}(React.Component);
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -7545,7 +7174,7 @@ var Dropdown = function (_React$Component) {
                         { className: "item-text" },
                         selectedText
                     ),
-                    React.createElement("img", { className: this.state.open ? "arrow open" : "arrow", src: "resources/icons/chevron.svg" })
+                    React.createElement("img", { className: this.state.open ? "arrow open" : "arrow", src: "content/down-arrow-black.svg" })
                 ));
 
                 if (this.state.open) {
@@ -7562,7 +7191,7 @@ var Dropdown = function (_React$Component) {
                         });
                     });
 
-                    content.push(React.createElement("hr", { key: "divider" }));
+                    //content.push(<hr key="divider" />);
                     content.push(React.createElement(
                         "div",
                         { key: "options", className: "dropdown-options" },
