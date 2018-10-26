@@ -1,11 +1,11 @@
 ﻿.selector {
-    margin: 10px 0;
+    margin: 5px 0;
 }
 
     .selector .option {
         display: inline-block;
         text-align: center;
-        padding: 3px;
+        margin: 1px;
         overflow: hidden;
         text-overflow: ellipsis;
         cursor: pointer;
@@ -30,39 +30,42 @@
         }
 
             .selector.tabs .option:hover {
-                border-bottom: 2px solid rgb(64, 192, 255);
+                border-bottom: 2px solid rgb(0, 0, 0);
             }
 
             .selector.tabs .option.selected {
-                background-color: rgb(64, 192, 255);
-                background-color: rgba(64, 192, 255, 0.2);
-                border-bottom: 2px solid rgb(64, 192, 255);
+                background-color: rgb(0, 0, 0);
+                background-color: rgba(0, 0, 0, 0.1);
+                border-bottom: 2px solid rgb(0, 0, 0);
                 cursor: default;
             }
 
     .selector.radio {
         padding: 2px;
-        border: 1px solid #222222;
+        border: 1px solid #C3C3C3;
     }
 
+        .selector.radio.no-border {
+            border: none;
+        }
+
         .selector.radio:hover {
-            background-color: rgb(64, 192, 255);
-            background-color: rgba(64, 192, 255, 0.2);
-            border-color: rgb(64, 192, 255);
+            border-color: rgb(0, 0, 0);
         }
 
         .selector.radio .option {
             vertical-align: middle;
+            padding: 3px;
         }
 
             .selector.radio .option:hover {
-                background-color: rgb(64, 192, 255);
-                background-color: rgba(64, 192, 255, 0.4);
+                background-color: rgb(0, 0, 0);
+                background-color: rgba(0, 0, 0, 0.1);
             }
 
             .selector.radio .option.selected {
-                background-color: rgb(64, 192, 255);
-                background-color: rgba(64, 192, 255, 0.6);
+                background-color: rgb(0, 0, 0);
+                background-color: rgba(0, 0, 0, 0.2);
                 font-weight: 600;
                 cursor: default;
             }

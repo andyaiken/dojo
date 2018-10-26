@@ -1,6 +1,6 @@
 ﻿.dropdown {
-    margin: 10px 0;
-    border: 1px solid #222222;
+    margin: 5px 0;
+    border: 1px solid #C3C3C3;
     cursor: pointer;
     white-space: nowrap;
     overflow: hidden;
@@ -8,7 +8,7 @@
 }
 
     .dropdown:hover {
-        border-color: rgb(64, 192, 255);
+        border-color: rgb(0, 0, 0);
     }
 
     .dropdown .dropdown-placeholder {
@@ -25,8 +25,8 @@
         .dropdown .dropdown-placeholder:hover,
         .dropdown .dropdown-selection:hover,
         .dropdown.open .dropdown-selection {
-            background-color: rgb(64, 192, 255);
-            background-color: rgba(64, 192, 255, 0.2);
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.1);
         }
 
         .dropdown .dropdown-placeholder .item-text,
@@ -70,8 +70,8 @@
         }
 
             .dropdown .dropdown-options .dropdown-option:hover {
-                background-color: rgb(64, 192, 255);
-                background-color: rgba(64, 192, 255, 0.2);
+                background-color: rgb(0, 0, 0);
+                background-color: rgba(0, 0, 0, 0.1);
             }
 
             .dropdown .dropdown-options .dropdown-option.selected {

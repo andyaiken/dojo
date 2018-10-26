@@ -884,73 +884,31 @@ var FilterCard = function (_React$Component) {
                                     return _this2.props.changeValue("name", event.target.value);
                                 } })
                         ),
+                        React.createElement(Spin, {
+                            source: this.props.filter,
+                            name: "challengeMin",
+                            label: "min cr",
+                            display: function display(value) {
+                                return challenge(value);
+                            },
+                            nudgeValue: function nudgeValue(delta) {
+                                return _this2.props.nudgeValue("challengeMin", delta);
+                            }
+                        }),
+                        React.createElement(Spin, {
+                            source: this.props.filter,
+                            name: "challengeMax",
+                            label: "max cr",
+                            display: function display(value) {
+                                return challenge(value);
+                            },
+                            nudgeValue: function nudgeValue(delta) {
+                                return _this2.props.nudgeValue("challengeMax", delta);
+                            }
+                        }),
                         React.createElement(
                             "div",
                             { className: "section" },
-                            React.createElement(
-                                "div",
-                                { className: "spin" },
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button wide toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue("challengeMin", -1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" })
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-value" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        "min challenge"
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        challenge(this.props.filter.challengeMin)
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button wide toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue("challengeMin", +1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" })
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "spin" },
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button wide toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue("challengeMax", -1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" })
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-value" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        "max challenge"
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        challenge(this.props.filter.challengeMax)
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button wide toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue("challengeMax", +1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" })
-                                )
-                            ),
                             React.createElement(
                                 "div",
                                 { className: "dropdown" },
@@ -1518,8 +1476,8 @@ var MonsterCard = function (_React$Component) {
                         React.createElement(AbilityScorePanel, {
                             edit: true,
                             combatant: this.props.combatant,
-                            nudgeValue: function nudgeValue(type, delta) {
-                                return _this2.props.nudgeValue(_this2.props.combatant, type, delta);
+                            nudgeValue: function nudgeValue(source, type, delta) {
+                                return _this2.props.nudgeValue(source, type, delta);
                             }
                         }),
                         React.createElement("div", { className: "divider" }),
@@ -1591,104 +1549,33 @@ var MonsterCard = function (_React$Component) {
                         React.createElement(
                             "div",
                             { className: "column" },
-                            React.createElement(
-                                "div",
-                                { className: "section spin" },
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button wide toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "challenge", -1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" })
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-value" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        "challenge"
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        challenge(this.props.combatant.challenge)
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button wide toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "challenge", +1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" })
-                                )
-                            ),
-                            React.createElement("div", { className: "divider" }),
-                            React.createElement(
-                                "div",
-                                { className: "section spin" },
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button wide toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "ac", -1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" })
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-value" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        "armor class"
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        this.props.combatant.ac
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button wide toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "ac", +1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" })
-                                )
-                            ),
-                            React.createElement("div", { className: "divider" }),
-                            React.createElement(
-                                "div",
-                                { className: "section spin" },
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button wide toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "hitDice", -1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" })
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-value" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        "hit dice"
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        this.props.combatant.hitDice
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button wide toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "hitDice", +1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" })
-                                )
-                            ),
+                            React.createElement(Spin, {
+                                source: this.props.combatant,
+                                name: "challenge",
+                                label: "challenge",
+                                display: function display(value) {
+                                    return challenge(value);
+                                },
+                                nudgeValue: function nudgeValue(delta) {
+                                    return _this2.props.nudgeValue(_this2.props.combatant, "challenge", delta);
+                                }
+                            }),
+                            React.createElement(Spin, {
+                                source: this.props.combatant,
+                                name: "ac",
+                                label: "armor class",
+                                nudgeValue: function nudgeValue(delta) {
+                                    return _this2.props.nudgeValue(_this2.props.combatant, "ac", delta);
+                                }
+                            }),
+                            React.createElement(Spin, {
+                                source: this.props.combatant,
+                                name: "hitDice",
+                                label: "hit dice",
+                                nudgeValue: function nudgeValue(delta) {
+                                    return _this2.props.nudgeValue(_this2.props.combatant, "hitDice", delta);
+                                }
+                            }),
                             React.createElement(
                                 "div",
                                 { className: "section centered" },
@@ -1774,38 +1661,14 @@ var MonsterCard = function (_React$Component) {
                             "div",
                             null,
                             React.createElement("div", { className: "divider" }),
-                            React.createElement(
-                                "div",
-                                { className: "section spin" },
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button wide toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.slot, "count", -1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" })
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-value" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        "count"
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        this.props.slot.count
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button wide toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.slot, "count", +1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" })
-                                )
-                            )
+                            React.createElement(Spin, {
+                                source: this.props.slot,
+                                name: "count",
+                                label: "count",
+                                nudgeValue: function nudgeValue(delta) {
+                                    return _this2.props.nudgeValue(_this2.props.slot, "count", delta);
+                                }
+                            })
                         );
                     }
 
@@ -2052,209 +1915,38 @@ var MonsterCard = function (_React$Component) {
                         React.createElement(
                             "div",
                             { style: { display: this.state.showInit ? "" : "none" } },
-                            React.createElement(
-                                "div",
-                                { className: "section spin" },
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "initiative", -5);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "5"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "initiative", -1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "1"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-value" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        "initiative"
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        this.props.combatant.initiative
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "initiative", +1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "1"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "initiative", +5);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "5"
-                                    )
-                                )
-                            ),
+                            React.createElement(Spin, {
+                                source: this.props.combatant,
+                                name: "initiative",
+                                label: "initiative",
+                                factors: [1, 5],
+                                nudgeValue: function nudgeValue(delta) {
+                                    return _this2.props.nudgeValue(_this2.props.combatant, "initiative", delta);
+                                }
+                            }),
                             React.createElement("div", { className: "divider" })
                         ),
                         React.createElement(
                             "div",
                             { style: { display: this.state.showHP ? "" : "none" } },
-                            React.createElement(
-                                "div",
-                                { className: "section spin" },
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "hp", +5);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "5"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "hp", +1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "1"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-value" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        "damage"
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        this.props.combatant.hpMax - this.props.combatant.hp
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "hp", -1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "1"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "hp", -5);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "5"
-                                    )
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "section spin" },
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "hpTemp", -5);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "5"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "hpTemp", -1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "1"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-value" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        "temp hp"
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        this.props.combatant.hpTemp
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "hpTemp", +1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "1"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "hpTemp", +5);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "5"
-                                    )
-                                )
-                            ),
+                            React.createElement(Spin, {
+                                source: this.props.combatant,
+                                name: "hp",
+                                label: "hit points",
+                                factors: [1, 5],
+                                nudgeValue: function nudgeValue(delta) {
+                                    return _this2.props.nudgeValue(_this2.props.combatant, "hp", delta);
+                                }
+                            }),
+                            React.createElement(Spin, {
+                                source: this.props.combatant,
+                                name: "hpTemp",
+                                label: "temp hp",
+                                factors: [1, 5],
+                                nudgeValue: function nudgeValue(delta) {
+                                    return _this2.props.nudgeValue(_this2.props.combatant, "hpTemp", delta);
+                                }
+                            }),
                             React.createElement(
                                 "div",
                                 { className: "section" },
@@ -3100,72 +2792,14 @@ var PCCard = function (_React$Component) {
                                     } })
                             ),
                             React.createElement("div", { className: "divider" }),
-                            React.createElement(
-                                "div",
-                                { className: "section spin" },
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "level", -5);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "5"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "level", -1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "1"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-value" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        "level"
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        this.props.combatant.level
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "level", +1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "1"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "level", +5);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "5"
-                                    )
-                                )
-                            ),
+                            React.createElement(Spin, {
+                                source: this.props.combatant,
+                                name: "level",
+                                label: "level",
+                                nudgeValue: function nudgeValue(delta) {
+                                    return _this2.props.nudgeValue(_this2.props.combatant, "level", delta);
+                                }
+                            }),
                             React.createElement("div", { className: "divider" }),
                             React.createElement(
                                 "div",
@@ -3198,204 +2832,30 @@ var PCCard = function (_React$Component) {
                                 { className: "section subheading" },
                                 "passive skills"
                             ),
-                            React.createElement(
-                                "div",
-                                { className: "section spin" },
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "passiveInsight", -5);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "5"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "passiveInsight", -1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "1"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-value" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        "insight"
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        this.props.combatant.passiveInsight
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "passiveInsight", +1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "1"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "passiveInsight", +5);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "5"
-                                    )
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "section spin" },
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "passiveInvestigation", -5);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "5"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "passiveInvestigation", -1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "1"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-value" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        "investigation"
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        this.props.combatant.passiveInvestigation
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "passiveInvestigation", +1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "1"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "passiveInvestigation", +5);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "5"
-                                    )
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "section spin" },
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "passivePerception", -5);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "5"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "passivePerception", -1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "1"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-value" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        "perception"
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        this.props.combatant.passivePerception
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "passivePerception", +1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "1"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "passivePerception", +5);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "5"
-                                    )
-                                )
-                            )
+                            React.createElement(Spin, {
+                                source: this.props.combatant,
+                                name: "passiveInsight",
+                                label: "insight",
+                                nudgeValue: function nudgeValue(delta) {
+                                    return _this2.props.nudgeValue(_this2.props.combatant, "passiveInsight", delta);
+                                }
+                            }),
+                            React.createElement(Spin, {
+                                source: this.props.combatant,
+                                name: "passiveInvestigation",
+                                label: "investigation",
+                                nudgeValue: function nudgeValue(delta) {
+                                    return _this2.props.nudgeValue(_this2.props.combatant, "passiveInvestigation", delta);
+                                }
+                            }),
+                            React.createElement(Spin, {
+                                source: this.props.combatant,
+                                name: "passivePerception",
+                                label: "perception",
+                                nudgeValue: function nudgeValue(delta) {
+                                    return _this2.props.nudgeValue(_this2.props.combatant, "passivePerception", delta);
+                                }
+                            })
                         )
                     );
                 }
@@ -3441,72 +2901,15 @@ var PCCard = function (_React$Component) {
                             "div",
                             { style: { display: this.state.showInit ? "" : "none" } },
                             React.createElement("div", { className: "divider" }),
-                            React.createElement(
-                                "div",
-                                { className: "section spin" },
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "initiative", -5);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "5"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "initiative", -1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/minus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "1"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-value" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        "initiative"
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "spin-label" },
-                                        this.props.combatant.initiative
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "initiative", +1);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "1"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-button toggle", onClick: function onClick() {
-                                            return _this2.props.nudgeValue(_this2.props.combatant, "initiative", +5);
-                                        } },
-                                    React.createElement("img", { className: "image", src: "content/plus.svg" }),
-                                    React.createElement(
-                                        "span",
-                                        { className: "spin-delta" },
-                                        "5"
-                                    )
-                                )
-                            )
+                            React.createElement(Spin, {
+                                source: this.props.combatant,
+                                name: "initiative",
+                                label: "initiative",
+                                factors: [1, 5],
+                                nudgeValue: function nudgeValue(delta) {
+                                    return _this2.props.nudgeValue(_this2.props.combatant, "initiative", delta);
+                                }
+                            })
                         ),
                         React.createElement("div", { className: "divider" }),
                         React.createElement(
@@ -4733,6 +4136,12 @@ var Dojo = function (_React$Component) {
                         options: this.state.options
                     });
                     break;
+                default:
+                    this.setState({
+                        library: this.state.library,
+                        modal: this.state.modal
+                    });
+                    break;
             }
         }
     }, {
@@ -5455,218 +4864,74 @@ var AbilityScorePanel = function (_React$Component) {
                             React.createElement(
                                 "div",
                                 { className: "ability-score" },
-                                React.createElement(
-                                    "div",
-                                    { className: "spin" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "ability-spin toggle", onClick: function onClick() {
-                                                return _this2.props.nudgeValue("abilityScores.str", -1);
-                                            } },
-                                        React.createElement("img", { className: "image", src: "content/minus.svg" })
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "ability-spin" },
-                                        React.createElement(
-                                            "div",
-                                            { className: "ability-heading" },
-                                            "str"
-                                        ),
-                                        React.createElement(
-                                            "div",
-                                            { className: "ability-value" },
-                                            this.props.combatant.abilityScores.str
-                                        )
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "ability-spin toggle", onClick: function onClick() {
-                                                return _this2.props.nudgeValue("abilityScores.str", +1);
-                                            } },
-                                        React.createElement("img", { className: "image", src: "content/plus.svg" })
-                                    )
-                                )
+                                React.createElement(Spin, {
+                                    source: this.props.combatant.abilityScores,
+                                    name: "str",
+                                    label: "str",
+                                    nudgeValue: function nudgeValue(delta) {
+                                        return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.str", delta);
+                                    }
+                                })
                             ),
                             React.createElement(
                                 "div",
                                 { className: "ability-score" },
-                                React.createElement(
-                                    "div",
-                                    { className: "spin" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "ability-spin toggle", onClick: function onClick() {
-                                                return _this2.props.nudgeValue("abilityScores.dex", -1);
-                                            } },
-                                        React.createElement("img", { className: "image", src: "content/minus.svg" })
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "ability-spin" },
-                                        React.createElement(
-                                            "div",
-                                            { className: "ability-heading" },
-                                            "dex"
-                                        ),
-                                        React.createElement(
-                                            "div",
-                                            { className: "ability-value" },
-                                            this.props.combatant.abilityScores.dex
-                                        )
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "ability-spin toggle", onClick: function onClick() {
-                                                return _this2.props.nudgeValue("abilityScores.dex", +1);
-                                            } },
-                                        React.createElement("img", { className: "image", src: "content/plus.svg" })
-                                    )
-                                )
+                                React.createElement(Spin, {
+                                    source: this.props.combatant.abilityScores,
+                                    name: "dex",
+                                    label: "dex",
+                                    nudgeValue: function nudgeValue(delta) {
+                                        return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.dex", delta);
+                                    }
+                                })
                             ),
                             React.createElement(
                                 "div",
                                 { className: "ability-score" },
-                                React.createElement(
-                                    "div",
-                                    { className: "spin" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "ability-spin toggle", onClick: function onClick() {
-                                                return _this2.props.nudgeValue("abilityScores.con", -1);
-                                            } },
-                                        React.createElement("img", { className: "image", src: "content/minus.svg" })
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "ability-spin" },
-                                        React.createElement(
-                                            "div",
-                                            { className: "ability-heading" },
-                                            "con"
-                                        ),
-                                        React.createElement(
-                                            "div",
-                                            { className: "ability-value" },
-                                            this.props.combatant.abilityScores.con
-                                        )
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "ability-spin toggle", onClick: function onClick() {
-                                                return _this2.props.nudgeValue("abilityScores.con", +1);
-                                            } },
-                                        React.createElement("img", { className: "image", src: "content/plus.svg" })
-                                    )
-                                )
+                                React.createElement(Spin, {
+                                    source: this.props.combatant.abilityScores,
+                                    name: "con",
+                                    label: "con",
+                                    nudgeValue: function nudgeValue(delta) {
+                                        return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.con", delta);
+                                    }
+                                })
                             ),
                             React.createElement(
                                 "div",
                                 { className: "ability-score" },
-                                React.createElement(
-                                    "div",
-                                    { className: "spin" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "ability-spin toggle", onClick: function onClick() {
-                                                return _this2.props.nudgeValue("abilityScores.int", -1);
-                                            } },
-                                        React.createElement("img", { className: "image", src: "content/minus.svg" })
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "ability-spin" },
-                                        React.createElement(
-                                            "div",
-                                            { className: "ability-heading" },
-                                            "int"
-                                        ),
-                                        React.createElement(
-                                            "div",
-                                            { className: "ability-value" },
-                                            this.props.combatant.abilityScores.int
-                                        )
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "ability-spin toggle", onClick: function onClick() {
-                                                return _this2.props.nudgeValue("abilityScores.int", +1);
-                                            } },
-                                        React.createElement("img", { className: "image", src: "content/plus.svg" })
-                                    )
-                                )
+                                React.createElement(Spin, {
+                                    source: this.props.combatant.abilityScores,
+                                    name: "int",
+                                    label: "int",
+                                    nudgeValue: function nudgeValue(delta) {
+                                        return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.int", delta);
+                                    }
+                                })
                             ),
                             React.createElement(
                                 "div",
                                 { className: "ability-score" },
-                                React.createElement(
-                                    "div",
-                                    { className: "spin" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "ability-spin toggle", onClick: function onClick() {
-                                                return _this2.props.nudgeValue("abilityScores.wis", -1);
-                                            } },
-                                        React.createElement("img", { className: "image", src: "content/minus.svg" })
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "ability-spin" },
-                                        React.createElement(
-                                            "div",
-                                            { className: "ability-heading" },
-                                            "wis"
-                                        ),
-                                        React.createElement(
-                                            "div",
-                                            { className: "ability-value" },
-                                            this.props.combatant.abilityScores.wis
-                                        )
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "ability-spin toggle", onClick: function onClick() {
-                                                return _this2.props.nudgeValue("abilityScores.wis", +1);
-                                            } },
-                                        React.createElement("img", { className: "image", src: "content/plus.svg" })
-                                    )
-                                )
+                                React.createElement(Spin, {
+                                    source: this.props.combatant.abilityScores,
+                                    name: "wis",
+                                    label: "wis",
+                                    nudgeValue: function nudgeValue(delta) {
+                                        return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.wis", delta);
+                                    }
+                                })
                             ),
                             React.createElement(
                                 "div",
                                 { className: "ability-score" },
-                                React.createElement(
-                                    "div",
-                                    { className: "spin" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "ability-spin toggle", onClick: function onClick() {
-                                                return _this2.props.nudgeValue("abilityScores.cha", -1);
-                                            } },
-                                        React.createElement("img", { className: "image", src: "content/minus.svg" })
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "ability-spin" },
-                                        React.createElement(
-                                            "div",
-                                            { className: "ability-heading" },
-                                            "cha"
-                                        ),
-                                        React.createElement(
-                                            "div",
-                                            { className: "ability-value" },
-                                            this.props.combatant.abilityScores.cha
-                                        )
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "ability-spin toggle", onClick: function onClick() {
-                                                return _this2.props.nudgeValue("abilityScores.cha", +1);
-                                            } },
-                                        React.createElement("img", { className: "image", src: "content/plus.svg" })
-                                    )
-                                )
+                                React.createElement(Spin, {
+                                    source: this.props.combatant.abilityScores,
+                                    name: "cha",
+                                    label: "cha",
+                                    nudgeValue: function nudgeValue(delta) {
+                                        return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.cha", delta);
+                                    }
+                                })
                             )
                         )
                     );
@@ -6160,38 +5425,15 @@ var ConditionPanel = function (_React$Component) {
             try {
                 var details = [];
                 if (this.props.condition.name === "exhausted") {
-                    details.push(React.createElement(
-                        "div",
-                        { key: "spin", className: "section spin" },
-                        React.createElement(
-                            "div",
-                            { className: "spin-button wide toggle", onClick: function onClick() {
-                                    return _this2.props.nudgeConditionValue(_this2.props.condition, "level", -1);
-                                } },
-                            React.createElement("img", { className: "image", src: "content/minus.svg" })
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "spin-value" },
-                            React.createElement(
-                                "div",
-                                { className: "spin-label" },
-                                "level"
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "spin-label" },
-                                this.props.condition.level
-                            )
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "spin-button wide toggle", onClick: function onClick() {
-                                    return _this2.props.nudgeConditionValue(_this2.props.condition, "level", +1);
-                                } },
-                            React.createElement("img", { className: "image", src: "content/plus.svg" })
-                        )
-                    ));
+                    details.push(React.createElement(Spin, {
+                        key: "level",
+                        source: this.props.condition,
+                        name: "level",
+                        label: "level",
+                        nudgeValue: function nudgeValue(delta) {
+                            return _this2.props.nudgeConditionValue(_this2.props.condition, "level", delta);
+                        }
+                    }));
                     details.push(React.createElement("div", { key: "div1", className: "divider" }));
                 }
                 var text = conditionText(this.props.condition);
@@ -6539,72 +5781,18 @@ var TraitPanel = function (_React$Component) {
     function TraitPanel() {
         _classCallCheck(this, TraitPanel);
 
-        var _this = _possibleConstructorReturn(this, (TraitPanel.__proto__ || Object.getPrototypeOf(TraitPanel)).call(this));
-
-        _this.state = {
-            dropdownOpen: false
-        };
-        return _this;
+        return _possibleConstructorReturn(this, (TraitPanel.__proto__ || Object.getPrototypeOf(TraitPanel)).apply(this, arguments));
     }
 
     _createClass(TraitPanel, [{
-        key: "selectType",
-        value: function selectType(type) {
-            if (type) {
-                this.props.changeTrait(this.props.trait, "type", type);
-                this.setState({
-                    dropdownOpen: false
-                });
-            } else {
-                this.setState({
-                    dropdownOpen: !this.state.dropdownOpen
-                });
-            }
-        }
-    }, {
         key: "render",
         value: function render() {
             var _this2 = this;
 
             try {
-                var dropdownItems = [];
-                var types = ["trait", "action", "legendary", "lair", "regional"];
-                for (var n = 0; n !== types.length; ++n) {
-                    var type = types[n];
-                    dropdownItems.push(React.createElement(DropdownItem, {
-                        key: n,
-                        text: traitType(type),
-                        item: type,
-                        selected: this.props.trait.type === type,
-                        onSelect: function onSelect(item) {
-                            return _this2.selectType(item);
-                        } }));
-                }
-
                 var details = React.createElement(
                     "div",
                     { className: "section" },
-                    React.createElement(
-                        "div",
-                        { className: "dropdown" },
-                        React.createElement(
-                            "button",
-                            { className: "dropdown-button", onClick: function onClick() {
-                                    return _this2.selectType();
-                                } },
-                            React.createElement(
-                                "div",
-                                { className: "title" },
-                                traitType(this.props.trait.type)
-                            ),
-                            React.createElement("img", { className: "image", src: "content/ellipsis.svg" })
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: this.state.dropdownOpen ? "dropdown-content open" : "dropdown-content" },
-                            dropdownItems
-                        )
-                    ),
                     React.createElement("input", { type: "text", placeholder: "name", value: this.props.trait.name, onChange: function onChange(event) {
                             return _this2.props.changeTrait(_this2.props.trait, "name", event.target.value);
                         } }),
@@ -8549,6 +7737,7 @@ var options = [
 <Selector
     tabs={BOOLEAN}
     options={options}
+    noBorder={BOOLEAN}
     selectedID={CURRENT_OPTION_ID}
     select={optionID => this.changeValue(SOURCEOBJECT, FIELDNAME, optionID)}
 />
@@ -8570,6 +7759,9 @@ var Selector = function (_React$Component) {
 
             try {
                 var style = this.props.tabs ? "selector tabs" : "selector radio";
+                if (this.props.noBorder) {
+                    style += " no-border";
+                }
 
                 var itemsPerRow = this.props.itemsPerRow ? this.props.itemsPerRow : this.props.options.length;
                 var rowCount = Math.ceil(this.props.options.length / itemsPerRow);
@@ -8638,16 +7830,11 @@ var SelectorOption = function (_React$Component2) {
             var _this4 = this;
 
             try {
-                var width = "calc((100% - 1px) / " + this.props.count + ")";
+                var width = "calc(((100% - 1px) / " + this.props.count + ") - 8px)";
 
                 var style = "option";
                 if (this.props.selected) {
                     style += " selected";
-                }
-
-                var smallText = this.props.option.text;
-                if (this.props.option.smallText) {
-                    smallText = this.props.option.smallText;
                 }
 
                 return React.createElement(
@@ -8655,16 +7842,7 @@ var SelectorOption = function (_React$Component2) {
                     { key: this.props.option.id, className: style, style: { width: width }, title: this.props.option.text, onClick: function onClick(e) {
                             return _this4.click(e);
                         } },
-                    React.createElement(
-                        "div",
-                        { className: "hidden-sm hidden-xs" },
-                        this.props.option.text
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "hidden-lg hidden-md" },
-                        smallText
-                    )
+                    this.props.option.text
                 );
             } catch (ex) {
                 console.error(ex);
@@ -8691,6 +7869,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     name="FIELDNAME"
     label="LABEL"
     factors={[1, 10, 100]}
+    display={value => this.displayValue(value)}
     nudgeValue={delta => this.nudgeValue(SOURCEOBJECT, FIELDNAME, delta)}
 />
 */
@@ -8754,6 +7933,7 @@ var Spin = function (_React$Component) {
                         { className: "factor-selector" },
                         React.createElement(Selector, {
                             options: options,
+                            noBorder: true,
                             selectedID: this.state.factor,
                             select: function select(optionID) {
                                 return _this2.setState({ factor: optionID });
@@ -8768,6 +7948,10 @@ var Spin = function (_React$Component) {
                     style += " dimmed";
                 }
 
+                if (this.props.display) {
+                    value = this.props.display(value);
+                }
+
                 return React.createElement(
                     "div",
                     { className: "spin" },
@@ -8776,7 +7960,7 @@ var Spin = function (_React$Component) {
                         { className: "spin-button", onClick: function onClick(e) {
                                 return _this2.click(e, -1);
                             } },
-                        React.createElement("img", { className: "image", src: "resources/icons/minus.svg" })
+                        React.createElement("img", { className: "image", src: "content/minus.svg" })
                     ),
                     React.createElement(
                         "div",
@@ -8797,7 +7981,7 @@ var Spin = function (_React$Component) {
                         { className: "spin-button", onClick: function onClick(e) {
                                 return _this2.click(e, +1);
                             } },
-                        React.createElement("img", { className: "image", src: "resources/icons/plus.svg" })
+                        React.createElement("img", { className: "image", src: "content/plus.svg" })
                     ),
                     expander,
                     factorSelector

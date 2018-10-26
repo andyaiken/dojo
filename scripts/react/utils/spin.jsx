@@ -4,6 +4,7 @@
     name="FIELDNAME"
     label="LABEL"
     factors={[1, 10, 100]}
+    display={value => this.displayValue(value)}
     nudgeValue={delta => this.nudgeValue(SOURCEOBJECT, FIELDNAME, delta)}
 />
 */
@@ -51,6 +52,7 @@ class Spin extends React.Component {
                     <div className="factor-selector">
                         <Selector
                             options={options}
+                            noBorder={true}
                             selectedID={this.state.factor}
                             select={optionID => this.setState({ factor: optionID })}
                         />
@@ -64,17 +66,21 @@ class Spin extends React.Component {
                 style += " dimmed";
             }
 
+            if (this.props.display) {
+                value = this.props.display(value);
+            }
+
             return (
                 <div className="spin">
                     <div className="spin-button" onClick={e => this.click(e, -1)}>
-                        <img className="image" src="resources/icons/minus.svg" />
+                        <img className="image" src="content/minus.svg" />
                     </div>
                     <div className="info">
                         <div className="info-label">{this.props.label}</div>
                         <div className={style}>{value}</div>
                     </div>
                     <div className="spin-button" onClick={e => this.click(e, +1)}>
-                        <img className="image" src="resources/icons/plus.svg" />
+                        <img className="image" src="content/plus.svg" />
                     </div>
                     {expander}
                     {factorSelector}

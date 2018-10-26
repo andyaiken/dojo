@@ -4,18 +4,13 @@ class ConditionPanel extends React.Component {
             var details = [];
             if (this.props.condition.name === "exhausted") {
                 details.push(
-                    <div key="spin" className="section spin">
-                        <div className="spin-button wide toggle" onClick={() => this.props.nudgeConditionValue(this.props.condition, "level", -1)}>
-                            <img className="image" src="content/minus.svg" />
-                        </div>
-                        <div className="spin-value">
-                            <div className="spin-label">level</div>
-                            <div className="spin-label">{this.props.condition.level}</div>
-                        </div>
-                        <div className="spin-button wide toggle" onClick={() => this.props.nudgeConditionValue(this.props.condition, "level", +1)}>
-                            <img className="image" src="content/plus.svg" />
-                        </div>
-                    </div>
+                    <Spin
+                        key="level"
+                        source={this.props.condition}
+                        name="level"
+                        label="level"
+                        nudgeValue={delta => this.props.nudgeConditionValue(this.props.condition, "level", delta)}
+                    />
                 );
                 details.push(<div key="div1" className="divider"></div>);
             }

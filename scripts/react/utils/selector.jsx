@@ -13,6 +13,7 @@ var options = [
 <Selector
     tabs={BOOLEAN}
     options={options}
+    noBorder={BOOLEAN}
     selectedID={CURRENT_OPTION_ID}
     select={optionID => this.changeValue(SOURCEOBJECT, FIELDNAME, optionID)}
 />
@@ -22,6 +23,9 @@ class Selector extends React.Component {
     render() {
         try {
             var style = (this.props.tabs) ? "selector tabs" : "selector radio";
+            if (this.props.noBorder) {
+                style += " no-border";
+            }
 
             var itemsPerRow = this.props.itemsPerRow ? this.props.itemsPerRow : this.props.options.length;
             var rowCount = Math.ceil(this.props.options.length / itemsPerRow);
@@ -70,22 +74,16 @@ class SelectorOption extends React.Component {
 
     render() {
         try {
-            var width = "calc((100% - 1px) / " + this.props.count + ")";
+            var width = "calc(((100% - 1px) / " + this.props.count + ") - 8px)";
 
             var style = "option";
             if (this.props.selected) {
                 style += " selected";
             }
 
-            var smallText = this.props.option.text;
-            if (this.props.option.smallText) {
-                smallText = this.props.option.smallText;
-            }
-
             return (
                 <div key={this.props.option.id} className={style} style={{ width: width }} title={this.props.option.text} onClick={e => this.click(e)}>
-                    <div className="hidden-sm hidden-xs">{this.props.option.text}</div>
-                    <div className="hidden-lg hidden-md">{smallText}</div>
+                    {this.props.option.text}
                 </div>
             );
         } catch (ex) {

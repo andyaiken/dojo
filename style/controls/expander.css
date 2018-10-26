@@ -1,5 +1,5 @@
 ﻿.expander {
-    margin: 10px 0;
+    margin: 5px 0;
     border: 0px solid #888888;
     border-left-width: 5px;
 }
@@ -15,7 +15,7 @@
     }
 
     .expander:hover .expander-header {
-        background-color: black;
+        background-color: rgb(0, 0, 0);
         background-color: rgba(0, 0, 0, 0.1);
     }
 

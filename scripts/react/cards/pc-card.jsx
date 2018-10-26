@@ -74,28 +74,12 @@ class PCCard extends React.Component {
                                 <input type="text" value={this.props.combatant.background} onChange={event => this.props.changeValue(this.props.combatant, "background", event.target.value)} />
                             </div>
                             <div className="divider"></div>
-                            <div className="section spin">
-                                <div className="spin-button toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "level", -5)}>
-                                    <img className="image" src="content/minus.svg" />
-                                    <span className="spin-delta">5</span>
-                                </div>
-                                <div className="spin-button toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "level", -1)}>
-                                    <img className="image" src="content/minus.svg" />
-                                    <span className="spin-delta">1</span>
-                                </div>
-                                <div className="spin-value">
-                                    <div className="spin-label">level</div>
-                                    <div className="spin-label">{this.props.combatant.level}</div>
-                                </div>
-                                <div className="spin-button toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "level", +1)}>
-                                    <img className="image" src="content/plus.svg" />
-                                    <span className="spin-delta">1</span>
-                                </div>
-                                <div className="spin-button toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "level", +5)}>
-                                    <img className="image" src="content/plus.svg" />
-                                    <span className="spin-delta">5</span>
-                                </div>
-                            </div>
+                            <Spin
+                                source={this.props.combatant}
+                                name="level"
+                                label="level"
+                                nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "level", delta)}
+                            />
                             <div className="divider"></div>
                             <div className="section">
                                 <div className="input-label">languages:</div>
@@ -108,72 +92,24 @@ class PCCard extends React.Component {
                             </div>
                             <div className="divider"></div>
                             <div className="section subheading">passive skills</div>
-                            <div className="section spin">
-                                <div className="spin-button toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "passiveInsight", -5)}>
-                                    <img className="image" src="content/minus.svg" />
-                                    <span className="spin-delta">5</span>
-                                </div>
-                                <div className="spin-button toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "passiveInsight", -1)}>
-                                    <img className="image" src="content/minus.svg" />
-                                    <span className="spin-delta">1</span>
-                                </div>
-                                <div className="spin-value">
-                                    <div className="spin-label">insight</div>
-                                    <div className="spin-label">{this.props.combatant.passiveInsight}</div>
-                                </div>
-                                <div className="spin-button toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "passiveInsight", +1)}>
-                                    <img className="image" src="content/plus.svg" />
-                                    <span className="spin-delta">1</span>
-                                </div>
-                                <div className="spin-button toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "passiveInsight", +5)}>
-                                    <img className="image" src="content/plus.svg" />
-                                    <span className="spin-delta">5</span>
-                                </div>
-                            </div>
-                            <div className="section spin">
-                                <div className="spin-button toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "passiveInvestigation", -5)}>
-                                    <img className="image" src="content/minus.svg" />
-                                    <span className="spin-delta">5</span>
-                                </div>
-                                <div className="spin-button toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "passiveInvestigation", -1)}>
-                                    <img className="image" src="content/minus.svg" />
-                                    <span className="spin-delta">1</span>
-                                </div>
-                                <div className="spin-value">
-                                    <div className="spin-label">investigation</div>
-                                    <div className="spin-label">{this.props.combatant.passiveInvestigation}</div>
-                                </div>
-                                <div className="spin-button toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "passiveInvestigation", +1)}>
-                                    <img className="image" src="content/plus.svg" />
-                                    <span className="spin-delta">1</span>
-                                </div>
-                                <div className="spin-button toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "passiveInvestigation", +5)}>
-                                    <img className="image" src="content/plus.svg" />
-                                    <span className="spin-delta">5</span>
-                                </div>
-                            </div>
-                            <div className="section spin">
-                                <div className="spin-button toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "passivePerception", -5)}>
-                                    <img className="image" src="content/minus.svg" />
-                                    <span className="spin-delta">5</span>
-                                </div>
-                                <div className="spin-button toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "passivePerception", -1)}>
-                                    <img className="image" src="content/minus.svg" />
-                                    <span className="spin-delta">1</span>
-                                </div>
-                                <div className="spin-value">
-                                    <div className="spin-label">perception</div>
-                                    <div className="spin-label">{this.props.combatant.passivePerception}</div>
-                                </div>
-                                <div className="spin-button toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "passivePerception", +1)}>
-                                    <img className="image" src="content/plus.svg" />
-                                    <span className="spin-delta">1</span>
-                                </div>
-                                <div className="spin-button toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "passivePerception", +5)}>
-                                    <img className="image" src="content/plus.svg" />
-                                    <span className="spin-delta">5</span>
-                                </div>
-                            </div>
+                            <Spin
+                                source={this.props.combatant}
+                                name="passiveInsight"
+                                label="insight"
+                                nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "passiveInsight", delta)}
+                            />
+                            <Spin
+                                source={this.props.combatant}
+                                name="passiveInvestigation"
+                                label="investigation"
+                                nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "passiveInvestigation", delta)}
+                            />
+                            <Spin
+                                source={this.props.combatant}
+                                name="passivePerception"
+                                label="perception"
+                                nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "passivePerception", delta)}
+                            />
                         </div>
                     </div>
                 );
@@ -193,28 +129,13 @@ class PCCard extends React.Component {
                         </div>
                         <div style={{ display: this.state.showInit ? "" : "none" }}>
                             <div className="divider"></div>
-                            <div className="section spin">
-                                <div className="spin-button toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "initiative", -5)}>
-                                    <img className="image" src="content/minus.svg" />
-                                    <span className="spin-delta">5</span>
-                                </div>
-                                <div className="spin-button toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "initiative", -1)}>
-                                    <img className="image" src="content/minus.svg" />
-                                    <span className="spin-delta">1</span>
-                                </div>
-                                <div className="spin-value">
-                                    <div className="spin-label">initiative</div>
-                                    <div className="spin-label">{this.props.combatant.initiative}</div>
-                                </div>
-                                <div className="spin-button toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "initiative", +1)}>
-                                    <img className="image" src="content/plus.svg" />
-                                    <span className="spin-delta">1</span>
-                                </div>
-                                <div className="spin-button toggle" onClick={() => this.props.nudgeValue(this.props.combatant, "initiative", +5)}>
-                                    <img className="image" src="content/plus.svg" />
-                                    <span className="spin-delta">5</span>
-                                </div>
-                            </div>
+                            <Spin
+                                source={this.props.combatant}
+                                name="initiative"
+                                label="initiative"
+                                factors={[1, 5]}
+                                nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "initiative", delta)}
+                            />
                         </div>
                         <div className="divider"></div>
                         <div className="section centered">

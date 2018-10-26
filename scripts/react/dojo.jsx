@@ -1019,6 +1019,12 @@ class Dojo extends React.Component {
                     options: this.state.options
                 });
                 break;
+            default:
+                this.setState({
+                    library: this.state.library,
+                    modal: this.state.modal
+                });
+                break;
         }
     }
 

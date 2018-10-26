@@ -1,13 +1,12 @@
 ﻿.checkbox {
-    margin: 10px 0;
+    margin: 5px 0;
     border: 1px solid #C3C3C3;
     cursor: pointer;
     padding: 5px;
 }
 
     .checkbox:hover {
-        background-color: rgb(64, 192, 255);
-        background-color: rgba(64, 192, 255, 0.2);
+        border-color: rgb(0, 0, 0);
     }
 
     .checkbox .image {

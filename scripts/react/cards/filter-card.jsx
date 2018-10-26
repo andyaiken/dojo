@@ -79,31 +79,21 @@ class FilterCard extends React.Component {
                         <div className="section">
                             <input type="text" placeholder="name" value={this.props.filter.name} onChange={event => this.props.changeValue("name", event.target.value)} />
                         </div>
+                        <Spin
+                            source={this.props.filter}
+                            name="challengeMin"
+                            label="min cr"
+                            display={value => challenge(value)}
+                            nudgeValue={delta => this.props.nudgeValue("challengeMin", delta)}
+                        />
+                        <Spin
+                            source={this.props.filter}
+                            name="challengeMax"
+                            label="max cr"
+                            display={value => challenge(value)}
+                            nudgeValue={delta => this.props.nudgeValue("challengeMax", delta)}
+                        />
                         <div className="section">
-                            <div className="spin">
-                                <div className="spin-button wide toggle" onClick={() => this.props.nudgeValue("challengeMin", -1)}>
-                                    <img className="image" src="content/minus.svg" />
-                                </div>
-                                <div className="spin-value">
-                                    <div className="spin-label">min challenge</div>
-                                    <div className="spin-label">{challenge(this.props.filter.challengeMin)}</div>
-                                </div>
-                                <div className="spin-button wide toggle" onClick={() => this.props.nudgeValue("challengeMin", +1)}>
-                                    <img className="image" src="content/plus.svg" />
-                                </div>
-                            </div>
-                            <div className="spin">
-                                <div className="spin-button wide toggle" onClick={() => this.props.nudgeValue("challengeMax", -1)}>
-                                    <img className="image" src="content/minus.svg" />
-                                </div>
-                                <div className="spin-value">
-                                    <div className="spin-label">max challenge</div>
-                                    <div className="spin-label">{challenge(this.props.filter.challengeMax)}</div>
-                                </div>
-                                <div className="spin-button wide toggle" onClick={() => this.props.nudgeValue("challengeMax", +1)}>
-                                    <img className="image" src="content/plus.svg" />
-                                </div>
-                            </div>
                             <div className="dropdown">
                                 <button className="dropdown-button" onClick={() => this.selectSize()}>
                                     <div className="title">{this.props.filter.size}</div>

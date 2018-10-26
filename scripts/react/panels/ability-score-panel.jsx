@@ -21,88 +21,52 @@ class AbilityScorePanel extends React.Component {
                     <div className="section">
                         <div className="ability-scores">
                             <div className="ability-score">
-                                <div className="spin">
-                                    <div className="ability-spin toggle" onClick={() => this.props.nudgeValue("abilityScores.str", -1)}>
-                                        <img className="image" src="content/minus.svg" />
-                                    </div>
-                                    <div className="ability-spin">
-                                        <div className="ability-heading">str</div>
-                                        <div className="ability-value">{this.props.combatant.abilityScores.str}</div>
-                                    </div>
-                                    <div className="ability-spin toggle" onClick={() => this.props.nudgeValue("abilityScores.str", +1)}>
-                                        <img className="image" src="content/plus.svg" />
-                                    </div>
-                                </div>
+                                <Spin
+                                    source={this.props.combatant.abilityScores}
+                                    name="str"
+                                    label="str"
+                                    nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "abilityScores.str", delta)}
+                                />
                             </div>
                             <div className="ability-score">
-                                <div className="spin">
-                                    <div className="ability-spin toggle" onClick={() => this.props.nudgeValue("abilityScores.dex", -1)}>
-                                        <img className="image" src="content/minus.svg" />
-                                    </div>
-                                    <div className="ability-spin">
-                                        <div className="ability-heading">dex</div>
-                                        <div className="ability-value">{this.props.combatant.abilityScores.dex}</div>
-                                    </div>
-                                    <div className="ability-spin toggle" onClick={() => this.props.nudgeValue("abilityScores.dex", +1)}>
-                                        <img className="image" src="content/plus.svg" />
-                                    </div>
-                                </div>
+                                <Spin
+                                    source={this.props.combatant.abilityScores}
+                                    name="dex"
+                                    label="dex"
+                                    nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "abilityScores.dex", delta)}
+                                />
                             </div>
                             <div className="ability-score">
-                                <div className="spin">
-                                    <div className="ability-spin toggle" onClick={() => this.props.nudgeValue("abilityScores.con", -1)}>
-                                        <img className="image" src="content/minus.svg" />
-                                    </div>
-                                    <div className="ability-spin">
-                                        <div className="ability-heading">con</div>
-                                        <div className="ability-value">{this.props.combatant.abilityScores.con}</div>
-                                    </div>
-                                    <div className="ability-spin toggle" onClick={() => this.props.nudgeValue("abilityScores.con", +1)}>
-                                        <img className="image" src="content/plus.svg" />
-                                    </div>
-                                </div>
+                                <Spin
+                                    source={this.props.combatant.abilityScores}
+                                    name="con"
+                                    label="con"
+                                    nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "abilityScores.con", delta)}
+                                />
                             </div>
                             <div className="ability-score">
-                                <div className="spin">
-                                    <div className="ability-spin toggle" onClick={() => this.props.nudgeValue("abilityScores.int", -1)}>
-                                        <img className="image" src="content/minus.svg" />
-                                    </div>
-                                    <div className="ability-spin">
-                                        <div className="ability-heading">int</div>
-                                        <div className="ability-value">{this.props.combatant.abilityScores.int}</div>
-                                    </div>
-                                    <div className="ability-spin toggle" onClick={() => this.props.nudgeValue("abilityScores.int", +1)}>
-                                        <img className="image" src="content/plus.svg" />
-                                    </div>
-                                </div>
+                                <Spin
+                                    source={this.props.combatant.abilityScores}
+                                    name="int"
+                                    label="int"
+                                    nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "abilityScores.int", delta)}
+                                />
                             </div>
                             <div className="ability-score">
-                                <div className="spin">
-                                    <div className="ability-spin toggle" onClick={() => this.props.nudgeValue("abilityScores.wis", -1)}>
-                                        <img className="image" src="content/minus.svg" />
-                                    </div>
-                                    <div className="ability-spin">
-                                        <div className="ability-heading">wis</div>
-                                        <div className="ability-value">{this.props.combatant.abilityScores.wis}</div>
-                                    </div>
-                                    <div className="ability-spin toggle" onClick={() => this.props.nudgeValue("abilityScores.wis", +1)}>
-                                        <img className="image" src="content/plus.svg" />
-                                    </div>
-                                </div>
+                                <Spin
+                                    source={this.props.combatant.abilityScores}
+                                    name="wis"
+                                    label="wis"
+                                    nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "abilityScores.wis", delta)}
+                                />
                             </div>
                             <div className="ability-score">
-                                <div className="spin">
-                                    <div className="ability-spin toggle" onClick={() => this.props.nudgeValue("abilityScores.cha", -1)}>
-                                        <img className="image" src="content/minus.svg" />
-                                    </div>
-                                    <div className="ability-spin">
-                                        <div className="ability-heading">cha</div>
-                                        <div className="ability-value">{this.props.combatant.abilityScores.cha}</div>
-                                    </div>
-                                    <div className="ability-spin toggle" onClick={() => this.props.nudgeValue("abilityScores.cha", +1)}>
-                                        <img className="image" src="content/plus.svg" />
-                                    </div>
-                                </div>
+                                <Spin
+                                    source={this.props.combatant.abilityScores}
+                                    name="cha"
+                                    label="cha"
+                                    nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "abilityScores.cha", delta)}
+                                />
                             </div>
                         </div>
                     </div>

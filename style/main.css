@@ -407,19 +407,9 @@ button {
 
         .card .section .ability-score {
             display: inline-block;
-            width: calc((100% - 1px) / 6);
+            width: calc(((100% - 1px) / 6) - 10px);
+            padding: 0 5px;
         }
-
-            .card .section .ability-score .spin {
-                margin: 0 20px;
-            }
-
-                .card .section .ability-score .spin .ability-spin {
-                    display: inline-block;
-                    text-align: center;
-                    vertical-align: middle;
-                    width: calc((100% - 1px) / 3);
-                }
 
         .card .section .key-stat {
             display: inline-block;
@@ -466,10 +456,6 @@ button {
             background-color: #DDDDDD;
         }
 
-    .card .spin .spin-value .spin-label {
-        font-weight: 600;
-    }
-
     .card .table {
         background-color: white;
         border: 1px solid #C3C3C3;
@@ -496,13 +482,6 @@ button {
         height: 20px;
         cursor: pointer;
         display: inline-block;
-        vertical-align: middle;
-    }
-
-    .card .spin .image {
-        width: 20px;
-        height: 20px;
-        padding: 10px 0;
         vertical-align: middle;
     }
 
@@ -612,38 +591,6 @@ button {
         .hp-gauge .bar.temp {
             background-color: cornflowerblue;
         }
-        
-.spin .spin-button {
-    display: inline-block;
-    width: 15%;
-    text-align: center;
-    vertical-align: middle;
-    cursor: pointer;
-}
-
-    .spin .spin-button:hover {
-        background-color: #DDDDDD;
-    }
-
-    .spin .spin-button.wide {
-        width: 30%;
-    }
-
-    .spin .spin-button .spin-delta {
-        vertical-align: middle;
-        margin: 0 2px;
-    }
-
-.spin .spin-value {
-    display: inline-block;
-    width: 40%;
-    vertical-align: middle;
-}
-
-    .spin .spin-value .spin-label {
-        text-align: center;
-        padding: 1px 0;
-    }
 
 .image.rotate {
     transform: rotate(-180deg);
