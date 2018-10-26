@@ -9,6 +9,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         cursor: pointer;
+        padding: 3px;
     }
 
         .selector .option.selected {
@@ -16,17 +17,16 @@
         }
 
     .selector.tabs {
-        height: 40px;
+        display: block;
     }
 
         .selector.tabs .option {
-            height: 33px;
             line-height: 25px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
-            border-bottom: 2px solid rgb(128, 128, 128);
-            border-bottom: 2px solid rgba(128, 128, 128, 0.5);
+            border-bottom: 2px solid rgb(0, 0, 0);
+            border-bottom: 2px solid rgba(0, 0, 0, 0.3);
         }
 
             .selector.tabs .option:hover {
@@ -55,7 +55,6 @@
 
         .selector.radio .option {
             vertical-align: middle;
-            padding: 3px;
         }
 
             .selector.radio .option:hover {
@@ -65,7 +64,7 @@
 
             .selector.radio .option.selected {
                 background-color: rgb(0, 0, 0);
-                background-color: rgba(0, 0, 0, 0.2);
+                background-color: rgba(0, 0, 0, 0.1);
                 font-weight: 600;
                 cursor: default;
             }

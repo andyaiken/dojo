@@ -1,6 +1,6 @@
 ﻿.expander {
     margin: 5px 0;
-    border: 0px solid #888888;
+    border: 0px solid #C3C3C3;
     border-left-width: 5px;
 }
 
@@ -11,6 +11,7 @@
     .expander .expander-header {
         display: block;
         padding-left: 10px;
+        padding-right: 6px;
         cursor: pointer;
     }
 

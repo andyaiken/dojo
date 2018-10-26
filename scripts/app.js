@@ -5694,15 +5694,125 @@ var AboutScreen = function (_React$Component) {
     function AboutScreen() {
         _classCallCheck(this, AboutScreen);
 
-        return _possibleConstructorReturn(this, (AboutScreen.__proto__ || Object.getPrototypeOf(AboutScreen)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (AboutScreen.__proto__ || Object.getPrototypeOf(AboutScreen)).call(this));
+
+        _this.state = {
+            optionID: "abc",
+            value: 0,
+            selected: false
+        };
+        return _this;
     }
 
     _createClass(AboutScreen, [{
+        key: "setOption",
+        value: function setOption(optionID) {
+            this.setState({
+                optionID: optionID
+            });
+        }
+    }, {
+        key: "setValue",
+        value: function setValue(value) {
+            this.setState({
+                value: value
+            });
+        }
+    }, {
+        key: "setSelected",
+        value: function setSelected(selected) {
+            this.setState({
+                selected: selected
+            });
+        }
+    }, {
         key: "render",
         value: function render() {
             var _this2 = this;
 
             try {
+                var devOptions = [{
+                    id: "abc",
+                    text: "ABC"
+                }, {
+                    id: "def",
+                    text: "DEF"
+                }, {
+                    id: "ghi",
+                    text: "GHI"
+                }];
+
+                var dev = null;
+                if (false) {
+                    dev = React.createElement(
+                        "div",
+                        { className: "group" },
+                        React.createElement(
+                            "div",
+                            { className: "heading" },
+                            "dev"
+                        ),
+                        React.createElement(
+                            "button",
+                            null,
+                            "button"
+                        ),
+                        React.createElement(ConfirmButton, {
+                            text: "confirm",
+                            callback: function callback() {
+                                return _this2.setSelected(false);
+                            }
+                        }),
+                        React.createElement(Dropdown, {
+                            options: devOptions,
+                            selectedID: this.state.optionID,
+                            select: function select(optionID) {
+                                return _this2.setOption(optionID);
+                            }
+                        }),
+                        React.createElement(Expander, {
+                            text: "expander",
+                            content: React.createElement(
+                                "div",
+                                null,
+                                "content"
+                            )
+                        }),
+                        React.createElement(Spin, {
+                            source: this.state,
+                            name: "value",
+                            label: "value",
+                            factors: [1, 10, 100],
+                            nudgeValue: function nudgeValue(delta) {
+                                return _this2.setValue(_this2.state.value + delta);
+                            }
+                        }),
+                        React.createElement(Checkbox, {
+                            label: "checkbox",
+                            checked: this.state.selected,
+                            changeValue: function changeValue(value) {
+                                return _this2.setSelected(value);
+                            }
+                        }),
+                        React.createElement(Selector, {
+                            tabs: true,
+                            options: devOptions,
+                            selectedID: this.state.optionID,
+                            select: function select(optionID) {
+                                return _this2.setOption(optionID);
+                            }
+                        }),
+                        React.createElement(Selector, {
+                            tabs: false,
+                            options: devOptions,
+                            selectedID: this.state.optionID,
+                            select: function select(optionID) {
+                                return _this2.setOption(optionID);
+                            }
+                        })
+                    );
+                }
+
                 return React.createElement(
                     "div",
                     { className: "about" },
@@ -5751,7 +5861,8 @@ var AboutScreen = function (_React$Component) {
                                     return _this2.props.changeValue(_this2.props.options, "showHelp", value);
                                 }
                             })
-                        )
+                        ),
+                        dev
                     ),
                     React.createElement(
                         "div",

@@ -1,6 +1,95 @@
 class AboutScreen extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            optionID: "abc",
+            value: 0,
+            selected: false
+        };
+    }
+
+    setOption(optionID) {
+        this.setState({
+            optionID: optionID
+        });
+    }
+
+    setValue(value) {
+        this.setState({
+            value: value
+        });
+    }
+
+    setSelected(selected) {
+        this.setState({
+            selected: selected
+        });
+    }
+
     render() {
         try {
+            var devOptions = [
+                {
+                    id: "abc",
+                    text: "ABC"
+                },
+                {
+                    id: "def",
+                    text: "DEF"
+                },
+                {
+                    id: "ghi",
+                    text: "GHI"
+                }
+            ];
+
+            var dev = null;
+            if (false) {
+                dev = (
+                    <div className="group">
+                        <div className="heading">dev</div>
+                        <button>button</button>
+                        <ConfirmButton
+                            text="confirm"
+                            callback={() => this.setSelected(false)}
+                        />
+                        <Dropdown
+                            options={devOptions}
+                            selectedID={this.state.optionID}
+                            select={optionID => this.setOption(optionID)}
+                        />
+                        <Expander
+                            text="expander"
+                            content={<div>content</div>}
+                        />
+                        <Spin
+                            source={this.state}
+                            name="value"
+                            label="value"
+                            factors={[1, 10, 100]}
+                            nudgeValue={delta => this.setValue(this.state.value + delta)}
+                        />
+                        <Checkbox
+                            label="checkbox"
+                            checked={this.state.selected}
+                            changeValue={value => this.setSelected(value)}
+                        />
+                        <Selector
+                            tabs={true}
+                            options={devOptions}
+                            selectedID={this.state.optionID}
+                            select={optionID => this.setOption(optionID)}
+                        />
+                        <Selector
+                            tabs={false}
+                            options={devOptions}
+                            selectedID={this.state.optionID}
+                            select={optionID => this.setOption(optionID)}
+                        />
+                    </div>
+                );
+            }
+            
             return (
                 <div className="about">
                     <div className="left-pane scrollable">
@@ -18,6 +107,7 @@ class AboutScreen extends React.Component {
                                 changeValue={value => this.props.changeValue(this.props.options, "showHelp", value)}
                             />
                         </div>
+                        {dev}
                     </div>
                     <div className="right-pane scrollable">
                         <div className="group">

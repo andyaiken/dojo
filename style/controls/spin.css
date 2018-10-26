@@ -20,8 +20,7 @@
         width: 20px;
         cursor: pointer;
         background-color: transparent;
-        padding: 5px;
-        margin: 0 10px;
+        padding: 5px 10px;
     }
 
         .spin .spin-button:hover {
@@ -30,7 +29,7 @@
         }
 
     .spin .info {
-        width: calc(100% - 100px);
+        width: calc(100% - 80px);
         margin: 2px 0;
     }
 

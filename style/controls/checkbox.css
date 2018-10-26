@@ -1,6 +1,7 @@
 ﻿.checkbox {
     margin: 5px 0;
     border: 1px solid #C3C3C3;
+    border-left-width: 5px;
     cursor: pointer;
     padding: 5px;
 }
@@ -21,4 +22,5 @@
         vertical-align: middle;
         margin-left: 5px;
         width: calc(100% - 25px);
+        font-weight: 600;
     }
