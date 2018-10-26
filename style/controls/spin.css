@@ -1,6 +1,7 @@
 ﻿.spin {
     margin: 5px 0;
     border: 1px solid #C3C3C3;
+    background-color: white;
 }
 
     .spin:hover {
@@ -25,21 +26,19 @@
 
         .spin .spin-button:hover {
             background-color: rgb(0, 0, 0);
-            background-color: rgba(0, 0, 0, 0.2);
+            background-color: rgba(0, 0, 0, 0.1);
         }
 
     .spin .info {
         width: calc(100% - 100px);
+        margin: 2px 0;
     }
 
         .spin .info .info-label {
-            margin-top: 5px;
             font-size: 11px;
         }
 
         .spin .info .info-value {
-            margin-bottom: 5px;
-            text-align: center;
             font-weight: 600;
             font-size: 15px;
         }

@@ -354,7 +354,7 @@ var EncounterCard = function (_React$Component) {
 
         _this.state = {
             showDetails: false,
-            partyId: null
+            partyID: null
         };
         return _this;
     }
@@ -368,9 +368,9 @@ var EncounterCard = function (_React$Component) {
         }
     }, {
         key: "selectParty",
-        value: function selectParty(partyId) {
+        value: function selectParty(partyID) {
             this.setState({
-                partyId: partyId
+                partyID: partyID
             });
         }
     }, {
@@ -412,7 +412,7 @@ var EncounterCard = function (_React$Component) {
 
                     if (this.state.partyID) {
                         var selectedParty = this.props.parties.find(function (p) {
-                            return p.id === _this2.state.partyId;
+                            return p.id === _this2.state.partyID;
                         });
 
                         var xpEasy = 0;
@@ -483,7 +483,7 @@ var EncounterCard = function (_React$Component) {
                             { style: { display: this.props.parties.length !== 0 ? "" : "none" } },
                             React.createElement(Dropdown, {
                                 options: partyOptions,
-                                selectedID: this.state.partyId,
+                                selectedID: this.state.partyID,
                                 select: function select(optionID) {
                                     return _this2.selectParty(optionID);
                                 }
@@ -491,7 +491,7 @@ var EncounterCard = function (_React$Component) {
                         ),
                         React.createElement(
                             "div",
-                            { className: "table", style: { display: selectedParty ? "" : "none" } },
+                            { className: "table", style: { display: this.state.partyID ? "" : "none" } },
                             React.createElement(
                                 "div",
                                 null,
@@ -5002,7 +5002,7 @@ var CombatStartPanel = function (_React$Component) {
                     items.push(React.createElement(Dropdown, {
                         key: "party-dropdown",
                         options: partyOptions,
-                        selectedID: this.state.partyId,
+                        selectedID: this.state.partyID,
                         select: function select(optionID) {
                             return _this2.selectParty(optionID);
                         }
@@ -7079,7 +7079,6 @@ var ConfirmButton = function (_React$Component) {
     return ConfirmButton;
 }(React.Component);
 "use strict";
-"use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -7148,7 +7147,6 @@ var Dropdown = function (_React$Component) {
                 var content = [];
 
                 var selectedText = null;
-                var selectedTextStyle = null;
                 var title = null;
                 if (this.props.selectedID) {
                     var option = null;
@@ -7159,16 +7157,14 @@ var Dropdown = function (_React$Component) {
                     });
 
                     selectedText = option.text;
-                    selectedTextStyle = "dropdown-selection";
                     title = option.text;
                 } else {
-                    selectedText = this.props.text ? this.props.text : "Select...";
-                    selectedTextStyle = "dropdown-placeholder";
+                    selectedText = this.props.text ? this.props.text : "select...";
                 }
 
                 content.push(React.createElement(
                     "div",
-                    { key: "selection", className: selectedTextStyle, title: title },
+                    { key: "selection", className: "dropdown-top", title: title },
                     React.createElement(
                         "div",
                         { className: "item-text" },
@@ -7191,7 +7187,6 @@ var Dropdown = function (_React$Component) {
                         });
                     });
 
-                    //content.push(<hr key="divider" />);
                     content.push(React.createElement(
                         "div",
                         { key: "options", className: "dropdown-options" },

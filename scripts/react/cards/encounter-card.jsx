@@ -3,7 +3,7 @@ class EncounterCard extends React.Component {
         super();
         this.state = {
             showDetails: false,
-            partyId: null
+            partyID: null
         };
     }
 
@@ -13,9 +13,9 @@ class EncounterCard extends React.Component {
         })
     }
 
-    selectParty(partyId) {
+    selectParty(partyID) {
         this.setState({
-            partyId: partyId
+            partyID: partyID
         });
     }
 
@@ -53,7 +53,7 @@ class EncounterCard extends React.Component {
                 adjustedXp = monsterXp * experienceFactor(monsterCount);
 
                 if (this.state.partyID) {
-                    var selectedParty = this.props.parties.find(p => p.id === this.state.partyId);
+                    var selectedParty = this.props.parties.find(p => p.id === this.state.partyID);
 
                     var xpEasy = 0;
                     var xpMedium = 0;
@@ -114,11 +114,11 @@ class EncounterCard extends React.Component {
                         <div style={{ display: this.props.parties.length !== 0 ? "" : "none" }}>
                             <Dropdown
                                 options={partyOptions}
-                                selectedID={this.state.partyId}
+                                selectedID={this.state.partyID}
                                 select={optionID => this.selectParty(optionID)}
                             />
                         </div>
-                        <div className="table" style={{ display: selectedParty ? "" : "none" }}>
+                        <div className="table" style={{ display: this.state.partyID ? "" : "none" }}>
                             <div>
                                 <div className="cell four"><b>easy</b></div>
                                 <div className="cell four"><b>medium</b></div>

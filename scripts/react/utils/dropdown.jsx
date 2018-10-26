@@ -46,7 +46,6 @@ class Dropdown extends React.Component {
             var content = [];
 
             var selectedText = null;
-            var selectedTextStyle = null;
             var title = null;
             if (this.props.selectedID) {
                 var option = null;
@@ -57,15 +56,13 @@ class Dropdown extends React.Component {
                 });
 
                 selectedText = option.text;
-                selectedTextStyle = "dropdown-selection";
                 title = option.text;
             } else {
-                selectedText = this.props.text ? this.props.text : "Select...";
-                selectedTextStyle = "dropdown-placeholder";
+                selectedText = this.props.text ? this.props.text : "select...";
             }
 
             content.push(
-                <div key="selection" className={selectedTextStyle} title={title}>
+                <div key="selection" className="dropdown-top" title={title}>
                     <div className="item-text">{selectedText}</div>
                     <img className={this.state.open ? "arrow open" : "arrow"} src="content/down-arrow-black.svg" />
                 </div>
@@ -85,7 +82,6 @@ class Dropdown extends React.Component {
                     );
                 });
 
-                //content.push(<hr key="divider" />);
                 content.push(
                     <div key="options" className="dropdown-options">
                         {items}

@@ -1,6 +1,5 @@
 ﻿.dropdown {
     margin: 5px 0;
-    border: 1px solid #C3C3C3;
     background-color: white;
     cursor: pointer;
     white-space: nowrap;
@@ -8,29 +7,20 @@
     text-overflow: ellipsis;
 }
 
-    .dropdown:hover {
-        border-color: rgb(0, 0, 0);
-    }
-
-    .dropdown .dropdown-placeholder {
-        margin: 2px;
-        padding: 5px 10px;
-    }
-
-    .dropdown .dropdown-selection {
+    .dropdown .dropdown-top {
         padding: 5px 10px;
         font-weight: 600;
+        border: 1px solid #C3C3C3;
+        border-left-width: 5px;
     }
 
-        .dropdown .dropdown-placeholder:hover,
-        .dropdown .dropdown-selection:hover,
-        .dropdown.open .dropdown-selection {
+        .dropdown:hover .dropdown-top {
+            border-color: rgb(0, 0, 0);
             background-color: rgb(0, 0, 0);
             background-color: rgba(0, 0, 0, 0.1);
         }
 
-        .dropdown .dropdown-placeholder .item-text,
-        .dropdown .dropdown-selection .item-text {
+        .dropdown .dropdown-top .item-text {
             display: inline-block;
             vertical-align: middle;
             height: 20px;
@@ -41,24 +31,27 @@
             text-overflow: ellipsis;
         }
 
-        .dropdown .dropdown-placeholder .arrow,
-        .dropdown .dropdown-selection .arrow {
+        .dropdown .dropdown-top .arrow {
             display: inline-block;
             vertical-align: middle;
             height: 20px;
             width: 20px;
         }
 
-    .dropdown.open .dropdown-placeholder .arrow,
-    .dropdown.open .dropdown-selection .arrow {
+    .dropdown.open .dropdown-top .arrow {
         transform: rotate(-180deg);
     }
 
     .dropdown .dropdown-options {
-        border-top: 1px solid #C3C3C3;
+        border: 1px solid #C3C3C3;
+        border-top-width: 0;
         max-height: 142px;
         overflow-y: auto;
     }
+
+        .dropdown:hover .dropdown-options {
+            border-color: rgb(0, 0, 0);
+        }
 
         .dropdown .dropdown-options .dropdown-option {
             margin: 3px;

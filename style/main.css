@@ -212,23 +212,24 @@ button {
     font-size: 12px;
     font-family: "Segoe UI", Helvetica, Arial, sans-serif;
     font-weight: 600;
-    background-color: #FAFAFA;
+    background-color: white;
     border: 1px solid #C3C3C3;
     border-left-width: 5px;
     margin: 3px 0;
-    padding: 5px 8px 7px 8px;
+    padding: 5px 9px 5px 8px;
     cursor: pointer;
 }
 
     button:hover {
-        background-color: #EEEEEE;
         border-color: black;
     }
 
     button.disabled {
-        background-color: rgb(235, 235, 235);
-        color: rgb(180, 180, 180);
+        background-color: white;
+        border-color: #C3C3C3;
+        opacity: 0.5;
         cursor: default;
+        pointer-events: none;
     }
 
     button .destructive, button .non-destructive {
@@ -251,7 +252,7 @@ button {
     }
 
     button .title {
-        width: calc(100% - 21px);
+        width: calc(100% - 26px);
         display: inline-block;
         vertical-align: middle;
         height: 16px;
@@ -259,8 +260,8 @@ button {
     }
 
     button .image {
-        width: 16px;
-        height: 16px;
+        width: 20px;
+        height: 20px;
         display: inline-block;
         vertical-align: middle;
         padding-left: 5px;

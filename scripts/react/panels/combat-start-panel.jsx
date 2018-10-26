@@ -73,7 +73,7 @@ class CombatStartPanel extends React.Component {
                     <Dropdown
                         key="party-dropdown"
                         options={partyOptions}
-                        selectedID={this.state.partyId}
+                        selectedID={this.state.partyID}
                         select={optionID => this.selectParty(optionID)}
                     />
                 );
