@@ -990,24 +990,33 @@ class Dojo extends React.Component {
             case "parties":
                 this.sort(this.state.parties);
                 this.setState({
+                    selectedPartyID: this.state.selectedPartyID,
                     parties: this.state.parties
                 });
                 break;
             case "library":
                 this.sort(this.state.library);
                 this.setState({
+                    selectedMonsterGroupID: this.state.selectedMonsterGroupID,
                     library: this.state.library
                 });
                 break;
             case "encounter":
                 this.sort(this.state.encounters);
                 this.setState({
+                    selectedEncounterID: this.state.selectedEncounterID,
                     encounters: this.state.encounters
                 });
                 break;
             case "combat":
                 this.setState({
+                    selectedCombatID: this.state.selectedCombatID,
                     combats: this.state.combats
+                });
+                break;
+            case "about":
+                this.setState({
+                    options: this.state.options
                 });
                 break;
         }
@@ -1180,9 +1189,10 @@ class Dojo extends React.Component {
                         <AboutScreen
                             showHelp={this.state.options.showHelp}
                             options={this.state.options}
-                            toggleHelp={value => this.toggleHelp(value)}
+                            //toggleHelp={value => this.toggleHelp(value)}
                             resetAll={() => this.resetAll()}
-                            changeOption={(option, value) => this.changeOption(option, value)}
+                            //changeOption={(option, value) => this.changeOption(option, value)}
+                            changeValue={(source, type, value) => this.changeValue(source, type, value)}
                         />
                     );
                     break;

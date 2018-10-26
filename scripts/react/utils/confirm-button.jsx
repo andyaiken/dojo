@@ -1,3 +1,10 @@
+/*
+<ConfirmButton
+    text="TEXT"
+    callback={() => CALLBACK_FUNCTION}
+/>
+*/
+
 class ConfirmButton extends React.Component {
     constructor() {
         super();
@@ -45,8 +52,9 @@ class ConfirmButton extends React.Component {
                     {content}
                 </button>
             );
-        } catch (e) {
-            console.error(e);
+        } catch (ex) {
+            console.error(ex);
+            return null;
         }
     }
 }

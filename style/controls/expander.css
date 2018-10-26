@@ -1,0 +1,47 @@
+﻿.expander {
+    margin: 10px 0;
+    border: 0px solid #888888;
+    border-left-width: 5px;
+}
+
+    .expander:hover {
+        border-color: black;
+    }
+
+    .expander .expander-header {
+        display: block;
+        padding-left: 10px;
+        cursor: pointer;
+    }
+
+    .expander:hover .expander-header {
+        background-color: black;
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+        .expander .expander-header .expander-text {
+            display: inline-block;
+            width: calc(100% - 40px);
+            height: 30px;
+            line-height: 30px;
+            vertical-align: middle;
+            font-weight: 600;
+        }
+
+        .expander .expander-header .expander-button {
+            display: inline-block;
+            height: 20px;
+            width: 20px;
+            padding: 5px;
+            margin-left: 10px;
+            vertical-align: middle;
+            border-radius: 50%;
+        }
+
+    .expander.expanded .expander-header .expander-button {
+        transform: rotate(-180deg);
+    }
+
+    .expander.expanded .expander-content {
+        margin: 5px 10px 10px 10px;
+    }

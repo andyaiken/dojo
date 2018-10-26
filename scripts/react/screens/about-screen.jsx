@@ -12,10 +12,11 @@ class AboutScreen extends React.Component {
                         <div className="group">
                             <div className="heading">options</div>
                             <ConfirmButton text="clear all data" callback={() => this.props.resetAll()} />
-                            <div className="checkbox" onClick={() => this.props.changeOption("showHelp", !this.props.options.showHelp)}>
-                                <img className="image" src={this.props.options.showHelp ? "content/checked.svg" : "content/unchecked.svg"} />
-                                <div className="checkbox-text">show help cards</div>
-                            </div>
+                            <Checkbox
+                                label="show help cards"
+                                checked={this.props.options.showHelp}
+                                changeValue={value => this.props.changeValue(this.props.options, "showHelp", value)}
+                            />
                         </div>
                     </div>
                     <div className="right-pane scrollable">

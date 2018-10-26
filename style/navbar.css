@@ -1,0 +1,32 @@
+﻿.navbar {
+    height: 30px;
+    padding: 10px 5px;
+    text-align: center;
+    background-color: #404040;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+}
+
+    .navbar .navigator-item {
+        display: inline-block;
+        padding: 5px;
+        margin: 0 1px;
+        cursor: pointer;
+        height: 20px;
+        width: 150px;
+        font-size: 14px;
+        color: white;
+    }
+
+        .navbar .navigator-item.disabled {
+            cursor: default;
+            color: #999999;
+        }
+
+        .navbar .navigator-item.selected,
+        .navbar .navigator-item:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .navbar .navigator-item.disabled:hover {
+            background-color: #404040;
+        }

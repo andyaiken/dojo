@@ -1,0 +1,68 @@
+﻿.selector {
+    margin: 10px 0;
+}
+
+    .selector .option {
+        display: inline-block;
+        text-align: center;
+        padding: 3px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+    }
+
+        .selector .option.selected {
+            cursor: default;
+        }
+
+    .selector.tabs {
+        height: 40px;
+    }
+
+        .selector.tabs .option {
+            height: 33px;
+            line-height: 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid rgb(128, 128, 128);
+            border-bottom: 2px solid rgba(128, 128, 128, 0.5);
+        }
+
+            .selector.tabs .option:hover {
+                border-bottom: 2px solid rgb(64, 192, 255);
+            }
+
+            .selector.tabs .option.selected {
+                background-color: rgb(64, 192, 255);
+                background-color: rgba(64, 192, 255, 0.2);
+                border-bottom: 2px solid rgb(64, 192, 255);
+                cursor: default;
+            }
+
+    .selector.radio {
+        padding: 2px;
+        border: 1px solid #222222;
+    }
+
+        .selector.radio:hover {
+            background-color: rgb(64, 192, 255);
+            background-color: rgba(64, 192, 255, 0.2);
+            border-color: rgb(64, 192, 255);
+        }
+
+        .selector.radio .option {
+            vertical-align: middle;
+        }
+
+            .selector.radio .option:hover {
+                background-color: rgb(64, 192, 255);
+                background-color: rgba(64, 192, 255, 0.4);
+            }
+
+            .selector.radio .option.selected {
+                background-color: rgb(64, 192, 255);
+                background-color: rgba(64, 192, 255, 0.6);
+                font-weight: 600;
+                cursor: default;
+            }

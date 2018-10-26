@@ -15,10 +15,6 @@ b {
     color: #000000;
 }
 
-input[type=checkbox] {
-    vertical-align: middle;
-}
-
 input[type=text],
 textarea {
     height: 20px;
@@ -226,6 +222,7 @@ button {
 
     button:hover {
         background-color: #EEEEEE;
+        border-color: black;
     }
 
     button.disabled {
@@ -509,45 +506,6 @@ button {
         vertical-align: middle;
     }
 
-    .card .mini-card {
-        background-color: white;
-        border: 1px solid #000065;
-        margin: 5px 0;
-    }
-
-        .card .mini-card .heading {
-            height: 20px;
-            background-color: #000065;
-            font-size: 12px;
-            padding: 5px;
-            cursor: pointer;
-        }
-
-            .card .mini-card .heading .title {
-                width: calc(100% - 16px);
-                display: inline-block;
-                vertical-align: middle;
-            }
-
-            .card .mini-card .heading .image {
-                width: 16px;
-                height: 16px;
-                display: inline-block;
-                vertical-align: middle;
-            }
-
-        .card .mini-card .mini-card-content {
-            margin: 5px;
-        }
-
-        .card .mini-card .divider {
-            border-top: 1px solid #000065;
-        }
-
-        .card .mini-card .condition-text {
-            padding: 2px 0;
-        }
-
 .chart {
     height: 300px;
     border: 1px solid #C3C3C3;
@@ -654,105 +612,7 @@ button {
         .hp-gauge .bar.temp {
             background-color: cornflowerblue;
         }
-
-.checkbox {
-    border: 1px solid #C3C3C3;
-    margin: 3px 0;
-    cursor: pointer;
-}
-
-    .checkbox:hover {
-        background-color: #EEEEEE;
-    }
-
-    .checkbox .image {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        padding: 5px;
-        vertical-align: middle;
-    }
-
-    .checkbox .checkbox-text {
-        display: inline-block;
-        vertical-align: middle;
-    }
-
-.titlebar {
-    height: 30px;
-    padding: 10px 5px;
-    background-color: #404040;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
-}
-
-    .titlebar .app-name {
-        padding: 4px 6px 8px 6px;
-        margin: 0 5px;
-        height: 20px;
-        line-height: 20px;
-        font-size: 20px;
-        font-weight: 600;
-        color: white;
-        border-left: 3px solid white;
-    }
-
-    .titlebar .action {
-        position: absolute;
-        right: 50px;
-        top: 7px;
-    }
-
-        .titlebar .action .section {
-            display: inline-block;
-            margin: 0 5px;
-        }
-
-    .titlebar .settings-icon {
-        position: absolute;
-        right: 0;
-        top: 0;
-        height: 30px;
-        width: 30px;
-        padding: 10px;
-        cursor: pointer;
-    }
-
-        .titlebar .settings-icon:hover {
-            background-color: rgba(255, 255, 255, 0.3);
-        }
         
-.navbar {
-    height: 30px;
-    padding: 10px 5px;
-    text-align: center;
-    background-color: #404040;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
-}
-
-    .navbar .navigator-item {
-        display: inline-block;
-        padding: 5px;
-        cursor: pointer;
-        height: 20px;
-        width: 150px;
-        font-size: 14px;
-        color: white;
-    }
-
-        .navbar .navigator-item.disabled {
-            cursor: default;
-            color: #999999;
-        }
-
-        .navbar .navigator-item.selected,
-        .navbar .navigator-item:hover {
-            background-color: rgba(255, 255, 255, 0.3);
-        }
-
-        .navbar .navigator-item.disabled:hover {
-            background-color: #404040;
-        }
-
 .spin .spin-button {
     display: inline-block;
     width: 15%;

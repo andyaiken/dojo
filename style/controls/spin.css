@@ -1,0 +1,66 @@
+﻿.spin {
+    margin: 10px 0;
+    border: 1px solid #222222;
+}
+
+    .spin:hover {
+        border-color: rgb(64, 192, 255);
+        background-color: rgb(64, 192, 255);
+        background-color: rgba(64, 192, 255, 0.2);
+    }
+
+    .spin .spin-button,
+    .spin .info {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .spin .spin-button {
+        height: 40px;
+        width: 40px;
+        cursor: pointer;
+        background-color: transparent;
+        border-radius: 50%;
+        margin: 10px;
+    }
+
+        .spin .spin-button:hover {
+            background-color: rgb(64, 192, 255);
+            background-color: rgba(64, 192, 255, 0.7);
+        }
+
+    .spin .info {
+        width: calc(100% - 120px);
+    }
+
+        .spin .info .info-label {
+            margin-top: 5px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 11px;
+        }
+
+        .spin .info .info-value {
+            margin-bottom: 5px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 20px;
+        }
+
+            .spin .info .info-value.dimmed {
+                opacity: 0.25;
+            }
+
+    .spin .spin-expander {
+        text-align: center;
+        cursor: pointer;
+        height: 20px;
+    }
+
+        .spin .spin-expander:hover {
+            background-color: rgb(64, 192, 255);
+        }
+
+    .spin .factor-selector {
+        margin: 0 10px;
+    }

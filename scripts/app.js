@@ -4704,24 +4704,33 @@ var Dojo = function (_React$Component) {
                 case "parties":
                     this.sort(this.state.parties);
                     this.setState({
+                        selectedPartyID: this.state.selectedPartyID,
                         parties: this.state.parties
                     });
                     break;
                 case "library":
                     this.sort(this.state.library);
                     this.setState({
+                        selectedMonsterGroupID: this.state.selectedMonsterGroupID,
                         library: this.state.library
                     });
                     break;
                 case "encounter":
                     this.sort(this.state.encounters);
                     this.setState({
+                        selectedEncounterID: this.state.selectedEncounterID,
                         encounters: this.state.encounters
                     });
                     break;
                 case "combat":
                     this.setState({
+                        selectedCombatID: this.state.selectedCombatID,
                         combats: this.state.combats
+                    });
+                    break;
+                case "about":
+                    this.setState({
+                        options: this.state.options
                     });
                     break;
             }
@@ -4995,15 +5004,14 @@ var Dojo = function (_React$Component) {
                     case "about":
                         content = React.createElement(AboutScreen, {
                             showHelp: this.state.options.showHelp,
-                            options: this.state.options,
-                            toggleHelp: function toggleHelp(value) {
-                                return _this5.toggleHelp(value);
-                            },
-                            resetAll: function resetAll() {
+                            options: this.state.options
+                            //toggleHelp={value => this.toggleHelp(value)}
+                            , resetAll: function resetAll() {
                                 return _this5.resetAll();
-                            },
-                            changeOption: function changeOption(option, value) {
-                                return _this5.changeOption(option, value);
+                            }
+                            //changeOption={(option, value) => this.changeOption(option, value)}
+                            , changeValue: function changeValue(source, type, value) {
+                                return _this5.changeValue(source, type, value);
                             }
                         });
                         break;
@@ -6141,114 +6149,74 @@ var ConditionPanel = function (_React$Component) {
     function ConditionPanel() {
         _classCallCheck(this, ConditionPanel);
 
-        var _this = _possibleConstructorReturn(this, (ConditionPanel.__proto__ || Object.getPrototypeOf(ConditionPanel)).call(this));
-
-        _this.state = {
-            showDetails: false
-        };
-        return _this;
+        return _possibleConstructorReturn(this, (ConditionPanel.__proto__ || Object.getPrototypeOf(ConditionPanel)).apply(this, arguments));
     }
 
     _createClass(ConditionPanel, [{
-        key: "toggleDetails",
-        value: function toggleDetails() {
-            this.setState({
-                showDetails: !this.state.showDetails
-            });
-        }
-    }, {
         key: "render",
         value: function render() {
             var _this2 = this;
 
             try {
                 var details = [];
-                if (this.state.showDetails) {
-                    if (this.props.condition.name === "exhausted") {
-                        details.push(React.createElement(
-                            "div",
-                            { key: "spin", className: "section spin" },
-                            React.createElement(
-                                "div",
-                                { className: "spin-button wide toggle", onClick: function onClick() {
-                                        return _this2.props.nudgeConditionValue(_this2.props.condition, "level", -1);
-                                    } },
-                                React.createElement("img", { className: "image", src: "content/minus.svg" })
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "spin-value" },
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-label" },
-                                    "level"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "spin-label" },
-                                    this.props.condition.level
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "spin-button wide toggle", onClick: function onClick() {
-                                        return _this2.props.nudgeConditionValue(_this2.props.condition, "level", +1);
-                                    } },
-                                React.createElement("img", { className: "image", src: "content/plus.svg" })
-                            )
-                        ));
-                        details.push(React.createElement("div", { key: "div1", className: "divider" }));
-                    }
-                    var text = conditionText(this.props.condition);
-                    for (var n = 0; n != text.length; ++n) {
-                        details.push(React.createElement(
-                            "div",
-                            { key: n, className: "condition-text" },
-                            text[n]
-                        ));
-                    }
-                    details.push(React.createElement("div", { key: "div2", className: "divider" }));
+                if (this.props.condition.name === "exhausted") {
                     details.push(React.createElement(
                         "div",
-                        { key: "remove", className: "section" },
-                        React.createElement(ConfirmButton, { key: "remove", text: "remove condition", callback: function callback() {
-                                return _this2.props.removeCondition(_this2.props.condition);
-                            } })
+                        { key: "spin", className: "section spin" },
+                        React.createElement(
+                            "div",
+                            { className: "spin-button wide toggle", onClick: function onClick() {
+                                    return _this2.props.nudgeConditionValue(_this2.props.condition, "level", -1);
+                                } },
+                            React.createElement("img", { className: "image", src: "content/minus.svg" })
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "spin-value" },
+                            React.createElement(
+                                "div",
+                                { className: "spin-label" },
+                                "level"
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "spin-label" },
+                                this.props.condition.level
+                            )
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "spin-button wide toggle", onClick: function onClick() {
+                                    return _this2.props.nudgeConditionValue(_this2.props.condition, "level", +1);
+                                } },
+                            React.createElement("img", { className: "image", src: "content/plus.svg" })
+                        )
+                    ));
+                    details.push(React.createElement("div", { key: "div1", className: "divider" }));
+                }
+                var text = conditionText(this.props.condition);
+                for (var n = 0; n != text.length; ++n) {
+                    details.push(React.createElement(
+                        "div",
+                        { key: n, className: "section" },
+                        text[n]
                     ));
                 }
-
-                var content = null;
-                if (details.length !== 0) {
-                    content = React.createElement(
-                        "div",
-                        { className: "mini-card-content" },
-                        details
-                    );
-                }
+                details.push(React.createElement("div", { key: "div2", className: "divider" }));
+                details.push(React.createElement(
+                    "div",
+                    { key: "remove", className: "section" },
+                    React.createElement(ConfirmButton, { key: "remove", text: "remove condition", callback: function callback() {
+                            return _this2.props.removeCondition(_this2.props.condition);
+                        } })
+                ));
 
                 var name = this.props.condition.name;
                 if (this.props.condition.name === "exhausted") {
                     name += " (" + this.props.condition.level + ")";
                 }
-                var imageStyle = this.state.showDetails ? "image rotate" : "image";
 
-                return React.createElement(
-                    "div",
-                    { className: "mini-card" },
-                    React.createElement(
-                        "div",
-                        { className: "heading", onClick: function onClick() {
-                                return _this2.toggleDetails();
-                            } },
-                        React.createElement(
-                            "div",
-                            { className: "title" },
-                            name
-                        ),
-                        React.createElement("img", { className: imageStyle, src: "content/down-arrow.svg" })
-                    ),
-                    content
-                );
+                return React.createElement(Expander, { text: name, content: details });
             } catch (e) {
                 console.error(e);
             }
@@ -6574,20 +6542,12 @@ var TraitPanel = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (TraitPanel.__proto__ || Object.getPrototypeOf(TraitPanel)).call(this));
 
         _this.state = {
-            showDetails: false,
             dropdownOpen: false
         };
         return _this;
     }
 
     _createClass(TraitPanel, [{
-        key: "toggleDetails",
-        value: function toggleDetails() {
-            this.setState({
-                showDetails: !this.state.showDetails
-            });
-        }
-    }, {
         key: "selectType",
         value: function selectType(type) {
             if (type) {
@@ -6621,76 +6581,46 @@ var TraitPanel = function (_React$Component) {
                         } }));
                 }
 
-                var details = null;
-                if (this.state.showDetails) {
-                    details = React.createElement(
-                        "div",
-                        { className: "mini-card-content" },
-                        React.createElement(
-                            "div",
-                            { className: "section" },
-                            React.createElement(
-                                "div",
-                                { className: "dropdown" },
-                                React.createElement(
-                                    "button",
-                                    { className: "dropdown-button", onClick: function onClick() {
-                                            return _this2.selectType();
-                                        } },
-                                    React.createElement(
-                                        "div",
-                                        { className: "title" },
-                                        traitType(this.props.trait.type)
-                                    ),
-                                    React.createElement("img", { className: "image", src: "content/ellipsis.svg" })
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: this.state.dropdownOpen ? "dropdown-content open" : "dropdown-content" },
-                                    dropdownItems
-                                )
-                            ),
-                            React.createElement("input", { type: "text", placeholder: "name", value: this.props.trait.name, onChange: function onChange(event) {
-                                    return _this2.props.changeTrait(_this2.props.trait, "name", event.target.value);
-                                } }),
-                            React.createElement("input", { type: "text", placeholder: "usage", value: this.props.trait.usage, onChange: function onChange(event) {
-                                    return _this2.props.changeTrait(_this2.props.trait, "usage", event.target.value);
-                                } }),
-                            React.createElement("textarea", { placeholder: "details", value: this.props.trait.text, onChange: function onChange(event) {
-                                    return _this2.props.changeTrait(_this2.props.trait, "text", event.target.value);
-                                } }),
-                            React.createElement("div", { className: "divider" }),
-                            React.createElement(ConfirmButton, { text: "delete", callback: function callback() {
-                                    return _this2.props.removeTrait(_this2.props.trait);
-                                } })
-                        )
-                    );
-                }
-
-                var name = this.props.trait.name;
-                if (!name) {
-                    name = "unnamed trait";
-                }
-
-                var imageStyle = this.state.showDetails ? "image rotate" : "image";
-
-                return React.createElement(
+                var details = React.createElement(
                     "div",
-                    { className: "mini-card" },
+                    { className: "section" },
                     React.createElement(
                         "div",
-                        { className: "heading", onClick: function onClick() {
-                                return _this2.toggleDetails();
-                            } },
+                        { className: "dropdown" },
+                        React.createElement(
+                            "button",
+                            { className: "dropdown-button", onClick: function onClick() {
+                                    return _this2.selectType();
+                                } },
+                            React.createElement(
+                                "div",
+                                { className: "title" },
+                                traitType(this.props.trait.type)
+                            ),
+                            React.createElement("img", { className: "image", src: "content/ellipsis.svg" })
+                        ),
                         React.createElement(
                             "div",
-                            { className: "title" },
-                            name
-                        ),
-                        React.createElement("img", { className: imageStyle, src: "content/down-arrow.svg" })
+                            { className: this.state.dropdownOpen ? "dropdown-content open" : "dropdown-content" },
+                            dropdownItems
+                        )
                     ),
-                    details
+                    React.createElement("input", { type: "text", placeholder: "name", value: this.props.trait.name, onChange: function onChange(event) {
+                            return _this2.props.changeTrait(_this2.props.trait, "name", event.target.value);
+                        } }),
+                    React.createElement("input", { type: "text", placeholder: "usage", value: this.props.trait.usage, onChange: function onChange(event) {
+                            return _this2.props.changeTrait(_this2.props.trait, "usage", event.target.value);
+                        } }),
+                    React.createElement("textarea", { placeholder: "details", value: this.props.trait.text, onChange: function onChange(event) {
+                            return _this2.props.changeTrait(_this2.props.trait, "text", event.target.value);
+                        } }),
+                    React.createElement("div", { className: "divider" }),
+                    React.createElement(ConfirmButton, { text: "delete", callback: function callback() {
+                            return _this2.props.removeTrait(_this2.props.trait);
+                        } })
                 );
+
+                return React.createElement(Expander, { text: this.props.trait.name || "unnamed trait", content: details });
             } catch (e) {
                 console.error(e);
             }
@@ -6950,18 +6880,13 @@ var AboutScreen = function (_React$Component) {
                             React.createElement(ConfirmButton, { text: "clear all data", callback: function callback() {
                                     return _this2.props.resetAll();
                                 } }),
-                            React.createElement(
-                                "div",
-                                { className: "checkbox", onClick: function onClick() {
-                                        return _this2.props.changeOption("showHelp", !_this2.props.options.showHelp);
-                                    } },
-                                React.createElement("img", { className: "image", src: this.props.options.showHelp ? "content/checked.svg" : "content/unchecked.svg" }),
-                                React.createElement(
-                                    "div",
-                                    { className: "checkbox-text" },
-                                    "show help cards"
-                                )
-                            )
+                            React.createElement(Checkbox, {
+                                label: "show help cards",
+                                checked: this.props.options.showHelp,
+                                changeValue: function changeValue(value) {
+                                    return _this2.props.changeValue(_this2.props.options, "showHelp", value);
+                                }
+                            })
                         )
                     ),
                     React.createElement(
@@ -8129,6 +8054,73 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+/*
+<Checkbox
+    label="LABEL"
+    checked={BOOLEAN}
+    changeValue={value => this.changeValue(SOURCEOBJECT, FIELDNAME, value)}
+/>
+*/
+
+var Checkbox = function (_React$Component) {
+    _inherits(Checkbox, _React$Component);
+
+    function Checkbox() {
+        _classCallCheck(this, Checkbox);
+
+        return _possibleConstructorReturn(this, (Checkbox.__proto__ || Object.getPrototypeOf(Checkbox)).apply(this, arguments));
+    }
+
+    _createClass(Checkbox, [{
+        key: "click",
+        value: function click(e) {
+            e.stopPropagation();
+            this.props.changeValue(!this.props.checked);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                return React.createElement(
+                    "div",
+                    { className: "checkbox", onClick: function onClick(e) {
+                            return _this2.click(e);
+                        } },
+                    React.createElement("img", { className: "image", src: this.props.checked ? "content/checked.svg" : "content/unchecked.svg" }),
+                    React.createElement(
+                        "div",
+                        { className: "checkbox-label" },
+                        this.props.label
+                    )
+                );
+            } catch (ex) {
+                console.error(ex);
+                return null;
+            }
+        }
+    }]);
+
+    return Checkbox;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/*
+<ConfirmButton
+    text="TEXT"
+    callback={() => CALLBACK_FUNCTION}
+/>
+*/
+
 var ConfirmButton = function (_React$Component) {
     _inherits(ConfirmButton, _React$Component);
 
@@ -8213,8 +8205,9 @@ var ConfirmButton = function (_React$Component) {
                         } },
                     content
                 );
-            } catch (e) {
-                console.error(e);
+            } catch (ex) {
+                console.error(ex);
+                return null;
             }
         }
     }]);
@@ -8252,6 +8245,7 @@ var DropdownItem = function (_React$Component) {
 
             try {
                 var style = this.props.selected ? "dropdown-item selected" : "dropdown-item";
+
                 return React.createElement(
                     "div",
                     { className: style, onClick: function onClick() {
@@ -8259,11 +8253,561 @@ var DropdownItem = function (_React$Component) {
                         } },
                     this.props.text
                 );
-            } catch (e) {
-                console.error(e);
+            } catch (ex) {
+                console.error(ex);
+                return null;
             }
         }
     }]);
 
     return DropdownItem;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/*
+var options = [
+    {
+        id: "total",
+        text: "Total wealth"
+    },
+    {
+        id: "purse",
+        text: "Purse"
+    }
+];
+
+<Dropdown
+    options={options}
+    selectedID={CURRENT_OPTION_ID}
+    select={optionID => this.changeValue(SOURCEOBJECT, FIELDNAME, optionID)}
+/>
+*/
+
+var Dropdown = function (_React$Component) {
+    _inherits(Dropdown, _React$Component);
+
+    function Dropdown() {
+        _classCallCheck(this, Dropdown);
+
+        var _this = _possibleConstructorReturn(this, (Dropdown.__proto__ || Object.getPrototypeOf(Dropdown)).call(this));
+
+        _this.state = {
+            open: false
+        };
+        return _this;
+    }
+
+    _createClass(Dropdown, [{
+        key: "toggleOpen",
+        value: function toggleOpen(e) {
+            e.stopPropagation();
+            this.setState({
+                open: !this.state.open
+            });
+        }
+    }, {
+        key: "select",
+        value: function select(optionID) {
+            this.setState({
+                open: false
+            });
+            this.props.select(optionID);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                var style = "dropdown";
+                var content = [];
+
+                var selectedText = null;
+                var selectedTextStyle = null;
+                var title = null;
+                if (this.props.selectedID) {
+                    var option = null;
+                    this.props.options.forEach(function (o) {
+                        if (o.id === _this2.props.selectedID) {
+                            option = o;
+                        }
+                    });
+
+                    selectedText = option.text;
+                    selectedTextStyle = "dropdown-selection";
+                    title = option.text;
+                } else {
+                    selectedText = this.props.text ? this.props.text : "Select...";
+                    selectedTextStyle = "dropdown-placeholder";
+                }
+
+                content.push(React.createElement(
+                    "div",
+                    { key: "selection", className: selectedTextStyle, title: title },
+                    React.createElement(
+                        "div",
+                        { className: "item-text" },
+                        selectedText
+                    ),
+                    React.createElement("img", { className: this.state.open ? "arrow open" : "arrow", src: "resources/icons/chevron.svg" })
+                ));
+
+                if (this.state.open) {
+                    style += " open";
+
+                    var items = this.props.options.map(function (option) {
+                        return React.createElement(DropdownOption, {
+                            key: option.id,
+                            option: option,
+                            selected: option.id === _this2.props.selectedID,
+                            select: function select(optionID) {
+                                return _this2.select(optionID);
+                            }
+                        });
+                    });
+
+                    content.push(React.createElement("hr", { key: "divider" }));
+                    content.push(React.createElement(
+                        "div",
+                        { key: "options", className: "dropdown-options" },
+                        items
+                    ));
+                }
+
+                return React.createElement(
+                    "div",
+                    { className: style, onClick: function onClick(e) {
+                            return _this2.toggleOpen(e);
+                        } },
+                    content
+                );
+            } catch (ex) {
+                console.error(ex);
+                return null;
+            }
+        }
+    }]);
+
+    return Dropdown;
+}(React.Component);
+
+var DropdownOption = function (_React$Component2) {
+    _inherits(DropdownOption, _React$Component2);
+
+    function DropdownOption() {
+        _classCallCheck(this, DropdownOption);
+
+        return _possibleConstructorReturn(this, (DropdownOption.__proto__ || Object.getPrototypeOf(DropdownOption)).apply(this, arguments));
+    }
+
+    _createClass(DropdownOption, [{
+        key: "click",
+        value: function click(e) {
+            e.stopPropagation();
+            this.props.select(this.props.option.id);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this4 = this;
+
+            try {
+                var style = this.props.selected ? "dropdown-option selected" : "dropdown-option";
+
+                return React.createElement(
+                    "div",
+                    { className: style, title: this.props.option.text, onClick: function onClick(e) {
+                            return _this4.click(e);
+                        } },
+                    this.props.option.text
+                );
+            } catch (ex) {
+                console.error(ex);
+                return null;
+            }
+        }
+    }]);
+
+    return DropdownOption;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/*
+<Expander
+    text="TEXT"
+    content={<div>ANY CONTENT</div>}
+/>
+*/
+
+var Expander = function (_React$Component) {
+    _inherits(Expander, _React$Component);
+
+    function Expander() {
+        _classCallCheck(this, Expander);
+
+        var _this = _possibleConstructorReturn(this, (Expander.__proto__ || Object.getPrototypeOf(Expander)).call(this));
+
+        _this.state = {
+            expanded: false
+        };
+        return _this;
+    }
+
+    _createClass(Expander, [{
+        key: "toggle",
+        value: function toggle() {
+            this.setState({
+                expanded: !this.state.expanded
+            });
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                var style = "expander";
+                if (this.state.expanded) {
+                    style += " expanded";
+                }
+
+                var content = null;
+                if (this.state.expanded) {
+                    content = React.createElement(
+                        "div",
+                        { className: "expander-content" },
+                        this.props.content
+                    );
+                }
+
+                var text = text;
+
+                return React.createElement(
+                    "div",
+                    { className: style },
+                    React.createElement(
+                        "div",
+                        { className: "expander-header", onClick: function onClick() {
+                                return _this2.toggle();
+                            } },
+                        React.createElement(
+                            "div",
+                            { className: "expander-text" },
+                            this.props.text
+                        ),
+                        React.createElement("img", { className: "expander-button", src: "content/down-arrow-black.svg" })
+                    ),
+                    content
+                );
+            } catch (ex) {
+                console.error(ex);
+                return null;
+            }
+        }
+    }]);
+
+    return Expander;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/*
+var options = [
+    {
+        id: "feature",
+        text: "Feature"
+    },
+    {
+        id: "details",
+        text: "Details"
+    }
+];
+
+<Selector
+    tabs={BOOLEAN}
+    options={options}
+    selectedID={CURRENT_OPTION_ID}
+    select={optionID => this.changeValue(SOURCEOBJECT, FIELDNAME, optionID)}
+/>
+*/
+
+var Selector = function (_React$Component) {
+    _inherits(Selector, _React$Component);
+
+    function Selector() {
+        _classCallCheck(this, Selector);
+
+        return _possibleConstructorReturn(this, (Selector.__proto__ || Object.getPrototypeOf(Selector)).apply(this, arguments));
+    }
+
+    _createClass(Selector, [{
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                var style = this.props.tabs ? "selector tabs" : "selector radio";
+
+                var itemsPerRow = this.props.itemsPerRow ? this.props.itemsPerRow : this.props.options.length;
+                var rowCount = Math.ceil(this.props.options.length / itemsPerRow);
+                var rowContents = [];
+                for (var n = 0; n != rowCount; ++n) {
+                    rowContents.push([]);
+                }
+
+                this.props.options.forEach(function (option) {
+                    var index = _this2.props.options.indexOf(option);
+                    var rowIndex = Math.floor(index / itemsPerRow);
+                    var row = rowContents[rowIndex];
+                    row.push(React.createElement(SelectorOption, {
+                        key: option.id,
+                        option: option,
+                        selected: option.id === _this2.props.selectedID,
+                        count: itemsPerRow,
+                        select: function select(optionID) {
+                            return _this2.props.select(optionID);
+                        }
+                    }));
+                });
+
+                var rowSections = rowContents.map(function (row) {
+                    var index = rowContents.indexOf(row);
+                    return React.createElement(
+                        "div",
+                        { key: index },
+                        row
+                    );
+                });
+
+                return React.createElement(
+                    "div",
+                    { className: style },
+                    rowSections
+                );
+            } catch (ex) {
+                console.error(ex);
+                return null;
+            }
+        }
+    }]);
+
+    return Selector;
+}(React.Component);
+
+var SelectorOption = function (_React$Component2) {
+    _inherits(SelectorOption, _React$Component2);
+
+    function SelectorOption() {
+        _classCallCheck(this, SelectorOption);
+
+        return _possibleConstructorReturn(this, (SelectorOption.__proto__ || Object.getPrototypeOf(SelectorOption)).apply(this, arguments));
+    }
+
+    _createClass(SelectorOption, [{
+        key: "click",
+        value: function click(e) {
+            e.stopPropagation();
+            this.props.select(this.props.option.id);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this4 = this;
+
+            try {
+                var width = "calc((100% - 1px) / " + this.props.count + ")";
+
+                var style = "option";
+                if (this.props.selected) {
+                    style += " selected";
+                }
+
+                var smallText = this.props.option.text;
+                if (this.props.option.smallText) {
+                    smallText = this.props.option.smallText;
+                }
+
+                return React.createElement(
+                    "div",
+                    { key: this.props.option.id, className: style, style: { width: width }, title: this.props.option.text, onClick: function onClick(e) {
+                            return _this4.click(e);
+                        } },
+                    React.createElement(
+                        "div",
+                        { className: "hidden-sm hidden-xs" },
+                        this.props.option.text
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "hidden-lg hidden-md" },
+                        smallText
+                    )
+                );
+            } catch (ex) {
+                console.error(ex);
+                return null;
+            }
+        }
+    }]);
+
+    return SelectorOption;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/*
+<Spin
+    source={SOURCEOBJECT}
+    name="FIELDNAME"
+    label="LABEL"
+    factors={[1, 10, 100]}
+    nudgeValue={delta => this.nudgeValue(SOURCEOBJECT, FIELDNAME, delta)}
+/>
+*/
+
+var Spin = function (_React$Component) {
+    _inherits(Spin, _React$Component);
+
+    function Spin() {
+        _classCallCheck(this, Spin);
+
+        var _this = _possibleConstructorReturn(this, (Spin.__proto__ || Object.getPrototypeOf(Spin)).call(this));
+
+        _this.state = {
+            expanded: false,
+            factor: 1
+        };
+        return _this;
+    }
+
+    _createClass(Spin, [{
+        key: "toggleExpanded",
+        value: function toggleExpanded() {
+            this.setState({
+                expanded: !this.state.expanded
+            });
+        }
+    }, {
+        key: "click",
+        value: function click(e, delta) {
+            e.stopPropagation();
+            this.props.nudgeValue(delta * this.state.factor);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                var expander = null;
+                if (this.props.factors) {
+                    expander = React.createElement(
+                        "div",
+                        { className: "spin-expander", onClick: function onClick() {
+                                return _this2.toggleExpanded();
+                            } },
+                        "\u2022 \u2022 \u2022"
+                    );
+                }
+
+                var factorSelector = null;
+                if (this.props.factors && this.state.expanded) {
+                    var options = this.props.factors.map(function (factor) {
+                        return {
+                            id: factor,
+                            text: factor
+                        };
+                    });
+
+                    factorSelector = React.createElement(
+                        "div",
+                        { className: "factor-selector" },
+                        React.createElement(Selector, {
+                            options: options,
+                            selectedID: this.state.factor,
+                            select: function select(optionID) {
+                                return _this2.setState({ factor: optionID });
+                            }
+                        })
+                    );
+                }
+
+                var style = "info-value";
+                var value = this.props.source[this.props.name];
+                if (value === 0) {
+                    style += " dimmed";
+                }
+
+                return React.createElement(
+                    "div",
+                    { className: "spin" },
+                    React.createElement(
+                        "div",
+                        { className: "spin-button", onClick: function onClick(e) {
+                                return _this2.click(e, -1);
+                            } },
+                        React.createElement("img", { className: "image", src: "resources/icons/minus.svg" })
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "info" },
+                        React.createElement(
+                            "div",
+                            { className: "info-label" },
+                            this.props.label
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: style },
+                            value
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "spin-button", onClick: function onClick(e) {
+                                return _this2.click(e, +1);
+                            } },
+                        React.createElement("img", { className: "image", src: "resources/icons/plus.svg" })
+                    ),
+                    expander,
+                    factorSelector
+                );
+            } catch (ex) {
+                console.error(ex);
+                return null;
+            }
+        }
+    }]);
+
+    return Spin;
 }(React.Component);

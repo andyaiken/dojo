@@ -1,0 +1,42 @@
+﻿.titlebar {
+    height: 30px;
+    padding: 10px 5px;
+    background-color: #404040;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+}
+
+    .titlebar .app-name {
+        padding: 4px 6px 8px 6px;
+        margin: 0 5px;
+        height: 20px;
+        line-height: 20px;
+        font-size: 20px;
+        font-weight: 600;
+        color: white;
+        border-left: 3px solid white;
+    }
+
+    .titlebar .action {
+        position: absolute;
+        right: 50px;
+        top: 6px;
+    }
+
+        .titlebar .action .section {
+            display: inline-block;
+            margin: 0 5px;
+        }
+
+    .titlebar .settings-icon {
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 30px;
+        width: 30px;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+        .titlebar .settings-icon:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
