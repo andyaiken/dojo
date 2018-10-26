@@ -322,7 +322,7 @@ button {
     }
 
     .card.welcome {
-        margin-top: 190px;
+        margin-top: 150px;
     }
 
     .card.pc,
@@ -685,7 +685,7 @@ button {
 }
 
     .titlebar .app-name {
-        padding: 5px 6px 7px 6px;
+        padding: 4px 6px 8px 6px;
         margin: 0 5px;
         height: 20px;
         line-height: 20px;
@@ -697,7 +697,7 @@ button {
 
     .titlebar .action {
         position: absolute;
-        right: 5px;
+        right: 50px;
         top: 7px;
     }
 
@@ -706,6 +706,20 @@ button {
             margin: 0 5px;
         }
 
+    .titlebar .settings-icon {
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 30px;
+        width: 30px;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+        .titlebar .settings-icon:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
 .navbar {
     height: 30px;
     padding: 10px 5px;
@@ -716,21 +730,17 @@ button {
 
     .navbar .navigator-item {
         display: inline-block;
-        padding: 5px 6px 7px 6px;
+        padding: 5px;
         cursor: pointer;
-        margin: 0 5px;
         height: 20px;
         width: 150px;
-        text-align: left;
         font-size: 14px;
         color: white;
-        border-left: 3px solid white;
     }
 
         .navbar .navigator-item.disabled {
             cursor: default;
             color: #999999;
-            border-left: 3px solid #999999;
         }
 
         .navbar .navigator-item.selected,

@@ -6,7 +6,7 @@ class AboutScreen extends React.Component {
                     <div className="left-pane scrollable">
                         <div className="group">
                             <div className="heading">about</div>
-                            <div className="text">dm dojo by <a href="mailto:andy.aiken@live.co.uk">andy aiken</a></div>
+                            <div className="text">dojo by <a href="mailto:andy.aiken@live.co.uk">andy aiken</a></div>
                             <div className="text">dungeons and dragons copyright wizards of the coast</div>
                         </div>
                         <div className="group">

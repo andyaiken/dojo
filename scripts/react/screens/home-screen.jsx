@@ -5,14 +5,14 @@ class HomeScreen extends React.Component {
                 <div className="home scrollable">
                     <InfoCard centered={true} welcome={true} getContent={() =>
                         <div>
-                            <div className="section">welcome to <b>dm dojo</b></div>
+                            <div className="section">welcome to <b>dojo</b></div>
                             <div className="divider"></div>
                             <div className="section">
-                                <div>dm dojo is an app for dms of dungeons and dragons fifth edition</div>
+                                <div>dojo is an app for dms of dungeons and dragons fifth edition</div>
                             </div>
                             <div className="section">
                                 <div>
-                                    with dm dojo you can:
+                                    with dojo you can:
                                     <ul>
                                         <li>build unique, challenging monsters</li>
                                         <li>create encounters of just the right difficulty for your players</li>

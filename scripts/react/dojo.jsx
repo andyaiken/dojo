@@ -1233,6 +1233,7 @@ class Dojo extends React.Component {
                     <Titlebar
                         action={action}
                         blur={modal !== null}
+                        setView={view => this.setView(view)}
                     />
                     <div className={contentStyle}>
                         {content}

@@ -5066,7 +5066,10 @@ var Dojo = function (_React$Component) {
                     { className: "dojo" },
                     React.createElement(Titlebar, {
                         action: action,
-                        blur: modal !== null
+                        blur: modal !== null,
+                        setView: function setView(view) {
+                            return _this5.setView(view);
+                        }
                     }),
                     React.createElement(
                         "div",
@@ -6447,7 +6450,6 @@ var Navbar = function (_React$Component) {
                 var libraryStyle = this.props.view === "library" ? "navigator-item selected" : "navigator-item";
                 var encounterStyle = this.props.view === "encounter" ? "navigator-item selected" : "navigator-item";
                 var combatStyle = this.props.view === "combat" ? "navigator-item selected" : "navigator-item";
-                var aboutStyle = this.props.view === "about" ? "navigator-item selected" : "navigator-item";
 
                 var encountersEnabled = this.props.library.length !== 0;
                 var combatEnabled = this.props.parties.length !== 0 && this.props.encounters.length !== 0;
@@ -6488,13 +6490,6 @@ var Navbar = function (_React$Component) {
                                 return combatEnabled ? _this2.props.setView("combat") : null;
                             } },
                         "combat manager"
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: aboutStyle, onClick: function onClick() {
-                                return _this2.props.setView("about");
-                            } },
-                        "about"
                     )
                 );
             } catch (e) {
@@ -6527,6 +6522,8 @@ var Titlebar = function (_React$Component) {
     _createClass(Titlebar, [{
         key: "render",
         value: function render() {
+            var _this2 = this;
+
             try {
                 var actionSection = null;
                 if (this.props.action) {
@@ -6543,9 +6540,12 @@ var Titlebar = function (_React$Component) {
                     React.createElement(
                         "div",
                         { className: "app-name" },
-                        "dm dojo"
+                        "dojo"
                     ),
-                    actionSection
+                    actionSection,
+                    React.createElement("img", { className: "settings-icon", src: "content/settings.svg", onClick: function onClick() {
+                            return _this2.props.setView("about");
+                        } })
                 );
             } catch (e) {
                 console.error(e);
@@ -6926,7 +6926,7 @@ var AboutScreen = function (_React$Component) {
                             React.createElement(
                                 "div",
                                 { className: "text" },
-                                "dm dojo by ",
+                                "dojo by ",
                                 React.createElement(
                                     "a",
                                     { href: "mailto:andy.aiken@live.co.uk" },
@@ -7705,7 +7705,7 @@ var HomeScreen = function (_React$Component) {
                                     React.createElement(
                                         "b",
                                         null,
-                                        "dm dojo"
+                                        "dojo"
                                     )
                                 ),
                                 React.createElement("div", { className: "divider" }),
@@ -7715,7 +7715,7 @@ var HomeScreen = function (_React$Component) {
                                     React.createElement(
                                         "div",
                                         null,
-                                        "dm dojo is an app for dms of dungeons and dragons fifth edition"
+                                        "dojo is an app for dms of dungeons and dragons fifth edition"
                                     )
                                 ),
                                 React.createElement(
@@ -7724,7 +7724,7 @@ var HomeScreen = function (_React$Component) {
                                     React.createElement(
                                         "div",
                                         null,
-                                        "with dm dojo you can:",
+                                        "with dojo you can:",
                                         React.createElement(
                                             "ul",
                                             null,
