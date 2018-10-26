@@ -94,6 +94,7 @@ body,
     padding: 0 15px;
     overflow-x: hidden;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .column {
