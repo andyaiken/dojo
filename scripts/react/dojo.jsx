@@ -32,6 +32,7 @@ class Dojo extends React.Component {
             if (data !== null) {
                 this.state = data;
                 this.state.view = "home";
+                this.state.modal = null;
             }
         } catch (ex) {
             console.error(ex);
@@ -236,11 +237,26 @@ class Dojo extends React.Component {
     }
 
     editMonster(monster) {
-        this.setModal(monster);
+        this.setModal("monster editor", (
+            <MonsterEditorModal
+                key={monster.id}
+                combatant={monster}
+                mode={"editor"}
+                changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
+                nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
+                changeTrait={(trait, type, value) => this.changeValue(trait, type, value)}
+                addTrait={(combatant, type) => this.addTrait(combatant, type)}
+                removeTrait={(combatant, trait) => this.removeTrait(combatant, trait)}
+            />
+        ));
     }
 
     openDemographics() {
-        this.setModal("demographics");
+        this.setModal("demographics", (
+            <DemographicsModal
+                library={this.state.library}
+            />
+        ));
     }
 
     cloneMonster(monster) {
@@ -854,9 +870,18 @@ class Dojo extends React.Component {
         });
     }
 
-    setModal(content) {
+    setModal(title, content) {
         this.setState({
-            modal: content
+            modal: {
+                title: title,
+                content: content
+            }
+        });
+    }
+
+    closeModal() {
+        this.setState({
+            modal: null
         });
     }
 
@@ -1215,34 +1240,16 @@ class Dojo extends React.Component {
 
             var modal = null;
             if (this.state.modal) {
-                var modalContent = null;
-                if (this.state.modal === "demographics") {
-                    modalContent = (
-                        <DemographicsModal
-                            library={this.state.library}
-                            close={() => this.setModal(null)}
-                        />
-                    );
-                }
-                if (this.state.modal.type === "monster") {
-                    modalContent = (
-                        <MonsterEditorModal
-                            key={this.state.modal.id}
-                            combatant={this.state.modal}
-                            mode={"editor"}
-                            changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
-                            nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
-                            changeTrait={(trait, type, value) => this.changeValue(trait, type, value)}
-                            addTrait={(combatant, type) => this.addTrait(combatant, type)}
-                            removeTrait={(combatant, trait) => this.removeTrait(combatant, trait)}
-                            closeEditor={() => this.setModal(null)}
-                        />
-                    );
-                }
                 modal = (
                     <div className="overlay">
-                        <div className="modal scrollable">
-                            {modalContent}
+                        <div className="modal">
+                            <div className="modal-heading">
+                                <div className="title">{this.state.modal.title}</div>
+                                <img className="image" src="content/close-white.svg" onClick={() => this.closeModal()} />
+                            </div>
+                            <div className="modal-content scrollable">
+                                {this.state.modal.content}
+                            </div>
                         </div>
                     </div>
                 );

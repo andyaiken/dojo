@@ -115,10 +115,42 @@ body,
 }
 
 .modal {
-    width: calc(100% - 130px);
-    height: calc(100% - 100px);
-    margin: 50px;
+    width: calc(100% - 100px);
+    height: calc(100% - 200px);
+    margin: 100px 50px;
+    box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.5);
 }
+
+    .modal .modal-heading {
+        height: 50px;
+        margin: 0;
+        padding-left: 15px;
+        border-bottom: none;
+        background-color: #656565;
+        color: white;
+    }
+
+        .modal .modal-heading .title {
+            display: inline-block;
+            vertical-align: middle;
+            width: calc(100% - 50px);
+            line-height: 40px;
+            font-size: 20px;
+        }
+
+        .modal .modal-heading .image {
+            display: inline-block;
+            vertical-align: middle;
+            width: 30px;
+            height: 30px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+    .modal .modal-content {
+        height: calc(100% - 50px);
+        background-color: white;
+    }
 
 .blur {
     -webkit-filter: blur(5px);
@@ -398,56 +430,6 @@ button {
         border-top: 1px solid #650000;
     }
 
-    .card .section {
-        margin: 5px 0;
-    }
-
-        .card .section.centered {
-            text-align: center;
-        }
-
-        .card .section .ability-score {
-            display: inline-block;
-            width: calc(((100% - 1px) / 6) - 10px);
-            padding: 0 5px;
-        }
-
-        .card .section .key-stat {
-            display: inline-block;
-            width: calc((100% - 1px) / 3);
-            vertical-align: top;
-        }
-
-            .card .section .key-stat.wide {
-                width: calc(2 * (100% - 1px) / 3);
-            }
-
-            .card .section .ability-score .ability-heading,
-            .card .section .key-stat .stat-heading {
-                text-align: center;
-                font-weight: 600;
-            }
-
-            .card .section .ability-score .ability-value,
-            .card .section .key-stat .stat-value {
-                text-align: center;
-            }
-
-        .card .section .ability-score .ability-value {
-            padding-top: 5px;
-        }
-
-        .card .section .key-stat .stat-value {
-            font-size: 20px;
-            font-weight: 600;
-            padding-top: 5px;
-        }
-
-        .card .section .input-label {
-            padding-top: 5px;
-            font-weight: 600;
-        }
-
     .card .toggle {
         cursor: pointer;
         user-select: none;
@@ -518,6 +500,56 @@ button {
                 background-color: #EEEEEE;
             }
 
+.section {
+    margin: 5px 0;
+}
+
+    .section.centered {
+        text-align: center;
+    }
+
+    .section .ability-score {
+        display: inline-block;
+        width: calc(((100% - 1px) / 6) - 10px);
+        padding: 0 5px;
+    }
+
+    .section .key-stat {
+        display: inline-block;
+        width: calc((100% - 1px) / 3);
+        vertical-align: top;
+    }
+
+        .section .key-stat.wide {
+            width: calc(2 * (100% - 1px) / 3);
+        }
+
+        .section .ability-score .ability-heading,
+        .section .key-stat .stat-heading {
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .section .ability-score .ability-value,
+        .section .key-stat .stat-value {
+            text-align: center;
+        }
+
+    .section .ability-score .ability-value {
+        padding-top: 5px;
+    }
+
+    .section .key-stat .stat-value {
+        font-size: 20px;
+        font-weight: 600;
+        padding-top: 5px;
+    }
+
+    .section .input-label {
+        padding-top: 5px;
+        font-weight: 600;
+    }
+        
 .hp-gauge {
     margin: 5px 5px 10px 5px;
     height: 5px;

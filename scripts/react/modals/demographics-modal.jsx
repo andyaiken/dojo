@@ -147,17 +147,7 @@ class DemographicsModal extends React.Component {
                 );
             }
 
-            return (
-                <div className="card wide">
-                    <div className="heading">
-                        <div className="title">demographics</div>
-                        <img className="image" src="content/close-white.svg" onClick={() => this.props.close()} />
-                    </div>
-                    <div className="card-content">
-                        {demographics}
-                    </div>
-                </div>
-            );
+            return demographics;
         } catch (e) {
             console.error(e);
         }
