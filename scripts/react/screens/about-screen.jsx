@@ -2,6 +2,7 @@ class AboutScreen extends React.Component {
     constructor() {
         super();
         this.state = {
+            showDev: false,
             optionID: "abc",
             value: 0,
             selected: false
@@ -28,30 +29,22 @@ class AboutScreen extends React.Component {
 
     render() {
         try {
-            var devOptions = [
-                {
-                    id: "abc",
-                    text: "ABC"
-                },
-                {
-                    id: "def",
-                    text: "DEF"
-                },
-                {
-                    id: "ghi",
-                    text: "GHI"
-                }
-            ];
+            var devOptions = ["abc", "def", "ghi", "jkl"].map(x => {
+                return {
+                    id: x,
+                    text: x
+                };
+            });
 
             var dev = null;
-            if (false) {
+            if (this.state.showDev) {
                 dev = (
                     <div className="group">
                         <div className="heading">dev</div>
-                        <button>button</button>
+                        <button onClick={() => this.setSelected(!this.state.selected)}>button</button>
                         <ConfirmButton
                             text="confirm"
-                            callback={() => this.setSelected(false)}
+                            callback={() => this.setSelected(!this.state.selected)}
                         />
                         <Dropdown
                             options={devOptions}

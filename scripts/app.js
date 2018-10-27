@@ -5697,6 +5697,7 @@ var AboutScreen = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (AboutScreen.__proto__ || Object.getPrototypeOf(AboutScreen)).call(this));
 
         _this.state = {
+            showDev: false,
             optionID: "abc",
             value: 0,
             selected: false
@@ -5731,19 +5732,15 @@ var AboutScreen = function (_React$Component) {
             var _this2 = this;
 
             try {
-                var devOptions = [{
-                    id: "abc",
-                    text: "ABC"
-                }, {
-                    id: "def",
-                    text: "DEF"
-                }, {
-                    id: "ghi",
-                    text: "GHI"
-                }];
+                var devOptions = ["abc", "def", "ghi", "jkl"].map(function (x) {
+                    return {
+                        id: x,
+                        text: x
+                    };
+                });
 
                 var dev = null;
-                if (false) {
+                if (this.state.showDev) {
                     dev = React.createElement(
                         "div",
                         { className: "group" },
@@ -5754,13 +5751,15 @@ var AboutScreen = function (_React$Component) {
                         ),
                         React.createElement(
                             "button",
-                            null,
+                            { onClick: function onClick() {
+                                    return _this2.setSelected(!_this2.state.selected);
+                                } },
                             "button"
                         ),
                         React.createElement(ConfirmButton, {
                             text: "confirm",
                             callback: function callback() {
-                                return _this2.setSelected(false);
+                                return _this2.setSelected(!_this2.state.selected);
                             }
                         }),
                         React.createElement(Dropdown, {
