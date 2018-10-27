@@ -235,6 +235,14 @@ class Dojo extends React.Component {
         });
     }
 
+    editMonster(monster) {
+        this.setModal(monster);
+    }
+
+    openDemographics() {
+        this.setModal("demographics");
+    }
+
     cloneMonster(monster) {
         var group = this.findMonster(monster);
 
@@ -1120,7 +1128,7 @@ class Dojo extends React.Component {
                             nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
                             addTrait={(combatant, type) => this.addTrait(combatant, type)}
                             removeTrait={(combatant, trait) => this.removeTrait(combatant, trait)}
-                            editMonster={combatant => this.setModal(combatant)}
+                            editMonster={combatant => this.editMonster(combatant)}
                             cloneMonster={combatant => this.cloneMonster(combatant)}
                             moveToGroup={(combatant, groupID) => this.moveToGroup(combatant, groupID)}
                             addOpenGameContent={() => this.addOpenGameContent()}
@@ -1133,7 +1141,7 @@ class Dojo extends React.Component {
                     if (count > 0) {
                         action = (
                             <div className="section">
-                                <button onClick={() => this.setModal("demographics")}>demographics</button>
+                                <button onClick={() => this.openDemographics()}>demographics</button>
                             </div>
                         );
                     }

@@ -60,7 +60,7 @@ class MonsterCard extends React.Component {
             if (this.props.mode.indexOf("view") !== -1) {
                 if (this.props.mode.indexOf("editable") !== -1) {
                     options.push(<button key="edit" onClick={() => this.props.editMonster(this.props.combatant)}>edit monster</button>);
-                    options.push(<button key="clone" onClick={() => this.props.cloneMonster(this.props.combatant)}>clone monster</button>);
+                    options.push(<button key="clone" onClick={() => this.props.cloneMonster(this.props.combatant)}>create a copy</button>);
 
                     var groupOptions = [];
                     this.props.library.forEach(group => {
@@ -75,6 +75,7 @@ class MonsterCard extends React.Component {
                         <Dropdown
                             key="move"
                             options={groupOptions}
+                            placeholder="move to group"
                             select={optionID => this.props.moveToGroup(this.props.combatant, optionID)}
                         />
                     );

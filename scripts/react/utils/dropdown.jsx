@@ -12,6 +12,7 @@ var options = [
 
 <Dropdown
     options={options}
+    placeholer={PLACEHOLDER_TEXT}
     selectedID={CURRENT_OPTION_ID}
     select={optionID => this.changeValue(SOURCEOBJECT, FIELDNAME, optionID)}
 />
@@ -58,7 +59,7 @@ class Dropdown extends React.Component {
                 selectedText = option.text;
                 title = option.text;
             } else {
-                selectedText = this.props.text ? this.props.text : "select...";
+                selectedText = this.props.text || this.props.placeholder || "select...";
             }
 
             content.push(

@@ -1052,7 +1052,7 @@ var MonsterCard = function (_React$Component) {
                             { key: "clone", onClick: function onClick() {
                                     return _this2.props.cloneMonster(_this2.props.combatant);
                                 } },
-                            "clone monster"
+                            "create a copy"
                         ));
 
                         var groupOptions = [];
@@ -1067,6 +1067,7 @@ var MonsterCard = function (_React$Component) {
                         options.push(React.createElement(Dropdown, {
                             key: "move",
                             options: groupOptions,
+                            placeholder: "move to group",
                             select: function select(optionID) {
                                 return _this2.props.moveToGroup(_this2.props.combatant, optionID);
                             }
@@ -3085,6 +3086,16 @@ var Dojo = function (_React$Component) {
             });
         }
     }, {
+        key: "editMonster",
+        value: function editMonster(monster) {
+            this.setModal(monster);
+        }
+    }, {
+        key: "openDemographics",
+        value: function openDemographics() {
+            this.setModal("demographics");
+        }
+    }, {
         key: "cloneMonster",
         value: function cloneMonster(monster) {
             var _this2 = this;
@@ -4031,7 +4042,7 @@ var Dojo = function (_React$Component) {
                                 return _this5.removeTrait(combatant, trait);
                             },
                             editMonster: function editMonster(combatant) {
-                                return _this5.setModal(combatant);
+                                return _this5.editMonster(combatant);
                             },
                             cloneMonster: function cloneMonster(combatant) {
                                 return _this5.cloneMonster(combatant);
@@ -4054,7 +4065,7 @@ var Dojo = function (_React$Component) {
                                 React.createElement(
                                     "button",
                                     { onClick: function onClick() {
-                                            return _this5.setModal("demographics");
+                                            return _this5.openDemographics();
                                         } },
                                     "demographics"
                                 )
@@ -7212,6 +7223,7 @@ var options = [
 
 <Dropdown
     options={options}
+    placeholer={PLACEHOLDER_TEXT}
     selectedID={CURRENT_OPTION_ID}
     select={optionID => this.changeValue(SOURCEOBJECT, FIELDNAME, optionID)}
 />
@@ -7269,7 +7281,7 @@ var Dropdown = function (_React$Component) {
                     selectedText = option.text;
                     title = option.text;
                 } else {
-                    selectedText = this.props.text ? this.props.text : "select...";
+                    selectedText = this.props.text || this.props.placeholder || "select...";
                 }
 
                 content.push(React.createElement(
