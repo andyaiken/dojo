@@ -1,0 +1,134 @@
+﻿.card {
+    display: inline-block;
+    vertical-align: top;
+    background-color: #F5F5F5;
+    border: 1px solid #656565;
+}
+
+    .card.centered {
+        display: block;
+        width: 300px;
+        margin: 10px auto;
+    }
+
+    .card.wide {
+        width: 100%;
+        min-height: 100%;
+        border: none !important;
+    }
+
+    .card.welcome {
+        margin-top: 150px;
+    }
+
+    .card.pc,
+    .card.monster {
+        background-color: beige;
+    }
+
+    .card.pc {
+        border: 1px solid #006500;
+    }
+
+    .card.monster {
+        border: 1px solid #650000;
+    }
+
+    .card.error {
+        background-color: red;
+        color: white;
+        font-weight: 600;
+    }
+
+    .card .heading {
+        height: 25px;
+        font-size: 15px;
+        margin: 0;
+        padding-left: 8px;
+        border-bottom: none;
+        background-color: #656565;
+        color: white;
+    }
+
+        .card .heading .title {
+            width: calc(100% - 25px);
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+    .card.pc .heading {
+        background-color: #006500;
+    }
+
+    .card.monster .heading {
+        background-color: #650000;
+    }
+
+    .card .card-content {
+        padding: 5px 10px;
+    }
+
+    .card .subheading {
+        font-weight: 600;
+        font-size: 14px;
+        padding: 3px 0;
+        color: #656565;
+    }
+
+    .card.pc .subheading {
+        color: #006500;
+    }
+
+    .card.monster .subheading {
+        color: #650000;
+    }
+
+    .card .divider {
+        border-top: 1px solid #656565;
+    }
+
+    .card.pc .divider {
+        border-top: 1px solid #006500;
+    }
+
+    .card.monster .divider {
+        border-top: 1px solid #650000;
+    }
+
+    .card .toggle {
+        cursor: pointer;
+        user-select: none;
+    }
+
+        .card .toggle:hover {
+            background-color: #DDDDDD;
+        }
+
+    .card .table {
+        background-color: white;
+        border: 1px solid #C3C3C3;
+        margin: 8px 0;
+        padding: 3px 0;
+    }
+
+        .card .table .cell {
+            display: inline-block;
+            padding: 2px 0;
+            text-align: center;
+        }
+
+            .card .table .cell.three {
+                width: calc((100% - 1px) / 3);
+            }
+
+            .card .table .cell.four {
+                width: calc((100% - 1px) / 4);
+            }
+
+    .card .heading .image {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        display: inline-block;
+        vertical-align: middle;
+    }

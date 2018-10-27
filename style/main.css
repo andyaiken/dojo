@@ -3,52 +3,6 @@
     -webkit-user-select: none;
 }
 
-body {
-    font-size: 12px;
-    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-    background-color: white;
-    color: #404040;
-}
-
-b {
-    font-weight: 600;
-    color: #000000;
-}
-
-input[type=text],
-textarea {
-    height: 20px;
-    margin: 3px 0;
-    padding: 5px 8px;
-    border: 1px solid #C3C3C3;
-    width: calc(100% - 18px);
-    font-size: 12px;
-    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-    -webkit-user-select: text;
-}
-
-textarea {
-    min-height: 64px;
-    resize: vertical;
-}
-
-ul {
-    padding-left: 20px;
-}
-
-li {
-    margin: 5px 0;
-}
-
-a {
-    color: royalblue;
-    text-decoration: none;
-}
-
-    a:visited {
-        color: royalblue;
-    }
-
 html,
 body,
 #root,
@@ -68,8 +22,7 @@ body,
 .parties,
 .monster-library,
 .encounter-builder,
-.combat-manager,
-.about {
+.combat-manager {
     height: 100%;
 }
 
@@ -79,11 +32,22 @@ body,
     vertical-align: top;
 }
 
+    .left-pane .card {
+        width: 100%;
+        margin: 10px 0;
+    }
+
 .right-pane {
     display: inline-block;
     width: calc(100% - 390px);
     vertical-align: top;
 }
+
+    .right-pane .card {
+        width: calc(((100% - 1px) / 4) - 12px);
+        min-width: 280px;
+        margin: 10px 5px;
+    }
 
 .scrollable {
     height: 100%;
@@ -104,78 +68,12 @@ body,
     width: 10px;
 }
 
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    z-index: 10;
-    background-color: rgba(0,0,0,0.5);
-}
-
-.modal {
-    width: calc(100% - 100px);
-    height: calc(100% - 200px);
-    margin: 100px 50px;
-    box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.5);
-}
-
-    .modal .modal-heading {
-        height: 50px;
-        margin: 0;
-        padding-left: 15px;
-        border-bottom: none;
-        background-color: #656565;
-        color: white;
-    }
-
-        .modal .modal-heading .title {
-            display: inline-block;
-            vertical-align: middle;
-            width: calc(100% - 50px);
-            line-height: 40px;
-            font-size: 20px;
-        }
-
-        .modal .modal-heading .image {
-            display: inline-block;
-            vertical-align: middle;
-            width: 30px;
-            height: 30px;
-            padding: 10px;
-            cursor: pointer;
-        }
-
-    .modal .modal-content {
-        height: calc(100% - 50px);
-        background-color: white;
-    }
-
-.blur {
-    -webkit-filter: blur(5px);
-    -moz-filter: blur(5px);
-    -ms-filter: blur(5px);
-    filter: blur(5px);
-}
-
 .left {
     float: left;
 }
 
 .right {
     float: right;
-}
-
-:focus {
-    outline: none;
-}
-
-a:focus,
-input:focus,
-textarea:focus {
-    border-color: cornflowerblue;
-    box-shadow: 0 0 5px 0 cornflowerblue;
 }
 
 .heading {
@@ -236,73 +134,6 @@ textarea:focus {
         padding-left: 8px;
     }
 
-button {
-    display: block;
-    min-height: 32px;
-    width: 100%;
-    text-align: left;
-    font-size: 12px;
-    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-    font-weight: 600;
-    background-color: white;
-    border: 1px solid #C3C3C3;
-    border-left-width: 5px;
-    margin: 3px 0;
-    padding: 5px 9px 5px 10px;
-    cursor: pointer;
-}
-
-    button:hover {
-        border-color: black;
-    }
-
-    button.disabled {
-        background-color: white;
-        border-color: #C3C3C3;
-        opacity: 0.5;
-        cursor: default;
-        pointer-events: none;
-    }
-
-    button .destructive, button .non-destructive {
-        background-color: white;
-        border: 1px solid #C3C3C3;
-        border-left-width: 5px;
-        margin: 3px 0;
-        padding: 5px 8px;
-        height: 20px;
-        line-height: 18px;
-        cursor: pointer;
-    }
-
-    button .destructive {
-        border-color: rgb(170, 0, 0);
-    }
-
-    button .destructive:hover {
-        background-color: rgba(255, 0, 0, 0.3);
-    }
-
-    button .title {
-        width: calc(100% - 26px);
-        display: inline-block;
-        vertical-align: middle;
-        height: 16px;
-        line-height: 15px;
-    }
-
-    button .image {
-        width: 20px;
-        height: 20px;
-        display: inline-block;
-        vertical-align: middle;
-        padding-left: 5px;
-    }
-
-    button .confirmation {
-        padding-top: 10px;
-    }
-
 .card-group {
     margin-bottom: 20px;
     padding-left: 5px;
@@ -321,184 +152,6 @@ button {
         display: inline-block;
         vertical-align: middle;
     }
-
-.left-pane .card {
-    width: 100%;
-    margin: 10px 0;
-}
-
-.right-pane .card {
-    width: calc(((100% - 1px) / 4) - 12px);
-    min-width: 280px;
-    margin: 10px 5px;
-}
-
-.card {
-    display: inline-block;
-    vertical-align: top;
-    background-color: #F5F5F5;
-    border: 1px solid #656565;
-}
-
-    .card.centered {
-        display: block;
-        width: 300px;
-        margin: 10px auto;
-    }
-
-    .card.wide {
-        width: 100%;
-        min-height: 100%;
-        border: none !important;
-    }
-
-    .card.welcome {
-        margin-top: 150px;
-    }
-
-    .card.pc,
-    .card.monster {
-        background-color: beige;
-    }
-
-    .card.pc {
-        border: 1px solid #006500;
-    }
-
-    .card.monster {
-        border: 1px solid #650000;
-    }
-
-    .card.error {
-        background-color: red;
-        color: white;
-        font-weight: 600;
-    }
-
-    .card .heading {
-        height: 25px;
-        font-size: 15px;
-        margin: 0;
-        padding-left: 8px;
-        border-bottom: none;
-        background-color: #656565;
-        color: white;
-    }
-
-        .card .heading .title {
-            width: calc(100% - 25px);
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-    .card.pc .heading {
-        background-color: #006500;
-    }
-
-    .card.monster .heading {
-        background-color: #650000;
-    }
-
-    .card .card-content {
-        padding: 5px 10px;
-    }
-
-    .card .subheading {
-        font-weight: 600;
-        font-size: 14px;
-        padding: 3px 0;
-        color: #656565;
-    }
-
-    .card.pc .subheading {
-        color: #006500;
-    }
-
-    .card.monster .subheading {
-        color: #650000;
-    }
-
-    .card .divider {
-        border-top: 1px solid #656565;
-    }
-
-    .card.pc .divider {
-        border-top: 1px solid #006500;
-    }
-
-    .card.monster .divider {
-        border-top: 1px solid #650000;
-    }
-
-    .card .toggle {
-        cursor: pointer;
-        user-select: none;
-    }
-
-        .card .toggle:hover {
-            background-color: #DDDDDD;
-        }
-
-    .card .table {
-        background-color: white;
-        border: 1px solid #C3C3C3;
-        margin: 8px 0;
-        padding: 3px 0;
-    }
-
-        .card .table .cell {
-            display: inline-block;
-            padding: 2px 0;
-            text-align: center;
-        }
-
-            .card .table .cell.three {
-                width: calc((100% - 1px) / 3);
-            }
-
-            .card .table .cell.four {
-                width: calc((100% - 1px) / 4);
-            }
-
-    .card .heading .image {
-        width: 20px;
-        height: 20px;
-        cursor: pointer;
-        display: inline-block;
-        vertical-align: middle;
-    }
-
-.chart {
-    height: 300px;
-    border: 1px solid #C3C3C3;
-    background-color: white;
-}
-
-    .chart .plot {
-        height: calc(100% - 20px);
-        width: calc(100% - 20px);
-        margin: 10px;
-        border-bottom: 1px solid #C3C3C3;
-    }
-
-        .chart .plot .bar-container {
-            display: inline-block;
-            height: 100%;
-        }
-
-            .chart .plot .bar-container .bar {
-                background-color: lightsteelblue;
-                border-top: 1px solid steelblue;
-                vertical-align: bottom;
-            }
-
-            .chart .plot .bar-container:hover .bar {
-                background-color: steelblue;
-            }
-
-            .chart .plot .bar-container:hover .bar-space {
-                background-color: #EEEEEE;
-            }
 
 .section {
     margin: 5px 0;
@@ -549,33 +202,6 @@ button {
         padding-top: 5px;
         font-weight: 600;
     }
-        
-.hp-gauge {
-    margin: 5px 5px 10px 5px;
-    height: 5px;
-    background-color: lightgrey;
-}
-
-    .hp-gauge .bar {
-        float: left;
-        height: 100%;
-    }
-
-        .hp-gauge .bar.unhurt {
-            background-color: green;
-        }
-
-        .hp-gauge .bar.injured {
-            background-color: orange;
-        }
-
-        .hp-gauge .bar.bloodied {
-            background-color: crimson;
-        }
-
-        .hp-gauge .bar.temp {
-            background-color: cornflowerblue;
-        }
 
 .image.rotate {
     transform: rotate(-180deg);

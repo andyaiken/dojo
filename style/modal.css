@@ -1,0 +1,54 @@
+﻿.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 10;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal {
+    width: calc(100% - 100px);
+    height: calc(100% - 200px);
+    margin: 100px 50px;
+    box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.5);
+}
+
+    .modal .modal-heading {
+        height: 50px;
+        margin: 0;
+        padding-left: 15px;
+        border-bottom: none;
+        background-color: #656565;
+        color: white;
+    }
+
+        .modal .modal-heading .title {
+            display: inline-block;
+            vertical-align: middle;
+            width: calc(100% - 50px);
+            line-height: 40px;
+            font-size: 20px;
+        }
+
+        .modal .modal-heading .image {
+            display: inline-block;
+            vertical-align: middle;
+            width: 30px;
+            height: 30px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+    .modal .modal-content {
+        height: calc(100% - 50px);
+        background-color: white;
+    }
+
+.blur {
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);
+}
