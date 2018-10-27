@@ -5,7 +5,7 @@
 }
 
     .expander:hover {
-        border-color: black;
+        border-color: rgb(100, 150, 240);
     }
 
     .expander .expander-header {
@@ -16,8 +16,8 @@
     }
 
     .expander:hover .expander-header {
-        background-color: rgb(0, 0, 0);
-        background-color: rgba(0, 0, 0, 0.1);
+        background-color: rgb(100, 150, 240);
+        background-color: rgba(100, 150, 240, 0.1);
     }
 
         .expander .expander-header .expander-text {

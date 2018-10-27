@@ -22,6 +22,11 @@ textarea {
     -webkit-user-select: text;
 }
 
+    input[type=text]:hover,
+    textarea:hover {
+        border-color: rgb(100, 150, 240);
+    }
+
 textarea {
     min-height: 64px;
     resize: vertical;
@@ -47,7 +52,6 @@ a {
 :focus {
     outline: none;
     border-color: cornflowerblue !important;
-    box-shadow: 0 0 5px 0 cornflowerblue;
 }
 
 button {
@@ -68,7 +72,7 @@ button {
 }
 
     button:hover {
-        border-color: black;
+        border-color: rgb(100, 150, 240);
     }
 
     button.disabled {
@@ -96,6 +100,10 @@ button {
 
     button .destructive:hover {
         background-color: rgba(255, 0, 0, 0.3);
+    }
+
+    button .non-destructive:hover {
+        border-color: rgb(100, 150, 240);
     }
 
     button .title {

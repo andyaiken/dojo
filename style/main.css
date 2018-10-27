@@ -124,7 +124,7 @@ body,
 
     .list-item.selected,
     .list-item:hover {
-        background-color: #EEEEEE;
+        background-color: rgba(100, 150, 240, 0.1);
     }
 
     .list-item .heading {
@@ -132,6 +132,21 @@ body,
         margin-right: -3px;
         margin-top: -3px;
         padding-left: 8px;
+    }
+
+.subheading {
+    font-weight: 600;
+    font-size: 14px;
+    padding: 3px 0;
+    color: #656565;
+}
+
+    .pc .subheading {
+        color: #006500;
+    }
+
+    .monster .subheading {
+        color: #650000;
     }
 
 .card-group {

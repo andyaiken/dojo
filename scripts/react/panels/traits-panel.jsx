@@ -72,23 +72,23 @@ class TraitsPanel extends React.Component {
             return (
                 <div>
                     <div style={{ display: traits.length > 0 ? "" : "none" }}>
-                        <div className="section input-label">traits</div>
+                        <div className="section subheading">traits</div>
                         {traits}
                     </div>
                     <div style={{ display: actions.length > 0 ? "" : "none" }}>
-                        <div className="section input-label">actions</div>
+                        <div className="section subheading">actions</div>
                         {actions}
                     </div>
                     <div style={{ display: legendaryActions.length > 0 ? "" : "none" }}>
-                        <div className="section input-label">legendary actions</div>
+                        <div className="section subheading">legendary actions</div>
                         {legendaryActions}
                     </div>
                     <div style={{ display: lairActions.length > 0 ? "" : "none" }}>
-                        <div className="section input-label">lair actions</div>
+                        <div className="section subheading">lair actions</div>
                         {lairActions}
                     </div>
                     <div style={{ display: regionalEffects.length > 0 ? "" : "none" }}>
-                        <div className="section input-label">regional effects</div>
+                        <div className="section subheading">regional effects</div>
                         {regionalEffects}
                     </div>
                 </div>

@@ -5639,7 +5639,7 @@ var TraitsPanel = function (_React$Component) {
                         { style: { display: traits.length > 0 ? "" : "none" } },
                         React.createElement(
                             "div",
-                            { className: "section input-label" },
+                            { className: "section subheading" },
                             "traits"
                         ),
                         traits
@@ -5649,7 +5649,7 @@ var TraitsPanel = function (_React$Component) {
                         { style: { display: actions.length > 0 ? "" : "none" } },
                         React.createElement(
                             "div",
-                            { className: "section input-label" },
+                            { className: "section subheading" },
                             "actions"
                         ),
                         actions
@@ -5659,7 +5659,7 @@ var TraitsPanel = function (_React$Component) {
                         { style: { display: legendaryActions.length > 0 ? "" : "none" } },
                         React.createElement(
                             "div",
-                            { className: "section input-label" },
+                            { className: "section subheading" },
                             "legendary actions"
                         ),
                         legendaryActions
@@ -5669,7 +5669,7 @@ var TraitsPanel = function (_React$Component) {
                         { style: { display: lairActions.length > 0 ? "" : "none" } },
                         React.createElement(
                             "div",
-                            { className: "section input-label" },
+                            { className: "section subheading" },
                             "lair actions"
                         ),
                         lairActions
@@ -5679,7 +5679,7 @@ var TraitsPanel = function (_React$Component) {
                         { style: { display: regionalEffects.length > 0 ? "" : "none" } },
                         React.createElement(
                             "div",
-                            { className: "section input-label" },
+                            { className: "section subheading" },
                             "regional effects"
                         ),
                         regionalEffects

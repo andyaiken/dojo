@@ -5,7 +5,7 @@
 }
 
     .spin:hover {
-        border-color: rgb(0, 0, 0);
+        border-color: rgb(100, 150, 240);
     }
 
     .spin .spin-button,
@@ -24,8 +24,8 @@
     }
 
         .spin .spin-button:hover {
-            background-color: rgb(0, 0, 0);
-            background-color: rgba(0, 0, 0, 0.1);
+            background-color: rgb(100, 150, 240);
+            background-color: rgba(100, 150, 240, 0.1);
         }
 
     .spin .info {
@@ -54,7 +54,7 @@
     }
 
         .spin .spin-expander:hover {
-            background-color: rgb(0, 0, 0, 0.1);
+            background-color: rgb(100, 150, 240, 0.1);
         }
 
     .spin .factor-selector {

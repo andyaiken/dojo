@@ -19,6 +19,7 @@
 
     .card.welcome {
         margin-top: 150px;
+        background-color: rgba(100, 150, 240, 0.1);
     }
 
     .card.pc,
@@ -66,21 +67,6 @@
 
     .card .card-content {
         padding: 5px 10px;
-    }
-
-    .card .subheading {
-        font-weight: 600;
-        font-size: 14px;
-        padding: 3px 0;
-        color: #656565;
-    }
-
-    .card.pc .subheading {
-        color: #006500;
-    }
-
-    .card.monster .subheading {
-        color: #650000;
     }
 
     .card .divider {

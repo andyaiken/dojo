@@ -7,7 +7,7 @@
 }
 
     .checkbox:hover {
-        border-color: rgb(0, 0, 0);
+        border-color: rgb(100, 150, 240);
     }
 
     .checkbox .image {

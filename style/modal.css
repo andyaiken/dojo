@@ -5,7 +5,7 @@
     height: 100%;
     width: 100%;
     z-index: 10;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
 .modal {
@@ -20,7 +20,7 @@
         margin: 0;
         padding-left: 15px;
         border-bottom: none;
-        background-color: #656565;
+        background-color: rgb(100, 150, 240);
         color: white;
     }
 
@@ -42,7 +42,8 @@
         }
 
     .modal .modal-content {
-        height: calc(100% - 50px);
+        height: calc(100% - 65px);
+        padding-bottom: 15px;
         background-color: white;
     }
 
