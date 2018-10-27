@@ -1,4 +1,4 @@
-class DemographicsCard extends React.Component {
+class DemographicsModal extends React.Component {
     constructor() {
         super();
         this.state = {

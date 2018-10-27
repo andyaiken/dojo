@@ -1206,9 +1206,7 @@ class Dojo extends React.Component {
                         <AboutScreen
                             showHelp={this.state.options.showHelp}
                             options={this.state.options}
-                            //toggleHelp={value => this.toggleHelp(value)}
                             resetAll={() => this.resetAll()}
-                            //changeOption={(option, value) => this.changeOption(option, value)}
                             changeValue={(source, type, value) => this.changeValue(source, type, value)}
                         />
                     );
@@ -1220,7 +1218,7 @@ class Dojo extends React.Component {
                 var modalContent = null;
                 if (this.state.modal === "demographics") {
                     modalContent = (
-                        <DemographicsCard
+                        <DemographicsModal
                             library={this.state.library}
                             close={() => this.setModal(null)}
                         />
@@ -1228,7 +1226,7 @@ class Dojo extends React.Component {
                 }
                 if (this.state.modal.type === "monster") {
                     modalContent = (
-                        <MonsterCard
+                        <MonsterEditorModal
                             key={this.state.modal.id}
                             combatant={this.state.modal}
                             mode={"editor"}
