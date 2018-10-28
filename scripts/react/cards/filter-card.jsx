@@ -43,11 +43,13 @@ class FilterCard extends React.Component {
                         />
                         <Dropdown
                             options={sizeOptions}
+                            placeholder="filter by size..."
                             selectedID={this.props.filter.size}
                             select={optionID => this.props.changeValue("size", optionID)}
                         />
                         <Dropdown
                             options={catOptions}
+                            placeholder="filter by type..."
                             selectedID={this.props.filter.category}
                             select={optionID => this.props.changeValue("category", optionID)}
                         />

@@ -267,6 +267,7 @@ var EncounterCard = function (_React$Component) {
                             { style: { display: this.props.parties.length !== 0 ? "" : "none" } },
                             React.createElement(Dropdown, {
                                 options: partyOptions,
+                                placeholder: "select party...",
                                 selectedID: this.state.partyID,
                                 select: function select(optionID) {
                                     return _this2.selectParty(optionID);
@@ -585,6 +586,7 @@ var FilterCard = function (_React$Component) {
                         }),
                         React.createElement(Dropdown, {
                             options: sizeOptions,
+                            placeholder: "filter by size...",
                             selectedID: this.props.filter.size,
                             select: function select(optionID) {
                                 return _this2.props.changeValue("size", optionID);
@@ -592,6 +594,7 @@ var FilterCard = function (_React$Component) {
                         }),
                         React.createElement(Dropdown, {
                             options: catOptions,
+                            placeholder: "filter by type...",
                             selectedID: this.props.filter.category,
                             select: function select(optionID) {
                                 return _this2.props.changeValue("category", optionID);
@@ -4415,7 +4418,7 @@ var MonsterEditorModal = function (_React$Component) {
                             React.createElement(
                                 "div",
                                 { className: "input-label" },
-                                "tag:"
+                                "subtype:"
                             ),
                             React.createElement("input", { type: "text", value: this.props.combatant.tag, onChange: function onChange(event) {
                                     return _this2.props.changeValue(_this2.props.combatant, "tag", event.target.value);
@@ -5040,6 +5043,7 @@ var CombatStartPanel = function (_React$Component) {
                     items.push(React.createElement(Dropdown, {
                         key: "party-dropdown",
                         options: partyOptions,
+                        placeholder: "select party...",
                         selectedID: this.state.partyID,
                         select: function select(optionID) {
                             return _this2.selectParty(optionID);
@@ -5114,6 +5118,7 @@ var CombatStartPanel = function (_React$Component) {
                     items.push(React.createElement(Dropdown, {
                         key: "encounter-dropdown",
                         options: encounterOptions,
+                        placeholder: "select encounter...",
                         selectedID: this.state.encounterID,
                         select: function select(optionID) {
                             return _this2.selectEncounter(optionID);
@@ -5276,6 +5281,7 @@ var ConditionsPanel = function (_React$Component) {
                     conditions,
                     React.createElement(Dropdown, {
                         options: options,
+                        placeholder: "add condition",
                         select: function select(optionID) {
                             return _this2.addCondition(optionID);
                         }

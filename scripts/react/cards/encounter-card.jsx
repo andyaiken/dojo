@@ -114,6 +114,7 @@ class EncounterCard extends React.Component {
                         <div style={{ display: this.props.parties.length !== 0 ? "" : "none" }}>
                             <Dropdown
                                 options={partyOptions}
+                                placeholder="select party..."
                                 selectedID={this.state.partyID}
                                 select={optionID => this.selectParty(optionID)}
                             />

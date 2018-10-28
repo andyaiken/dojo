@@ -37,7 +37,7 @@ class MonsterEditorModal extends React.Component {
                     <div className="column-divider"></div>
                     <div className="column">
                         <div className="section">
-                            <div className="input-label">tag:</div>
+                            <div className="input-label">subtype:</div>
                             <input type="text" value={this.props.combatant.tag} onChange={event => this.props.changeValue(this.props.combatant, "tag", event.target.value)} />
                         </div>
                     </div>

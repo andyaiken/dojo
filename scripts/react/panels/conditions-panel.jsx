@@ -45,6 +45,7 @@ class ConditionsPanel extends React.Component {
                     {conditions}
                     <Dropdown
                         options={options}
+                        placeholder="add condition"
                         select={optionID => this.addCondition(optionID)}
                     />
                 </div>

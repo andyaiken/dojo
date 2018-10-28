@@ -20,12 +20,14 @@
         width: 20px;
         cursor: pointer;
         background-color: transparent;
-        padding: 5px 10px;
+        padding: 5px;
+        margin: 0 5px;
+        border-radius: 50%;
     }
 
         .spin .spin-button:hover {
             background-color: rgb(100, 150, 240);
-            background-color: rgba(100, 150, 240, 0.1);
+            background-color: rgba(100, 150, 240, 0.2);
         }
 
     .spin .info {
