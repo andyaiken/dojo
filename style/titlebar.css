@@ -25,6 +25,8 @@
         .titlebar .action .section {
             display: inline-block;
             margin: 0 5px;
+            color: white;
+            font-weight: 600;
         }
 
     .titlebar .settings-icon {

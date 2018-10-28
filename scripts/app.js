@@ -3682,9 +3682,36 @@ var Dojo = function (_React$Component) {
                             }
                         });
                         if (combat) {
+                            var xp = 0;
+                            combat.combatants.filter(function (c) {
+                                return c.type === "monster";
+                            }).forEach(function (combatant) {
+                                xp += experience(combatant.challenge);
+                            });
+
                             action = React.createElement(
                                 "div",
                                 null,
+                                React.createElement(
+                                    "div",
+                                    { className: "section" },
+                                    React.createElement(
+                                        "div",
+                                        null,
+                                        "round: ",
+                                        combat.round
+                                    )
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "section" },
+                                    React.createElement(
+                                        "div",
+                                        null,
+                                        "xp: ",
+                                        xp
+                                    )
+                                ),
                                 React.createElement(
                                     "div",
                                     { className: "section" },
@@ -4268,15 +4295,11 @@ var DemographicsModal = function (_React$Component) {
                         }),
                         React.createElement(
                             "div",
-                            { className: "section" },
+                            { className: "chart" },
                             React.createElement(
                                 "div",
-                                { className: "chart" },
-                                React.createElement(
-                                    "div",
-                                    { className: "plot" },
-                                    bars
-                                )
+                                { className: "plot" },
+                                bars
                             )
                         )
                     );

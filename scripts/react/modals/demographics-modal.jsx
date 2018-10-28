@@ -138,10 +138,8 @@ class DemographicsModal extends React.Component {
                             selectedID={this.state.chart}
                             select={optionID => this.selectChart(optionID)}
                         />
-                        <div className="section">
-                            <div className="chart">
-                                <div className="plot">{bars}</div>
-                            </div>
+                        <div className="chart">
+                            <div className="plot">{bars}</div>
                         </div>
                     </div>
                 );
