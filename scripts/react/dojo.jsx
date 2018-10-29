@@ -66,12 +66,12 @@ class Dojo extends React.Component {
 
     addParty(name) {
         var party = {
-            id: this.guid(),
+            id: guid(),
             name: name,
             pcs: []
         };
         var parties = [].concat(this.state.parties, [party]);
-        this.sort(parties);
+        sort(parties);
         this.setState({
             parties: parties,
             selectedPartyID: party.id
@@ -90,7 +90,7 @@ class Dojo extends React.Component {
 
     addPC(name) {
         var pc = {
-            id: this.guid(),
+            id: guid(),
             type: "pc",
             player: "",
             name: name,
@@ -124,7 +124,7 @@ class Dojo extends React.Component {
 
     sortPCs() {
         var party = this.getParty(this.state.selectedPartyID);
-        this.sort(party.pcs);
+        sort(party.pcs);
         this.setState({
             parties: this.state.parties
         });
@@ -135,12 +135,12 @@ class Dojo extends React.Component {
 
     addMonsterGroup(name) {
         var group = {
-            id: this.guid(),
+            id: guid(),
             name: name,
             monsters: []
         };
         var library = [].concat(this.state.library, [group]);
-        this.sort(library);
+        sort(library);
         this.setState({
             library: library,
             selectedMonsterGroupID: group.id
@@ -169,7 +169,7 @@ class Dojo extends React.Component {
 
     createMonster() {
         return {
-            id: this.guid(),
+            id: guid(),
             type: "monster",
             name: "",
             size: "medium",
@@ -216,7 +216,7 @@ class Dojo extends React.Component {
 
     sortMonsters() {
         var group = this.getMonsterGroup(this.state.selectedMonsterGroupID);
-        this.sort(group.monsters);
+        sort(group.monsters);
         this.setState({
             library: this.state.library
         });
@@ -229,7 +229,7 @@ class Dojo extends React.Component {
         sourceGroup.monsters.splice(index, 1);
         var group = this.getMonsterGroup(groupID);
         group.monsters.push(monster);
-        this.sort(group.monsters);
+        sort(group.monsters);
 
         this.setState({
             library: this.state.library
@@ -237,33 +237,27 @@ class Dojo extends React.Component {
     }
 
     editMonster(monster) {
-        this.setModal("monster editor", (
-            <MonsterEditorModal
-                key={monster.id}
-                combatant={monster}
-                mode={"editor"}
-                changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
-                nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
-                changeTrait={(trait, type, value) => this.changeValue(trait, type, value)}
-                addTrait={(combatant, type) => this.addTrait(combatant, type)}
-                removeTrait={(combatant, trait) => this.removeTrait(combatant, trait)}
-            />
-        ));
+        this.setState({
+            modal: {
+                type: "monster",
+                monster: monster
+            }
+        });
     }
 
     openDemographics() {
-        this.setModal("demographics", (
-            <DemographicsModal
-                library={this.state.library}
-            />
-        ));
+        this.setState({
+            modal: {
+                type: "demographics"
+            }
+        });
     }
 
     cloneMonster(monster) {
         var group = this.findMonster(monster);
 
         var clone = {
-            id: this.guid(),
+            id: guid(),
             type: "monster",
             name: monster.name + " copy",
             size: monster.size,
@@ -296,7 +290,7 @@ class Dojo extends React.Component {
             equipment: monster.equipment,
             traits: monster.traits.map(trait => {
                 return {
-                    id: this.guid(),
+                    id: guid(),
                     name: trait.name,
                     usage: trait.usage,
                     type: trait.type,
@@ -307,7 +301,7 @@ class Dojo extends React.Component {
         };
 
         group.monsters.push(clone);
-        this.sort(group.monsters);
+        sort(group.monsters);
 
         this.setState({
             library: this.state.library
@@ -316,7 +310,7 @@ class Dojo extends React.Component {
 
     addTrait(combatant, type) {
         var trait = {
-            id: this.guid(),
+            id: guid(),
             name: "New trait",
             usage: "",
             type: type,
@@ -524,7 +518,7 @@ class Dojo extends React.Component {
                         var group = this.getMonsterGroupByName(groupName);
                         if (!group) {
                             var group = {
-                                id: this.guid(),
+                                id: guid(),
                                 name: groupName,
                                 monsters: []
                             }
@@ -534,7 +528,7 @@ class Dojo extends React.Component {
                     }
                 });
 
-                this.sort(this.state.library);
+                sort(this.state.library);
 
                 this.setState({
                     view: "library",
@@ -559,7 +553,7 @@ class Dojo extends React.Component {
         }
 
         return {
-            id: this.guid(),
+            id: guid(),
             type: type,
             name: name,
             usage: usage,
@@ -572,12 +566,12 @@ class Dojo extends React.Component {
 
     addEncounter(name) {
         var encounter = {
-            id: this.guid(),
+            id: guid(),
             name: name,
             slots: []
         };
         var encounters = [].concat(this.state.encounters, [encounter]);
-        this.sort(encounters);
+        sort(encounters);
         this.setState({
             encounters: encounters,
             selectedEncounterID: encounter.id
@@ -597,7 +591,7 @@ class Dojo extends React.Component {
     addEncounterSlot(monster) {
         var group = this.findMonster(monster);
         var slot = {
-            id: this.guid(),
+            id: guid(),
             monsterGroupName: group.name,
             monsterName: monster.name,
             count: 1
@@ -650,7 +644,7 @@ class Dojo extends React.Component {
         }
 
         var combat = {
-            id: this.guid(),
+            id: guid(),
             name: partyName + " vs " + encounterName,
             combatants: [],
             round: 1,
@@ -667,7 +661,7 @@ class Dojo extends React.Component {
 
                 for (var n = 0; n !== slot.count; ++n) {
                     var copy = JSON.parse(JSON.stringify(monster));
-                    copy.id = this.guid();
+                    copy.id = guid();
                     if (slot.count > 1) {
                         copy.name += " " + (n + 1);
                     }
@@ -836,33 +830,6 @@ class Dojo extends React.Component {
     }
 
     /////////////////////////////////////////////////////////////////////////////
-    // About screen
-
-    toggleHelp(value) {
-        this.setState({
-            options: {
-                showHelp: value
-            }
-        });
-    }
-
-    resetAll() {
-        this.setState({
-            options: {
-                showHelp: true
-            },
-            parties: [],
-            selectedPartyID: null,
-            library: [],
-            selectedMonsterGroupID: null,
-            encounters: [],
-            selectedEncounterID: null,
-            combats: [],
-            selectedCombatID: null
-        });
-    }
-
-    /////////////////////////////////////////////////////////////////////////////
 
     setView(view) {
         this.setState({
@@ -870,11 +837,10 @@ class Dojo extends React.Component {
         });
     }
 
-    setModal(title, content) {
+    openAbout() {
         this.setState({
             modal: {
-                title: title,
-                content: content
+                type: "about"
             }
         });
     }
@@ -979,6 +945,22 @@ class Dojo extends React.Component {
         return result;
     }
 
+    resetAll() {
+        this.setState({
+            options: {
+                showHelp: true
+            },
+            parties: [],
+            selectedPartyID: null,
+            library: [],
+            selectedMonsterGroupID: null,
+            encounters: [],
+            selectedEncounterID: null,
+            combats: [],
+            selectedCombatID: null
+        });
+    }
+
     changeValue(combatant, type, value) {
         switch (type) {
             case "hp":
@@ -1022,46 +1004,21 @@ class Dojo extends React.Component {
             combatant.hpMax = hp;
         }
 
-        switch (this.state.view) {
-            case "parties":
-                this.sort(this.state.parties);
-                this.setState({
-                    selectedPartyID: this.state.selectedPartyID,
-                    parties: this.state.parties
-                });
-                break;
-            case "library":
-                this.sort(this.state.library);
-                this.setState({
-                    selectedMonsterGroupID: this.state.selectedMonsterGroupID,
-                    library: this.state.library
-                });
-                break;
-            case "encounter":
-                this.sort(this.state.encounters);
-                this.setState({
-                    selectedEncounterID: this.state.selectedEncounterID,
-                    encounters: this.state.encounters
-                });
-                break;
-            case "combat":
-                this.setState({
-                    selectedCombatID: this.state.selectedCombatID,
-                    combats: this.state.combats
-                });
-                break;
-            case "about":
-                this.setState({
-                    options: this.state.options
-                });
-                break;
-            default:
-                this.setState({
-                    library: this.state.library,
-                    modal: this.state.modal
-                });
-                break;
-        }
+        sort(this.state.parties);
+        sort(this.state.library);
+        sort(this.state.encounters);
+
+        this.setState({
+            parties: this.state.parties,
+            library: this.state.library,
+            encounters: this.state.encounters,
+            combats: this.state.combats,
+            selectedPartyID: this.state.selectedPartyID,
+            selectedMonsterGroupID: this.state.selectedMonsterGroupID,
+            selectedEncounterID: this.state.selectedEncounterID,
+            selectedCombatID: this.state.selectedCombatID,
+            options: this.state.options
+        });
     }
 
     nudgeValue(combatant, type, delta) {
@@ -1081,30 +1038,6 @@ class Dojo extends React.Component {
                 obj = obj[token];
             }
         }
-    }
-
-    changeOption(option, value) {
-        this.state.options[option] = value;
-        this.setState({
-            options: this.state.options
-        });
-    }
-
-    guid() {
-        function s4() {
-            return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-        }
-        return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-    }
-
-    sort(collection) {
-        collection.sort((a, b) => {
-            var aName = a.name.toLowerCase();
-            var bName = b.name.toLowerCase();
-            if (aName < bName) return -1;
-            if (aName > bName) return 1;
-            return 0;
-        });
     }
 
     /////////////////////////////////////////////////////////////////////////////
@@ -1238,38 +1171,61 @@ class Dojo extends React.Component {
                         );
                     }
                     break;
-                case "about":
-                    content = (
-                        <AboutScreen
-                            showHelp={this.state.options.showHelp}
-                            options={this.state.options}
-                            resetAll={() => this.resetAll()}
-                            changeValue={(source, type, value) => this.changeValue(source, type, value)}
-                        />
-                    );
-                    break;
             }
 
             var modal = null;
             if (this.state.modal) {
+                var modalTitle = null;
+                var modalContent = null;
+
+                switch (this.state.modal.type) {
+                    case "monster":
+                        modalTitle = "monster editor";
+                        modalContent = (
+                            <MonsterEditorModal
+                                combatant={this.state.modal.monster}
+                                mode={"editor"}
+                                changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
+                                nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
+                                changeTrait={(trait, type, value) => this.changeValue(trait, type, value)}
+                                addTrait={(combatant, type) => this.addTrait(combatant, type)}
+                                removeTrait={(combatant, trait) => this.removeTrait(combatant, trait)}
+                            />
+                        );
+                        break;
+                    case "demographics":
+                        modalTitle = "demographics";
+                        modalContent = (
+                            <DemographicsModal
+                                library={this.state.library}
+                            />
+                        );
+                        break;
+                    case "about":
+                        modalTitle = "about";
+                        modalContent = (
+                            <AboutModal
+                                options={this.state.options}
+                                resetAll={() => this.resetAll()}
+                                changeValue={(source, type, value) => this.changeValue(source, type, value)}
+                            />
+                        );
+                        break;
+                }
+
                 modal = (
                     <div className="overlay">
                         <div className="modal">
                             <div className="modal-heading">
-                                <div className="title">{this.state.modal.title}</div>
+                                <div className="title">{modalTitle}</div>
                                 <img className="image" src="content/close-white.svg" onClick={() => this.closeModal()} />
                             </div>
                             <div className="modal-content scrollable">
-                                {this.state.modal.content}
+                                {modalContent}
                             </div>
                         </div>
                     </div>
                 );
-            }
-
-            var contentStyle = "page-content";
-            if (modal !== null) {
-                contentStyle += " blur";
             }
 
             return (
@@ -1277,9 +1233,9 @@ class Dojo extends React.Component {
                     <Titlebar
                         action={action}
                         blur={modal !== null}
-                        setView={view => this.setView(view)}
+                        openAbout={() => this.openAbout()}
                     />
-                    <div className={contentStyle}>
+                    <div className={(modal === null) ? "page-content" : "page-content blur"}>
                         {content}
                     </div>
                     <Navbar

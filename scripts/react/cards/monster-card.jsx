@@ -61,7 +61,7 @@ class MonsterCard extends React.Component {
                         <Dropdown
                             key="move"
                             options={groupOptions}
-                            placeholder="move to group"
+                            placeholder="move to group..."
                             select={optionID => this.props.moveToGroup(this.props.combatant, optionID)}
                         />
                     );
@@ -279,7 +279,7 @@ class MonsterCard extends React.Component {
             }
 
             var toggle = null;
-            if ((this.props.mode.indexOf("editor") === -1) && !this.props.combatant.current) {
+            if (!this.props.combatant.current) {
                 var imageStyle = this.state.showDetails ? "image rotate" : "image";
                 toggle = <img className={imageStyle} src="content/down-arrow.svg" onClick={() => this.toggleDetails()} />
             }

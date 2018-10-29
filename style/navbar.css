@@ -9,10 +9,10 @@
     .navbar .navigator-item {
         display: inline-block;
         padding: 5px;
-        margin: 0 1px;
+        margin: 0 5px;
         cursor: pointer;
         height: 20px;
-        width: 150px;
+        width: calc(((100% - 1px) / 4) - 20px);
         font-size: 14px;
         color: white;
     }

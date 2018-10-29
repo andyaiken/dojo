@@ -35,7 +35,9 @@
         top: 0;
         height: 30px;
         width: 30px;
-        padding: 10px;
+        padding: 5px;
+        margin: 5px;
+        border-radius: 50%;
         cursor: pointer;
     }
 

@@ -14,7 +14,7 @@ class Titlebar extends React.Component {
                 <div className={this.props.blur ? "titlebar blur" : "titlebar"}>
                     <div className="app-name">dojo</div>
                     {actionSection}
-                    <img className="settings-icon" src="content/settings.svg" onClick={() => this.props.setView("about")} />
+                    <img className="settings-icon" src="content/settings.svg" title="about" onClick={() => this.props.openAbout()} />
                 </div>
             );
         } catch (e) {

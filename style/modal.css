@@ -5,14 +5,13 @@
     height: 100%;
     width: 100%;
     z-index: 10;
-    background-color: rgba(0, 0, 0, 0.2);
 }
 
 .modal {
-    width: calc(100% - 100px);
+    width: calc(100% - 200px);
     height: calc(100% - 200px);
-    margin: 100px 50px;
-    box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.5);
+    margin: 100px;
+    box-shadow: 0 0 50px 10px rgba(0, 0, 0, 0.5);
 }
 
     .modal .modal-heading {
@@ -30,6 +29,7 @@
             width: calc(100% - 50px);
             line-height: 40px;
             font-size: 20px;
+            font-weight: 600;
         }
 
         .modal .modal-heading .image {
@@ -37,9 +37,15 @@
             vertical-align: middle;
             width: 30px;
             height: 30px;
-            padding: 10px;
+            padding: 5px;
+            margin: 5px;
+            border-radius: 50%;
             cursor: pointer;
         }
+
+            .modal .modal-heading .image:hover {
+                background-color: rgba(255, 255, 255, 0.3);
+            }
 
     .modal .modal-content {
         height: calc(100% - 80px);

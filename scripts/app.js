@@ -836,7 +836,7 @@ var MonsterCard = function (_React$Component) {
                         options.push(React.createElement(Dropdown, {
                             key: "move",
                             options: groupOptions,
-                            placeholder: "move to group",
+                            placeholder: "move to group...",
                             select: function select(optionID) {
                                 return _this2.props.moveToGroup(_this2.props.combatant, optionID);
                             }
@@ -1387,7 +1387,7 @@ var MonsterCard = function (_React$Component) {
                 }
 
                 var toggle = null;
-                if (this.props.mode.indexOf("editor") === -1 && !this.props.combatant.current) {
+                if (!this.props.combatant.current) {
                     var imageStyle = this.state.showDetails ? "image rotate" : "image";
                     toggle = React.createElement("img", { className: imageStyle, src: "content/down-arrow.svg", onClick: function onClick() {
                             return _this2.toggleDetails();
@@ -2405,12 +2405,12 @@ var Dojo = function (_React$Component) {
         key: "addParty",
         value: function addParty(name) {
             var party = {
-                id: this.guid(),
+                id: guid(),
                 name: name,
                 pcs: []
             };
             var parties = [].concat(this.state.parties, [party]);
-            this.sort(parties);
+            sort(parties);
             this.setState({
                 parties: parties,
                 selectedPartyID: party.id
@@ -2431,7 +2431,7 @@ var Dojo = function (_React$Component) {
         key: "addPC",
         value: function addPC(name) {
             var pc = {
-                id: this.guid(),
+                id: guid(),
                 type: "pc",
                 player: "",
                 name: name,
@@ -2467,7 +2467,7 @@ var Dojo = function (_React$Component) {
         key: "sortPCs",
         value: function sortPCs() {
             var party = this.getParty(this.state.selectedPartyID);
-            this.sort(party.pcs);
+            sort(party.pcs);
             this.setState({
                 parties: this.state.parties
             });
@@ -2480,12 +2480,12 @@ var Dojo = function (_React$Component) {
         key: "addMonsterGroup",
         value: function addMonsterGroup(name) {
             var group = {
-                id: this.guid(),
+                id: guid(),
                 name: name,
                 monsters: []
             };
             var library = [].concat(this.state.library, [group]);
-            this.sort(library);
+            sort(library);
             this.setState({
                 library: library,
                 selectedMonsterGroupID: group.id
@@ -2517,7 +2517,7 @@ var Dojo = function (_React$Component) {
         key: "createMonster",
         value: function createMonster() {
             return {
-                id: this.guid(),
+                id: guid(),
                 type: "monster",
                 name: "",
                 size: "medium",
@@ -2566,7 +2566,7 @@ var Dojo = function (_React$Component) {
         key: "sortMonsters",
         value: function sortMonsters() {
             var group = this.getMonsterGroup(this.state.selectedMonsterGroupID);
-            this.sort(group.monsters);
+            sort(group.monsters);
             this.setState({
                 library: this.state.library
             });
@@ -2580,7 +2580,7 @@ var Dojo = function (_React$Component) {
             sourceGroup.monsters.splice(index, 1);
             var group = this.getMonsterGroup(groupID);
             group.monsters.push(monster);
-            this.sort(group.monsters);
+            sort(group.monsters);
 
             this.setState({
                 library: this.state.library
@@ -2589,45 +2589,29 @@ var Dojo = function (_React$Component) {
     }, {
         key: "editMonster",
         value: function editMonster(monster) {
-            var _this2 = this;
-
-            this.setModal("monster editor", React.createElement(MonsterEditorModal, {
-                key: monster.id,
-                combatant: monster,
-                mode: "editor",
-                changeValue: function changeValue(combatant, type, value) {
-                    return _this2.changeValue(combatant, type, value);
-                },
-                nudgeValue: function nudgeValue(combatant, type, delta) {
-                    return _this2.nudgeValue(combatant, type, delta);
-                },
-                changeTrait: function changeTrait(trait, type, value) {
-                    return _this2.changeValue(trait, type, value);
-                },
-                addTrait: function addTrait(combatant, type) {
-                    return _this2.addTrait(combatant, type);
-                },
-                removeTrait: function removeTrait(combatant, trait) {
-                    return _this2.removeTrait(combatant, trait);
+            this.setState({
+                modal: {
+                    type: "monster",
+                    monster: monster
                 }
-            }));
+            });
         }
     }, {
         key: "openDemographics",
         value: function openDemographics() {
-            this.setModal("demographics", React.createElement(DemographicsModal, {
-                library: this.state.library
-            }));
+            this.setState({
+                modal: {
+                    type: "demographics"
+                }
+            });
         }
     }, {
         key: "cloneMonster",
         value: function cloneMonster(monster) {
-            var _this3 = this;
-
             var group = this.findMonster(monster);
 
             var clone = {
-                id: this.guid(),
+                id: guid(),
                 type: "monster",
                 name: monster.name + " copy",
                 size: monster.size,
@@ -2660,7 +2644,7 @@ var Dojo = function (_React$Component) {
                 equipment: monster.equipment,
                 traits: monster.traits.map(function (trait) {
                     return {
-                        id: _this3.guid(),
+                        id: guid(),
                         name: trait.name,
                         usage: trait.usage,
                         type: trait.type,
@@ -2671,7 +2655,7 @@ var Dojo = function (_React$Component) {
             };
 
             group.monsters.push(clone);
-            this.sort(group.monsters);
+            sort(group.monsters);
 
             this.setState({
                 library: this.state.library
@@ -2681,7 +2665,7 @@ var Dojo = function (_React$Component) {
         key: "addTrait",
         value: function addTrait(combatant, type) {
             var trait = {
-                id: this.guid(),
+                id: guid(),
                 name: "New trait",
                 usage: "",
                 type: type,
@@ -2705,7 +2689,7 @@ var Dojo = function (_React$Component) {
     }, {
         key: "addOpenGameContent",
         value: function addOpenGameContent() {
-            var _this4 = this;
+            var _this2 = this;
 
             var request = new XMLHttpRequest();
             request.overrideMimeType("application/json");
@@ -2715,7 +2699,7 @@ var Dojo = function (_React$Component) {
                     var monsters = JSON.parse(request.responseText);
                     monsters.forEach(function (data) {
                         if (data.name) {
-                            var monster = _this4.createMonster();
+                            var monster = _this2.createMonster();
 
                             monster.type = "monster";
                             monster.name = data.name;
@@ -2836,19 +2820,19 @@ var Dojo = function (_React$Component) {
 
                             if (data.special_abilities) {
                                 data.special_abilities.forEach(function (rawTrait) {
-                                    var trait = _this4.buildTrait(rawTrait, "trait");
+                                    var trait = _this2.buildTrait(rawTrait, "trait");
                                     monster.traits.push(trait);
                                 });
                             }
                             if (data.actions) {
                                 data.actions.forEach(function (rawTrait) {
-                                    var trait = _this4.buildTrait(rawTrait, "action");
+                                    var trait = _this2.buildTrait(rawTrait, "action");
                                     monster.traits.push(trait);
                                 });
                             }
                             if (data.legendary_actions) {
                                 data.legendary_actions.forEach(function (rawTrait) {
-                                    var trait = _this4.buildTrait(rawTrait, "legendary");
+                                    var trait = _this2.buildTrait(rawTrait, "legendary");
                                     monster.traits.push(trait);
                                 });
                             }
@@ -2864,24 +2848,24 @@ var Dojo = function (_React$Component) {
                                 groupName = "npc";
                             }
 
-                            var group = _this4.getMonsterGroupByName(groupName);
+                            var group = _this2.getMonsterGroupByName(groupName);
                             if (!group) {
                                 var group = {
-                                    id: _this4.guid(),
+                                    id: guid(),
                                     name: groupName,
                                     monsters: []
                                 };
-                                _this4.state.library.push(group);
+                                _this2.state.library.push(group);
                             }
                             group.monsters.push(monster);
                         }
                     });
 
-                    _this4.sort(_this4.state.library);
+                    sort(_this2.state.library);
 
-                    _this4.setState({
+                    _this2.setState({
                         view: "library",
-                        library: _this4.state.library
+                        library: _this2.state.library
                     });
                 }
             };
@@ -2903,7 +2887,7 @@ var Dojo = function (_React$Component) {
             }
 
             return {
-                id: this.guid(),
+                id: guid(),
                 type: type,
                 name: name,
                 usage: usage,
@@ -2919,12 +2903,12 @@ var Dojo = function (_React$Component) {
 
         value: function addEncounter(name) {
             var encounter = {
-                id: this.guid(),
+                id: guid(),
                 name: name,
                 slots: []
             };
             var encounters = [].concat(this.state.encounters, [encounter]);
-            this.sort(encounters);
+            sort(encounters);
             this.setState({
                 encounters: encounters,
                 selectedEncounterID: encounter.id
@@ -2946,7 +2930,7 @@ var Dojo = function (_React$Component) {
         value: function addEncounterSlot(monster) {
             var group = this.findMonster(monster);
             var slot = {
-                id: this.guid(),
+                id: guid(),
                 monsterGroupName: group.name,
                 monsterName: monster.name,
                 count: 1
@@ -2991,7 +2975,7 @@ var Dojo = function (_React$Component) {
     }, {
         key: "startEncounter",
         value: function startEncounter(partyID, encounterID) {
-            var _this5 = this;
+            var _this3 = this;
 
             var party = this.getParty(partyID);
             var partyName = party.name;
@@ -3005,7 +2989,7 @@ var Dojo = function (_React$Component) {
             }
 
             var combat = {
-                id: this.guid(),
+                id: guid(),
                 name: partyName + " vs " + encounterName,
                 combatants: [],
                 round: 1,
@@ -3013,8 +2997,8 @@ var Dojo = function (_React$Component) {
             };
 
             encounter.slots.forEach(function (slot) {
-                var group = _this5.getMonsterGroupByName(slot.monsterGroupName);
-                var monster = _this5.getMonster(slot.monsterName, group);
+                var group = _this3.getMonsterGroupByName(slot.monsterGroupName);
+                var monster = _this3.getMonster(slot.monsterName, group);
 
                 if (monster) {
                     var init = parseInt(modifier(monster.abilityScores.dex));
@@ -3022,7 +3006,7 @@ var Dojo = function (_React$Component) {
 
                     for (var n = 0; n !== slot.count; ++n) {
                         var copy = JSON.parse(JSON.stringify(monster));
-                        copy.id = _this5.guid();
+                        copy.id = guid();
                         if (slot.count > 1) {
                             copy.name += " " + (n + 1);
                         }
@@ -3202,36 +3186,6 @@ var Dojo = function (_React$Component) {
         }
 
         /////////////////////////////////////////////////////////////////////////////
-        // About screen
-
-    }, {
-        key: "toggleHelp",
-        value: function toggleHelp(value) {
-            this.setState({
-                options: {
-                    showHelp: value
-                }
-            });
-        }
-    }, {
-        key: "resetAll",
-        value: function resetAll() {
-            this.setState({
-                options: {
-                    showHelp: true
-                },
-                parties: [],
-                selectedPartyID: null,
-                library: [],
-                selectedMonsterGroupID: null,
-                encounters: [],
-                selectedEncounterID: null,
-                combats: [],
-                selectedCombatID: null
-            });
-        }
-
-        /////////////////////////////////////////////////////////////////////////////
 
     }, {
         key: "setView",
@@ -3241,12 +3195,11 @@ var Dojo = function (_React$Component) {
             });
         }
     }, {
-        key: "setModal",
-        value: function setModal(title, content) {
+        key: "openAbout",
+        value: function openAbout() {
             this.setState({
                 modal: {
-                    title: title,
-                    content: content
+                    type: "about"
                 }
             });
         }
@@ -3362,6 +3315,23 @@ var Dojo = function (_React$Component) {
             return result;
         }
     }, {
+        key: "resetAll",
+        value: function resetAll() {
+            this.setState({
+                options: {
+                    showHelp: true
+                },
+                parties: [],
+                selectedPartyID: null,
+                library: [],
+                selectedMonsterGroupID: null,
+                encounters: [],
+                selectedEncounterID: null,
+                combats: [],
+                selectedCombatID: null
+            });
+        }
+    }, {
         key: "changeValue",
         value: function changeValue(combatant, type, value) {
             switch (type) {
@@ -3406,46 +3376,21 @@ var Dojo = function (_React$Component) {
                 combatant.hpMax = hp;
             }
 
-            switch (this.state.view) {
-                case "parties":
-                    this.sort(this.state.parties);
-                    this.setState({
-                        selectedPartyID: this.state.selectedPartyID,
-                        parties: this.state.parties
-                    });
-                    break;
-                case "library":
-                    this.sort(this.state.library);
-                    this.setState({
-                        selectedMonsterGroupID: this.state.selectedMonsterGroupID,
-                        library: this.state.library
-                    });
-                    break;
-                case "encounter":
-                    this.sort(this.state.encounters);
-                    this.setState({
-                        selectedEncounterID: this.state.selectedEncounterID,
-                        encounters: this.state.encounters
-                    });
-                    break;
-                case "combat":
-                    this.setState({
-                        selectedCombatID: this.state.selectedCombatID,
-                        combats: this.state.combats
-                    });
-                    break;
-                case "about":
-                    this.setState({
-                        options: this.state.options
-                    });
-                    break;
-                default:
-                    this.setState({
-                        library: this.state.library,
-                        modal: this.state.modal
-                    });
-                    break;
-            }
+            sort(this.state.parties);
+            sort(this.state.library);
+            sort(this.state.encounters);
+
+            this.setState({
+                parties: this.state.parties,
+                library: this.state.library,
+                encounters: this.state.encounters,
+                combats: this.state.combats,
+                selectedPartyID: this.state.selectedPartyID,
+                selectedMonsterGroupID: this.state.selectedMonsterGroupID,
+                selectedEncounterID: this.state.selectedEncounterID,
+                selectedCombatID: this.state.selectedCombatID,
+                options: this.state.options
+            });
         }
     }, {
         key: "nudgeValue",
@@ -3467,40 +3412,13 @@ var Dojo = function (_React$Component) {
                 }
             }
         }
-    }, {
-        key: "changeOption",
-        value: function changeOption(option, value) {
-            this.state.options[option] = value;
-            this.setState({
-                options: this.state.options
-            });
-        }
-    }, {
-        key: "guid",
-        value: function guid() {
-            function s4() {
-                return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-            }
-            return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-        }
-    }, {
-        key: "sort",
-        value: function sort(collection) {
-            collection.sort(function (a, b) {
-                var aName = a.name.toLowerCase();
-                var bName = b.name.toLowerCase();
-                if (aName < bName) return -1;
-                if (aName > bName) return 1;
-                return 0;
-            });
-        }
 
         /////////////////////////////////////////////////////////////////////////////
 
     }, {
         key: "render",
         value: function render() {
-            var _this6 = this;
+            var _this4 = this;
 
             try {
                 var content = null;
@@ -3515,28 +3433,28 @@ var Dojo = function (_React$Component) {
                             selection: this.getParty(this.state.selectedPartyID),
                             showHelp: this.state.options.showHelp,
                             selectParty: function selectParty(party) {
-                                return _this6.selectParty(party);
+                                return _this4.selectParty(party);
                             },
                             addParty: function addParty(name) {
-                                return _this6.addParty(name);
+                                return _this4.addParty(name);
                             },
                             removeParty: function removeParty() {
-                                return _this6.removeParty();
+                                return _this4.removeParty();
                             },
                             addPC: function addPC(name) {
-                                return _this6.addPC(name);
+                                return _this4.addPC(name);
                             },
                             removePC: function removePC(pc) {
-                                return _this6.removePC(pc);
+                                return _this4.removePC(pc);
                             },
                             sortPCs: function sortPCs() {
-                                return _this6.sortPCs();
+                                return _this4.sortPCs();
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this6.changeValue(combatant, type, value);
+                                return _this4.changeValue(combatant, type, value);
                             },
                             nudgeValue: function nudgeValue(combatant, type, delta) {
-                                return _this6.nudgeValue(combatant, type, delta);
+                                return _this4.nudgeValue(combatant, type, delta);
                             }
                         });
                         break;
@@ -3546,46 +3464,46 @@ var Dojo = function (_React$Component) {
                             selection: this.getMonsterGroup(this.state.selectedMonsterGroupID),
                             showHelp: this.state.options.showHelp,
                             selectMonsterGroup: function selectMonsterGroup(group) {
-                                return _this6.selectMonsterGroup(group);
+                                return _this4.selectMonsterGroup(group);
                             },
                             addMonsterGroup: function addMonsterGroup(name) {
-                                return _this6.addMonsterGroup(name);
+                                return _this4.addMonsterGroup(name);
                             },
                             removeMonsterGroup: function removeMonsterGroup() {
-                                return _this6.removeMonsterGroup();
+                                return _this4.removeMonsterGroup();
                             },
                             addMonster: function addMonster(name) {
-                                return _this6.addMonster(name);
+                                return _this4.addMonster(name);
                             },
                             removeMonster: function removeMonster(monster) {
-                                return _this6.removeMonster(monster);
+                                return _this4.removeMonster(monster);
                             },
                             sortMonsters: function sortMonsters() {
-                                return _this6.sortMonsters();
+                                return _this4.sortMonsters();
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this6.changeValue(combatant, type, value);
+                                return _this4.changeValue(combatant, type, value);
                             },
                             nudgeValue: function nudgeValue(combatant, type, delta) {
-                                return _this6.nudgeValue(combatant, type, delta);
+                                return _this4.nudgeValue(combatant, type, delta);
                             },
                             addTrait: function addTrait(combatant, type) {
-                                return _this6.addTrait(combatant, type);
+                                return _this4.addTrait(combatant, type);
                             },
                             removeTrait: function removeTrait(combatant, trait) {
-                                return _this6.removeTrait(combatant, trait);
+                                return _this4.removeTrait(combatant, trait);
                             },
                             editMonster: function editMonster(combatant) {
-                                return _this6.editMonster(combatant);
+                                return _this4.editMonster(combatant);
                             },
                             cloneMonster: function cloneMonster(combatant) {
-                                return _this6.cloneMonster(combatant);
+                                return _this4.cloneMonster(combatant);
                             },
                             moveToGroup: function moveToGroup(combatant, groupID) {
-                                return _this6.moveToGroup(combatant, groupID);
+                                return _this4.moveToGroup(combatant, groupID);
                             },
                             addOpenGameContent: function addOpenGameContent() {
-                                return _this6.addOpenGameContent();
+                                return _this4.addOpenGameContent();
                             }
                         });
                         var count = 0;
@@ -3599,7 +3517,7 @@ var Dojo = function (_React$Component) {
                                 React.createElement(
                                     "button",
                                     { onClick: function onClick() {
-                                            return _this6.openDemographics();
+                                            return _this4.openDemographics();
                                         } },
                                     "demographics"
                                 )
@@ -3614,28 +3532,28 @@ var Dojo = function (_React$Component) {
                             library: this.state.library,
                             showHelp: this.state.options.showHelp,
                             selectEncounter: function selectEncounter(encounter) {
-                                return _this6.selectEncounter(encounter);
+                                return _this4.selectEncounter(encounter);
                             },
                             addEncounter: function addEncounter(name) {
-                                return _this6.addEncounter(name);
+                                return _this4.addEncounter(name);
                             },
                             removeEncounter: function removeEncounter(encounter) {
-                                return _this6.removeEncounter(encounter);
+                                return _this4.removeEncounter(encounter);
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this6.changeValue(combatant, type, value);
+                                return _this4.changeValue(combatant, type, value);
                             },
                             getMonster: function getMonster(monsterName, monsterGroupName) {
-                                return _this6.getMonster(monsterName, _this6.getMonsterGroupByName(monsterGroupName));
+                                return _this4.getMonster(monsterName, _this4.getMonsterGroupByName(monsterGroupName));
                             },
                             addEncounterSlot: function addEncounterSlot(encounter, monster) {
-                                return _this6.addEncounterSlot(encounter, monster);
+                                return _this4.addEncounterSlot(encounter, monster);
                             },
                             removeEncounterSlot: function removeEncounterSlot(encounter, slot) {
-                                return _this6.removeEncounterSlot(encounter, slot);
+                                return _this4.removeEncounterSlot(encounter, slot);
                             },
                             nudgeValue: function nudgeValue(slot, type, delta) {
-                                return _this6.nudgeValue(slot, type, delta);
+                                return _this4.nudgeValue(slot, type, delta);
                             }
                         });
                         break;
@@ -3648,40 +3566,40 @@ var Dojo = function (_React$Component) {
                             combat: combat,
                             showHelp: this.state.options.showHelp,
                             startEncounter: function startEncounter(partyID, encounterID) {
-                                return _this6.startEncounter(partyID, encounterID);
+                                return _this4.startEncounter(partyID, encounterID);
                             },
                             pauseEncounter: function pauseEncounter() {
-                                return _this6.pauseEncounter();
+                                return _this4.pauseEncounter();
                             },
                             resumeEncounter: function resumeEncounter(combat) {
-                                return _this6.resumeEncounter(combat);
+                                return _this4.resumeEncounter(combat);
                             },
                             endEncounter: function endEncounter() {
-                                return _this6.endEncounter();
+                                return _this4.endEncounter();
                             },
                             nudgeValue: function nudgeValue(combatant, type, delta) {
-                                return _this6.nudgeValue(combatant, type, delta);
+                                return _this4.nudgeValue(combatant, type, delta);
                             },
                             makeCurrent: function makeCurrent(combatant) {
-                                return _this6.makeCurrent(combatant);
+                                return _this4.makeCurrent(combatant);
                             },
                             makeActive: function makeActive(combatant) {
-                                return _this6.makeActive(combatant);
+                                return _this4.makeActive(combatant);
                             },
                             makeDefeated: function makeDefeated(combatant) {
-                                return _this6.makeDefeated(combatant);
+                                return _this4.makeDefeated(combatant);
                             },
                             removeCombatant: function removeCombatant(combatant) {
-                                return _this6.removeCombatant(combatant);
+                                return _this4.removeCombatant(combatant);
                             },
                             addCondition: function addCondition(combatant, condition) {
-                                return _this6.addCondition(combatant, condition);
+                                return _this4.addCondition(combatant, condition);
                             },
                             removeCondition: function removeCondition(combatant, condition) {
-                                return _this6.removeCondition(combatant, condition);
+                                return _this4.removeCondition(combatant, condition);
                             },
                             endTurn: function endTurn(combatant) {
-                                return _this6.endTurn(combatant);
+                                return _this4.endTurn(combatant);
                             }
                         });
                         if (combat) {
@@ -3721,7 +3639,7 @@ var Dojo = function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         { onClick: function onClick() {
-                                                return _this6.pauseEncounter();
+                                                return _this4.pauseEncounter();
                                             } },
                                         "pause encounter"
                                     )
@@ -3732,7 +3650,7 @@ var Dojo = function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         { onClick: function onClick() {
-                                                return _this6.endEncounter();
+                                                return _this4.endEncounter();
                                             } },
                                         "end encounter"
                                     )
@@ -3740,22 +3658,56 @@ var Dojo = function (_React$Component) {
                             );
                         }
                         break;
-                    case "about":
-                        content = React.createElement(AboutScreen, {
-                            showHelp: this.state.options.showHelp,
-                            options: this.state.options,
-                            resetAll: function resetAll() {
-                                return _this6.resetAll();
-                            },
-                            changeValue: function changeValue(source, type, value) {
-                                return _this6.changeValue(source, type, value);
-                            }
-                        });
-                        break;
                 }
 
                 var modal = null;
                 if (this.state.modal) {
+                    var modalTitle = null;
+                    var modalContent = null;
+
+                    switch (this.state.modal.type) {
+                        case "monster":
+                            modalTitle = "monster editor";
+                            modalContent = React.createElement(MonsterEditorModal, {
+                                combatant: this.state.modal.monster,
+                                mode: "editor",
+                                changeValue: function changeValue(combatant, type, value) {
+                                    return _this4.changeValue(combatant, type, value);
+                                },
+                                nudgeValue: function nudgeValue(combatant, type, delta) {
+                                    return _this4.nudgeValue(combatant, type, delta);
+                                },
+                                changeTrait: function changeTrait(trait, type, value) {
+                                    return _this4.changeValue(trait, type, value);
+                                },
+                                addTrait: function addTrait(combatant, type) {
+                                    return _this4.addTrait(combatant, type);
+                                },
+                                removeTrait: function removeTrait(combatant, trait) {
+                                    return _this4.removeTrait(combatant, trait);
+                                }
+                            });
+                            break;
+                        case "demographics":
+                            modalTitle = "demographics";
+                            modalContent = React.createElement(DemographicsModal, {
+                                library: this.state.library
+                            });
+                            break;
+                        case "about":
+                            modalTitle = "about";
+                            modalContent = React.createElement(AboutModal, {
+                                options: this.state.options,
+                                resetAll: function resetAll() {
+                                    return _this4.resetAll();
+                                },
+                                changeValue: function changeValue(source, type, value) {
+                                    return _this4.changeValue(source, type, value);
+                                }
+                            });
+                            break;
+                    }
+
                     modal = React.createElement(
                         "div",
                         { className: "overlay" },
@@ -3768,24 +3720,19 @@ var Dojo = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "title" },
-                                    this.state.modal.title
+                                    modalTitle
                                 ),
                                 React.createElement("img", { className: "image", src: "content/close-white.svg", onClick: function onClick() {
-                                        return _this6.closeModal();
+                                        return _this4.closeModal();
                                     } })
                             ),
                             React.createElement(
                                 "div",
                                 { className: "modal-content scrollable" },
-                                this.state.modal.content
+                                modalContent
                             )
                         )
                     );
-                }
-
-                var contentStyle = "page-content";
-                if (modal !== null) {
-                    contentStyle += " blur";
                 }
 
                 return React.createElement(
@@ -3794,13 +3741,13 @@ var Dojo = function (_React$Component) {
                     React.createElement(Titlebar, {
                         action: action,
                         blur: modal !== null,
-                        setView: function setView(view) {
-                            return _this6.setView(view);
+                        openAbout: function openAbout() {
+                            return _this4.openAbout();
                         }
                     }),
                     React.createElement(
                         "div",
-                        { className: contentStyle },
+                        { className: modal === null ? "page-content" : "page-content blur" },
                         content
                     ),
                     React.createElement(Navbar, {
@@ -3810,7 +3757,7 @@ var Dojo = function (_React$Component) {
                         encounters: this.state.encounters,
                         blur: modal !== null,
                         setView: function setView(view) {
-                            return _this6.setView(view);
+                            return _this4.setView(view);
                         }
                     }),
                     modal
@@ -4135,6 +4082,304 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var AboutModal = function (_React$Component) {
+    _inherits(AboutModal, _React$Component);
+
+    function AboutModal() {
+        _classCallCheck(this, AboutModal);
+
+        var _this = _possibleConstructorReturn(this, (AboutModal.__proto__ || Object.getPrototypeOf(AboutModal)).call(this));
+
+        _this.state = {
+            showDev: false,
+            optionID: "abc",
+            value: 0,
+            selected: false
+        };
+        return _this;
+    }
+
+    _createClass(AboutModal, [{
+        key: "setOption",
+        value: function setOption(optionID) {
+            this.setState({
+                optionID: optionID
+            });
+        }
+    }, {
+        key: "setValue",
+        value: function setValue(value) {
+            this.setState({
+                value: value
+            });
+        }
+    }, {
+        key: "setSelected",
+        value: function setSelected(selected) {
+            this.setState({
+                selected: selected
+            });
+        }
+    }, {
+        key: "getDevSection",
+        value: function getDevSection() {
+            var _this2 = this;
+
+            if (this.state.showDev) {
+                var devOptions = ["abc", "def", "ghi", "jkl"].map(function (x) {
+                    return {
+                        id: x,
+                        text: x
+                    };
+                });
+
+                return React.createElement(
+                    "div",
+                    { className: "group" },
+                    React.createElement(
+                        "div",
+                        { className: "heading" },
+                        "dev"
+                    ),
+                    React.createElement(
+                        "button",
+                        { onClick: function onClick() {
+                                return _this2.setSelected(!_this2.state.selected);
+                            } },
+                        "button"
+                    ),
+                    React.createElement(ConfirmButton, {
+                        text: "confirm",
+                        callback: function callback() {
+                            return _this2.setSelected(!_this2.state.selected);
+                        }
+                    }),
+                    React.createElement(Dropdown, {
+                        options: devOptions,
+                        selectedID: this.state.optionID,
+                        select: function select(optionID) {
+                            return _this2.setOption(optionID);
+                        }
+                    }),
+                    React.createElement(Expander, {
+                        text: "expander",
+                        content: React.createElement(
+                            "div",
+                            null,
+                            "content"
+                        )
+                    }),
+                    React.createElement(Spin, {
+                        source: this.state,
+                        name: "value",
+                        label: "value",
+                        factors: [1, 10, 100],
+                        nudgeValue: function nudgeValue(delta) {
+                            return _this2.setValue(_this2.state.value + delta);
+                        }
+                    }),
+                    React.createElement(Checkbox, {
+                        label: "checkbox",
+                        checked: this.state.selected,
+                        changeValue: function changeValue(value) {
+                            return _this2.setSelected(value);
+                        }
+                    }),
+                    React.createElement(Selector, {
+                        tabs: true,
+                        options: devOptions,
+                        selectedID: this.state.optionID,
+                        select: function select(optionID) {
+                            return _this2.setOption(optionID);
+                        }
+                    }),
+                    React.createElement(Selector, {
+                        tabs: false,
+                        options: devOptions,
+                        selectedID: this.state.optionID,
+                        select: function select(optionID) {
+                            return _this2.setOption(optionID);
+                        }
+                    })
+                );
+            }
+
+            return null;
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this3 = this;
+
+            try {
+                return React.createElement(
+                    "div",
+                    { className: "about" },
+                    React.createElement(
+                        "div",
+                        { className: "column two" },
+                        React.createElement(
+                            "div",
+                            { className: "group" },
+                            React.createElement(
+                                "div",
+                                { className: "heading" },
+                                "about"
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "text" },
+                                "dojo by ",
+                                React.createElement(
+                                    "a",
+                                    { href: "mailto:andy.aiken@live.co.uk" },
+                                    "andy aiken"
+                                )
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "text" },
+                                "dungeons and dragons copyright wizards of the coast"
+                            )
+                        )
+                    ),
+                    React.createElement("div", { className: "column-divider" }),
+                    React.createElement(
+                        "div",
+                        { className: "column two" },
+                        React.createElement(
+                            "div",
+                            { className: "group" },
+                            React.createElement(
+                                "div",
+                                { className: "heading" },
+                                "options"
+                            ),
+                            React.createElement(ConfirmButton, { text: "clear all data", callback: function callback() {
+                                    return _this3.props.resetAll();
+                                } }),
+                            React.createElement(Checkbox, {
+                                label: "show help cards",
+                                checked: this.props.options.showHelp,
+                                changeValue: function changeValue(value) {
+                                    return _this3.props.changeValue(_this3.props.options, "showHelp", value);
+                                }
+                            })
+                        )
+                    ),
+                    this.getDevSection(),
+                    React.createElement(
+                        "div",
+                        { className: "group" },
+                        React.createElement(
+                            "div",
+                            { className: "heading" },
+                            "open game license version 1.0a"
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "text" },
+                            "The following text is the property of Wizards of the Coast, Inc. and is Copyright 2000 Wizards of the Coast, Inc (\"Wizards\"). All Rights Reserved."
+                        ),
+                        React.createElement(
+                            "ol",
+                            null,
+                            React.createElement(
+                                "li",
+                                null,
+                                "Definitions: (a)\"Contributors\" means the copyright and/or trademark owners who have contributed Open Game Content; (b)\"Derivative Material\" means copyrighted material including derivative works and translations (including into other computer languages), potation, modification, correction, addition, extension, upgrade, improvement, compilation, abridgment or other form in which an existing work may be recast, transformed or adapted; (c) \"Distribute\" means to reproduce, license, rent, lease, sell, broadcast, publicly display, transmit or otherwise distribute; (d)\"Open Game Content\" means the game mechanic and includes the methods, procedures, processes and routines to the extent such content does not embody the Product Identity and is an enhancement over the prior art and any additional content clearly identified as Open Game Content by the Contributor, and means any work covered by this License, including translations and derivative works under copyright law, but specifically excludes Product Identity. (e) \"Product Identity\" means product and product line names, logos and identifying marks including trade dress; artifacts; creatures characters; stories, storylines, plots, thematic elements, dialogue, incidents, language, artwork, symbols, designs, depictions, likenesses, formats, poses, concepts, themes and graphic, photographic and other visual or audio representations; names and descriptions of characters, spells, enchantments, personalities, teams, personas, likenesses and special abilities; places, locations, environments, creatures, equipment, magical or supernatural abilities or effects, logos, symbols, or graphic designs; and any other trademark or registered trademark clearly identified as Product identity by the owner of the Product Identity, and which specifically excludes the Open Game Content; (f) \"Trademark\" means the logos, names, mark, sign, motto, designs that are used by a Contributor to identify itself or its products or the associated products contributed to the Open Game License by the Contributor (g) \"Use\", \"Used\" or \"Using\" means to use, Distribute, copy, edit, format, modify, translate and otherwise create Derivative Material of Open Game Content. (h) \"You\" or \"Your\" means the licensee in terms of this agreement."
+                            ),
+                            React.createElement(
+                                "li",
+                                null,
+                                "The License: This License applies to any Open Game Content that contains a notice indicating that the Open Game Content may only be Used under and in terms of this License. You must affix such a notice to any Open Game Content that you Use. No terms may be added to or subtracted from this License except as described by the License itself. No other terms or conditions may be applied to any Open Game Content distributed using this License."
+                            ),
+                            React.createElement(
+                                "li",
+                                null,
+                                "Offer and Acceptance: By Using the Open Game Content You indicate Your acceptance of the terms of this License."
+                            ),
+                            React.createElement(
+                                "li",
+                                null,
+                                "Grant and Consideration: In consideration for agreeing to use this License, the Contributors grant You a perpetual, worldwide, royalty-free, non-exclusive license with the exact terms of this License to Use, the Open Game Content."
+                            ),
+                            React.createElement(
+                                "li",
+                                null,
+                                "Representation of Authority to Contribute: If You are contributing original material as Open Game Content, You represent that Your Contributions are Your original creation and/or You have sufficient rights to grant the rights conveyed by this License."
+                            ),
+                            React.createElement(
+                                "li",
+                                null,
+                                "Notice of License Copyright: You must update the COPYRIGHT NOTICE portion of this License to include the exact text of the COPYRIGHT NOTICE of any Open Game Content You are copying, modifying or distributing, and You must add the title, the copyright date, and the copyright holder's name to the COPYRIGHT NOTICE of any original Open Game Content you Distribute."
+                            ),
+                            React.createElement(
+                                "li",
+                                null,
+                                "Use of Product Identity: You agree not to Use any Product Identity, including as an indication as to compatibility, except as expressly licensed in another, independent Agreement with the owner of each element of that Product Identity. You agree not to indicate compatibility or co-adaptability with any Trademark or Registered Trademark in conjunction with a work containing Open Game Content except as expressly licensed in another, independent Agreement with the owner of such Trademark or Registered Trademark. The use of any Product Identity in Open Game Content does not constitute a challenge to the ownership of that Product Identity. The owner of any Product Identity used in Open Game Content shall retain all rights, title and interest in and to that Product Identity."
+                            ),
+                            React.createElement(
+                                "li",
+                                null,
+                                "Identification: If you distribute Open Game Content You must clearly indicate which portions of the work that you are distributing are Open Game Content."
+                            ),
+                            React.createElement(
+                                "li",
+                                null,
+                                "Updating the License: Wizards or its designated Agents may publish updated versions of this License. You may use any authorized version of this License to copy, modify and distribute any Open Game Content originally distributed under any version of this License."
+                            ),
+                            React.createElement(
+                                "li",
+                                null,
+                                "Copy of this License: You MUST include a copy of this License with every copy of the Open Game Content You Distribute."
+                            ),
+                            React.createElement(
+                                "li",
+                                null,
+                                "Use of Contributor Credits: You may not market or advertise the Open Game Content using the name of any Contributor unless You have written permission from the Contributor to do so."
+                            ),
+                            React.createElement(
+                                "li",
+                                null,
+                                "Inability to Comply: If it is impossible for You to comply with any of the terms of this License with respect to some or all of the Open Game Content due to statute, judicial order, or governmental regulation then You may not Use any Open Game Material so affected."
+                            ),
+                            React.createElement(
+                                "li",
+                                null,
+                                "Termination: This License will terminate automatically if You fail to comply with all terms herein and fail to cure such breach within 30 days of becoming aware of the breach. All sublicenses shall survive the termination of this License."
+                            ),
+                            React.createElement(
+                                "li",
+                                null,
+                                "Reformation: If any provision of this License is held to be unenforceable, such provision shall be reformed only to the extent necessary to make it enforceable."
+                            ),
+                            React.createElement(
+                                "li",
+                                null,
+                                "COPYRIGHT NOTICE Open Game License v 1.0 Copyright 2000, Wizards of the Coast, Inc."
+                            )
+                        )
+                    )
+                );
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return AboutModal;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 var DemographicsModal = function (_React$Component) {
     _inherits(DemographicsModal, _React$Component);
 
@@ -4360,70 +4605,12 @@ var MonsterEditorModal = function (_React$Component) {
                         { className: "section" },
                         React.createElement(
                             "div",
-                            { className: "input-label" },
-                            "name:"
+                            { className: "subheading" },
+                            "name"
                         ),
                         React.createElement("input", { type: "text", value: this.props.combatant.name, onChange: function onChange(event) {
                                 return _this2.props.changeValue(_this2.props.combatant, "name", event.target.value);
                             } })
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "column" },
-                        React.createElement(
-                            "div",
-                            { className: "section" },
-                            React.createElement(
-                                "div",
-                                { className: "input-label" },
-                                "size:"
-                            ),
-                            React.createElement(Dropdown, {
-                                options: sizeOptions,
-                                selectedID: this.props.combatant.size,
-                                select: function select(optionID) {
-                                    return _this2.props.changeTrait(_this2.props.combatant, "size", optionID);
-                                }
-                            })
-                        )
-                    ),
-                    React.createElement("div", { className: "column-divider" }),
-                    React.createElement(
-                        "div",
-                        { className: "column" },
-                        React.createElement(
-                            "div",
-                            { className: "section" },
-                            React.createElement(
-                                "div",
-                                { className: "input-label" },
-                                "type:"
-                            ),
-                            React.createElement(Dropdown, {
-                                options: catOptions,
-                                selectedID: this.props.combatant.category,
-                                select: function select(optionID) {
-                                    return _this2.props.changeTrait(_this2.props.combatant, "category", optionID);
-                                }
-                            })
-                        )
-                    ),
-                    React.createElement("div", { className: "column-divider" }),
-                    React.createElement(
-                        "div",
-                        { className: "column" },
-                        React.createElement(
-                            "div",
-                            { className: "section" },
-                            React.createElement(
-                                "div",
-                                { className: "input-label" },
-                                "subtype:"
-                            ),
-                            React.createElement("input", { type: "text", value: this.props.combatant.tag, onChange: function onChange(event) {
-                                    return _this2.props.changeValue(_this2.props.combatant, "tag", event.target.value);
-                                } })
-                        )
                     ),
                     React.createElement("div", { className: "divider" }),
                     React.createElement(AbilityScorePanel, {
@@ -4436,62 +4623,95 @@ var MonsterEditorModal = function (_React$Component) {
                     React.createElement("div", { className: "divider" }),
                     React.createElement(
                         "div",
-                        { className: "column" },
+                        { className: "column three" },
                         React.createElement(
                             "div",
                             { className: "section" },
                             React.createElement(
                                 "div",
-                                { className: "input-label" },
-                                "alignment:"
+                                { className: "subheading" },
+                                "size"
+                            ),
+                            React.createElement(Dropdown, {
+                                options: sizeOptions,
+                                selectedID: this.props.combatant.size,
+                                select: function select(optionID) {
+                                    return _this2.props.changeTrait(_this2.props.combatant, "size", optionID);
+                                }
+                            }),
+                            React.createElement(
+                                "div",
+                                { className: "subheading" },
+                                "type"
+                            ),
+                            React.createElement(Dropdown, {
+                                options: catOptions,
+                                selectedID: this.props.combatant.category,
+                                select: function select(optionID) {
+                                    return _this2.props.changeTrait(_this2.props.combatant, "category", optionID);
+                                }
+                            }),
+                            React.createElement(
+                                "div",
+                                { className: "subheading" },
+                                "subtype"
+                            ),
+                            React.createElement("input", { type: "text", value: this.props.combatant.tag, onChange: function onChange(event) {
+                                    return _this2.props.changeValue(_this2.props.combatant, "tag", event.target.value);
+                                } }),
+                            React.createElement(
+                                "div",
+                                { className: "subheading" },
+                                "alignment"
                             ),
                             React.createElement("input", { type: "text", value: this.props.combatant.alignment, onChange: function onChange(event) {
                                     return _this2.props.changeValue(_this2.props.combatant, "alignment", event.target.value);
                                 } }),
+                            React.createElement("div", { className: "divider" }),
                             React.createElement(
                                 "div",
-                                { className: "input-label" },
-                                "speed:"
+                                { className: "subheading" },
+                                "speed"
                             ),
                             React.createElement("input", { type: "text", value: this.props.combatant.speed, onChange: function onChange(event) {
                                     return _this2.props.changeValue(_this2.props.combatant, "speed", event.target.value);
                                 } }),
                             React.createElement(
                                 "div",
-                                { className: "input-label" },
-                                "saving throws:"
+                                { className: "subheading" },
+                                "saving throws"
                             ),
                             React.createElement("input", { type: "text", value: this.props.combatant.savingThrows, onChange: function onChange(event) {
                                     return _this2.props.changeValue(_this2.props.combatant, "savingThrows", event.target.value);
                                 } }),
                             React.createElement(
                                 "div",
-                                { className: "input-label" },
-                                "skills:"
+                                { className: "subheading" },
+                                "skills"
                             ),
                             React.createElement("input", { type: "text", value: this.props.combatant.skills, onChange: function onChange(event) {
                                     return _this2.props.changeValue(_this2.props.combatant, "skills", event.target.value);
                                 } }),
                             React.createElement(
                                 "div",
-                                { className: "input-label" },
-                                "senses:"
+                                { className: "subheading" },
+                                "senses"
                             ),
                             React.createElement("input", { type: "text", value: this.props.combatant.senses, onChange: function onChange(event) {
                                     return _this2.props.changeValue(_this2.props.combatant, "senses", event.target.value);
                                 } }),
                             React.createElement(
                                 "div",
-                                { className: "input-label" },
-                                "languages:"
+                                { className: "subheading" },
+                                "languages"
                             ),
                             React.createElement("input", { type: "text", value: this.props.combatant.languages, onChange: function onChange(event) {
                                     return _this2.props.changeValue(_this2.props.combatant, "languages", event.target.value);
                                 } }),
                             React.createElement(
                                 "div",
-                                { className: "input-label" },
-                                "equipment:"
+                                { className: "subheading" },
+                                "equipment"
                             ),
                             React.createElement("input", { type: "text", value: this.props.combatant.equipment, onChange: function onChange(event) {
                                     return _this2.props.changeValue(_this2.props.combatant, "equipment", event.target.value);
@@ -4501,11 +4721,11 @@ var MonsterEditorModal = function (_React$Component) {
                     React.createElement("div", { className: "column-divider" }),
                     React.createElement(
                         "div",
-                        { className: "column" },
+                        { className: "column three" },
                         React.createElement(Spin, {
                             source: this.props.combatant,
                             name: "challenge",
-                            label: "challenge",
+                            label: "challenge rating",
                             display: function display(value) {
                                 return challenge(value);
                             },
@@ -4555,32 +4775,32 @@ var MonsterEditorModal = function (_React$Component) {
                             { className: "section" },
                             React.createElement(
                                 "div",
-                                { className: "input-label" },
-                                "damage resistances:"
+                                { className: "subheading" },
+                                "damage resistances"
                             ),
                             React.createElement("input", { type: "text", value: this.props.combatant.damage.resist, onChange: function onChange(event) {
                                     return _this2.props.changeValue(_this2.props.combatant, "damage.resist", event.target.value);
                                 } }),
                             React.createElement(
                                 "div",
-                                { className: "input-label" },
-                                "damage vulnerabilities:"
+                                { className: "subheading" },
+                                "damage vulnerabilities"
                             ),
                             React.createElement("input", { type: "text", value: this.props.combatant.damage.vulnerable, onChange: function onChange(event) {
                                     return _this2.props.changeValue(_this2.props.combatant, "damage.vulnerable", event.target.value);
                                 } }),
                             React.createElement(
                                 "div",
-                                { className: "input-label" },
-                                "damage immunities:"
+                                { className: "subheading" },
+                                "damage immunities"
                             ),
                             React.createElement("input", { type: "text", value: this.props.combatant.damage.immune, onChange: function onChange(event) {
                                     return _this2.props.changeValue(_this2.props.combatant, "damage.immune", event.target.value);
                                 } }),
                             React.createElement(
                                 "div",
-                                { className: "input-label" },
-                                "condition immunities:"
+                                { className: "subheading" },
+                                "condition immunities"
                             ),
                             React.createElement("input", { type: "text", value: this.props.combatant.conditionImmunities, onChange: function onChange(event) {
                                     return _this2.props.changeValue(_this2.props.combatant, "conditionImmunities", event.target.value);
@@ -4590,7 +4810,7 @@ var MonsterEditorModal = function (_React$Component) {
                     React.createElement("div", { className: "column-divider" }),
                     React.createElement(
                         "div",
-                        { className: "column" },
+                        { className: "column three" },
                         React.createElement(TraitsPanel, {
                             combatant: this.props.combatant,
                             edit: true,
@@ -5281,7 +5501,7 @@ var ConditionsPanel = function (_React$Component) {
                     conditions,
                     React.createElement(Dropdown, {
                         options: options,
-                        placeholder: "add condition",
+                        placeholder: "add condition...",
                         select: function select(optionID) {
                             return _this2.addCondition(optionID);
                         }
@@ -5473,8 +5693,8 @@ var Titlebar = function (_React$Component) {
                         "dojo"
                     ),
                     actionSection,
-                    React.createElement("img", { className: "settings-icon", src: "content/settings.svg", onClick: function onClick() {
-                            return _this2.props.setView("about");
+                    React.createElement("img", { className: "settings-icon", src: "content/settings.svg", title: "about", onClick: function onClick() {
+                            return _this2.props.openAbout();
                         } })
                 );
             } catch (e) {
@@ -5721,297 +5941,6 @@ var TraitsPanel = function (_React$Component) {
     }]);
 
     return TraitsPanel;
-}(React.Component);
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var AboutScreen = function (_React$Component) {
-    _inherits(AboutScreen, _React$Component);
-
-    function AboutScreen() {
-        _classCallCheck(this, AboutScreen);
-
-        var _this = _possibleConstructorReturn(this, (AboutScreen.__proto__ || Object.getPrototypeOf(AboutScreen)).call(this));
-
-        _this.state = {
-            showDev: false,
-            optionID: "abc",
-            value: 0,
-            selected: false
-        };
-        return _this;
-    }
-
-    _createClass(AboutScreen, [{
-        key: "setOption",
-        value: function setOption(optionID) {
-            this.setState({
-                optionID: optionID
-            });
-        }
-    }, {
-        key: "setValue",
-        value: function setValue(value) {
-            this.setState({
-                value: value
-            });
-        }
-    }, {
-        key: "setSelected",
-        value: function setSelected(selected) {
-            this.setState({
-                selected: selected
-            });
-        }
-    }, {
-        key: "render",
-        value: function render() {
-            var _this2 = this;
-
-            try {
-                var devOptions = ["abc", "def", "ghi", "jkl"].map(function (x) {
-                    return {
-                        id: x,
-                        text: x
-                    };
-                });
-
-                var dev = null;
-                if (this.state.showDev) {
-                    dev = React.createElement(
-                        "div",
-                        { className: "group" },
-                        React.createElement(
-                            "div",
-                            { className: "heading" },
-                            "dev"
-                        ),
-                        React.createElement(
-                            "button",
-                            { onClick: function onClick() {
-                                    return _this2.setSelected(!_this2.state.selected);
-                                } },
-                            "button"
-                        ),
-                        React.createElement(ConfirmButton, {
-                            text: "confirm",
-                            callback: function callback() {
-                                return _this2.setSelected(!_this2.state.selected);
-                            }
-                        }),
-                        React.createElement(Dropdown, {
-                            options: devOptions,
-                            selectedID: this.state.optionID,
-                            select: function select(optionID) {
-                                return _this2.setOption(optionID);
-                            }
-                        }),
-                        React.createElement(Expander, {
-                            text: "expander",
-                            content: React.createElement(
-                                "div",
-                                null,
-                                "content"
-                            )
-                        }),
-                        React.createElement(Spin, {
-                            source: this.state,
-                            name: "value",
-                            label: "value",
-                            factors: [1, 10, 100],
-                            nudgeValue: function nudgeValue(delta) {
-                                return _this2.setValue(_this2.state.value + delta);
-                            }
-                        }),
-                        React.createElement(Checkbox, {
-                            label: "checkbox",
-                            checked: this.state.selected,
-                            changeValue: function changeValue(value) {
-                                return _this2.setSelected(value);
-                            }
-                        }),
-                        React.createElement(Selector, {
-                            tabs: true,
-                            options: devOptions,
-                            selectedID: this.state.optionID,
-                            select: function select(optionID) {
-                                return _this2.setOption(optionID);
-                            }
-                        }),
-                        React.createElement(Selector, {
-                            tabs: false,
-                            options: devOptions,
-                            selectedID: this.state.optionID,
-                            select: function select(optionID) {
-                                return _this2.setOption(optionID);
-                            }
-                        })
-                    );
-                }
-
-                return React.createElement(
-                    "div",
-                    { className: "about" },
-                    React.createElement(
-                        "div",
-                        { className: "left-pane scrollable" },
-                        React.createElement(
-                            "div",
-                            { className: "group" },
-                            React.createElement(
-                                "div",
-                                { className: "heading" },
-                                "about"
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "text" },
-                                "dojo by ",
-                                React.createElement(
-                                    "a",
-                                    { href: "mailto:andy.aiken@live.co.uk" },
-                                    "andy aiken"
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "text" },
-                                "dungeons and dragons copyright wizards of the coast"
-                            )
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "group" },
-                            React.createElement(
-                                "div",
-                                { className: "heading" },
-                                "options"
-                            ),
-                            React.createElement(ConfirmButton, { text: "clear all data", callback: function callback() {
-                                    return _this2.props.resetAll();
-                                } }),
-                            React.createElement(Checkbox, {
-                                label: "show help cards",
-                                checked: this.props.options.showHelp,
-                                changeValue: function changeValue(value) {
-                                    return _this2.props.changeValue(_this2.props.options, "showHelp", value);
-                                }
-                            })
-                        ),
-                        dev
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "right-pane scrollable" },
-                        React.createElement(
-                            "div",
-                            { className: "group" },
-                            React.createElement(
-                                "div",
-                                { className: "heading" },
-                                "open game license version 1.0a"
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "text" },
-                                "The following text is the property of Wizards of the Coast, Inc. and is Copyright 2000 Wizards of the Coast, Inc (\"Wizards\"). All Rights Reserved."
-                            ),
-                            React.createElement(
-                                "ol",
-                                null,
-                                React.createElement(
-                                    "li",
-                                    null,
-                                    "Definitions: (a)\"Contributors\" means the copyright and/or trademark owners who have contributed Open Game Content; (b)\"Derivative Material\" means copyrighted material including derivative works and translations (including into other computer languages), potation, modification, correction, addition, extension, upgrade, improvement, compilation, abridgment or other form in which an existing work may be recast, transformed or adapted; (c) \"Distribute\" means to reproduce, license, rent, lease, sell, broadcast, publicly display, transmit or otherwise distribute; (d)\"Open Game Content\" means the game mechanic and includes the methods, procedures, processes and routines to the extent such content does not embody the Product Identity and is an enhancement over the prior art and any additional content clearly identified as Open Game Content by the Contributor, and means any work covered by this License, including translations and derivative works under copyright law, but specifically excludes Product Identity. (e) \"Product Identity\" means product and product line names, logos and identifying marks including trade dress; artifacts; creatures characters; stories, storylines, plots, thematic elements, dialogue, incidents, language, artwork, symbols, designs, depictions, likenesses, formats, poses, concepts, themes and graphic, photographic and other visual or audio representations; names and descriptions of characters, spells, enchantments, personalities, teams, personas, likenesses and special abilities; places, locations, environments, creatures, equipment, magical or supernatural abilities or effects, logos, symbols, or graphic designs; and any other trademark or registered trademark clearly identified as Product identity by the owner of the Product Identity, and which specifically excludes the Open Game Content; (f) \"Trademark\" means the logos, names, mark, sign, motto, designs that are used by a Contributor to identify itself or its products or the associated products contributed to the Open Game License by the Contributor (g) \"Use\", \"Used\" or \"Using\" means to use, Distribute, copy, edit, format, modify, translate and otherwise create Derivative Material of Open Game Content. (h) \"You\" or \"Your\" means the licensee in terms of this agreement."
-                                ),
-                                React.createElement(
-                                    "li",
-                                    null,
-                                    "The License: This License applies to any Open Game Content that contains a notice indicating that the Open Game Content may only be Used under and in terms of this License. You must affix such a notice to any Open Game Content that you Use. No terms may be added to or subtracted from this License except as described by the License itself. No other terms or conditions may be applied to any Open Game Content distributed using this License."
-                                ),
-                                React.createElement(
-                                    "li",
-                                    null,
-                                    "Offer and Acceptance: By Using the Open Game Content You indicate Your acceptance of the terms of this License."
-                                ),
-                                React.createElement(
-                                    "li",
-                                    null,
-                                    "Grant and Consideration: In consideration for agreeing to use this License, the Contributors grant You a perpetual, worldwide, royalty-free, non-exclusive license with the exact terms of this License to Use, the Open Game Content."
-                                ),
-                                React.createElement(
-                                    "li",
-                                    null,
-                                    "Representation of Authority to Contribute: If You are contributing original material as Open Game Content, You represent that Your Contributions are Your original creation and/or You have sufficient rights to grant the rights conveyed by this License."
-                                ),
-                                React.createElement(
-                                    "li",
-                                    null,
-                                    "Notice of License Copyright: You must update the COPYRIGHT NOTICE portion of this License to include the exact text of the COPYRIGHT NOTICE of any Open Game Content You are copying, modifying or distributing, and You must add the title, the copyright date, and the copyright holder's name to the COPYRIGHT NOTICE of any original Open Game Content you Distribute."
-                                ),
-                                React.createElement(
-                                    "li",
-                                    null,
-                                    "Use of Product Identity: You agree not to Use any Product Identity, including as an indication as to compatibility, except as expressly licensed in another, independent Agreement with the owner of each element of that Product Identity. You agree not to indicate compatibility or co-adaptability with any Trademark or Registered Trademark in conjunction with a work containing Open Game Content except as expressly licensed in another, independent Agreement with the owner of such Trademark or Registered Trademark. The use of any Product Identity in Open Game Content does not constitute a challenge to the ownership of that Product Identity. The owner of any Product Identity used in Open Game Content shall retain all rights, title and interest in and to that Product Identity."
-                                ),
-                                React.createElement(
-                                    "li",
-                                    null,
-                                    "Identification: If you distribute Open Game Content You must clearly indicate which portions of the work that you are distributing are Open Game Content."
-                                ),
-                                React.createElement(
-                                    "li",
-                                    null,
-                                    "Updating the License: Wizards or its designated Agents may publish updated versions of this License. You may use any authorized version of this License to copy, modify and distribute any Open Game Content originally distributed under any version of this License."
-                                ),
-                                React.createElement(
-                                    "li",
-                                    null,
-                                    "Copy of this License: You MUST include a copy of this License with every copy of the Open Game Content You Distribute."
-                                ),
-                                React.createElement(
-                                    "li",
-                                    null,
-                                    "Use of Contributor Credits: You may not market or advertise the Open Game Content using the name of any Contributor unless You have written permission from the Contributor to do so."
-                                ),
-                                React.createElement(
-                                    "li",
-                                    null,
-                                    "Inability to Comply: If it is impossible for You to comply with any of the terms of this License with respect to some or all of the Open Game Content due to statute, judicial order, or governmental regulation then You may not Use any Open Game Material so affected."
-                                ),
-                                React.createElement(
-                                    "li",
-                                    null,
-                                    "Termination: This License will terminate automatically if You fail to comply with all terms herein and fail to cure such breach within 30 days of becoming aware of the breach. All sublicenses shall survive the termination of this License."
-                                ),
-                                React.createElement(
-                                    "li",
-                                    null,
-                                    "Reformation: If any provision of this License is held to be unenforceable, such provision shall be reformed only to the extent necessary to make it enforceable."
-                                ),
-                                React.createElement(
-                                    "li",
-                                    null,
-                                    "COPYRIGHT NOTICE Open Game License v 1.0 Copyright 2000, Wizards of the Coast, Inc."
-                                )
-                            )
-                        )
-                    )
-                );
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    }]);
-
-    return AboutScreen;
 }(React.Component);
 "use strict";
 

@@ -60,9 +60,16 @@ body,
 
 .column {
     display: inline-block;
-    width: calc((100% - 21px) / 3);
     vertical-align: top;
 }
+
+    .column.two {
+        width: calc((100% - 11px) / 2);
+    }
+
+    .column.three {
+        width: calc((100% - 21px) / 3);
+    }
 
 .column-divider {
     display: inline-block;
