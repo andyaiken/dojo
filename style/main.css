@@ -22,7 +22,8 @@ body,
 .parties,
 .monster-library,
 .encounter-builder,
-.combat-manager {
+.combat-manager,
+.about {
     height: 100%;
 }
 
