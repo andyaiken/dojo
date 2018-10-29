@@ -4600,26 +4600,9 @@ var MonsterEditorModal = function (_React$Component) {
                 return React.createElement(
                     "div",
                     null,
-                    React.createElement(
-                        "div",
-                        { className: "section" },
-                        React.createElement(
-                            "div",
-                            { className: "subheading" },
-                            "name"
-                        ),
-                        React.createElement("input", { type: "text", value: this.props.combatant.name, onChange: function onChange(event) {
-                                return _this2.props.changeValue(_this2.props.combatant, "name", event.target.value);
-                            } })
-                    ),
-                    React.createElement("div", { className: "divider" }),
-                    React.createElement(AbilityScorePanel, {
-                        edit: true,
-                        combatant: this.props.combatant,
-                        nudgeValue: function nudgeValue(source, type, delta) {
-                            return _this2.props.nudgeValue(source, type, delta);
-                        }
-                    }),
+                    React.createElement("input", { type: "text", value: this.props.combatant.name, onChange: function onChange(event) {
+                            return _this2.props.changeValue(_this2.props.combatant, "name", event.target.value);
+                        } }),
                     React.createElement("div", { className: "divider" }),
                     React.createElement(
                         "div",
@@ -4722,6 +4705,23 @@ var MonsterEditorModal = function (_React$Component) {
                     React.createElement(
                         "div",
                         { className: "column three" },
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            React.createElement(
+                                "div",
+                                { className: "subheading" },
+                                "ability scores"
+                            ),
+                            React.createElement(AbilityScorePanel, {
+                                edit: true,
+                                combatant: this.props.combatant,
+                                nudgeValue: function nudgeValue(source, type, delta) {
+                                    return _this2.props.nudgeValue(source, type, delta);
+                                }
+                            })
+                        ),
+                        React.createElement("div", { className: "divider" }),
                         React.createElement(Spin, {
                             source: this.props.combatant,
                             name: "challenge",
@@ -4877,175 +4877,143 @@ var AbilityScorePanel = function (_React$Component) {
                     result = React.createElement(
                         "div",
                         { className: "section" },
-                        React.createElement(
-                            "div",
-                            { className: "ability-scores" },
-                            React.createElement(
-                                "div",
-                                { className: "ability-score" },
-                                React.createElement(Spin, {
-                                    source: this.props.combatant.abilityScores,
-                                    name: "str",
-                                    label: "str",
-                                    nudgeValue: function nudgeValue(delta) {
-                                        return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.str", delta);
-                                    }
-                                })
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "ability-score" },
-                                React.createElement(Spin, {
-                                    source: this.props.combatant.abilityScores,
-                                    name: "dex",
-                                    label: "dex",
-                                    nudgeValue: function nudgeValue(delta) {
-                                        return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.dex", delta);
-                                    }
-                                })
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "ability-score" },
-                                React.createElement(Spin, {
-                                    source: this.props.combatant.abilityScores,
-                                    name: "con",
-                                    label: "con",
-                                    nudgeValue: function nudgeValue(delta) {
-                                        return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.con", delta);
-                                    }
-                                })
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "ability-score" },
-                                React.createElement(Spin, {
-                                    source: this.props.combatant.abilityScores,
-                                    name: "int",
-                                    label: "int",
-                                    nudgeValue: function nudgeValue(delta) {
-                                        return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.int", delta);
-                                    }
-                                })
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "ability-score" },
-                                React.createElement(Spin, {
-                                    source: this.props.combatant.abilityScores,
-                                    name: "wis",
-                                    label: "wis",
-                                    nudgeValue: function nudgeValue(delta) {
-                                        return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.wis", delta);
-                                    }
-                                })
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "ability-score" },
-                                React.createElement(Spin, {
-                                    source: this.props.combatant.abilityScores,
-                                    name: "cha",
-                                    label: "cha",
-                                    nudgeValue: function nudgeValue(delta) {
-                                        return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.cha", delta);
-                                    }
-                                })
-                            )
-                        )
+                        React.createElement(Spin, {
+                            source: this.props.combatant.abilityScores,
+                            name: "str",
+                            label: "str",
+                            nudgeValue: function nudgeValue(delta) {
+                                return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.str", delta);
+                            }
+                        }),
+                        React.createElement(Spin, {
+                            source: this.props.combatant.abilityScores,
+                            name: "dex",
+                            label: "dex",
+                            nudgeValue: function nudgeValue(delta) {
+                                return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.dex", delta);
+                            }
+                        }),
+                        React.createElement(Spin, {
+                            source: this.props.combatant.abilityScores,
+                            name: "con",
+                            label: "con",
+                            nudgeValue: function nudgeValue(delta) {
+                                return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.con", delta);
+                            }
+                        }),
+                        React.createElement(Spin, {
+                            source: this.props.combatant.abilityScores,
+                            name: "int",
+                            label: "int",
+                            nudgeValue: function nudgeValue(delta) {
+                                return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.int", delta);
+                            }
+                        }),
+                        React.createElement(Spin, {
+                            source: this.props.combatant.abilityScores,
+                            name: "wis",
+                            label: "wis",
+                            nudgeValue: function nudgeValue(delta) {
+                                return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.wis", delta);
+                            }
+                        }),
+                        React.createElement(Spin, {
+                            source: this.props.combatant.abilityScores,
+                            name: "cha",
+                            label: "cha",
+                            nudgeValue: function nudgeValue(delta) {
+                                return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.cha", delta);
+                            }
+                        })
                     );
                 } else {
                     result = React.createElement(
                         "div",
-                        { className: "section" },
+                        { className: "section toggle", onClick: function onClick() {
+                                return _this2.toggleAbilityScores();
+                            } },
                         React.createElement(
                             "div",
-                            { className: "ability-scores toggle", onClick: function onClick() {
-                                    return _this2.toggleAbilityScores();
-                                } },
+                            { className: "ability-score" },
                             React.createElement(
                                 "div",
-                                { className: "ability-score" },
-                                React.createElement(
-                                    "div",
-                                    { className: "ability-heading" },
-                                    "str"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "ability-value" },
-                                    this.state.showAbilityScores ? this.props.combatant.abilityScores.str : modifier(this.props.combatant.abilityScores.str)
-                                )
+                                { className: "ability-heading" },
+                                "str"
                             ),
                             React.createElement(
                                 "div",
-                                { className: "ability-score" },
-                                React.createElement(
-                                    "div",
-                                    { className: "ability-heading" },
-                                    "dex"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "ability-value" },
-                                    this.state.showAbilityScores ? this.props.combatant.abilityScores.dex : modifier(this.props.combatant.abilityScores.dex)
-                                )
+                                { className: "ability-value" },
+                                this.state.showAbilityScores ? this.props.combatant.abilityScores.str : modifier(this.props.combatant.abilityScores.str)
+                            )
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "ability-score" },
+                            React.createElement(
+                                "div",
+                                { className: "ability-heading" },
+                                "dex"
                             ),
                             React.createElement(
                                 "div",
-                                { className: "ability-score" },
-                                React.createElement(
-                                    "div",
-                                    { className: "ability-heading" },
-                                    "con"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "ability-value" },
-                                    this.state.showAbilityScores ? this.props.combatant.abilityScores.con : modifier(this.props.combatant.abilityScores.con)
-                                )
+                                { className: "ability-value" },
+                                this.state.showAbilityScores ? this.props.combatant.abilityScores.dex : modifier(this.props.combatant.abilityScores.dex)
+                            )
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "ability-score" },
+                            React.createElement(
+                                "div",
+                                { className: "ability-heading" },
+                                "con"
                             ),
                             React.createElement(
                                 "div",
-                                { className: "ability-score" },
-                                React.createElement(
-                                    "div",
-                                    { className: "ability-heading" },
-                                    "int"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "ability-value" },
-                                    this.state.showAbilityScores ? this.props.combatant.abilityScores.int : modifier(this.props.combatant.abilityScores.int)
-                                )
+                                { className: "ability-value" },
+                                this.state.showAbilityScores ? this.props.combatant.abilityScores.con : modifier(this.props.combatant.abilityScores.con)
+                            )
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "ability-score" },
+                            React.createElement(
+                                "div",
+                                { className: "ability-heading" },
+                                "int"
                             ),
                             React.createElement(
                                 "div",
-                                { className: "ability-score" },
-                                React.createElement(
-                                    "div",
-                                    { className: "ability-heading" },
-                                    "wis"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "ability-value" },
-                                    this.state.showAbilityScores ? this.props.combatant.abilityScores.wis : modifier(this.props.combatant.abilityScores.wis)
-                                )
+                                { className: "ability-value" },
+                                this.state.showAbilityScores ? this.props.combatant.abilityScores.int : modifier(this.props.combatant.abilityScores.int)
+                            )
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "ability-score" },
+                            React.createElement(
+                                "div",
+                                { className: "ability-heading" },
+                                "wis"
                             ),
                             React.createElement(
                                 "div",
-                                { className: "ability-score" },
-                                React.createElement(
-                                    "div",
-                                    { className: "ability-heading" },
-                                    "cha"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "ability-value" },
-                                    this.state.showAbilityScores ? this.props.combatant.abilityScores.cha : modifier(this.props.combatant.abilityScores.cha)
-                                )
+                                { className: "ability-value" },
+                                this.state.showAbilityScores ? this.props.combatant.abilityScores.wis : modifier(this.props.combatant.abilityScores.wis)
+                            )
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "ability-score" },
+                            React.createElement(
+                                "div",
+                                { className: "ability-heading" },
+                                "cha"
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "ability-value" },
+                                this.state.showAbilityScores ? this.props.combatant.abilityScores.cha : modifier(this.props.combatant.abilityScores.cha)
                             )
                         )
                     );

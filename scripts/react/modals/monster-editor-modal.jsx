@@ -9,16 +9,7 @@ class MonsterEditorModal extends React.Component {
 
             return (
                 <div>
-                    <div className="section">
-                        <div className="subheading">name</div>
-                        <input type="text" value={this.props.combatant.name} onChange={event => this.props.changeValue(this.props.combatant, "name", event.target.value)} />
-                    </div>
-                    <div className="divider"></div>
-                    <AbilityScorePanel
-                        edit={true}
-                        combatant={this.props.combatant}
-                        nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
-                    />
+                    <input type="text" value={this.props.combatant.name} onChange={event => this.props.changeValue(this.props.combatant, "name", event.target.value)} />
                     <div className="divider"></div>
                     <div className="column three">
                         <div className="section">
@@ -55,6 +46,15 @@ class MonsterEditorModal extends React.Component {
                     </div>
                     <div className="column-divider"></div>
                     <div className="column three">
+                    <div className="section">
+                        <div className="subheading">ability scores</div>
+                            <AbilityScorePanel
+                                edit={true}
+                                combatant={this.props.combatant}
+                                nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
+                            />
+                        </div>
+                        <div className="divider"></div>
                         <Spin
                             source={this.props.combatant}
                             name="challenge"

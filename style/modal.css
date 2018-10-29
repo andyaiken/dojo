@@ -37,8 +37,8 @@
             vertical-align: middle;
             width: 30px;
             height: 30px;
-            padding: 5px;
-            margin: 5px;
+            padding: 2px;
+            margin: 8px;
             border-radius: 50%;
             cursor: pointer;
         }
@@ -54,8 +54,8 @@
     }
 
 .blur {
-    -webkit-filter: blur(5px);
-    -moz-filter: blur(5px);
-    -ms-filter: blur(5px);
-    filter: blur(5px);
+    -webkit-filter: blur(2px);
+    -moz-filter: blur(2px);
+    -ms-filter: blur(2px);
+    filter: blur(2px);
 }
