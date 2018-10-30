@@ -22,37 +22,37 @@ class AbilityScorePanel extends React.Component {
                         <Spin
                             source={this.props.combatant.abilityScores}
                             name="str"
-                            label="str"
+                            label="strength"
                             nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "abilityScores.str", delta)}
                         />
                         <Spin
                             source={this.props.combatant.abilityScores}
                             name="dex"
-                            label="dex"
+                            label="dexterity"
                             nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "abilityScores.dex", delta)}
                         />
                         <Spin
                             source={this.props.combatant.abilityScores}
                             name="con"
-                            label="con"
+                            label="constitution"
                             nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "abilityScores.con", delta)}
                         />
                         <Spin
                             source={this.props.combatant.abilityScores}
                             name="int"
-                            label="int"
+                            label="intelligence"
                             nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "abilityScores.int", delta)}
                         />
                         <Spin
                             source={this.props.combatant.abilityScores}
                             name="wis"
-                            label="wis"
+                            label="wisdom"
                             nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "abilityScores.wis", delta)}
                         />
                         <Spin
                             source={this.props.combatant.abilityScores}
                             name="cha"
-                            label="cha"
+                            label="charisma"
                             nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "abilityScores.cha", delta)}
                         />
                     </div>

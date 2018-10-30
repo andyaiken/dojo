@@ -124,7 +124,7 @@ class EncounterBuilderScreen extends React.Component {
                                 key={monster.id}
                                 combatant={monster}
                                 slot={slot}
-                                mode={"view"}
+                                mode={"view encounter"}
                                 nudgeValue={(slot, type, delta) => this.props.nudgeValue(slot, type, delta)}
                                 removeEncounterSlot={slot => this.props.removeEncounterSlot(slot)}
                             />
@@ -191,7 +191,7 @@ class EncounterBuilderScreen extends React.Component {
                         <MonsterCard
                             key={monster.id}
                             combatant={monster}
-                            mode={"view"}
+                            mode={"view encounter"}
                             addEncounterSlot={combatant => this.props.addEncounterSlot(combatant)}
                         />
                     );

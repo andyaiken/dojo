@@ -9,28 +9,17 @@ class TraitsPanel extends React.Component {
 
             for (var n = 0; n != this.props.combatant.traits.length; ++n) {
                 var action = this.props.combatant.traits[n];
-                var heading = action.name;
-                if (!heading) {
-                    heading = "unnamed " + traitType(action.type);
-                }
-                if (action.usage) {
-                    heading += " (" + action.usage + ")";
-                }
-
-                var item = null;
-                if (this.props.edit) {
-                    item = <TraitPanel
+                var item = (
+                    <TraitPanel
                         key={action.id}
                         trait={action}
+                        edit={this.props.edit}
+                        template={this.props.template}
                         changeTrait={(action, type, value) => this.props.changeTrait(action, type, value)}
-                        removeTrait={action => this.props.removeTrait(action)} />
-                } else {
-                    item = (
-                        <div key={action.id} className="section trait">
-                            <b>{heading}</b> {action.text}
-                        </div>
-                    );
-                }
+                        removeTrait={action => this.props.removeTrait(action)}
+                        copyTrait={action => this.props.copyTrait(action)}
+                    />
+                );
 
                 switch (action.type) {
                     case "trait":
@@ -67,6 +56,26 @@ class TraitsPanel extends React.Component {
                 regionalEffects.push(
                     <button key="add" onClick={() => this.props.addTrait("regional")}>add a new regional effect</button>
                 );
+
+                return (
+                    <div>
+                        <div className="column two">
+                            <div className="section subheading">traits</div>
+                            {traits}
+                            <div className="section subheading">actions</div>
+                            {actions}
+                        </div>
+                        <div className="column-divider"></div>
+                        <div className="column two">
+                            <div className="section subheading">legendary actions</div>
+                            {legendaryActions}
+                            <div className="section subheading">lair actions</div>
+                            {lairActions}
+                            <div className="section subheading">regional effects</div>
+                            {regionalEffects}
+                        </div>
+                    </div>
+                );    
             }
 
             return (

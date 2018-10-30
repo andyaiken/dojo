@@ -2,6 +2,7 @@
     margin: 5px 0;
     border: 1px solid #C3C3C3;
     border-left-width: 5px;
+    background-color: white;
     cursor: pointer;
     padding: 5px;
 }

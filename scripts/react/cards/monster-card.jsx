@@ -67,7 +67,8 @@ class MonsterCard extends React.Component {
                     );
 
                     options.push(<ConfirmButton key="remove" text="delete monster" callback={() => this.props.removeCombatant(this.props.combatant)} />);
-                } else {
+                }
+                if (this.props.mode.indexOf("encounter") !== -1) {
                     if (!this.props.slot) {
                         options.push(<button key="add" onClick={() => this.props.addEncounterSlot(this.props.combatant)}>add to encounter</button>);
                     } else {
@@ -92,6 +93,9 @@ class MonsterCard extends React.Component {
                 if (!this.props.combatant.pending && !this.props.combatant.active && this.props.combatant.defeated) {
                     options.push(<button key="makeActive" onClick={() => this.props.makeActive(this.props.combatant)}>mark as active</button>);
                 }
+            }
+            if (this.props.mode.indexOf("template") !== -1) {
+                // None
             }
 
             var stats = null;
@@ -119,6 +123,9 @@ class MonsterCard extends React.Component {
                             <AbilityScorePanel combatant={this.props.combatant} />
                             <div className="divider"></div>
                             <div className="section">
+                                <div>
+                                    <b>ac</b> {this.props.combatant.ac}
+                                </div>
                                 <div style={{ display: this.props.combatant.hpMax !== "" ? "" : "none" }}>
                                     <b>hp</b> {this.props.combatant.hitDice !== "" ? this.props.combatant.hpMax + " (" + this.props.combatant.hitDice + "d" + hitDieType(this.props.combatant.size) + ")" : this.props.combatant.hpMax}
                                 </div>
@@ -212,14 +219,14 @@ class MonsterCard extends React.Component {
                                 source={this.props.combatant}
                                 name="hp"
                                 label="hit points"
-                                factors={[1, 5]}
+                                factors={[1, 5, 10]}
                                 nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "hp", delta)}
                             />
                             <Spin
                                 source={this.props.combatant}
                                 name="hpTemp"
                                 label="temp hp"
-                                factors={[1, 5]}
+                                factors={[1, 5, 10]}
                                 nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "hpTemp", delta)}
                             />
                             <div className="section">
@@ -277,9 +284,85 @@ class MonsterCard extends React.Component {
                     </div>
                 );
             }
+            if (this.props.mode.indexOf("template") !== -1) {
+                if (this.props.mode.indexOf("overview") !== -1) {
+                    stats = (
+                        <div>
+                            <div className="section">
+                                <div><i>{this.description()}</i></div>
+                            </div>
+                            <div className="section">
+                                <div><b>challenge</b> {challenge(this.props.combatant.challenge)} ({experience(this.props.combatant.challenge)} xp)</div>
+                            </div>
+                            <div className="section">
+                                <b>speed</b> {this.props.combatant.speed || "none"}
+                            </div>
+                            <div className="section">
+                                <b>senses</b> {this.props.combatant.senses || "none"}
+                            </div>
+                            <div className="section">
+                                <b>languages</b> {this.props.combatant.languages || "none"}
+                            </div>
+                            <div className="section">
+                                <b>equipment</b> {this.props.combatant.equipment || "none"}
+                            </div>
+                        </div>
+                    );
+                }
+                if (this.props.mode.indexOf("abilities") !== -1) {
+                    stats = (
+                        <div>
+                            <AbilityScorePanel combatant={this.props.combatant} />
+                            <div className="section">
+                                <b>saving throws</b> {this.props.combatant.savingThrows || "none"}
+                            </div>
+                            <div className="section">
+                                <b>skills</b> {this.props.combatant.skills || "none"}
+                            </div>
+                        </div>
+                    );
+                }
+                if (this.props.mode.indexOf("combat") !== -1) {
+                    stats = (
+                        <div>
+                            <div className="section">
+                                <b>ac</b> {this.props.combatant.ac}
+                            </div>
+                            <div className="section">
+                                <b>hp</b> {this.props.combatant.hitDice !== "" ? this.props.combatant.hpMax + " (" + this.props.combatant.hitDice + "d" + hitDieType(this.props.combatant.size) + ")" : this.props.combatant.hpMax}
+                            </div>
+                            <div className="section">
+                                <b>damage immunity</b> {this.props.combatant.damage.immune || "none"}
+                            </div>
+                            <div className="section">
+                                <b>damage resistance</b> {this.props.combatant.damage.resist || "none"}
+                            </div>
+                            <div className="section">
+                                <b>damage vulnerability</b> {this.props.combatant.damage.vulnerable || "none"}
+                            </div>
+                            <div className="section">
+                                <b>condition immunities</b> {this.props.combatant.conditionImmunities || "none"}
+                            </div>
+                        </div>
+                    );
+                }
+                if (this.props.mode.indexOf("actions") !== -1) {
+                    stats = (
+                        <TraitsPanel
+                            combatant={this.props.combatant}
+                            template={true}
+                            copyTrait={trait => this.props.copyTrait(trait)}
+                        />
+                    );
+                }
+            }
 
             var toggle = null;
-            if (!this.props.combatant.current) {
+            if ((this.props.mode.indexOf("combat") !== -1) && this.props.combatant.current) {
+                // Don't show toggle button for current combatant
+            } else if (this.props.mode.indexOf("template") !== -1) {
+                // Don't show toggle button for template
+            } else {
                 var imageStyle = this.state.showDetails ? "image rotate" : "image";
                 toggle = <img className={imageStyle} src="content/down-arrow.svg" onClick={() => this.toggleDetails()} />
             }

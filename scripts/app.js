@@ -845,7 +845,8 @@ var MonsterCard = function (_React$Component) {
                         options.push(React.createElement(ConfirmButton, { key: "remove", text: "delete monster", callback: function callback() {
                                 return _this2.props.removeCombatant(_this2.props.combatant);
                             } }));
-                    } else {
+                    }
+                    if (this.props.mode.indexOf("encounter") !== -1) {
                         if (!this.props.slot) {
                             options.push(React.createElement(
                                 "button",
@@ -921,6 +922,9 @@ var MonsterCard = function (_React$Component) {
                         ));
                     }
                 }
+                if (this.props.mode.indexOf("template") !== -1) {
+                    // None
+                }
 
                 var stats = null;
                 if (this.props.mode.indexOf("view") !== -1) {
@@ -952,6 +956,17 @@ var MonsterCard = function (_React$Component) {
                             React.createElement(
                                 "div",
                                 { className: "section" },
+                                React.createElement(
+                                    "div",
+                                    null,
+                                    React.createElement(
+                                        "b",
+                                        null,
+                                        "ac"
+                                    ),
+                                    " ",
+                                    this.props.combatant.ac
+                                ),
                                 React.createElement(
                                     "div",
                                     { style: { display: this.props.combatant.hpMax !== "" ? "" : "none" } },
@@ -1202,7 +1217,7 @@ var MonsterCard = function (_React$Component) {
                                 source: this.props.combatant,
                                 name: "hp",
                                 label: "hit points",
-                                factors: [1, 5],
+                                factors: [1, 5, 10],
                                 nudgeValue: function nudgeValue(delta) {
                                     return _this2.props.nudgeValue(_this2.props.combatant, "hp", delta);
                                 }
@@ -1211,7 +1226,7 @@ var MonsterCard = function (_React$Component) {
                                 source: this.props.combatant,
                                 name: "hpTemp",
                                 label: "temp hp",
-                                factors: [1, 5],
+                                factors: [1, 5, 10],
                                 nudgeValue: function nudgeValue(delta) {
                                     return _this2.props.nudgeValue(_this2.props.combatant, "hpTemp", delta);
                                 }
@@ -1385,9 +1400,206 @@ var MonsterCard = function (_React$Component) {
                         )
                     );
                 }
+                if (this.props.mode.indexOf("template") !== -1) {
+                    if (this.props.mode.indexOf("overview") !== -1) {
+                        stats = React.createElement(
+                            "div",
+                            null,
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "div",
+                                    null,
+                                    React.createElement(
+                                        "i",
+                                        null,
+                                        this.description()
+                                    )
+                                )
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "div",
+                                    null,
+                                    React.createElement(
+                                        "b",
+                                        null,
+                                        "challenge"
+                                    ),
+                                    " ",
+                                    challenge(this.props.combatant.challenge),
+                                    " (",
+                                    experience(this.props.combatant.challenge),
+                                    " xp)"
+                                )
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "speed"
+                                ),
+                                " ",
+                                this.props.combatant.speed || "none"
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "senses"
+                                ),
+                                " ",
+                                this.props.combatant.senses || "none"
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "languages"
+                                ),
+                                " ",
+                                this.props.combatant.languages || "none"
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "equipment"
+                                ),
+                                " ",
+                                this.props.combatant.equipment || "none"
+                            )
+                        );
+                    }
+                    if (this.props.mode.indexOf("abilities") !== -1) {
+                        stats = React.createElement(
+                            "div",
+                            null,
+                            React.createElement(AbilityScorePanel, { combatant: this.props.combatant }),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "saving throws"
+                                ),
+                                " ",
+                                this.props.combatant.savingThrows || "none"
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "skills"
+                                ),
+                                " ",
+                                this.props.combatant.skills || "none"
+                            )
+                        );
+                    }
+                    if (this.props.mode.indexOf("combat") !== -1) {
+                        stats = React.createElement(
+                            "div",
+                            null,
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "ac"
+                                ),
+                                " ",
+                                this.props.combatant.ac
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "hp"
+                                ),
+                                " ",
+                                this.props.combatant.hitDice !== "" ? this.props.combatant.hpMax + " (" + this.props.combatant.hitDice + "d" + hitDieType(this.props.combatant.size) + ")" : this.props.combatant.hpMax
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "damage immunity"
+                                ),
+                                " ",
+                                this.props.combatant.damage.immune || "none"
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "damage resistance"
+                                ),
+                                " ",
+                                this.props.combatant.damage.resist || "none"
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "damage vulnerability"
+                                ),
+                                " ",
+                                this.props.combatant.damage.vulnerable || "none"
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "condition immunities"
+                                ),
+                                " ",
+                                this.props.combatant.conditionImmunities || "none"
+                            )
+                        );
+                    }
+                    if (this.props.mode.indexOf("actions") !== -1) {
+                        stats = React.createElement(TraitsPanel, {
+                            combatant: this.props.combatant,
+                            template: true,
+                            copyTrait: function copyTrait(trait) {
+                                return _this2.props.copyTrait(trait);
+                            }
+                        });
+                    }
+                }
 
                 var toggle = null;
-                if (!this.props.combatant.current) {
+                if (this.props.mode.indexOf("combat") !== -1 && this.props.combatant.current) {
+                    // Don't show toggle button for current combatant
+                } else if (this.props.mode.indexOf("template") !== -1) {
+                    // Don't show toggle button for template
+                } else {
                     var imageStyle = this.state.showDetails ? "image rotate" : "image";
                     toggle = React.createElement("img", { className: imageStyle, src: "content/down-arrow.svg", onClick: function onClick() {
                             return _this2.toggleDetails();
@@ -2534,7 +2746,7 @@ var Dojo = function (_React$Component) {
                     cha: 10
                 },
                 ac: 10,
-                hpMax: 1,
+                hpMax: 4,
                 hpTemp: 0,
                 hitDice: 1,
                 damage: {
@@ -2685,6 +2897,15 @@ var Dojo = function (_React$Component) {
             this.setState({
                 library: this.state.library
             });
+        }
+    }, {
+        key: "copyTrait",
+        value: function copyTrait(combatant, trait) {
+            var trait = combatant.traits.push(trait);
+            this.setState({
+                library: this.state.library
+            });
+            return trait;
         }
     }, {
         key: "addOpenGameContent",
@@ -3337,6 +3558,7 @@ var Dojo = function (_React$Component) {
             switch (type) {
                 case "hp":
                     value = Math.min(value, combatant.hpMax);
+                    value = Math.max(value, 0);
                     break;
                 case "hpTemp":
                     value = Math.max(value, 0);
@@ -3670,7 +3892,7 @@ var Dojo = function (_React$Component) {
                             modalTitle = "monster editor";
                             modalContent = React.createElement(MonsterEditorModal, {
                                 combatant: this.state.modal.monster,
-                                mode: "editor",
+                                library: this.state.library,
                                 changeValue: function changeValue(combatant, type, value) {
                                     return _this4.changeValue(combatant, type, value);
                                 },
@@ -3685,6 +3907,9 @@ var Dojo = function (_React$Component) {
                                 },
                                 removeTrait: function removeTrait(combatant, trait) {
                                     return _this4.removeTrait(combatant, trait);
+                                },
+                                copyTrait: function copyTrait(combatant, type) {
+                                    return _this4.copyTrait(combatant, type);
                                 }
                             });
                             break;
@@ -4562,7 +4787,7 @@ var DemographicsModal = function (_React$Component) {
 
     return DemographicsModal;
 }(React.Component);
-"use strict";
+'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -4578,240 +4803,307 @@ var MonsterEditorModal = function (_React$Component) {
     function MonsterEditorModal() {
         _classCallCheck(this, MonsterEditorModal);
 
-        return _possibleConstructorReturn(this, (MonsterEditorModal.__proto__ || Object.getPrototypeOf(MonsterEditorModal)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (MonsterEditorModal.__proto__ || Object.getPrototypeOf(MonsterEditorModal)).call(this));
+
+        _this.state = {
+            page: 'overview'
+        };
+        return _this;
     }
 
     _createClass(MonsterEditorModal, [{
-        key: "render",
+        key: 'setPage',
+        value: function setPage(page) {
+            this.setState({
+                page: page
+            });
+        }
+    }, {
+        key: 'copyTrait',
+        value: function copyTrait(trait) {
+            var copy = JSON.parse(JSON.stringify(trait));
+            copy.id = guid();
+            this.props.copyTrait(this.props.combatant, copy);
+        }
+    }, {
+        key: 'render',
         value: function render() {
             var _this2 = this;
 
             try {
-                var categories = ["aberration", "beast", "celestial", "construct", "dragon", "elemental", "fey", "fiend", "giant", "humanoid", "monstrosity", "ooze", "plant", "undead"];
-                var catOptions = categories.map(function (cat) {
-                    return { id: cat, text: cat };
-                });
+                var pages = [{
+                    id: 'overview',
+                    text: 'overview'
+                }, {
+                    id: 'abilities',
+                    text: 'abilities'
+                }, {
+                    id: 'combat',
+                    text: 'combat'
+                }, {
+                    id: 'actions',
+                    text: 'actions'
+                }];
 
-                var sizes = ["tiny", "small", "medium", "large", "huge", "gargantuan"];
-                var sizeOptions = sizes.map(function (size) {
-                    return { id: size, text: size };
-                });
+                var content = null;
+                switch (this.state.page) {
+                    case 'overview':
+                        var categories = ["aberration", "beast", "celestial", "construct", "dragon", "elemental", "fey", "fiend", "giant", "humanoid", "monstrosity", "ooze", "plant", "undead"];
+                        var catOptions = categories.map(function (cat) {
+                            return { id: cat, text: cat };
+                        });
 
-                return React.createElement(
-                    "div",
-                    null,
-                    React.createElement("input", { type: "text", value: this.props.combatant.name, onChange: function onChange(event) {
-                            return _this2.props.changeValue(_this2.props.combatant, "name", event.target.value);
-                        } }),
-                    React.createElement("div", { className: "divider" }),
-                    React.createElement(
-                        "div",
-                        { className: "column three" },
-                        React.createElement(
-                            "div",
-                            { className: "section" },
+                        var sizes = ["tiny", "small", "medium", "large", "huge", "gargantuan"];
+                        var sizeOptions = sizes.map(function (size) {
+                            return { id: size, text: size };
+                        });
+
+                        content = React.createElement(
+                            'div',
+                            null,
                             React.createElement(
-                                "div",
-                                { className: "subheading" },
-                                "size"
-                            ),
-                            React.createElement(Dropdown, {
-                                options: sizeOptions,
-                                selectedID: this.props.combatant.size,
-                                select: function select(optionID) {
-                                    return _this2.props.changeTrait(_this2.props.combatant, "size", optionID);
-                                }
-                            }),
-                            React.createElement(
-                                "div",
-                                { className: "subheading" },
-                                "type"
-                            ),
-                            React.createElement(Dropdown, {
-                                options: catOptions,
-                                selectedID: this.props.combatant.category,
-                                select: function select(optionID) {
-                                    return _this2.props.changeTrait(_this2.props.combatant, "category", optionID);
-                                }
-                            }),
-                            React.createElement(
-                                "div",
-                                { className: "subheading" },
-                                "subtype"
-                            ),
-                            React.createElement("input", { type: "text", value: this.props.combatant.tag, onChange: function onChange(event) {
-                                    return _this2.props.changeValue(_this2.props.combatant, "tag", event.target.value);
-                                } }),
-                            React.createElement(
-                                "div",
-                                { className: "subheading" },
-                                "alignment"
-                            ),
-                            React.createElement("input", { type: "text", value: this.props.combatant.alignment, onChange: function onChange(event) {
-                                    return _this2.props.changeValue(_this2.props.combatant, "alignment", event.target.value);
-                                } }),
-                            React.createElement("div", { className: "divider" }),
-                            React.createElement(
-                                "div",
-                                { className: "subheading" },
-                                "speed"
-                            ),
-                            React.createElement("input", { type: "text", value: this.props.combatant.speed, onChange: function onChange(event) {
-                                    return _this2.props.changeValue(_this2.props.combatant, "speed", event.target.value);
-                                } }),
-                            React.createElement(
-                                "div",
-                                { className: "subheading" },
-                                "saving throws"
-                            ),
-                            React.createElement("input", { type: "text", value: this.props.combatant.savingThrows, onChange: function onChange(event) {
-                                    return _this2.props.changeValue(_this2.props.combatant, "savingThrows", event.target.value);
-                                } }),
-                            React.createElement(
-                                "div",
-                                { className: "subheading" },
-                                "skills"
-                            ),
-                            React.createElement("input", { type: "text", value: this.props.combatant.skills, onChange: function onChange(event) {
-                                    return _this2.props.changeValue(_this2.props.combatant, "skills", event.target.value);
-                                } }),
-                            React.createElement(
-                                "div",
-                                { className: "subheading" },
-                                "senses"
-                            ),
-                            React.createElement("input", { type: "text", value: this.props.combatant.senses, onChange: function onChange(event) {
-                                    return _this2.props.changeValue(_this2.props.combatant, "senses", event.target.value);
-                                } }),
-                            React.createElement(
-                                "div",
-                                { className: "subheading" },
-                                "languages"
-                            ),
-                            React.createElement("input", { type: "text", value: this.props.combatant.languages, onChange: function onChange(event) {
-                                    return _this2.props.changeValue(_this2.props.combatant, "languages", event.target.value);
-                                } }),
-                            React.createElement(
-                                "div",
-                                { className: "subheading" },
-                                "equipment"
-                            ),
-                            React.createElement("input", { type: "text", value: this.props.combatant.equipment, onChange: function onChange(event) {
-                                    return _this2.props.changeValue(_this2.props.combatant, "equipment", event.target.value);
-                                } })
-                        )
-                    ),
-                    React.createElement("div", { className: "column-divider" }),
-                    React.createElement(
-                        "div",
-                        { className: "column three" },
-                        React.createElement(
-                            "div",
-                            { className: "section" },
-                            React.createElement(
-                                "div",
-                                { className: "subheading" },
-                                "ability scores"
-                            ),
-                            React.createElement(AbilityScorePanel, {
-                                edit: true,
-                                combatant: this.props.combatant,
-                                nudgeValue: function nudgeValue(source, type, delta) {
-                                    return _this2.props.nudgeValue(source, type, delta);
-                                }
-                            })
-                        ),
-                        React.createElement("div", { className: "divider" }),
-                        React.createElement(Spin, {
-                            source: this.props.combatant,
-                            name: "challenge",
-                            label: "challenge rating",
-                            display: function display(value) {
-                                return challenge(value);
-                            },
-                            nudgeValue: function nudgeValue(delta) {
-                                return _this2.props.nudgeValue(_this2.props.combatant, "challenge", delta);
-                            }
-                        }),
-                        React.createElement(Spin, {
-                            source: this.props.combatant,
-                            name: "ac",
-                            label: "armor class",
-                            nudgeValue: function nudgeValue(delta) {
-                                return _this2.props.nudgeValue(_this2.props.combatant, "ac", delta);
-                            }
-                        }),
-                        React.createElement(Spin, {
-                            source: this.props.combatant,
-                            name: "hitDice",
-                            label: "hit dice",
-                            nudgeValue: function nudgeValue(delta) {
-                                return _this2.props.nudgeValue(_this2.props.combatant, "hitDice", delta);
-                            }
-                        }),
-                        React.createElement(
-                            "div",
-                            { className: "section centered" },
-                            React.createElement(
-                                "div",
-                                null,
+                                'div',
+                                { className: 'column two' },
                                 React.createElement(
-                                    "b",
-                                    null,
-                                    "hit points"
+                                    'div',
+                                    { className: 'subheading' },
+                                    'name'
                                 ),
-                                " ",
-                                this.props.combatant.hpMax,
-                                " (",
-                                this.props.combatant.hitDice,
-                                "d",
-                                hitDieType(this.props.combatant.size),
-                                ")"
+                                React.createElement('input', { type: 'text', value: this.props.combatant.name, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "name", event.target.value);
+                                    } }),
+                                React.createElement(
+                                    'div',
+                                    { className: 'subheading' },
+                                    'size'
+                                ),
+                                React.createElement(Dropdown, {
+                                    options: sizeOptions,
+                                    selectedID: this.props.combatant.size,
+                                    select: function select(optionID) {
+                                        return _this2.props.changeTrait(_this2.props.combatant, "size", optionID);
+                                    }
+                                }),
+                                React.createElement(
+                                    'div',
+                                    { className: 'subheading' },
+                                    'type'
+                                ),
+                                React.createElement(Dropdown, {
+                                    options: catOptions,
+                                    selectedID: this.props.combatant.category,
+                                    select: function select(optionID) {
+                                        return _this2.props.changeTrait(_this2.props.combatant, "category", optionID);
+                                    }
+                                }),
+                                React.createElement(
+                                    'div',
+                                    { className: 'subheading' },
+                                    'subtype'
+                                ),
+                                React.createElement('input', { type: 'text', value: this.props.combatant.tag, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "tag", event.target.value);
+                                    } }),
+                                React.createElement(
+                                    'div',
+                                    { className: 'subheading' },
+                                    'alignment'
+                                ),
+                                React.createElement('input', { type: 'text', value: this.props.combatant.alignment, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "alignment", event.target.value);
+                                    } })
+                            ),
+                            React.createElement('div', { className: 'column-divider' }),
+                            React.createElement(
+                                'div',
+                                { className: 'column two' },
+                                React.createElement(
+                                    'div',
+                                    { className: 'subheading' },
+                                    'challenge rating'
+                                ),
+                                React.createElement(Spin, {
+                                    source: this.props.combatant,
+                                    name: 'challenge',
+                                    display: function display(value) {
+                                        return challenge(value);
+                                    },
+                                    nudgeValue: function nudgeValue(delta) {
+                                        return _this2.props.nudgeValue(_this2.props.combatant, "challenge", delta);
+                                    }
+                                }),
+                                React.createElement(
+                                    'div',
+                                    { className: 'subheading' },
+                                    'speed'
+                                ),
+                                React.createElement('input', { type: 'text', value: this.props.combatant.speed, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "speed", event.target.value);
+                                    } }),
+                                React.createElement(
+                                    'div',
+                                    { className: 'subheading' },
+                                    'senses'
+                                ),
+                                React.createElement('input', { type: 'text', value: this.props.combatant.senses, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "senses", event.target.value);
+                                    } }),
+                                React.createElement(
+                                    'div',
+                                    { className: 'subheading' },
+                                    'languages'
+                                ),
+                                React.createElement('input', { type: 'text', value: this.props.combatant.languages, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "languages", event.target.value);
+                                    } }),
+                                React.createElement(
+                                    'div',
+                                    { className: 'subheading' },
+                                    'equipment'
+                                ),
+                                React.createElement('input', { type: 'text', value: this.props.combatant.equipment, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "equipment", event.target.value);
+                                    } })
                             )
-                        ),
-                        React.createElement("div", { className: "divider" }),
-                        React.createElement(
-                            "div",
-                            { className: "section" },
+                        );
+                        break;
+                    case 'abilities':
+                        content = React.createElement(
+                            'div',
+                            null,
                             React.createElement(
-                                "div",
-                                { className: "subheading" },
-                                "damage resistances"
+                                'div',
+                                { className: 'column two' },
+                                React.createElement(
+                                    'div',
+                                    { className: 'subheading' },
+                                    'ability scores'
+                                ),
+                                React.createElement(AbilityScorePanel, {
+                                    edit: true,
+                                    combatant: this.props.combatant,
+                                    nudgeValue: function nudgeValue(source, type, delta) {
+                                        return _this2.props.nudgeValue(source, type, delta);
+                                    }
+                                })
                             ),
-                            React.createElement("input", { type: "text", value: this.props.combatant.damage.resist, onChange: function onChange(event) {
-                                    return _this2.props.changeValue(_this2.props.combatant, "damage.resist", event.target.value);
-                                } }),
+                            React.createElement('div', { className: 'column-divider' }),
                             React.createElement(
-                                "div",
-                                { className: "subheading" },
-                                "damage vulnerabilities"
-                            ),
-                            React.createElement("input", { type: "text", value: this.props.combatant.damage.vulnerable, onChange: function onChange(event) {
-                                    return _this2.props.changeValue(_this2.props.combatant, "damage.vulnerable", event.target.value);
-                                } }),
+                                'div',
+                                { className: 'column two' },
+                                React.createElement(
+                                    'div',
+                                    { className: 'subheading' },
+                                    'saving throws'
+                                ),
+                                React.createElement('input', { type: 'text', value: this.props.combatant.savingThrows, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "savingThrows", event.target.value);
+                                    } }),
+                                React.createElement(
+                                    'div',
+                                    { className: 'subheading' },
+                                    'skills'
+                                ),
+                                React.createElement('input', { type: 'text', value: this.props.combatant.skills, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "skills", event.target.value);
+                                    } })
+                            )
+                        );
+                        break;
+                    case 'combat':
+                        content = React.createElement(
+                            'div',
+                            null,
                             React.createElement(
-                                "div",
-                                { className: "subheading" },
-                                "damage immunities"
+                                'div',
+                                { className: 'column two' },
+                                React.createElement(
+                                    'div',
+                                    { className: 'subheading' },
+                                    'armor class'
+                                ),
+                                React.createElement(Spin, {
+                                    source: this.props.combatant,
+                                    name: 'ac',
+                                    nudgeValue: function nudgeValue(delta) {
+                                        return _this2.props.nudgeValue(_this2.props.combatant, "ac", delta);
+                                    }
+                                }),
+                                React.createElement(
+                                    'div',
+                                    { className: 'subheading' },
+                                    'hit dice'
+                                ),
+                                React.createElement(Spin, {
+                                    source: this.props.combatant,
+                                    name: 'hitDice',
+                                    nudgeValue: function nudgeValue(delta) {
+                                        return _this2.props.nudgeValue(_this2.props.combatant, "hitDice", delta);
+                                    }
+                                }),
+                                React.createElement('div', { className: 'divider' }),
+                                React.createElement(
+                                    'div',
+                                    { className: 'section centered' },
+                                    React.createElement(
+                                        'div',
+                                        null,
+                                        React.createElement(
+                                            'b',
+                                            null,
+                                            'hit points'
+                                        ),
+                                        ' ',
+                                        this.props.combatant.hpMax,
+                                        ' (',
+                                        this.props.combatant.hitDice,
+                                        'd',
+                                        hitDieType(this.props.combatant.size),
+                                        ')'
+                                    )
+                                )
                             ),
-                            React.createElement("input", { type: "text", value: this.props.combatant.damage.immune, onChange: function onChange(event) {
-                                    return _this2.props.changeValue(_this2.props.combatant, "damage.immune", event.target.value);
-                                } }),
+                            React.createElement('div', { className: 'column-divider' }),
                             React.createElement(
-                                "div",
-                                { className: "subheading" },
-                                "condition immunities"
-                            ),
-                            React.createElement("input", { type: "text", value: this.props.combatant.conditionImmunities, onChange: function onChange(event) {
-                                    return _this2.props.changeValue(_this2.props.combatant, "conditionImmunities", event.target.value);
-                                } })
-                        )
-                    ),
-                    React.createElement("div", { className: "column-divider" }),
-                    React.createElement(
-                        "div",
-                        { className: "column three" },
-                        React.createElement(TraitsPanel, {
+                                'div',
+                                { className: 'column two' },
+                                React.createElement(
+                                    'div',
+                                    { className: 'subheading' },
+                                    'damage resistances'
+                                ),
+                                React.createElement('input', { type: 'text', value: this.props.combatant.damage.resist, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "damage.resist", event.target.value);
+                                    } }),
+                                React.createElement(
+                                    'div',
+                                    { className: 'subheading' },
+                                    'damage vulnerabilities'
+                                ),
+                                React.createElement('input', { type: 'text', value: this.props.combatant.damage.vulnerable, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "damage.vulnerable", event.target.value);
+                                    } }),
+                                React.createElement(
+                                    'div',
+                                    { className: 'subheading' },
+                                    'damage immunities'
+                                ),
+                                React.createElement('input', { type: 'text', value: this.props.combatant.damage.immune, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "damage.immune", event.target.value);
+                                    } }),
+                                React.createElement(
+                                    'div',
+                                    { className: 'subheading' },
+                                    'condition immunities'
+                                ),
+                                React.createElement('input', { type: 'text', value: this.props.combatant.conditionImmunities, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "conditionImmunities", event.target.value);
+                                    } })
+                            )
+                        );
+                        break;
+                    case 'actions':
+                        content = React.createElement(TraitsPanel, {
                             combatant: this.props.combatant,
                             edit: true,
                             addTrait: function addTrait(type) {
@@ -4822,6 +5114,37 @@ var MonsterEditorModal = function (_React$Component) {
                             },
                             changeTrait: function changeTrait(trait, type, value) {
                                 return _this2.props.changeTrait(trait, type, value);
+                            }
+                        });
+                        break;
+                }
+
+                return React.createElement(
+                    'div',
+                    null,
+                    React.createElement(
+                        'div',
+                        { className: 'column three double' },
+                        React.createElement(Selector, {
+                            tabs: true,
+                            options: pages,
+                            selectedID: this.state.page,
+                            select: function select(optionID) {
+                                return _this2.setPage(optionID);
+                            }
+                        }),
+                        content
+                    ),
+                    React.createElement('div', { className: 'column-divider' }),
+                    React.createElement(
+                        'div',
+                        { className: 'column three' },
+                        React.createElement(MonsterListPanel, {
+                            monster: this.props.combatant,
+                            library: this.props.library,
+                            mode: this.state.page,
+                            copyTrait: function copyTrait(trait) {
+                                return _this2.copyTrait(trait);
                             }
                         })
                     )
@@ -4880,7 +5203,7 @@ var AbilityScorePanel = function (_React$Component) {
                         React.createElement(Spin, {
                             source: this.props.combatant.abilityScores,
                             name: "str",
-                            label: "str",
+                            label: "strength",
                             nudgeValue: function nudgeValue(delta) {
                                 return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.str", delta);
                             }
@@ -4888,7 +5211,7 @@ var AbilityScorePanel = function (_React$Component) {
                         React.createElement(Spin, {
                             source: this.props.combatant.abilityScores,
                             name: "dex",
-                            label: "dex",
+                            label: "dexterity",
                             nudgeValue: function nudgeValue(delta) {
                                 return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.dex", delta);
                             }
@@ -4896,7 +5219,7 @@ var AbilityScorePanel = function (_React$Component) {
                         React.createElement(Spin, {
                             source: this.props.combatant.abilityScores,
                             name: "con",
-                            label: "con",
+                            label: "constitution",
                             nudgeValue: function nudgeValue(delta) {
                                 return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.con", delta);
                             }
@@ -4904,7 +5227,7 @@ var AbilityScorePanel = function (_React$Component) {
                         React.createElement(Spin, {
                             source: this.props.combatant.abilityScores,
                             name: "int",
-                            label: "int",
+                            label: "intelligence",
                             nudgeValue: function nudgeValue(delta) {
                                 return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.int", delta);
                             }
@@ -4912,7 +5235,7 @@ var AbilityScorePanel = function (_React$Component) {
                         React.createElement(Spin, {
                             source: this.props.combatant.abilityScores,
                             name: "wis",
-                            label: "wis",
+                            label: "wisdom",
                             nudgeValue: function nudgeValue(delta) {
                                 return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.wis", delta);
                             }
@@ -4920,7 +5243,7 @@ var AbilityScorePanel = function (_React$Component) {
                         React.createElement(Spin, {
                             source: this.props.combatant.abilityScores,
                             name: "cha",
-                            label: "cha",
+                            label: "charisma",
                             nudgeValue: function nudgeValue(delta) {
                                 return _this2.props.nudgeValue(_this2.props.combatant, "abilityScores.cha", delta);
                             }
@@ -5549,6 +5872,232 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var MonsterListPanel = function (_React$Component) {
+    _inherits(MonsterListPanel, _React$Component);
+
+    function MonsterListPanel() {
+        _classCallCheck(this, MonsterListPanel);
+
+        var _this = _possibleConstructorReturn(this, (MonsterListPanel.__proto__ || Object.getPrototypeOf(MonsterListPanel)).call(this));
+
+        _this.state = {
+            showFilter: false,
+            matchSize: true,
+            matchType: true,
+            matchSubtype: false,
+            matchAlignment: false,
+            matchCR: true
+        };
+        return _this;
+    }
+
+    _createClass(MonsterListPanel, [{
+        key: "toggleFilter",
+        value: function toggleFilter() {
+            this.setState({
+                showFilter: !this.state.showFilter
+            });
+        }
+    }, {
+        key: "setMatchSize",
+        value: function setMatchSize(match) {
+            this.setState({
+                matchSize: match
+            });
+        }
+    }, {
+        key: "setMatchType",
+        value: function setMatchType(match) {
+            this.setState({
+                matchType: match
+            });
+        }
+    }, {
+        key: "setMatchSubtype",
+        value: function setMatchSubtype(match) {
+            this.setState({
+                matchSubtype: match
+            });
+        }
+    }, {
+        key: "setMatchAlignment",
+        value: function setMatchAlignment(match) {
+            this.setState({
+                matchAlignment: match
+            });
+        }
+    }, {
+        key: "setMatchCR",
+        value: function setMatchCR(match) {
+            this.setState({
+                matchCR: match
+            });
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                var filterContent = null;
+                if (this.state.showFilter) {
+                    var subtype = null;
+                    if (this.props.monster.tag) {
+                        subtype = React.createElement(Checkbox, {
+                            label: "match subtype",
+                            checked: this.state.matchSubtype,
+                            changeValue: function changeValue(value) {
+                                return _this2.setMatchSubtype(value);
+                            }
+                        });
+                    }
+                    var alignment = null;
+                    if (this.props.monster.alignment) {
+                        alignment = React.createElement(Checkbox, {
+                            label: "match alignment",
+                            checked: this.state.matchAlignment,
+                            changeValue: function changeValue(value) {
+                                return _this2.setMatchAlignment(value);
+                            }
+                        });
+                    }
+
+                    filterContent = React.createElement(
+                        "div",
+                        { className: "section" },
+                        React.createElement(Checkbox, {
+                            label: "match size",
+                            checked: this.state.matchSize,
+                            changeValue: function changeValue(value) {
+                                return _this2.setMatchSize(value);
+                            }
+                        }),
+                        React.createElement(Checkbox, {
+                            label: "match type",
+                            checked: this.state.matchType,
+                            changeValue: function changeValue(value) {
+                                return _this2.setMatchType(value);
+                            }
+                        }),
+                        subtype,
+                        alignment,
+                        React.createElement(Checkbox, {
+                            label: "match challenge rating",
+                            checked: this.state.matchCR,
+                            changeValue: function changeValue(value) {
+                                return _this2.setMatchCR(value);
+                            }
+                        })
+                    );
+                }
+
+                var monsters = [];
+                this.props.library.forEach(function (group) {
+                    group.monsters.forEach(function (monster) {
+                        var match = true;
+
+                        if (_this2.props.monster.id === monster.id) {
+                            match = false;
+                        }
+
+                        if (_this2.state.matchSize && _this2.props.monster.size !== monster.size) {
+                            match = false;
+                        }
+
+                        if (_this2.state.matchType && _this2.props.monster.category !== monster.category) {
+                            match = false;
+                        }
+
+                        if (_this2.state.matchSubtype && _this2.props.monster.tag !== monster.tag) {
+                            match = false;
+                        }
+
+                        if (_this2.state.matchAlignment && _this2.props.monster.alignment !== monster.alignment) {
+                            match = false;
+                        }
+
+                        if (_this2.state.matchCR && _this2.props.monster.challenge !== monster.challenge) {
+                            match = false;
+                        }
+
+                        if (match) {
+                            monsters.push(monster);
+                        }
+                    });
+                });
+
+                sort(monsters);
+
+                var monsterCards = monsters.map(function (m) {
+                    return React.createElement(
+                        "div",
+                        { className: "section", key: m.id },
+                        React.createElement(MonsterCard, {
+                            combatant: m,
+                            mode: "template " + _this2.props.mode,
+                            copyTrait: function copyTrait(trait) {
+                                return _this2.props.copyTrait(trait);
+                            }
+                        })
+                    );
+                });
+
+                if (monsterCards.length === 0) {
+                    monsterCards.push(React.createElement(
+                        "div",
+                        { className: "section centered", key: "none" },
+                        "no monsters to show"
+                    ));
+                }
+
+                return React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        React.createElement(
+                            "div",
+                            { className: "card" },
+                            React.createElement(
+                                "div",
+                                { className: "heading" },
+                                React.createElement(
+                                    "div",
+                                    { className: "title" },
+                                    "match creatures"
+                                ),
+                                React.createElement("img", { className: this.state.showFilter ? "image rotate" : "image", src: "content/down-arrow.svg", onClick: function onClick() {
+                                        return _this2.toggleFilter();
+                                    } })
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "card-content" },
+                                filterContent
+                            )
+                        )
+                    ),
+                    monsterCards
+                );
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return MonsterListPanel;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 var Navbar = function (_React$Component) {
     _inherits(Navbar, _React$Component);
 
@@ -5698,25 +6247,66 @@ var TraitPanel = function (_React$Component) {
             var _this2 = this;
 
             try {
-                var details = React.createElement(
-                    "div",
-                    { className: "section" },
-                    React.createElement("input", { type: "text", placeholder: "name", value: this.props.trait.name, onChange: function onChange(event) {
-                            return _this2.props.changeTrait(_this2.props.trait, "name", event.target.value);
-                        } }),
-                    React.createElement("input", { type: "text", placeholder: "usage", value: this.props.trait.usage, onChange: function onChange(event) {
-                            return _this2.props.changeTrait(_this2.props.trait, "usage", event.target.value);
-                        } }),
-                    React.createElement("textarea", { placeholder: "details", value: this.props.trait.text, onChange: function onChange(event) {
-                            return _this2.props.changeTrait(_this2.props.trait, "text", event.target.value);
-                        } }),
-                    React.createElement("div", { className: "divider" }),
-                    React.createElement(ConfirmButton, { text: "delete", callback: function callback() {
-                            return _this2.props.removeTrait(_this2.props.trait);
-                        } })
-                );
+                var heading = this.props.trait.name || "unnamed " + traitType(this.props.trait.type);
+                if (this.props.trait.usage) {
+                    heading += " (" + this.props.trait.usage + ")";
+                }
 
-                return React.createElement(Expander, { text: this.props.trait.name || "unnamed trait", content: details });
+                if (this.props.edit) {
+                    var details = React.createElement(
+                        "div",
+                        { className: "section" },
+                        React.createElement("input", { type: "text", placeholder: "name", value: this.props.trait.name, onChange: function onChange(event) {
+                                return _this2.props.changeTrait(_this2.props.trait, "name", event.target.value);
+                            } }),
+                        React.createElement("input", { type: "text", placeholder: "usage", value: this.props.trait.usage, onChange: function onChange(event) {
+                                return _this2.props.changeTrait(_this2.props.trait, "usage", event.target.value);
+                            } }),
+                        React.createElement("textarea", { placeholder: "details", value: this.props.trait.text, onChange: function onChange(event) {
+                                return _this2.props.changeTrait(_this2.props.trait, "text", event.target.value);
+                            } }),
+                        React.createElement("div", { className: "divider" }),
+                        React.createElement(ConfirmButton, { text: "delete", callback: function callback() {
+                                return _this2.props.removeTrait(_this2.props.trait);
+                            } })
+                    );
+
+                    return React.createElement(Expander, {
+                        text: this.props.trait.name || "unnamed " + traitType(this.props.trait.type),
+                        content: details
+                    });
+                } else if (this.props.template) {
+                    return React.createElement(
+                        "div",
+                        { key: this.props.trait.id, className: "section trait" },
+                        React.createElement(
+                            "b",
+                            null,
+                            heading
+                        ),
+                        " ",
+                        this.props.trait.text,
+                        React.createElement(
+                            "button",
+                            { onClick: function onClick() {
+                                    return _this2.props.copyTrait(_this2.props.trait);
+                                } },
+                            "copy"
+                        )
+                    );
+                } else {
+                    return React.createElement(
+                        "div",
+                        { key: this.props.trait.id, className: "section trait" },
+                        React.createElement(
+                            "b",
+                            null,
+                            heading
+                        ),
+                        " ",
+                        this.props.trait.text
+                    );
+                }
             } catch (e) {
                 console.error(e);
             }
@@ -5758,38 +6348,21 @@ var TraitsPanel = function (_React$Component) {
 
                 for (var n = 0; n != this.props.combatant.traits.length; ++n) {
                     var action = this.props.combatant.traits[n];
-                    var heading = action.name;
-                    if (!heading) {
-                        heading = "unnamed " + traitType(action.type);
-                    }
-                    if (action.usage) {
-                        heading += " (" + action.usage + ")";
-                    }
-
-                    var item = null;
-                    if (this.props.edit) {
-                        item = React.createElement(TraitPanel, {
-                            key: action.id,
-                            trait: action,
-                            changeTrait: function changeTrait(action, type, value) {
-                                return _this2.props.changeTrait(action, type, value);
-                            },
-                            removeTrait: function removeTrait(action) {
-                                return _this2.props.removeTrait(action);
-                            } });
-                    } else {
-                        item = React.createElement(
-                            "div",
-                            { key: action.id, className: "section trait" },
-                            React.createElement(
-                                "b",
-                                null,
-                                heading
-                            ),
-                            " ",
-                            action.text
-                        );
-                    }
+                    var item = React.createElement(TraitPanel, {
+                        key: action.id,
+                        trait: action,
+                        edit: this.props.edit,
+                        template: this.props.template,
+                        changeTrait: function changeTrait(action, type, value) {
+                            return _this2.props.changeTrait(action, type, value);
+                        },
+                        removeTrait: function removeTrait(action) {
+                            return _this2.props.removeTrait(action);
+                        },
+                        copyTrait: function copyTrait(action) {
+                            return _this2.props.copyTrait(action);
+                        }
+                    });
 
                     switch (action.type) {
                         case "trait":
@@ -5846,6 +6419,50 @@ var TraitsPanel = function (_React$Component) {
                             } },
                         "add a new regional effect"
                     ));
+
+                    return React.createElement(
+                        "div",
+                        null,
+                        React.createElement(
+                            "div",
+                            { className: "column two" },
+                            React.createElement(
+                                "div",
+                                { className: "section subheading" },
+                                "traits"
+                            ),
+                            traits,
+                            React.createElement(
+                                "div",
+                                { className: "section subheading" },
+                                "actions"
+                            ),
+                            actions
+                        ),
+                        React.createElement("div", { className: "column-divider" }),
+                        React.createElement(
+                            "div",
+                            { className: "column two" },
+                            React.createElement(
+                                "div",
+                                { className: "section subheading" },
+                                "legendary actions"
+                            ),
+                            legendaryActions,
+                            React.createElement(
+                                "div",
+                                { className: "section subheading" },
+                                "lair actions"
+                            ),
+                            lairActions,
+                            React.createElement(
+                                "div",
+                                { className: "section subheading" },
+                                "regional effects"
+                            ),
+                            regionalEffects
+                        )
+                    );
                 }
 
                 return React.createElement(
@@ -6354,7 +6971,7 @@ var EncounterBuilderScreen = function (_React$Component) {
                                 key: monster.id,
                                 combatant: monster,
                                 slot: slot,
-                                mode: "view",
+                                mode: "view encounter",
                                 nudgeValue: function nudgeValue(slot, type, delta) {
                                     return _this2.props.nudgeValue(slot, type, delta);
                                 },
@@ -6445,7 +7062,7 @@ var EncounterBuilderScreen = function (_React$Component) {
                         libraryCards.push(React.createElement(MonsterCard, {
                             key: monster.id,
                             combatant: monster,
-                            mode: "view",
+                            mode: "view encounter",
                             addEncounterSlot: function addEncounterSlot(combatant) {
                                 return _this2.props.addEncounterSlot(combatant);
                             }

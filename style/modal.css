@@ -53,6 +53,10 @@
         background-color: white;
     }
 
+        .modal .modal-content .card {
+            width: 100%;
+        }
+
 .blur {
     -webkit-filter: blur(2px);
     -moz-filter: blur(2px);

@@ -186,7 +186,7 @@ class Dojo extends React.Component {
                 cha: 10
             },
             ac: 10,
-            hpMax: 1,
+            hpMax: 4,
             hpTemp: 0,
             hitDice: 1,
             damage: {
@@ -329,6 +329,14 @@ class Dojo extends React.Component {
         this.setState({
             library: this.state.library
         });
+    }
+
+    copyTrait(combatant, trait) {
+        var trait = combatant.traits.push(trait);
+        this.setState({
+            library: this.state.library
+        });
+        return trait;
     }
 
     addOpenGameContent() {
@@ -965,6 +973,7 @@ class Dojo extends React.Component {
         switch (type) {
             case "hp":
                 value = Math.min(value, combatant.hpMax);
+                value = Math.max(value, 0);
                 break;
             case "hpTemp":
                 value = Math.max(value, 0);
@@ -1184,12 +1193,13 @@ class Dojo extends React.Component {
                         modalContent = (
                             <MonsterEditorModal
                                 combatant={this.state.modal.monster}
-                                mode={"editor"}
+                                library={this.state.library}
                                 changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                                 nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
                                 changeTrait={(trait, type, value) => this.changeValue(trait, type, value)}
                                 addTrait={(combatant, type) => this.addTrait(combatant, type)}
                                 removeTrait={(combatant, trait) => this.removeTrait(combatant, trait)}
+                                copyTrait={(combatant, type) => this.copyTrait(combatant, type)}
                             />
                         );
                         break;

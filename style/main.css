@@ -71,6 +71,18 @@ body,
         width: calc((100% - 21px) / 3);
     }
 
+        .column.three.double {
+            width: calc((((100% - 21px) / 3) * 2) + 10px);
+        }
+
+    .column.four {
+        width: calc((100% - 31px) / 4);
+    }
+
+    .column.five {
+        width: calc((100% - 41px) / 5);
+    }
+
 .column-divider {
     display: inline-block;
     width: 10px;
@@ -146,7 +158,7 @@ body,
 .subheading {
     font-weight: 600;
     font-size: 14px;
-    padding: 3px 0;
+    padding-top: 3px;
     color: #656565;
 }
 
