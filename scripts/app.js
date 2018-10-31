@@ -5037,30 +5037,23 @@ var MonsterEditorModal = function (_React$Component) {
                                 React.createElement(Spin, {
                                     source: this.props.combatant,
                                     name: 'hitDice',
+                                    display: function display(value) {
+                                        return value + "d" + hitDieType(_this2.props.combatant.size);
+                                    },
                                     nudgeValue: function nudgeValue(delta) {
                                         return _this2.props.nudgeValue(_this2.props.combatant, "hitDice", delta);
                                     }
                                 }),
-                                React.createElement('div', { className: 'divider' }),
                                 React.createElement(
                                     'div',
-                                    { className: 'section centered' },
-                                    React.createElement(
-                                        'div',
-                                        null,
-                                        React.createElement(
-                                            'b',
-                                            null,
-                                            'hit points'
-                                        ),
-                                        ' ',
-                                        this.props.combatant.hpMax,
-                                        ' (',
-                                        this.props.combatant.hitDice,
-                                        'd',
-                                        hitDieType(this.props.combatant.size),
-                                        ')'
-                                    )
+                                    { className: 'subheading' },
+                                    'hit points'
+                                ),
+                                React.createElement(
+                                    'div',
+                                    { className: 'hp-value' },
+                                    this.props.combatant.hpMax,
+                                    ' hp'
                                 )
                             ),
                             React.createElement('div', { className: 'column-divider' }),

@@ -126,12 +126,11 @@ class MonsterEditorModal extends React.Component {
                                 <Spin
                                     source={this.props.combatant}
                                     name="hitDice"
+                                    display={value => value + "d" + hitDieType(this.props.combatant.size)}
                                     nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "hitDice", delta)}
                                 />
-                                <div className="divider"></div>
-                                <div className="section centered">
-                                    <div><b>hit points</b> {this.props.combatant.hpMax} ({this.props.combatant.hitDice}d{hitDieType(this.props.combatant.size)})</div>
-                                </div>
+                                <div className="subheading">hit points</div>
+                                <div className="hp-value">{this.props.combatant.hpMax} hp</div>
                             </div>
                             <div className="column-divider"></div>
                             <div className="column two">
