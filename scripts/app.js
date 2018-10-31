@@ -5879,7 +5879,8 @@ var MonsterListPanel = function (_React$Component) {
             matchType: true,
             matchSubtype: false,
             matchAlignment: false,
-            matchCR: true
+            matchCR: true,
+            filterText: ""
         };
         return _this;
     }
@@ -5927,6 +5928,13 @@ var MonsterListPanel = function (_React$Component) {
             });
         }
     }, {
+        key: "setFilterText",
+        value: function setFilterText(text) {
+            this.setState({
+                filterText: text
+            });
+        }
+    }, {
         key: "render",
         value: function render() {
             var _this2 = this;
@@ -5957,7 +5965,10 @@ var MonsterListPanel = function (_React$Component) {
 
                     filterContent = React.createElement(
                         "div",
-                        { className: "section" },
+                        null,
+                        React.createElement("input", { type: "text", placeholder: "filter", value: this.state.filterText, onChange: function onChange(event) {
+                                return _this2.setFilterText(event.target.value);
+                            } }),
                         React.createElement(Checkbox, {
                             label: "match size",
                             checked: this.state.matchSize,
@@ -5982,6 +5993,10 @@ var MonsterListPanel = function (_React$Component) {
                             }
                         })
                     );
+                } else {
+                    filterContent = React.createElement("input", { type: "text", placeholder: "name", value: this.state.filterText, onChange: function onChange(event) {
+                            return _this2.setFilterText(event.target.value);
+                        } });
                 }
 
                 var monsters = [];
@@ -5990,6 +6005,10 @@ var MonsterListPanel = function (_React$Component) {
                         var match = true;
 
                         if (_this2.props.monster.id === monster.id) {
+                            match = false;
+                        }
+
+                        if (_this2.state.filterText && monster.name.toLowerCase().indexOf(_this2.state.filterText.toLowerCase()) === -1) {
                             match = false;
                         }
 

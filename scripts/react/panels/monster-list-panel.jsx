@@ -7,7 +7,8 @@ class MonsterListPanel extends React.Component {
             matchType: true,
             matchSubtype: false,
             matchAlignment: false,
-            matchCR: true
+            matchCR: true,
+            filterText: ""
         };
     }
 
@@ -47,6 +48,12 @@ class MonsterListPanel extends React.Component {
         });
     }
 
+    setFilterText(text) {
+        this.setState({
+            filterText: text
+        });
+    }
+
     render() {
         try {
             var filterContent = null;
@@ -73,7 +80,8 @@ class MonsterListPanel extends React.Component {
                 }
 
                 filterContent = (
-                    <div className="section">
+                    <div>
+                        <input type="text" placeholder="filter" value={this.state.filterText} onChange={event => this.setFilterText(event.target.value)} />
                         <Checkbox
                             label="match size"
                             checked={this.state.matchSize}
@@ -93,6 +101,10 @@ class MonsterListPanel extends React.Component {
                         />
                     </div>
                 );
+            } else {
+                filterContent = (
+                    <input type="text" placeholder="name" value={this.state.filterText} onChange={event => this.setFilterText(event.target.value)} />
+                );
             }
 
             var monsters = [];
@@ -101,6 +113,10 @@ class MonsterListPanel extends React.Component {
                     var match = true;
 
                     if (this.props.monster.id === monster.id) {
+                        match = false;
+                    }
+
+                    if (this.state.filterText && (monster.name.toLowerCase().indexOf(this.state.filterText.toLowerCase()) === -1)) {
                         match = false;
                     }
 
