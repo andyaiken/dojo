@@ -5942,27 +5942,6 @@ var MonsterListPanel = function (_React$Component) {
             try {
                 var filterContent = null;
                 if (this.state.showFilter) {
-                    var subtype = null;
-                    if (this.props.monster.tag) {
-                        subtype = React.createElement(Checkbox, {
-                            label: "match subtype",
-                            checked: this.state.matchSubtype,
-                            changeValue: function changeValue(value) {
-                                return _this2.setMatchSubtype(value);
-                            }
-                        });
-                    }
-                    var alignment = null;
-                    if (this.props.monster.alignment) {
-                        alignment = React.createElement(Checkbox, {
-                            label: "match alignment",
-                            checked: this.state.matchAlignment,
-                            changeValue: function changeValue(value) {
-                                return _this2.setMatchAlignment(value);
-                            }
-                        });
-                    }
-
                     filterContent = React.createElement(
                         "div",
                         null,
@@ -5983,8 +5962,22 @@ var MonsterListPanel = function (_React$Component) {
                                 return _this2.setMatchType(value);
                             }
                         }),
-                        subtype,
-                        alignment,
+                        React.createElement(Checkbox, {
+                            label: "match subtype",
+                            checked: this.state.matchSubtype,
+                            disabled: !this.props.monster.tag,
+                            changeValue: function changeValue(value) {
+                                return _this2.setMatchSubtype(value);
+                            }
+                        }),
+                        React.createElement(Checkbox, {
+                            label: "match alignment",
+                            checked: this.state.matchAlignment,
+                            disabled: !this.props.monster.alignment,
+                            changeValue: function changeValue(value) {
+                                return _this2.setMatchAlignment(value);
+                            }
+                        }),
                         React.createElement(Checkbox, {
                             label: "match challenge rating",
                             checked: this.state.matchCR,
@@ -5994,7 +5987,7 @@ var MonsterListPanel = function (_React$Component) {
                         })
                     );
                 } else {
-                    filterContent = React.createElement("input", { type: "text", placeholder: "name", value: this.state.filterText, onChange: function onChange(event) {
+                    filterContent = React.createElement("input", { type: "text", placeholder: "filter", value: this.state.filterText, onChange: function onChange(event) {
                             return _this2.setFilterText(event.target.value);
                         } });
                 }
@@ -7602,6 +7595,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 <Checkbox
     label="LABEL"
     checked={BOOLEAN}
+    disabled={BOOLEAN}
     changeValue={value => this.changeValue(SOURCEOBJECT, FIELDNAME, value)}
 />
 */
@@ -7629,7 +7623,7 @@ var Checkbox = function (_React$Component) {
             try {
                 return React.createElement(
                     "div",
-                    { className: "checkbox", onClick: function onClick(e) {
+                    { className: this.props.disabled ? "checkbox disabled" : "checkbox", onClick: function onClick(e) {
                             return _this2.click(e);
                         } },
                     React.createElement("img", { className: "image", src: this.props.checked ? "content/checked.svg" : "content/unchecked.svg" }),
@@ -7661,6 +7655,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /*
 <ConfirmButton
     text="TEXT"
+    disabled={BOOLEAN}
     callback={() => CALLBACK_FUNCTION}
 />
 */
@@ -7744,7 +7739,7 @@ var ConfirmButton = function (_React$Component) {
 
                 return React.createElement(
                     "button",
-                    { onClick: function onClick() {
+                    { className: this.props.disabled ? "disabled" : "", onClick: function onClick() {
                             return _this2.toggle();
                         } },
                     content
@@ -7771,12 +7766,19 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /*
 var options = [
     {
-        id: "total",
-        text: "Total wealth"
+        id: "one",
+        text: "One",
+        disabled: false
     },
     {
-        id: "purse",
-        text: "Purse"
+        id: "two",
+        text: "Two",
+        disabled: true
+    },
+    {
+        id: "three",
+        text: "Three",
+        disabled: false
     }
 ];
 
@@ -7784,6 +7786,7 @@ var options = [
     options={options}
     placeholer={PLACEHOLDER_TEXT}
     selectedID={CURRENT_OPTION_ID}
+    disabled={BOOLEAN}
     select={optionID => this.changeValue(SOURCEOBJECT, FIELDNAME, optionID)}
 />
 */
@@ -7824,7 +7827,7 @@ var Dropdown = function (_React$Component) {
             var _this2 = this;
 
             try {
-                var style = "dropdown";
+                var style = this.props.disabled ? "dropdown disabled" : "dropdown";
                 var content = [];
 
                 var selectedText = null;
@@ -7913,7 +7916,13 @@ var DropdownOption = function (_React$Component2) {
             var _this4 = this;
 
             try {
-                var style = this.props.selected ? "dropdown-option selected" : "dropdown-option";
+                var style = "dropdown-option";
+                if (this.props.selected) {
+                    style += " selected";
+                }
+                if (this.props.disabled) {
+                    style += " disabled";
+                }
 
                 return React.createElement(
                     "div",
@@ -7945,6 +7954,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 <Expander
     text="TEXT"
     content={<div>ANY CONTENT</div>}
+    disabled={BOOLEAN}
 />
 */
 
@@ -7975,7 +7985,7 @@ var Expander = function (_React$Component) {
             var _this2 = this;
 
             try {
-                var style = "expander";
+                var style = this.props.disabled ? "expander disabled" : "expander";
                 if (this.state.expanded) {
                     style += " expanded";
                 }
@@ -8030,12 +8040,19 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /*
 var options = [
     {
-        id: "feature",
-        text: "Feature"
+        id: "one",
+        text: "One",
+        disabled: false
     },
     {
-        id: "details",
-        text: "Details"
+        id: "two",
+        text: "Two",
+        disabled: true
+    },
+    {
+        id: "three",
+        text: "Three",
+        disabled: false
     }
 ];
 
@@ -8044,6 +8061,7 @@ var options = [
     options={options}
     noBorder={BOOLEAN}
     selectedID={CURRENT_OPTION_ID}
+    disabled={BOOLEAN}
     select={optionID => this.changeValue(SOURCEOBJECT, FIELDNAME, optionID)}
 />
 */
@@ -8064,6 +8082,9 @@ var Selector = function (_React$Component) {
 
             try {
                 var style = this.props.tabs ? "selector tabs" : "selector radio";
+                if (this.props.disabled) {
+                    style += " disabled";
+                }
                 if (this.props.noBorder) {
                     style += " no-border";
                 }
@@ -8141,6 +8162,9 @@ var SelectorOption = function (_React$Component2) {
                 if (this.props.selected) {
                     style += " selected";
                 }
+                if (this.props.disabled) {
+                    style += " disabled";
+                }
 
                 return React.createElement(
                     "div",
@@ -8174,6 +8198,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     name="FIELDNAME"
     label="LABEL"
     factors={[1, 10, 100]}
+    disabled={BOOLEAN}
     display={value => this.displayValue(value)}
     nudgeValue={delta => this.nudgeValue(SOURCEOBJECT, FIELDNAME, delta)}
 />
@@ -8259,7 +8284,7 @@ var Spin = function (_React$Component) {
 
                 return React.createElement(
                     "div",
-                    { className: "spin" },
+                    { className: this.props.disabled ? "spin disabled" : "spin" },
                     React.createElement(
                         "div",
                         { className: "spin-button", onClick: function onClick(e) {

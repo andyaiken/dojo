@@ -2,6 +2,7 @@
 <Expander
     text="TEXT"
     content={<div>ANY CONTENT</div>}
+    disabled={BOOLEAN}
 />
 */
 
@@ -22,7 +23,7 @@ class Expander extends React.Component {
 
     render() {
         try {
-            var style = "expander";
+            var style = this.props.disabled ? "expander disabled" : "expander";
             if (this.state.expanded) {
                 style += " expanded";
             }

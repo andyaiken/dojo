@@ -1,12 +1,19 @@
 /*
 var options = [
     {
-        id: "total",
-        text: "Total wealth"
+        id: "one",
+        text: "One",
+        disabled: false
     },
     {
-        id: "purse",
-        text: "Purse"
+        id: "two",
+        text: "Two",
+        disabled: true
+    },
+    {
+        id: "three",
+        text: "Three",
+        disabled: false
     }
 ];
 
@@ -14,6 +21,7 @@ var options = [
     options={options}
     placeholer={PLACEHOLDER_TEXT}
     selectedID={CURRENT_OPTION_ID}
+    disabled={BOOLEAN}
     select={optionID => this.changeValue(SOURCEOBJECT, FIELDNAME, optionID)}
 />
 */
@@ -43,7 +51,7 @@ class Dropdown extends React.Component {
 
     render() {
         try {
-            var style = "dropdown";
+            var style = this.props.disabled ? "dropdown disabled" : "dropdown";
             var content = [];
 
             var selectedText = null;
@@ -110,7 +118,13 @@ class DropdownOption extends React.Component {
 
     render() {
         try {
-            var style = this.props.selected ? "dropdown-option selected" : "dropdown-option";
+            var style = "dropdown-option";
+            if (this.props.selected) {
+                style += " selected";
+            }
+            if (this.props.disabled) {
+                style += " disabled";
+            }
 
             return (
                 <div className={style} title={this.props.option.text} onClick={e => this.click(e)}>

@@ -1,12 +1,19 @@
 /*
 var options = [
     {
-        id: "feature",
-        text: "Feature"
+        id: "one",
+        text: "One",
+        disabled: false
     },
     {
-        id: "details",
-        text: "Details"
+        id: "two",
+        text: "Two",
+        disabled: true
+    },
+    {
+        id: "three",
+        text: "Three",
+        disabled: false
     }
 ];
 
@@ -15,6 +22,7 @@ var options = [
     options={options}
     noBorder={BOOLEAN}
     selectedID={CURRENT_OPTION_ID}
+    disabled={BOOLEAN}
     select={optionID => this.changeValue(SOURCEOBJECT, FIELDNAME, optionID)}
 />
 */
@@ -23,6 +31,9 @@ class Selector extends React.Component {
     render() {
         try {
             var style = (this.props.tabs) ? "selector tabs" : "selector radio";
+            if (this.props.disabled) {
+                style += " disabled";
+            }
             if (this.props.noBorder) {
                 style += " no-border";
             }
@@ -79,6 +90,9 @@ class SelectorOption extends React.Component {
             var style = "option";
             if (this.props.selected) {
                 style += " selected";
+            }
+            if (this.props.disabled) {
+                style += " disabled";
             }
 
             return (

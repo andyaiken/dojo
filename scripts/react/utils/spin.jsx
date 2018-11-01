@@ -4,6 +4,7 @@
     name="FIELDNAME"
     label="LABEL"
     factors={[1, 10, 100]}
+    disabled={BOOLEAN}
     display={value => this.displayValue(value)}
     nudgeValue={delta => this.nudgeValue(SOURCEOBJECT, FIELDNAME, delta)}
 />
@@ -71,7 +72,7 @@ class Spin extends React.Component {
             }
 
             return (
-                <div className="spin">
+                <div className={this.props.disabled ? "spin disabled" : "spin"}>
                     <div className="spin-button" onClick={e => this.click(e, -1)}>
                         <img className="image" src="content/minus.svg" />
                     </div>

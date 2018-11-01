@@ -2,6 +2,7 @@
 <Checkbox
     label="LABEL"
     checked={BOOLEAN}
+    disabled={BOOLEAN}
     changeValue={value => this.changeValue(SOURCEOBJECT, FIELDNAME, value)}
 />
 */
@@ -15,7 +16,7 @@ class Checkbox extends React.Component {
     render() {
         try {
             return (
-                <div className="checkbox" onClick={e => this.click(e)}>
+                <div className={this.props.disabled ? "checkbox disabled" : "checkbox"} onClick={e => this.click(e)}>
                     <img className="image" src={this.props.checked ? "content/checked.svg" : "content/unchecked.svg"} />
                     <div className="checkbox-label">{this.props.label}</div>
                 </div>

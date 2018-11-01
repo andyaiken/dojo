@@ -1,6 +1,7 @@
 /*
 <ConfirmButton
     text="TEXT"
+    disabled={BOOLEAN}
     callback={() => CALLBACK_FUNCTION}
 />
 */
@@ -48,7 +49,7 @@ class ConfirmButton extends React.Component {
             }
 
             return (
-                <button onClick={() => this.toggle()}>
+                <button className={this.props.disabled ? "disabled" : ""} onClick={() => this.toggle()}>
                     {content}
                 </button>
             );

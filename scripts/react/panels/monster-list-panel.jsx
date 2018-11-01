@@ -58,27 +58,6 @@ class MonsterListPanel extends React.Component {
         try {
             var filterContent = null;
             if (this.state.showFilter) {
-                var subtype = null;
-                if (this.props.monster.tag) {
-                    subtype = (
-                        <Checkbox
-                            label="match subtype"
-                            checked={this.state.matchSubtype}
-                            changeValue={value => this.setMatchSubtype(value)}
-                        />
-                    );
-                }
-                var alignment = null;
-                if (this.props.monster.alignment) {
-                    alignment = (
-                        <Checkbox
-                            label="match alignment"
-                            checked={this.state.matchAlignment}
-                            changeValue={value => this.setMatchAlignment(value)}
-                        />
-                    );
-                }
-
                 filterContent = (
                     <div>
                         <input type="text" placeholder="filter" value={this.state.filterText} onChange={event => this.setFilterText(event.target.value)} />
@@ -92,8 +71,18 @@ class MonsterListPanel extends React.Component {
                             checked={this.state.matchType}
                             changeValue={value => this.setMatchType(value)}
                         />
-                        {subtype}
-                        {alignment}
+                        <Checkbox
+                            label="match subtype"
+                            checked={this.state.matchSubtype}
+                            disabled={!this.props.monster.tag}
+                            changeValue={value => this.setMatchSubtype(value)}
+                        />
+                        <Checkbox
+                            label="match alignment"
+                            checked={this.state.matchAlignment}
+                            disabled={!this.props.monster.alignment}
+                            changeValue={value => this.setMatchAlignment(value)}
+                        />
                         <Checkbox
                             label="match challenge rating"
                             checked={this.state.matchCR}
@@ -103,7 +92,7 @@ class MonsterListPanel extends React.Component {
                 );
             } else {
                 filterContent = (
-                    <input type="text" placeholder="name" value={this.state.filterText} onChange={event => this.setFilterText(event.target.value)} />
+                    <input type="text" placeholder="filter" value={this.state.filterText} onChange={event => this.setFilterText(event.target.value)} />
                 );
             }
 
