@@ -85,7 +85,7 @@ class SelectorOption extends React.Component {
 
     render() {
         try {
-            var width = "calc(((100% - 1px) / " + this.props.count + ") - 8px)";
+            var width = "calc(((100% - 1px) / " + this.props.count + ") - 2px )";
 
             var style = "option";
             if (this.props.selected) {

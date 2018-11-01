@@ -17,7 +17,6 @@
     .modal .modal-heading {
         height: 50px;
         margin: 0;
-        padding-left: 15px;
         border-bottom: none;
         background-color: rgb(100, 150, 240);
         color: white;
@@ -26,7 +25,8 @@
         .modal .modal-heading .title {
             display: inline-block;
             vertical-align: middle;
-            width: calc(100% - 50px);
+            width: calc(100% - 52px);
+            padding: 0 15px;
             line-height: 40px;
             font-size: 20px;
             font-weight: 600;
@@ -35,8 +35,8 @@
         .modal .modal-heading .image {
             display: inline-block;
             vertical-align: middle;
-            width: 30px;
-            height: 30px;
+            width: 36px;
+            height: 36px;
             padding: 2px;
             margin: 8px;
             border-radius: 50%;
@@ -48,7 +48,7 @@
             }
 
     .modal .modal-content {
-        height: calc(100% - 80px);
+        height: calc(100% - 50px);
         padding: 15px;
         background-color: white;
     }
@@ -58,13 +58,18 @@
         }
 
         .modal .modal-content .hp-value {
-            height: 20px;
+            height: 32px;
             margin: 5px 0;
             padding: 5px 8px;
             border: 1px solid #C3C3C3;
             font-size: 15px;
             text-align: center;
             font-weight: 600;
+        }
+
+        .modal .modal-content .dev-section {
+            width: 300px;
+            margin: 0 auto;
         }
 
 .blur {

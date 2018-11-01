@@ -3,7 +3,7 @@ class ErrorCard extends React.Component {
         try {
             var heading = null;
             if (this.props.title) {
-                heading = <div className="heading">{this.props.title}</div>;
+                heading = <div className="heading"><div className="title">{this.props.title}</div></div>;
             }
 
             var content = this.props.getContent();

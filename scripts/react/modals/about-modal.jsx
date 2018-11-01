@@ -38,7 +38,7 @@ class AboutModal extends React.Component {
             });
 
             return (
-                <div className="group">
+                <div className="dev-section">
                     <div className="heading">dev</div>
                     <button onClick={() => this.setSelected(!this.state.selected)}>button</button>
                     <ConfirmButton

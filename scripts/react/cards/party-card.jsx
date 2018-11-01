@@ -30,7 +30,7 @@ class PartyCard extends React.Component {
 
                 heading = (
                     <div className="heading">
-                        party
+                        <div className="title">party</div>
                     </div>
                 );
 

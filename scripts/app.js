@@ -479,7 +479,11 @@ var ErrorCard = function (_React$Component) {
                     heading = React.createElement(
                         "div",
                         { className: "heading" },
-                        this.props.title
+                        React.createElement(
+                            "div",
+                            { className: "title" },
+                            this.props.title
+                        )
                     );
                 }
 
@@ -1675,7 +1679,11 @@ var MonsterGroupCard = function (_React$Component) {
                     heading = React.createElement(
                         "div",
                         { className: "heading" },
-                        "monster group"
+                        React.createElement(
+                            "div",
+                            { className: "title" },
+                            "monster group"
+                        )
                     );
 
                     content = React.createElement(
@@ -1951,7 +1959,11 @@ var PartyCard = function (_React$Component) {
                     heading = React.createElement(
                         "div",
                         { className: "heading" },
-                        "party"
+                        React.createElement(
+                            "div",
+                            { className: "title" },
+                            "party"
+                        )
                     );
 
                     content = React.createElement(
@@ -4360,7 +4372,7 @@ var AboutModal = function (_React$Component) {
 
                 return React.createElement(
                     "div",
-                    { className: "group" },
+                    { className: "dev-section" },
                     React.createElement(
                         "div",
                         { className: "heading" },
@@ -8156,7 +8168,7 @@ var SelectorOption = function (_React$Component2) {
             var _this4 = this;
 
             try {
-                var width = "calc(((100% - 1px) / " + this.props.count + ") - 8px)";
+                var width = "calc(((100% - 1px) / " + this.props.count + ") - 2px )";
 
                 var style = "option";
                 if (this.props.selected) {

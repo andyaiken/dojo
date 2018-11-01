@@ -7,7 +7,7 @@ class MonsterGroupCard extends React.Component {
             if (this.props.selection) {
                 heading = (
                     <div className="heading">
-                        monster group
+                        <div className="title">monster group</div>
                     </div>
                 );
 
