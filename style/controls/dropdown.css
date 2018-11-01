@@ -3,8 +3,8 @@
     background-color: white;
     cursor: pointer;
     white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
+    position: relative;
 }
 
     .dropdown .dropdown-top {
@@ -41,10 +41,15 @@
     }
 
     .dropdown .dropdown-options {
+        background-color: white;
         border: 1px solid #C3C3C3;
-        border-top-width: 0;
         max-height: 155px;
         overflow-y: auto;
+        position: absolute;
+        top: 31px;
+        left: 0px;
+        right: 0px;
+        box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.5);
     }
 
         .dropdown:hover .dropdown-options {
