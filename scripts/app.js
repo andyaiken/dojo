@@ -871,6 +871,9 @@ var MonsterCard = function (_React$Component) {
                                 } },
                             "add to encounter"
                         ));
+                        options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
+                                return _this2.props.removeCombatant(_this2.props.combatant);
+                            } }));
                     }
                     if (!this.props.combatant.pending && this.props.combatant.active && !this.props.combatant.defeated) {
                         if (this.props.combatant.current) {
@@ -916,6 +919,9 @@ var MonsterCard = function (_React$Component) {
                                 } },
                             "mark as active"
                         ));
+                        options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
+                                return _this2.props.removeCombatant(_this2.props.combatant);
+                            } }));
                     }
                 }
                 if (this.props.mode.indexOf("template") !== -1) {
@@ -2122,6 +2128,9 @@ var PCCard = function (_React$Component) {
                                 } },
                             "add to encounter"
                         ));
+                        options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
+                                return _this2.props.removeCombatant(_this2.props.combatant);
+                            } }));
                     }
                     if (!this.props.combatant.pending && this.props.combatant.active && !this.props.combatant.defeated) {
                         if (this.props.combatant.current) {
@@ -2167,6 +2176,9 @@ var PCCard = function (_React$Component) {
                                 } },
                             "mark as active"
                         ));
+                        options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
+                                return _this2.props.removeCombatant(_this2.props.combatant);
+                            } }));
                     }
                 }
 

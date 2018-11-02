@@ -79,6 +79,7 @@ class MonsterCard extends React.Component {
             if (this.props.mode.indexOf("combat") !== -1) {
                 if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
                     options.push(<button key="makeAdd" onClick={() => this.props.makeActive(this.props.combatant)}>add to encounter</button>);
+                    options.push(<ConfirmButton key="remove" text="remove from encounter" callback={() => this.props.removeCombatant(this.props.combatant)} />);
                 }
                 if (!this.props.combatant.pending && this.props.combatant.active && !this.props.combatant.defeated) {
                     if (this.props.combatant.current) {
@@ -92,6 +93,7 @@ class MonsterCard extends React.Component {
                 }
                 if (!this.props.combatant.pending && !this.props.combatant.active && this.props.combatant.defeated) {
                     options.push(<button key="makeActive" onClick={() => this.props.makeActive(this.props.combatant)}>mark as active</button>);
+                    options.push(<ConfirmButton key="remove" text="remove from encounter" callback={() => this.props.removeCombatant(this.props.combatant)} />);
                 }
             }
             if (this.props.mode.indexOf("template") !== -1) {
