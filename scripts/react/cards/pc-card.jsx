@@ -118,7 +118,7 @@ class PCCard extends React.Component {
                 stats = (
                     <div className="stats">
                         <div className="section key-stats">
-                            <div className="key-stat toggle" onClick={() => this.toggleInit()}>
+                            <div className="key-stat editable" onClick={() => this.toggleInit()}>
                                 <div className="stat-heading">init</div>
                                 <div className="stat-value">{this.props.combatant.initiative}</div>
                             </div>
@@ -128,7 +128,6 @@ class PCCard extends React.Component {
                             </div>
                         </div>
                         <div style={{ display: this.state.showInit ? "" : "none" }}>
-                            <div className="divider"></div>
                             <Spin
                                 source={this.props.combatant}
                                 name="initiative"

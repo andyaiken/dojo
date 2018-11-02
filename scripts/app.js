@@ -1140,7 +1140,7 @@ var MonsterCard = function (_React$Component) {
                             { className: "section key-stats" },
                             React.createElement(
                                 "div",
-                                { className: "key-stat toggle", onClick: function onClick() {
+                                { className: "key-stat editable", onClick: function onClick() {
                                         return _this2.toggleInit();
                                     } },
                                 React.createElement(
@@ -1170,7 +1170,7 @@ var MonsterCard = function (_React$Component) {
                             ),
                             React.createElement(
                                 "div",
-                                { className: "key-stat toggle", onClick: function onClick() {
+                                { className: "key-stat editable", onClick: function onClick() {
                                         return _this2.toggleHP();
                                     } },
                                 React.createElement(
@@ -1185,7 +1185,6 @@ var MonsterCard = function (_React$Component) {
                                 )
                             )
                         ),
-                        React.createElement("div", { className: "divider" }),
                         React.createElement(
                             "div",
                             { style: { display: this.state.showInit ? "" : "none" } },
@@ -1197,8 +1196,7 @@ var MonsterCard = function (_React$Component) {
                                 nudgeValue: function nudgeValue(delta) {
                                     return _this2.props.nudgeValue(_this2.props.combatant, "initiative", delta);
                                 }
-                            }),
-                            React.createElement("div", { className: "divider" })
+                            })
                         ),
                         React.createElement(
                             "div",
@@ -1253,9 +1251,9 @@ var MonsterCard = function (_React$Component) {
                                 ),
                                 " ",
                                 this.props.combatant.damage.immune
-                            ),
-                            React.createElement("div", { className: "divider" })
+                            )
                         ),
+                        React.createElement("div", { className: "divider" }),
                         React.createElement(ConditionsPanel, {
                             combatant: this.props.combatant,
                             addCondition: function addCondition(condition) {
@@ -2334,7 +2332,7 @@ var PCCard = function (_React$Component) {
                             { className: "section key-stats" },
                             React.createElement(
                                 "div",
-                                { className: "key-stat toggle", onClick: function onClick() {
+                                { className: "key-stat editable", onClick: function onClick() {
                                         return _this2.toggleInit();
                                     } },
                                 React.createElement(
@@ -2366,7 +2364,6 @@ var PCCard = function (_React$Component) {
                         React.createElement(
                             "div",
                             { style: { display: this.state.showInit ? "" : "none" } },
-                            React.createElement("div", { className: "divider" }),
                             React.createElement(Spin, {
                                 source: this.props.combatant,
                                 name: "initiative",
@@ -5201,7 +5198,7 @@ var AbilityScorePanel = function (_React$Component) {
                 if (this.props.edit) {
                     result = React.createElement(
                         "div",
-                        { className: "ability-scores" },
+                        null,
                         React.createElement(Spin, {
                             source: this.props.combatant.abilityScores,
                             name: "str",
@@ -5254,7 +5251,7 @@ var AbilityScorePanel = function (_React$Component) {
                 } else {
                     result = React.createElement(
                         "div",
-                        { className: "ability-scores toggle", onClick: function onClick() {
+                        { className: "ability-scores", onClick: function onClick() {
                                 return _this2.toggleAbilityScores();
                             } },
                         React.createElement(

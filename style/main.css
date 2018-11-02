@@ -147,6 +147,13 @@ body,
 
     .section .ability-scores {
         padding: 5px 0;
+        background-color: white;
+        border: 1px solid #404040;
+        cursor: pointer;
+    }
+
+    .section .ability-scores:hover {
+        border-color: rgb(100, 150, 240);
     }
 
         .section .ability-scores .ability-score {
@@ -155,9 +162,21 @@ body,
             padding: 0 5px;
         }
 
+            .section .ability-scores .ability-score .ability-heading {
+                text-align: center;
+                font-weight: 600;
+            }
+
+            .section .ability-scores .ability-score .ability-value {
+                text-align: center;
+                padding-top: 5px;
+            }
+
     .section .key-stat {
         display: inline-block;
+        border: 1px solid transparent;
         width: calc((100% - 1px) / 3);
+        padding: 5px 0;
         vertical-align: top;
     }
 
@@ -165,26 +184,27 @@ body,
             width: calc(2 * (100% - 1px) / 3);
         }
 
-        .section .ability-score .ability-heading,
+        .section .key-stat.editable {
+            cursor: pointer;
+            background-color: white;
+            border-color: #404040;
+        }
+
+            .section .key-stat.editable:hover {
+                border-color: rgb(100, 150, 240);
+            }
+
         .section .key-stat .stat-heading {
             text-align: center;
             font-weight: 600;
         }
 
-        .section .ability-score .ability-value,
         .section .key-stat .stat-value {
             text-align: center;
+            font-weight: 600;
+            font-size: 20px;
+            padding-top: 5px;
         }
-
-    .section .ability-score .ability-value {
-        padding-top: 5px;
-    }
-
-    .section .key-stat .stat-value {
-        font-size: 20px;
-        font-weight: 600;
-        padding-top: 5px;
-    }
 
     .section .input-label {
         padding-top: 5px;

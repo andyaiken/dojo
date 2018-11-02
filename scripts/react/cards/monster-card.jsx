@@ -190,7 +190,7 @@ class MonsterCard extends React.Component {
                     <div className="stats">
                         <HitPointGauge combatant={this.props.combatant} />
                         <div className="section key-stats">
-                            <div className="key-stat toggle" onClick={() => this.toggleInit()}>
+                            <div className="key-stat editable" onClick={() => this.toggleInit()}>
                                 <div className="stat-heading">init</div>
                                 <div className="stat-value">{this.props.combatant.initiative}</div>
                             </div>
@@ -198,12 +198,11 @@ class MonsterCard extends React.Component {
                                 <div className="stat-heading">ac</div>
                                 <div className="stat-value">{this.props.combatant.ac}</div>
                             </div>
-                            <div className="key-stat toggle" onClick={() => this.toggleHP()}>
+                            <div className="key-stat editable" onClick={() => this.toggleHP()}>
                                 <div className="stat-heading">hp</div>
                                 <div className="stat-value">{hp}</div>
                             </div>
                         </div>
-                        <div className="divider"></div>
                         <div style={{ display: this.state.showInit ? "" : "none" }}>
                             <Spin
                                 source={this.props.combatant}
@@ -212,7 +211,6 @@ class MonsterCard extends React.Component {
                                 factors={[1, 5]}
                                 nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "initiative", delta)}
                             />
-                            <div className="divider"></div>
                         </div>
                         <div style={{ display: this.state.showHP ? "" : "none" }}>
                             <Spin
@@ -238,8 +236,8 @@ class MonsterCard extends React.Component {
                             <div className="section" style={{ display: this.props.combatant.damage.immune !== "" ? "" : "none" }}>
                                 <b>damage immunities</b> {this.props.combatant.damage.immune}
                             </div>
-                            <div className="divider"></div>
                         </div>
+                        <div className="divider"></div>
                         <ConditionsPanel
                             combatant={this.props.combatant}
                             addCondition={condition => this.props.addCondition(this.props.combatant, condition)}

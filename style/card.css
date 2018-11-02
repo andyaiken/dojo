@@ -69,15 +69,6 @@
         border-top: 1px solid #650000;
     }
 
-    .card .toggle {
-        cursor: pointer;
-        user-select: none;
-    }
-
-        .card .toggle:hover {
-            background-color: #DDDDDD;
-        }
-
     .card .table {
         background-color: white;
         border: 1px solid #C3C3C3;
