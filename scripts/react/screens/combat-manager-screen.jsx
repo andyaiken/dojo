@@ -146,6 +146,7 @@ class CombatManagerScreen extends React.Component {
                             heading="waiting for intiative to be entered"
                             content={pending}
                             hidden={pending.length === 0}
+                            showToggle={true}
                         />
                         <CardGroup
                             heading="active combatants"
@@ -156,6 +157,7 @@ class CombatManagerScreen extends React.Component {
                             heading="defeated"
                             content={defeated}
                             hidden={defeated.length === 0}
+                            showToggle={true}
                         />
                     </div>
                 );
@@ -193,10 +195,10 @@ class CombatManagerScreen extends React.Component {
 
             return (
                 <div className="combat-manager row">
-                    <div className="columns small-4 medium-4 large-4 scrollable">
+                    <div className="columns small-6 medium-4 large-2 scrollable">
                         {leftPaneContent}
                     </div>
-                    <div className="columns small-8 medium-8 large-8 scrollable">
+                    <div className="columns small-6 medium-8 large-10 scrollable">
                         {rightPaneContent}
                     </div>
                 </div>

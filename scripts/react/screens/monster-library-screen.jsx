@@ -112,7 +112,7 @@ class MonsterLibraryScreen extends React.Component {
 
             return (
                 <div className="monster-library row">
-                    <div className="columns small-4 medium-4 large-4 scrollable">
+                    <div className="columns small-6 medium-4 large-2 scrollable">
                         {help}
                         <div className="group">
                             <button onClick={() => this.props.addMonsterGroup("new group")}>add a new monster group</button>
@@ -122,7 +122,7 @@ class MonsterLibraryScreen extends React.Component {
                         </div>
                         {listItems}
                     </div>
-                    <div className="columns small-8 medium-8 large-8 scrollable">
+                    <div className="columns small-6 medium-8 large-10 scrollable">
                         <CardGroup
                             content={cards}
                             heading={name}

@@ -53,7 +53,7 @@ class CardGroup extends React.Component {
             return (
                 <div className="card-group">
                     {heading}
-                    <div className="row small-up-2 medium-up-2 large-up-4 collapse">
+                    <div className="row small-up-1 medium-up-2 large-up-4 collapse">
                         {cards}
                     </div>
                 </div>

@@ -1,5 +1,4 @@
 .row {
-  max-width: 62.5rem;
   margin-right: auto;
   margin-left: auto; }
   .row::before, .row::after {

@@ -5441,7 +5441,7 @@ var CardGroup = function (_React$Component) {
                     heading,
                     React.createElement(
                         "div",
-                        { className: "row small-up-2 medium-up-2 large-up-4 collapse" },
+                        { className: "row small-up-1 medium-up-2 large-up-4 collapse" },
                         cards
                     )
                 );
@@ -6795,7 +6795,8 @@ var CombatManagerScreen = function (_React$Component) {
                         React.createElement(CardGroup, {
                             heading: "waiting for intiative to be entered",
                             content: pending,
-                            hidden: pending.length === 0
+                            hidden: pending.length === 0,
+                            showToggle: true
                         }),
                         React.createElement(CardGroup, {
                             heading: "active combatants",
@@ -6805,7 +6806,8 @@ var CombatManagerScreen = function (_React$Component) {
                         React.createElement(CardGroup, {
                             heading: "defeated",
                             content: defeated,
-                            hidden: defeated.length === 0
+                            hidden: defeated.length === 0,
+                            showToggle: true
                         })
                     );
                 } else {
@@ -6845,12 +6847,12 @@ var CombatManagerScreen = function (_React$Component) {
                     { className: "combat-manager row" },
                     React.createElement(
                         "div",
-                        { className: "columns small-4 medium-4 large-4 scrollable" },
+                        { className: "columns small-6 medium-4 large-2 scrollable" },
                         leftPaneContent
                     ),
                     React.createElement(
                         "div",
-                        { className: "columns small-8 medium-8 large-8 scrollable" },
+                        { className: "columns small-6 medium-8 large-10 scrollable" },
                         rightPaneContent
                     )
                 );
@@ -7144,7 +7146,7 @@ var EncounterBuilderScreen = function (_React$Component) {
                     { className: "encounter-builder row" },
                     React.createElement(
                         "div",
-                        { className: "columns small-4 medium-4 large-4 scrollable" },
+                        { className: "columns small-6 medium-4 large-2 scrollable" },
                         help,
                         React.createElement(
                             "div",
@@ -7161,7 +7163,7 @@ var EncounterBuilderScreen = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "columns small-8 medium-8 large-8 scrollable" },
+                        { className: "columns small-6 medium-8 large-10 scrollable" },
                         React.createElement(CardGroup, {
                             content: encounterCards,
                             heading: name,
@@ -7458,7 +7460,7 @@ var MonsterLibraryScreen = function (_React$Component) {
                     { className: "monster-library row" },
                     React.createElement(
                         "div",
-                        { className: "columns small-4 medium-4 large-4 scrollable" },
+                        { className: "columns small-6 medium-4 large-2 scrollable" },
                         help,
                         React.createElement(
                             "div",
@@ -7482,7 +7484,7 @@ var MonsterLibraryScreen = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "columns small-8 medium-8 large-8 scrollable" },
+                        { className: "columns small-6 medium-8 large-10 scrollable" },
                         React.createElement(CardGroup, {
                             content: cards,
                             heading: name,
@@ -7615,7 +7617,7 @@ var PartiesScreen = function (_React$Component) {
                     { className: "parties row" },
                     React.createElement(
                         "div",
-                        { className: "columns small-4 medium-4 large-4 scrollable" },
+                        { className: "columns small-6 medium-4 large-2 scrollable" },
                         help,
                         React.createElement(
                             "div",
@@ -7632,7 +7634,7 @@ var PartiesScreen = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "columns small-8 medium-8 large-8 scrollable" },
+                        { className: "columns small-6 medium-8 large-10 scrollable" },
                         React.createElement(CardGroup, {
                             content: cards,
                             heading: name,

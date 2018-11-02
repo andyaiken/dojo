@@ -212,14 +212,14 @@ class EncounterBuilderScreen extends React.Component {
 
             return (
                 <div className="encounter-builder row">
-                    <div className="columns small-4 medium-4 large-4 scrollable">
+                    <div className="columns small-6 medium-4 large-2 scrollable">
                         {help}
                         <div className="group">
                             <button onClick={() => this.props.addEncounter("new encounter")}>add a new encounter</button>
                         </div>
                         {encounters}
                     </div>
-                    <div className="columns small-8 medium-8 large-8 scrollable">
+                    <div className="columns small-6 medium-8 large-10 scrollable">
                         <CardGroup
                             content={encounterCards}
                             heading={name}
