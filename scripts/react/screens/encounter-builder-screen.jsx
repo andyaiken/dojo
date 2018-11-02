@@ -106,59 +106,60 @@ class EncounterBuilderScreen extends React.Component {
 
             if (this.props.selection) {
                 encounterCards.push(
-                    <EncounterCard
-                        key="info"
-                        selection={this.props.selection}
-                        parties={this.props.parties}
-                        changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
-                        removeEncounter={() => this.props.removeEncounter()}
-                        getMonster={(monsterName, monsterGroupName) => this.props.getMonster(monsterName, monsterGroupName)}
-                    />
+                    <div className="column column-block" key="info">
+                        <EncounterCard
+                            selection={this.props.selection}
+                            parties={this.props.parties}
+                            changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
+                            removeEncounter={() => this.props.removeEncounter()}
+                            getMonster={(monsterName, monsterGroupName) => this.props.getMonster(monsterName, monsterGroupName)}
+                        />
+                    </div>
                 );
 
                 this.props.selection.slots.forEach(slot => {
                     var monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
                     if (monster) {
                         encounterCards.push(
-                            <MonsterCard
-                                key={monster.id}
-                                combatant={monster}
-                                slot={slot}
-                                mode={"view encounter"}
-                                nudgeValue={(slot, type, delta) => this.props.nudgeValue(slot, type, delta)}
-                                removeEncounterSlot={slot => this.props.removeEncounterSlot(slot)}
-                            />
+                            <div className="column column-block" key={monster.id}>
+                                <MonsterCard
+                                    combatant={monster}
+                                    slot={slot}
+                                    mode={"view encounter"}
+                                    nudgeValue={(slot, type, delta) => this.props.nudgeValue(slot, type, delta)}
+                                    removeEncounterSlot={slot => this.props.removeEncounterSlot(slot)}
+                                />
+                            </div>
                         );
                     } else {
                         var index = this.props.selection.slots.indexOf(slot);
                         var error = "unknown monster: " + slot.monsterName + " in group " + slot.monsterGroupName;
                         encounterCards.push(
-                            <ErrorCard
-                                key={index}
-                                getContent={() => <div className="section">{error}</div>}
-                            />
+                            <div className="column column-block" key={index}>
+                                <ErrorCard getContent={() => <div className="section">{error}</div>} />
+                            </div>
                         );
                     }
                 });
                 if (this.props.selection.slots.length === 0) {
                     encounterCards.push(
-                        <InfoCard
-                            key={"empty"}
-                            getContent={() => <div className="section">no monsters</div>}
-                        />
+                        <div className="column column-block" key="empty">
+                            <InfoCard getContent={() => <div className="section">no monsters</div>} />
+                        </div>
                     );
                 }
             }
 
             var libraryCards = [];
             libraryCards.push(
-                <FilterCard
-                    key="filter"
-                    filter={this.state.filter}
-                    changeValue={(type, value) => this.changeFilterValue(type, value)}
-                    nudgeValue={(type, delta) => this.nudgeFilterValue(type, delta)}
-                    resetFilter={() => this.resetFilter()}
-                />
+                <div className="column column-block" key="filter">
+                    <FilterCard
+                        filter={this.state.filter}
+                        changeValue={(type, value) => this.changeFilterValue(type, value)}
+                        nudgeValue={(type, delta) => this.nudgeFilterValue(type, delta)}
+                        resetFilter={() => this.resetFilter()}
+                    />
+                </div>
             );
 
             var monsters = [];
@@ -180,20 +181,23 @@ class EncounterBuilderScreen extends React.Component {
                 if (this.inEncounter(monster)) {
                     var title = monster.name;
                     libraryCards.push(
-                        <InfoCard
-                            key={monster.id}
-                            getHeading={() => <div className="heading">{title}</div>}
-                            getContent={() => <div className="section">already in encounter</div>}
-                        />
+                        <div className="column column-block" key={monster.id}>
+                            <InfoCard
+                                getHeading={() => <div className="heading">{title}</div>}
+                                getContent={() => <div className="section">already in encounter</div>}
+                            />
+                        </div>
                     );
                 } else {
                     libraryCards.push(
-                        <MonsterCard
-                            key={monster.id}
-                            combatant={monster}
-                            mode={"view encounter"}
-                            addEncounterSlot={combatant => this.props.addEncounterSlot(combatant)}
-                        />
+                        <div className="column column-block" key={monster.id}>
+                            <MonsterCard
+                                key={monster.id}
+                                combatant={monster}
+                                mode={"view encounter"}
+                                addEncounterSlot={combatant => this.props.addEncounterSlot(combatant)}
+                            />
+                        </div>
                     );
                 }
             });
@@ -207,15 +211,15 @@ class EncounterBuilderScreen extends React.Component {
             }
 
             return (
-                <div className="encounter-builder">
-                    <div className="left-pane scrollable">
+                <div className="encounter-builder row">
+                    <div className="columns small-4 medium-4 large-4 scrollable">
                         {help}
                         <div className="group">
                             <button onClick={() => this.props.addEncounter("new encounter")}>add a new encounter</button>
                         </div>
                         {encounters}
                     </div>
-                    <div className="right-pane scrollable">
+                    <div className="columns small-8 medium-8 large-8 scrollable">
                         <CardGroup
                             content={encounterCards}
                             heading={name}

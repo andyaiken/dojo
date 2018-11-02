@@ -25,36 +25,36 @@ class PartiesScreen extends React.Component {
 
             if (this.props.selection) {
                 cards.push(
-                    <PartyCard
-                        key={"info"}
-                        selection={this.props.selection}
-                        addPC={name => this.props.addPC(name)}
-                        sortPCs={() => this.props.sortPCs()}
-                        changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
-                        removeParty={() => this.props.removeParty()}
-                    />
+                    <div className="column column-block" key="info">
+                        <PartyCard
+                            selection={this.props.selection}
+                            addPC={name => this.props.addPC(name)}
+                            sortPCs={() => this.props.sortPCs()}
+                            changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
+                            removeParty={() => this.props.removeParty()}
+                        />
+                    </div>
                 );
 
-                for (var index = 0; index !== this.props.selection.pcs.length; ++index) {
-                    var pc = this.props.selection.pcs[index];
+                if (this.props.selection.pcs.length !== 0) {
+                    this.props.selection.pcs.forEach(pc => {
+                        cards.push(
+                            <div className="column column-block" key={pc.id}>
+                                <PCCard
+                                    combatant={pc}
+                                    mode={"edit"}
+                                    changeValue={(combatant, type, value) => this.props.changeValue(combatant, type, value)}
+                                    nudgeValue={(combatant, type, delta) => this.props.nudgeValue(combatant, type, delta)}
+                                    removeCombatant={combatant => this.props.removePC(combatant)}
+                                />
+                            </div>
+                        );
+                    });
+                } else {
                     cards.push(
-                        <PCCard
-                            key={pc.id}
-                            combatant={pc}
-                            mode={"edit"}
-                            changeValue={(combatant, type, value) => this.props.changeValue(combatant, type, value)}
-                            nudgeValue={(combatant, type, delta) => this.props.nudgeValue(combatant, type, delta)}
-                            removeCombatant={combatant => this.props.removePC(combatant)}
-                        />
-                    );
-                }
-
-                if (this.props.selection.pcs.length === 0) {
-                    cards.push(
-                        <InfoCard
-                            key={"empty"}
-                            getContent={() => <div className="section">no pcs</div>}
-                        />
+                        <div className="column column-block" key="empty">
+                            <InfoCard getContent={() => <div className="section">no pcs</div>} />
+                        </div>
                     );
                 }
             }
@@ -68,15 +68,15 @@ class PartiesScreen extends React.Component {
             }
 
             return (
-                <div className="parties">
-                    <div className="left-pane scrollable">
+                <div className="parties row">
+                    <div className="columns small-4 medium-4 large-4 scrollable">
                         {help}
                         <div className="group">
                             <button onClick={() => this.props.addParty("new party")}>add a new party</button>
                         </div>
                         {parties}
                     </div>
-                    <div className="right-pane scrollable">
+                    <div className="columns small-8 medium-8 large-8 scrollable">
                         <CardGroup
                             content={cards}
                             heading={name}

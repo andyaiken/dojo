@@ -53,10 +53,6 @@
         background-color: white;
     }
 
-        .modal .modal-content .card {
-            width: 100%;
-        }
-
         .modal .modal-content .hp-value {
             height: 32px;
             margin: 5px 0;
@@ -65,11 +61,6 @@
             font-size: 15px;
             text-align: center;
             font-weight: 600;
-        }
-
-        .modal .modal-content .dev-section {
-            width: 300px;
-            margin: 0 auto;
         }
 
 .blur {

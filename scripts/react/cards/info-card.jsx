@@ -2,16 +2,8 @@ class InfoCard extends React.Component {
     render() {
         try {
             var style = "card";
-            if (this.props.centered) {
-                style += " centered";
-            }
-
             if (this.props.welcome) {
                 style += " welcome";
-            }
-
-            if (this.props.wide) {
-                style += " wide";
             }
 
             var heading = null;

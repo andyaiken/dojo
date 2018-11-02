@@ -49,8 +49,8 @@ class MonsterEditorModal extends React.Component {
                     var sizeOptions = sizes.map(size => { return { id: size, text: size }; });
 
                     content = (
-                        <div>
-                            <div className="column two">
+                        <div className="row">
+                            <div className="columns small-6 medium-6 large-6">
                                 <div className="subheading">name</div>
                                 <input type="text" value={this.props.combatant.name} onChange={event => this.props.changeValue(this.props.combatant, "name", event.target.value)} />
                                 <div className="subheading">size</div>
@@ -70,8 +70,7 @@ class MonsterEditorModal extends React.Component {
                                 <div className="subheading">alignment</div>
                                 <input type="text" value={this.props.combatant.alignment} onChange={event => this.props.changeValue(this.props.combatant, "alignment", event.target.value)} />
                             </div>
-                            <div className="column-divider"></div>
-                            <div className="column two">
+                            <div className="columns small-6 medium-6 large-6">
                                 <div className="subheading">challenge rating</div>
                                 <Spin
                                     source={this.props.combatant}
@@ -93,8 +92,8 @@ class MonsterEditorModal extends React.Component {
                     break;
                 case 'abilities':
                     content = (
-                        <div>
-                            <div className="column two">
+                        <div className="row">
+                            <div className="columns small-6 medium-6 large-6">
                                 <div className="subheading">ability scores</div>
                                 <AbilityScorePanel
                                     edit={true}
@@ -102,8 +101,7 @@ class MonsterEditorModal extends React.Component {
                                     nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
                                 />
                             </div>
-                            <div className="column-divider"></div>
-                            <div className="column two">
+                            <div className="columns small-6 medium-6 large-6">
                                 <div className="subheading">saving throws</div>
                                 <input type="text" value={this.props.combatant.savingThrows} onChange={event => this.props.changeValue(this.props.combatant, "savingThrows", event.target.value)} />
                                 <div className="subheading">skills</div>
@@ -114,8 +112,8 @@ class MonsterEditorModal extends React.Component {
                     break;
                 case 'combat':
                     content = (
-                        <div>
-                            <div className="column two">
+                        <div className="row">
+                            <div className="columns small-6 medium-6 large-6">
                                 <div className="subheading">armor class</div>
                                 <Spin
                                     source={this.props.combatant}
@@ -132,8 +130,7 @@ class MonsterEditorModal extends React.Component {
                                 <div className="subheading">hit points</div>
                                 <div className="hp-value">{this.props.combatant.hpMax} hp</div>
                             </div>
-                            <div className="column-divider"></div>
-                            <div className="column two">
+                            <div className="columns small-6 medium-6 large-6">
                                 <div className="subheading">damage resistances</div>
                                 <input type="text" value={this.props.combatant.damage.resist} onChange={event => this.props.changeValue(this.props.combatant, "damage.resist", event.target.value)} />
                                 <div className="subheading">damage vulnerabilities</div>
@@ -160,8 +157,8 @@ class MonsterEditorModal extends React.Component {
             }
 
             return (
-                <div>
-                    <div className="column three double">
+                <div className="row">
+                    <div className="columns small-8 medium-8 large-8">
                         <Selector
                             tabs={true}
                             options={pages}
@@ -170,8 +167,7 @@ class MonsterEditorModal extends React.Component {
                         />
                         {content}
                     </div>
-                    <div className="column-divider"></div>
-                    <div className="column three">
+                    <div className="columns small-4 medium-4 large-4">
                         <MonsterListPanel
                             monster={this.props.combatant}
                             library={this.props.library}

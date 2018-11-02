@@ -110,7 +110,7 @@ button {
         width: calc(100% - 21px);
         display: inline-block;
         vertical-align: middle;
-        height: 16px;
+        min-height: 16px;
         line-height: 15px;
     }
 

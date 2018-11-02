@@ -276,7 +276,7 @@ class MonsterCard extends React.Component {
                                     <b>equipment</b> {this.props.combatant.equipment}
                                 </div>
                                 <div style={{ display: this.props.combatant.conditionImmunities !== "" ? "" : "none" }}>
-                                    <b>conditionImmunities</b> {this.props.combatant.conditionImmunities}
+                                    <b>condition immunities</b> {this.props.combatant.conditionImmunities}
                                 </div>
                             </div>
                             <TraitsPanel combatant={this.props.combatant} />

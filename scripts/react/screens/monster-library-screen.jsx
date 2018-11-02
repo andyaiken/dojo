@@ -56,46 +56,48 @@ class MonsterLibraryScreen extends React.Component {
 
             if (this.props.selection) {
                 cards.push(
-                    <MonsterGroupCard
-                        key={"info"}
-                        selection={this.props.selection}
-                        filter={this.state.filter}
-                        addMonster={name => this.props.addMonster(name)}
-                        sortMonsters={() => this.props.sortMonsters()}
-                        changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
-                        removeMonsterGroup={() => this.props.removeMonsterGroup()}
-                    />
+                    <div className="column column-block" key="info">
+                        <MonsterGroupCard
+                            selection={this.props.selection}
+                            filter={this.state.filter}
+                            addMonster={name => this.props.addMonster(name)}
+                            sortMonsters={() => this.props.sortMonsters()}
+                            changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
+                            removeMonsterGroup={() => this.props.removeMonsterGroup()}
+                        />
+                    </div>
                 );
 
                 var monsters = this.props.selection.monsters.filter(monster => {
                     return match(this.state.filter, monster.name);
                 });
 
-                monsters.forEach(monster => {
+                if (monsters.length !== 0) {
+                    monsters.forEach(monster => {
+                        cards.push(
+                            <div className="column column-block" key={monster.id}>
+                                <MonsterCard
+                                    combatant={monster}
+                                    mode={"view editable"}
+                                    library={this.props.library}
+                                    moveToGroup={(combatant, groupID) => this.props.moveToGroup(combatant, groupID)}
+                                    changeValue={(combatant, type, value) => this.props.changeValue(combatant, type, value)}
+                                    nudgeValue={(combatant, type, delta) => this.props.nudgeValue(combatant, type, delta)}
+                                    changeTrait={(trait, type, value) => this.props.changeValue(trait, type, value)}
+                                    addTrait={(combatant, type) => this.props.addTrait(combatant, type)}
+                                    removeTrait={(combatant, trait) => this.props.removeTrait(combatant, trait)}
+                                    removeCombatant={combatant => this.props.removeMonster(combatant)}
+                                    editMonster={combatant => this.props.editMonster(combatant)}
+                                    cloneMonster={combatant => this.props.cloneMonster(combatant)}
+                                />
+                            </div>
+                        );
+                    });
+                } else {
                     cards.push(
-                        <MonsterCard
-                            key={monster.id}
-                            combatant={monster}
-                            mode={"view editable"}
-                            library={this.props.library}
-                            moveToGroup={(combatant, groupID) => this.props.moveToGroup(combatant, groupID)}
-                            changeValue={(combatant, type, value) => this.props.changeValue(combatant, type, value)}
-                            nudgeValue={(combatant, type, delta) => this.props.nudgeValue(combatant, type, delta)}
-                            changeTrait={(trait, type, value) => this.props.changeValue(trait, type, value)}
-                            addTrait={(combatant, type) => this.props.addTrait(combatant, type)}
-                            removeTrait={(combatant, trait) => this.props.removeTrait(combatant, trait)}
-                            removeCombatant={combatant => this.props.removeMonster(combatant)}
-                            editMonster={combatant => this.props.editMonster(combatant)}
-                            cloneMonster={combatant => this.props.cloneMonster(combatant)}
-                        />
-                    );
-                });
-                if (monsters.length === 0) {
-                    cards.push(
-                        <InfoCard
-                            key={"empty"}
-                            getContent={() => <div className="section">no monsters</div>}
-                        />
+                        <div className="column column-block" key="empty">
+                            <InfoCard getContent={() => <div className="section">no monsters</div>} />
+                        </div>
                     );
                 }
             }
@@ -109,8 +111,8 @@ class MonsterLibraryScreen extends React.Component {
             }
 
             return (
-                <div className="monster-library">
-                    <div className="left-pane scrollable">
+                <div className="monster-library row">
+                    <div className="columns small-4 medium-4 large-4 scrollable">
                         {help}
                         <div className="group">
                             <button onClick={() => this.props.addMonsterGroup("new group")}>add a new monster group</button>
@@ -120,7 +122,7 @@ class MonsterLibraryScreen extends React.Component {
                         </div>
                         {listItems}
                     </div>
-                    <div className="right-pane scrollable">
+                    <div className="columns small-8 medium-8 large-8 scrollable">
                         <CardGroup
                             content={cards}
                             heading={name}

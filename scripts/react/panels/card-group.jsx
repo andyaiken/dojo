@@ -53,7 +53,9 @@ class CardGroup extends React.Component {
             return (
                 <div className="card-group">
                     {heading}
-                    {cards}
+                    <div className="row small-up-2 medium-up-2 large-up-4 collapse">
+                        {cards}
+                    </div>
                 </div>
             );
         } catch (e) {

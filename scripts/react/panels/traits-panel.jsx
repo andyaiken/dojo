@@ -58,15 +58,14 @@ class TraitsPanel extends React.Component {
                 );
 
                 return (
-                    <div>
-                        <div className="column two">
+                    <div className="row">
+                        <div className="columns small-6 medium-6 large-6">
                             <div className="section subheading">traits</div>
                             {traits}
                             <div className="section subheading">actions</div>
                             {actions}
                         </div>
-                        <div className="column-divider"></div>
-                        <div className="column two">
+                        <div className="columns small-6 medium-6 large-6">
                             <div className="section subheading">legendary actions</div>
                             {legendaryActions}
                             <div className="section subheading">lair actions</div>

@@ -3,7 +3,7 @@ class HomeScreen extends React.Component {
         try {
             return (
                 <div className="home scrollable">
-                    <InfoCard centered={true} welcome={true} getContent={() =>
+                    <InfoCard welcome={true} getContent={() =>
                         <div>
                             <div className="section">welcome to <b>dojo</b></div>
                             <div className="divider"></div>

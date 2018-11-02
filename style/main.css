@@ -28,65 +28,12 @@ body,
     height: 100%;
 }
 
-.left-pane {
-    display: inline-block;
-    width: 330px;
-    vertical-align: top;
-}
-
-    .left-pane .card {
-        width: 100%;
-        margin: 10px 0;
-    }
-
-.right-pane {
-    display: inline-block;
-    width: calc(100% - 330px);
-    vertical-align: top;
-}
-
-    .right-pane .card {
-        width: calc(((100% - 1px) / 4) - 12px);
-        min-width: 298px;
-        margin: 10px 5px;
-    }
-
 .scrollable {
     height: 100%;
     padding: 0 15px;
     overflow-x: hidden;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-}
-
-.column {
-    display: inline-block;
-    vertical-align: top;
-}
-
-    .column.two {
-        width: calc((100% - 11px) / 2);
-    }
-
-    .column.three {
-        width: calc((100% - 21px) / 3);
-    }
-
-        .column.three.double {
-            width: calc((((100% - 21px) / 3) * 2) + 10px);
-        }
-
-    .column.four {
-        width: calc((100% - 31px) / 4);
-    }
-
-    .column.five {
-        width: calc((100% - 41px) / 5);
-    }
-
-.column-divider {
-    display: inline-block;
-    width: 10px;
 }
 
 .left {

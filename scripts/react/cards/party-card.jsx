@@ -46,8 +46,8 @@ class PartyCard extends React.Component {
                         <div className="table">
                             <div>
                                 <div className="cell three"><b>insight</b></div>
-                                <div className="cell three"><b>investigation</b></div>
-                                <div className="cell three"><b>perception</b></div>
+                                <div className="cell three"><b>invest.</b></div>
+                                <div className="cell three"><b>percep.</b></div>
                             </div>
                             <div>
                                 <div className="cell three">{insightSummary}</div>

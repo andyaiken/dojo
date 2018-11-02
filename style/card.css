@@ -1,24 +1,12 @@
 ﻿.card {
-    display: inline-block;
-    vertical-align: top;
     background-color: #F5F5F5;
     border: 1px solid #656565;
+    margin: 5px;
 }
 
-    .card.centered {
-        display: block;
-        width: 300px;
-        margin: 10px auto;
-    }
-
-    .card.wide {
-        width: 100%;
-        min-height: 100%;
-        border: none !important;
-    }
-
     .card.welcome {
-        margin-top: 150px;
+        width: 300px;
+        margin: 150px auto 0 auto;
         background-color: rgba(100, 150, 240, 0.1);
     }
 

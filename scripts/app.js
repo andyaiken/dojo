@@ -699,16 +699,8 @@ var InfoCard = function (_React$Component) {
         value: function render() {
             try {
                 var style = "card";
-                if (this.props.centered) {
-                    style += " centered";
-                }
-
                 if (this.props.welcome) {
                     style += " welcome";
-                }
-
-                if (this.props.wide) {
-                    style += " wide";
                 }
 
                 var heading = null;
@@ -1394,7 +1386,7 @@ var MonsterCard = function (_React$Component) {
                                     React.createElement(
                                         "b",
                                         null,
-                                        "conditionImmunities"
+                                        "condition immunities"
                                     ),
                                     " ",
                                     this.props.combatant.conditionImmunities
@@ -2007,7 +1999,7 @@ var PartyCard = function (_React$Component) {
                                     React.createElement(
                                         "b",
                                         null,
-                                        "investigation"
+                                        "invest."
                                     )
                                 ),
                                 React.createElement(
@@ -2016,7 +2008,7 @@ var PartyCard = function (_React$Component) {
                                     React.createElement(
                                         "b",
                                         null,
-                                        "perception"
+                                        "percep."
                                     )
                                 )
                             ),
@@ -2455,7 +2447,7 @@ var PCCard = function (_React$Component) {
                                         React.createElement(
                                             "b",
                                             null,
-                                            "investigation"
+                                            "invest."
                                         )
                                     ),
                                     React.createElement(
@@ -2464,7 +2456,7 @@ var PCCard = function (_React$Component) {
                                         React.createElement(
                                             "b",
                                             null,
-                                            "perception"
+                                            "percep."
                                         )
                                     )
                                 ),
@@ -4372,72 +4364,76 @@ var AboutModal = function (_React$Component) {
 
                 return React.createElement(
                     "div",
-                    { className: "dev-section" },
+                    { className: "row" },
                     React.createElement(
                         "div",
-                        { className: "heading" },
-                        "dev"
-                    ),
-                    React.createElement(
-                        "button",
-                        { onClick: function onClick() {
-                                return _this2.setSelected(!_this2.state.selected);
-                            } },
-                        "button"
-                    ),
-                    React.createElement(ConfirmButton, {
-                        text: "confirm",
-                        callback: function callback() {
-                            return _this2.setSelected(!_this2.state.selected);
-                        }
-                    }),
-                    React.createElement(Dropdown, {
-                        options: devOptions,
-                        selectedID: this.state.optionID,
-                        select: function select(optionID) {
-                            return _this2.setOption(optionID);
-                        }
-                    }),
-                    React.createElement(Expander, {
-                        text: "expander",
-                        content: React.createElement(
+                        { className: "columns small-6 medium-6 large-6 end" },
+                        React.createElement(
                             "div",
-                            null,
-                            "content"
-                        )
-                    }),
-                    React.createElement(Spin, {
-                        source: this.state,
-                        name: "value",
-                        label: "value",
-                        factors: [1, 10, 100],
-                        nudgeValue: function nudgeValue(delta) {
-                            return _this2.setValue(_this2.state.value + delta);
-                        }
-                    }),
-                    React.createElement(Checkbox, {
-                        label: "checkbox",
-                        checked: this.state.selected,
-                        changeValue: function changeValue(value) {
-                            return _this2.setSelected(value);
-                        }
-                    }),
-                    React.createElement(Selector, {
-                        tabs: true,
-                        options: devOptions,
-                        selectedID: this.state.optionID,
-                        select: function select(optionID) {
-                            return _this2.setOption(optionID);
-                        }
-                    }),
-                    React.createElement(Selector, {
-                        tabs: false,
-                        options: devOptions,
-                        selectedID: this.state.optionID,
-                        select: function select(optionID) {
-                            return _this2.setOption(optionID);
-                        }
-                    })
+                            { className: "heading" },
+                            "dev"
+                        ),
+                        React.createElement(
+                            "button",
+                            { onClick: function onClick() {
+                                    return _this2.setSelected(!_this2.state.selected);
+                                } },
+                            "button"
+                        ),
+                        React.createElement(ConfirmButton, {
+                            text: "confirm",
+                            callback: function callback() {
+                                return _this2.setSelected(!_this2.state.selected);
+                            }
+                        }),
+                        React.createElement(Dropdown, {
+                            options: devOptions,
+                            selectedID: this.state.optionID,
+                            select: function select(optionID) {
+                                return _this2.setOption(optionID);
+                            }
+                        }),
+                        React.createElement(Expander, {
+                            text: "expander",
+                            content: React.createElement(
+                                "div",
+                                null,
+                                "content"
+                            )
+                        }),
+                        React.createElement(Spin, {
+                            source: this.state,
+                            name: "value",
+                            label: "value",
+                            factors: [1, 10, 100],
+                            nudgeValue: function nudgeValue(delta) {
+                                return _this2.setValue(_this2.state.value + delta);
+                            }
+                        }),
+                        React.createElement(Checkbox, {
+                            label: "checkbox",
+                            checked: this.state.selected,
+                            changeValue: function changeValue(value) {
+                                return _this2.setSelected(value);
+                            }
+                        }),
+                        React.createElement(Selector, {
+                            tabs: true,
+                            options: devOptions,
+                            selectedID: this.state.optionID,
+                            select: function select(optionID) {
+                                return _this2.setOption(optionID);
+                            }
+                        }),
+                        React.createElement(Selector, {
+                            tabs: false,
+                            options: devOptions,
+                            selectedID: this.state.optionID,
+                            select: function select(optionID) {
+                                return _this2.setOption(optionID);
+                            }
+                        })
+                    )
                 );
             }
 
@@ -4454,147 +4450,158 @@ var AboutModal = function (_React$Component) {
                     { className: "about" },
                     React.createElement(
                         "div",
-                        { className: "column two" },
+                        { className: "row" },
                         React.createElement(
                             "div",
-                            { className: "group" },
+                            { className: "columns small-6 medium-6 large-6" },
                             React.createElement(
                                 "div",
-                                { className: "heading" },
-                                "about"
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "text" },
-                                "dojo by ",
+                                { className: "group" },
                                 React.createElement(
-                                    "a",
-                                    { href: "mailto:andy.aiken@live.co.uk" },
-                                    "andy aiken"
+                                    "div",
+                                    { className: "heading" },
+                                    "about"
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "text" },
+                                    "dojo by ",
+                                    React.createElement(
+                                        "a",
+                                        { href: "mailto:andy.aiken@live.co.uk" },
+                                        "andy aiken"
+                                    )
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "text" },
+                                    "dungeons and dragons copyright wizards of the coast"
                                 )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "text" },
-                                "dungeons and dragons copyright wizards of the coast"
                             )
-                        )
-                    ),
-                    React.createElement("div", { className: "column-divider" }),
-                    React.createElement(
-                        "div",
-                        { className: "column two" },
+                        ),
                         React.createElement(
                             "div",
-                            { className: "group" },
+                            { className: "columns small-6 medium-6 large-6" },
                             React.createElement(
                                 "div",
-                                { className: "heading" },
-                                "options"
-                            ),
-                            React.createElement(ConfirmButton, { text: "clear all data", callback: function callback() {
-                                    return _this3.props.resetAll();
-                                } }),
-                            React.createElement(Checkbox, {
-                                label: "show help cards",
-                                checked: this.props.options.showHelp,
-                                changeValue: function changeValue(value) {
-                                    return _this3.props.changeValue(_this3.props.options, "showHelp", value);
-                                }
-                            })
+                                { className: "group" },
+                                React.createElement(
+                                    "div",
+                                    { className: "heading" },
+                                    "options"
+                                ),
+                                React.createElement(ConfirmButton, { text: "clear all data", callback: function callback() {
+                                        return _this3.props.resetAll();
+                                    } }),
+                                React.createElement(Checkbox, {
+                                    label: "show help cards",
+                                    checked: this.props.options.showHelp,
+                                    changeValue: function changeValue(value) {
+                                        return _this3.props.changeValue(_this3.props.options, "showHelp", value);
+                                    }
+                                })
+                            )
                         )
                     ),
                     this.getDevSection(),
                     React.createElement(
                         "div",
-                        { className: "group" },
+                        { className: "row" },
                         React.createElement(
                             "div",
-                            { className: "heading" },
-                            "open game license version 1.0a"
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "text" },
-                            "The following text is the property of Wizards of the Coast, Inc. and is Copyright 2000 Wizards of the Coast, Inc (\"Wizards\"). All Rights Reserved."
-                        ),
-                        React.createElement(
-                            "ol",
-                            null,
+                            { className: "columns small-12 medium-12 large-12" },
                             React.createElement(
-                                "li",
-                                null,
-                                "Definitions: (a)\"Contributors\" means the copyright and/or trademark owners who have contributed Open Game Content; (b)\"Derivative Material\" means copyrighted material including derivative works and translations (including into other computer languages), potation, modification, correction, addition, extension, upgrade, improvement, compilation, abridgment or other form in which an existing work may be recast, transformed or adapted; (c) \"Distribute\" means to reproduce, license, rent, lease, sell, broadcast, publicly display, transmit or otherwise distribute; (d)\"Open Game Content\" means the game mechanic and includes the methods, procedures, processes and routines to the extent such content does not embody the Product Identity and is an enhancement over the prior art and any additional content clearly identified as Open Game Content by the Contributor, and means any work covered by this License, including translations and derivative works under copyright law, but specifically excludes Product Identity. (e) \"Product Identity\" means product and product line names, logos and identifying marks including trade dress; artifacts; creatures characters; stories, storylines, plots, thematic elements, dialogue, incidents, language, artwork, symbols, designs, depictions, likenesses, formats, poses, concepts, themes and graphic, photographic and other visual or audio representations; names and descriptions of characters, spells, enchantments, personalities, teams, personas, likenesses and special abilities; places, locations, environments, creatures, equipment, magical or supernatural abilities or effects, logos, symbols, or graphic designs; and any other trademark or registered trademark clearly identified as Product identity by the owner of the Product Identity, and which specifically excludes the Open Game Content; (f) \"Trademark\" means the logos, names, mark, sign, motto, designs that are used by a Contributor to identify itself or its products or the associated products contributed to the Open Game License by the Contributor (g) \"Use\", \"Used\" or \"Using\" means to use, Distribute, copy, edit, format, modify, translate and otherwise create Derivative Material of Open Game Content. (h) \"You\" or \"Your\" means the licensee in terms of this agreement."
-                            ),
-                            React.createElement(
-                                "li",
-                                null,
-                                "The License: This License applies to any Open Game Content that contains a notice indicating that the Open Game Content may only be Used under and in terms of this License. You must affix such a notice to any Open Game Content that you Use. No terms may be added to or subtracted from this License except as described by the License itself. No other terms or conditions may be applied to any Open Game Content distributed using this License."
-                            ),
-                            React.createElement(
-                                "li",
-                                null,
-                                "Offer and Acceptance: By Using the Open Game Content You indicate Your acceptance of the terms of this License."
-                            ),
-                            React.createElement(
-                                "li",
-                                null,
-                                "Grant and Consideration: In consideration for agreeing to use this License, the Contributors grant You a perpetual, worldwide, royalty-free, non-exclusive license with the exact terms of this License to Use, the Open Game Content."
-                            ),
-                            React.createElement(
-                                "li",
-                                null,
-                                "Representation of Authority to Contribute: If You are contributing original material as Open Game Content, You represent that Your Contributions are Your original creation and/or You have sufficient rights to grant the rights conveyed by this License."
-                            ),
-                            React.createElement(
-                                "li",
-                                null,
-                                "Notice of License Copyright: You must update the COPYRIGHT NOTICE portion of this License to include the exact text of the COPYRIGHT NOTICE of any Open Game Content You are copying, modifying or distributing, and You must add the title, the copyright date, and the copyright holder's name to the COPYRIGHT NOTICE of any original Open Game Content you Distribute."
-                            ),
-                            React.createElement(
-                                "li",
-                                null,
-                                "Use of Product Identity: You agree not to Use any Product Identity, including as an indication as to compatibility, except as expressly licensed in another, independent Agreement with the owner of each element of that Product Identity. You agree not to indicate compatibility or co-adaptability with any Trademark or Registered Trademark in conjunction with a work containing Open Game Content except as expressly licensed in another, independent Agreement with the owner of such Trademark or Registered Trademark. The use of any Product Identity in Open Game Content does not constitute a challenge to the ownership of that Product Identity. The owner of any Product Identity used in Open Game Content shall retain all rights, title and interest in and to that Product Identity."
-                            ),
-                            React.createElement(
-                                "li",
-                                null,
-                                "Identification: If you distribute Open Game Content You must clearly indicate which portions of the work that you are distributing are Open Game Content."
-                            ),
-                            React.createElement(
-                                "li",
-                                null,
-                                "Updating the License: Wizards or its designated Agents may publish updated versions of this License. You may use any authorized version of this License to copy, modify and distribute any Open Game Content originally distributed under any version of this License."
-                            ),
-                            React.createElement(
-                                "li",
-                                null,
-                                "Copy of this License: You MUST include a copy of this License with every copy of the Open Game Content You Distribute."
-                            ),
-                            React.createElement(
-                                "li",
-                                null,
-                                "Use of Contributor Credits: You may not market or advertise the Open Game Content using the name of any Contributor unless You have written permission from the Contributor to do so."
-                            ),
-                            React.createElement(
-                                "li",
-                                null,
-                                "Inability to Comply: If it is impossible for You to comply with any of the terms of this License with respect to some or all of the Open Game Content due to statute, judicial order, or governmental regulation then You may not Use any Open Game Material so affected."
-                            ),
-                            React.createElement(
-                                "li",
-                                null,
-                                "Termination: This License will terminate automatically if You fail to comply with all terms herein and fail to cure such breach within 30 days of becoming aware of the breach. All sublicenses shall survive the termination of this License."
-                            ),
-                            React.createElement(
-                                "li",
-                                null,
-                                "Reformation: If any provision of this License is held to be unenforceable, such provision shall be reformed only to the extent necessary to make it enforceable."
-                            ),
-                            React.createElement(
-                                "li",
-                                null,
-                                "COPYRIGHT NOTICE Open Game License v 1.0 Copyright 2000, Wizards of the Coast, Inc."
+                                "div",
+                                { className: "group" },
+                                React.createElement(
+                                    "div",
+                                    { className: "heading" },
+                                    "open game license version 1.0a"
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "text" },
+                                    "The following text is the property of Wizards of the Coast, Inc. and is Copyright 2000 Wizards of the Coast, Inc (\"Wizards\"). All Rights Reserved."
+                                ),
+                                React.createElement(
+                                    "ol",
+                                    null,
+                                    React.createElement(
+                                        "li",
+                                        null,
+                                        "Definitions: (a)\"Contributors\" means the copyright and/or trademark owners who have contributed Open Game Content; (b)\"Derivative Material\" means copyrighted material including derivative works and translations (including into other computer languages), potation, modification, correction, addition, extension, upgrade, improvement, compilation, abridgment or other form in which an existing work may be recast, transformed or adapted; (c) \"Distribute\" means to reproduce, license, rent, lease, sell, broadcast, publicly display, transmit or otherwise distribute; (d)\"Open Game Content\" means the game mechanic and includes the methods, procedures, processes and routines to the extent such content does not embody the Product Identity and is an enhancement over the prior art and any additional content clearly identified as Open Game Content by the Contributor, and means any work covered by this License, including translations and derivative works under copyright law, but specifically excludes Product Identity. (e) \"Product Identity\" means product and product line names, logos and identifying marks including trade dress; artifacts; creatures characters; stories, storylines, plots, thematic elements, dialogue, incidents, language, artwork, symbols, designs, depictions, likenesses, formats, poses, concepts, themes and graphic, photographic and other visual or audio representations; names and descriptions of characters, spells, enchantments, personalities, teams, personas, likenesses and special abilities; places, locations, environments, creatures, equipment, magical or supernatural abilities or effects, logos, symbols, or graphic designs; and any other trademark or registered trademark clearly identified as Product identity by the owner of the Product Identity, and which specifically excludes the Open Game Content; (f) \"Trademark\" means the logos, names, mark, sign, motto, designs that are used by a Contributor to identify itself or its products or the associated products contributed to the Open Game License by the Contributor (g) \"Use\", \"Used\" or \"Using\" means to use, Distribute, copy, edit, format, modify, translate and otherwise create Derivative Material of Open Game Content. (h) \"You\" or \"Your\" means the licensee in terms of this agreement."
+                                    ),
+                                    React.createElement(
+                                        "li",
+                                        null,
+                                        "The License: This License applies to any Open Game Content that contains a notice indicating that the Open Game Content may only be Used under and in terms of this License. You must affix such a notice to any Open Game Content that you Use. No terms may be added to or subtracted from this License except as described by the License itself. No other terms or conditions may be applied to any Open Game Content distributed using this License."
+                                    ),
+                                    React.createElement(
+                                        "li",
+                                        null,
+                                        "Offer and Acceptance: By Using the Open Game Content You indicate Your acceptance of the terms of this License."
+                                    ),
+                                    React.createElement(
+                                        "li",
+                                        null,
+                                        "Grant and Consideration: In consideration for agreeing to use this License, the Contributors grant You a perpetual, worldwide, royalty-free, non-exclusive license with the exact terms of this License to Use, the Open Game Content."
+                                    ),
+                                    React.createElement(
+                                        "li",
+                                        null,
+                                        "Representation of Authority to Contribute: If You are contributing original material as Open Game Content, You represent that Your Contributions are Your original creation and/or You have sufficient rights to grant the rights conveyed by this License."
+                                    ),
+                                    React.createElement(
+                                        "li",
+                                        null,
+                                        "Notice of License Copyright: You must update the COPYRIGHT NOTICE portion of this License to include the exact text of the COPYRIGHT NOTICE of any Open Game Content You are copying, modifying or distributing, and You must add the title, the copyright date, and the copyright holder's name to the COPYRIGHT NOTICE of any original Open Game Content you Distribute."
+                                    ),
+                                    React.createElement(
+                                        "li",
+                                        null,
+                                        "Use of Product Identity: You agree not to Use any Product Identity, including as an indication as to compatibility, except as expressly licensed in another, independent Agreement with the owner of each element of that Product Identity. You agree not to indicate compatibility or co-adaptability with any Trademark or Registered Trademark in conjunction with a work containing Open Game Content except as expressly licensed in another, independent Agreement with the owner of such Trademark or Registered Trademark. The use of any Product Identity in Open Game Content does not constitute a challenge to the ownership of that Product Identity. The owner of any Product Identity used in Open Game Content shall retain all rights, title and interest in and to that Product Identity."
+                                    ),
+                                    React.createElement(
+                                        "li",
+                                        null,
+                                        "Identification: If you distribute Open Game Content You must clearly indicate which portions of the work that you are distributing are Open Game Content."
+                                    ),
+                                    React.createElement(
+                                        "li",
+                                        null,
+                                        "Updating the License: Wizards or its designated Agents may publish updated versions of this License. You may use any authorized version of this License to copy, modify and distribute any Open Game Content originally distributed under any version of this License."
+                                    ),
+                                    React.createElement(
+                                        "li",
+                                        null,
+                                        "Copy of this License: You MUST include a copy of this License with every copy of the Open Game Content You Distribute."
+                                    ),
+                                    React.createElement(
+                                        "li",
+                                        null,
+                                        "Use of Contributor Credits: You may not market or advertise the Open Game Content using the name of any Contributor unless You have written permission from the Contributor to do so."
+                                    ),
+                                    React.createElement(
+                                        "li",
+                                        null,
+                                        "Inability to Comply: If it is impossible for You to comply with any of the terms of this License with respect to some or all of the Open Game Content due to statute, judicial order, or governmental regulation then You may not Use any Open Game Material so affected."
+                                    ),
+                                    React.createElement(
+                                        "li",
+                                        null,
+                                        "Termination: This License will terminate automatically if You fail to comply with all terms herein and fail to cure such breach within 30 days of becoming aware of the breach. All sublicenses shall survive the termination of this License."
+                                    ),
+                                    React.createElement(
+                                        "li",
+                                        null,
+                                        "Reformation: If any provision of this License is held to be unenforceable, such provision shall be reformed only to the extent necessary to make it enforceable."
+                                    ),
+                                    React.createElement(
+                                        "li",
+                                        null,
+                                        "COPYRIGHT NOTICE Open Game License v 1.0 Copyright 2000, Wizards of the Coast, Inc."
+                                    )
+                                )
                             )
                         )
                     )
@@ -4872,10 +4879,10 @@ var MonsterEditorModal = function (_React$Component) {
 
                         content = React.createElement(
                             'div',
-                            null,
+                            { className: 'row' },
                             React.createElement(
                                 'div',
-                                { className: 'column two' },
+                                { className: 'columns small-6 medium-6 large-6' },
                                 React.createElement(
                                     'div',
                                     { className: 'subheading' },
@@ -4925,10 +4932,9 @@ var MonsterEditorModal = function (_React$Component) {
                                         return _this2.props.changeValue(_this2.props.combatant, "alignment", event.target.value);
                                     } })
                             ),
-                            React.createElement('div', { className: 'column-divider' }),
                             React.createElement(
                                 'div',
-                                { className: 'column two' },
+                                { className: 'columns small-6 medium-6 large-6' },
                                 React.createElement(
                                     'div',
                                     { className: 'subheading' },
@@ -4982,10 +4988,10 @@ var MonsterEditorModal = function (_React$Component) {
                     case 'abilities':
                         content = React.createElement(
                             'div',
-                            null,
+                            { className: 'row' },
                             React.createElement(
                                 'div',
-                                { className: 'column two' },
+                                { className: 'columns small-6 medium-6 large-6' },
                                 React.createElement(
                                     'div',
                                     { className: 'subheading' },
@@ -4999,10 +5005,9 @@ var MonsterEditorModal = function (_React$Component) {
                                     }
                                 })
                             ),
-                            React.createElement('div', { className: 'column-divider' }),
                             React.createElement(
                                 'div',
-                                { className: 'column two' },
+                                { className: 'columns small-6 medium-6 large-6' },
                                 React.createElement(
                                     'div',
                                     { className: 'subheading' },
@@ -5025,10 +5030,10 @@ var MonsterEditorModal = function (_React$Component) {
                     case 'combat':
                         content = React.createElement(
                             'div',
-                            null,
+                            { className: 'row' },
                             React.createElement(
                                 'div',
-                                { className: 'column two' },
+                                { className: 'columns small-6 medium-6 large-6' },
                                 React.createElement(
                                     'div',
                                     { className: 'subheading' },
@@ -5068,10 +5073,9 @@ var MonsterEditorModal = function (_React$Component) {
                                     ' hp'
                                 )
                             ),
-                            React.createElement('div', { className: 'column-divider' }),
                             React.createElement(
                                 'div',
-                                { className: 'column two' },
+                                { className: 'columns small-6 medium-6 large-6' },
                                 React.createElement(
                                     'div',
                                     { className: 'subheading' },
@@ -5126,10 +5130,10 @@ var MonsterEditorModal = function (_React$Component) {
 
                 return React.createElement(
                     'div',
-                    null,
+                    { className: 'row' },
                     React.createElement(
                         'div',
-                        { className: 'column three double' },
+                        { className: 'columns small-8 medium-8 large-8' },
                         React.createElement(Selector, {
                             tabs: true,
                             options: pages,
@@ -5140,10 +5144,9 @@ var MonsterEditorModal = function (_React$Component) {
                         }),
                         content
                     ),
-                    React.createElement('div', { className: 'column-divider' }),
                     React.createElement(
                         'div',
-                        { className: 'column three' },
+                        { className: 'columns small-4 medium-4 large-4' },
                         React.createElement(MonsterListPanel, {
                             monster: this.props.combatant,
                             library: this.props.library,
@@ -5436,7 +5439,11 @@ var CardGroup = function (_React$Component) {
                     "div",
                     { className: "card-group" },
                     heading,
-                    cards
+                    React.createElement(
+                        "div",
+                        { className: "row small-up-2 medium-up-2 large-up-4 collapse" },
+                        cards
+                    )
                 );
             } catch (e) {
                 console.error(e);
@@ -6439,10 +6446,10 @@ var TraitsPanel = function (_React$Component) {
 
                     return React.createElement(
                         "div",
-                        null,
+                        { className: "row" },
                         React.createElement(
                             "div",
-                            { className: "column two" },
+                            { className: "columns small-6 medium-6 large-6" },
                             React.createElement(
                                 "div",
                                 { className: "section subheading" },
@@ -6456,10 +6463,9 @@ var TraitsPanel = function (_React$Component) {
                             ),
                             actions
                         ),
-                        React.createElement("div", { className: "column-divider" }),
                         React.createElement(
                             "div",
-                            { className: "column two" },
+                            { className: "columns small-6 medium-6 large-6" },
                             React.createElement(
                                 "div",
                                 { className: "section subheading" },
@@ -6565,7 +6571,7 @@ var CombatManagerScreen = function (_React$Component) {
 
     _createClass(CombatManagerScreen, [{
         key: "createCard",
-        value: function createCard(index, combatant, isPlaceholder) {
+        value: function createCard(combatant, isPlaceholder) {
             var _this2 = this;
 
             if (isPlaceholder && isPlaceholder(combatant)) {
@@ -6591,7 +6597,6 @@ var CombatManagerScreen = function (_React$Component) {
             switch (combatant.type) {
                 case "pc":
                     return React.createElement(PCCard, {
-                        key: combatant.id,
                         combatant: combatant,
                         mode: "combat",
                         changeValue: function changeValue(combatant, type, value) {
@@ -6618,7 +6623,6 @@ var CombatManagerScreen = function (_React$Component) {
                     });
                 case "monster":
                     return React.createElement(MonsterCard, {
-                        key: combatant.id,
                         combatant: combatant,
                         mode: "combat",
                         changeValue: function changeValue(combatant, type, value) {
@@ -6671,79 +6675,42 @@ var CombatManagerScreen = function (_React$Component) {
                     var pending = [];
                     var defeated = [];
 
-                    for (var index = 0; index !== this.props.combat.combatants.length; ++index) {
-                        var combatant = this.props.combat.combatants[index];
+                    this.props.combat.combatants.forEach(function (combatant) {
                         if (combatant.current) {
-                            current.push(this.createCard(index, combatant));
+                            current.push(React.createElement(
+                                "div",
+                                { key: combatant.id },
+                                _this3.createCard(combatant)
+                            ));
                         }
                         if (combatant.pending && !combatant.active && !combatant.defeated) {
-                            pending.push(this.createCard(index, combatant, function (combatant) {
-                                return combatant.current;
-                            }));
+                            pending.push(React.createElement(
+                                "div",
+                                { className: "column column-block", key: combatant.id },
+                                _this3.createCard(combatant, function (combatant) {
+                                    return combatant.current;
+                                })
+                            ));
                         }
                         if (!combatant.pending && combatant.active && !combatant.defeated) {
-                            active.push(this.createCard(index, combatant, function (combatant) {
-                                return combatant.current;
-                            }));
+                            active.push(React.createElement(
+                                "div",
+                                { className: "column column-block", key: combatant.id },
+                                _this3.createCard(combatant, function (combatant) {
+                                    return combatant.current;
+                                })
+                            ));
                         }
                         if (!combatant.pending && !combatant.active && combatant.defeated) {
-                            defeated.push(this.createCard(index, combatant, function (combatant) {
-                                return combatant.current;
-                            }));
+                            defeated.push(React.createElement(
+                                "div",
+                                { className: "column column-block", key: combatant.id },
+                                _this3.createCard(combatant, function (combatant) {
+                                    return combatant.current;
+                                })
+                            ));
                         }
-                    }
-
-                    if (this.props.showHelp && pending.length !== 0) {
-                        var help = React.createElement(InfoCard, {
-                            key: "help",
-                            getContent: function getContent() {
-                                return React.createElement(
-                                    "div",
-                                    null,
-                                    React.createElement(
-                                        "div",
-                                        { className: "section" },
-                                        "these pcs are not yet part of the encounter"
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "section" },
-                                        "set initiative on each pc, then add them to the encounter"
-                                    )
-                                );
-                            }
-                        });
-                        pending = [].concat(help, pending);
-                    }
-
-                    if (this.props.showHelp && current.length === 0) {
-                        var help = React.createElement(InfoCard, {
-                            key: "help",
-                            getContent: function getContent() {
-                                return React.createElement(
-                                    "div",
-                                    null,
-                                    React.createElement(
-                                        "div",
-                                        { className: "section" },
-                                        "to begin the encounter, press ",
-                                        React.createElement(
-                                            "b",
-                                            null,
-                                            "start turn"
-                                        ),
-                                        " on one of the stat blocks in this section"
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "section" },
-                                        "that stat block will then be displayed on the left"
-                                    )
-                                );
-                            }
-                        });
-                        active = [].concat(help, active);
-                    }
+                    });
 
                     if (current.length === 0) {
                         current.push(React.createElement(InfoCard, {
@@ -6763,6 +6730,65 @@ var CombatManagerScreen = function (_React$Component) {
                         content: current,
                         hidden: current.length === 0
                     });
+
+                    if (this.props.showHelp && pending.length !== 0) {
+                        var help = React.createElement(
+                            "div",
+                            { className: "column column-block", key: "help" },
+                            React.createElement(InfoCard, {
+                                getContent: function getContent() {
+                                    return React.createElement(
+                                        "div",
+                                        null,
+                                        React.createElement(
+                                            "div",
+                                            { className: "section" },
+                                            "these pcs are not yet part of the encounter"
+                                        ),
+                                        React.createElement(
+                                            "div",
+                                            { className: "section" },
+                                            "set initiative on each pc, then add them to the encounter"
+                                        )
+                                    );
+                                }
+                            })
+                        );
+                        pending = [].concat(help, pending);
+                    }
+
+                    if (this.props.showHelp && current.length === 0) {
+                        var help = React.createElement(
+                            "div",
+                            { className: "column column-block", key: "help" },
+                            React.createElement(InfoCard, {
+                                getContent: function getContent() {
+                                    return React.createElement(
+                                        "div",
+                                        null,
+                                        React.createElement(
+                                            "div",
+                                            { className: "section" },
+                                            "to begin the encounter, press ",
+                                            React.createElement(
+                                                "b",
+                                                null,
+                                                "start turn"
+                                            ),
+                                            " on one of the stat blocks in this section"
+                                        ),
+                                        React.createElement(
+                                            "div",
+                                            { className: "section" },
+                                            "that stat block will then be displayed on the left"
+                                        )
+                                    );
+                                }
+                            })
+                        );
+                        active = [].concat(help, active);
+                    }
+
                     rightPaneContent = React.createElement(
                         "div",
                         null,
@@ -6816,15 +6842,15 @@ var CombatManagerScreen = function (_React$Component) {
 
                 return React.createElement(
                     "div",
-                    { className: "combat-manager" },
+                    { className: "combat-manager row" },
                     React.createElement(
                         "div",
-                        { className: "left-pane scrollable" },
+                        { className: "columns small-4 medium-4 large-4 scrollable" },
                         leftPaneContent
                     ),
                     React.createElement(
                         "div",
-                        { className: "right-pane scrollable" },
+                        { className: "columns small-8 medium-8 large-8 scrollable" },
                         rightPaneContent
                     )
                 );
@@ -6966,79 +6992,90 @@ var EncounterBuilderScreen = function (_React$Component) {
                 var encounterCards = [];
 
                 if (this.props.selection) {
-                    encounterCards.push(React.createElement(EncounterCard, {
-                        key: "info",
-                        selection: this.props.selection,
-                        parties: this.props.parties,
-                        changeValue: function changeValue(type, value) {
-                            return _this2.props.changeValue(_this2.props.selection, type, value);
-                        },
-                        removeEncounter: function removeEncounter() {
-                            return _this2.props.removeEncounter();
-                        },
-                        getMonster: function getMonster(monsterName, monsterGroupName) {
-                            return _this2.props.getMonster(monsterName, monsterGroupName);
-                        }
-                    }));
+                    encounterCards.push(React.createElement(
+                        "div",
+                        { className: "column column-block", key: "info" },
+                        React.createElement(EncounterCard, {
+                            selection: this.props.selection,
+                            parties: this.props.parties,
+                            changeValue: function changeValue(type, value) {
+                                return _this2.props.changeValue(_this2.props.selection, type, value);
+                            },
+                            removeEncounter: function removeEncounter() {
+                                return _this2.props.removeEncounter();
+                            },
+                            getMonster: function getMonster(monsterName, monsterGroupName) {
+                                return _this2.props.getMonster(monsterName, monsterGroupName);
+                            }
+                        })
+                    ));
 
                     this.props.selection.slots.forEach(function (slot) {
                         var monster = _this2.props.getMonster(slot.monsterName, slot.monsterGroupName);
                         if (monster) {
-                            encounterCards.push(React.createElement(MonsterCard, {
-                                key: monster.id,
-                                combatant: monster,
-                                slot: slot,
-                                mode: "view encounter",
-                                nudgeValue: function nudgeValue(slot, type, delta) {
-                                    return _this2.props.nudgeValue(slot, type, delta);
-                                },
-                                removeEncounterSlot: function removeEncounterSlot(slot) {
-                                    return _this2.props.removeEncounterSlot(slot);
-                                }
-                            }));
+                            encounterCards.push(React.createElement(
+                                "div",
+                                { className: "column column-block", key: monster.id },
+                                React.createElement(MonsterCard, {
+                                    combatant: monster,
+                                    slot: slot,
+                                    mode: "view encounter",
+                                    nudgeValue: function nudgeValue(slot, type, delta) {
+                                        return _this2.props.nudgeValue(slot, type, delta);
+                                    },
+                                    removeEncounterSlot: function removeEncounterSlot(slot) {
+                                        return _this2.props.removeEncounterSlot(slot);
+                                    }
+                                })
+                            ));
                         } else {
                             var index = _this2.props.selection.slots.indexOf(slot);
                             var error = "unknown monster: " + slot.monsterName + " in group " + slot.monsterGroupName;
-                            encounterCards.push(React.createElement(ErrorCard, {
-                                key: index,
-                                getContent: function getContent() {
-                                    return React.createElement(
-                                        "div",
-                                        { className: "section" },
-                                        error
-                                    );
-                                }
-                            }));
+                            encounterCards.push(React.createElement(
+                                "div",
+                                { className: "column column-block", key: index },
+                                React.createElement(ErrorCard, { getContent: function getContent() {
+                                        return React.createElement(
+                                            "div",
+                                            { className: "section" },
+                                            error
+                                        );
+                                    } })
+                            ));
                         }
                     });
                     if (this.props.selection.slots.length === 0) {
-                        encounterCards.push(React.createElement(InfoCard, {
-                            key: "empty",
-                            getContent: function getContent() {
-                                return React.createElement(
-                                    "div",
-                                    { className: "section" },
-                                    "no monsters"
-                                );
-                            }
-                        }));
+                        encounterCards.push(React.createElement(
+                            "div",
+                            { className: "column column-block", key: "empty" },
+                            React.createElement(InfoCard, { getContent: function getContent() {
+                                    return React.createElement(
+                                        "div",
+                                        { className: "section" },
+                                        "no monsters"
+                                    );
+                                } })
+                        ));
                     }
                 }
 
                 var libraryCards = [];
-                libraryCards.push(React.createElement(FilterCard, {
-                    key: "filter",
-                    filter: this.state.filter,
-                    changeValue: function changeValue(type, value) {
-                        return _this2.changeFilterValue(type, value);
-                    },
-                    nudgeValue: function nudgeValue(type, delta) {
-                        return _this2.nudgeFilterValue(type, delta);
-                    },
-                    resetFilter: function resetFilter() {
-                        return _this2.resetFilter();
-                    }
-                }));
+                libraryCards.push(React.createElement(
+                    "div",
+                    { className: "column column-block", key: "filter" },
+                    React.createElement(FilterCard, {
+                        filter: this.state.filter,
+                        changeValue: function changeValue(type, value) {
+                            return _this2.changeFilterValue(type, value);
+                        },
+                        nudgeValue: function nudgeValue(type, delta) {
+                            return _this2.nudgeFilterValue(type, delta);
+                        },
+                        resetFilter: function resetFilter() {
+                            return _this2.resetFilter();
+                        }
+                    })
+                ));
 
                 var monsters = [];
                 if (this.props.selection) {
@@ -7058,32 +7095,39 @@ var EncounterBuilderScreen = function (_React$Component) {
                 monsters.forEach(function (monster) {
                     if (_this2.inEncounter(monster)) {
                         var title = monster.name;
-                        libraryCards.push(React.createElement(InfoCard, {
-                            key: monster.id,
-                            getHeading: function getHeading() {
-                                return React.createElement(
-                                    "div",
-                                    { className: "heading" },
-                                    title
-                                );
-                            },
-                            getContent: function getContent() {
-                                return React.createElement(
-                                    "div",
-                                    { className: "section" },
-                                    "already in encounter"
-                                );
-                            }
-                        }));
+                        libraryCards.push(React.createElement(
+                            "div",
+                            { className: "column column-block", key: monster.id },
+                            React.createElement(InfoCard, {
+                                getHeading: function getHeading() {
+                                    return React.createElement(
+                                        "div",
+                                        { className: "heading" },
+                                        title
+                                    );
+                                },
+                                getContent: function getContent() {
+                                    return React.createElement(
+                                        "div",
+                                        { className: "section" },
+                                        "already in encounter"
+                                    );
+                                }
+                            })
+                        ));
                     } else {
-                        libraryCards.push(React.createElement(MonsterCard, {
-                            key: monster.id,
-                            combatant: monster,
-                            mode: "view encounter",
-                            addEncounterSlot: function addEncounterSlot(combatant) {
-                                return _this2.props.addEncounterSlot(combatant);
-                            }
-                        }));
+                        libraryCards.push(React.createElement(
+                            "div",
+                            { className: "column column-block", key: monster.id },
+                            React.createElement(MonsterCard, {
+                                key: monster.id,
+                                combatant: monster,
+                                mode: "view encounter",
+                                addEncounterSlot: function addEncounterSlot(combatant) {
+                                    return _this2.props.addEncounterSlot(combatant);
+                                }
+                            })
+                        ));
                     }
                 });
 
@@ -7097,10 +7141,10 @@ var EncounterBuilderScreen = function (_React$Component) {
 
                 return React.createElement(
                     "div",
-                    { className: "encounter-builder" },
+                    { className: "encounter-builder row" },
                     React.createElement(
                         "div",
-                        { className: "left-pane scrollable" },
+                        { className: "columns small-4 medium-4 large-4 scrollable" },
                         help,
                         React.createElement(
                             "div",
@@ -7117,7 +7161,7 @@ var EncounterBuilderScreen = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "right-pane scrollable" },
+                        { className: "columns small-8 medium-8 large-8 scrollable" },
                         React.createElement(CardGroup, {
                             content: encounterCards,
                             heading: name,
@@ -7168,7 +7212,7 @@ var HomeScreen = function (_React$Component) {
                 return React.createElement(
                     "div",
                     { className: "home scrollable" },
-                    React.createElement(InfoCard, { centered: true, welcome: true, getContent: function getContent() {
+                    React.createElement(InfoCard, { welcome: true, getContent: function getContent() {
                             return React.createElement(
                                 "div",
                                 null,
@@ -7322,74 +7366,82 @@ var MonsterLibraryScreen = function (_React$Component) {
                 var cards = [];
 
                 if (this.props.selection) {
-                    cards.push(React.createElement(MonsterGroupCard, {
-                        key: "info",
-                        selection: this.props.selection,
-                        filter: this.state.filter,
-                        addMonster: function addMonster(name) {
-                            return _this3.props.addMonster(name);
-                        },
-                        sortMonsters: function sortMonsters() {
-                            return _this3.props.sortMonsters();
-                        },
-                        changeValue: function changeValue(type, value) {
-                            return _this3.props.changeValue(_this3.props.selection, type, value);
-                        },
-                        removeMonsterGroup: function removeMonsterGroup() {
-                            return _this3.props.removeMonsterGroup();
-                        }
-                    }));
+                    cards.push(React.createElement(
+                        "div",
+                        { className: "column column-block", key: "info" },
+                        React.createElement(MonsterGroupCard, {
+                            selection: this.props.selection,
+                            filter: this.state.filter,
+                            addMonster: function addMonster(name) {
+                                return _this3.props.addMonster(name);
+                            },
+                            sortMonsters: function sortMonsters() {
+                                return _this3.props.sortMonsters();
+                            },
+                            changeValue: function changeValue(type, value) {
+                                return _this3.props.changeValue(_this3.props.selection, type, value);
+                            },
+                            removeMonsterGroup: function removeMonsterGroup() {
+                                return _this3.props.removeMonsterGroup();
+                            }
+                        })
+                    ));
 
                     var monsters = this.props.selection.monsters.filter(function (monster) {
                         return match(_this3.state.filter, monster.name);
                     });
 
-                    monsters.forEach(function (monster) {
-                        cards.push(React.createElement(MonsterCard, {
-                            key: monster.id,
-                            combatant: monster,
-                            mode: "view editable",
-                            library: _this3.props.library,
-                            moveToGroup: function moveToGroup(combatant, groupID) {
-                                return _this3.props.moveToGroup(combatant, groupID);
-                            },
-                            changeValue: function changeValue(combatant, type, value) {
-                                return _this3.props.changeValue(combatant, type, value);
-                            },
-                            nudgeValue: function nudgeValue(combatant, type, delta) {
-                                return _this3.props.nudgeValue(combatant, type, delta);
-                            },
-                            changeTrait: function changeTrait(trait, type, value) {
-                                return _this3.props.changeValue(trait, type, value);
-                            },
-                            addTrait: function addTrait(combatant, type) {
-                                return _this3.props.addTrait(combatant, type);
-                            },
-                            removeTrait: function removeTrait(combatant, trait) {
-                                return _this3.props.removeTrait(combatant, trait);
-                            },
-                            removeCombatant: function removeCombatant(combatant) {
-                                return _this3.props.removeMonster(combatant);
-                            },
-                            editMonster: function editMonster(combatant) {
-                                return _this3.props.editMonster(combatant);
-                            },
-                            cloneMonster: function cloneMonster(combatant) {
-                                return _this3.props.cloneMonster(combatant);
-                            }
-                        }));
-                    });
-                    if (monsters.length === 0) {
-                        cards.push(React.createElement(InfoCard, {
-                            key: "empty",
-                            getContent: function getContent() {
-                                return React.createElement(
-                                    "div",
-                                    { className: "section" },
-                                    "no monsters"
-                                );
-                            }
-                        }));
+                    if (monsters.length !== 0) {
+                        monsters.forEach(function (monster) {
+                            cards.push(React.createElement(
+                                "div",
+                                { className: "column column-block", key: monster.id },
+                                React.createElement(MonsterCard, {
+                                    combatant: monster,
+                                    mode: "view editable",
+                                    library: _this3.props.library,
+                                    moveToGroup: function moveToGroup(combatant, groupID) {
+                                        return _this3.props.moveToGroup(combatant, groupID);
+                                    },
+                                    changeValue: function changeValue(combatant, type, value) {
+                                        return _this3.props.changeValue(combatant, type, value);
+                                    },
+                                    nudgeValue: function nudgeValue(combatant, type, delta) {
+                                        return _this3.props.nudgeValue(combatant, type, delta);
+                                    },
+                                    changeTrait: function changeTrait(trait, type, value) {
+                                        return _this3.props.changeValue(trait, type, value);
+                                    },
+                                    addTrait: function addTrait(combatant, type) {
+                                        return _this3.props.addTrait(combatant, type);
+                                    },
+                                    removeTrait: function removeTrait(combatant, trait) {
+                                        return _this3.props.removeTrait(combatant, trait);
+                                    },
+                                    removeCombatant: function removeCombatant(combatant) {
+                                        return _this3.props.removeMonster(combatant);
+                                    },
+                                    editMonster: function editMonster(combatant) {
+                                        return _this3.props.editMonster(combatant);
+                                    },
+                                    cloneMonster: function cloneMonster(combatant) {
+                                        return _this3.props.cloneMonster(combatant);
+                                    }
+                                })
+                            ));
+                        });
+                    } else {
+                        cards.push(React.createElement(
+                            "div",
+                            { className: "column column-block", key: "empty" },
+                            React.createElement(InfoCard, { getContent: function getContent() {
+                                    return React.createElement(
+                                        "div",
+                                        { className: "section" },
+                                        "no monsters"
+                                    );
+                                } })
+                        ));
                     }
                 }
 
@@ -7403,10 +7455,10 @@ var MonsterLibraryScreen = function (_React$Component) {
 
                 return React.createElement(
                     "div",
-                    { className: "monster-library" },
+                    { className: "monster-library row" },
                     React.createElement(
                         "div",
-                        { className: "left-pane scrollable" },
+                        { className: "columns small-4 medium-4 large-4 scrollable" },
                         help,
                         React.createElement(
                             "div",
@@ -7430,7 +7482,7 @@ var MonsterLibraryScreen = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "right-pane scrollable" },
+                        { className: "columns small-8 medium-8 large-8 scrollable" },
                         React.createElement(CardGroup, {
                             content: cards,
                             heading: name,
@@ -7495,52 +7547,58 @@ var PartiesScreen = function (_React$Component) {
                 var cards = [];
 
                 if (this.props.selection) {
-                    cards.push(React.createElement(PartyCard, {
-                        key: "info",
-                        selection: this.props.selection,
-                        addPC: function addPC(name) {
-                            return _this2.props.addPC(name);
-                        },
-                        sortPCs: function sortPCs() {
-                            return _this2.props.sortPCs();
-                        },
-                        changeValue: function changeValue(type, value) {
-                            return _this2.props.changeValue(_this2.props.selection, type, value);
-                        },
-                        removeParty: function removeParty() {
-                            return _this2.props.removeParty();
-                        }
-                    }));
-
-                    for (var index = 0; index !== this.props.selection.pcs.length; ++index) {
-                        var pc = this.props.selection.pcs[index];
-                        cards.push(React.createElement(PCCard, {
-                            key: pc.id,
-                            combatant: pc,
-                            mode: "edit",
-                            changeValue: function changeValue(combatant, type, value) {
-                                return _this2.props.changeValue(combatant, type, value);
+                    cards.push(React.createElement(
+                        "div",
+                        { className: "column column-block", key: "info" },
+                        React.createElement(PartyCard, {
+                            selection: this.props.selection,
+                            addPC: function addPC(name) {
+                                return _this2.props.addPC(name);
                             },
-                            nudgeValue: function nudgeValue(combatant, type, delta) {
-                                return _this2.props.nudgeValue(combatant, type, delta);
+                            sortPCs: function sortPCs() {
+                                return _this2.props.sortPCs();
                             },
-                            removeCombatant: function removeCombatant(combatant) {
-                                return _this2.props.removePC(combatant);
+                            changeValue: function changeValue(type, value) {
+                                return _this2.props.changeValue(_this2.props.selection, type, value);
+                            },
+                            removeParty: function removeParty() {
+                                return _this2.props.removeParty();
                             }
-                        }));
-                    }
+                        })
+                    ));
 
-                    if (this.props.selection.pcs.length === 0) {
-                        cards.push(React.createElement(InfoCard, {
-                            key: "empty",
-                            getContent: function getContent() {
-                                return React.createElement(
-                                    "div",
-                                    { className: "section" },
-                                    "no pcs"
-                                );
-                            }
-                        }));
+                    if (this.props.selection.pcs.length !== 0) {
+                        this.props.selection.pcs.forEach(function (pc) {
+                            cards.push(React.createElement(
+                                "div",
+                                { className: "column column-block", key: pc.id },
+                                React.createElement(PCCard, {
+                                    combatant: pc,
+                                    mode: "edit",
+                                    changeValue: function changeValue(combatant, type, value) {
+                                        return _this2.props.changeValue(combatant, type, value);
+                                    },
+                                    nudgeValue: function nudgeValue(combatant, type, delta) {
+                                        return _this2.props.nudgeValue(combatant, type, delta);
+                                    },
+                                    removeCombatant: function removeCombatant(combatant) {
+                                        return _this2.props.removePC(combatant);
+                                    }
+                                })
+                            ));
+                        });
+                    } else {
+                        cards.push(React.createElement(
+                            "div",
+                            { className: "column column-block", key: "empty" },
+                            React.createElement(InfoCard, { getContent: function getContent() {
+                                    return React.createElement(
+                                        "div",
+                                        { className: "section" },
+                                        "no pcs"
+                                    );
+                                } })
+                        ));
                     }
                 }
 
@@ -7554,10 +7612,10 @@ var PartiesScreen = function (_React$Component) {
 
                 return React.createElement(
                     "div",
-                    { className: "parties" },
+                    { className: "parties row" },
                     React.createElement(
                         "div",
-                        { className: "left-pane scrollable" },
+                        { className: "columns small-4 medium-4 large-4 scrollable" },
                         help,
                         React.createElement(
                             "div",
@@ -7574,7 +7632,7 @@ var PartiesScreen = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "right-pane scrollable" },
+                        { className: "columns small-8 medium-8 large-8 scrollable" },
                         React.createElement(CardGroup, {
                             content: cards,
                             heading: name,

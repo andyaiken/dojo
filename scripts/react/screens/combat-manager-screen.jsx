@@ -1,5 +1,5 @@
 class CombatManagerScreen extends React.Component {
-    createCard(index, combatant, isPlaceholder) {
+    createCard(combatant, isPlaceholder) {
         if (isPlaceholder && isPlaceholder(combatant)) {
             return (
                 <InfoCard
@@ -14,7 +14,6 @@ class CombatManagerScreen extends React.Component {
             case "pc":
                 return (
                     <PCCard
-                        key={combatant.id}
                         combatant={combatant}
                         mode={"combat"}
                         changeValue={(combatant, type, value) => this.props.changeValue(combatant, type, value)}
@@ -29,7 +28,6 @@ class CombatManagerScreen extends React.Component {
             case "monster":
                 return (
                     <MonsterCard
-                        key={combatant.id}
                         combatant={combatant}
                         mode={"combat"}
                         changeValue={(combatant, type, value) => this.props.changeValue(combatant, type, value)}
@@ -60,51 +58,36 @@ class CombatManagerScreen extends React.Component {
                 var pending = [];
                 var defeated = [];
 
-                for (var index = 0; index !== this.props.combat.combatants.length; ++index) {
-                    var combatant = this.props.combat.combatants[index];
+                this.props.combat.combatants.forEach(combatant => {
                     if (combatant.current) {
-                        current.push(this.createCard(index, combatant));
+                        current.push(
+                            <div key={combatant.id}>
+                                {this.createCard(combatant)}
+                            </div>
+                        );
                     }
                     if (combatant.pending && !combatant.active && !combatant.defeated) {
-                        pending.push(this.createCard(index, combatant, combatant => combatant.current));
+                        pending.push(
+                            <div className="column column-block" key={combatant.id}>
+                                {this.createCard(combatant, combatant => combatant.current)}
+                            </div>
+                        );
                     }
                     if (!combatant.pending && combatant.active && !combatant.defeated) {
-                        active.push(this.createCard(index, combatant, combatant => combatant.current));
+                        active.push(
+                            <div className="column column-block" key={combatant.id}>
+                                {this.createCard(combatant, combatant => combatant.current)}
+                            </div>
+                        );
                     }
                     if (!combatant.pending && !combatant.active && combatant.defeated) {
-                        defeated.push(this.createCard(index, combatant, combatant => combatant.current));
+                        defeated.push(
+                            <div className="column column-block" key={combatant.id}>
+                                {this.createCard(combatant, combatant => combatant.current)}
+                            </div>
+                        );
                     }
-                }
-
-                if (this.props.showHelp && (pending.length !== 0)) {
-                    var help = (
-                        <InfoCard
-                            key="help"
-                            getContent={() =>
-                                <div>
-                                    <div className="section">these pcs are not yet part of the encounter</div>
-                                    <div className="section">set initiative on each pc, then add them to the encounter</div>
-                                </div>
-                            }
-                        />
-                    );
-                    pending = [].concat(help, pending);
-                }
-
-                if (this.props.showHelp && (current.length === 0)) {
-                    var help = (
-                        <InfoCard
-                            key="help"
-                            getContent={() =>
-                                <div>
-                                    <div className="section">to begin the encounter, press <b>start turn</b> on one of the stat blocks in this section</div>
-                                    <div className="section">that stat block will then be displayed on the left</div>
-                                </div>
-                            }
-                        />
-                    );
-                    active = [].concat(help, active);
-                }
+                });
 
                 if (current.length === 0) {
                     current.push(
@@ -124,6 +107,39 @@ class CombatManagerScreen extends React.Component {
                         hidden={current.length === 0}
                     />
                 );
+
+                if (this.props.showHelp && (pending.length !== 0)) {
+                    var help = (
+                        <div className="column column-block" key="help">
+                            <InfoCard
+                                getContent={() =>
+                                    <div>
+                                        <div className="section">these pcs are not yet part of the encounter</div>
+                                        <div className="section">set initiative on each pc, then add them to the encounter</div>
+                                    </div>
+                                }
+                            />
+                        </div>
+                    );
+                    pending = [].concat(help, pending);
+                }
+
+                if (this.props.showHelp && (current.length === 0)) {
+                    var help = (
+                        <div className="column column-block" key="help">
+                            <InfoCard
+                                getContent={() =>
+                                    <div>
+                                        <div className="section">to begin the encounter, press <b>start turn</b> on one of the stat blocks in this section</div>
+                                        <div className="section">that stat block will then be displayed on the left</div>
+                                    </div>
+                                }
+                            />
+                        </div>
+                    );
+                    active = [].concat(help, active);
+                }
+
                 rightPaneContent = (
                     <div>
                         <CardGroup
@@ -176,11 +192,11 @@ class CombatManagerScreen extends React.Component {
             }
 
             return (
-                <div className="combat-manager">
-                    <div className="left-pane scrollable">
+                <div className="combat-manager row">
+                    <div className="columns small-4 medium-4 large-4 scrollable">
                         {leftPaneContent}
                     </div>
-                    <div className="right-pane scrollable">
+                    <div className="columns small-8 medium-8 large-8 scrollable">
                         {rightPaneContent}
                     </div>
                 </div>
