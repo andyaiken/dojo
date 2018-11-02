@@ -12,7 +12,7 @@
         margin: 0 5px;
         cursor: pointer;
         height: 30px;
-        width: calc(((100% - 1px) / 4) - 20px);
+        width: calc(((100% - 1px) / 4) - 10px);
         font-size: 14px;
         color: white;
     }
