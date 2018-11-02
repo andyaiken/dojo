@@ -211,7 +211,7 @@ class EncounterBuilderScreen extends React.Component {
             }
 
             return (
-                <div className="encounter-builder row">
+                <div className="encounter-builder row collapse">
                     <div className="columns small-6 medium-4 large-2 scrollable">
                         {help}
                         <div className="group">

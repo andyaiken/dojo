@@ -68,7 +68,7 @@ class PartiesScreen extends React.Component {
             }
 
             return (
-                <div className="parties row">
+                <div className="parties row collapse">
                     <div className="columns small-6 medium-4 large-2 scrollable">
                         {help}
                         <div className="group">

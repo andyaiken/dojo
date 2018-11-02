@@ -194,7 +194,7 @@ class CombatManagerScreen extends React.Component {
             }
 
             return (
-                <div className="combat-manager row">
+                <div className="combat-manager row collapse">
                     <div className="columns small-6 medium-4 large-2 scrollable">
                         {leftPaneContent}
                     </div>

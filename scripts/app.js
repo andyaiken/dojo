@@ -947,148 +947,160 @@ var MonsterCard = function (_React$Component) {
                             "div",
                             null,
                             React.createElement("div", { className: "divider" }),
-                            React.createElement(AbilityScorePanel, { combatant: this.props.combatant }),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "ac"
+                                ),
+                                " ",
+                                this.props.combatant.ac
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section", style: { display: this.props.combatant.hpMax !== "" ? "" : "none" } },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "hp"
+                                ),
+                                " ",
+                                this.props.combatant.hitDice !== "" ? this.props.combatant.hpMax + " (" + this.props.combatant.hitDice + "d" + hitDieType(this.props.combatant.size) + ")" : this.props.combatant.hpMax
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section", style: { display: this.props.combatant.speed !== "" ? "" : "none" } },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "speed"
+                                ),
+                                " ",
+                                this.props.combatant.speed
+                            ),
                             React.createElement("div", { className: "divider" }),
                             React.createElement(
                                 "div",
                                 { className: "section" },
+                                React.createElement(AbilityScorePanel, { combatant: this.props.combatant })
+                            ),
+                            React.createElement("div", { className: "divider" }),
+                            React.createElement(
+                                "div",
+                                { className: "section", style: { display: this.props.combatant.savingThrows !== "" ? "" : "none" } },
                                 React.createElement(
-                                    "div",
+                                    "b",
                                     null,
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "ac"
-                                    ),
-                                    " ",
-                                    this.props.combatant.ac
+                                    "saving throws"
                                 ),
+                                " ",
+                                this.props.combatant.savingThrows
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section", style: { display: this.props.combatant.skills !== "" ? "" : "none" } },
                                 React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.hpMax !== "" ? "" : "none" } },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "hp"
-                                    ),
-                                    " ",
-                                    this.props.combatant.hitDice !== "" ? this.props.combatant.hpMax + " (" + this.props.combatant.hitDice + "d" + hitDieType(this.props.combatant.size) + ")" : this.props.combatant.hpMax
+                                    "b",
+                                    null,
+                                    "skills"
                                 ),
+                                " ",
+                                this.props.combatant.skills
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section", style: { display: this.props.combatant.damage.resist !== "" ? "" : "none" } },
                                 React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.damage.immune !== "" ? "" : "none" } },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "damage immunity"
-                                    ),
-                                    " ",
-                                    this.props.combatant.damage.immune
+                                    "b",
+                                    null,
+                                    "damage resistances"
                                 ),
+                                " ",
+                                this.props.combatant.damage.resist
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section", style: { display: this.props.combatant.damage.vulnerable !== "" ? "" : "none" } },
                                 React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.damage.resist !== "" ? "" : "none" } },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "damage resistance"
-                                    ),
-                                    " ",
-                                    this.props.combatant.damage.resist
+                                    "b",
+                                    null,
+                                    "damage vulnerabilities"
                                 ),
+                                " ",
+                                this.props.combatant.damage.vulnerable
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section", style: { display: this.props.combatant.damage.immune !== "" ? "" : "none" } },
                                 React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.damage.vulnerable !== "" ? "" : "none" } },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "damage vulnerability"
-                                    ),
-                                    " ",
-                                    this.props.combatant.damage.vulnerable
+                                    "b",
+                                    null,
+                                    "damage immunities"
                                 ),
+                                " ",
+                                this.props.combatant.damage.immune
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section", style: { display: this.props.combatant.conditionImmunities !== "" ? "" : "none" } },
                                 React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.conditionImmunities !== "" ? "" : "none" } },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "condition immunities"
-                                    ),
-                                    " ",
-                                    this.props.combatant.conditionImmunities
-                                )
+                                    "b",
+                                    null,
+                                    "condition immunities"
+                                ),
+                                " ",
+                                this.props.combatant.conditionImmunities
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section", style: { display: this.props.combatant.senses !== "" ? "" : "none" } },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "senses"
+                                ),
+                                " ",
+                                this.props.combatant.senses
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section", style: { display: this.props.combatant.languages !== "" ? "" : "none" } },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "languages"
+                                ),
+                                " ",
+                                this.props.combatant.languages
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section", style: { display: this.props.combatant.equipment !== "" ? "" : "none" } },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "equipment"
+                                ),
+                                " ",
+                                this.props.combatant.equipment
                             ),
                             React.createElement(
                                 "div",
                                 { className: "section" },
                                 React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.speed !== "" ? "" : "none" } },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "speed"
-                                    ),
-                                    " ",
-                                    this.props.combatant.speed
+                                    "b",
+                                    null,
+                                    "challenge"
                                 ),
-                                React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.savingThrows !== "" ? "" : "none" } },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "saving throws"
-                                    ),
-                                    " ",
-                                    this.props.combatant.savingThrows
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.skills !== "" ? "" : "none" } },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "skills"
-                                    ),
-                                    " ",
-                                    this.props.combatant.skills
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.senses !== "" ? "" : "none" } },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "senses"
-                                    ),
-                                    " ",
-                                    this.props.combatant.senses
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.languages !== "" ? "" : "none" } },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "languages"
-                                    ),
-                                    " ",
-                                    this.props.combatant.languages
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.equipment !== "" ? "" : "none" } },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "equipment"
-                                    ),
-                                    " ",
-                                    this.props.combatant.equipment
-                                )
+                                " ",
+                                challenge(this.props.combatant.challenge),
+                                " (",
+                                experience(this.props.combatant.challenge),
+                                " xp)"
                             ),
+                            React.createElement("div", { className: "divider" }),
                             React.createElement(TraitsPanel, { combatant: this.props.combatant })
                         );
                     }
@@ -1107,24 +1119,6 @@ var MonsterCard = function (_React$Component) {
                                     null,
                                     this.description()
                                 )
-                            )
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "section" },
-                            React.createElement(
-                                "div",
-                                null,
-                                React.createElement(
-                                    "b",
-                                    null,
-                                    "challenge"
-                                ),
-                                " ",
-                                challenge(this.props.combatant.challenge),
-                                " (",
-                                experience(this.props.combatant.challenge),
-                                " xp)"
                             )
                         ),
                         slotSection,
@@ -1229,45 +1223,39 @@ var MonsterCard = function (_React$Component) {
                             }),
                             React.createElement(
                                 "div",
-                                { className: "section" },
+                                { className: "section", style: { display: this.props.combatant.damage.resist !== "" ? "" : "none" } },
                                 React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.damage.immune !== "" ? "" : "none" } },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "damage immunity"
-                                    ),
-                                    " ",
-                                    this.props.combatant.damage.immune
+                                    "b",
+                                    null,
+                                    "damage resistances"
                                 ),
+                                " ",
+                                this.props.combatant.damage.resist
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section", style: { display: this.props.combatant.damage.vulnerable !== "" ? "" : "none" } },
                                 React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.damage.resist !== "" ? "" : "none" } },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "damage resistance"
-                                    ),
-                                    " ",
-                                    this.props.combatant.damage.resist
+                                    "b",
+                                    null,
+                                    "damage vulnerabilities"
                                 ),
+                                " ",
+                                this.props.combatant.damage.vulnerable
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section", style: { display: this.props.combatant.damage.immune !== "" ? "" : "none" } },
                                 React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.damage.vulnerable !== "" ? "" : "none" } },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "damage vulnerability"
-                                    ),
-                                    " ",
-                                    this.props.combatant.damage.vulnerable
-                                )
+                                    "b",
+                                    null,
+                                    "damage immunities"
+                                ),
+                                " ",
+                                this.props.combatant.damage.immune
                             ),
                             React.createElement("div", { className: "divider" })
                         ),
-                        React.createElement(AbilityScorePanel, { combatant: this.props.combatant }),
-                        React.createElement("div", { className: "divider" }),
                         React.createElement(ConditionsPanel, {
                             combatant: this.props.combatant,
                             addCondition: function addCondition(condition) {
@@ -1280,6 +1268,17 @@ var MonsterCard = function (_React$Component) {
                                 return _this2.props.nudgeConditionValue(condition, type, delta);
                             }
                         }),
+                        React.createElement(
+                            "div",
+                            { className: "section", style: { display: this.props.combatant.conditionImmunities !== "" ? "" : "none" } },
+                            React.createElement(
+                                "b",
+                                null,
+                                "condition immunities"
+                            ),
+                            " ",
+                            this.props.combatant.conditionImmunities
+                        ),
                         React.createElement(
                             "div",
                             { style: { display: this.state.showDetails || this.props.combatant.current ? "" : "none" } },
@@ -1300,98 +1299,89 @@ var MonsterCard = function (_React$Component) {
                             React.createElement(
                                 "div",
                                 { className: "section" },
-                                React.createElement(
-                                    "div",
-                                    null,
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "challenge"
-                                    ),
-                                    " ",
-                                    challenge(this.props.combatant.challenge),
-                                    " (",
-                                    experience(this.props.combatant.challenge),
-                                    " xp)"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.speed !== "" ? "" : "none" } },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "speed"
-                                    ),
-                                    " ",
-                                    this.props.combatant.speed
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.savingThrows !== "" ? "" : "none" } },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "saving throws"
-                                    ),
-                                    " ",
-                                    this.props.combatant.savingThrows
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.skills !== "" ? "" : "none" } },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "skills"
-                                    ),
-                                    " ",
-                                    this.props.combatant.skills
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.senses !== "" ? "" : "none" } },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "senses"
-                                    ),
-                                    " ",
-                                    this.props.combatant.senses
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.languages !== "" ? "" : "none" } },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "languages"
-                                    ),
-                                    " ",
-                                    this.props.combatant.languages
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.equipment !== "" ? "" : "none" } },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "equipment"
-                                    ),
-                                    " ",
-                                    this.props.combatant.equipment
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.conditionImmunities !== "" ? "" : "none" } },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "condition immunities"
-                                    ),
-                                    " ",
-                                    this.props.combatant.conditionImmunities
-                                )
+                                React.createElement(AbilityScorePanel, { combatant: this.props.combatant })
                             ),
+                            React.createElement(
+                                "div",
+                                { className: "section", style: { display: this.props.combatant.savingThrows !== "" ? "" : "none" } },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "saving throws"
+                                ),
+                                " ",
+                                this.props.combatant.savingThrows
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section", style: { display: this.props.combatant.skills !== "" ? "" : "none" } },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "skills"
+                                ),
+                                " ",
+                                this.props.combatant.skills
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section", style: { display: this.props.combatant.speed !== "" ? "" : "none" } },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "speed"
+                                ),
+                                " ",
+                                this.props.combatant.speed
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section", style: { display: this.props.combatant.senses !== "" ? "" : "none" } },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "senses"
+                                ),
+                                " ",
+                                this.props.combatant.senses
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section", style: { display: this.props.combatant.languages !== "" ? "" : "none" } },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "languages"
+                                ),
+                                " ",
+                                this.props.combatant.languages
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section", style: { display: this.props.combatant.equipment !== "" ? "" : "none" } },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "equipment"
+                                ),
+                                " ",
+                                this.props.combatant.equipment
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "challenge"
+                                ),
+                                " ",
+                                challenge(this.props.combatant.challenge),
+                                " (",
+                                experience(this.props.combatant.challenge),
+                                " xp)"
+                            ),
+                            React.createElement("div", { className: "divider" }),
                             React.createElement(TraitsPanel, { combatant: this.props.combatant })
                         )
                     );
@@ -1482,7 +1472,11 @@ var MonsterCard = function (_React$Component) {
                         stats = React.createElement(
                             "div",
                             null,
-                            React.createElement(AbilityScorePanel, { combatant: this.props.combatant }),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(AbilityScorePanel, { combatant: this.props.combatant })
+                            ),
                             React.createElement(
                                 "div",
                                 { className: "section" },
@@ -5207,7 +5201,7 @@ var AbilityScorePanel = function (_React$Component) {
                 if (this.props.edit) {
                     result = React.createElement(
                         "div",
-                        { className: "section" },
+                        { className: "ability-scores" },
                         React.createElement(Spin, {
                             source: this.props.combatant.abilityScores,
                             name: "str",
@@ -5260,7 +5254,7 @@ var AbilityScorePanel = function (_React$Component) {
                 } else {
                     result = React.createElement(
                         "div",
-                        { className: "section toggle", onClick: function onClick() {
+                        { className: "ability-scores toggle", onClick: function onClick() {
                                 return _this2.toggleAbilityScores();
                             } },
                         React.createElement(
@@ -6844,7 +6838,7 @@ var CombatManagerScreen = function (_React$Component) {
 
                 return React.createElement(
                     "div",
-                    { className: "combat-manager row" },
+                    { className: "combat-manager row collapse" },
                     React.createElement(
                         "div",
                         { className: "columns small-6 medium-4 large-2 scrollable" },
@@ -7143,7 +7137,7 @@ var EncounterBuilderScreen = function (_React$Component) {
 
                 return React.createElement(
                     "div",
-                    { className: "encounter-builder row" },
+                    { className: "encounter-builder row collapse" },
                     React.createElement(
                         "div",
                         { className: "columns small-6 medium-4 large-2 scrollable" },
@@ -7457,7 +7451,7 @@ var MonsterLibraryScreen = function (_React$Component) {
 
                 return React.createElement(
                     "div",
-                    { className: "monster-library row" },
+                    { className: "monster-library row collapse" },
                     React.createElement(
                         "div",
                         { className: "columns small-6 medium-4 large-2 scrollable" },
@@ -7614,7 +7608,7 @@ var PartiesScreen = function (_React$Component) {
 
                 return React.createElement(
                     "div",
-                    { className: "parties row" },
+                    { className: "parties row collapse" },
                     React.createElement(
                         "div",
                         { className: "columns small-6 medium-4 large-2 scrollable" },

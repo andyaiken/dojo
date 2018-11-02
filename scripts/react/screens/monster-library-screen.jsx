@@ -111,7 +111,7 @@ class MonsterLibraryScreen extends React.Component {
             }
 
             return (
-                <div className="monster-library row">
+                <div className="monster-library row collapse">
                     <div className="columns small-6 medium-4 large-2 scrollable">
                         {help}
                         <div className="group">

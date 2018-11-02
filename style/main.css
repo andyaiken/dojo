@@ -120,7 +120,7 @@ body,
 
 .card-group {
     margin-bottom: 20px;
-    padding-left: 5px;
+    padding: 0 5px;
 }
 
     .card-group .heading .title {
@@ -145,11 +145,15 @@ body,
         text-align: center;
     }
 
-    .section .ability-score {
-        display: inline-block;
-        width: calc((100% - 1px) / 6);
-        padding: 0 5px;
+    .section .ability-scores {
+        padding: 5px 0;
     }
+
+        .section .ability-scores .ability-score {
+            display: inline-block;
+            width: calc((100% - 1px) / 6);
+            padding: 0 5px;
+        }
 
     .section .key-stat {
         display: inline-block;

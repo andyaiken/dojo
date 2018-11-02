@@ -18,7 +18,7 @@ class AbilityScorePanel extends React.Component {
 
             if (this.props.edit) {
                 result = (
-                    <div className="section">
+                    <div className="ability-scores">
                         <Spin
                             source={this.props.combatant.abilityScores}
                             name="str"
@@ -59,7 +59,7 @@ class AbilityScorePanel extends React.Component {
                 );
             } else {
                 result = (
-                    <div className="section toggle" onClick={() => this.toggleAbilityScores()}>
+                    <div className="ability-scores toggle" onClick={() => this.toggleAbilityScores()}>
                         <div className="ability-score">
                             <div className="ability-heading">str</div>
                             <div className="ability-value">{this.state.showAbilityScores ? this.props.combatant.abilityScores.str : modifier(this.props.combatant.abilityScores.str)}</div>

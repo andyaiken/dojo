@@ -120,48 +120,51 @@ class MonsterCard extends React.Component {
                     details = (
                         <div>
                             <div className="divider"></div>
-                            <AbilityScorePanel combatant={this.props.combatant} />
+                            <div className="section">
+                                <b>ac</b> {this.props.combatant.ac}
+                            </div>
+                            <div className="section" style={{ display: this.props.combatant.hpMax !== "" ? "" : "none" }}>
+                                <b>hp</b> {this.props.combatant.hitDice !== "" ? this.props.combatant.hpMax + " (" + this.props.combatant.hitDice + "d" + hitDieType(this.props.combatant.size) + ")" : this.props.combatant.hpMax}
+                            </div>
+                            <div className="section" style={{ display: this.props.combatant.speed !== "" ? "" : "none" }}>
+                                <b>speed</b> {this.props.combatant.speed}
+                            </div>
                             <div className="divider"></div>
                             <div className="section">
-                                <div>
-                                    <b>ac</b> {this.props.combatant.ac}
-                                </div>
-                                <div style={{ display: this.props.combatant.hpMax !== "" ? "" : "none" }}>
-                                    <b>hp</b> {this.props.combatant.hitDice !== "" ? this.props.combatant.hpMax + " (" + this.props.combatant.hitDice + "d" + hitDieType(this.props.combatant.size) + ")" : this.props.combatant.hpMax}
-                                </div>
-                                <div style={{ display: this.props.combatant.damage.immune !== "" ? "" : "none" }}>
-                                    <b>damage immunity</b> {this.props.combatant.damage.immune}
-                                </div>
-                                <div style={{ display: this.props.combatant.damage.resist !== "" ? "" : "none" }}>
-                                    <b>damage resistance</b> {this.props.combatant.damage.resist}
-                                </div>
-                                <div style={{ display: this.props.combatant.damage.vulnerable !== "" ? "" : "none" }}>
-                                    <b>damage vulnerability</b> {this.props.combatant.damage.vulnerable}
-                                </div>
-                                <div style={{ display: this.props.combatant.conditionImmunities !== "" ? "" : "none" }}>
-                                    <b>condition immunities</b> {this.props.combatant.conditionImmunities}
-                                </div>
+                                <AbilityScorePanel combatant={this.props.combatant} />
+                            </div>
+                            <div className="divider"></div>
+                            <div className="section" style={{ display: this.props.combatant.savingThrows !== "" ? "" : "none" }}>
+                                <b>saving throws</b> {this.props.combatant.savingThrows}
+                            </div>
+                            <div className="section" style={{ display: this.props.combatant.skills !== "" ? "" : "none" }}>
+                                <b>skills</b> {this.props.combatant.skills}
+                            </div>
+                            <div className="section" style={{ display: this.props.combatant.damage.resist !== "" ? "" : "none" }}>
+                                <b>damage resistances</b> {this.props.combatant.damage.resist}
+                            </div>
+                            <div className="section" style={{ display: this.props.combatant.damage.vulnerable !== "" ? "" : "none" }}>
+                                <b>damage vulnerabilities</b> {this.props.combatant.damage.vulnerable}
+                            </div>
+                            <div className="section" style={{ display: this.props.combatant.damage.immune !== "" ? "" : "none" }}>
+                                <b>damage immunities</b> {this.props.combatant.damage.immune}
+                            </div>
+                            <div className="section" style={{ display: this.props.combatant.conditionImmunities !== "" ? "" : "none" }}>
+                                <b>condition immunities</b> {this.props.combatant.conditionImmunities}
+                            </div>
+                            <div className="section" style={{ display: this.props.combatant.senses !== "" ? "" : "none" }}>
+                                <b>senses</b> {this.props.combatant.senses}
+                            </div>
+                            <div className="section" style={{ display: this.props.combatant.languages !== "" ? "" : "none" }}>
+                                <b>languages</b> {this.props.combatant.languages}
+                            </div>
+                            <div className="section" style={{ display: this.props.combatant.equipment !== "" ? "" : "none" }}>
+                                <b>equipment</b> {this.props.combatant.equipment}
                             </div>
                             <div className="section">
-                                <div style={{ display: this.props.combatant.speed !== "" ? "" : "none" }}>
-                                    <b>speed</b> {this.props.combatant.speed}
-                                </div>
-                                <div style={{ display: this.props.combatant.savingThrows !== "" ? "" : "none" }}>
-                                    <b>saving throws</b> {this.props.combatant.savingThrows}
-                                </div>
-                                <div style={{ display: this.props.combatant.skills !== "" ? "" : "none" }}>
-                                    <b>skills</b> {this.props.combatant.skills}
-                                </div>
-                                <div style={{ display: this.props.combatant.senses !== "" ? "" : "none" }}>
-                                    <b>senses</b> {this.props.combatant.senses}
-                                </div>
-                                <div style={{ display: this.props.combatant.languages !== "" ? "" : "none" }}>
-                                    <b>languages</b> {this.props.combatant.languages}
-                                </div>
-                                <div style={{ display: this.props.combatant.equipment !== "" ? "" : "none" }}>
-                                    <b>equipment</b> {this.props.combatant.equipment}
-                                </div>
+                                <b>challenge</b> {challenge(this.props.combatant.challenge)} ({experience(this.props.combatant.challenge)} xp)
                             </div>
+                            <div className="divider"></div>
                             <TraitsPanel combatant={this.props.combatant} />
                         </div>
                     );
@@ -171,9 +174,6 @@ class MonsterCard extends React.Component {
                     <div className="stats">
                         <div className="section">
                             <div><i>{this.description()}</i></div>
-                        </div>
-                        <div className="section">
-                            <div><b>challenge</b> {challenge(this.props.combatant.challenge)} ({experience(this.props.combatant.challenge)} xp)</div>
                         </div>
                         {slotSection}
                         {details}
@@ -229,56 +229,56 @@ class MonsterCard extends React.Component {
                                 factors={[1, 5, 10]}
                                 nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "hpTemp", delta)}
                             />
-                            <div className="section">
-                                <div style={{ display: this.props.combatant.damage.immune !== "" ? "" : "none" }}>
-                                    <b>damage immunity</b> {this.props.combatant.damage.immune}
-                                </div>
-                                <div style={{ display: this.props.combatant.damage.resist !== "" ? "" : "none" }}>
-                                    <b>damage resistance</b> {this.props.combatant.damage.resist}
-                                </div>
-                                <div style={{ display: this.props.combatant.damage.vulnerable !== "" ? "" : "none" }}>
-                                    <b>damage vulnerability</b> {this.props.combatant.damage.vulnerable}
-                                </div>
+                            <div className="section" style={{ display: this.props.combatant.damage.resist !== "" ? "" : "none" }}>
+                                <b>damage resistances</b> {this.props.combatant.damage.resist}
+                            </div>
+                            <div className="section" style={{ display: this.props.combatant.damage.vulnerable !== "" ? "" : "none" }}>
+                                <b>damage vulnerabilities</b> {this.props.combatant.damage.vulnerable}
+                            </div>
+                            <div className="section" style={{ display: this.props.combatant.damage.immune !== "" ? "" : "none" }}>
+                                <b>damage immunities</b> {this.props.combatant.damage.immune}
                             </div>
                             <div className="divider"></div>
                         </div>
-                        <AbilityScorePanel combatant={this.props.combatant} />
-                        <div className="divider"></div>
                         <ConditionsPanel
                             combatant={this.props.combatant}
                             addCondition={condition => this.props.addCondition(this.props.combatant, condition)}
                             removeCondition={condition => this.props.removeCondition(this.props.combatant, condition)}
                             nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
                         />
+                        <div className="section" style={{ display: this.props.combatant.conditionImmunities !== "" ? "" : "none" }}>
+                            <b>condition immunities</b> {this.props.combatant.conditionImmunities}
+                        </div>
                         <div style={{ display: (this.state.showDetails || this.props.combatant.current) ? "" : "none" }}>
                             <div className="divider"></div>
                             <div className="section">
                                 <div><i>{this.description()}</i></div>
                             </div>
                             <div className="section">
-                                <div><b>challenge</b> {challenge(this.props.combatant.challenge)} ({experience(this.props.combatant.challenge)} xp)</div>
-                                <div style={{ display: this.props.combatant.speed !== "" ? "" : "none" }}>
-                                    <b>speed</b> {this.props.combatant.speed}
-                                </div>
-                                <div style={{ display: this.props.combatant.savingThrows !== "" ? "" : "none" }}>
-                                    <b>saving throws</b> {this.props.combatant.savingThrows}
-                                </div>
-                                <div style={{ display: this.props.combatant.skills !== "" ? "" : "none" }}>
-                                    <b>skills</b> {this.props.combatant.skills}
-                                </div>
-                                <div style={{ display: this.props.combatant.senses !== "" ? "" : "none" }}>
-                                    <b>senses</b> {this.props.combatant.senses}
-                                </div>
-                                <div style={{ display: this.props.combatant.languages !== "" ? "" : "none" }}>
-                                    <b>languages</b> {this.props.combatant.languages}
-                                </div>
-                                <div style={{ display: this.props.combatant.equipment !== "" ? "" : "none" }}>
-                                    <b>equipment</b> {this.props.combatant.equipment}
-                                </div>
-                                <div style={{ display: this.props.combatant.conditionImmunities !== "" ? "" : "none" }}>
-                                    <b>condition immunities</b> {this.props.combatant.conditionImmunities}
-                                </div>
+                                <AbilityScorePanel combatant={this.props.combatant} />
                             </div>
+                            <div className="section" style={{ display: this.props.combatant.savingThrows !== "" ? "" : "none" }}>
+                                <b>saving throws</b> {this.props.combatant.savingThrows}
+                            </div>
+                            <div className="section" style={{ display: this.props.combatant.skills !== "" ? "" : "none" }}>
+                                <b>skills</b> {this.props.combatant.skills}
+                            </div>
+                            <div className="section" style={{ display: this.props.combatant.speed !== "" ? "" : "none" }}>
+                                <b>speed</b> {this.props.combatant.speed}
+                            </div>
+                            <div className="section" style={{ display: this.props.combatant.senses !== "" ? "" : "none" }}>
+                                <b>senses</b> {this.props.combatant.senses}
+                            </div>
+                            <div className="section" style={{ display: this.props.combatant.languages !== "" ? "" : "none" }}>
+                                <b>languages</b> {this.props.combatant.languages}
+                            </div>
+                            <div className="section" style={{ display: this.props.combatant.equipment !== "" ? "" : "none" }}>
+                                <b>equipment</b> {this.props.combatant.equipment}
+                            </div>
+                            <div className="section">
+                                <b>challenge</b> {challenge(this.props.combatant.challenge)} ({experience(this.props.combatant.challenge)} xp)
+                            </div>
+                            <div className="divider"></div>
                             <TraitsPanel combatant={this.props.combatant} />
                         </div>
                     </div>
@@ -312,7 +312,9 @@ class MonsterCard extends React.Component {
                 if (this.props.mode.indexOf("abilities") !== -1) {
                     stats = (
                         <div>
-                            <AbilityScorePanel combatant={this.props.combatant} />
+                            <div className="section">
+                                <AbilityScorePanel combatant={this.props.combatant} />
+                            </div>
                             <div className="section">
                                 <b>saving throws</b> {this.props.combatant.savingThrows || "none"}
                             </div>
