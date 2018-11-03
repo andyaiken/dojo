@@ -204,7 +204,7 @@ var EncounterCard = function (_React$Component) {
                         var xpHard = 0;
                         var xpDeadly = 0;
 
-                        for (var n = 0; n != selectedParty.pcs.length; ++n) {
+                        for (var n = 0; n !== selectedParty.pcs.length; ++n) {
                             var pc = selectedParty.pcs[n];
                             xpEasy += pcExperience(pc.level, "easy");
                             xpMedium += pcExperience(pc.level, "medium");
@@ -3048,7 +3048,7 @@ var Selector = function (_React$Component) {
                 var itemsPerRow = this.props.itemsPerRow ? this.props.itemsPerRow : this.props.options.length;
                 var rowCount = Math.ceil(this.props.options.length / itemsPerRow);
                 var rowContents = [];
-                for (var n = 0; n != rowCount; ++n) {
+                for (var n = 0; n !== rowCount; ++n) {
                     rowContents.push([]);
                 }
 
@@ -3678,7 +3678,7 @@ var Dojo = function (_React$Component) {
             request.overrideMimeType("application/json");
             request.open('GET', 'data/monsters.json', true);
             request.onreadystatechange = function () {
-                if (request.readyState == 4 && request.status == "200") {
+                if (request.readyState === 4 && request.status === "200") {
                     var monsters = JSON.parse(request.responseText);
                     monsters.forEach(function (data) {
                         if (data.name) {
@@ -5495,7 +5495,7 @@ var DemographicsModal = function (_React$Component) {
                     }
 
                     var bars = [];
-                    for (var index = 0; index != buckets.length; ++index) {
+                    for (var index = 0; index !== buckets.length; ++index) {
                         var bucket = buckets[index];
                         var set = monsters[bucket.value];
                         var count = set ? set.length : 0;
@@ -6473,7 +6473,7 @@ var ConditionPanel = function (_React$Component) {
                     details.push(React.createElement("div", { key: "div1", className: "divider" }));
                 }
                 var text = conditionText(this.props.condition);
-                for (var n = 0; n != text.length; ++n) {
+                for (var n = 0; n !== text.length; ++n) {
                     details.push(React.createElement(
                         "div",
                         { key: n, className: "section" },
@@ -6542,7 +6542,7 @@ var ConditionsPanel = function (_React$Component) {
                 });
 
                 var conditions = [];
-                for (var n = 0; n != this.props.combatant.conditions.length; ++n) {
+                for (var n = 0; n !== this.props.combatant.conditions.length; ++n) {
                     var condition = this.props.combatant.conditions[n];
                     conditions.push(React.createElement(ConditionPanel, {
                         key: n,
@@ -7128,7 +7128,7 @@ var TraitsPanel = function (_React$Component) {
                 var lairActions = [];
                 var regionalEffects = [];
 
-                for (var n = 0; n != this.props.combatant.traits.length; ++n) {
+                for (var n = 0; n !== this.props.combatant.traits.length; ++n) {
                     var action = this.props.combatant.traits[n];
                     var item = React.createElement(TraitPanel, {
                         key: action.id,

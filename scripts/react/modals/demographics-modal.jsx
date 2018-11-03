@@ -87,7 +87,7 @@ class DemographicsModal extends React.Component {
                 }
 
                 var bars = [];
-                for (var index = 0; index != buckets.length; ++index) {
+                for (var index = 0; index !== buckets.length; ++index) {
                     var bucket = buckets[index];
                     var set = monsters[bucket.value];
                     var count = set ? set.length : 0;

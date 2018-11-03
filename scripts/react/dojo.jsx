@@ -344,7 +344,7 @@ class Dojo extends React.Component {
         request.overrideMimeType("application/json");
         request.open('GET', 'data/monsters.json', true);
         request.onreadystatechange = () => {
-            if (request.readyState == 4 && request.status == "200") {
+            if (request.readyState === 4 && request.status === "200") {
                 var monsters = JSON.parse(request.responseText);
                 monsters.forEach(data => {
                     if (data.name) {

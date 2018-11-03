@@ -41,7 +41,7 @@ class Selector extends React.Component {
             var itemsPerRow = this.props.itemsPerRow ? this.props.itemsPerRow : this.props.options.length;
             var rowCount = Math.ceil(this.props.options.length / itemsPerRow);
             var rowContents = [];
-            for (var n = 0; n != rowCount; ++n) {
+            for (var n = 0; n !== rowCount; ++n) {
                 rowContents.push([]);
             }
 

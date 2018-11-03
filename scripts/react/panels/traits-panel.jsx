@@ -7,7 +7,7 @@ class TraitsPanel extends React.Component {
             var lairActions = [];
             var regionalEffects = [];
 
-            for (var n = 0; n != this.props.combatant.traits.length; ++n) {
+            for (var n = 0; n !== this.props.combatant.traits.length; ++n) {
                 var action = this.props.combatant.traits[n];
                 var item = (
                     <TraitPanel

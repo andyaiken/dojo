@@ -25,7 +25,7 @@ function match(filter, text) {
     var result = true;
 
     try {
-        var tokens = filter.toLowerCase().split(" ");
+        var tokens = filter.toLowerCase().split(' ');
         tokens.forEach(token => {
             if (text.toLowerCase().indexOf(token) === -1) {
                 result = false;

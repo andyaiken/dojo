@@ -15,7 +15,7 @@ class ConditionPanel extends React.Component {
                 details.push(<div key="div1" className="divider"></div>);
             }
             var text = conditionText(this.props.condition);
-            for (var n = 0; n != text.length; ++n) {
+            for (var n = 0; n !== text.length; ++n) {
                 details.push(<div key={n} className="section">{text[n]}</div>);
             }
             details.push(<div key="div2" className="divider"></div>);

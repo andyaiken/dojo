@@ -28,7 +28,7 @@ class ConditionsPanel extends React.Component {
             var options = conditions.map(c => { return { id: c, text: c }; });
 
             var conditions = [];
-            for (var n = 0; n != this.props.combatant.conditions.length; ++n) {
+            for (var n = 0; n !== this.props.combatant.conditions.length; ++n) {
                 var condition = this.props.combatant.conditions[n];
                 conditions.push(
                     <ConditionPanel

@@ -60,7 +60,7 @@ class EncounterCard extends React.Component {
                     var xpHard = 0;
                     var xpDeadly = 0;
 
-                    for (var n = 0; n != selectedParty.pcs.length; ++n) {
+                    for (var n = 0; n !== selectedParty.pcs.length; ++n) {
                         var pc = selectedParty.pcs[n];
                         xpEasy += pcExperience(pc.level, "easy");
                         xpMedium += pcExperience(pc.level, "medium");
