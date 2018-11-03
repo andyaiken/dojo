@@ -148,7 +148,7 @@ body,
     .section .ability-scores {
         padding: 5px 0;
         background-color: white;
-        border: 1px solid #404040;
+        border: 1px solid #C3C3C3;
         cursor: pointer;
     }
 
@@ -187,7 +187,8 @@ body,
         .section .key-stat.editable {
             cursor: pointer;
             background-color: white;
-            border-color: #404040;
+            border-color: #C3C3C3;
+            border-left-width: 5px;
         }
 
             .section .key-stat.editable:hover {

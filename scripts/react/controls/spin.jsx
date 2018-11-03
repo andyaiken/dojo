@@ -31,6 +31,12 @@ class Spin extends React.Component {
         this.props.nudgeValue(delta * this.state.factor);
     }
 
+    touchEnd(e, delta) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.props.nudgeValue(delta * this.state.factor);
+    }
+
     render() {
         try {
             var expander = null;
@@ -73,14 +79,14 @@ class Spin extends React.Component {
 
             return (
                 <div className={this.props.disabled ? "spin disabled" : "spin"}>
-                    <div className="spin-button" onClick={e => this.click(e, -1)}>
+                    <div className="spin-button" onTouchEnd={e => this.touchEnd(e, -1)} onClick={e => this.click(e, -1)}>
                         <img className="image" src="content/minus.svg" />
                     </div>
                     <div className="info">
                         <div className="info-label">{this.props.label}</div>
                         <div className={style}>{value}</div>
                     </div>
-                    <div className="spin-button" onClick={e => this.click(e, +1)}>
+                    <div className="spin-button" onTouchEnd={e => this.touchEnd(e, +1)} onClick={e => this.click(e, +1)}>
                         <img className="image" src="content/plus.svg" />
                     </div>
                     {expander}

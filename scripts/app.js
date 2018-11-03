@@ -1198,7 +1198,7 @@ var MonsterCard = function (_React$Component) {
                                 source: this.props.combatant,
                                 name: "initiative",
                                 label: "initiative",
-                                factors: [1, 5],
+                                factors: [1, 5, 10],
                                 nudgeValue: function nudgeValue(delta) {
                                     return _this2.props.nudgeValue(_this2.props.combatant, "initiative", delta);
                                 }
@@ -2380,7 +2380,7 @@ var PCCard = function (_React$Component) {
                                 source: this.props.combatant,
                                 name: "initiative",
                                 label: "initiative",
-                                factors: [1, 5],
+                                factors: [1, 5, 10],
                                 nudgeValue: function nudgeValue(delta) {
                                     return _this2.props.nudgeValue(_this2.props.combatant, "initiative", delta);
                                 }
@@ -2536,6 +2536,761 @@ var PCCard = function (_React$Component) {
     }]);
 
     return PCCard;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/*
+<Checkbox
+    label="LABEL"
+    checked={BOOLEAN}
+    disabled={BOOLEAN}
+    changeValue={value => this.changeValue(SOURCEOBJECT, FIELDNAME, value)}
+/>
+*/
+
+var Checkbox = function (_React$Component) {
+    _inherits(Checkbox, _React$Component);
+
+    function Checkbox() {
+        _classCallCheck(this, Checkbox);
+
+        return _possibleConstructorReturn(this, (Checkbox.__proto__ || Object.getPrototypeOf(Checkbox)).apply(this, arguments));
+    }
+
+    _createClass(Checkbox, [{
+        key: "click",
+        value: function click(e) {
+            e.stopPropagation();
+            this.props.changeValue(!this.props.checked);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                return React.createElement(
+                    "div",
+                    { className: this.props.disabled ? "checkbox disabled" : "checkbox", onClick: function onClick(e) {
+                            return _this2.click(e);
+                        } },
+                    React.createElement("img", { className: "image", src: this.props.checked ? "content/checked.svg" : "content/unchecked.svg" }),
+                    React.createElement(
+                        "div",
+                        { className: "checkbox-label" },
+                        this.props.label
+                    )
+                );
+            } catch (ex) {
+                console.error(ex);
+                return null;
+            }
+        }
+    }]);
+
+    return Checkbox;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/*
+<ConfirmButton
+    text="TEXT"
+    disabled={BOOLEAN}
+    callback={() => CALLBACK_FUNCTION}
+/>
+*/
+
+var ConfirmButton = function (_React$Component) {
+    _inherits(ConfirmButton, _React$Component);
+
+    function ConfirmButton() {
+        _classCallCheck(this, ConfirmButton);
+
+        var _this = _possibleConstructorReturn(this, (ConfirmButton.__proto__ || Object.getPrototypeOf(ConfirmButton)).call(this));
+
+        _this.state = {
+            pressed: false
+        };
+        return _this;
+    }
+
+    _createClass(ConfirmButton, [{
+        key: "toggle",
+        value: function toggle() {
+            this.setState({
+                pressed: !this.state.pressed
+            });
+        }
+    }, {
+        key: "perform",
+        value: function perform() {
+            this.toggle();
+            this.props.callback();
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                var content = null;
+                if (this.state.pressed) {
+                    content = React.createElement(
+                        "div",
+                        null,
+                        React.createElement(
+                            "div",
+                            { className: "title" },
+                            this.props.text,
+                            " - are you sure?"
+                        ),
+                        React.createElement("img", { className: "image", src: "content/warning.svg" }),
+                        React.createElement(
+                            "div",
+                            { className: "confirmation" },
+                            React.createElement(
+                                "div",
+                                { className: "destructive", onClick: function onClick() {
+                                        return _this2.perform();
+                                    } },
+                                "yes"
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "non-destructive", onClick: function onClick() {
+                                        return _this2.toggle();
+                                    } },
+                                "no"
+                            )
+                        )
+                    );
+                } else {
+                    content = React.createElement(
+                        "div",
+                        null,
+                        React.createElement(
+                            "div",
+                            { className: "title" },
+                            this.props.text
+                        ),
+                        React.createElement("img", { className: "image", src: "content/warning.svg" })
+                    );
+                }
+
+                return React.createElement(
+                    "button",
+                    { className: this.props.disabled ? "disabled" : "", onClick: function onClick() {
+                            return _this2.toggle();
+                        } },
+                    content
+                );
+            } catch (ex) {
+                console.error(ex);
+                return null;
+            }
+        }
+    }]);
+
+    return ConfirmButton;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/*
+var options = [
+    {
+        id: "one",
+        text: "One",
+        disabled: false
+    },
+    {
+        id: "two",
+        text: "Two",
+        disabled: true
+    },
+    {
+        id: "three",
+        text: "Three",
+        disabled: false
+    }
+];
+
+<Dropdown
+    options={options}
+    placeholer={PLACEHOLDER_TEXT}
+    selectedID={CURRENT_OPTION_ID}
+    disabled={BOOLEAN}
+    select={optionID => this.changeValue(SOURCEOBJECT, FIELDNAME, optionID)}
+/>
+*/
+
+var Dropdown = function (_React$Component) {
+    _inherits(Dropdown, _React$Component);
+
+    function Dropdown() {
+        _classCallCheck(this, Dropdown);
+
+        var _this = _possibleConstructorReturn(this, (Dropdown.__proto__ || Object.getPrototypeOf(Dropdown)).call(this));
+
+        _this.state = {
+            open: false
+        };
+        return _this;
+    }
+
+    _createClass(Dropdown, [{
+        key: "toggleOpen",
+        value: function toggleOpen(e) {
+            e.stopPropagation();
+            this.setState({
+                open: !this.state.open
+            });
+        }
+    }, {
+        key: "select",
+        value: function select(optionID) {
+            this.setState({
+                open: false
+            });
+            this.props.select(optionID);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                var style = this.props.disabled ? "dropdown disabled" : "dropdown";
+                var content = [];
+
+                var selectedText = null;
+                var title = null;
+                if (this.props.selectedID) {
+                    var option = null;
+                    this.props.options.forEach(function (o) {
+                        if (o.id === _this2.props.selectedID) {
+                            option = o;
+                        }
+                    });
+
+                    selectedText = option.text;
+                    title = option.text;
+                } else {
+                    selectedText = this.props.text || this.props.placeholder || "select...";
+                }
+
+                content.push(React.createElement(
+                    "div",
+                    { key: "selection", className: "dropdown-top", title: title },
+                    React.createElement(
+                        "div",
+                        { className: "item-text" },
+                        selectedText
+                    ),
+                    React.createElement("img", { className: this.state.open ? "arrow open" : "arrow", src: "content/down-arrow-black.svg" })
+                ));
+
+                if (this.state.open) {
+                    style += " open";
+
+                    var items = this.props.options.map(function (option) {
+                        return React.createElement(DropdownOption, {
+                            key: option.id,
+                            option: option,
+                            selected: option.id === _this2.props.selectedID,
+                            select: function select(optionID) {
+                                return _this2.select(optionID);
+                            }
+                        });
+                    });
+
+                    content.push(React.createElement(
+                        "div",
+                        { key: "options", className: "dropdown-options" },
+                        items
+                    ));
+                }
+
+                return React.createElement(
+                    "div",
+                    { className: style, onClick: function onClick(e) {
+                            return _this2.toggleOpen(e);
+                        } },
+                    content
+                );
+            } catch (ex) {
+                console.error(ex);
+                return null;
+            }
+        }
+    }]);
+
+    return Dropdown;
+}(React.Component);
+
+var DropdownOption = function (_React$Component2) {
+    _inherits(DropdownOption, _React$Component2);
+
+    function DropdownOption() {
+        _classCallCheck(this, DropdownOption);
+
+        return _possibleConstructorReturn(this, (DropdownOption.__proto__ || Object.getPrototypeOf(DropdownOption)).apply(this, arguments));
+    }
+
+    _createClass(DropdownOption, [{
+        key: "click",
+        value: function click(e) {
+            e.stopPropagation();
+            this.props.select(this.props.option.id);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this4 = this;
+
+            try {
+                var style = "dropdown-option";
+                if (this.props.selected) {
+                    style += " selected";
+                }
+                if (this.props.disabled) {
+                    style += " disabled";
+                }
+
+                return React.createElement(
+                    "div",
+                    { className: style, title: this.props.option.text, onClick: function onClick(e) {
+                            return _this4.click(e);
+                        } },
+                    this.props.option.text
+                );
+            } catch (ex) {
+                console.error(ex);
+                return null;
+            }
+        }
+    }]);
+
+    return DropdownOption;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/*
+<Expander
+    text="TEXT"
+    content={<div>ANY CONTENT</div>}
+    disabled={BOOLEAN}
+/>
+*/
+
+var Expander = function (_React$Component) {
+    _inherits(Expander, _React$Component);
+
+    function Expander() {
+        _classCallCheck(this, Expander);
+
+        var _this = _possibleConstructorReturn(this, (Expander.__proto__ || Object.getPrototypeOf(Expander)).call(this));
+
+        _this.state = {
+            expanded: false
+        };
+        return _this;
+    }
+
+    _createClass(Expander, [{
+        key: "toggle",
+        value: function toggle() {
+            this.setState({
+                expanded: !this.state.expanded
+            });
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                var style = this.props.disabled ? "expander disabled" : "expander";
+                if (this.state.expanded) {
+                    style += " expanded";
+                }
+
+                var content = null;
+                if (this.state.expanded) {
+                    content = React.createElement(
+                        "div",
+                        { className: "expander-content" },
+                        this.props.content
+                    );
+                }
+
+                var text = text;
+
+                return React.createElement(
+                    "div",
+                    { className: style },
+                    React.createElement(
+                        "div",
+                        { className: "expander-header", onClick: function onClick() {
+                                return _this2.toggle();
+                            } },
+                        React.createElement(
+                            "div",
+                            { className: "expander-text" },
+                            this.props.text
+                        ),
+                        React.createElement("img", { className: "expander-button", src: "content/down-arrow-black.svg" })
+                    ),
+                    content
+                );
+            } catch (ex) {
+                console.error(ex);
+                return null;
+            }
+        }
+    }]);
+
+    return Expander;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/*
+var options = [
+    {
+        id: "one",
+        text: "One",
+        disabled: false
+    },
+    {
+        id: "two",
+        text: "Two",
+        disabled: true
+    },
+    {
+        id: "three",
+        text: "Three",
+        disabled: false
+    }
+];
+
+<Selector
+    tabs={BOOLEAN}
+    options={options}
+    noBorder={BOOLEAN}
+    selectedID={CURRENT_OPTION_ID}
+    disabled={BOOLEAN}
+    select={optionID => this.changeValue(SOURCEOBJECT, FIELDNAME, optionID)}
+/>
+*/
+
+var Selector = function (_React$Component) {
+    _inherits(Selector, _React$Component);
+
+    function Selector() {
+        _classCallCheck(this, Selector);
+
+        return _possibleConstructorReturn(this, (Selector.__proto__ || Object.getPrototypeOf(Selector)).apply(this, arguments));
+    }
+
+    _createClass(Selector, [{
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                var style = this.props.tabs ? "selector tabs" : "selector radio";
+                if (this.props.disabled) {
+                    style += " disabled";
+                }
+                if (this.props.noBorder) {
+                    style += " no-border";
+                }
+
+                var itemsPerRow = this.props.itemsPerRow ? this.props.itemsPerRow : this.props.options.length;
+                var rowCount = Math.ceil(this.props.options.length / itemsPerRow);
+                var rowContents = [];
+                for (var n = 0; n != rowCount; ++n) {
+                    rowContents.push([]);
+                }
+
+                this.props.options.forEach(function (option) {
+                    var index = _this2.props.options.indexOf(option);
+                    var rowIndex = Math.floor(index / itemsPerRow);
+                    var row = rowContents[rowIndex];
+                    row.push(React.createElement(SelectorOption, {
+                        key: option.id,
+                        option: option,
+                        selected: option.id === _this2.props.selectedID,
+                        count: itemsPerRow,
+                        select: function select(optionID) {
+                            return _this2.props.select(optionID);
+                        }
+                    }));
+                });
+
+                var rowSections = rowContents.map(function (row) {
+                    var index = rowContents.indexOf(row);
+                    return React.createElement(
+                        "div",
+                        { key: index },
+                        row
+                    );
+                });
+
+                return React.createElement(
+                    "div",
+                    { className: style },
+                    rowSections
+                );
+            } catch (ex) {
+                console.error(ex);
+                return null;
+            }
+        }
+    }]);
+
+    return Selector;
+}(React.Component);
+
+var SelectorOption = function (_React$Component2) {
+    _inherits(SelectorOption, _React$Component2);
+
+    function SelectorOption() {
+        _classCallCheck(this, SelectorOption);
+
+        return _possibleConstructorReturn(this, (SelectorOption.__proto__ || Object.getPrototypeOf(SelectorOption)).apply(this, arguments));
+    }
+
+    _createClass(SelectorOption, [{
+        key: "click",
+        value: function click(e) {
+            e.stopPropagation();
+            this.props.select(this.props.option.id);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this4 = this;
+
+            try {
+                var width = "calc(((100% - 1px) / " + this.props.count + ") - 2px )";
+
+                var style = "option";
+                if (this.props.selected) {
+                    style += " selected";
+                }
+                if (this.props.disabled) {
+                    style += " disabled";
+                }
+
+                return React.createElement(
+                    "div",
+                    { key: this.props.option.id, className: style, style: { width: width }, title: this.props.option.text, onClick: function onClick(e) {
+                            return _this4.click(e);
+                        } },
+                    this.props.option.text
+                );
+            } catch (ex) {
+                console.error(ex);
+                return null;
+            }
+        }
+    }]);
+
+    return SelectorOption;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/*
+<Spin
+    source={SOURCEOBJECT}
+    name="FIELDNAME"
+    label="LABEL"
+    factors={[1, 10, 100]}
+    disabled={BOOLEAN}
+    display={value => this.displayValue(value)}
+    nudgeValue={delta => this.nudgeValue(SOURCEOBJECT, FIELDNAME, delta)}
+/>
+*/
+
+var Spin = function (_React$Component) {
+    _inherits(Spin, _React$Component);
+
+    function Spin() {
+        _classCallCheck(this, Spin);
+
+        var _this = _possibleConstructorReturn(this, (Spin.__proto__ || Object.getPrototypeOf(Spin)).call(this));
+
+        _this.state = {
+            expanded: false,
+            factor: 1
+        };
+        return _this;
+    }
+
+    _createClass(Spin, [{
+        key: "toggleExpanded",
+        value: function toggleExpanded() {
+            this.setState({
+                expanded: !this.state.expanded
+            });
+        }
+    }, {
+        key: "click",
+        value: function click(e, delta) {
+            e.stopPropagation();
+            this.props.nudgeValue(delta * this.state.factor);
+        }
+    }, {
+        key: "touchEnd",
+        value: function touchEnd(e, delta) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.props.nudgeValue(delta * this.state.factor);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                var expander = null;
+                if (this.props.factors) {
+                    expander = React.createElement(
+                        "div",
+                        { className: "spin-expander", onClick: function onClick() {
+                                return _this2.toggleExpanded();
+                            } },
+                        "\u2022 \u2022 \u2022"
+                    );
+                }
+
+                var factorSelector = null;
+                if (this.props.factors && this.state.expanded) {
+                    var options = this.props.factors.map(function (factor) {
+                        return {
+                            id: factor,
+                            text: factor
+                        };
+                    });
+
+                    factorSelector = React.createElement(
+                        "div",
+                        { className: "factor-selector" },
+                        React.createElement(Selector, {
+                            options: options,
+                            noBorder: true,
+                            selectedID: this.state.factor,
+                            select: function select(optionID) {
+                                return _this2.setState({ factor: optionID });
+                            }
+                        })
+                    );
+                }
+
+                var style = "info-value";
+                var value = this.props.source[this.props.name];
+                if (value === 0) {
+                    style += " dimmed";
+                }
+
+                if (this.props.display) {
+                    value = this.props.display(value);
+                }
+
+                return React.createElement(
+                    "div",
+                    { className: this.props.disabled ? "spin disabled" : "spin" },
+                    React.createElement(
+                        "div",
+                        { className: "spin-button", onTouchEnd: function onTouchEnd(e) {
+                                return _this2.touchEnd(e, -1);
+                            }, onClick: function onClick(e) {
+                                return _this2.click(e, -1);
+                            } },
+                        React.createElement("img", { className: "image", src: "content/minus.svg" })
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "info" },
+                        React.createElement(
+                            "div",
+                            { className: "info-label" },
+                            this.props.label
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: style },
+                            value
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "spin-button", onTouchEnd: function onTouchEnd(e) {
+                                return _this2.touchEnd(e, +1);
+                            }, onClick: function onClick(e) {
+                                return _this2.click(e, +1);
+                            } },
+                        React.createElement("img", { className: "image", src: "content/plus.svg" })
+                    ),
+                    expander,
+                    factorSelector
+                );
+            } catch (ex) {
+                console.error(ex);
+                return null;
+            }
+        }
+    }]);
+
+    return Spin;
 }(React.Component);
 "use strict";
 
@@ -7655,748 +8410,4 @@ var PartiesScreen = function (_React$Component) {
     }]);
 
     return PartiesScreen;
-}(React.Component);
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-/*
-<Checkbox
-    label="LABEL"
-    checked={BOOLEAN}
-    disabled={BOOLEAN}
-    changeValue={value => this.changeValue(SOURCEOBJECT, FIELDNAME, value)}
-/>
-*/
-
-var Checkbox = function (_React$Component) {
-    _inherits(Checkbox, _React$Component);
-
-    function Checkbox() {
-        _classCallCheck(this, Checkbox);
-
-        return _possibleConstructorReturn(this, (Checkbox.__proto__ || Object.getPrototypeOf(Checkbox)).apply(this, arguments));
-    }
-
-    _createClass(Checkbox, [{
-        key: "click",
-        value: function click(e) {
-            e.stopPropagation();
-            this.props.changeValue(!this.props.checked);
-        }
-    }, {
-        key: "render",
-        value: function render() {
-            var _this2 = this;
-
-            try {
-                return React.createElement(
-                    "div",
-                    { className: this.props.disabled ? "checkbox disabled" : "checkbox", onClick: function onClick(e) {
-                            return _this2.click(e);
-                        } },
-                    React.createElement("img", { className: "image", src: this.props.checked ? "content/checked.svg" : "content/unchecked.svg" }),
-                    React.createElement(
-                        "div",
-                        { className: "checkbox-label" },
-                        this.props.label
-                    )
-                );
-            } catch (ex) {
-                console.error(ex);
-                return null;
-            }
-        }
-    }]);
-
-    return Checkbox;
-}(React.Component);
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-/*
-<ConfirmButton
-    text="TEXT"
-    disabled={BOOLEAN}
-    callback={() => CALLBACK_FUNCTION}
-/>
-*/
-
-var ConfirmButton = function (_React$Component) {
-    _inherits(ConfirmButton, _React$Component);
-
-    function ConfirmButton() {
-        _classCallCheck(this, ConfirmButton);
-
-        var _this = _possibleConstructorReturn(this, (ConfirmButton.__proto__ || Object.getPrototypeOf(ConfirmButton)).call(this));
-
-        _this.state = {
-            pressed: false
-        };
-        return _this;
-    }
-
-    _createClass(ConfirmButton, [{
-        key: "toggle",
-        value: function toggle() {
-            this.setState({
-                pressed: !this.state.pressed
-            });
-        }
-    }, {
-        key: "perform",
-        value: function perform() {
-            this.toggle();
-            this.props.callback();
-        }
-    }, {
-        key: "render",
-        value: function render() {
-            var _this2 = this;
-
-            try {
-                var content = null;
-                if (this.state.pressed) {
-                    content = React.createElement(
-                        "div",
-                        null,
-                        React.createElement(
-                            "div",
-                            { className: "title" },
-                            this.props.text,
-                            " - are you sure?"
-                        ),
-                        React.createElement("img", { className: "image", src: "content/warning.svg" }),
-                        React.createElement(
-                            "div",
-                            { className: "confirmation" },
-                            React.createElement(
-                                "div",
-                                { className: "destructive", onClick: function onClick() {
-                                        return _this2.perform();
-                                    } },
-                                "yes"
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "non-destructive", onClick: function onClick() {
-                                        return _this2.toggle();
-                                    } },
-                                "no"
-                            )
-                        )
-                    );
-                } else {
-                    content = React.createElement(
-                        "div",
-                        null,
-                        React.createElement(
-                            "div",
-                            { className: "title" },
-                            this.props.text
-                        ),
-                        React.createElement("img", { className: "image", src: "content/warning.svg" })
-                    );
-                }
-
-                return React.createElement(
-                    "button",
-                    { className: this.props.disabled ? "disabled" : "", onClick: function onClick() {
-                            return _this2.toggle();
-                        } },
-                    content
-                );
-            } catch (ex) {
-                console.error(ex);
-                return null;
-            }
-        }
-    }]);
-
-    return ConfirmButton;
-}(React.Component);
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-/*
-var options = [
-    {
-        id: "one",
-        text: "One",
-        disabled: false
-    },
-    {
-        id: "two",
-        text: "Two",
-        disabled: true
-    },
-    {
-        id: "three",
-        text: "Three",
-        disabled: false
-    }
-];
-
-<Dropdown
-    options={options}
-    placeholer={PLACEHOLDER_TEXT}
-    selectedID={CURRENT_OPTION_ID}
-    disabled={BOOLEAN}
-    select={optionID => this.changeValue(SOURCEOBJECT, FIELDNAME, optionID)}
-/>
-*/
-
-var Dropdown = function (_React$Component) {
-    _inherits(Dropdown, _React$Component);
-
-    function Dropdown() {
-        _classCallCheck(this, Dropdown);
-
-        var _this = _possibleConstructorReturn(this, (Dropdown.__proto__ || Object.getPrototypeOf(Dropdown)).call(this));
-
-        _this.state = {
-            open: false
-        };
-        return _this;
-    }
-
-    _createClass(Dropdown, [{
-        key: "toggleOpen",
-        value: function toggleOpen(e) {
-            e.stopPropagation();
-            this.setState({
-                open: !this.state.open
-            });
-        }
-    }, {
-        key: "select",
-        value: function select(optionID) {
-            this.setState({
-                open: false
-            });
-            this.props.select(optionID);
-        }
-    }, {
-        key: "render",
-        value: function render() {
-            var _this2 = this;
-
-            try {
-                var style = this.props.disabled ? "dropdown disabled" : "dropdown";
-                var content = [];
-
-                var selectedText = null;
-                var title = null;
-                if (this.props.selectedID) {
-                    var option = null;
-                    this.props.options.forEach(function (o) {
-                        if (o.id === _this2.props.selectedID) {
-                            option = o;
-                        }
-                    });
-
-                    selectedText = option.text;
-                    title = option.text;
-                } else {
-                    selectedText = this.props.text || this.props.placeholder || "select...";
-                }
-
-                content.push(React.createElement(
-                    "div",
-                    { key: "selection", className: "dropdown-top", title: title },
-                    React.createElement(
-                        "div",
-                        { className: "item-text" },
-                        selectedText
-                    ),
-                    React.createElement("img", { className: this.state.open ? "arrow open" : "arrow", src: "content/down-arrow-black.svg" })
-                ));
-
-                if (this.state.open) {
-                    style += " open";
-
-                    var items = this.props.options.map(function (option) {
-                        return React.createElement(DropdownOption, {
-                            key: option.id,
-                            option: option,
-                            selected: option.id === _this2.props.selectedID,
-                            select: function select(optionID) {
-                                return _this2.select(optionID);
-                            }
-                        });
-                    });
-
-                    content.push(React.createElement(
-                        "div",
-                        { key: "options", className: "dropdown-options" },
-                        items
-                    ));
-                }
-
-                return React.createElement(
-                    "div",
-                    { className: style, onClick: function onClick(e) {
-                            return _this2.toggleOpen(e);
-                        } },
-                    content
-                );
-            } catch (ex) {
-                console.error(ex);
-                return null;
-            }
-        }
-    }]);
-
-    return Dropdown;
-}(React.Component);
-
-var DropdownOption = function (_React$Component2) {
-    _inherits(DropdownOption, _React$Component2);
-
-    function DropdownOption() {
-        _classCallCheck(this, DropdownOption);
-
-        return _possibleConstructorReturn(this, (DropdownOption.__proto__ || Object.getPrototypeOf(DropdownOption)).apply(this, arguments));
-    }
-
-    _createClass(DropdownOption, [{
-        key: "click",
-        value: function click(e) {
-            e.stopPropagation();
-            this.props.select(this.props.option.id);
-        }
-    }, {
-        key: "render",
-        value: function render() {
-            var _this4 = this;
-
-            try {
-                var style = "dropdown-option";
-                if (this.props.selected) {
-                    style += " selected";
-                }
-                if (this.props.disabled) {
-                    style += " disabled";
-                }
-
-                return React.createElement(
-                    "div",
-                    { className: style, title: this.props.option.text, onClick: function onClick(e) {
-                            return _this4.click(e);
-                        } },
-                    this.props.option.text
-                );
-            } catch (ex) {
-                console.error(ex);
-                return null;
-            }
-        }
-    }]);
-
-    return DropdownOption;
-}(React.Component);
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-/*
-<Expander
-    text="TEXT"
-    content={<div>ANY CONTENT</div>}
-    disabled={BOOLEAN}
-/>
-*/
-
-var Expander = function (_React$Component) {
-    _inherits(Expander, _React$Component);
-
-    function Expander() {
-        _classCallCheck(this, Expander);
-
-        var _this = _possibleConstructorReturn(this, (Expander.__proto__ || Object.getPrototypeOf(Expander)).call(this));
-
-        _this.state = {
-            expanded: false
-        };
-        return _this;
-    }
-
-    _createClass(Expander, [{
-        key: "toggle",
-        value: function toggle() {
-            this.setState({
-                expanded: !this.state.expanded
-            });
-        }
-    }, {
-        key: "render",
-        value: function render() {
-            var _this2 = this;
-
-            try {
-                var style = this.props.disabled ? "expander disabled" : "expander";
-                if (this.state.expanded) {
-                    style += " expanded";
-                }
-
-                var content = null;
-                if (this.state.expanded) {
-                    content = React.createElement(
-                        "div",
-                        { className: "expander-content" },
-                        this.props.content
-                    );
-                }
-
-                var text = text;
-
-                return React.createElement(
-                    "div",
-                    { className: style },
-                    React.createElement(
-                        "div",
-                        { className: "expander-header", onClick: function onClick() {
-                                return _this2.toggle();
-                            } },
-                        React.createElement(
-                            "div",
-                            { className: "expander-text" },
-                            this.props.text
-                        ),
-                        React.createElement("img", { className: "expander-button", src: "content/down-arrow-black.svg" })
-                    ),
-                    content
-                );
-            } catch (ex) {
-                console.error(ex);
-                return null;
-            }
-        }
-    }]);
-
-    return Expander;
-}(React.Component);
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-/*
-var options = [
-    {
-        id: "one",
-        text: "One",
-        disabled: false
-    },
-    {
-        id: "two",
-        text: "Two",
-        disabled: true
-    },
-    {
-        id: "three",
-        text: "Three",
-        disabled: false
-    }
-];
-
-<Selector
-    tabs={BOOLEAN}
-    options={options}
-    noBorder={BOOLEAN}
-    selectedID={CURRENT_OPTION_ID}
-    disabled={BOOLEAN}
-    select={optionID => this.changeValue(SOURCEOBJECT, FIELDNAME, optionID)}
-/>
-*/
-
-var Selector = function (_React$Component) {
-    _inherits(Selector, _React$Component);
-
-    function Selector() {
-        _classCallCheck(this, Selector);
-
-        return _possibleConstructorReturn(this, (Selector.__proto__ || Object.getPrototypeOf(Selector)).apply(this, arguments));
-    }
-
-    _createClass(Selector, [{
-        key: "render",
-        value: function render() {
-            var _this2 = this;
-
-            try {
-                var style = this.props.tabs ? "selector tabs" : "selector radio";
-                if (this.props.disabled) {
-                    style += " disabled";
-                }
-                if (this.props.noBorder) {
-                    style += " no-border";
-                }
-
-                var itemsPerRow = this.props.itemsPerRow ? this.props.itemsPerRow : this.props.options.length;
-                var rowCount = Math.ceil(this.props.options.length / itemsPerRow);
-                var rowContents = [];
-                for (var n = 0; n != rowCount; ++n) {
-                    rowContents.push([]);
-                }
-
-                this.props.options.forEach(function (option) {
-                    var index = _this2.props.options.indexOf(option);
-                    var rowIndex = Math.floor(index / itemsPerRow);
-                    var row = rowContents[rowIndex];
-                    row.push(React.createElement(SelectorOption, {
-                        key: option.id,
-                        option: option,
-                        selected: option.id === _this2.props.selectedID,
-                        count: itemsPerRow,
-                        select: function select(optionID) {
-                            return _this2.props.select(optionID);
-                        }
-                    }));
-                });
-
-                var rowSections = rowContents.map(function (row) {
-                    var index = rowContents.indexOf(row);
-                    return React.createElement(
-                        "div",
-                        { key: index },
-                        row
-                    );
-                });
-
-                return React.createElement(
-                    "div",
-                    { className: style },
-                    rowSections
-                );
-            } catch (ex) {
-                console.error(ex);
-                return null;
-            }
-        }
-    }]);
-
-    return Selector;
-}(React.Component);
-
-var SelectorOption = function (_React$Component2) {
-    _inherits(SelectorOption, _React$Component2);
-
-    function SelectorOption() {
-        _classCallCheck(this, SelectorOption);
-
-        return _possibleConstructorReturn(this, (SelectorOption.__proto__ || Object.getPrototypeOf(SelectorOption)).apply(this, arguments));
-    }
-
-    _createClass(SelectorOption, [{
-        key: "click",
-        value: function click(e) {
-            e.stopPropagation();
-            this.props.select(this.props.option.id);
-        }
-    }, {
-        key: "render",
-        value: function render() {
-            var _this4 = this;
-
-            try {
-                var width = "calc(((100% - 1px) / " + this.props.count + ") - 2px )";
-
-                var style = "option";
-                if (this.props.selected) {
-                    style += " selected";
-                }
-                if (this.props.disabled) {
-                    style += " disabled";
-                }
-
-                return React.createElement(
-                    "div",
-                    { key: this.props.option.id, className: style, style: { width: width }, title: this.props.option.text, onClick: function onClick(e) {
-                            return _this4.click(e);
-                        } },
-                    this.props.option.text
-                );
-            } catch (ex) {
-                console.error(ex);
-                return null;
-            }
-        }
-    }]);
-
-    return SelectorOption;
-}(React.Component);
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-/*
-<Spin
-    source={SOURCEOBJECT}
-    name="FIELDNAME"
-    label="LABEL"
-    factors={[1, 10, 100]}
-    disabled={BOOLEAN}
-    display={value => this.displayValue(value)}
-    nudgeValue={delta => this.nudgeValue(SOURCEOBJECT, FIELDNAME, delta)}
-/>
-*/
-
-var Spin = function (_React$Component) {
-    _inherits(Spin, _React$Component);
-
-    function Spin() {
-        _classCallCheck(this, Spin);
-
-        var _this = _possibleConstructorReturn(this, (Spin.__proto__ || Object.getPrototypeOf(Spin)).call(this));
-
-        _this.state = {
-            expanded: false,
-            factor: 1
-        };
-        return _this;
-    }
-
-    _createClass(Spin, [{
-        key: "toggleExpanded",
-        value: function toggleExpanded() {
-            this.setState({
-                expanded: !this.state.expanded
-            });
-        }
-    }, {
-        key: "click",
-        value: function click(e, delta) {
-            e.stopPropagation();
-            this.props.nudgeValue(delta * this.state.factor);
-        }
-    }, {
-        key: "render",
-        value: function render() {
-            var _this2 = this;
-
-            try {
-                var expander = null;
-                if (this.props.factors) {
-                    expander = React.createElement(
-                        "div",
-                        { className: "spin-expander", onClick: function onClick() {
-                                return _this2.toggleExpanded();
-                            } },
-                        "\u2022 \u2022 \u2022"
-                    );
-                }
-
-                var factorSelector = null;
-                if (this.props.factors && this.state.expanded) {
-                    var options = this.props.factors.map(function (factor) {
-                        return {
-                            id: factor,
-                            text: factor
-                        };
-                    });
-
-                    factorSelector = React.createElement(
-                        "div",
-                        { className: "factor-selector" },
-                        React.createElement(Selector, {
-                            options: options,
-                            noBorder: true,
-                            selectedID: this.state.factor,
-                            select: function select(optionID) {
-                                return _this2.setState({ factor: optionID });
-                            }
-                        })
-                    );
-                }
-
-                var style = "info-value";
-                var value = this.props.source[this.props.name];
-                if (value === 0) {
-                    style += " dimmed";
-                }
-
-                if (this.props.display) {
-                    value = this.props.display(value);
-                }
-
-                return React.createElement(
-                    "div",
-                    { className: this.props.disabled ? "spin disabled" : "spin" },
-                    React.createElement(
-                        "div",
-                        { className: "spin-button", onClick: function onClick(e) {
-                                return _this2.click(e, -1);
-                            } },
-                        React.createElement("img", { className: "image", src: "content/minus.svg" })
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "info" },
-                        React.createElement(
-                            "div",
-                            { className: "info-label" },
-                            this.props.label
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: style },
-                            value
-                        )
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "spin-button", onClick: function onClick(e) {
-                                return _this2.click(e, +1);
-                            } },
-                        React.createElement("img", { className: "image", src: "content/plus.svg" })
-                    ),
-                    expander,
-                    factorSelector
-                );
-            } catch (ex) {
-                console.error(ex);
-                return null;
-            }
-        }
-    }]);
-
-    return Spin;
 }(React.Component);

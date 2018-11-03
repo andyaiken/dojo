@@ -51,8 +51,8 @@
     .spin .spin-expander {
         text-align: center;
         cursor: pointer;
-        height: 10px;
-        line-height: 8px;
+        height: 15px;
+        line-height: 12px;
     }
 
         .spin .spin-expander:hover {

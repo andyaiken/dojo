@@ -5,7 +5,8 @@
 }
 
     .card.welcome {
-        width: 300px;
+        font-size: 15pt;
+        width: 600px;
         margin: 150px auto 0 auto;
         background-color: rgba(100, 150, 240, 0.1);
     }

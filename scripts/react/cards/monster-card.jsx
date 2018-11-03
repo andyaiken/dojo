@@ -210,7 +210,7 @@ class MonsterCard extends React.Component {
                                 source={this.props.combatant}
                                 name="initiative"
                                 label="initiative"
-                                factors={[1, 5]}
+                                factors={[1, 5, 10]}
                                 nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "initiative", delta)}
                             />
                         </div>
