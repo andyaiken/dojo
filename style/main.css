@@ -149,6 +149,7 @@ body,
         padding: 5px 0;
         background-color: white;
         border: 1px solid #C3C3C3;
+        border-left-width: 5px;
         cursor: pointer;
     }
 
@@ -214,6 +215,10 @@ body,
 
 .image.rotate {
     transform: rotate(-180deg);
+}
+
+.lowercase {
+    text-transform: lowercase;
 }
 
 .disabled {

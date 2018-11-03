@@ -2216,7 +2216,7 @@ var PCCard = function (_React$Component) {
                                 { className: "section centered" },
                                 React.createElement(
                                     "div",
-                                    null,
+                                    { className: "lowercase" },
                                     "level ",
                                     this.props.combatant.level,
                                     " ",
@@ -2392,7 +2392,7 @@ var PCCard = function (_React$Component) {
                             { className: "section centered" },
                             React.createElement(
                                 "div",
-                                null,
+                                { className: "lowercase" },
                                 "level ",
                                 this.props.combatant.level,
                                 " ",

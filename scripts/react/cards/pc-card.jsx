@@ -59,7 +59,7 @@ class PCCard extends React.Component {
                         <div style={{ display: this.state.showDetails ? "none" : "" }}>
                             <div className="divider"></div>
                             <div className="section centered">
-                                <div>level {this.props.combatant.level} {this.props.combatant.race || 'race'} {this.props.combatant.classes || 'class'}</div>
+                                <div className="lowercase">level {this.props.combatant.level} {this.props.combatant.race || 'race'} {this.props.combatant.classes || 'class'}</div>
                                 <div style={{ display: this.props.combatant.url ? "" : "none" }}>
                                     <a href={this.props.combatant.url} target="_blank">d&d beyond character sheet</a>
                                 </div>
@@ -140,7 +140,7 @@ class PCCard extends React.Component {
                         </div>
                         <div className="divider"></div>
                         <div className="section centered">
-                            <div>level {this.props.combatant.level} {this.props.combatant.race || 'race'} {this.props.combatant.classes || 'class'}</div>
+                            <div className="lowercase">level {this.props.combatant.level} {this.props.combatant.race || 'race'} {this.props.combatant.classes || 'class'}</div>
                             <div style={{ display: this.props.combatant.url ? "" : "none" }}>
                                 <a href={this.props.combatant.url} target="_blank">d&d beyond character sheet</a>
                             </div>
