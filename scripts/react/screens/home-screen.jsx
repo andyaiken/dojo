@@ -5,7 +5,7 @@ class HomeScreen extends React.Component {
                 <div className="home scrollable">
                     <InfoCard welcome={true} getContent={() =>
                         <div>
-                            <div className="section">welcome to <b>dojo</b></div>
+                            <div className="section centered">welcome to <b>dojo</b></div>
                             <div className="divider"></div>
                             <div className="section">
                                 <div>dojo is an app for dms of dungeons and dragons fifth edition</div>

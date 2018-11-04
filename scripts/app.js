@@ -7978,7 +7978,7 @@ var HomeScreen = function (_React$Component) {
                                 null,
                                 React.createElement(
                                     "div",
-                                    { className: "section" },
+                                    { className: "section centered" },
                                     "welcome to ",
                                     React.createElement(
                                         "b",
