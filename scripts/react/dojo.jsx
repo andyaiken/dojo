@@ -1186,6 +1186,7 @@ class Dojo extends React.Component {
             if (this.state.modal) {
                 var modalTitle = null;
                 var modalContent = null;
+                var modalScroll = true;
 
                 switch (this.state.modal.type) {
                     case "about":
@@ -1220,6 +1221,7 @@ class Dojo extends React.Component {
                                 copyTrait={(combatant, type) => this.copyTrait(combatant, type)}
                             />
                         );
+                        modalScroll = false;
                         break;
                 }
 
@@ -1230,7 +1232,7 @@ class Dojo extends React.Component {
                                 <div className="title">{modalTitle}</div>
                                 <img className="image" src="content/close-white.svg" onClick={() => this.closeModal()} />
                             </div>
-                            <div className="modal-content scrollable">
+                            <div className={modalScroll ? "modal-content scrollable" : "modal-content"}>
                                 {modalContent}
                             </div>
                         </div>

@@ -4644,6 +4644,7 @@ var Dojo = function (_React$Component) {
                 if (this.state.modal) {
                     var modalTitle = null;
                     var modalContent = null;
+                    var modalScroll = true;
 
                     switch (this.state.modal.type) {
                         case "about":
@@ -4688,6 +4689,7 @@ var Dojo = function (_React$Component) {
                                     return _this4.copyTrait(combatant, type);
                                 }
                             });
+                            modalScroll = false;
                             break;
                     }
 
@@ -4711,7 +4713,7 @@ var Dojo = function (_React$Component) {
                             ),
                             React.createElement(
                                 "div",
-                                { className: "modal-content scrollable" },
+                                { className: modalScroll ? "modal-content scrollable" : "modal-content" },
                                 modalContent
                             )
                         )
@@ -5574,7 +5576,8 @@ var MonsterEditorModal = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (MonsterEditorModal.__proto__ || Object.getPrototypeOf(MonsterEditorModal)).call(this));
 
         _this.state = {
-            page: 'overview'
+            page: 'overview',
+            showMonsters: false
         };
         return _this;
     }
@@ -5584,6 +5587,13 @@ var MonsterEditorModal = function (_React$Component) {
         value: function setPage(page) {
             this.setState({
                 page: page
+            });
+        }
+    }, {
+        key: 'toggleMonsters',
+        value: function toggleMonsters() {
+            this.setState({
+                showMonsters: !this.state.showMonsters
             });
         }
     }, {
@@ -5614,6 +5624,7 @@ var MonsterEditorModal = function (_React$Component) {
                 }];
 
                 var content = null;
+                var help = null;
                 switch (this.state.page) {
                     case 'overview':
                         var categories = ["aberration", "beast", "celestial", "construct", "dragon", "elemental", "fey", "fiend", "giant", "humanoid", "monstrosity", "ooze", "plant", "undead"];
@@ -5733,6 +5744,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     } })
                             )
                         );
+                        help = React.createElement('div', null);
                         break;
                     case 'abilities':
                         content = React.createElement(
@@ -5775,6 +5787,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     } })
                             )
                         );
+                        help = React.createElement('div', null);
                         break;
                     case 'combat':
                         content = React.createElement(
@@ -5859,6 +5872,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     } })
                             )
                         );
+                        help = React.createElement('div', null);
                         break;
                     case 'actions':
                         content = React.createElement(TraitsPanel, {
@@ -5874,28 +5888,15 @@ var MonsterEditorModal = function (_React$Component) {
                                 return _this2.props.changeTrait(trait, type, value);
                             }
                         });
+                        help = React.createElement('div', null);
                         break;
                 }
 
-                return React.createElement(
-                    'div',
-                    { className: 'row' },
-                    React.createElement(
+                var monsters = null;
+                if (this.state.showMonsters) {
+                    monsters = React.createElement(
                         'div',
-                        { className: 'columns small-8 medium-8 large-8' },
-                        React.createElement(Selector, {
-                            tabs: true,
-                            options: pages,
-                            selectedID: this.state.page,
-                            select: function select(optionID) {
-                                return _this2.setPage(optionID);
-                            }
-                        }),
-                        content
-                    ),
-                    React.createElement(
-                        'div',
-                        { className: 'columns small-4 medium-4 large-4' },
+                        { className: 'columns small-4 medium-4 large-4 scrollable' },
                         React.createElement(MonsterListPanel, {
                             monster: this.props.combatant,
                             library: this.props.library,
@@ -5904,7 +5905,35 @@ var MonsterEditorModal = function (_React$Component) {
                                 return _this2.copyTrait(trait);
                             }
                         })
-                    )
+                    );
+                }
+
+                return React.createElement(
+                    'div',
+                    { className: 'row', style: { height: "100%", margin: "0 -15px" } },
+                    React.createElement(
+                        'div',
+                        { className: this.state.showMonsters ? "columns small-8 medium-8 large-8 scrollable" : "columns small-12 medium-12 large-12 scrollable" },
+                        React.createElement(Selector, {
+                            tabs: true,
+                            options: pages,
+                            selectedID: this.state.page,
+                            select: function select(optionID) {
+                                return _this2.setPage(optionID);
+                            }
+                        }),
+                        content,
+                        React.createElement('div', { className: 'divider' }),
+                        React.createElement(Checkbox, {
+                            label: 'show similar monsters',
+                            checked: this.state.showMonsters,
+                            changeValue: function changeValue(value) {
+                                return _this2.toggleMonsters();
+                            }
+                        }),
+                        this.state.showMonsters ? help : null
+                    ),
+                    monsters
                 );
             } catch (e) {
                 console.error(e);
@@ -6838,7 +6867,7 @@ var MonsterListPanel = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "title" },
-                                    "match creatures"
+                                    "similar monsters"
                                 ),
                                 React.createElement("img", { className: this.state.showFilter ? "image rotate" : "image", src: "content/down-arrow.svg", onClick: function onClick() {
                                         return _this2.toggleFilter();

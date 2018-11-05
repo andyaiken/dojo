@@ -160,7 +160,7 @@ class MonsterListPanel extends React.Component {
                     <div className="section">
                         <div className="card">
                             <div className="heading">
-                                <div className="title">match creatures</div>
+                                <div className="title">similar monsters</div>
                                 <img className={this.state.showFilter ? "image rotate" : "image"} src="content/down-arrow.svg" onClick={() => this.toggleFilter()} />
                             </div>
                             <div className="card-content">

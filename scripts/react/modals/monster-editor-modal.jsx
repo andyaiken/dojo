@@ -2,13 +2,20 @@ class MonsterEditorModal extends React.Component {
     constructor() {
         super();
         this.state = {
-            page: 'overview'
+            page: 'overview',
+            showMonsters: false
         };
     }
 
     setPage(page) {
         this.setState({
             page: page
+        });
+    }
+
+    toggleMonsters() {
+        this.setState({
+            showMonsters: !this.state.showMonsters
         });
     }
 
@@ -40,6 +47,7 @@ class MonsterEditorModal extends React.Component {
             ];
 
             var content = null;
+            var help = null;
             switch (this.state.page) {
                 case 'overview':
                     var categories = ["aberration", "beast", "celestial", "construct", "dragon", "elemental", "fey", "fiend", "giant", "humanoid", "monstrosity", "ooze", "plant", "undead"];
@@ -89,6 +97,10 @@ class MonsterEditorModal extends React.Component {
                             </div>
                         </div>
                     );
+                    help = (
+                        <div>
+                        </div>
+                    );
                     break;
                 case 'abilities':
                     content = (
@@ -107,6 +119,10 @@ class MonsterEditorModal extends React.Component {
                                 <div className="subheading">skills</div>
                                 <input type="text" value={this.props.combatant.skills} onChange={event => this.props.changeValue(this.props.combatant, "skills", event.target.value)} />
                             </div>
+                        </div>
+                    );
+                    help = (
+                        <div>
                         </div>
                     );
                     break;
@@ -142,6 +158,10 @@ class MonsterEditorModal extends React.Component {
                             </div>
                         </div>
                     );
+                    help = (
+                        <div>
+                        </div>
+                    );
                     break;
                 case 'actions':
                     content = (
@@ -153,21 +173,17 @@ class MonsterEditorModal extends React.Component {
                             changeTrait={(trait, type, value) => this.props.changeTrait(trait, type, value)}
                         />
                     );
+                    help = (
+                        <div>
+                        </div>
+                    );
                     break;
             }
 
-            return (
-                <div className="row">
-                    <div className="columns small-8 medium-8 large-8">
-                        <Selector
-                            tabs={true}
-                            options={pages}
-                            selectedID={this.state.page}
-                            select={optionID => this.setPage(optionID)}
-                        />
-                        {content}
-                    </div>
-                    <div className="columns small-4 medium-4 large-4">
+            var monsters = null;
+            if (this.state.showMonsters) {
+                monsters = (
+                    <div className="columns small-4 medium-4 large-4 scrollable">
                         <MonsterListPanel
                             monster={this.props.combatant}
                             library={this.props.library}
@@ -175,6 +191,28 @@ class MonsterEditorModal extends React.Component {
                             copyTrait={trait => this.copyTrait(trait)}
                         />
                     </div>
+                );
+            }
+
+            return (
+                <div className="row" style={{ height: "100%", margin: "0 -15px" }}>
+                    <div className={this.state.showMonsters ? "columns small-8 medium-8 large-8 scrollable" : "columns small-12 medium-12 large-12 scrollable"}>
+                        <Selector
+                            tabs={true}
+                            options={pages}
+                            selectedID={this.state.page}
+                            select={optionID => this.setPage(optionID)}
+                        />
+                        {content}
+                        <div className="divider"></div>
+                        <Checkbox
+                            label="show similar monsters"
+                            checked={this.state.showMonsters}
+                            changeValue={value => this.toggleMonsters()}
+                        />
+                        {this.state.showMonsters ? help : null}
+                    </div>
+                    {monsters}
                 </div>
             );
         } catch (e) {
