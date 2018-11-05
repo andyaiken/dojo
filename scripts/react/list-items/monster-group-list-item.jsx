@@ -24,11 +24,9 @@ class MonsterGroupListItem extends React.Component {
                 monsters.push(<div key="empty" className="text">no monsters</div>);
             }
 
-            var style = this.props.selected ? "list-item selected" : "list-item";
-
             return (
                 <div className="group">
-                    <div className={style} onClick={() => this.props.setSelection(this.props.group)}>
+                    <div className={this.props.selected ? "list-item selected" : "list-item"} onClick={() => this.props.setSelection(this.props.group)}>
                         <div className="heading">{groupName}</div>
                         {monsters}
                     </div>

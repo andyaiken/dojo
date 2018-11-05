@@ -22,11 +22,9 @@ class EncounterListItem extends React.Component {
                 slots.push(<div key="empty" className="text">no monsters</div>);
             }
 
-            var style = this.props.selected ? "list-item selected" : "list-item";
-
             return (
                 <div className="group">
-                    <div className={style} onClick={() => this.props.setSelection(this.props.encounter)}>
+                    <div className={this.props.selected ? "list-item selected" : "list-item"} onClick={() => this.props.setSelection(this.props.encounter)}>
                         <div className="heading">{encounterName}</div>
                         {slots}
                     </div>

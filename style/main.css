@@ -14,6 +14,13 @@ body,
     overflow: hidden;
 }
 
+.dojo {
+    font-size: 12px;
+    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    background-color: white;
+    color: #404040;
+}
+
 .page-content {
     height: calc(100% - 110px);
     margin: 5px 0;
@@ -55,7 +62,7 @@ body,
 .divider {
     margin: 10px 20px;
     height: 0;
-    border-top: 1px solid #404040;
+    border-top: 1px solid #C3C3C3;
 }
 
 .group {
@@ -71,19 +78,11 @@ body,
         margin: 7px;
     }
 
-        .group .text.warning {
-            color: #B00000;
-            font-weight: 600;
-            border: 1px solid #500000;
-            padding: 5px;
-        }
-
 .list-item {
     margin: 3px 0;
     padding: 3px;
     cursor: pointer;
-    user-select: none;
-    border-left: 3px solid #404040;
+    border-left: 5px solid #404040;
 }
 
     .list-item.selected {
@@ -97,10 +96,13 @@ body,
     }
 
     .list-item .heading {
-        margin-left: -3px;
-        margin-right: -3px;
-        margin-top: -3px;
         padding-left: 8px;
+        margin-left: -3px;
+        margin-top: -3px;
+    }
+
+    .list-item .text {
+        margin: 7px;
     }
 
 .subheading {
@@ -146,6 +148,7 @@ body,
     }
 
     .section .ability-scores {
+        margin: 10px 0;
         padding: 5px 0;
         background-color: white;
         border: 1px solid #C3C3C3;
@@ -225,3 +228,34 @@ body,
     pointer-events: none;
     opacity: 0.5;
 }
+
+.vertical-center-outer {
+    display: table;
+    height: 100%;
+    width: 100%;
+}
+
+    .vertical-center-outer .vertical-center-middle {
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+        .vertical-center-outer .vertical-center-middle .vertical-center-inner {
+            margin: 0 auto;
+            width: 75%;
+        }
+
+.welcome-panel {
+    padding: 3px;
+    border-left: 5px solid #404040;
+}
+
+    .welcome-panel .heading {
+        padding-left: 8px;
+        margin-left: -3px;
+        margin-top: -3px;
+    }
+
+    .welcome-panel .text {
+        margin: 7px;
+    }

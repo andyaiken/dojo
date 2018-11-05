@@ -131,11 +131,9 @@ class MonsterCard extends React.Component {
                             <div className="section" style={{ display: this.props.combatant.speed !== "" ? "" : "none" }}>
                                 <b>speed</b> {this.props.combatant.speed}
                             </div>
-                            <div className="divider"></div>
                             <div className="section">
                                 <AbilityScorePanel combatant={this.props.combatant} />
                             </div>
-                            <div className="divider"></div>
                             <div className="section" style={{ display: this.props.combatant.savingThrows !== "" ? "" : "none" }}>
                                 <b>saving throws</b> {this.props.combatant.savingThrows}
                             </div>
@@ -174,7 +172,7 @@ class MonsterCard extends React.Component {
 
                 stats = (
                     <div className="stats">
-                        <div className="section">
+                        <div className="section centered">
                             <div><i>{this.description()}</i></div>
                         </div>
                         {slotSection}
@@ -251,7 +249,7 @@ class MonsterCard extends React.Component {
                         </div>
                         <div style={{ display: (this.state.showDetails || this.props.combatant.current) ? "" : "none" }}>
                             <div className="divider"></div>
-                            <div className="section">
+                            <div className="section centered">
                                 <div><i>{this.description()}</i></div>
                             </div>
                             <div className="section">
@@ -289,7 +287,7 @@ class MonsterCard extends React.Component {
                     stats = (
                         <div>
                             <div className="section">
-                                <div><i>{this.description()}</i></div>
+                                <div>{this.description()}</div>
                             </div>
                             <div className="section">
                                 <div><b>challenge</b> {challenge(this.props.combatant.challenge)} ({experience(this.props.combatant.challenge)} xp)</div>

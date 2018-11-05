@@ -6,6 +6,7 @@
 }
 
     .titlebar .app-name {
+        display: inline-block;
         padding: 4px 6px 8px 6px;
         margin: 0 5px;
         height: 30px;
@@ -14,7 +15,12 @@
         font-weight: 600;
         color: white;
         border-left: 3px solid white;
+        cursor: pointer;
     }
+
+        .titlebar .app-name:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
 
     .titlebar .action {
         position: absolute;

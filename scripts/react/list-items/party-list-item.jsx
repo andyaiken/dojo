@@ -22,11 +22,9 @@ class PartyListItem extends React.Component {
                 pcs.push(<div key="empty" className="text">no pcs</div>);
             }
 
-            var style = this.props.selected ? "list-item selected" : "list-item";
-
             return (
                 <div className="group">
-                    <div className={style} onClick={() => this.props.setSelection(this.props.party)}>
+                    <div className={this.props.selected ? "list-item selected" : "list-item"} onClick={() => this.props.setSelection(this.props.party)}>
                         <div className="heading">{partyName}</div>
                         {pcs}
                     </div>

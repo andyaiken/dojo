@@ -195,10 +195,10 @@ class CombatManagerScreen extends React.Component {
 
             return (
                 <div className="combat-manager row collapse">
-                    <div className="columns small-6 medium-4 large-2 scrollable">
+                    <div className="columns small-6 medium-4 large-3 scrollable">
                         {leftPaneContent}
                     </div>
-                    <div className="columns small-6 medium-8 large-10 scrollable">
+                    <div className="columns small-6 medium-8 large-9 scrollable">
                         {rightPaneContent}
                     </div>
                 </div>

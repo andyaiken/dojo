@@ -1243,6 +1243,7 @@ class Dojo extends React.Component {
                     <Titlebar
                         action={action}
                         blur={modal !== null}
+                        openHome={() => this.setView("home")}
                         openAbout={() => this.openAbout()}
                     />
                     <div className={(modal === null) ? "page-content" : "page-content blur"}>

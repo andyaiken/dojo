@@ -986,13 +986,11 @@ var MonsterCard = function (_React$Component) {
                                 " ",
                                 this.props.combatant.speed
                             ),
-                            React.createElement("div", { className: "divider" }),
                             React.createElement(
                                 "div",
                                 { className: "section" },
                                 React.createElement(AbilityScorePanel, { combatant: this.props.combatant })
                             ),
-                            React.createElement("div", { className: "divider" }),
                             React.createElement(
                                 "div",
                                 { className: "section", style: { display: this.props.combatant.savingThrows !== "" ? "" : "none" } },
@@ -1116,7 +1114,7 @@ var MonsterCard = function (_React$Component) {
                         { className: "stats" },
                         React.createElement(
                             "div",
-                            { className: "section" },
+                            { className: "section centered" },
                             React.createElement(
                                 "div",
                                 null,
@@ -1289,7 +1287,7 @@ var MonsterCard = function (_React$Component) {
                             React.createElement("div", { className: "divider" }),
                             React.createElement(
                                 "div",
-                                { className: "section" },
+                                { className: "section centered" },
                                 React.createElement(
                                     "div",
                                     null,
@@ -1401,11 +1399,7 @@ var MonsterCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     null,
-                                    React.createElement(
-                                        "i",
-                                        null,
-                                        this.description()
-                                    )
+                                    this.description()
                                 )
                             ),
                             React.createElement(
@@ -2230,7 +2224,7 @@ var PCCard = function (_React$Component) {
                                     React.createElement(
                                         "a",
                                         { href: this.props.combatant.url, target: "_blank" },
-                                        "d&d beyond character sheet"
+                                        "d&d beyond sheet"
                                     )
                                 )
                             )
@@ -2406,7 +2400,7 @@ var PCCard = function (_React$Component) {
                                 React.createElement(
                                     "a",
                                     { href: this.props.combatant.url, target: "_blank" },
-                                    "d&d beyond character sheet"
+                                    "d&d beyond sheet"
                                 )
                             )
                         ),
@@ -4728,6 +4722,9 @@ var Dojo = function (_React$Component) {
                     React.createElement(Titlebar, {
                         action: action,
                         blur: modal !== null,
+                        openHome: function openHome() {
+                            return _this4.setView("home");
+                        },
                         openAbout: function openAbout() {
                             return _this4.openAbout();
                         }
@@ -4787,14 +4784,12 @@ var CombatListItem = function (_React$Component) {
                     combatName = "unnamed combat";
                 }
 
-                var style = this.props.selected ? "list-item selected" : "list-item";
-
                 return React.createElement(
                     "div",
                     { className: "group" },
                     React.createElement(
                         "div",
-                        { className: style, onClick: function onClick() {
+                        { className: this.props.selected ? "list-item selected" : "list-item", onClick: function onClick() {
                                 return _this2.props.setSelection(_this2.props.combat);
                             } },
                         React.createElement(
@@ -4871,14 +4866,12 @@ var EncounterListItem = function (_React$Component) {
                     ));
                 }
 
-                var style = this.props.selected ? "list-item selected" : "list-item";
-
                 return React.createElement(
                     "div",
                     { className: "group" },
                     React.createElement(
                         "div",
-                        { className: style, onClick: function onClick() {
+                        { className: this.props.selected ? "list-item selected" : "list-item", onClick: function onClick() {
                                 return _this2.props.setSelection(_this2.props.encounter);
                             } },
                         React.createElement(
@@ -4953,14 +4946,12 @@ var MonsterGroupListItem = function (_React$Component) {
                     ));
                 }
 
-                var style = this.props.selected ? "list-item selected" : "list-item";
-
                 return React.createElement(
                     "div",
                     { className: "group" },
                     React.createElement(
                         "div",
-                        { className: style, onClick: function onClick() {
+                        { className: this.props.selected ? "list-item selected" : "list-item", onClick: function onClick() {
                                 return _this2.props.setSelection(_this2.props.group);
                             } },
                         React.createElement(
@@ -5033,14 +5024,12 @@ var PartyListItem = function (_React$Component) {
                     ));
                 }
 
-                var style = this.props.selected ? "list-item selected" : "list-item";
-
                 return React.createElement(
                     "div",
                     { className: "group" },
                     React.createElement(
                         "div",
-                        { className: style, onClick: function onClick() {
+                        { className: this.props.selected ? "list-item selected" : "list-item", onClick: function onClick() {
                                 return _this2.props.setSelection(_this2.props.party);
                             } },
                         React.createElement(
@@ -6988,7 +6977,9 @@ var Titlebar = function (_React$Component) {
                     { className: this.props.blur ? "titlebar blur" : "titlebar" },
                     React.createElement(
                         "div",
-                        { className: "app-name" },
+                        { className: "app-name", onClick: function onClick() {
+                                return _this2.props.openHome();
+                            } },
                         "dojo"
                     ),
                     actionSection,
@@ -7605,12 +7596,12 @@ var CombatManagerScreen = function (_React$Component) {
                     { className: "combat-manager row collapse" },
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-4 large-2 scrollable" },
+                        { className: "columns small-6 medium-4 large-3 scrollable" },
                         leftPaneContent
                     ),
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-8 large-10 scrollable" },
+                        { className: "columns small-6 medium-8 large-9 scrollable" },
                         rightPaneContent
                     )
                 );
@@ -7904,7 +7895,7 @@ var EncounterBuilderScreen = function (_React$Component) {
                     { className: "encounter-builder row collapse" },
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-4 large-2 scrollable" },
+                        { className: "columns small-6 medium-4 large-3 scrollable" },
                         help,
                         React.createElement(
                             "div",
@@ -7921,7 +7912,7 @@ var EncounterBuilderScreen = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-8 large-10 scrollable" },
+                        { className: "columns small-6 medium-8 large-9 scrollable" },
                         React.createElement(CardGroup, {
                             content: encounterCards,
                             heading: name,
@@ -7972,70 +7963,90 @@ var HomeScreen = function (_React$Component) {
                 return React.createElement(
                     "div",
                     { className: "home scrollable" },
-                    React.createElement(InfoCard, { welcome: true, getContent: function getContent() {
-                            return React.createElement(
+                    React.createElement(
+                        "div",
+                        { className: "vertical-center-outer" },
+                        React.createElement(
+                            "div",
+                            { className: "vertical-center-middle" },
+                            React.createElement(
                                 "div",
-                                null,
+                                { className: "vertical-center-inner" },
                                 React.createElement(
                                     "div",
-                                    { className: "section centered" },
-                                    "welcome to ",
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "dojo"
-                                    )
-                                ),
-                                React.createElement("div", { className: "divider" }),
-                                React.createElement(
-                                    "div",
-                                    { className: "section" },
+                                    { className: "welcome-panel" },
                                     React.createElement(
                                         "div",
-                                        null,
-                                        "dojo is an app for dms of dungeons and dragons fifth edition"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "section" },
-                                    React.createElement(
-                                        "div",
-                                        null,
-                                        "with dojo you can:",
+                                        { className: "heading" },
+                                        "welcome to ",
                                         React.createElement(
-                                            "ul",
+                                            "b",
+                                            null,
+                                            "dojo"
+                                        )
+                                    ),
+                                    React.createElement(
+                                        "div",
+                                        { className: "text" },
+                                        React.createElement(
+                                            "div",
                                             null,
                                             React.createElement(
-                                                "li",
+                                                "b",
                                                 null,
-                                                "build unique, challenging monsters"
+                                                "dojo"
                                             ),
-                                            React.createElement(
-                                                "li",
-                                                null,
-                                                "create encounters of just the right difficulty for your players"
-                                            ),
-                                            React.createElement(
-                                                "li",
-                                                null,
-                                                "run combat without the book-keeping"
-                                            )
+                                            " is an app for dms of dungeons and dragons fifth edition"
                                         )
-                                    )
-                                ),
-                                React.createElement("div", { className: "divider" }),
-                                React.createElement(
-                                    "div",
-                                    { className: "section" },
+                                    ),
                                     React.createElement(
                                         "div",
-                                        null,
-                                        "use the buttons at the bottom of the screen to access the app's features"
+                                        { className: "text" },
+                                        React.createElement(
+                                            "div",
+                                            null,
+                                            "with ",
+                                            React.createElement(
+                                                "b",
+                                                null,
+                                                "dojo"
+                                            ),
+                                            " you can:",
+                                            React.createElement(
+                                                "ul",
+                                                null,
+                                                React.createElement(
+                                                    "li",
+                                                    null,
+                                                    "build unique, challenging monsters"
+                                                ),
+                                                React.createElement(
+                                                    "li",
+                                                    null,
+                                                    "create encounters of just the right difficulty for your players"
+                                                ),
+                                                React.createElement(
+                                                    "li",
+                                                    null,
+                                                    "run combat without the book-keeping"
+                                                )
+                                            )
+                                        )
+                                    ),
+                                    React.createElement("div", { className: "divider" }),
+                                    React.createElement(
+                                        "div",
+                                        { className: "text" },
+                                        React.createElement(
+                                            "div",
+                                            null,
+                                            "use the buttons at the bottom of the screen to access the app's features"
+                                        )
                                     )
                                 )
-                            );
-                        } })
+                            )
+                        )
+                    )
                 );
             } catch (e) {
                 console.error(e);
@@ -8218,7 +8229,7 @@ var MonsterLibraryScreen = function (_React$Component) {
                     { className: "monster-library row collapse" },
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-4 large-2 scrollable" },
+                        { className: "columns small-6 medium-4 large-3 scrollable" },
                         help,
                         React.createElement(
                             "div",
@@ -8242,7 +8253,7 @@ var MonsterLibraryScreen = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-8 large-10 scrollable" },
+                        { className: "columns small-6 medium-8 large-9 scrollable" },
                         React.createElement(CardGroup, {
                             content: cards,
                             heading: name,
@@ -8375,7 +8386,7 @@ var PartiesScreen = function (_React$Component) {
                     { className: "parties row collapse" },
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-4 large-2 scrollable" },
+                        { className: "columns small-6 medium-4 large-3 scrollable" },
                         help,
                         React.createElement(
                             "div",
@@ -8392,7 +8403,7 @@ var PartiesScreen = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-8 large-10 scrollable" },
+                        { className: "columns small-6 medium-8 large-9 scrollable" },
                         React.createElement(CardGroup, {
                             content: cards,
                             heading: name,
