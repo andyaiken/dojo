@@ -295,16 +295,16 @@ class MonsterCard extends React.Component {
                                 <div><b>challenge</b> {challenge(this.props.combatant.challenge)} ({experience(this.props.combatant.challenge)} xp)</div>
                             </div>
                             <div className="section">
-                                <b>speed</b> {this.props.combatant.speed || "none"}
+                                <b>speed</b> {this.props.combatant.speed || "-"}
                             </div>
                             <div className="section">
-                                <b>senses</b> {this.props.combatant.senses || "none"}
+                                <b>senses</b> {this.props.combatant.senses || "-"}
                             </div>
                             <div className="section">
-                                <b>languages</b> {this.props.combatant.languages || "none"}
+                                <b>languages</b> {this.props.combatant.languages || "-"}
                             </div>
                             <div className="section">
-                                <b>equipment</b> {this.props.combatant.equipment || "none"}
+                                <b>equipment</b> {this.props.combatant.equipment || "-"}
                             </div>
                         </div>
                     );
@@ -316,10 +316,10 @@ class MonsterCard extends React.Component {
                                 <AbilityScorePanel combatant={this.props.combatant} />
                             </div>
                             <div className="section">
-                                <b>saving throws</b> {this.props.combatant.savingThrows || "none"}
+                                <b>saving throws</b> {this.props.combatant.savingThrows || "-"}
                             </div>
                             <div className="section">
-                                <b>skills</b> {this.props.combatant.skills || "none"}
+                                <b>skills</b> {this.props.combatant.skills || "-"}
                             </div>
                         </div>
                     );
@@ -334,16 +334,16 @@ class MonsterCard extends React.Component {
                                 <b>hp</b> {this.props.combatant.hitDice !== "" ? this.props.combatant.hpMax + " (" + this.props.combatant.hitDice + "d" + hitDieType(this.props.combatant.size) + ")" : this.props.combatant.hpMax}
                             </div>
                             <div className="section">
-                                <b>damage immunity</b> {this.props.combatant.damage.immune || "none"}
+                                <b>damage immunity</b> {this.props.combatant.damage.immune || "-"}
                             </div>
                             <div className="section">
-                                <b>damage resistance</b> {this.props.combatant.damage.resist || "none"}
+                                <b>damage resistance</b> {this.props.combatant.damage.resist || "-"}
                             </div>
                             <div className="section">
-                                <b>damage vulnerability</b> {this.props.combatant.damage.vulnerable || "none"}
+                                <b>damage vulnerability</b> {this.props.combatant.damage.vulnerable || "-"}
                             </div>
                             <div className="section">
-                                <b>condition immunities</b> {this.props.combatant.conditionImmunities || "none"}
+                                <b>condition immunities</b> {this.props.combatant.conditionImmunities || "-"}
                             </div>
                         </div>
                     );

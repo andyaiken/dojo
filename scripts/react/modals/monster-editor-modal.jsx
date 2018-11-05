@@ -2,14 +2,26 @@ class MonsterEditorModal extends React.Component {
     constructor() {
         super();
         this.state = {
-            page: 'overview',
-            showMonsters: false
+            page: "overview",
+            showMonsters: false,
+            showFilter: false,
+            helpSection: "speed",
+            filter: {
+                size: true,
+                type: true,
+                subtype: false,
+                alignment: false,
+                challenge: true,
+                text: ""
+            }
         };
     }
 
     setPage(page) {
+        var sections = this.getHelpOptionsForPage(page);
         this.setState({
-            page: page
+            page: page,
+            helpSection: sections[0]
         });
     }
 
@@ -19,10 +31,262 @@ class MonsterEditorModal extends React.Component {
         });
     }
 
+    toggleFilter() {
+        this.setState({
+            showFilter: !this.state.showFilter
+        });
+    }
+
+    setHelpSection(section) {
+        this.setState({
+            helpSection: section
+        });
+    }
+
+    toggleMatch(type) {
+        this.state.filter[type] = !this.state.filter[type];
+        this.setState({
+            filter: this.state.filter
+        });
+    }
+
+    setFilterText(text) {
+        this.state.filter.text = text;
+        this.setState({
+            filter: this.state.filter
+        });
+    }
+
+    getHelpOptionsForPage(page) {
+        switch (page) {
+            case "overview":
+                return ["speed", "senses", "languages", "equipment"];
+            case "abilities":
+                return ["ability scores", "saving throws", "skills"];
+            case "combat":
+                return ["armor class", "hit dice", "resistances", "vulnerabilities", "immunities", "conditions"];
+            case "actions":
+                return ["actions"];
+        }
+
+        return null;
+    }
+
+    getMonsters() {
+        var monsters = [];
+        this.props.library.forEach(group => {
+            group.monsters.forEach(monster => {
+                var match = true;
+
+                if (this.props.combatant.id === monster.id) {
+                    match = false;
+                }
+
+                if (this.state.filter.text && (monster.name.toLowerCase().indexOf(this.state.filter.text.toLowerCase()) === -1)) {
+                    match = false;
+                }
+
+                if (this.state.filter.size && (this.props.combatant.size !== monster.size)) {
+                    match = false;
+                }
+
+                if (this.state.filter.type && (this.props.combatant.category !== monster.category)) {
+                    match = false;
+                }
+
+                if (this.state.filter.subtype && (this.props.combatant.tag !== monster.tag)) {
+                    match = false;
+                }
+
+                if (this.state.filter.alignment && (this.props.combatant.alignment !== monster.alignment)) {
+                    match = false;
+                }
+
+                if (this.state.filter.challenge && (this.props.combatant.challenge !== monster.challenge)) {
+                    match = false;
+                }
+
+                if (match) {
+                    monsters.push(monster);
+                }
+            })
+        });
+
+        return monsters;
+    }
+
     copyTrait(trait) {
         var copy = JSON.parse(JSON.stringify(trait));
         copy.id = guid();
         this.props.copyTrait(this.props.combatant, copy);
+    }
+
+    getHelpSection(monsters) {
+        switch (this.state.helpSection) {
+            case "speed":
+                return this.getTextSection("speed", monsters);
+            case "senses":
+                return this.getTextSection("senses", monsters);
+            case "languages":
+                return this.getTextSection("languages", monsters);
+            case "equipment":
+                return this.getTextSection("equipment", monsters);
+            case "ability scores":
+                // TODO: Ability scores
+                return (
+                    null
+                );
+            case "saving throws":
+                return this.getTextSection("savingThrows", monsters);
+            case "skills":
+                return this.getTextSection("skills", monsters);
+            case "armor class":
+                // TODO: AC
+                return (
+                    null
+                );
+            case "hit dice":
+                // TODO: HD
+                return (
+                    null
+                );
+            case "resistances":
+                return this.getTextSection("damage.resist", monsters);
+            case "vulnerabilities":
+                return this.getTextSection("damage.vulnerable", monsters);
+            case "immunities":
+                return this.getTextSection("damage.immune", monsters);
+            case "conditions":
+                return this.getTextSection("conditionImmunities", monsters);
+            case "actions":
+                // TODO: Traits and actions
+                return (
+                    null
+                );
+        }
+
+        return null;
+    }
+
+    getTextSection(field, monsters) {
+        var values = monsters
+            .map(m => m[field])
+            .filter(v => !!v);
+        var distinct = [];
+        values.forEach(v => {
+            var current = distinct.find(d => d.value === v);
+            if (current) {
+                current.count += 1;
+            } else {
+                distinct.push({
+                    value: v,
+                    count: 1
+                });
+            }
+        });
+        sortByCount(distinct);
+        var valueSections = distinct.map(d => {
+            // TODO: Bar graph to show count
+            return (
+                <div className="row small-up-3 medium-up-3 large-up-3 value-list" key={distinct.indexOf(d)}>
+                    <div className="column">
+                        {d.value}
+                    </div>
+                    <div className="column">
+                        x{d.count}
+                    </div>
+                    <div className="column">
+                        <button onClick={() => this.props.changeValue(this.props.combatant, field, d.value)}>use this value</button>
+                    </div>
+                </div>
+            );
+        });
+
+        // TODO: Button to populate with a random value
+        return (
+            <div>
+                {valueSections}
+            </div>
+        );
+    }
+
+    getFilterCard() {
+        var filterContent = null;
+        if (this.state.showFilter) {
+            filterContent = (
+                <div>
+                    <input type="text" placeholder="filter" value={this.state.filter.text} onChange={event => this.setFilterText(event.target.value)} />
+                    <Checkbox
+                        label="match size"
+                        checked={this.state.filter.size}
+                        changeValue={value => this.toggleMatch("size")}
+                    />
+                    <Checkbox
+                        label="match type"
+                        checked={this.state.filter.type}
+                        changeValue={value => this.toggleMatch("type")}
+                    />
+                    <Checkbox
+                        label="match subtype"
+                        checked={this.state.filter.subtype}
+                        disabled={!this.props.combatant.tag}
+                        changeValue={value => this.toggleMatch("subtype")}
+                    />
+                    <Checkbox
+                        label="match alignment"
+                        checked={this.state.filter.alignment}
+                        disabled={!this.props.combatant.alignment}
+                        changeValue={value => this.toggleMatch("alignment")}
+                    />
+                    <Checkbox
+                        label="match challenge rating"
+                        checked={this.state.filter.challenge}
+                        changeValue={value => this.toggleMatch("challenge")}
+                    />
+                </div>
+            );
+        } else {
+            filterContent = (
+                <input type="text" placeholder="filter" value={this.state.filter.text} onChange={event => this.setFilterText(event.target.value)} />
+            );
+        }
+
+        return (
+            <div className="section">
+                <div className="card">
+                    <div className="heading">
+                        <div className="title">similar monsters</div>
+                        <img className={this.state.showFilter ? "image rotate" : "image"} src="content/down-arrow.svg" onClick={() => this.toggleFilter()} />
+                    </div>
+                    <div className="card-content">
+                        {filterContent}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    getMonsterCards(monsters) {
+        var monsters = sort(monsters);
+        var monsterCards = monsters.map(m => (
+            <div className="section" key={m.id}>
+                <MonsterCard
+                    combatant={m}
+                    mode={"template " + this.state.page}
+                    copyTrait={trait => this.copyTrait(trait)}
+                />
+            </div>
+        ));
+
+        if (monsterCards.length === 0) {
+            monsterCards.push(
+                <div className="section centered" key="none">
+                    no monsters to show
+                </div>
+            )
+        }
+
+        return monsterCards;
     }
 
     render() {
@@ -45,6 +309,11 @@ class MonsterEditorModal extends React.Component {
                     text: 'actions'
                 },
             ];
+
+            var monsters = [];
+            if (this.state.showMonsters) {
+                monsters = this.getMonsters();
+            }
 
             var content = null;
             var help = null;
@@ -97,10 +366,6 @@ class MonsterEditorModal extends React.Component {
                             </div>
                         </div>
                     );
-                    help = (
-                        <div>
-                        </div>
-                    );
                     break;
                 case 'abilities':
                     content = (
@@ -119,10 +384,6 @@ class MonsterEditorModal extends React.Component {
                                 <div className="subheading">skills</div>
                                 <input type="text" value={this.props.combatant.skills} onChange={event => this.props.changeValue(this.props.combatant, "skills", event.target.value)} />
                             </div>
-                        </div>
-                    );
-                    help = (
-                        <div>
                         </div>
                     );
                     break;
@@ -158,10 +419,6 @@ class MonsterEditorModal extends React.Component {
                             </div>
                         </div>
                     );
-                    help = (
-                        <div>
-                        </div>
-                    );
                     break;
                 case 'actions':
                     content = (
@@ -173,23 +430,45 @@ class MonsterEditorModal extends React.Component {
                             changeTrait={(trait, type, value) => this.props.changeTrait(trait, type, value)}
                         />
                     );
-                    help = (
-                        <div>
-                        </div>
-                    );
                     break;
             }
 
-            var monsters = null;
+            var help = null;
+            // TODO: Should only show the help section if there are > 1 monsters
             if (this.state.showMonsters) {
-                monsters = (
-                    <div className="columns small-4 medium-4 large-4 scrollable">
-                        <MonsterListPanel
-                            monster={this.props.combatant}
-                            library={this.props.library}
-                            mode={this.state.page}
-                            copyTrait={trait => this.copyTrait(trait)}
+                var selector = null;
+                if (this.getHelpOptionsForPage(this.state.page).length > 1) {
+                    var options = this.getHelpOptionsForPage(this.state.page).map(s => {
+                        return {
+                            id: s,
+                            text: s
+                        };
+                    });
+                    selector = (
+                        <Selector
+                            tabs={false}
+                            options={options}
+                            selectedID={this.state.helpSection}
+                            select={optionID => this.setHelpSection(optionID)}
                         />
+                    );
+                }
+
+                help = (
+                    <div>
+                        <div className="subheading">information from similar monsters</div>
+                        {selector}
+                        {this.getHelpSection(monsters)}
+                    </div>
+                );
+            }
+
+            var monsterList = null;
+            if (this.state.showMonsters) {
+                monsterList = (
+                    <div className="columns small-4 medium-4 large-4 scrollable">
+                        {this.getFilterCard()}
+                        {this.getMonsterCards(monsters)}
                     </div>
                 );
             }
@@ -210,9 +489,9 @@ class MonsterEditorModal extends React.Component {
                             checked={this.state.showMonsters}
                             changeValue={value => this.toggleMonsters()}
                         />
-                        {this.state.showMonsters ? help : null}
+                        {help}
                     </div>
-                    {monsters}
+                    {monsterList}
                 </div>
             );
         } catch (e) {

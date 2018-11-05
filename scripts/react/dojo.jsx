@@ -344,195 +344,199 @@ class Dojo extends React.Component {
         request.overrideMimeType("application/json");
         request.open('GET', 'data/monsters.json', true);
         request.onreadystatechange = () => {
-            if (request.readyState === 4 && request.status === "200") {
+            if (request.readyState === 4 && request.status === 200) {
                 var monsters = JSON.parse(request.responseText);
                 monsters.forEach(data => {
-                    if (data.name) {
-                        var monster = this.createMonster();
+                    try {
+                        if (data.name) {
+                            var monster = this.createMonster();
 
-                        monster.type = "monster";
-                        monster.name = data.name;
-                        monster.size = data.size.toLowerCase();
-                        monster.category = data.type;
-                        monster.tag = data.subtype;
-                        monster.alignment = data.alignment;
-                        monster.challenge = parseChallenge(data.challenge_rating);
-                        monster.ac = data.armor_class;
-                        monster.hp = data.hit_points;
-                        monster.hpMax = data.hit_points;
-                        monster.speed = data.speed;
-                        monster.senses = data.senses;
-                        monster.languages = data.languages;
+                            monster.type = "monster";
+                            monster.name = data.name;
+                            monster.size = data.size.toLowerCase();
+                            monster.category = data.type;
+                            monster.tag = data.subtype;
+                            monster.alignment = data.alignment;
+                            monster.challenge = parseChallenge(data.challenge_rating);
+                            monster.ac = data.armor_class;
+                            monster.hp = data.hit_points;
+                            monster.hpMax = data.hit_points;
+                            monster.speed = data.speed;
+                            monster.senses = data.senses;
+                            monster.languages = data.languages;
 
-                        var index = data.hit_dice.indexOf("d");
-                        monster.hitDice = parseInt(data.hit_dice.substring(0, index));
+                            var index = data.hit_dice.indexOf("d");
+                            monster.hitDice = parseInt(data.hit_dice.substring(0, index));
 
-                        monster.abilityScores.str = data.strength;
-                        monster.abilityScores.dex = data.dexterity;
-                        monster.abilityScores.con = data.constitution;
-                        monster.abilityScores.int = data.intelligence;
-                        monster.abilityScores.wis = data.wisdom;
-                        monster.abilityScores.cha = data.charisma;
+                            monster.abilityScores.str = data.strength;
+                            monster.abilityScores.dex = data.dexterity;
+                            monster.abilityScores.con = data.constitution;
+                            monster.abilityScores.int = data.intelligence;
+                            monster.abilityScores.wis = data.wisdom;
+                            monster.abilityScores.cha = data.charisma;
 
-                        monster.damage.resist = data.damage_resistances;
-                        monster.damage.vulnerable = data.damage_vulnerabilities;
-                        monster.damage.immune = data.damage_immunities;
-                        monster.conditionImmunities = data.condition_immunities;
+                            monster.damage.resist = data.damage_resistances;
+                            monster.damage.vulnerable = data.damage_vulnerabilities;
+                            monster.damage.immune = data.damage_immunities;
+                            monster.conditionImmunities = data.condition_immunities;
 
-                        var saves = [
-                            {
-                                field: "strength_save",
-                                text: "Strength"
-                            },
-                            {
-                                field: "dexterity_save",
-                                text: "Dexterity"
-                            },
-                            {
-                                field: "constitution_save",
-                                text: "Constitution"
-                            },
-                            {
-                                field: "intelligence_save",
-                                text: "Intelligence"
-                            },
-                            {
-                                field: "wisdom_save",
-                                text: "Wisdom"
-                            },
-                            {
-                                field: "charisma_save",
-                                text: "Charisma"
-                            }
-                        ];
-                        saves.forEach(save => {
-                            if (data[save.field]) {
-                                var str = save.text + " " + data[save.field];
-                                monster.savingThrows += monster.savingThrows === "" ? str : ", " + str;
-                            }
-                        });
-
-                        var skills = [
-                            {
-                                field: "acrobatics",
-                                text: "Acrobatics"
-                            },
-                            {
-                                field: "animal_handling",
-                                text: "Animal handling"
-                            },
-                            {
-                                field: "arcana",
-                                text: "Arcana"
-                            },
-                            {
-                                field: "athletics",
-                                text: "Athletics"
-                            },
-                            {
-                                field: "deception",
-                                text: "Deception"
-                            },
-                            {
-                                field: "history",
-                                text: "History"
-                            },
-                            {
-                                field: "insight",
-                                text: "Insight"
-                            },
-                            {
-                                field: "intimidation",
-                                text: "Intimidation"
-                            },
-                            {
-                                field: "investigation",
-                                text: "Investigation"
-                            },
-                            {
-                                field: "medicine",
-                                text: "Medicine"
-                            },
-                            {
-                                field: "nature",
-                                text: "Nature"
-                            },
-                            {
-                                field: "perception",
-                                text: "Perception"
-                            },
-                            {
-                                field: "performance",
-                                text: "Performance"
-                            },
-                            {
-                                field: "persuasion",
-                                text: "Persuasion"
-                            },
-                            {
-                                field: "religion",
-                                text: "Religion"
-                            },
-                            {
-                                field: "sleight_of_hand",
-                                text: "Sleight of hand"
-                            },
-                            {
-                                field: "stealth",
-                                text: "Stealth"
-                            },
-                            {
-                                field: "survival",
-                                text: "Survival"
-                            }
-                        ];
-                        skills.forEach(skill => {
-                            if (data[skill.field]) {
-                                var str = skill.text + " " + data[skill.field];
-                                monster.skills += monster.skills === "" ? str : ", " + str;
-                            }
-                        });
-
-                        if (data.special_abilities) {
-                            data.special_abilities.forEach(rawTrait => {
-                                var trait = this.buildTrait(rawTrait, "trait");
-                                monster.traits.push(trait);
+                            var saves = [
+                                {
+                                    field: "strength_save",
+                                    text: "Strength"
+                                },
+                                {
+                                    field: "dexterity_save",
+                                    text: "Dexterity"
+                                },
+                                {
+                                    field: "constitution_save",
+                                    text: "Constitution"
+                                },
+                                {
+                                    field: "intelligence_save",
+                                    text: "Intelligence"
+                                },
+                                {
+                                    field: "wisdom_save",
+                                    text: "Wisdom"
+                                },
+                                {
+                                    field: "charisma_save",
+                                    text: "Charisma"
+                                }
+                            ];
+                            saves.forEach(save => {
+                                if (data[save.field]) {
+                                    var str = save.text + " " + data[save.field];
+                                    monster.savingThrows += monster.savingThrows === "" ? str : ", " + str;
+                                }
                             });
-                        }
-                        if (data.actions) {
-                            data.actions.forEach(rawTrait => {
-                                var trait = this.buildTrait(rawTrait, "action");
-                                monster.traits.push(trait);
-                            });
-                        }
-                        if (data.legendary_actions) {
-                            data.legendary_actions.forEach(rawTrait => {
-                                var trait = this.buildTrait(rawTrait, "legendary");
-                                monster.traits.push(trait);
-                            });
-                        }
 
-                        var groupName = monster.tag;
-                        if (groupName === "") {
-                            groupName = monster.category;
-                        }
-                        if (groupName.indexOf("swarm") === 0) {
-                            groupName = "swarm";
-                        }
-                        if (groupName === "any race") {
-                            groupName = "npc";
-                        }
+                            var skills = [
+                                {
+                                    field: "acrobatics",
+                                    text: "Acrobatics"
+                                },
+                                {
+                                    field: "animal_handling",
+                                    text: "Animal handling"
+                                },
+                                {
+                                    field: "arcana",
+                                    text: "Arcana"
+                                },
+                                {
+                                    field: "athletics",
+                                    text: "Athletics"
+                                },
+                                {
+                                    field: "deception",
+                                    text: "Deception"
+                                },
+                                {
+                                    field: "history",
+                                    text: "History"
+                                },
+                                {
+                                    field: "insight",
+                                    text: "Insight"
+                                },
+                                {
+                                    field: "intimidation",
+                                    text: "Intimidation"
+                                },
+                                {
+                                    field: "investigation",
+                                    text: "Investigation"
+                                },
+                                {
+                                    field: "medicine",
+                                    text: "Medicine"
+                                },
+                                {
+                                    field: "nature",
+                                    text: "Nature"
+                                },
+                                {
+                                    field: "perception",
+                                    text: "Perception"
+                                },
+                                {
+                                    field: "performance",
+                                    text: "Performance"
+                                },
+                                {
+                                    field: "persuasion",
+                                    text: "Persuasion"
+                                },
+                                {
+                                    field: "religion",
+                                    text: "Religion"
+                                },
+                                {
+                                    field: "sleight_of_hand",
+                                    text: "Sleight of hand"
+                                },
+                                {
+                                    field: "stealth",
+                                    text: "Stealth"
+                                },
+                                {
+                                    field: "survival",
+                                    text: "Survival"
+                                }
+                            ];
+                            skills.forEach(skill => {
+                                if (data[skill.field]) {
+                                    var str = skill.text + " " + data[skill.field];
+                                    monster.skills += monster.skills === "" ? str : ", " + str;
+                                }
+                            });
 
-                        var group = this.getMonsterGroupByName(groupName);
-                        if (!group) {
-                            var group = {
-                                id: guid(),
-                                name: groupName,
-                                monsters: []
+                            if (data.special_abilities) {
+                                data.special_abilities.forEach(rawTrait => {
+                                    var trait = this.buildTrait(rawTrait, "trait");
+                                    monster.traits.push(trait);
+                                });
                             }
-                            this.state.library.push(group);
+                            if (data.actions) {
+                                data.actions.forEach(rawTrait => {
+                                    var trait = this.buildTrait(rawTrait, "action");
+                                    monster.traits.push(trait);
+                                });
+                            }
+                            if (data.legendary_actions) {
+                                data.legendary_actions.forEach(rawTrait => {
+                                    var trait = this.buildTrait(rawTrait, "legendary");
+                                    monster.traits.push(trait);
+                                });
+                            }
+
+                            var groupName = monster.tag;
+                            if (groupName === "") {
+                                groupName = monster.category;
+                            }
+                            if (groupName.indexOf("swarm") === 0) {
+                                groupName = "swarm";
+                            }
+                            if (groupName === "any race") {
+                                groupName = "npc";
+                            }
+
+                            var group = this.getMonsterGroupByName(groupName);
+                            if (!group) {
+                                var group = {
+                                    id: guid(),
+                                    name: groupName,
+                                    monsters: []
+                                }
+                                this.state.library.push(group);
+                            }
+                            group.monsters.push(monster);
                         }
-                        group.monsters.push(monster);
+                    } catch (e) {
+                        console.log(e);
                     }
                 });
 

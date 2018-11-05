@@ -63,6 +63,14 @@
             font-weight: 600;
         }
 
+        .modal .modal-content .value-list {
+            line-height: 38px;
+        }
+
+            .modal .modal-content .value-list:nth-child(odd) {
+                background-color: rgba(100, 150, 240, 0.1);
+            }
+
 .blur {
     -webkit-filter: blur(2px);
     -moz-filter: blur(2px);

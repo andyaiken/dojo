@@ -53,4 +53,20 @@ function sort(collection) {
         if (aName > bName) return 1;
         return 0;
     });
+    return collection;
+}
+
+function sortByCount(collection) {
+    collection.sort((a, b) => {
+        if (a.count < b.count) return 1;
+        if (a.count > b.count) return -1;
+
+        var aName = a.value.toLowerCase();
+        var bName = b.value.toLowerCase();
+        if (aName < bName) return -1;
+        if (aName > bName) return 1;
+
+        return 0;
+    });
+    return collection;
 }

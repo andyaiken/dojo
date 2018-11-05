@@ -1431,7 +1431,7 @@ var MonsterCard = function (_React$Component) {
                                     "speed"
                                 ),
                                 " ",
-                                this.props.combatant.speed || "none"
+                                this.props.combatant.speed || "-"
                             ),
                             React.createElement(
                                 "div",
@@ -1442,7 +1442,7 @@ var MonsterCard = function (_React$Component) {
                                     "senses"
                                 ),
                                 " ",
-                                this.props.combatant.senses || "none"
+                                this.props.combatant.senses || "-"
                             ),
                             React.createElement(
                                 "div",
@@ -1453,7 +1453,7 @@ var MonsterCard = function (_React$Component) {
                                     "languages"
                                 ),
                                 " ",
-                                this.props.combatant.languages || "none"
+                                this.props.combatant.languages || "-"
                             ),
                             React.createElement(
                                 "div",
@@ -1464,7 +1464,7 @@ var MonsterCard = function (_React$Component) {
                                     "equipment"
                                 ),
                                 " ",
-                                this.props.combatant.equipment || "none"
+                                this.props.combatant.equipment || "-"
                             )
                         );
                     }
@@ -1486,7 +1486,7 @@ var MonsterCard = function (_React$Component) {
                                     "saving throws"
                                 ),
                                 " ",
-                                this.props.combatant.savingThrows || "none"
+                                this.props.combatant.savingThrows || "-"
                             ),
                             React.createElement(
                                 "div",
@@ -1497,7 +1497,7 @@ var MonsterCard = function (_React$Component) {
                                     "skills"
                                 ),
                                 " ",
-                                this.props.combatant.skills || "none"
+                                this.props.combatant.skills || "-"
                             )
                         );
                     }
@@ -1536,7 +1536,7 @@ var MonsterCard = function (_React$Component) {
                                     "damage immunity"
                                 ),
                                 " ",
-                                this.props.combatant.damage.immune || "none"
+                                this.props.combatant.damage.immune || "-"
                             ),
                             React.createElement(
                                 "div",
@@ -1547,7 +1547,7 @@ var MonsterCard = function (_React$Component) {
                                     "damage resistance"
                                 ),
                                 " ",
-                                this.props.combatant.damage.resist || "none"
+                                this.props.combatant.damage.resist || "-"
                             ),
                             React.createElement(
                                 "div",
@@ -1558,7 +1558,7 @@ var MonsterCard = function (_React$Component) {
                                     "damage vulnerability"
                                 ),
                                 " ",
-                                this.props.combatant.damage.vulnerable || "none"
+                                this.props.combatant.damage.vulnerable || "-"
                             ),
                             React.createElement(
                                 "div",
@@ -1569,7 +1569,7 @@ var MonsterCard = function (_React$Component) {
                                     "condition immunities"
                                 ),
                                 " ",
-                                this.props.combatant.conditionImmunities || "none"
+                                this.props.combatant.conditionImmunities || "-"
                             )
                         );
                     }
@@ -2418,7 +2418,7 @@ var PCCard = function (_React$Component) {
                             React.createElement(
                                 "div",
                                 { className: "section" },
-                                this.props.combatant.languages || "none"
+                                this.props.combatant.languages || "-"
                             ),
                             React.createElement(
                                 "div",
@@ -3674,169 +3674,173 @@ var Dojo = function (_React$Component) {
             request.overrideMimeType("application/json");
             request.open('GET', 'data/monsters.json', true);
             request.onreadystatechange = function () {
-                if (request.readyState === 4 && request.status === "200") {
+                if (request.readyState === 4 && request.status === 200) {
                     var monsters = JSON.parse(request.responseText);
                     monsters.forEach(function (data) {
-                        if (data.name) {
-                            var monster = _this2.createMonster();
+                        try {
+                            if (data.name) {
+                                var monster = _this2.createMonster();
 
-                            monster.type = "monster";
-                            monster.name = data.name;
-                            monster.size = data.size.toLowerCase();
-                            monster.category = data.type;
-                            monster.tag = data.subtype;
-                            monster.alignment = data.alignment;
-                            monster.challenge = parseChallenge(data.challenge_rating);
-                            monster.ac = data.armor_class;
-                            monster.hp = data.hit_points;
-                            monster.hpMax = data.hit_points;
-                            monster.speed = data.speed;
-                            monster.senses = data.senses;
-                            monster.languages = data.languages;
+                                monster.type = "monster";
+                                monster.name = data.name;
+                                monster.size = data.size.toLowerCase();
+                                monster.category = data.type;
+                                monster.tag = data.subtype;
+                                monster.alignment = data.alignment;
+                                monster.challenge = parseChallenge(data.challenge_rating);
+                                monster.ac = data.armor_class;
+                                monster.hp = data.hit_points;
+                                monster.hpMax = data.hit_points;
+                                monster.speed = data.speed;
+                                monster.senses = data.senses;
+                                monster.languages = data.languages;
 
-                            var index = data.hit_dice.indexOf("d");
-                            monster.hitDice = parseInt(data.hit_dice.substring(0, index));
+                                var index = data.hit_dice.indexOf("d");
+                                monster.hitDice = parseInt(data.hit_dice.substring(0, index));
 
-                            monster.abilityScores.str = data.strength;
-                            monster.abilityScores.dex = data.dexterity;
-                            monster.abilityScores.con = data.constitution;
-                            monster.abilityScores.int = data.intelligence;
-                            monster.abilityScores.wis = data.wisdom;
-                            monster.abilityScores.cha = data.charisma;
+                                monster.abilityScores.str = data.strength;
+                                monster.abilityScores.dex = data.dexterity;
+                                monster.abilityScores.con = data.constitution;
+                                monster.abilityScores.int = data.intelligence;
+                                monster.abilityScores.wis = data.wisdom;
+                                monster.abilityScores.cha = data.charisma;
 
-                            monster.damage.resist = data.damage_resistances;
-                            monster.damage.vulnerable = data.damage_vulnerabilities;
-                            monster.damage.immune = data.damage_immunities;
-                            monster.conditionImmunities = data.condition_immunities;
+                                monster.damage.resist = data.damage_resistances;
+                                monster.damage.vulnerable = data.damage_vulnerabilities;
+                                monster.damage.immune = data.damage_immunities;
+                                monster.conditionImmunities = data.condition_immunities;
 
-                            var saves = [{
-                                field: "strength_save",
-                                text: "Strength"
-                            }, {
-                                field: "dexterity_save",
-                                text: "Dexterity"
-                            }, {
-                                field: "constitution_save",
-                                text: "Constitution"
-                            }, {
-                                field: "intelligence_save",
-                                text: "Intelligence"
-                            }, {
-                                field: "wisdom_save",
-                                text: "Wisdom"
-                            }, {
-                                field: "charisma_save",
-                                text: "Charisma"
-                            }];
-                            saves.forEach(function (save) {
-                                if (data[save.field]) {
-                                    var str = save.text + " " + data[save.field];
-                                    monster.savingThrows += monster.savingThrows === "" ? str : ", " + str;
+                                var saves = [{
+                                    field: "strength_save",
+                                    text: "Strength"
+                                }, {
+                                    field: "dexterity_save",
+                                    text: "Dexterity"
+                                }, {
+                                    field: "constitution_save",
+                                    text: "Constitution"
+                                }, {
+                                    field: "intelligence_save",
+                                    text: "Intelligence"
+                                }, {
+                                    field: "wisdom_save",
+                                    text: "Wisdom"
+                                }, {
+                                    field: "charisma_save",
+                                    text: "Charisma"
+                                }];
+                                saves.forEach(function (save) {
+                                    if (data[save.field]) {
+                                        var str = save.text + " " + data[save.field];
+                                        monster.savingThrows += monster.savingThrows === "" ? str : ", " + str;
+                                    }
+                                });
+
+                                var skills = [{
+                                    field: "acrobatics",
+                                    text: "Acrobatics"
+                                }, {
+                                    field: "animal_handling",
+                                    text: "Animal handling"
+                                }, {
+                                    field: "arcana",
+                                    text: "Arcana"
+                                }, {
+                                    field: "athletics",
+                                    text: "Athletics"
+                                }, {
+                                    field: "deception",
+                                    text: "Deception"
+                                }, {
+                                    field: "history",
+                                    text: "History"
+                                }, {
+                                    field: "insight",
+                                    text: "Insight"
+                                }, {
+                                    field: "intimidation",
+                                    text: "Intimidation"
+                                }, {
+                                    field: "investigation",
+                                    text: "Investigation"
+                                }, {
+                                    field: "medicine",
+                                    text: "Medicine"
+                                }, {
+                                    field: "nature",
+                                    text: "Nature"
+                                }, {
+                                    field: "perception",
+                                    text: "Perception"
+                                }, {
+                                    field: "performance",
+                                    text: "Performance"
+                                }, {
+                                    field: "persuasion",
+                                    text: "Persuasion"
+                                }, {
+                                    field: "religion",
+                                    text: "Religion"
+                                }, {
+                                    field: "sleight_of_hand",
+                                    text: "Sleight of hand"
+                                }, {
+                                    field: "stealth",
+                                    text: "Stealth"
+                                }, {
+                                    field: "survival",
+                                    text: "Survival"
+                                }];
+                                skills.forEach(function (skill) {
+                                    if (data[skill.field]) {
+                                        var str = skill.text + " " + data[skill.field];
+                                        monster.skills += monster.skills === "" ? str : ", " + str;
+                                    }
+                                });
+
+                                if (data.special_abilities) {
+                                    data.special_abilities.forEach(function (rawTrait) {
+                                        var trait = _this2.buildTrait(rawTrait, "trait");
+                                        monster.traits.push(trait);
+                                    });
                                 }
-                            });
-
-                            var skills = [{
-                                field: "acrobatics",
-                                text: "Acrobatics"
-                            }, {
-                                field: "animal_handling",
-                                text: "Animal handling"
-                            }, {
-                                field: "arcana",
-                                text: "Arcana"
-                            }, {
-                                field: "athletics",
-                                text: "Athletics"
-                            }, {
-                                field: "deception",
-                                text: "Deception"
-                            }, {
-                                field: "history",
-                                text: "History"
-                            }, {
-                                field: "insight",
-                                text: "Insight"
-                            }, {
-                                field: "intimidation",
-                                text: "Intimidation"
-                            }, {
-                                field: "investigation",
-                                text: "Investigation"
-                            }, {
-                                field: "medicine",
-                                text: "Medicine"
-                            }, {
-                                field: "nature",
-                                text: "Nature"
-                            }, {
-                                field: "perception",
-                                text: "Perception"
-                            }, {
-                                field: "performance",
-                                text: "Performance"
-                            }, {
-                                field: "persuasion",
-                                text: "Persuasion"
-                            }, {
-                                field: "religion",
-                                text: "Religion"
-                            }, {
-                                field: "sleight_of_hand",
-                                text: "Sleight of hand"
-                            }, {
-                                field: "stealth",
-                                text: "Stealth"
-                            }, {
-                                field: "survival",
-                                text: "Survival"
-                            }];
-                            skills.forEach(function (skill) {
-                                if (data[skill.field]) {
-                                    var str = skill.text + " " + data[skill.field];
-                                    monster.skills += monster.skills === "" ? str : ", " + str;
+                                if (data.actions) {
+                                    data.actions.forEach(function (rawTrait) {
+                                        var trait = _this2.buildTrait(rawTrait, "action");
+                                        monster.traits.push(trait);
+                                    });
                                 }
-                            });
+                                if (data.legendary_actions) {
+                                    data.legendary_actions.forEach(function (rawTrait) {
+                                        var trait = _this2.buildTrait(rawTrait, "legendary");
+                                        monster.traits.push(trait);
+                                    });
+                                }
 
-                            if (data.special_abilities) {
-                                data.special_abilities.forEach(function (rawTrait) {
-                                    var trait = _this2.buildTrait(rawTrait, "trait");
-                                    monster.traits.push(trait);
-                                });
-                            }
-                            if (data.actions) {
-                                data.actions.forEach(function (rawTrait) {
-                                    var trait = _this2.buildTrait(rawTrait, "action");
-                                    monster.traits.push(trait);
-                                });
-                            }
-                            if (data.legendary_actions) {
-                                data.legendary_actions.forEach(function (rawTrait) {
-                                    var trait = _this2.buildTrait(rawTrait, "legendary");
-                                    monster.traits.push(trait);
-                                });
-                            }
+                                var groupName = monster.tag;
+                                if (groupName === "") {
+                                    groupName = monster.category;
+                                }
+                                if (groupName.indexOf("swarm") === 0) {
+                                    groupName = "swarm";
+                                }
+                                if (groupName === "any race") {
+                                    groupName = "npc";
+                                }
 
-                            var groupName = monster.tag;
-                            if (groupName === "") {
-                                groupName = monster.category;
+                                var group = _this2.getMonsterGroupByName(groupName);
+                                if (!group) {
+                                    var group = {
+                                        id: guid(),
+                                        name: groupName,
+                                        monsters: []
+                                    };
+                                    _this2.state.library.push(group);
+                                }
+                                group.monsters.push(monster);
                             }
-                            if (groupName.indexOf("swarm") === 0) {
-                                groupName = "swarm";
-                            }
-                            if (groupName === "any race") {
-                                groupName = "npc";
-                            }
-
-                            var group = _this2.getMonsterGroupByName(groupName);
-                            if (!group) {
-                                var group = {
-                                    id: guid(),
-                                    name: groupName,
-                                    monsters: []
-                                };
-                                _this2.state.library.push(group);
-                            }
-                            group.monsters.push(monster);
+                        } catch (e) {
+                            console.log(e);
                         }
                     });
 
@@ -5557,7 +5561,7 @@ var DemographicsModal = function (_React$Component) {
 
     return DemographicsModal;
 }(React.Component);
-'use strict';
+"use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -5576,37 +5580,356 @@ var MonsterEditorModal = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (MonsterEditorModal.__proto__ || Object.getPrototypeOf(MonsterEditorModal)).call(this));
 
         _this.state = {
-            page: 'overview',
-            showMonsters: false
+            page: "overview",
+            showMonsters: false,
+            showFilter: false,
+            helpSection: "speed",
+            filter: {
+                size: true,
+                type: true,
+                subtype: false,
+                alignment: false,
+                challenge: true,
+                text: ""
+            }
         };
         return _this;
     }
 
     _createClass(MonsterEditorModal, [{
-        key: 'setPage',
+        key: "setPage",
         value: function setPage(page) {
+            var sections = this.getHelpOptionsForPage(page);
             this.setState({
-                page: page
+                page: page,
+                helpSection: sections[0]
             });
         }
     }, {
-        key: 'toggleMonsters',
+        key: "toggleMonsters",
         value: function toggleMonsters() {
             this.setState({
                 showMonsters: !this.state.showMonsters
             });
         }
     }, {
-        key: 'copyTrait',
+        key: "toggleFilter",
+        value: function toggleFilter() {
+            this.setState({
+                showFilter: !this.state.showFilter
+            });
+        }
+    }, {
+        key: "setHelpSection",
+        value: function setHelpSection(section) {
+            this.setState({
+                helpSection: section
+            });
+        }
+    }, {
+        key: "toggleMatch",
+        value: function toggleMatch(type) {
+            this.state.filter[type] = !this.state.filter[type];
+            this.setState({
+                filter: this.state.filter
+            });
+        }
+    }, {
+        key: "setFilterText",
+        value: function setFilterText(text) {
+            this.state.filter.text = text;
+            this.setState({
+                filter: this.state.filter
+            });
+        }
+    }, {
+        key: "getHelpOptionsForPage",
+        value: function getHelpOptionsForPage(page) {
+            switch (page) {
+                case "overview":
+                    return ["speed", "senses", "languages", "equipment"];
+                case "abilities":
+                    return ["ability scores", "saving throws", "skills"];
+                case "combat":
+                    return ["armor class", "hit dice", "resistances", "vulnerabilities", "immunities", "conditions"];
+                case "actions":
+                    return ["actions"];
+            }
+
+            return null;
+        }
+    }, {
+        key: "getMonsters",
+        value: function getMonsters() {
+            var _this2 = this;
+
+            var monsters = [];
+            this.props.library.forEach(function (group) {
+                group.monsters.forEach(function (monster) {
+                    var match = true;
+
+                    if (_this2.props.combatant.id === monster.id) {
+                        match = false;
+                    }
+
+                    if (_this2.state.filter.text && monster.name.toLowerCase().indexOf(_this2.state.filter.text.toLowerCase()) === -1) {
+                        match = false;
+                    }
+
+                    if (_this2.state.filter.size && _this2.props.combatant.size !== monster.size) {
+                        match = false;
+                    }
+
+                    if (_this2.state.filter.type && _this2.props.combatant.category !== monster.category) {
+                        match = false;
+                    }
+
+                    if (_this2.state.filter.subtype && _this2.props.combatant.tag !== monster.tag) {
+                        match = false;
+                    }
+
+                    if (_this2.state.filter.alignment && _this2.props.combatant.alignment !== monster.alignment) {
+                        match = false;
+                    }
+
+                    if (_this2.state.filter.challenge && _this2.props.combatant.challenge !== monster.challenge) {
+                        match = false;
+                    }
+
+                    if (match) {
+                        monsters.push(monster);
+                    }
+                });
+            });
+
+            return monsters;
+        }
+    }, {
+        key: "copyTrait",
         value: function copyTrait(trait) {
             var copy = JSON.parse(JSON.stringify(trait));
             copy.id = guid();
             this.props.copyTrait(this.props.combatant, copy);
         }
     }, {
-        key: 'render',
+        key: "getHelpSection",
+        value: function getHelpSection(monsters) {
+            switch (this.state.helpSection) {
+                case "speed":
+                    return this.getTextSection("speed", monsters);
+                case "senses":
+                    return this.getTextSection("senses", monsters);
+                case "languages":
+                    return this.getTextSection("languages", monsters);
+                case "equipment":
+                    return this.getTextSection("equipment", monsters);
+                case "ability scores":
+                    // TODO: Ability scores
+                    return null;
+                case "saving throws":
+                    return this.getTextSection("savingThrows", monsters);
+                case "skills":
+                    return this.getTextSection("skills", monsters);
+                case "armor class":
+                    // TODO: AC
+                    return null;
+                case "hit dice":
+                    // TODO: HD
+                    return null;
+                case "resistances":
+                    return this.getTextSection("damage.resist", monsters);
+                case "vulnerabilities":
+                    return this.getTextSection("damage.vulnerable", monsters);
+                case "immunities":
+                    return this.getTextSection("damage.immune", monsters);
+                case "conditions":
+                    return this.getTextSection("conditionImmunities", monsters);
+                case "actions":
+                    // TODO: Traits and actions
+                    return null;
+            }
+
+            return null;
+        }
+    }, {
+        key: "getTextSection",
+        value: function getTextSection(field, monsters) {
+            var _this3 = this;
+
+            var values = monsters.map(function (m) {
+                return m[field];
+            }).filter(function (v) {
+                return !!v;
+            });
+            var distinct = [];
+            values.forEach(function (v) {
+                var current = distinct.find(function (d) {
+                    return d.value === v;
+                });
+                if (current) {
+                    current.count += 1;
+                } else {
+                    distinct.push({
+                        value: v,
+                        count: 1
+                    });
+                }
+            });
+            sortByCount(distinct);
+            var valueSections = distinct.map(function (d) {
+                // TODO: Bar graph to show count
+                return React.createElement(
+                    "div",
+                    { className: "row small-up-3 medium-up-3 large-up-3 value-list", key: distinct.indexOf(d) },
+                    React.createElement(
+                        "div",
+                        { className: "column" },
+                        d.value
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "column" },
+                        "x",
+                        d.count
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "column" },
+                        React.createElement(
+                            "button",
+                            { onClick: function onClick() {
+                                    return _this3.props.changeValue(_this3.props.combatant, field, d.value);
+                                } },
+                            "use this value"
+                        )
+                    )
+                );
+            });
+
+            // TODO: Button to populate with a random value
+            return React.createElement(
+                "div",
+                null,
+                valueSections
+            );
+        }
+    }, {
+        key: "getFilterCard",
+        value: function getFilterCard() {
+            var _this4 = this;
+
+            var filterContent = null;
+            if (this.state.showFilter) {
+                filterContent = React.createElement(
+                    "div",
+                    null,
+                    React.createElement("input", { type: "text", placeholder: "filter", value: this.state.filter.text, onChange: function onChange(event) {
+                            return _this4.setFilterText(event.target.value);
+                        } }),
+                    React.createElement(Checkbox, {
+                        label: "match size",
+                        checked: this.state.filter.size,
+                        changeValue: function changeValue(value) {
+                            return _this4.toggleMatch("size");
+                        }
+                    }),
+                    React.createElement(Checkbox, {
+                        label: "match type",
+                        checked: this.state.filter.type,
+                        changeValue: function changeValue(value) {
+                            return _this4.toggleMatch("type");
+                        }
+                    }),
+                    React.createElement(Checkbox, {
+                        label: "match subtype",
+                        checked: this.state.filter.subtype,
+                        disabled: !this.props.combatant.tag,
+                        changeValue: function changeValue(value) {
+                            return _this4.toggleMatch("subtype");
+                        }
+                    }),
+                    React.createElement(Checkbox, {
+                        label: "match alignment",
+                        checked: this.state.filter.alignment,
+                        disabled: !this.props.combatant.alignment,
+                        changeValue: function changeValue(value) {
+                            return _this4.toggleMatch("alignment");
+                        }
+                    }),
+                    React.createElement(Checkbox, {
+                        label: "match challenge rating",
+                        checked: this.state.filter.challenge,
+                        changeValue: function changeValue(value) {
+                            return _this4.toggleMatch("challenge");
+                        }
+                    })
+                );
+            } else {
+                filterContent = React.createElement("input", { type: "text", placeholder: "filter", value: this.state.filter.text, onChange: function onChange(event) {
+                        return _this4.setFilterText(event.target.value);
+                    } });
+            }
+
+            return React.createElement(
+                "div",
+                { className: "section" },
+                React.createElement(
+                    "div",
+                    { className: "card" },
+                    React.createElement(
+                        "div",
+                        { className: "heading" },
+                        React.createElement(
+                            "div",
+                            { className: "title" },
+                            "similar monsters"
+                        ),
+                        React.createElement("img", { className: this.state.showFilter ? "image rotate" : "image", src: "content/down-arrow.svg", onClick: function onClick() {
+                                return _this4.toggleFilter();
+                            } })
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "card-content" },
+                        filterContent
+                    )
+                )
+            );
+        }
+    }, {
+        key: "getMonsterCards",
+        value: function getMonsterCards(monsters) {
+            var _this5 = this;
+
+            var monsters = sort(monsters);
+            var monsterCards = monsters.map(function (m) {
+                return React.createElement(
+                    "div",
+                    { className: "section", key: m.id },
+                    React.createElement(MonsterCard, {
+                        combatant: m,
+                        mode: "template " + _this5.state.page,
+                        copyTrait: function copyTrait(trait) {
+                            return _this5.copyTrait(trait);
+                        }
+                    })
+                );
+            });
+
+            if (monsterCards.length === 0) {
+                monsterCards.push(React.createElement(
+                    "div",
+                    { className: "section centered", key: "none" },
+                    "no monsters to show"
+                ));
+            }
+
+            return monsterCards;
+        }
+    }, {
+        key: "render",
         value: function render() {
-            var _this2 = this;
+            var _this6 = this;
 
             try {
                 var pages = [{
@@ -5623,6 +5946,11 @@ var MonsterEditorModal = function (_React$Component) {
                     text: 'actions'
                 }];
 
+                var monsters = [];
+                if (this.state.showMonsters) {
+                    monsters = this.getMonsters();
+                }
+
                 var content = null;
                 var help = null;
                 switch (this.state.page) {
@@ -5638,302 +5966,326 @@ var MonsterEditorModal = function (_React$Component) {
                         });
 
                         content = React.createElement(
-                            'div',
-                            { className: 'row' },
+                            "div",
+                            { className: "row" },
                             React.createElement(
-                                'div',
-                                { className: 'columns small-6 medium-6 large-6' },
+                                "div",
+                                { className: "columns small-6 medium-6 large-6" },
                                 React.createElement(
-                                    'div',
-                                    { className: 'subheading' },
-                                    'name'
+                                    "div",
+                                    { className: "subheading" },
+                                    "name"
                                 ),
-                                React.createElement('input', { type: 'text', value: this.props.combatant.name, onChange: function onChange(event) {
-                                        return _this2.props.changeValue(_this2.props.combatant, "name", event.target.value);
+                                React.createElement("input", { type: "text", value: this.props.combatant.name, onChange: function onChange(event) {
+                                        return _this6.props.changeValue(_this6.props.combatant, "name", event.target.value);
                                     } }),
                                 React.createElement(
-                                    'div',
-                                    { className: 'subheading' },
-                                    'size'
+                                    "div",
+                                    { className: "subheading" },
+                                    "size"
                                 ),
                                 React.createElement(Dropdown, {
                                     options: sizeOptions,
                                     selectedID: this.props.combatant.size,
                                     select: function select(optionID) {
-                                        return _this2.props.changeTrait(_this2.props.combatant, "size", optionID);
+                                        return _this6.props.changeTrait(_this6.props.combatant, "size", optionID);
                                     }
                                 }),
                                 React.createElement(
-                                    'div',
-                                    { className: 'subheading' },
-                                    'type'
+                                    "div",
+                                    { className: "subheading" },
+                                    "type"
                                 ),
                                 React.createElement(Dropdown, {
                                     options: catOptions,
                                     selectedID: this.props.combatant.category,
                                     select: function select(optionID) {
-                                        return _this2.props.changeTrait(_this2.props.combatant, "category", optionID);
+                                        return _this6.props.changeTrait(_this6.props.combatant, "category", optionID);
                                     }
                                 }),
                                 React.createElement(
-                                    'div',
-                                    { className: 'subheading' },
-                                    'subtype'
+                                    "div",
+                                    { className: "subheading" },
+                                    "subtype"
                                 ),
-                                React.createElement('input', { type: 'text', value: this.props.combatant.tag, onChange: function onChange(event) {
-                                        return _this2.props.changeValue(_this2.props.combatant, "tag", event.target.value);
+                                React.createElement("input", { type: "text", value: this.props.combatant.tag, onChange: function onChange(event) {
+                                        return _this6.props.changeValue(_this6.props.combatant, "tag", event.target.value);
                                     } }),
                                 React.createElement(
-                                    'div',
-                                    { className: 'subheading' },
-                                    'alignment'
+                                    "div",
+                                    { className: "subheading" },
+                                    "alignment"
                                 ),
-                                React.createElement('input', { type: 'text', value: this.props.combatant.alignment, onChange: function onChange(event) {
-                                        return _this2.props.changeValue(_this2.props.combatant, "alignment", event.target.value);
+                                React.createElement("input", { type: "text", value: this.props.combatant.alignment, onChange: function onChange(event) {
+                                        return _this6.props.changeValue(_this6.props.combatant, "alignment", event.target.value);
                                     } })
                             ),
                             React.createElement(
-                                'div',
-                                { className: 'columns small-6 medium-6 large-6' },
+                                "div",
+                                { className: "columns small-6 medium-6 large-6" },
                                 React.createElement(
-                                    'div',
-                                    { className: 'subheading' },
-                                    'challenge rating'
+                                    "div",
+                                    { className: "subheading" },
+                                    "challenge rating"
                                 ),
                                 React.createElement(Spin, {
                                     source: this.props.combatant,
-                                    name: 'challenge',
+                                    name: "challenge",
                                     display: function display(value) {
                                         return challenge(value);
                                     },
                                     nudgeValue: function nudgeValue(delta) {
-                                        return _this2.props.nudgeValue(_this2.props.combatant, "challenge", delta);
+                                        return _this6.props.nudgeValue(_this6.props.combatant, "challenge", delta);
                                     }
                                 }),
                                 React.createElement(
-                                    'div',
-                                    { className: 'subheading' },
-                                    'speed'
+                                    "div",
+                                    { className: "subheading" },
+                                    "speed"
                                 ),
-                                React.createElement('input', { type: 'text', value: this.props.combatant.speed, onChange: function onChange(event) {
-                                        return _this2.props.changeValue(_this2.props.combatant, "speed", event.target.value);
+                                React.createElement("input", { type: "text", value: this.props.combatant.speed, onChange: function onChange(event) {
+                                        return _this6.props.changeValue(_this6.props.combatant, "speed", event.target.value);
                                     } }),
                                 React.createElement(
-                                    'div',
-                                    { className: 'subheading' },
-                                    'senses'
+                                    "div",
+                                    { className: "subheading" },
+                                    "senses"
                                 ),
-                                React.createElement('input', { type: 'text', value: this.props.combatant.senses, onChange: function onChange(event) {
-                                        return _this2.props.changeValue(_this2.props.combatant, "senses", event.target.value);
+                                React.createElement("input", { type: "text", value: this.props.combatant.senses, onChange: function onChange(event) {
+                                        return _this6.props.changeValue(_this6.props.combatant, "senses", event.target.value);
                                     } }),
                                 React.createElement(
-                                    'div',
-                                    { className: 'subheading' },
-                                    'languages'
+                                    "div",
+                                    { className: "subheading" },
+                                    "languages"
                                 ),
-                                React.createElement('input', { type: 'text', value: this.props.combatant.languages, onChange: function onChange(event) {
-                                        return _this2.props.changeValue(_this2.props.combatant, "languages", event.target.value);
+                                React.createElement("input", { type: "text", value: this.props.combatant.languages, onChange: function onChange(event) {
+                                        return _this6.props.changeValue(_this6.props.combatant, "languages", event.target.value);
                                     } }),
                                 React.createElement(
-                                    'div',
-                                    { className: 'subheading' },
-                                    'equipment'
+                                    "div",
+                                    { className: "subheading" },
+                                    "equipment"
                                 ),
-                                React.createElement('input', { type: 'text', value: this.props.combatant.equipment, onChange: function onChange(event) {
-                                        return _this2.props.changeValue(_this2.props.combatant, "equipment", event.target.value);
+                                React.createElement("input", { type: "text", value: this.props.combatant.equipment, onChange: function onChange(event) {
+                                        return _this6.props.changeValue(_this6.props.combatant, "equipment", event.target.value);
                                     } })
                             )
                         );
-                        help = React.createElement('div', null);
                         break;
                     case 'abilities':
                         content = React.createElement(
-                            'div',
-                            { className: 'row' },
+                            "div",
+                            { className: "row" },
                             React.createElement(
-                                'div',
-                                { className: 'columns small-6 medium-6 large-6' },
+                                "div",
+                                { className: "columns small-6 medium-6 large-6" },
                                 React.createElement(
-                                    'div',
-                                    { className: 'subheading' },
-                                    'ability scores'
+                                    "div",
+                                    { className: "subheading" },
+                                    "ability scores"
                                 ),
                                 React.createElement(AbilityScorePanel, {
                                     edit: true,
                                     combatant: this.props.combatant,
                                     nudgeValue: function nudgeValue(source, type, delta) {
-                                        return _this2.props.nudgeValue(source, type, delta);
+                                        return _this6.props.nudgeValue(source, type, delta);
                                     }
                                 })
                             ),
                             React.createElement(
-                                'div',
-                                { className: 'columns small-6 medium-6 large-6' },
+                                "div",
+                                { className: "columns small-6 medium-6 large-6" },
                                 React.createElement(
-                                    'div',
-                                    { className: 'subheading' },
-                                    'saving throws'
+                                    "div",
+                                    { className: "subheading" },
+                                    "saving throws"
                                 ),
-                                React.createElement('input', { type: 'text', value: this.props.combatant.savingThrows, onChange: function onChange(event) {
-                                        return _this2.props.changeValue(_this2.props.combatant, "savingThrows", event.target.value);
+                                React.createElement("input", { type: "text", value: this.props.combatant.savingThrows, onChange: function onChange(event) {
+                                        return _this6.props.changeValue(_this6.props.combatant, "savingThrows", event.target.value);
                                     } }),
                                 React.createElement(
-                                    'div',
-                                    { className: 'subheading' },
-                                    'skills'
+                                    "div",
+                                    { className: "subheading" },
+                                    "skills"
                                 ),
-                                React.createElement('input', { type: 'text', value: this.props.combatant.skills, onChange: function onChange(event) {
-                                        return _this2.props.changeValue(_this2.props.combatant, "skills", event.target.value);
+                                React.createElement("input", { type: "text", value: this.props.combatant.skills, onChange: function onChange(event) {
+                                        return _this6.props.changeValue(_this6.props.combatant, "skills", event.target.value);
                                     } })
                             )
                         );
-                        help = React.createElement('div', null);
                         break;
                     case 'combat':
                         content = React.createElement(
-                            'div',
-                            { className: 'row' },
+                            "div",
+                            { className: "row" },
                             React.createElement(
-                                'div',
-                                { className: 'columns small-6 medium-6 large-6' },
+                                "div",
+                                { className: "columns small-6 medium-6 large-6" },
                                 React.createElement(
-                                    'div',
-                                    { className: 'subheading' },
-                                    'armor class'
+                                    "div",
+                                    { className: "subheading" },
+                                    "armor class"
                                 ),
                                 React.createElement(Spin, {
                                     source: this.props.combatant,
-                                    name: 'ac',
+                                    name: "ac",
                                     nudgeValue: function nudgeValue(delta) {
-                                        return _this2.props.nudgeValue(_this2.props.combatant, "ac", delta);
+                                        return _this6.props.nudgeValue(_this6.props.combatant, "ac", delta);
                                     }
                                 }),
                                 React.createElement(
-                                    'div',
-                                    { className: 'subheading' },
-                                    'hit dice'
+                                    "div",
+                                    { className: "subheading" },
+                                    "hit dice"
                                 ),
                                 React.createElement(Spin, {
                                     source: this.props.combatant,
-                                    name: 'hitDice',
+                                    name: "hitDice",
                                     display: function display(value) {
-                                        return value + "d" + hitDieType(_this2.props.combatant.size);
+                                        return value + "d" + hitDieType(_this6.props.combatant.size);
                                     },
                                     nudgeValue: function nudgeValue(delta) {
-                                        return _this2.props.nudgeValue(_this2.props.combatant, "hitDice", delta);
+                                        return _this6.props.nudgeValue(_this6.props.combatant, "hitDice", delta);
                                     }
                                 }),
                                 React.createElement(
-                                    'div',
-                                    { className: 'subheading' },
-                                    'hit points'
+                                    "div",
+                                    { className: "subheading" },
+                                    "hit points"
                                 ),
                                 React.createElement(
-                                    'div',
-                                    { className: 'hp-value' },
+                                    "div",
+                                    { className: "hp-value" },
                                     this.props.combatant.hpMax,
-                                    ' hp'
+                                    " hp"
                                 )
                             ),
                             React.createElement(
-                                'div',
-                                { className: 'columns small-6 medium-6 large-6' },
+                                "div",
+                                { className: "columns small-6 medium-6 large-6" },
                                 React.createElement(
-                                    'div',
-                                    { className: 'subheading' },
-                                    'damage resistances'
+                                    "div",
+                                    { className: "subheading" },
+                                    "damage resistances"
                                 ),
-                                React.createElement('input', { type: 'text', value: this.props.combatant.damage.resist, onChange: function onChange(event) {
-                                        return _this2.props.changeValue(_this2.props.combatant, "damage.resist", event.target.value);
+                                React.createElement("input", { type: "text", value: this.props.combatant.damage.resist, onChange: function onChange(event) {
+                                        return _this6.props.changeValue(_this6.props.combatant, "damage.resist", event.target.value);
                                     } }),
                                 React.createElement(
-                                    'div',
-                                    { className: 'subheading' },
-                                    'damage vulnerabilities'
+                                    "div",
+                                    { className: "subheading" },
+                                    "damage vulnerabilities"
                                 ),
-                                React.createElement('input', { type: 'text', value: this.props.combatant.damage.vulnerable, onChange: function onChange(event) {
-                                        return _this2.props.changeValue(_this2.props.combatant, "damage.vulnerable", event.target.value);
+                                React.createElement("input", { type: "text", value: this.props.combatant.damage.vulnerable, onChange: function onChange(event) {
+                                        return _this6.props.changeValue(_this6.props.combatant, "damage.vulnerable", event.target.value);
                                     } }),
                                 React.createElement(
-                                    'div',
-                                    { className: 'subheading' },
-                                    'damage immunities'
+                                    "div",
+                                    { className: "subheading" },
+                                    "damage immunities"
                                 ),
-                                React.createElement('input', { type: 'text', value: this.props.combatant.damage.immune, onChange: function onChange(event) {
-                                        return _this2.props.changeValue(_this2.props.combatant, "damage.immune", event.target.value);
+                                React.createElement("input", { type: "text", value: this.props.combatant.damage.immune, onChange: function onChange(event) {
+                                        return _this6.props.changeValue(_this6.props.combatant, "damage.immune", event.target.value);
                                     } }),
                                 React.createElement(
-                                    'div',
-                                    { className: 'subheading' },
-                                    'condition immunities'
+                                    "div",
+                                    { className: "subheading" },
+                                    "condition immunities"
                                 ),
-                                React.createElement('input', { type: 'text', value: this.props.combatant.conditionImmunities, onChange: function onChange(event) {
-                                        return _this2.props.changeValue(_this2.props.combatant, "conditionImmunities", event.target.value);
+                                React.createElement("input", { type: "text", value: this.props.combatant.conditionImmunities, onChange: function onChange(event) {
+                                        return _this6.props.changeValue(_this6.props.combatant, "conditionImmunities", event.target.value);
                                     } })
                             )
                         );
-                        help = React.createElement('div', null);
                         break;
                     case 'actions':
                         content = React.createElement(TraitsPanel, {
                             combatant: this.props.combatant,
                             edit: true,
                             addTrait: function addTrait(type) {
-                                return _this2.props.addTrait(_this2.props.combatant, type);
+                                return _this6.props.addTrait(_this6.props.combatant, type);
                             },
                             removeTrait: function removeTrait(trait) {
-                                return _this2.props.removeTrait(_this2.props.combatant, trait);
+                                return _this6.props.removeTrait(_this6.props.combatant, trait);
                             },
                             changeTrait: function changeTrait(trait, type, value) {
-                                return _this2.props.changeTrait(trait, type, value);
+                                return _this6.props.changeTrait(trait, type, value);
                             }
                         });
-                        help = React.createElement('div', null);
                         break;
                 }
 
-                var monsters = null;
+                var help = null;
+                // TODO: Should only show the help section if there are > 1 monsters
                 if (this.state.showMonsters) {
-                    monsters = React.createElement(
-                        'div',
-                        { className: 'columns small-4 medium-4 large-4 scrollable' },
-                        React.createElement(MonsterListPanel, {
-                            monster: this.props.combatant,
-                            library: this.props.library,
-                            mode: this.state.page,
-                            copyTrait: function copyTrait(trait) {
-                                return _this2.copyTrait(trait);
+                    var selector = null;
+                    if (this.getHelpOptionsForPage(this.state.page).length > 1) {
+                        var options = this.getHelpOptionsForPage(this.state.page).map(function (s) {
+                            return {
+                                id: s,
+                                text: s
+                            };
+                        });
+                        selector = React.createElement(Selector, {
+                            tabs: false,
+                            options: options,
+                            selectedID: this.state.helpSection,
+                            select: function select(optionID) {
+                                return _this6.setHelpSection(optionID);
                             }
-                        })
+                        });
+                    }
+
+                    help = React.createElement(
+                        "div",
+                        null,
+                        React.createElement(
+                            "div",
+                            { className: "subheading" },
+                            "information from similar monsters"
+                        ),
+                        selector,
+                        this.getHelpSection(monsters)
+                    );
+                }
+
+                var monsterList = null;
+                if (this.state.showMonsters) {
+                    monsterList = React.createElement(
+                        "div",
+                        { className: "columns small-4 medium-4 large-4 scrollable" },
+                        this.getFilterCard(),
+                        this.getMonsterCards(monsters)
                     );
                 }
 
                 return React.createElement(
-                    'div',
-                    { className: 'row', style: { height: "100%", margin: "0 -15px" } },
+                    "div",
+                    { className: "row", style: { height: "100%", margin: "0 -15px" } },
                     React.createElement(
-                        'div',
+                        "div",
                         { className: this.state.showMonsters ? "columns small-8 medium-8 large-8 scrollable" : "columns small-12 medium-12 large-12 scrollable" },
                         React.createElement(Selector, {
                             tabs: true,
                             options: pages,
                             selectedID: this.state.page,
                             select: function select(optionID) {
-                                return _this2.setPage(optionID);
+                                return _this6.setPage(optionID);
                             }
                         }),
                         content,
-                        React.createElement('div', { className: 'divider' }),
+                        React.createElement("div", { className: "divider" }),
                         React.createElement(Checkbox, {
-                            label: 'show similar monsters',
+                            label: "show similar monsters",
                             checked: this.state.showMonsters,
                             changeValue: function changeValue(value) {
-                                return _this2.toggleMonsters();
+                                return _this6.toggleMonsters();
                             }
                         }),
-                        this.state.showMonsters ? help : null
+                        help
                     ),
-                    monsters
+                    monsterList
                 );
             } catch (e) {
                 console.error(e);
@@ -6651,244 +7003,6 @@ var HitPointGauge = function (_React$Component) {
     }]);
 
     return HitPointGauge;
-}(React.Component);
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var MonsterListPanel = function (_React$Component) {
-    _inherits(MonsterListPanel, _React$Component);
-
-    function MonsterListPanel() {
-        _classCallCheck(this, MonsterListPanel);
-
-        var _this = _possibleConstructorReturn(this, (MonsterListPanel.__proto__ || Object.getPrototypeOf(MonsterListPanel)).call(this));
-
-        _this.state = {
-            showFilter: false,
-            matchSize: true,
-            matchType: true,
-            matchSubtype: false,
-            matchAlignment: false,
-            matchCR: true,
-            filterText: ""
-        };
-        return _this;
-    }
-
-    _createClass(MonsterListPanel, [{
-        key: "toggleFilter",
-        value: function toggleFilter() {
-            this.setState({
-                showFilter: !this.state.showFilter
-            });
-        }
-    }, {
-        key: "setMatchSize",
-        value: function setMatchSize(match) {
-            this.setState({
-                matchSize: match
-            });
-        }
-    }, {
-        key: "setMatchType",
-        value: function setMatchType(match) {
-            this.setState({
-                matchType: match
-            });
-        }
-    }, {
-        key: "setMatchSubtype",
-        value: function setMatchSubtype(match) {
-            this.setState({
-                matchSubtype: match
-            });
-        }
-    }, {
-        key: "setMatchAlignment",
-        value: function setMatchAlignment(match) {
-            this.setState({
-                matchAlignment: match
-            });
-        }
-    }, {
-        key: "setMatchCR",
-        value: function setMatchCR(match) {
-            this.setState({
-                matchCR: match
-            });
-        }
-    }, {
-        key: "setFilterText",
-        value: function setFilterText(text) {
-            this.setState({
-                filterText: text
-            });
-        }
-    }, {
-        key: "render",
-        value: function render() {
-            var _this2 = this;
-
-            try {
-                var filterContent = null;
-                if (this.state.showFilter) {
-                    filterContent = React.createElement(
-                        "div",
-                        null,
-                        React.createElement("input", { type: "text", placeholder: "filter", value: this.state.filterText, onChange: function onChange(event) {
-                                return _this2.setFilterText(event.target.value);
-                            } }),
-                        React.createElement(Checkbox, {
-                            label: "match size",
-                            checked: this.state.matchSize,
-                            changeValue: function changeValue(value) {
-                                return _this2.setMatchSize(value);
-                            }
-                        }),
-                        React.createElement(Checkbox, {
-                            label: "match type",
-                            checked: this.state.matchType,
-                            changeValue: function changeValue(value) {
-                                return _this2.setMatchType(value);
-                            }
-                        }),
-                        React.createElement(Checkbox, {
-                            label: "match subtype",
-                            checked: this.state.matchSubtype,
-                            disabled: !this.props.monster.tag,
-                            changeValue: function changeValue(value) {
-                                return _this2.setMatchSubtype(value);
-                            }
-                        }),
-                        React.createElement(Checkbox, {
-                            label: "match alignment",
-                            checked: this.state.matchAlignment,
-                            disabled: !this.props.monster.alignment,
-                            changeValue: function changeValue(value) {
-                                return _this2.setMatchAlignment(value);
-                            }
-                        }),
-                        React.createElement(Checkbox, {
-                            label: "match challenge rating",
-                            checked: this.state.matchCR,
-                            changeValue: function changeValue(value) {
-                                return _this2.setMatchCR(value);
-                            }
-                        })
-                    );
-                } else {
-                    filterContent = React.createElement("input", { type: "text", placeholder: "filter", value: this.state.filterText, onChange: function onChange(event) {
-                            return _this2.setFilterText(event.target.value);
-                        } });
-                }
-
-                var monsters = [];
-                this.props.library.forEach(function (group) {
-                    group.monsters.forEach(function (monster) {
-                        var match = true;
-
-                        if (_this2.props.monster.id === monster.id) {
-                            match = false;
-                        }
-
-                        if (_this2.state.filterText && monster.name.toLowerCase().indexOf(_this2.state.filterText.toLowerCase()) === -1) {
-                            match = false;
-                        }
-
-                        if (_this2.state.matchSize && _this2.props.monster.size !== monster.size) {
-                            match = false;
-                        }
-
-                        if (_this2.state.matchType && _this2.props.monster.category !== monster.category) {
-                            match = false;
-                        }
-
-                        if (_this2.state.matchSubtype && _this2.props.monster.tag !== monster.tag) {
-                            match = false;
-                        }
-
-                        if (_this2.state.matchAlignment && _this2.props.monster.alignment !== monster.alignment) {
-                            match = false;
-                        }
-
-                        if (_this2.state.matchCR && _this2.props.monster.challenge !== monster.challenge) {
-                            match = false;
-                        }
-
-                        if (match) {
-                            monsters.push(monster);
-                        }
-                    });
-                });
-
-                sort(monsters);
-
-                var monsterCards = monsters.map(function (m) {
-                    return React.createElement(
-                        "div",
-                        { className: "section", key: m.id },
-                        React.createElement(MonsterCard, {
-                            combatant: m,
-                            mode: "template " + _this2.props.mode,
-                            copyTrait: function copyTrait(trait) {
-                                return _this2.props.copyTrait(trait);
-                            }
-                        })
-                    );
-                });
-
-                if (monsterCards.length === 0) {
-                    monsterCards.push(React.createElement(
-                        "div",
-                        { className: "section centered", key: "none" },
-                        "no monsters to show"
-                    ));
-                }
-
-                return React.createElement(
-                    "div",
-                    null,
-                    React.createElement(
-                        "div",
-                        { className: "section" },
-                        React.createElement(
-                            "div",
-                            { className: "card" },
-                            React.createElement(
-                                "div",
-                                { className: "heading" },
-                                React.createElement(
-                                    "div",
-                                    { className: "title" },
-                                    "similar monsters"
-                                ),
-                                React.createElement("img", { className: this.state.showFilter ? "image rotate" : "image", src: "content/down-arrow.svg", onClick: function onClick() {
-                                        return _this2.toggleFilter();
-                                    } })
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "card-content" },
-                                filterContent
-                            )
-                        )
-                    ),
-                    monsterCards
-                );
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    }]);
-
-    return MonsterListPanel;
 }(React.Component);
 "use strict";
 
