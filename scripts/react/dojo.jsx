@@ -1188,6 +1188,24 @@ class Dojo extends React.Component {
                 var modalContent = null;
 
                 switch (this.state.modal.type) {
+                    case "about":
+                        modalTitle = "about";
+                        modalContent = (
+                            <AboutModal
+                                options={this.state.options}
+                                resetAll={() => this.resetAll()}
+                                changeValue={(source, type, value) => this.changeValue(source, type, value)}
+                            />
+                        );
+                        break;
+                    case "demographics":
+                        modalTitle = "demographics";
+                        modalContent = (
+                            <DemographicsModal
+                                library={this.state.library}
+                            />
+                        );
+                        break;
                     case "monster":
                         modalTitle = "monster editor";
                         modalContent = (
@@ -1200,24 +1218,6 @@ class Dojo extends React.Component {
                                 addTrait={(combatant, type) => this.addTrait(combatant, type)}
                                 removeTrait={(combatant, trait) => this.removeTrait(combatant, trait)}
                                 copyTrait={(combatant, type) => this.copyTrait(combatant, type)}
-                            />
-                        );
-                        break;
-                    case "demographics":
-                        modalTitle = "demographics";
-                        modalContent = (
-                            <DemographicsModal
-                                library={this.state.library}
-                            />
-                        );
-                        break;
-                    case "about":
-                        modalTitle = "about";
-                        modalContent = (
-                            <AboutModal
-                                options={this.state.options}
-                                resetAll={() => this.resetAll()}
-                                changeValue={(source, type, value) => this.changeValue(source, type, value)}
                             />
                         );
                         break;

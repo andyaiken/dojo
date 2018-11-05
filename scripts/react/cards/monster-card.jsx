@@ -43,61 +43,63 @@ class MonsterCard extends React.Component {
     render() {
         try {
             var options = [];
-            if (this.props.mode.indexOf("view") !== -1) {
-                if (this.props.mode.indexOf("editable") !== -1) {
-                    options.push(<button key="edit" onClick={() => this.props.editMonster(this.props.combatant)}>edit monster</button>);
-                    options.push(<button key="clone" onClick={() => this.props.cloneMonster(this.props.combatant)}>create a copy</button>);
+            if (this.props.mode.indexOf("no-buttons") === -1) {
+                if (this.props.mode.indexOf("view") !== -1) {
+                    if (this.props.mode.indexOf("editable") !== -1) {
+                        options.push(<button key="edit" onClick={() => this.props.editMonster(this.props.combatant)}>edit monster</button>);
+                        options.push(<button key="clone" onClick={() => this.props.cloneMonster(this.props.combatant)}>create a copy</button>);
 
-                    var groupOptions = [];
-                    this.props.library.forEach(group => {
-                        if (group.monsters.indexOf(this.props.combatant) === -1) {
-                            groupOptions.push({
-                                id: group.id,
-                                text: group.name
-                            });
+                        var groupOptions = [];
+                        this.props.library.forEach(group => {
+                            if (group.monsters.indexOf(this.props.combatant) === -1) {
+                                groupOptions.push({
+                                    id: group.id,
+                                    text: group.name
+                                });
+                            }
+                        });
+                        options.push(
+                            <Dropdown
+                                key="move"
+                                options={groupOptions}
+                                placeholder="move to group..."
+                                select={optionID => this.props.moveToGroup(this.props.combatant, optionID)}
+                            />
+                        );
+
+                        options.push(<ConfirmButton key="remove" text="delete monster" callback={() => this.props.removeCombatant(this.props.combatant)} />);
+                    }
+                    if (this.props.mode.indexOf("encounter") !== -1) {
+                        if (!this.props.slot) {
+                            options.push(<button key="add" onClick={() => this.props.addEncounterSlot(this.props.combatant)}>add to encounter</button>);
+                        } else {
+                            options.push(<button key="remove" onClick={() => this.props.removeEncounterSlot(this.props.slot)}>remove from encounter</button>);
                         }
-                    });
-                    options.push(
-                        <Dropdown
-                            key="move"
-                            options={groupOptions}
-                            placeholder="move to group..."
-                            select={optionID => this.props.moveToGroup(this.props.combatant, optionID)}
-                        />
-                    );
-
-                    options.push(<ConfirmButton key="remove" text="delete monster" callback={() => this.props.removeCombatant(this.props.combatant)} />);
-                }
-                if (this.props.mode.indexOf("encounter") !== -1) {
-                    if (!this.props.slot) {
-                        options.push(<button key="add" onClick={() => this.props.addEncounterSlot(this.props.combatant)}>add to encounter</button>);
-                    } else {
-                        options.push(<button key="remove" onClick={() => this.props.removeEncounterSlot(this.props.slot)}>remove from encounter</button>);
                     }
                 }
-            }
-            if (this.props.mode.indexOf("combat") !== -1) {
-                if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
-                    options.push(<button key="makeAdd" onClick={() => this.props.makeActive(this.props.combatant)}>add to encounter</button>);
-                    options.push(<ConfirmButton key="remove" text="remove from encounter" callback={() => this.props.removeCombatant(this.props.combatant)} />);
-                }
-                if (!this.props.combatant.pending && this.props.combatant.active && !this.props.combatant.defeated) {
-                    if (this.props.combatant.current) {
-                        options.push(<button key="endTurn" onClick={() => this.props.endTurn(this.props.combatant)}>end turn</button>);
-                        options.push(<button key="makeDefeated" onClick={() => this.props.makeDefeated(this.props.combatant)}>mark as defeated and end turn</button>);
-                    } else {
-                        options.push(<button key="makeCurrent" onClick={() => this.props.makeCurrent(this.props.combatant)}>start turn</button>);
-                        options.push(<button key="makeDefeated" onClick={() => this.props.makeDefeated(this.props.combatant)}>mark as defeated</button>);
+                if (this.props.mode.indexOf("combat") !== -1) {
+                    if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
+                        options.push(<button key="makeAdd" onClick={() => this.props.makeActive(this.props.combatant)}>add to encounter</button>);
+                        options.push(<ConfirmButton key="remove" text="remove from encounter" callback={() => this.props.removeCombatant(this.props.combatant)} />);
+                    }
+                    if (!this.props.combatant.pending && this.props.combatant.active && !this.props.combatant.defeated) {
+                        if (this.props.combatant.current) {
+                            options.push(<button key="endTurn" onClick={() => this.props.endTurn(this.props.combatant)}>end turn</button>);
+                            options.push(<button key="makeDefeated" onClick={() => this.props.makeDefeated(this.props.combatant)}>mark as defeated and end turn</button>);
+                        } else {
+                            options.push(<button key="makeCurrent" onClick={() => this.props.makeCurrent(this.props.combatant)}>start turn</button>);
+                            options.push(<button key="makeDefeated" onClick={() => this.props.makeDefeated(this.props.combatant)}>mark as defeated</button>);
+                            options.push(<ConfirmButton key="remove" text="remove from encounter" callback={() => this.props.removeCombatant(this.props.combatant)} />);
+                        }
+                    }
+                    if (!this.props.combatant.pending && !this.props.combatant.active && this.props.combatant.defeated) {
+                        options.push(<button key="makeActive" onClick={() => this.props.makeActive(this.props.combatant)}>mark as active</button>);
                         options.push(<ConfirmButton key="remove" text="remove from encounter" callback={() => this.props.removeCombatant(this.props.combatant)} />);
                     }
                 }
-                if (!this.props.combatant.pending && !this.props.combatant.active && this.props.combatant.defeated) {
-                    options.push(<button key="makeActive" onClick={() => this.props.makeActive(this.props.combatant)}>mark as active</button>);
-                    options.push(<ConfirmButton key="remove" text="remove from encounter" callback={() => this.props.removeCombatant(this.props.combatant)} />);
+                if (this.props.mode.indexOf("template") !== -1) {
+                    // None
                 }
-            }
-            if (this.props.mode.indexOf("template") !== -1) {
-                // None
             }
 
             var stats = null;

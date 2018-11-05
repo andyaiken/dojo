@@ -68,21 +68,21 @@ class CombatManagerScreen extends React.Component {
                     }
                     if (combatant.pending && !combatant.active && !combatant.defeated) {
                         pending.push(
-                            <div className="column column-block" key={combatant.id}>
+                            <div className="column" key={combatant.id}>
                                 {this.createCard(combatant, combatant => combatant.current)}
                             </div>
                         );
                     }
                     if (!combatant.pending && combatant.active && !combatant.defeated) {
                         active.push(
-                            <div className="column column-block" key={combatant.id}>
+                            <div className="column" key={combatant.id}>
                                 {this.createCard(combatant, combatant => combatant.current)}
                             </div>
                         );
                     }
                     if (!combatant.pending && !combatant.active && combatant.defeated) {
                         defeated.push(
-                            <div className="column column-block" key={combatant.id}>
+                            <div className="column" key={combatant.id}>
                                 {this.createCard(combatant, combatant => combatant.current)}
                             </div>
                         );
@@ -110,7 +110,7 @@ class CombatManagerScreen extends React.Component {
 
                 if (this.props.showHelp && (pending.length !== 0)) {
                     var help = (
-                        <div className="column column-block" key="help">
+                        <div className="column" key="help">
                             <InfoCard
                                 getContent={() =>
                                     <div>
@@ -126,7 +126,7 @@ class CombatManagerScreen extends React.Component {
 
                 if (this.props.showHelp && (current.length === 0)) {
                     var help = (
-                        <div className="column column-block" key="help">
+                        <div className="column" key="help">
                             <InfoCard
                                 getContent={() =>
                                     <div>

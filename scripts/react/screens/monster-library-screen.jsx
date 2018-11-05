@@ -56,7 +56,7 @@ class MonsterLibraryScreen extends React.Component {
 
             if (this.props.selection) {
                 cards.push(
-                    <div className="column column-block" key="info">
+                    <div className="column" key="info">
                         <MonsterGroupCard
                             selection={this.props.selection}
                             filter={this.state.filter}
@@ -75,7 +75,7 @@ class MonsterLibraryScreen extends React.Component {
                 if (monsters.length !== 0) {
                     monsters.forEach(monster => {
                         cards.push(
-                            <div className="column column-block" key={monster.id}>
+                            <div className="column" key={monster.id}>
                                 <MonsterCard
                                     combatant={monster}
                                     mode={"view editable"}
@@ -95,7 +95,7 @@ class MonsterLibraryScreen extends React.Component {
                     });
                 } else {
                     cards.push(
-                        <div className="column column-block" key="empty">
+                        <div className="column" key="empty">
                             <InfoCard getContent={() => <div className="section">no monsters</div>} />
                         </div>
                     );

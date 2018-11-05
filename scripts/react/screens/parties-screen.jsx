@@ -25,7 +25,7 @@ class PartiesScreen extends React.Component {
 
             if (this.props.selection) {
                 cards.push(
-                    <div className="column column-block" key="info">
+                    <div className="column" key="info">
                         <PartyCard
                             selection={this.props.selection}
                             addPC={name => this.props.addPC(name)}
@@ -39,7 +39,7 @@ class PartiesScreen extends React.Component {
                 if (this.props.selection.pcs.length !== 0) {
                     this.props.selection.pcs.forEach(pc => {
                         cards.push(
-                            <div className="column column-block" key={pc.id}>
+                            <div className="column" key={pc.id}>
                                 <PCCard
                                     combatant={pc}
                                     mode={"edit"}
@@ -52,7 +52,7 @@ class PartiesScreen extends React.Component {
                     });
                 } else {
                     cards.push(
-                        <div className="column column-block" key="empty">
+                        <div className="column" key="empty">
                             <InfoCard getContent={() => <div className="section">no pcs</div>} />
                         </div>
                     );

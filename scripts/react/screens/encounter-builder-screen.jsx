@@ -106,7 +106,7 @@ class EncounterBuilderScreen extends React.Component {
 
             if (this.props.selection) {
                 encounterCards.push(
-                    <div className="column column-block" key="info">
+                    <div className="column" key="info">
                         <EncounterCard
                             selection={this.props.selection}
                             parties={this.props.parties}
@@ -121,7 +121,7 @@ class EncounterBuilderScreen extends React.Component {
                     var monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
                     if (monster) {
                         encounterCards.push(
-                            <div className="column column-block" key={monster.id}>
+                            <div className="column" key={monster.id}>
                                 <MonsterCard
                                     combatant={monster}
                                     slot={slot}
@@ -135,7 +135,7 @@ class EncounterBuilderScreen extends React.Component {
                         var index = this.props.selection.slots.indexOf(slot);
                         var error = "unknown monster: " + slot.monsterName + " in group " + slot.monsterGroupName;
                         encounterCards.push(
-                            <div className="column column-block" key={index}>
+                            <div className="column" key={index}>
                                 <ErrorCard getContent={() => <div className="section">{error}</div>} />
                             </div>
                         );
@@ -143,7 +143,7 @@ class EncounterBuilderScreen extends React.Component {
                 });
                 if (this.props.selection.slots.length === 0) {
                     encounterCards.push(
-                        <div className="column column-block" key="empty">
+                        <div className="column" key="empty">
                             <InfoCard getContent={() => <div className="section">no monsters</div>} />
                         </div>
                     );
@@ -152,7 +152,7 @@ class EncounterBuilderScreen extends React.Component {
 
             var libraryCards = [];
             libraryCards.push(
-                <div className="column column-block" key="filter">
+                <div className="column" key="filter">
                     <FilterCard
                         filter={this.state.filter}
                         changeValue={(type, value) => this.changeFilterValue(type, value)}
@@ -181,7 +181,7 @@ class EncounterBuilderScreen extends React.Component {
                 if (this.inEncounter(monster)) {
                     var title = monster.name;
                     libraryCards.push(
-                        <div className="column column-block" key={monster.id}>
+                        <div className="column" key={monster.id}>
                             <InfoCard
                                 getHeading={() => <div className="heading">{title}</div>}
                                 getContent={() => <div className="section">already in encounter</div>}
@@ -190,7 +190,7 @@ class EncounterBuilderScreen extends React.Component {
                     );
                 } else {
                     libraryCards.push(
-                        <div className="column column-block" key={monster.id}>
+                        <div className="column" key={monster.id}>
                             <MonsterCard
                                 key={monster.id}
                                 combatant={monster}

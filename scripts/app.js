@@ -803,129 +803,131 @@ var MonsterCard = function (_React$Component) {
 
             try {
                 var options = [];
-                if (this.props.mode.indexOf("view") !== -1) {
-                    if (this.props.mode.indexOf("editable") !== -1) {
-                        options.push(React.createElement(
-                            "button",
-                            { key: "edit", onClick: function onClick() {
-                                    return _this2.props.editMonster(_this2.props.combatant);
-                                } },
-                            "edit monster"
-                        ));
-                        options.push(React.createElement(
-                            "button",
-                            { key: "clone", onClick: function onClick() {
-                                    return _this2.props.cloneMonster(_this2.props.combatant);
-                                } },
-                            "create a copy"
-                        ));
-
-                        var groupOptions = [];
-                        this.props.library.forEach(function (group) {
-                            if (group.monsters.indexOf(_this2.props.combatant) === -1) {
-                                groupOptions.push({
-                                    id: group.id,
-                                    text: group.name
-                                });
-                            }
-                        });
-                        options.push(React.createElement(Dropdown, {
-                            key: "move",
-                            options: groupOptions,
-                            placeholder: "move to group...",
-                            select: function select(optionID) {
-                                return _this2.props.moveToGroup(_this2.props.combatant, optionID);
-                            }
-                        }));
-
-                        options.push(React.createElement(ConfirmButton, { key: "remove", text: "delete monster", callback: function callback() {
-                                return _this2.props.removeCombatant(_this2.props.combatant);
-                            } }));
-                    }
-                    if (this.props.mode.indexOf("encounter") !== -1) {
-                        if (!this.props.slot) {
+                if (this.props.mode.indexOf("no-buttons") === -1) {
+                    if (this.props.mode.indexOf("view") !== -1) {
+                        if (this.props.mode.indexOf("editable") !== -1) {
                             options.push(React.createElement(
                                 "button",
-                                { key: "add", onClick: function onClick() {
-                                        return _this2.props.addEncounterSlot(_this2.props.combatant);
+                                { key: "edit", onClick: function onClick() {
+                                        return _this2.props.editMonster(_this2.props.combatant);
+                                    } },
+                                "edit monster"
+                            ));
+                            options.push(React.createElement(
+                                "button",
+                                { key: "clone", onClick: function onClick() {
+                                        return _this2.props.cloneMonster(_this2.props.combatant);
+                                    } },
+                                "create a copy"
+                            ));
+
+                            var groupOptions = [];
+                            this.props.library.forEach(function (group) {
+                                if (group.monsters.indexOf(_this2.props.combatant) === -1) {
+                                    groupOptions.push({
+                                        id: group.id,
+                                        text: group.name
+                                    });
+                                }
+                            });
+                            options.push(React.createElement(Dropdown, {
+                                key: "move",
+                                options: groupOptions,
+                                placeholder: "move to group...",
+                                select: function select(optionID) {
+                                    return _this2.props.moveToGroup(_this2.props.combatant, optionID);
+                                }
+                            }));
+
+                            options.push(React.createElement(ConfirmButton, { key: "remove", text: "delete monster", callback: function callback() {
+                                    return _this2.props.removeCombatant(_this2.props.combatant);
+                                } }));
+                        }
+                        if (this.props.mode.indexOf("encounter") !== -1) {
+                            if (!this.props.slot) {
+                                options.push(React.createElement(
+                                    "button",
+                                    { key: "add", onClick: function onClick() {
+                                            return _this2.props.addEncounterSlot(_this2.props.combatant);
+                                        } },
+                                    "add to encounter"
+                                ));
+                            } else {
+                                options.push(React.createElement(
+                                    "button",
+                                    { key: "remove", onClick: function onClick() {
+                                            return _this2.props.removeEncounterSlot(_this2.props.slot);
+                                        } },
+                                    "remove from encounter"
+                                ));
+                            }
+                        }
+                    }
+                    if (this.props.mode.indexOf("combat") !== -1) {
+                        if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
+                            options.push(React.createElement(
+                                "button",
+                                { key: "makeAdd", onClick: function onClick() {
+                                        return _this2.props.makeActive(_this2.props.combatant);
                                     } },
                                 "add to encounter"
                             ));
-                        } else {
-                            options.push(React.createElement(
-                                "button",
-                                { key: "remove", onClick: function onClick() {
-                                        return _this2.props.removeEncounterSlot(_this2.props.slot);
-                                    } },
-                                "remove from encounter"
-                            ));
+                            options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
+                                    return _this2.props.removeCombatant(_this2.props.combatant);
+                                } }));
                         }
-                    }
-                }
-                if (this.props.mode.indexOf("combat") !== -1) {
-                    if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
-                        options.push(React.createElement(
-                            "button",
-                            { key: "makeAdd", onClick: function onClick() {
-                                    return _this2.props.makeActive(_this2.props.combatant);
-                                } },
-                            "add to encounter"
-                        ));
-                        options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
-                                return _this2.props.removeCombatant(_this2.props.combatant);
-                            } }));
-                    }
-                    if (!this.props.combatant.pending && this.props.combatant.active && !this.props.combatant.defeated) {
-                        if (this.props.combatant.current) {
+                        if (!this.props.combatant.pending && this.props.combatant.active && !this.props.combatant.defeated) {
+                            if (this.props.combatant.current) {
+                                options.push(React.createElement(
+                                    "button",
+                                    { key: "endTurn", onClick: function onClick() {
+                                            return _this2.props.endTurn(_this2.props.combatant);
+                                        } },
+                                    "end turn"
+                                ));
+                                options.push(React.createElement(
+                                    "button",
+                                    { key: "makeDefeated", onClick: function onClick() {
+                                            return _this2.props.makeDefeated(_this2.props.combatant);
+                                        } },
+                                    "mark as defeated and end turn"
+                                ));
+                            } else {
+                                options.push(React.createElement(
+                                    "button",
+                                    { key: "makeCurrent", onClick: function onClick() {
+                                            return _this2.props.makeCurrent(_this2.props.combatant);
+                                        } },
+                                    "start turn"
+                                ));
+                                options.push(React.createElement(
+                                    "button",
+                                    { key: "makeDefeated", onClick: function onClick() {
+                                            return _this2.props.makeDefeated(_this2.props.combatant);
+                                        } },
+                                    "mark as defeated"
+                                ));
+                                options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
+                                        return _this2.props.removeCombatant(_this2.props.combatant);
+                                    } }));
+                            }
+                        }
+                        if (!this.props.combatant.pending && !this.props.combatant.active && this.props.combatant.defeated) {
                             options.push(React.createElement(
                                 "button",
-                                { key: "endTurn", onClick: function onClick() {
-                                        return _this2.props.endTurn(_this2.props.combatant);
+                                { key: "makeActive", onClick: function onClick() {
+                                        return _this2.props.makeActive(_this2.props.combatant);
                                     } },
-                                "end turn"
-                            ));
-                            options.push(React.createElement(
-                                "button",
-                                { key: "makeDefeated", onClick: function onClick() {
-                                        return _this2.props.makeDefeated(_this2.props.combatant);
-                                    } },
-                                "mark as defeated and end turn"
-                            ));
-                        } else {
-                            options.push(React.createElement(
-                                "button",
-                                { key: "makeCurrent", onClick: function onClick() {
-                                        return _this2.props.makeCurrent(_this2.props.combatant);
-                                    } },
-                                "start turn"
-                            ));
-                            options.push(React.createElement(
-                                "button",
-                                { key: "makeDefeated", onClick: function onClick() {
-                                        return _this2.props.makeDefeated(_this2.props.combatant);
-                                    } },
-                                "mark as defeated"
+                                "mark as active"
                             ));
                             options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
                                     return _this2.props.removeCombatant(_this2.props.combatant);
                                 } }));
                         }
                     }
-                    if (!this.props.combatant.pending && !this.props.combatant.active && this.props.combatant.defeated) {
-                        options.push(React.createElement(
-                            "button",
-                            { key: "makeActive", onClick: function onClick() {
-                                    return _this2.props.makeActive(_this2.props.combatant);
-                                } },
-                            "mark as active"
-                        ));
-                        options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
-                                return _this2.props.removeCombatant(_this2.props.combatant);
-                            } }));
+                    if (this.props.mode.indexOf("template") !== -1) {
+                        // None
                     }
-                }
-                if (this.props.mode.indexOf("template") !== -1) {
-                    // None
                 }
 
                 var stats = null;
@@ -2734,7 +2736,7 @@ var options = [
 
 <Dropdown
     options={options}
-    placeholer={PLACEHOLDER_TEXT}
+    placeholder={PLACEHOLDER_TEXT}
     selectedID={CURRENT_OPTION_ID}
     disabled={BOOLEAN}
     select={optionID => this.changeValue(SOURCEOBJECT, FIELDNAME, optionID)}
@@ -4644,6 +4646,24 @@ var Dojo = function (_React$Component) {
                     var modalContent = null;
 
                     switch (this.state.modal.type) {
+                        case "about":
+                            modalTitle = "about";
+                            modalContent = React.createElement(AboutModal, {
+                                options: this.state.options,
+                                resetAll: function resetAll() {
+                                    return _this4.resetAll();
+                                },
+                                changeValue: function changeValue(source, type, value) {
+                                    return _this4.changeValue(source, type, value);
+                                }
+                            });
+                            break;
+                        case "demographics":
+                            modalTitle = "demographics";
+                            modalContent = React.createElement(DemographicsModal, {
+                                library: this.state.library
+                            });
+                            break;
                         case "monster":
                             modalTitle = "monster editor";
                             modalContent = React.createElement(MonsterEditorModal, {
@@ -4666,24 +4686,6 @@ var Dojo = function (_React$Component) {
                                 },
                                 copyTrait: function copyTrait(combatant, type) {
                                     return _this4.copyTrait(combatant, type);
-                                }
-                            });
-                            break;
-                        case "demographics":
-                            modalTitle = "demographics";
-                            modalContent = React.createElement(DemographicsModal, {
-                                library: this.state.library
-                            });
-                            break;
-                        case "about":
-                            modalTitle = "about";
-                            modalContent = React.createElement(AboutModal, {
-                                options: this.state.options,
-                                resetAll: function resetAll() {
-                                    return _this4.resetAll();
-                                },
-                                changeValue: function changeValue(source, type, value) {
-                                    return _this4.changeValue(source, type, value);
                                 }
                             });
                             break;
@@ -7435,7 +7437,7 @@ var CombatManagerScreen = function (_React$Component) {
                         if (combatant.pending && !combatant.active && !combatant.defeated) {
                             pending.push(React.createElement(
                                 "div",
-                                { className: "column column-block", key: combatant.id },
+                                { className: "column", key: combatant.id },
                                 _this3.createCard(combatant, function (combatant) {
                                     return combatant.current;
                                 })
@@ -7444,7 +7446,7 @@ var CombatManagerScreen = function (_React$Component) {
                         if (!combatant.pending && combatant.active && !combatant.defeated) {
                             active.push(React.createElement(
                                 "div",
-                                { className: "column column-block", key: combatant.id },
+                                { className: "column", key: combatant.id },
                                 _this3.createCard(combatant, function (combatant) {
                                     return combatant.current;
                                 })
@@ -7453,7 +7455,7 @@ var CombatManagerScreen = function (_React$Component) {
                         if (!combatant.pending && !combatant.active && combatant.defeated) {
                             defeated.push(React.createElement(
                                 "div",
-                                { className: "column column-block", key: combatant.id },
+                                { className: "column", key: combatant.id },
                                 _this3.createCard(combatant, function (combatant) {
                                     return combatant.current;
                                 })
@@ -7483,7 +7485,7 @@ var CombatManagerScreen = function (_React$Component) {
                     if (this.props.showHelp && pending.length !== 0) {
                         var help = React.createElement(
                             "div",
-                            { className: "column column-block", key: "help" },
+                            { className: "column", key: "help" },
                             React.createElement(InfoCard, {
                                 getContent: function getContent() {
                                     return React.createElement(
@@ -7509,7 +7511,7 @@ var CombatManagerScreen = function (_React$Component) {
                     if (this.props.showHelp && current.length === 0) {
                         var help = React.createElement(
                             "div",
-                            { className: "column column-block", key: "help" },
+                            { className: "column", key: "help" },
                             React.createElement(InfoCard, {
                                 getContent: function getContent() {
                                     return React.createElement(
@@ -7745,7 +7747,7 @@ var EncounterBuilderScreen = function (_React$Component) {
                 if (this.props.selection) {
                     encounterCards.push(React.createElement(
                         "div",
-                        { className: "column column-block", key: "info" },
+                        { className: "column", key: "info" },
                         React.createElement(EncounterCard, {
                             selection: this.props.selection,
                             parties: this.props.parties,
@@ -7766,7 +7768,7 @@ var EncounterBuilderScreen = function (_React$Component) {
                         if (monster) {
                             encounterCards.push(React.createElement(
                                 "div",
-                                { className: "column column-block", key: monster.id },
+                                { className: "column", key: monster.id },
                                 React.createElement(MonsterCard, {
                                     combatant: monster,
                                     slot: slot,
@@ -7784,7 +7786,7 @@ var EncounterBuilderScreen = function (_React$Component) {
                             var error = "unknown monster: " + slot.monsterName + " in group " + slot.monsterGroupName;
                             encounterCards.push(React.createElement(
                                 "div",
-                                { className: "column column-block", key: index },
+                                { className: "column", key: index },
                                 React.createElement(ErrorCard, { getContent: function getContent() {
                                         return React.createElement(
                                             "div",
@@ -7798,7 +7800,7 @@ var EncounterBuilderScreen = function (_React$Component) {
                     if (this.props.selection.slots.length === 0) {
                         encounterCards.push(React.createElement(
                             "div",
-                            { className: "column column-block", key: "empty" },
+                            { className: "column", key: "empty" },
                             React.createElement(InfoCard, { getContent: function getContent() {
                                     return React.createElement(
                                         "div",
@@ -7813,7 +7815,7 @@ var EncounterBuilderScreen = function (_React$Component) {
                 var libraryCards = [];
                 libraryCards.push(React.createElement(
                     "div",
-                    { className: "column column-block", key: "filter" },
+                    { className: "column", key: "filter" },
                     React.createElement(FilterCard, {
                         filter: this.state.filter,
                         changeValue: function changeValue(type, value) {
@@ -7848,7 +7850,7 @@ var EncounterBuilderScreen = function (_React$Component) {
                         var title = monster.name;
                         libraryCards.push(React.createElement(
                             "div",
-                            { className: "column column-block", key: monster.id },
+                            { className: "column", key: monster.id },
                             React.createElement(InfoCard, {
                                 getHeading: function getHeading() {
                                     return React.createElement(
@@ -7869,7 +7871,7 @@ var EncounterBuilderScreen = function (_React$Component) {
                     } else {
                         libraryCards.push(React.createElement(
                             "div",
-                            { className: "column column-block", key: monster.id },
+                            { className: "column", key: monster.id },
                             React.createElement(MonsterCard, {
                                 key: monster.id,
                                 combatant: monster,
@@ -8139,7 +8141,7 @@ var MonsterLibraryScreen = function (_React$Component) {
                 if (this.props.selection) {
                     cards.push(React.createElement(
                         "div",
-                        { className: "column column-block", key: "info" },
+                        { className: "column", key: "info" },
                         React.createElement(MonsterGroupCard, {
                             selection: this.props.selection,
                             filter: this.state.filter,
@@ -8166,7 +8168,7 @@ var MonsterLibraryScreen = function (_React$Component) {
                         monsters.forEach(function (monster) {
                             cards.push(React.createElement(
                                 "div",
-                                { className: "column column-block", key: monster.id },
+                                { className: "column", key: monster.id },
                                 React.createElement(MonsterCard, {
                                     combatant: monster,
                                     mode: "view editable",
@@ -8204,7 +8206,7 @@ var MonsterLibraryScreen = function (_React$Component) {
                     } else {
                         cards.push(React.createElement(
                             "div",
-                            { className: "column column-block", key: "empty" },
+                            { className: "column", key: "empty" },
                             React.createElement(InfoCard, { getContent: function getContent() {
                                     return React.createElement(
                                         "div",
@@ -8320,7 +8322,7 @@ var PartiesScreen = function (_React$Component) {
                 if (this.props.selection) {
                     cards.push(React.createElement(
                         "div",
-                        { className: "column column-block", key: "info" },
+                        { className: "column", key: "info" },
                         React.createElement(PartyCard, {
                             selection: this.props.selection,
                             addPC: function addPC(name) {
@@ -8342,7 +8344,7 @@ var PartiesScreen = function (_React$Component) {
                         this.props.selection.pcs.forEach(function (pc) {
                             cards.push(React.createElement(
                                 "div",
-                                { className: "column column-block", key: pc.id },
+                                { className: "column", key: pc.id },
                                 React.createElement(PCCard, {
                                     combatant: pc,
                                     mode: "edit",
@@ -8361,7 +8363,7 @@ var PartiesScreen = function (_React$Component) {
                     } else {
                         cards.push(React.createElement(
                             "div",
-                            { className: "column column-block", key: "empty" },
+                            { className: "column", key: "empty" },
                             React.createElement(InfoCard, { getContent: function getContent() {
                                     return React.createElement(
                                         "div",

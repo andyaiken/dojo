@@ -19,7 +19,7 @@ var options = [
 
 <Dropdown
     options={options}
-    placeholer={PLACEHOLDER_TEXT}
+    placeholder={PLACEHOLDER_TEXT}
     selectedID={CURRENT_OPTION_ID}
     disabled={BOOLEAN}
     select={optionID => this.changeValue(SOURCEOBJECT, FIELDNAME, optionID)}
