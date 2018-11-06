@@ -2086,7 +2086,6 @@ ReactElement.createFactory = function (type) {
   // easily accessed on elements. E.g. `<Foo />.type === Foo`.
   // This should not be named `constructor` since this may not be the function
   // that created the element, and it may not even be a constructor.
-  // Legacy hook TODO: Warn if this is accessed
   factory.type = type;
   return factory;
 };
@@ -2414,7 +2413,6 @@ var ReactElementValidator = {
 
   createFactory: function (type) {
     var validatedFactory = ReactElementValidator.createElement.bind(null, type);
-    // Legacy hook TODO: Warn if this is accessed
     validatedFactory.type = type;
 
     if ("development" !== 'production') {
@@ -2530,8 +2528,7 @@ var ReactNoopUpdateQueue = {
   /**
    * Sets a subset of the state. This only exists because _pendingState is
    * internal. This provides a merging strategy that is not available to deep
-   * properties which is confusing. TODO: Expose pendingState or don't use it
-   * during the merge.
+   * properties which is confusing.
    *
    * @param {ReactClass} publicInstance The instance that should rerender.
    * @param {object} partialState Next partial state to be merged with state.

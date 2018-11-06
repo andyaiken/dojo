@@ -8,9 +8,9 @@
 }
 
 .modal {
-    width: calc(100% - 200px);
-    height: calc(100% - 200px);
-    margin: 100px;
+    height: calc(100% - 140px);
+    width: calc(100% - 140px);
+    margin: 70px;
     box-shadow: 0 0 50px 10px rgba(0, 0, 0, 0.5);
 }
 
@@ -63,12 +63,37 @@
             font-weight: 600;
         }
 
+        .modal .modal-content .monster-help {
+            margin-top: 20px;
+        }
+
         .modal .modal-content .value-list {
-            line-height: 38px;
+            margin: 0;
         }
 
             .modal .modal-content .value-list:nth-child(odd) {
                 background-color: rgba(100, 150, 240, 0.1);
+            }
+
+            .modal .modal-content .value-list .column {
+                min-height: 38px;
+            }
+
+        .modal .modal-content .vertical-expander {
+            text-align: center;
+            width: 50%;
+            margin: 20px 25% 0 25%;
+            cursor: pointer;
+            transform: rotate(90deg);
+            border-radius: 50%;
+        }
+
+            .modal .modal-content .vertical-expander:hover {
+                background-color: rgba(100, 150, 240, 0.2);
+            }
+
+            .modal .modal-content .vertical-expander.rotate {
+                transform: rotate(-90deg);
             }
 
 .blur {

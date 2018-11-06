@@ -151,11 +151,11 @@ class MonsterEditorModal extends React.Component {
                     null
                 );
             case "resistances":
-                return this.getTextSection("damage.resist", monsters);
+                return this.getTextSection("resist", monsters.map(m => m.damage));
             case "vulnerabilities":
-                return this.getTextSection("damage.vulnerable", monsters);
+                return this.getTextSection("vulnerable", monsters.map(m => m.damage));
             case "immunities":
-                return this.getTextSection("damage.immune", monsters);
+                return this.getTextSection("immune", monsters.map(m => m.damage));
             case "conditions":
                 return this.getTextSection("conditionImmunities", monsters);
             case "actions":
@@ -434,8 +434,7 @@ class MonsterEditorModal extends React.Component {
             }
 
             var help = null;
-            // TODO: Should only show the help section if there are > 1 monsters
-            if (this.state.showMonsters) {
+            if (this.state.showMonsters && (monsters.length > 1)) {
                 var selector = null;
                 if (this.getHelpOptionsForPage(this.state.page).length > 1) {
                     var options = this.getHelpOptionsForPage(this.state.page).map(s => {
@@ -455,7 +454,7 @@ class MonsterEditorModal extends React.Component {
                 }
 
                 help = (
-                    <div>
+                    <div className="monster-help">
                         <div className="subheading">information from similar monsters</div>
                         {selector}
                         {this.getHelpSection(monsters)}
@@ -475,7 +474,7 @@ class MonsterEditorModal extends React.Component {
 
             return (
                 <div className="row" style={{ height: "100%", margin: "0 -15px" }}>
-                    <div className={this.state.showMonsters ? "columns small-8 medium-8 large-8 scrollable" : "columns small-12 medium-12 large-12 scrollable"}>
+                    <div className={this.state.showMonsters ? "columns small-7 medium-7 large-7 scrollable" : "columns small-11 medium-11 large-11 scrollable"}>
                         <Selector
                             tabs={true}
                             options={pages}
@@ -483,13 +482,10 @@ class MonsterEditorModal extends React.Component {
                             select={optionID => this.setPage(optionID)}
                         />
                         {content}
-                        <div className="divider"></div>
-                        <Checkbox
-                            label="show similar monsters"
-                            checked={this.state.showMonsters}
-                            changeValue={value => this.toggleMonsters()}
-                        />
                         {help}
+                    </div>
+                    <div className="columns small-1 medium-1 large-1 scrollable">
+                        <img className={this.state.showMonsters ? "vertical-expander rotate" : "vertical-expander"} src="content/down-arrow-black.svg" onClick={() => this.toggleMonsters()}/>
                     </div>
                     {monsterList}
                 </div>

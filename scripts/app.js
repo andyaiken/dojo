@@ -5737,11 +5737,17 @@ var MonsterEditorModal = function (_React$Component) {
                     // TODO: HD
                     return null;
                 case "resistances":
-                    return this.getTextSection("damage.resist", monsters);
+                    return this.getTextSection("resist", monsters.map(function (m) {
+                        return m.damage;
+                    }));
                 case "vulnerabilities":
-                    return this.getTextSection("damage.vulnerable", monsters);
+                    return this.getTextSection("vulnerable", monsters.map(function (m) {
+                        return m.damage;
+                    }));
                 case "immunities":
-                    return this.getTextSection("damage.immune", monsters);
+                    return this.getTextSection("immune", monsters.map(function (m) {
+                        return m.damage;
+                    }));
                 case "conditions":
                     return this.getTextSection("conditionImmunities", monsters);
                 case "actions":
@@ -6217,8 +6223,7 @@ var MonsterEditorModal = function (_React$Component) {
                 }
 
                 var help = null;
-                // TODO: Should only show the help section if there are > 1 monsters
-                if (this.state.showMonsters) {
+                if (this.state.showMonsters && monsters.length > 1) {
                     var selector = null;
                     if (this.getHelpOptionsForPage(this.state.page).length > 1) {
                         var options = this.getHelpOptionsForPage(this.state.page).map(function (s) {
@@ -6239,7 +6244,7 @@ var MonsterEditorModal = function (_React$Component) {
 
                     help = React.createElement(
                         "div",
-                        null,
+                        { className: "monster-help" },
                         React.createElement(
                             "div",
                             { className: "subheading" },
@@ -6265,7 +6270,7 @@ var MonsterEditorModal = function (_React$Component) {
                     { className: "row", style: { height: "100%", margin: "0 -15px" } },
                     React.createElement(
                         "div",
-                        { className: this.state.showMonsters ? "columns small-8 medium-8 large-8 scrollable" : "columns small-12 medium-12 large-12 scrollable" },
+                        { className: this.state.showMonsters ? "columns small-7 medium-7 large-7 scrollable" : "columns small-11 medium-11 large-11 scrollable" },
                         React.createElement(Selector, {
                             tabs: true,
                             options: pages,
@@ -6275,15 +6280,14 @@ var MonsterEditorModal = function (_React$Component) {
                             }
                         }),
                         content,
-                        React.createElement("div", { className: "divider" }),
-                        React.createElement(Checkbox, {
-                            label: "show similar monsters",
-                            checked: this.state.showMonsters,
-                            changeValue: function changeValue(value) {
-                                return _this6.toggleMonsters();
-                            }
-                        }),
                         help
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "columns small-1 medium-1 large-1 scrollable" },
+                        React.createElement("img", { className: this.state.showMonsters ? "vertical-expander rotate" : "vertical-expander", src: "content/down-arrow-black.svg", onClick: function onClick() {
+                                return _this6.toggleMonsters();
+                            } })
                     ),
                     monsterList
                 );
