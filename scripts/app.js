@@ -5653,7 +5653,7 @@ var MonsterEditorModal = function (_React$Component) {
                 case "combat":
                     return ["armor class", "hit dice", "resistances", "vulnerabilities", "immunities", "conditions"];
                 case "actions":
-                    return ["actions"];
+                    return ["traits", "actions", "legendary", "lair", "regional"];
             }
 
             return null;
@@ -5769,9 +5769,16 @@ var MonsterEditorModal = function (_React$Component) {
                     }));
                 case "conditions":
                     return this.getValueSection("conditionImmunities", "count", monsters);
+                case "traits":
+                    return this.getActionsSection("trait", monsters);
                 case "actions":
-                    // TODO: Traits and actions
-                    return null;
+                    return this.getActionsSection("action", monsters);
+                case "legendary":
+                    return this.getActionsSection("legendary", monsters);
+                case "lair":
+                    return this.getActionsSection("lair", monsters);
+                case "regional":
+                    return this.getActionsSection("regional", monsters);
             }
 
             return null;
@@ -5880,6 +5887,79 @@ var MonsterEditorModal = function (_React$Component) {
                     "div",
                     { className: "no-values" },
                     "no values"
+                );
+            }
+        }
+    }, {
+        key: "getActionsSection",
+        value: function getActionsSection(type, monsters) {
+            var actionType = null;
+            switch (type) {
+                case "trait":
+                    actionType = "traits";
+                    break;
+                case "action":
+                    actionType = "actions";
+                    break;
+                case "legendary":
+                    actionType = "legendary actions";
+                    break;
+                case "lair":
+                    actionType = "lair actions";
+                    break;
+                case "regional":
+                    actionType = "regional effects";
+                    break;
+            }
+
+            var min = null,
+                max = null,
+                count = null;
+            monsters.forEach(function (m) {
+                var n = m.traits.filter(function (t) {
+                    return t.type === type;
+                }).length;
+                if (min === null || n < min) {
+                    min = n;
+                }
+                if (max === null || n > max) {
+                    max = n;
+                }
+                count += n;
+            });
+            var avg = Math.round(count / monsters.length);
+
+            if (count === 0) {
+                return React.createElement(
+                    "div",
+                    { className: "action-count" },
+                    "number of ",
+                    actionType,
+                    ": ",
+                    React.createElement(
+                        "b",
+                        null,
+                        "0"
+                    )
+                );
+            } else {
+                // TODO: Button to add a random one
+                return React.createElement(
+                    "div",
+                    { className: "action-count" },
+                    "number of ",
+                    actionType,
+                    ": ",
+                    React.createElement(
+                        "b",
+                        null,
+                        min,
+                        " - ",
+                        max,
+                        " (average ",
+                        avg,
+                        ")"
+                    )
                 );
             }
         }

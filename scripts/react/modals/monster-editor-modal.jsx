@@ -66,7 +66,7 @@ class MonsterEditorModal extends React.Component {
             case "combat":
                 return ["armor class", "hit dice", "resistances", "vulnerabilities", "immunities", "conditions"];
             case "actions":
-                return ["actions"];
+                return ["traits", "actions", "legendary", "lair", "regional"];
         }
 
         return null;
@@ -159,11 +159,16 @@ class MonsterEditorModal extends React.Component {
                 return this.getValueSection("immune", "count", monsters.map(m => m.damage));
             case "conditions":
                 return this.getValueSection("conditionImmunities", "count", monsters);
+            case "traits":
+                return this.getActionsSection("trait", monsters);
             case "actions":
-                // TODO: Traits and actions
-                return (
-                    null
-                );
+                return this.getActionsSection("action", monsters);
+            case "legendary":
+                return this.getActionsSection("legendary", monsters);
+            case "lair":
+                return this.getActionsSection("lair", monsters);
+            case "regional":
+                return this.getActionsSection("regional", monsters);
         }
 
         return null;
@@ -247,6 +252,55 @@ class MonsterEditorModal extends React.Component {
             return (
                 <div className="no-values">
                     no values
+                </div>
+            );
+        }
+    }
+
+    getActionsSection(type, monsters) {
+        var actionType = null;
+        switch (type) {
+            case "trait":
+                actionType = "traits";
+                break;
+            case "action":
+                actionType = "actions";
+                break;
+            case "legendary":
+                actionType = "legendary actions";
+                break;
+            case "lair":
+                actionType = "lair actions";
+                break;
+            case "regional":
+                actionType = "regional effects";
+                break;
+        }
+
+        var min = null, max = null, count = null;
+        monsters.forEach(m => {
+            var n = m.traits.filter(t => t.type === type).length;
+            if ((min === null) || (n < min)) {
+                min = n;
+            }
+            if ((max === null) || (n > max)) {
+                max = n;
+            }
+            count += n;
+        });
+        var avg = Math.round(count / monsters.length);
+
+        if (count === 0) {
+            return (
+                <div className="action-count">
+                    number of {actionType}: <b>0</b>
+                </div>
+            );
+        } else {
+            // TODO: Button to add a random one
+            return (
+                <div className="action-count">
+                    number of {actionType}: <b>{min} - {max} (average {avg})</b>
                 </div>
             );
         }
