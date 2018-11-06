@@ -5822,51 +5822,66 @@ var MonsterEditorModal = function (_React$Component) {
                 }
             });
 
-            switch (sortBy) {
-                case "value":
-                    sortByValue(distinct);
-                    break;
-                case "count":
-                    sortByCount(distinct);
-                    break;
-            }
+            if (distinct.length !== 0) {
+                switch (sortBy) {
+                    case "value":
+                        sortByValue(distinct);
+                        break;
+                    case "count":
+                        sortByCount(distinct);
+                        break;
+                }
 
-            var valueSections = distinct.map(function (d) {
-                // TODO: Bar graph to show count
+                var valueSections = distinct.map(function (d) {
+                    var width = 100 * d.count / monsters.length;
+                    return React.createElement(
+                        "div",
+                        { className: "row small-up-3 medium-up-3 large-up-3 value-list", key: distinct.indexOf(d) },
+                        React.createElement(
+                            "div",
+                            { className: "column" },
+                            React.createElement(
+                                "div",
+                                { className: "text-container" },
+                                d.value
+                            )
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "column" },
+                            React.createElement(
+                                "div",
+                                { className: "bar-container" },
+                                React.createElement("div", { className: "bar", style: { width: width + "%" } })
+                            )
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "column" },
+                            React.createElement(
+                                "button",
+                                { onClick: function onClick() {
+                                        return _this3.props.changeValue(_this3.props.combatant, field, d.value);
+                                    } },
+                                "use this value"
+                            )
+                        )
+                    );
+                });
+
+                // TODO: Button to populate with a random value
                 return React.createElement(
                     "div",
-                    { className: "row small-up-3 medium-up-3 large-up-3 value-list", key: distinct.indexOf(d) },
-                    React.createElement(
-                        "div",
-                        { className: "column" },
-                        d.value
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "column" },
-                        "x",
-                        d.count
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "column" },
-                        React.createElement(
-                            "button",
-                            { onClick: function onClick() {
-                                    return _this3.props.changeValue(_this3.props.combatant, field, d.value);
-                                } },
-                            "use this value"
-                        )
-                    )
+                    null,
+                    valueSections
                 );
-            });
-
-            // TODO: Button to populate with a random value
-            return React.createElement(
-                "div",
-                null,
-                valueSections
-            );
+            } else {
+                return React.createElement(
+                    "div",
+                    { className: "no-values" },
+                    "no values"
+                );
+            }
         }
     }, {
         key: "getFilterCard",

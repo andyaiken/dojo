@@ -79,6 +79,26 @@
                     min-height: 38px;
                 }
 
+                    .modal .modal-content .monster-help .value-list .column .text-container {
+                        margin: 10px 0;
+                    }
+
+                    .modal .modal-content .monster-help .value-list .column .bar-container {
+                        height: 18px;
+                        margin: 10px 0;
+                        border-bottom: 1px solid rgba(100, 150, 240, 0.2);
+                    }
+
+                        .modal .modal-content .monster-help .value-list .column .bar-container .bar {
+                            height: 100%;
+                            background-color: rgb(100, 150, 240);
+                        }
+
+            .modal .modal-content .monster-help .no-values {
+                text-align: center;
+                margin-top: 20px;
+            }
+
         .modal .modal-content .vertical-expander {
             text-align: center;
             width: 50%;

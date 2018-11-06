@@ -206,38 +206,50 @@ class MonsterEditorModal extends React.Component {
             }
         });
 
-        switch (sortBy) {
-            case "value":
-                sortByValue(distinct);
-                break;
-            case "count":
-                sortByCount(distinct);
-                break;
-        }
-
-        var valueSections = distinct.map(d => {
-            // TODO: Bar graph to show count
+        if (distinct.length !== 0) {
+            switch (sortBy) {
+                case "value":
+                    sortByValue(distinct);
+                    break;
+                case "count":
+                    sortByCount(distinct);
+                    break;
+            }
+    
+            var valueSections = distinct.map(d => {
+                var width = 100 * d.count / monsters.length;
+                return (
+                    <div className="row small-up-3 medium-up-3 large-up-3 value-list" key={distinct.indexOf(d)}>
+                        <div className="column">
+                            <div className="text-container">
+                                {d.value}
+                            </div>
+                        </div>
+                        <div className="column">
+                            <div className="bar-container">
+                                <div className="bar" style={{ width: width + "%" }}></div>
+                            </div>
+                        </div>
+                        <div className="column">
+                            <button onClick={() => this.props.changeValue(this.props.combatant, field, d.value)}>use this value</button>
+                        </div>
+                    </div>
+                );
+            });
+    
+            // TODO: Button to populate with a random value
             return (
-                <div className="row small-up-3 medium-up-3 large-up-3 value-list" key={distinct.indexOf(d)}>
-                    <div className="column">
-                        {d.value}
-                    </div>
-                    <div className="column">
-                        x{d.count}
-                    </div>
-                    <div className="column">
-                        <button onClick={() => this.props.changeValue(this.props.combatant, field, d.value)}>use this value</button>
-                    </div>
+                <div>
+                    {valueSections}
                 </div>
             );
-        });
-
-        // TODO: Button to populate with a random value
-        return (
-            <div>
-                {valueSections}
-            </div>
-        );
+        } else {
+            return (
+                <div className="no-values">
+                    no values
+                </div>
+            );
+        }
     }
 
     getFilterCard() {
