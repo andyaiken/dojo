@@ -56,15 +56,24 @@ function sort(collection) {
     return collection;
 }
 
+function sortByValue(collection) {
+    collection.sort((a, b) => {
+        if (a.value < b.value) return -1;
+        if (a.value > b.value) return 1;
+        return 0;
+    });
+    return collection;
+}
+
 function sortByCount(collection) {
     collection.sort((a, b) => {
         if (a.count < b.count) return 1;
         if (a.count > b.count) return -1;
 
-        var aName = a.value.toLowerCase();
-        var bName = b.value.toLowerCase();
-        if (aName < bName) return -1;
-        if (aName > bName) return 1;
+        var aValue = a.value.toLowerCase();
+        var bValue = b.value.toLowerCase();
+        if (aValue < bValue) return -1;
+        if (aValue > bValue) return 1;
 
         return 0;
     });

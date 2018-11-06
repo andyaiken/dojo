@@ -5649,7 +5649,7 @@ var MonsterEditorModal = function (_React$Component) {
                 case "overview":
                     return ["speed", "senses", "languages", "equipment"];
                 case "abilities":
-                    return ["ability scores", "saving throws", "skills"];
+                    return ["str", "dex", "con", "int", "wis", "cha", "saves", "skills"];
                 case "combat":
                     return ["armor class", "hit dice", "resistances", "vulnerabilities", "immunities", "conditions"];
                 case "actions":
@@ -5716,40 +5716,59 @@ var MonsterEditorModal = function (_React$Component) {
         value: function getHelpSection(monsters) {
             switch (this.state.helpSection) {
                 case "speed":
-                    return this.getTextSection("speed", monsters);
+                    return this.getValueSection("speed", "count", monsters);
                 case "senses":
-                    return this.getTextSection("senses", monsters);
+                    return this.getValueSection("senses", "count", monsters);
                 case "languages":
-                    return this.getTextSection("languages", monsters);
+                    return this.getValueSection("languages", "count", monsters);
                 case "equipment":
-                    return this.getTextSection("equipment", monsters);
-                case "ability scores":
-                    // TODO: Ability scores
-                    return null;
-                case "saving throws":
-                    return this.getTextSection("savingThrows", monsters);
+                    return this.getValueSection("equipment", "count", monsters);
+                case "str":
+                    return this.getValueSection("str", "value", monsters.map(function (m) {
+                        return m.abilityScores;
+                    }));
+                case "dex":
+                    return this.getValueSection("dex", "value", monsters.map(function (m) {
+                        return m.abilityScores;
+                    }));
+                case "con":
+                    return this.getValueSection("con", "value", monsters.map(function (m) {
+                        return m.abilityScores;
+                    }));
+                case "int":
+                    return this.getValueSection("int", "value", monsters.map(function (m) {
+                        return m.abilityScores;
+                    }));
+                case "wis":
+                    return this.getValueSection("wis", "value", monsters.map(function (m) {
+                        return m.abilityScores;
+                    }));
+                case "cha":
+                    return this.getValueSection("cha", "value", monsters.map(function (m) {
+                        return m.abilityScores;
+                    }));
+                case "saves":
+                    return this.getValueSection("savingThrows", "count", monsters);
                 case "skills":
-                    return this.getTextSection("skills", monsters);
+                    return this.getValueSection("skills", "count", monsters);
                 case "armor class":
-                    // TODO: AC
-                    return null;
+                    return this.getValueSection("ac", "value", monsters);
                 case "hit dice":
-                    // TODO: HD
-                    return null;
+                    return this.getValueSection("hitDice", "value", monsters);
                 case "resistances":
-                    return this.getTextSection("resist", monsters.map(function (m) {
+                    return this.getValueSection("resist", "count", monsters.map(function (m) {
                         return m.damage;
                     }));
                 case "vulnerabilities":
-                    return this.getTextSection("vulnerable", monsters.map(function (m) {
+                    return this.getValueSection("vulnerable", "count", monsters.map(function (m) {
                         return m.damage;
                     }));
                 case "immunities":
-                    return this.getTextSection("immune", monsters.map(function (m) {
+                    return this.getValueSection("immune", "count", monsters.map(function (m) {
                         return m.damage;
                     }));
                 case "conditions":
-                    return this.getTextSection("conditionImmunities", monsters);
+                    return this.getValueSection("conditionImmunities", "count", monsters);
                 case "actions":
                     // TODO: Traits and actions
                     return null;
@@ -5758,8 +5777,8 @@ var MonsterEditorModal = function (_React$Component) {
             return null;
         }
     }, {
-        key: "getTextSection",
-        value: function getTextSection(field, monsters) {
+        key: "getValueSection",
+        value: function getValueSection(field, sortBy, monsters) {
             var _this3 = this;
 
             var values = monsters.map(function (m) {
@@ -5767,7 +5786,28 @@ var MonsterEditorModal = function (_React$Component) {
             }).filter(function (v) {
                 return !!v;
             });
+
             var distinct = [];
+            if (sortBy === "value") {
+                var min = null,
+                    max = null;
+                values.forEach(function (v) {
+                    if (min === null || v < min) {
+                        min = v;
+                    }
+                    if (max === null || v > max) {
+                        max = v;
+                    }
+                });
+                if (min !== null && max !== null) {
+                    for (var n = min; n <= max; ++n) {
+                        distinct.push({
+                            value: n,
+                            count: 0
+                        });
+                    }
+                }
+            }
             values.forEach(function (v) {
                 var current = distinct.find(function (d) {
                     return d.value === v;
@@ -5781,7 +5821,16 @@ var MonsterEditorModal = function (_React$Component) {
                     });
                 }
             });
-            sortByCount(distinct);
+
+            switch (sortBy) {
+                case "value":
+                    sortByValue(distinct);
+                    break;
+                case "count":
+                    sortByCount(distinct);
+                    break;
+            }
+
             var valueSections = distinct.map(function (d) {
                 // TODO: Bar graph to show count
                 return React.createElement(

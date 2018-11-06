@@ -67,17 +67,17 @@
             margin-top: 20px;
         }
 
-        .modal .modal-content .value-list {
-            margin: 0;
-        }
-
-            .modal .modal-content .value-list:nth-child(odd) {
-                background-color: rgba(100, 150, 240, 0.1);
+            .modal .modal-content .monster-help .value-list {
+                margin: 0;
             }
 
-            .modal .modal-content .value-list .column {
-                min-height: 38px;
-            }
+                .modal .modal-content .monster-help .value-list:nth-child(odd) {
+                    background-color: rgba(100, 150, 240, 0.1);
+                }
+
+                .modal .modal-content .monster-help .value-list .column {
+                    min-height: 38px;
+                }
 
         .modal .modal-content .vertical-expander {
             text-align: center;
