@@ -328,38 +328,6 @@ class Dojo extends React.Component {
         });
     }
 
-    addTrait(combatant, type) {
-        var trait = {
-            id: guid(),
-            name: "New trait",
-            usage: "",
-            type: type,
-            text: ""
-        }
-        var trait = combatant.traits.push(trait);
-        this.setState({
-            library: this.state.library
-        });
-        return trait;
-    }
-
-    removeTrait(combatant, trait) {
-        var index = combatant.traits.indexOf(trait);
-        combatant.traits.splice(index, 1);
-        this.setState({
-            library: this.state.library
-        });
-    }
-
-    copyTrait(combatant, trait) {
-        var copy = JSON.parse(JSON.stringify(trait));
-        copy.id = guid();
-        combatant.traits.push(copy);
-        this.setState({
-            library: this.state.library
-        });
-    }
-
     addOpenGameContent() {
         var request = new XMLHttpRequest();
         request.overrideMimeType("application/json");
@@ -1119,8 +1087,6 @@ class Dojo extends React.Component {
                             sortMonsters={() => this.sortMonsters()}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                             nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
-                            addTrait={(combatant, type) => this.addTrait(combatant, type)}
-                            removeTrait={(combatant, trait) => this.removeTrait(combatant, trait)}
                             editMonster={combatant => this.editMonster(combatant)}
                             cloneMonster={combatant => this.cloneMonster(combatant)}
                             moveToGroup={(combatant, groupID) => this.moveToGroup(combatant, groupID)}
@@ -1242,15 +1208,9 @@ class Dojo extends React.Component {
                         modalTitle = "monster editor";
                         modalContent = (
                             <MonsterEditorModal
-                                combatant={this.state.modal.monster}
+                                monster={this.state.modal.monster}
                                 library={this.state.library}
                                 showMonsters={this.state.modal.showMonsters}
-                                changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
-                                nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
-                                changeTrait={(trait, type, value) => this.changeValue(trait, type, value)}
-                                addTrait={(combatant, type) => this.addTrait(combatant, type)}
-                                removeTrait={(combatant, trait) => this.removeTrait(combatant, trait)}
-                                copyTrait={(combatant, type) => this.copyTrait(combatant, type)}
                             />
                         );
                         modalAllowClose = false;

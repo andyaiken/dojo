@@ -1,7 +1,8 @@
 class MonsterEditorModal extends React.Component {
-    constructor() {
+    constructor(props) {
         super();
         this.state = {
+            monster: props.monster,
             page: "overview",
             showFilter: false,
             helpSection: "speed",
@@ -63,27 +64,27 @@ class MonsterEditorModal extends React.Component {
             group.monsters.forEach(monster => {
                 var match = true;
 
-                if (this.props.combatant.id === monster.id) {
+                if (this.state.monster.id === monster.id) {
                     match = false;
                 }
 
-                if (this.state.filter.size && (this.props.combatant.size !== monster.size)) {
+                if (this.state.filter.size && (this.state.monster.size !== monster.size)) {
                     match = false;
                 }
 
-                if (this.state.filter.type && (this.props.combatant.category !== monster.category)) {
+                if (this.state.filter.type && (this.state.monster.category !== monster.category)) {
                     match = false;
                 }
 
-                if (this.state.filter.subtype && (this.props.combatant.tag !== monster.tag)) {
+                if (this.state.filter.subtype && (this.state.monster.tag !== monster.tag)) {
                     match = false;
                 }
 
-                if (this.state.filter.alignment && (this.props.combatant.alignment !== monster.alignment)) {
+                if (this.state.filter.alignment && (this.state.monster.alignment !== monster.alignment)) {
                     match = false;
                 }
 
-                if (this.state.filter.challenge && (this.props.combatant.challenge !== monster.challenge)) {
+                if (this.state.filter.challenge && (this.state.monster.challenge !== monster.challenge)) {
                     match = false;
                 }
 
@@ -96,110 +97,204 @@ class MonsterEditorModal extends React.Component {
         return monsters;
     }
 
-    setRandomValue(field, monsters, source) {
+    setRandomValue(field, monsters, notify) {
         var index = Math.floor(Math.random() * monsters.length);
         var m = monsters[index];
-        var src = source ? m[source] : m;
-        var value = src[field];
-        this.changeValue(field, source, value);
-        // TODO: Notify that something has changed
+
+        var source = m;
+        var value = null;
+        var tokens = field.split(".");
+        tokens.forEach(token => {
+            if (token === tokens[tokens.length - 1]) {
+                value = source[token];
+            } else {
+                source = source[token];
+            }
+        });
+
+        this.changeValue(field, value, notify);
     }
 
     geneSplice(monsters) {
-        // TODO: Gene splice
-
-        // Take random values for all fields from the source monsters
-        // For traits, if there are any which are common to all, take them; then fill with other random items
-
-        var fields = [
-            {
-                field: "speed",
-                source: null
-            },
-            {
-                field: "senses",
-                source: null
-            },
-            {
-                field: "languages",
-                source: null
-            },
-            {
-                field: "equipment",
-                source: null
-            },
-            {
-                field: "str",
-                source: "abilityScores"
-            },
-            {
-                field: "dex",
-                source: "abilityScores"
-            },
-            {
-                field: "con",
-                source: "abilityScores"
-            },
-            {
-                field: "int",
-                source: "abilityScores"
-            },
-            {
-                field: "wis",
-                source: "abilityScores"
-            },
-            {
-                field: "cha",
-                source: "abilityScores"
-            },
-            {
-                field: "savingThrows",
-                source: null
-            },
-            {
-                field: "skills",
-                source: null
-            },
-            {
-                field: "ac",
-                source: null
-            },
-            {
-                field: "hitDice",
-                source: null
-            },
-            {
-                field: "resist",
-                source: "damage"
-            },
-            {
-                field: "vulnerable",
-                source: "damage"
-            },
-            {
-                field: "immune",
-                source: "damage"
-            },
-            {
-                field: "conditionImmunities",
-                source: null
-            }
-        ];
-
-        fields.forEach(f => {
-            var index = Math.floor(Math.random() * monsters.length);
-            var m = monsters[index];
-            var src = f.source ? m[f.source] : m;
-            var value = src[f.field];
-            this.changeValue(f.field, f.source, value);
+        [
+            "speed",
+            "senses",
+            "languages",
+            "equipment",
+            "abilityScores.str",
+            "abilityScores.dex",
+            "abilityScores.con",
+            "abilityScores.int",
+            "abilityScores.wis",
+            "abilityScores.cha",
+            "savingThrows",
+            "skills",
+            "ac",
+            "hitDice",
+            "damage.resist",
+            "damage.vulnerable",
+            "damage.immune",
+            "conditionImmunities"
+        ].forEach(field => {
+            this.setRandomValue(field, monsters, false);
         });
 
-        // TODO: Notify that something has changed
+        ["trait", "action", "legendary", "lair", "regional"].forEach(type => {
+            // Clear current traits of this type
+            var current = this.state.monster.traits.filter(t => t.type === type);
+            current.forEach(c => {
+                var index = this.state.monster.traits.findIndex(t => t === c);
+                this.state.monster.traits.splice(index, 1);
+            })
+
+            // Get all traits of this type
+            var traits = [];
+            monsters.forEach(m => {
+                m.traits.filter(t => t.type === type)
+                    .forEach(t => traits.push(t));
+            });
+
+            // Collate by name
+            var distinct = [];
+            traits.forEach(t => {
+                var current = distinct.find(d => d.trait.name === t.name);
+                if (current) {
+                    current.count += 1;
+                } else {
+                    distinct.push({
+                        trait: t,
+                        count: 1
+                    });
+                }
+            });
+
+            // If any are common to all monsters, copy them and remove from the candidates
+            var addedIDs = [];
+            distinct.filter(d => d.count === monsters.length)
+                .forEach(d => {
+                    this.copyTrait(d.trait);
+                    addedIDs.push(d.trait.id);
+                });
+            addedIDs.forEach(id => {
+                var index = distinct.findIndex(d => d.trait.id === id);
+                distinct.splice(index, 1);
+            });
+
+            var avg = traits.length / monsters.length;
+            while (this.state.monster.traits.filter(t => t.type === type).length < avg) {
+                var index = Math.floor(Math.random() * distinct.length);
+                var t = distinct[index].trait;
+                this.copyTrait(t);
+                distinct.splice(index, 1);
+            }
+        });
+
+        this.setState({
+            monster: this.state.monster
+        });
     }
 
-    changeValue(field, source, value) {
-        var target = source ? this.props.combatant[source] : this.props.combatant;
-        target[field] = value;
+    addTrait(type) {
+        var trait = {
+            id: guid(),
+            name: "New " + this.getActionTypeName(type).toLowerCase(),
+            usage: "",
+            type: type,
+            text: ""
+        }
+        this.state.monster.traits.push(trait);
+        this.setState({
+            library: this.state.library
+        });
+    }
+
+    addRandomTrait(type, monsters) {
+        var traits = [];
+        monsters.forEach(m => {
+            m.traits.filter(t => t.type === type)
+                .forEach(t => {
+                    traits.push(t);
+                });
+        });
+
+        var index = Math.floor(Math.random() * traits.length);
+        var trait = traits[index];
+
+        this.copyTrait(trait);
+    }
+
+    removeTrait(trait) {
+        var index = this.state.monster.traits.indexOf(trait);
+        this.state.monster.traits.splice(index, 1);
+        this.setState({
+            library: this.state.library
+        });
+    }
+
+    getActionTypeName(type) {
+        switch (type) {
+            case "trait":
+                return "traits";
+            case "action":
+                return "actions";
+            case "legendary":
+                return "legendary actions";
+            case "lair":
+                return "lair actions";
+            case "regional":
+                return "regional effects";
+        }
+
+        return "";
+    }
+
+    copyTrait(trait) {
+        var copy = JSON.parse(JSON.stringify(trait));
+        copy.id = guid();
+        this.state.monster.traits.push(copy);
+        this.setState({
+            library: this.state.library
+        });
+    }
+
+    nudgeValue(field, delta) {
+        var source = this.state.monster;
+        var value = null;
+        var tokens = field.split(".");
+        tokens.forEach(token => {
+            if (token === tokens[tokens.length - 1]) {
+                value = source[token];
+            } else {
+                source = source[token];
+            }
+        });
+
+        var newValue = null;
+        if (field === "challenge") {
+            newValue = nudgeChallenge(value, delta);
+        } else {
+            newValue = value + delta;
+        }
+
+        this.changeValue(field, newValue);
+    }
+
+    changeValue(field, value, notify = true) {
+        var source = this.state.monster;
+        var tokens = field.split(".");
+        tokens.forEach(token => {
+            if (token === tokens[tokens.length - 1]) {
+                source[token] = value;
+
+                if (notify) {
+                    this.setState({
+                        monster: this.state.monster
+                    });
+                }
+            } else {
+                source = source[token];
+            }
+        });
     }
 
     getHelpSection(monsters) {
@@ -213,17 +308,17 @@ class MonsterEditorModal extends React.Component {
             case "equipment":
                 return this.getValueSection("equipment", "text", monsters);
             case "str":
-                return this.getValueSection("str", "number", monsters, "abilityScores");
+                return this.getValueSection("abilityScores.str", "number", monsters);
             case "dex":
-                return this.getValueSection("dex", "number", monsters, "abilityScores");
+                return this.getValueSection("abilityScores.dex", "number", monsters);
             case "con":
-                return this.getValueSection("con", "number", monsters, "abilityScores");
+                return this.getValueSection("abilityScores.con", "number", monsters);
             case "int":
-                return this.getValueSection("int", "number", monsters, "abilityScores");
+                return this.getValueSection("abilityScores.int", "number", monsters);
             case "wis":
-                return this.getValueSection("wis", "number", monsters, "abilityScores");
+                return this.getValueSection("abilityScores.wis", "number", monsters);
             case "cha":
-                return this.getValueSection("cha", "number", monsters, "abilityScores");
+                return this.getValueSection("abilityScores.cha", "number", monsters);
             case "saves":
                 return this.getValueSection("savingThrows", "text", monsters);
             case "skills":
@@ -233,11 +328,11 @@ class MonsterEditorModal extends React.Component {
             case "hit dice":
                 return this.getValueSection("hitDice", "number", monsters);
             case "resistances":
-                return this.getValueSection("resist", "text", monsters, "damage");
+                return this.getValueSection("damage.resist", "text", monsters);
             case "vulnerabilities":
-                return this.getValueSection("vulnerable", "text", monsters, "damage");
+                return this.getValueSection("damage.vulnerable", "text", monsters);
             case "immunities":
-                return this.getValueSection("immune", "text", monsters, "damage");
+                return this.getValueSection("damage.immune", "text", monsters);
             case "conditions":
                 return this.getValueSection("conditionImmunities", "text", monsters);
             case "actions":
@@ -247,11 +342,25 @@ class MonsterEditorModal extends React.Component {
         return null;
     }
 
-    getValueSection(field, dataType, monsters, source) {
+    getValueSection(field, dataType, monsters) {
         var values = monsters
-            .map(m => source ? m[source] : m)
-            .map(m => m[field])
-            .filter(v => !!v);
+            .map(m => {
+                var tokens = field.split(".");
+                var source = m;
+                var value = null;
+                tokens.forEach(token => {
+                    if (token === tokens[tokens.length - 1]) {
+                        value = source[token];
+                    } else {
+                        source = source[token];
+                    }
+                });
+                if ((dataType === "text") && (value === "")) {
+                    value = null;
+                }
+                return value;
+            })
+            .filter(v => v !== null);
 
         var distinct = [];
         if (dataType === "number") {
@@ -298,7 +407,7 @@ class MonsterEditorModal extends React.Component {
             var count = monsters.length - values.length;
             if (count !== 0) {
                 distinct.push({
-                    value: null,
+                    value: "",
                     count: monsters.length - values.length
                 });
             }
@@ -319,17 +428,16 @@ class MonsterEditorModal extends React.Component {
                         </div>
                     </div>
                     <div className="column">
-                        <button onClick={() => this.props.changeValue(this.props.combatant, field, d.value)}>use this value</button>
+                        <button onClick={() => this.changeValue(field, d.value)}>use this value</button>
                     </div>
                 </div>
             );
         });
 
-        // TODO: Button to populate with a random value
         return (
             <div>
                 {valueSections}
-                <button onClick={() => this.setRandomValue(field, monsters, source)}>select random value</button>
+                <button onClick={() => this.setRandomValue(field, monsters, true)}>select random value</button>
             </div>
         );
     }
@@ -356,26 +464,7 @@ class MonsterEditorModal extends React.Component {
             </div>
         );
 
-        ["trait", "action", "legendary", "lair", "regional"].forEach(type => {
-            var actionName = null;
-            switch (type) {
-                case "trait":
-                    actionName = "traits";
-                    break;
-                case "action":
-                    actionName = "actions";
-                    break;
-                case "legendary":
-                    actionName = "legendary actions";
-                    break;
-                case "lair":
-                    actionName = "lair actions";
-                    break;
-                case "regional":
-                    actionName = "regional effects";
-                    break;
-            }
-    
+        ["trait", "action", "legendary", "lair", "regional"].forEach(type => {    
             var min = null, max = null, count = null;
             monsters.forEach(m => {
                 var n = m.traits.filter(t => t.type === type).length;
@@ -389,13 +478,11 @@ class MonsterEditorModal extends React.Component {
             });
             var avg = Math.round(count / monsters.length);    
 
-            // TODO: Button to copy a random trait
-
             rows.push(
-                <div className="row small-up-3 medium-up-3 large-up-3 value-list" key={type}>
+                <div className="row small-up-4 medium-up-4 large-up-4 value-list" key={type}>
                     <div className="column">
                         <div className={count === 0 ? "text-container disabled" : "text-container"}>
-                            {actionName}
+                            {this.getActionTypeName(type)}
                         </div>
                     </div>
                     <div className="column">
@@ -407,6 +494,9 @@ class MonsterEditorModal extends React.Component {
                         <div className={count === 0 ? "text-container number disabled" : "text-container number"}>
                             {min} - {max}
                         </div>
+                    </div>
+                    <div className="column">
+                        <button className={count === 0 ? "disabled" : ""} onClick={() => this.addRandomTrait(type, monsters)}>add random</button>
                     </div>
                 </div>
             );
@@ -431,29 +521,29 @@ class MonsterEditorModal extends React.Component {
             filterContent = (
                 <div>
                     <Checkbox
-                        label="match size"
+                        label={"size " + this.state.monster.size}
                         checked={this.state.filter.size}
                         changeValue={value => this.toggleMatch("size")}
                     />
                     <Checkbox
-                        label="match type"
+                        label={"type " + this.state.monster.category}
                         checked={this.state.filter.type}
                         changeValue={value => this.toggleMatch("type")}
                     />
                     <Checkbox
-                        label="match subtype"
+                        label={this.state.monster.tag ? "subtype " + this.state.monster.tag : "subtype"}
                         checked={this.state.filter.subtype}
-                        disabled={!this.props.combatant.tag}
+                        disabled={!this.state.monster.tag}
                         changeValue={value => this.toggleMatch("subtype")}
                     />
                     <Checkbox
-                        label="match alignment"
+                        label={this.state.monster.alignment ? "alignment " + this.state.monster.alignment : "alignment"}
                         checked={this.state.filter.alignment}
-                        disabled={!this.props.combatant.alignment}
+                        disabled={!this.state.monster.alignment}
                         changeValue={value => this.toggleMatch("alignment")}
                     />
                     <Checkbox
-                        label="match challenge rating"
+                        label={"challenge rating " + challenge(this.state.monster.challenge)}
                         checked={this.state.filter.challenge}
                         changeValue={value => this.toggleMatch("challenge")}
                     />
@@ -493,7 +583,7 @@ class MonsterEditorModal extends React.Component {
                 <MonsterCard
                     combatant={m}
                     mode={"template " + this.state.page}
-                    copyTrait={trait => this.props.copyTrait(this.props.combatant, trait)}
+                    copyTrait={trait => this.copyTrait(trait)}
                 />
             </div>
         ));
@@ -541,40 +631,40 @@ class MonsterEditorModal extends React.Component {
                         <div className="row">
                             <div className="columns small-6 medium-6 large-6">
                                 <div className="subheading">name</div>
-                                <input type="text" value={this.props.combatant.name} onChange={event => this.props.changeValue(this.props.combatant, "name", event.target.value)} />
+                                <input type="text" value={this.state.monster.name} onChange={event => this.changeValue("name", event.target.value)} />
                                 <div className="subheading">size</div>
                                 <Dropdown
                                     options={sizeOptions}
-                                    selectedID={this.props.combatant.size}
-                                    select={optionID => this.props.changeTrait(this.props.combatant, "size", optionID)}
+                                    selectedID={this.state.monster.size}
+                                    select={optionID => this.changeTrait("size", optionID)}
                                 />
                                 <div className="subheading">type</div>
                                 <Dropdown
                                     options={catOptions}
-                                    selectedID={this.props.combatant.category}
-                                    select={optionID => this.props.changeTrait(this.props.combatant, "category", optionID)}
+                                    selectedID={this.state.monster.category}
+                                    select={optionID => this.changeValue("category", optionID)}
                                 />
                                 <div className="subheading">subtype</div>
-                                <input type="text" value={this.props.combatant.tag} onChange={event => this.props.changeValue(this.props.combatant, "tag", event.target.value)} />
+                                <input type="text" value={this.state.monster.tag} onChange={event => this.changeValue("tag", event.target.value)} />
                                 <div className="subheading">alignment</div>
-                                <input type="text" value={this.props.combatant.alignment} onChange={event => this.props.changeValue(this.props.combatant, "alignment", event.target.value)} />
+                                <input type="text" value={this.state.monster.alignment} onChange={event => this.changeValue("alignment", event.target.value)} />
                             </div>
                             <div className="columns small-6 medium-6 large-6">
                                 <div className="subheading">challenge rating</div>
                                 <Spin
-                                    source={this.props.combatant}
+                                    source={this.state.monster}
                                     name="challenge"
                                     display={value => challenge(value)}
-                                    nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "challenge", delta)}
+                                    nudgeValue={delta => this.nudgeValue("challenge", delta)}
                                 />
                                 <div className="subheading">speed</div>
-                                <input type="text" value={this.props.combatant.speed} onChange={event => this.props.changeValue(this.props.combatant, "speed", event.target.value)} />
+                                <input type="text" value={this.state.monster.speed} onChange={event => this.changeValue("speed", event.target.value)} />
                                 <div className="subheading">senses</div>
-                                <input type="text" value={this.props.combatant.senses} onChange={event => this.props.changeValue(this.props.combatant, "senses", event.target.value)} />
+                                <input type="text" value={this.state.monster.senses} onChange={event => this.changeValue("senses", event.target.value)} />
                                 <div className="subheading">languages</div>
-                                <input type="text" value={this.props.combatant.languages} onChange={event => this.props.changeValue(this.props.combatant, "languages", event.target.value)} />
+                                <input type="text" value={this.state.monster.languages} onChange={event => this.changeValue("languages", event.target.value)} />
                                 <div className="subheading">equipment</div>
-                                <input type="text" value={this.props.combatant.equipment} onChange={event => this.props.changeValue(this.props.combatant, "equipment", event.target.value)} />
+                                <input type="text" value={this.state.monster.equipment} onChange={event => this.changeValue("equipment", event.target.value)} />
                             </div>
                         </div>
                     );
@@ -586,15 +676,15 @@ class MonsterEditorModal extends React.Component {
                                 <div className="subheading">ability scores</div>
                                 <AbilityScorePanel
                                     edit={true}
-                                    combatant={this.props.combatant}
-                                    nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
+                                    combatant={this.state.monster}
+                                    nudgeValue={(source, type, delta) => this.nudgeValue(source, type, delta)}
                                 />
                             </div>
                             <div className="columns small-6 medium-6 large-6">
                                 <div className="subheading">saving throws</div>
-                                <input type="text" value={this.props.combatant.savingThrows} onChange={event => this.props.changeValue(this.props.combatant, "savingThrows", event.target.value)} />
+                                <input type="text" value={this.state.monster.savingThrows} onChange={event => this.changeValue("savingThrows", event.target.value)} />
                                 <div className="subheading">skills</div>
-                                <input type="text" value={this.props.combatant.skills} onChange={event => this.props.changeValue(this.props.combatant, "skills", event.target.value)} />
+                                <input type="text" value={this.state.monster.skills} onChange={event => this.changeValue("skills", event.target.value)} />
                             </div>
                         </div>
                     );
@@ -605,29 +695,29 @@ class MonsterEditorModal extends React.Component {
                             <div className="columns small-6 medium-6 large-6">
                                 <div className="subheading">armor class</div>
                                 <Spin
-                                    source={this.props.combatant}
+                                    source={this.state.monster}
                                     name="ac"
-                                    nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "ac", delta)}
+                                    nudgeValue={delta => this.nudgeValue("ac", delta)}
                                 />
                                 <div className="subheading">hit dice</div>
                                 <Spin
-                                    source={this.props.combatant}
+                                    source={this.state.monster}
                                     name="hitDice"
-                                    display={value => value + "d" + hitDieType(this.props.combatant.size)}
-                                    nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "hitDice", delta)}
+                                    display={value => value + "d" + hitDieType(this.state.monster.size)}
+                                    nudgeValue={delta => this.nudgeValue("hitDice", delta)}
                                 />
                                 <div className="subheading">hit points</div>
-                                <div className="hp-value">{this.props.combatant.hpMax} hp</div>
+                                <div className="hp-value">{this.state.monster.hpMax} hp</div>
                             </div>
                             <div className="columns small-6 medium-6 large-6">
                                 <div className="subheading">damage resistances</div>
-                                <input type="text" value={this.props.combatant.damage.resist} onChange={event => this.props.changeValue(this.props.combatant, "damage.resist", event.target.value)} />
+                                <input type="text" value={this.state.monster.damage.resist} onChange={event => this.changeValue("damage.resist", event.target.value)} />
                                 <div className="subheading">damage vulnerabilities</div>
-                                <input type="text" value={this.props.combatant.damage.vulnerable} onChange={event => this.props.changeValue(this.props.combatant, "damage.vulnerable", event.target.value)} />
+                                <input type="text" value={this.state.monster.damage.vulnerable} onChange={event => this.changeValue("damage.vulnerable", event.target.value)} />
                                 <div className="subheading">damage immunities</div>
-                                <input type="text" value={this.props.combatant.damage.immune} onChange={event => this.props.changeValue(this.props.combatant, "damage.immune", event.target.value)} />
+                                <input type="text" value={this.state.monster.damage.immune} onChange={event => this.changeValue("damage.immune", event.target.value)} />
                                 <div className="subheading">condition immunities</div>
-                                <input type="text" value={this.props.combatant.conditionImmunities} onChange={event => this.props.changeValue(this.props.combatant, "conditionImmunities", event.target.value)} />
+                                <input type="text" value={this.state.monster.conditionImmunities} onChange={event => this.changeValue("conditionImmunities", event.target.value)} />
                             </div>
                         </div>
                     );
@@ -635,11 +725,11 @@ class MonsterEditorModal extends React.Component {
                 case 'actions':
                     content = (
                         <TraitsPanel
-                            combatant={this.props.combatant}
+                            combatant={this.state.monster}
                             edit={true}
-                            addTrait={type => this.props.addTrait(this.props.combatant, type)}
-                            removeTrait={trait => this.props.removeTrait(this.props.combatant, trait)}
-                            changeTrait={(trait, type, value) => this.props.changeTrait(trait, type, value)}
+                            addTrait={type => this.addTrait(type)}
+                            removeTrait={trait => this.removeTrait(trait)}
+                            changeTrait={(trait, type, value) => this.changeTrait(trait, type, value)}
                         />
                     );
                     break;
