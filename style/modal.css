@@ -81,6 +81,10 @@
                         margin: 10px 0;
                     }
 
+                        .modal .modal-content .monster-help .value-list .column .text-container.number {
+                            text-align: right;
+                        }
+
                     .modal .modal-content .monster-help .value-list .column .bar-container {
                         height: 18px;
                         margin: 10px 0;

@@ -51,7 +51,7 @@ class MonsterEditorModal extends React.Component {
             case "combat":
                 return ["armor class", "hit dice", "resistances", "vulnerabilities", "immunities", "conditions"];
             case "actions":
-                return ["traits", "actions", "legendary", "lair", "regional"];
+                return ["actions"];
         }
 
         return null;
@@ -134,16 +134,8 @@ class MonsterEditorModal extends React.Component {
                 return this.getValueSection("immune", "count", monsters.map(m => m.damage));
             case "conditions":
                 return this.getValueSection("conditionImmunities", "count", monsters);
-            case "traits":
-                return this.getActionsSection("trait", monsters);
             case "actions":
-                return this.getActionsSection("action", monsters);
-            case "legendary":
-                return this.getActionsSection("legendary", monsters);
-            case "lair":
-                return this.getActionsSection("lair", monsters);
-            case "regional":
-                return this.getActionsSection("regional", monsters);
+                return this.getActionsSection(monsters);
         }
 
         return null;
@@ -232,65 +224,77 @@ class MonsterEditorModal extends React.Component {
         }
     }
 
-    getActionsSection(type, monsters) {
-        var actionType = null;
-        switch (type) {
-            case "trait":
-                actionType = "traits";
-                break;
-            case "action":
-                actionType = "actions";
-                break;
-            case "legendary":
-                actionType = "legendary actions";
-                break;
-            case "lair":
-                actionType = "lair actions";
-                break;
-            case "regional":
-                actionType = "regional effects";
-                break;
-        }
-
-        var min = null, max = null, count = null;
-        monsters.forEach(m => {
-            var n = m.traits.filter(t => t.type === type).length;
-            if ((min === null) || (n < min)) {
-                min = n;
+    getActionsSection(monsters) {
+        var rows = [];
+        ["trait", "action", "legendary", "lair", "regional"].forEach(type => {
+            var actionName = null;
+            switch (type) {
+                case "trait":
+                    actionName = "traits";
+                    break;
+                case "action":
+                    actionName = "actions";
+                    break;
+                case "legendary":
+                    actionName = "legendary actions";
+                    break;
+                case "lair":
+                    actionName = "lair actions";
+                    break;
+                case "regional":
+                    actionName = "regional effects";
+                    break;
             }
-            if ((max === null) || (n > max)) {
-                max = n;
-            }
-            count += n;
-        });
-        var avg = Math.round(count / monsters.length);
+    
+            var min = null, max = null, count = null;
+            monsters.forEach(m => {
+                var n = m.traits.filter(t => t.type === type).length;
+                if ((min === null) || (n < min)) {
+                    min = n;
+                }
+                if ((max === null) || (n > max)) {
+                    max = n;
+                }
+                count += n;
+            });
+            var avg = Math.round(count / monsters.length);    
 
-        if (count === 0) {
-            return (
-                <div className="action-count">
-                    number of {actionType}: <b>0</b>
-                </div>
-            );
-        } else {
             // TODO: Button to copy a random trait
-            return (
-                <div className="action-count">
-                    number of {actionType}: <b>{min} - {max} (average {avg})</b>
+
+            rows.push(
+                <div className="row small-up-3 medium-up-3 large-up-3 value-list" key={type}>
+                    <div className="column">
+                        <div className={count === 0 ? "text-container disabled" : "text-container"}>
+                            {actionName}
+                        </div>
+                    </div>
+                    <div className="column">
+                        <div className={count === 0 ? "text-container number disabled" : "text-container number"}>
+                            {avg}
+                        </div>
+                    </div>
+                    <div className="column">
+                        <div className={count === 0 ? "text-container number disabled" : "text-container number"}>
+                            {min} - {max}
+                        </div>
+                    </div>
                 </div>
             );
-        }
+        });
+
+        return (
+            <div>
+                {rows}
+            </div>
+        );
     }
 
-    getFilterCard() {
-        var buttons = [
-            // TODO: Add explanation
-            <ConfirmButton
-                key="splice"
-                text="gene splice"
-                disabled={true}         // TODO: Disabled if fewer than 2 monsters
-                callback={() => null}   // TODO: Gene splice
-            />
-        ];
+    getFilterCard(monsters) {
+        var similar = (
+            <div className="section">
+                {monsters.length} similar monsters
+            </div>
+        );
 
         var filterContent = null;
         if (this.state.showFilter) {
@@ -323,13 +327,21 @@ class MonsterEditorModal extends React.Component {
                         checked={this.state.filter.challenge}
                         changeValue={value => this.toggleMatch("challenge")}
                     />
-                    {buttons}
+                    <div className="divider"></div>
+                    <ConfirmButton
+                        text="gene splice"
+                        // TODO: Add explanation
+                        disabled={true}         // TODO: Disabled if fewer than 2 monsters
+                        callback={() => null}   // TODO: Gene splice
+                    />
+                    <div className="divider"></div>
+                    {similar}
                 </div>
             );
         } else {
             filterContent = (
                 <div>
-                    {buttons}
+                    {similar}
                 </div>
             );
         }
@@ -360,14 +372,6 @@ class MonsterEditorModal extends React.Component {
                 />
             </div>
         ));
-
-        if (monsterCards.length === 0) {
-            monsterCards.push(
-                <div className="section centered" key="none">
-                    no monsters to show
-                </div>
-            )
-        }
 
         return monsterCards;
     }
@@ -549,7 +553,7 @@ class MonsterEditorModal extends React.Component {
             if (this.props.showMonsters) {
                 monsterList = (
                     <div className="columns small-4 medium-4 large-4 scrollable">
-                        {this.getFilterCard()}
+                        {this.getFilterCard(monsters)}
                         {this.getMonsterCards(monsters)}
                     </div>
                 );

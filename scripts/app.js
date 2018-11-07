@@ -5706,7 +5706,7 @@ var MonsterEditorModal = function (_React$Component) {
                 case "combat":
                     return ["armor class", "hit dice", "resistances", "vulnerabilities", "immunities", "conditions"];
                 case "actions":
-                    return ["traits", "actions", "legendary", "lair", "regional"];
+                    return ["actions"];
             }
 
             return null;
@@ -5811,16 +5811,8 @@ var MonsterEditorModal = function (_React$Component) {
                     }));
                 case "conditions":
                     return this.getValueSection("conditionImmunities", "count", monsters);
-                case "traits":
-                    return this.getActionsSection("trait", monsters);
                 case "actions":
-                    return this.getActionsSection("action", monsters);
-                case "legendary":
-                    return this.getActionsSection("legendary", monsters);
-                case "lair":
-                    return this.getActionsSection("lair", monsters);
-                case "regional":
-                    return this.getActionsSection("regional", monsters);
+                    return this.getActionsSection(monsters);
             }
 
             return null;
@@ -5934,92 +5926,99 @@ var MonsterEditorModal = function (_React$Component) {
         }
     }, {
         key: "getActionsSection",
-        value: function getActionsSection(type, monsters) {
-            var actionType = null;
-            switch (type) {
-                case "trait":
-                    actionType = "traits";
-                    break;
-                case "action":
-                    actionType = "actions";
-                    break;
-                case "legendary":
-                    actionType = "legendary actions";
-                    break;
-                case "lair":
-                    actionType = "lair actions";
-                    break;
-                case "regional":
-                    actionType = "regional effects";
-                    break;
-            }
-
-            var min = null,
-                max = null,
-                count = null;
-            monsters.forEach(function (m) {
-                var n = m.traits.filter(function (t) {
-                    return t.type === type;
-                }).length;
-                if (min === null || n < min) {
-                    min = n;
+        value: function getActionsSection(monsters) {
+            var rows = [];
+            ["trait", "action", "legendary", "lair", "regional"].forEach(function (type) {
+                var actionName = null;
+                switch (type) {
+                    case "trait":
+                        actionName = "traits";
+                        break;
+                    case "action":
+                        actionName = "actions";
+                        break;
+                    case "legendary":
+                        actionName = "legendary actions";
+                        break;
+                    case "lair":
+                        actionName = "lair actions";
+                        break;
+                    case "regional":
+                        actionName = "regional effects";
+                        break;
                 }
-                if (max === null || n > max) {
-                    max = n;
-                }
-                count += n;
-            });
-            var avg = Math.round(count / monsters.length);
 
-            if (count === 0) {
-                return React.createElement(
-                    "div",
-                    { className: "action-count" },
-                    "number of ",
-                    actionType,
-                    ": ",
-                    React.createElement(
-                        "b",
-                        null,
-                        "0"
-                    )
-                );
-            } else {
+                var min = null,
+                    max = null,
+                    count = null;
+                monsters.forEach(function (m) {
+                    var n = m.traits.filter(function (t) {
+                        return t.type === type;
+                    }).length;
+                    if (min === null || n < min) {
+                        min = n;
+                    }
+                    if (max === null || n > max) {
+                        max = n;
+                    }
+                    count += n;
+                });
+                var avg = Math.round(count / monsters.length);
+
                 // TODO: Button to copy a random trait
-                return React.createElement(
+
+                rows.push(React.createElement(
                     "div",
-                    { className: "action-count" },
-                    "number of ",
-                    actionType,
-                    ": ",
+                    { className: "row small-up-3 medium-up-3 large-up-3 value-list", key: type },
                     React.createElement(
-                        "b",
-                        null,
-                        min,
-                        " - ",
-                        max,
-                        " (average ",
-                        avg,
-                        ")"
+                        "div",
+                        { className: "column" },
+                        React.createElement(
+                            "div",
+                            { className: count === 0 ? "text-container disabled" : "text-container" },
+                            actionName
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "column" },
+                        React.createElement(
+                            "div",
+                            { className: count === 0 ? "text-container number disabled" : "text-container number" },
+                            avg
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "column" },
+                        React.createElement(
+                            "div",
+                            { className: count === 0 ? "text-container number disabled" : "text-container number" },
+                            min,
+                            " - ",
+                            max
+                        )
                     )
-                );
-            }
+                ));
+            });
+
+            return React.createElement(
+                "div",
+                null,
+                rows
+            );
         }
     }, {
         key: "getFilterCard",
-        value: function getFilterCard() {
+        value: function getFilterCard(monsters) {
             var _this4 = this;
 
-            var buttons = [
-            // TODO: Add explanation
-            React.createElement(ConfirmButton, {
-                key: "splice",
-                text: "gene splice",
-                disabled: true // TODO: Disabled if fewer than 2 monsters
-                , callback: function callback() {
-                    return null;
-                } // TODO: Gene splice
-            })];
+            var similar = React.createElement(
+                "div",
+                { className: "section" },
+                monsters.length,
+                " similar monsters"
+            );
 
             var filterContent = null;
             if (this.state.showFilter) {
@@ -6063,13 +6062,23 @@ var MonsterEditorModal = function (_React$Component) {
                             return _this4.toggleMatch("challenge");
                         }
                     }),
-                    buttons
+                    React.createElement("div", { className: "divider" }),
+                    React.createElement(ConfirmButton, {
+                        text: "gene splice"
+                        // TODO: Add explanation
+                        , disabled: true // TODO: Disabled if fewer than 2 monsters
+                        , callback: function callback() {
+                            return null;
+                        } // TODO: Gene splice
+                    }),
+                    React.createElement("div", { className: "divider" }),
+                    similar
                 );
             } else {
                 filterContent = React.createElement(
                     "div",
                     null,
-                    buttons
+                    similar
                 );
             }
 
@@ -6118,14 +6127,6 @@ var MonsterEditorModal = function (_React$Component) {
                     })
                 );
             });
-
-            if (monsterCards.length === 0) {
-                monsterCards.push(React.createElement(
-                    "div",
-                    { className: "section centered", key: "none" },
-                    "no monsters to show"
-                ));
-            }
 
             return monsterCards;
         }
@@ -6457,7 +6458,7 @@ var MonsterEditorModal = function (_React$Component) {
                     monsterList = React.createElement(
                         "div",
                         { className: "columns small-4 medium-4 large-4 scrollable" },
-                        this.getFilterCard(),
+                        this.getFilterCard(monsters),
                         this.getMonsterCards(monsters)
                     );
                 }
