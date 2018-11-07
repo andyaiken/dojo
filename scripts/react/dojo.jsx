@@ -1212,12 +1212,11 @@ class Dojo extends React.Component {
             if (this.state.modal) {
                 var modalTitle = null;
                 var modalContent = null;
-                var modalScroll = true;
+                var modalAllowClose = true;
+                var modalAllowScroll = true;
                 var modalButtons = {
                     left: [],
-                    right: [
-                        <button key="close" onClick={() => this.closeModal()}>close</button>
-                    ]
+                    right: []
                 };
 
                 switch (this.state.modal.type) {
@@ -1254,7 +1253,8 @@ class Dojo extends React.Component {
                                 copyTrait={(combatant, type) => this.copyTrait(combatant, type)}
                             />
                         );
-                        modalScroll = false;
+                        modalAllowClose = false;
+                        modalAllowScroll = false;
                         modalButtons.left = [
                             <Checkbox
                                 key="similar"
@@ -1275,8 +1275,9 @@ class Dojo extends React.Component {
                         <div className="modal">
                             <div className="modal-header">
                                 <div className="title">{modalTitle}</div>
+                                {modalAllowClose ? <img className="image" src="content/close-white.svg" onClick={() => this.closeModal()} /> : null}
                             </div>
-                            <div className={modalScroll ? "modal-content scrollable" : "modal-content"}>
+                            <div className={modalAllowScroll ? "modal-content scrollable" : "modal-content"}>
                                 {modalContent}
                             </div>
                             <div className="modal-footer">

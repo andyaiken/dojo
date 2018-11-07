@@ -4676,16 +4676,11 @@ var Dojo = function (_React$Component) {
                 if (this.state.modal) {
                     var modalTitle = null;
                     var modalContent = null;
-                    var modalScroll = true;
+                    var modalAllowClose = true;
+                    var modalAllowScroll = true;
                     var modalButtons = {
                         left: [],
-                        right: [React.createElement(
-                            "button",
-                            { key: "close", onClick: function onClick() {
-                                    return _this5.closeModal();
-                                } },
-                            "close"
-                        )]
+                        right: []
                     };
 
                     switch (this.state.modal.type) {
@@ -4732,7 +4727,8 @@ var Dojo = function (_React$Component) {
                                     return _this5.copyTrait(combatant, type);
                                 }
                             });
-                            modalScroll = false;
+                            modalAllowClose = false;
+                            modalAllowScroll = false;
                             modalButtons.left = [React.createElement(Checkbox, {
                                 key: "similar",
                                 label: "similar monsters",
@@ -4770,11 +4766,14 @@ var Dojo = function (_React$Component) {
                                     "div",
                                     { className: "title" },
                                     modalTitle
-                                )
+                                ),
+                                modalAllowClose ? React.createElement("img", { className: "image", src: "content/close-white.svg", onClick: function onClick() {
+                                        return _this5.closeModal();
+                                    } }) : null
                             ),
                             React.createElement(
                                 "div",
-                                { className: modalScroll ? "modal-content scrollable" : "modal-content" },
+                                { className: modalAllowScroll ? "modal-content scrollable" : "modal-content" },
                                 modalContent
                             ),
                             React.createElement(
