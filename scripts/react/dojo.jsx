@@ -237,11 +237,31 @@ class Dojo extends React.Component {
     }
 
     editMonster(monster) {
+        var copy = JSON.parse(JSON.stringify(monster));
         this.setState({
             modal: {
                 type: "monster",
-                monster: monster
+                monster: copy,
+                showMonsters: false
             }
+        });
+    }
+
+    saveMonster() {
+        var group = this.getMonsterGroup(this.state.selectedMonsterGroupID);
+        var original = group.monsters.find(m => m.id === this.state.modal.monster.id);
+        var index = group.monsters.indexOf(original);
+        group.monsters[index] = this.state.modal.monster;
+        this.setState({
+            library: this.state.library,
+            modal: null
+        });
+    }
+
+    toggleShowSimilarMonsters() {
+        this.state.modal.showMonsters = !this.state.modal.showMonsters;
+        this.setState({
+            modal: this.state.modal
         });
     }
 
@@ -332,11 +352,12 @@ class Dojo extends React.Component {
     }
 
     copyTrait(combatant, trait) {
-        var trait = combatant.traits.push(trait);
+        var copy = JSON.parse(JSON.stringify(trait));
+        copy.id = guid();
+        combatant.traits.push(copy);
         this.setState({
             library: this.state.library
         });
-        return trait;
     }
 
     addOpenGameContent() {
@@ -1030,7 +1051,8 @@ class Dojo extends React.Component {
             selectedMonsterGroupID: this.state.selectedMonsterGroupID,
             selectedEncounterID: this.state.selectedEncounterID,
             selectedCombatID: this.state.selectedCombatID,
-            options: this.state.options
+            options: this.state.options,
+            modal: this.state.modal
         });
     }
 
@@ -1191,6 +1213,12 @@ class Dojo extends React.Component {
                 var modalTitle = null;
                 var modalContent = null;
                 var modalScroll = true;
+                var modalButtons = {
+                    left: [],
+                    right: [
+                        <button key="close" onClick={() => this.closeModal()}>close</button>
+                    ]
+                };
 
                 switch (this.state.modal.type) {
                     case "about":
@@ -1217,6 +1245,7 @@ class Dojo extends React.Component {
                             <MonsterEditorModal
                                 combatant={this.state.modal.monster}
                                 library={this.state.library}
+                                showMonsters={this.state.modal.showMonsters}
                                 changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                                 nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
                                 changeTrait={(trait, type, value) => this.changeValue(trait, type, value)}
@@ -1226,18 +1255,33 @@ class Dojo extends React.Component {
                             />
                         );
                         modalScroll = false;
+                        modalButtons.left = [
+                            <Checkbox
+                                key="similar"
+                                label="similar monsters"
+                                checked={this.state.modal.showMonsters}
+                                changeValue={() => this.toggleShowSimilarMonsters()}
+                            /> 
+                        ];
+                        modalButtons.right = [
+                            <button key="save" onClick={() => this.saveMonster()}>save</button>,
+                            <button key="cancel" onClick={() => this.closeModal()}>cancel</button>
+                        ];
                         break;
                 }
 
                 modal = (
                     <div className="overlay">
                         <div className="modal">
-                            <div className="modal-heading">
+                            <div className="modal-header">
                                 <div className="title">{modalTitle}</div>
-                                <img className="image" src="content/close-white.svg" onClick={() => this.closeModal()} />
                             </div>
                             <div className={modalScroll ? "modal-content scrollable" : "modal-content"}>
                                 {modalContent}
+                            </div>
+                            <div className="modal-footer">
+                                <div className="left">{modalButtons.left}</div>
+                                <div className="right">{modalButtons.right}</div>
                             </div>
                         </div>
                     </div>

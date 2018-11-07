@@ -3559,11 +3559,37 @@ var Dojo = function (_React$Component) {
     }, {
         key: "editMonster",
         value: function editMonster(monster) {
+            var copy = JSON.parse(JSON.stringify(monster));
             this.setState({
                 modal: {
                     type: "monster",
-                    monster: monster
+                    monster: copy,
+                    showMonsters: false
                 }
+            });
+        }
+    }, {
+        key: "saveMonster",
+        value: function saveMonster() {
+            var _this2 = this;
+
+            var group = this.getMonsterGroup(this.state.selectedMonsterGroupID);
+            var original = group.monsters.find(function (m) {
+                return m.id === _this2.state.modal.monster.id;
+            });
+            var index = group.monsters.indexOf(original);
+            group.monsters[index] = this.state.modal.monster;
+            this.setState({
+                library: this.state.library,
+                modal: null
+            });
+        }
+    }, {
+        key: "toggleShowSimilarMonsters",
+        value: function toggleShowSimilarMonsters() {
+            this.state.modal.showMonsters = !this.state.modal.showMonsters;
+            this.setState({
+                modal: this.state.modal
             });
         }
     }, {
@@ -3659,16 +3685,17 @@ var Dojo = function (_React$Component) {
     }, {
         key: "copyTrait",
         value: function copyTrait(combatant, trait) {
-            var trait = combatant.traits.push(trait);
+            var copy = JSON.parse(JSON.stringify(trait));
+            copy.id = guid();
+            combatant.traits.push(copy);
             this.setState({
                 library: this.state.library
             });
-            return trait;
         }
     }, {
         key: "addOpenGameContent",
         value: function addOpenGameContent() {
-            var _this2 = this;
+            var _this3 = this;
 
             var request = new XMLHttpRequest();
             request.overrideMimeType("application/json");
@@ -3679,7 +3706,7 @@ var Dojo = function (_React$Component) {
                     monsters.forEach(function (data) {
                         try {
                             if (data.name) {
-                                var monster = _this2.createMonster();
+                                var monster = _this3.createMonster();
 
                                 monster.type = "monster";
                                 monster.name = data.name;
@@ -3800,19 +3827,19 @@ var Dojo = function (_React$Component) {
 
                                 if (data.special_abilities) {
                                     data.special_abilities.forEach(function (rawTrait) {
-                                        var trait = _this2.buildTrait(rawTrait, "trait");
+                                        var trait = _this3.buildTrait(rawTrait, "trait");
                                         monster.traits.push(trait);
                                     });
                                 }
                                 if (data.actions) {
                                     data.actions.forEach(function (rawTrait) {
-                                        var trait = _this2.buildTrait(rawTrait, "action");
+                                        var trait = _this3.buildTrait(rawTrait, "action");
                                         monster.traits.push(trait);
                                     });
                                 }
                                 if (data.legendary_actions) {
                                     data.legendary_actions.forEach(function (rawTrait) {
-                                        var trait = _this2.buildTrait(rawTrait, "legendary");
+                                        var trait = _this3.buildTrait(rawTrait, "legendary");
                                         monster.traits.push(trait);
                                     });
                                 }
@@ -3828,14 +3855,14 @@ var Dojo = function (_React$Component) {
                                     groupName = "npc";
                                 }
 
-                                var group = _this2.getMonsterGroupByName(groupName);
+                                var group = _this3.getMonsterGroupByName(groupName);
                                 if (!group) {
                                     var group = {
                                         id: guid(),
                                         name: groupName,
                                         monsters: []
                                     };
-                                    _this2.state.library.push(group);
+                                    _this3.state.library.push(group);
                                 }
                                 group.monsters.push(monster);
                             }
@@ -3844,11 +3871,11 @@ var Dojo = function (_React$Component) {
                         }
                     });
 
-                    sort(_this2.state.library);
+                    sort(_this3.state.library);
 
-                    _this2.setState({
+                    _this3.setState({
                         view: "library",
-                        library: _this2.state.library
+                        library: _this3.state.library
                     });
                 }
             };
@@ -3958,7 +3985,7 @@ var Dojo = function (_React$Component) {
     }, {
         key: "startEncounter",
         value: function startEncounter(partyID, encounterID) {
-            var _this3 = this;
+            var _this4 = this;
 
             var party = this.getParty(partyID);
             var partyName = party.name;
@@ -3980,8 +4007,8 @@ var Dojo = function (_React$Component) {
             };
 
             encounter.slots.forEach(function (slot) {
-                var group = _this3.getMonsterGroupByName(slot.monsterGroupName);
-                var monster = _this3.getMonster(slot.monsterName, group);
+                var group = _this4.getMonsterGroupByName(slot.monsterGroupName);
+                var monster = _this4.getMonster(slot.monsterName, group);
 
                 if (monster) {
                     var init = parseInt(modifier(monster.abilityScores.dex));
@@ -4373,7 +4400,8 @@ var Dojo = function (_React$Component) {
                 selectedMonsterGroupID: this.state.selectedMonsterGroupID,
                 selectedEncounterID: this.state.selectedEncounterID,
                 selectedCombatID: this.state.selectedCombatID,
-                options: this.state.options
+                options: this.state.options,
+                modal: this.state.modal
             });
         }
     }, {
@@ -4402,7 +4430,7 @@ var Dojo = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            var _this4 = this;
+            var _this5 = this;
 
             try {
                 var content = null;
@@ -4417,28 +4445,28 @@ var Dojo = function (_React$Component) {
                             selection: this.getParty(this.state.selectedPartyID),
                             showHelp: this.state.options.showHelp,
                             selectParty: function selectParty(party) {
-                                return _this4.selectParty(party);
+                                return _this5.selectParty(party);
                             },
                             addParty: function addParty(name) {
-                                return _this4.addParty(name);
+                                return _this5.addParty(name);
                             },
                             removeParty: function removeParty() {
-                                return _this4.removeParty();
+                                return _this5.removeParty();
                             },
                             addPC: function addPC(name) {
-                                return _this4.addPC(name);
+                                return _this5.addPC(name);
                             },
                             removePC: function removePC(pc) {
-                                return _this4.removePC(pc);
+                                return _this5.removePC(pc);
                             },
                             sortPCs: function sortPCs() {
-                                return _this4.sortPCs();
+                                return _this5.sortPCs();
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this4.changeValue(combatant, type, value);
+                                return _this5.changeValue(combatant, type, value);
                             },
                             nudgeValue: function nudgeValue(combatant, type, delta) {
-                                return _this4.nudgeValue(combatant, type, delta);
+                                return _this5.nudgeValue(combatant, type, delta);
                             }
                         });
                         break;
@@ -4448,46 +4476,46 @@ var Dojo = function (_React$Component) {
                             selection: this.getMonsterGroup(this.state.selectedMonsterGroupID),
                             showHelp: this.state.options.showHelp,
                             selectMonsterGroup: function selectMonsterGroup(group) {
-                                return _this4.selectMonsterGroup(group);
+                                return _this5.selectMonsterGroup(group);
                             },
                             addMonsterGroup: function addMonsterGroup(name) {
-                                return _this4.addMonsterGroup(name);
+                                return _this5.addMonsterGroup(name);
                             },
                             removeMonsterGroup: function removeMonsterGroup() {
-                                return _this4.removeMonsterGroup();
+                                return _this5.removeMonsterGroup();
                             },
                             addMonster: function addMonster(name) {
-                                return _this4.addMonster(name);
+                                return _this5.addMonster(name);
                             },
                             removeMonster: function removeMonster(monster) {
-                                return _this4.removeMonster(monster);
+                                return _this5.removeMonster(monster);
                             },
                             sortMonsters: function sortMonsters() {
-                                return _this4.sortMonsters();
+                                return _this5.sortMonsters();
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this4.changeValue(combatant, type, value);
+                                return _this5.changeValue(combatant, type, value);
                             },
                             nudgeValue: function nudgeValue(combatant, type, delta) {
-                                return _this4.nudgeValue(combatant, type, delta);
+                                return _this5.nudgeValue(combatant, type, delta);
                             },
                             addTrait: function addTrait(combatant, type) {
-                                return _this4.addTrait(combatant, type);
+                                return _this5.addTrait(combatant, type);
                             },
                             removeTrait: function removeTrait(combatant, trait) {
-                                return _this4.removeTrait(combatant, trait);
+                                return _this5.removeTrait(combatant, trait);
                             },
                             editMonster: function editMonster(combatant) {
-                                return _this4.editMonster(combatant);
+                                return _this5.editMonster(combatant);
                             },
                             cloneMonster: function cloneMonster(combatant) {
-                                return _this4.cloneMonster(combatant);
+                                return _this5.cloneMonster(combatant);
                             },
                             moveToGroup: function moveToGroup(combatant, groupID) {
-                                return _this4.moveToGroup(combatant, groupID);
+                                return _this5.moveToGroup(combatant, groupID);
                             },
                             addOpenGameContent: function addOpenGameContent() {
-                                return _this4.addOpenGameContent();
+                                return _this5.addOpenGameContent();
                             }
                         });
                         var count = 0;
@@ -4501,7 +4529,7 @@ var Dojo = function (_React$Component) {
                                 React.createElement(
                                     "button",
                                     { onClick: function onClick() {
-                                            return _this4.openDemographics();
+                                            return _this5.openDemographics();
                                         } },
                                     "demographics"
                                 )
@@ -4516,28 +4544,28 @@ var Dojo = function (_React$Component) {
                             library: this.state.library,
                             showHelp: this.state.options.showHelp,
                             selectEncounter: function selectEncounter(encounter) {
-                                return _this4.selectEncounter(encounter);
+                                return _this5.selectEncounter(encounter);
                             },
                             addEncounter: function addEncounter(name) {
-                                return _this4.addEncounter(name);
+                                return _this5.addEncounter(name);
                             },
                             removeEncounter: function removeEncounter(encounter) {
-                                return _this4.removeEncounter(encounter);
+                                return _this5.removeEncounter(encounter);
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this4.changeValue(combatant, type, value);
+                                return _this5.changeValue(combatant, type, value);
                             },
                             getMonster: function getMonster(monsterName, monsterGroupName) {
-                                return _this4.getMonster(monsterName, _this4.getMonsterGroupByName(monsterGroupName));
+                                return _this5.getMonster(monsterName, _this5.getMonsterGroupByName(monsterGroupName));
                             },
                             addEncounterSlot: function addEncounterSlot(encounter, monster) {
-                                return _this4.addEncounterSlot(encounter, monster);
+                                return _this5.addEncounterSlot(encounter, monster);
                             },
                             removeEncounterSlot: function removeEncounterSlot(encounter, slot) {
-                                return _this4.removeEncounterSlot(encounter, slot);
+                                return _this5.removeEncounterSlot(encounter, slot);
                             },
                             nudgeValue: function nudgeValue(slot, type, delta) {
-                                return _this4.nudgeValue(slot, type, delta);
+                                return _this5.nudgeValue(slot, type, delta);
                             }
                         });
                         break;
@@ -4550,40 +4578,40 @@ var Dojo = function (_React$Component) {
                             combat: combat,
                             showHelp: this.state.options.showHelp,
                             startEncounter: function startEncounter(partyID, encounterID) {
-                                return _this4.startEncounter(partyID, encounterID);
+                                return _this5.startEncounter(partyID, encounterID);
                             },
                             pauseEncounter: function pauseEncounter() {
-                                return _this4.pauseEncounter();
+                                return _this5.pauseEncounter();
                             },
                             resumeEncounter: function resumeEncounter(combat) {
-                                return _this4.resumeEncounter(combat);
+                                return _this5.resumeEncounter(combat);
                             },
                             endEncounter: function endEncounter() {
-                                return _this4.endEncounter();
+                                return _this5.endEncounter();
                             },
                             nudgeValue: function nudgeValue(combatant, type, delta) {
-                                return _this4.nudgeValue(combatant, type, delta);
+                                return _this5.nudgeValue(combatant, type, delta);
                             },
                             makeCurrent: function makeCurrent(combatant) {
-                                return _this4.makeCurrent(combatant);
+                                return _this5.makeCurrent(combatant);
                             },
                             makeActive: function makeActive(combatant) {
-                                return _this4.makeActive(combatant);
+                                return _this5.makeActive(combatant);
                             },
                             makeDefeated: function makeDefeated(combatant) {
-                                return _this4.makeDefeated(combatant);
+                                return _this5.makeDefeated(combatant);
                             },
                             removeCombatant: function removeCombatant(combatant) {
-                                return _this4.removeCombatant(combatant);
+                                return _this5.removeCombatant(combatant);
                             },
                             addCondition: function addCondition(combatant, condition) {
-                                return _this4.addCondition(combatant, condition);
+                                return _this5.addCondition(combatant, condition);
                             },
                             removeCondition: function removeCondition(combatant, condition) {
-                                return _this4.removeCondition(combatant, condition);
+                                return _this5.removeCondition(combatant, condition);
                             },
                             endTurn: function endTurn(combatant) {
-                                return _this4.endTurn(combatant);
+                                return _this5.endTurn(combatant);
                             }
                         });
                         if (combat) {
@@ -4623,7 +4651,7 @@ var Dojo = function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         { onClick: function onClick() {
-                                                return _this4.pauseEncounter();
+                                                return _this5.pauseEncounter();
                                             } },
                                         "pause encounter"
                                     )
@@ -4634,7 +4662,7 @@ var Dojo = function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         { onClick: function onClick() {
-                                                return _this4.endEncounter();
+                                                return _this5.endEncounter();
                                             } },
                                         "end encounter"
                                     )
@@ -4649,6 +4677,16 @@ var Dojo = function (_React$Component) {
                     var modalTitle = null;
                     var modalContent = null;
                     var modalScroll = true;
+                    var modalButtons = {
+                        left: [],
+                        right: [React.createElement(
+                            "button",
+                            { key: "close", onClick: function onClick() {
+                                    return _this5.closeModal();
+                                } },
+                            "close"
+                        )]
+                    };
 
                     switch (this.state.modal.type) {
                         case "about":
@@ -4656,10 +4694,10 @@ var Dojo = function (_React$Component) {
                             modalContent = React.createElement(AboutModal, {
                                 options: this.state.options,
                                 resetAll: function resetAll() {
-                                    return _this4.resetAll();
+                                    return _this5.resetAll();
                                 },
                                 changeValue: function changeValue(source, type, value) {
-                                    return _this4.changeValue(source, type, value);
+                                    return _this5.changeValue(source, type, value);
                                 }
                             });
                             break;
@@ -4674,26 +4712,48 @@ var Dojo = function (_React$Component) {
                             modalContent = React.createElement(MonsterEditorModal, {
                                 combatant: this.state.modal.monster,
                                 library: this.state.library,
+                                showMonsters: this.state.modal.showMonsters,
                                 changeValue: function changeValue(combatant, type, value) {
-                                    return _this4.changeValue(combatant, type, value);
+                                    return _this5.changeValue(combatant, type, value);
                                 },
                                 nudgeValue: function nudgeValue(combatant, type, delta) {
-                                    return _this4.nudgeValue(combatant, type, delta);
+                                    return _this5.nudgeValue(combatant, type, delta);
                                 },
                                 changeTrait: function changeTrait(trait, type, value) {
-                                    return _this4.changeValue(trait, type, value);
+                                    return _this5.changeValue(trait, type, value);
                                 },
                                 addTrait: function addTrait(combatant, type) {
-                                    return _this4.addTrait(combatant, type);
+                                    return _this5.addTrait(combatant, type);
                                 },
                                 removeTrait: function removeTrait(combatant, trait) {
-                                    return _this4.removeTrait(combatant, trait);
+                                    return _this5.removeTrait(combatant, trait);
                                 },
                                 copyTrait: function copyTrait(combatant, type) {
-                                    return _this4.copyTrait(combatant, type);
+                                    return _this5.copyTrait(combatant, type);
                                 }
                             });
                             modalScroll = false;
+                            modalButtons.left = [React.createElement(Checkbox, {
+                                key: "similar",
+                                label: "similar monsters",
+                                checked: this.state.modal.showMonsters,
+                                changeValue: function changeValue() {
+                                    return _this5.toggleShowSimilarMonsters();
+                                }
+                            })];
+                            modalButtons.right = [React.createElement(
+                                "button",
+                                { key: "save", onClick: function onClick() {
+                                        return _this5.saveMonster();
+                                    } },
+                                "save"
+                            ), React.createElement(
+                                "button",
+                                { key: "cancel", onClick: function onClick() {
+                                        return _this5.closeModal();
+                                    } },
+                                "cancel"
+                            )];
                             break;
                     }
 
@@ -4705,20 +4765,31 @@ var Dojo = function (_React$Component) {
                             { className: "modal" },
                             React.createElement(
                                 "div",
-                                { className: "modal-heading" },
+                                { className: "modal-header" },
                                 React.createElement(
                                     "div",
                                     { className: "title" },
                                     modalTitle
-                                ),
-                                React.createElement("img", { className: "image", src: "content/close-white.svg", onClick: function onClick() {
-                                        return _this4.closeModal();
-                                    } })
+                                )
                             ),
                             React.createElement(
                                 "div",
                                 { className: modalScroll ? "modal-content scrollable" : "modal-content" },
                                 modalContent
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "modal-footer" },
+                                React.createElement(
+                                    "div",
+                                    { className: "left" },
+                                    modalButtons.left
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "right" },
+                                    modalButtons.right
+                                )
                             )
                         )
                     );
@@ -4731,10 +4802,10 @@ var Dojo = function (_React$Component) {
                         action: action,
                         blur: modal !== null,
                         openHome: function openHome() {
-                            return _this4.setView("home");
+                            return _this5.setView("home");
                         },
                         openAbout: function openAbout() {
-                            return _this4.openAbout();
+                            return _this5.openAbout();
                         }
                     }),
                     React.createElement(
@@ -4749,7 +4820,7 @@ var Dojo = function (_React$Component) {
                         encounters: this.state.encounters,
                         blur: modal !== null,
                         setView: function setView(view) {
-                            return _this4.setView(view);
+                            return _this5.setView(view);
                         }
                     }),
                     modal
@@ -5581,7 +5652,6 @@ var MonsterEditorModal = function (_React$Component) {
 
         _this.state = {
             page: "overview",
-            showMonsters: false,
             showFilter: false,
             helpSection: "speed",
             filter: {
@@ -5589,8 +5659,7 @@ var MonsterEditorModal = function (_React$Component) {
                 type: true,
                 subtype: false,
                 alignment: false,
-                challenge: true,
-                text: ""
+                challenge: true
             }
         };
         return _this;
@@ -5603,13 +5672,6 @@ var MonsterEditorModal = function (_React$Component) {
             this.setState({
                 page: page,
                 helpSection: sections[0]
-            });
-        }
-    }, {
-        key: "toggleMonsters",
-        value: function toggleMonsters() {
-            this.setState({
-                showMonsters: !this.state.showMonsters
             });
         }
     }, {
@@ -5630,14 +5692,6 @@ var MonsterEditorModal = function (_React$Component) {
         key: "toggleMatch",
         value: function toggleMatch(type) {
             this.state.filter[type] = !this.state.filter[type];
-            this.setState({
-                filter: this.state.filter
-            });
-        }
-    }, {
-        key: "setFilterText",
-        value: function setFilterText(text) {
-            this.state.filter.text = text;
             this.setState({
                 filter: this.state.filter
             });
@@ -5672,10 +5726,6 @@ var MonsterEditorModal = function (_React$Component) {
                         match = false;
                     }
 
-                    if (_this2.state.filter.text && monster.name.toLowerCase().indexOf(_this2.state.filter.text.toLowerCase()) === -1) {
-                        match = false;
-                    }
-
                     if (_this2.state.filter.size && _this2.props.combatant.size !== monster.size) {
                         match = false;
                     }
@@ -5703,13 +5753,6 @@ var MonsterEditorModal = function (_React$Component) {
             });
 
             return monsters;
-        }
-    }, {
-        key: "copyTrait",
-        value: function copyTrait(trait) {
-            var copy = JSON.parse(JSON.stringify(trait));
-            copy.id = guid();
-            this.props.copyTrait(this.props.combatant, copy);
         }
     }, {
         key: "getHelpSection",
@@ -5943,7 +5986,7 @@ var MonsterEditorModal = function (_React$Component) {
                     )
                 );
             } else {
-                // TODO: Button to add a random one
+                // TODO: Button to copy a random trait
                 return React.createElement(
                     "div",
                     { className: "action-count" },
@@ -5968,14 +6011,22 @@ var MonsterEditorModal = function (_React$Component) {
         value: function getFilterCard() {
             var _this4 = this;
 
+            var buttons = [
+            // TODO: Add explanation
+            React.createElement(ConfirmButton, {
+                key: "splice",
+                text: "gene splice",
+                disabled: true // TODO: Disabled if fewer than 2 monsters
+                , callback: function callback() {
+                    return null;
+                } // TODO: Gene splice
+            })];
+
             var filterContent = null;
             if (this.state.showFilter) {
                 filterContent = React.createElement(
                     "div",
                     null,
-                    React.createElement("input", { type: "text", placeholder: "filter", value: this.state.filter.text, onChange: function onChange(event) {
-                            return _this4.setFilterText(event.target.value);
-                        } }),
                     React.createElement(Checkbox, {
                         label: "match size",
                         checked: this.state.filter.size,
@@ -6012,12 +6063,15 @@ var MonsterEditorModal = function (_React$Component) {
                         changeValue: function changeValue(value) {
                             return _this4.toggleMatch("challenge");
                         }
-                    })
+                    }),
+                    buttons
                 );
             } else {
-                filterContent = React.createElement("input", { type: "text", placeholder: "filter", value: this.state.filter.text, onChange: function onChange(event) {
-                        return _this4.setFilterText(event.target.value);
-                    } });
+                filterContent = React.createElement(
+                    "div",
+                    null,
+                    buttons
+                );
             }
 
             return React.createElement(
@@ -6060,7 +6114,7 @@ var MonsterEditorModal = function (_React$Component) {
                         combatant: m,
                         mode: "template " + _this5.state.page,
                         copyTrait: function copyTrait(trait) {
-                            return _this5.copyTrait(trait);
+                            return _this5.props.copyTrait(_this5.props.combatant, trait);
                         }
                     })
                 );
@@ -6097,7 +6151,7 @@ var MonsterEditorModal = function (_React$Component) {
                 }];
 
                 var monsters = [];
-                if (this.state.showMonsters) {
+                if (this.props.showMonsters) {
                     monsters = this.getMonsters();
                 }
 
@@ -6367,7 +6421,7 @@ var MonsterEditorModal = function (_React$Component) {
                 }
 
                 var help = null;
-                if (this.state.showMonsters && monsters.length > 1) {
+                if (this.props.showMonsters && monsters.length > 1) {
                     var selector = null;
                     if (this.getHelpOptionsForPage(this.state.page).length > 1) {
                         var options = this.getHelpOptionsForPage(this.state.page).map(function (s) {
@@ -6400,7 +6454,7 @@ var MonsterEditorModal = function (_React$Component) {
                 }
 
                 var monsterList = null;
-                if (this.state.showMonsters) {
+                if (this.props.showMonsters) {
                     monsterList = React.createElement(
                         "div",
                         { className: "columns small-4 medium-4 large-4 scrollable" },
@@ -6414,7 +6468,7 @@ var MonsterEditorModal = function (_React$Component) {
                     { className: "row", style: { height: "100%", margin: "0 -15px" } },
                     React.createElement(
                         "div",
-                        { className: this.state.showMonsters ? "columns small-7 medium-7 large-7 scrollable" : "columns small-11 medium-11 large-11 scrollable" },
+                        { className: this.props.showMonsters ? "columns small-8 medium-8 large-8 scrollable" : "columns small-12 medium-12 large-12 scrollable", style: { transition: "none" } },
                         React.createElement(Selector, {
                             tabs: true,
                             options: pages,
@@ -6425,13 +6479,6 @@ var MonsterEditorModal = function (_React$Component) {
                         }),
                         content,
                         help
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "columns small-1 medium-1 large-1 scrollable" },
-                        React.createElement("img", { className: this.state.showMonsters ? "vertical-expander rotate" : "vertical-expander", src: "content/down-arrow-black.svg", onClick: function onClick() {
-                                return _this6.toggleMonsters();
-                            } })
                     ),
                     monsterList
                 );

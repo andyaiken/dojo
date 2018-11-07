@@ -3,7 +3,6 @@ class MonsterEditorModal extends React.Component {
         super();
         this.state = {
             page: "overview",
-            showMonsters: false,
             showFilter: false,
             helpSection: "speed",
             filter: {
@@ -12,7 +11,6 @@ class MonsterEditorModal extends React.Component {
                 subtype: false,
                 alignment: false,
                 challenge: true,
-                text: ""
             }
         };
     }
@@ -22,12 +20,6 @@ class MonsterEditorModal extends React.Component {
         this.setState({
             page: page,
             helpSection: sections[0]
-        });
-    }
-
-    toggleMonsters() {
-        this.setState({
-            showMonsters: !this.state.showMonsters
         });
     }
 
@@ -45,13 +37,6 @@ class MonsterEditorModal extends React.Component {
 
     toggleMatch(type) {
         this.state.filter[type] = !this.state.filter[type];
-        this.setState({
-            filter: this.state.filter
-        });
-    }
-
-    setFilterText(text) {
-        this.state.filter.text = text;
         this.setState({
             filter: this.state.filter
         });
@@ -82,10 +67,6 @@ class MonsterEditorModal extends React.Component {
                     match = false;
                 }
 
-                if (this.state.filter.text && (monster.name.toLowerCase().indexOf(this.state.filter.text.toLowerCase()) === -1)) {
-                    match = false;
-                }
-
                 if (this.state.filter.size && (this.props.combatant.size !== monster.size)) {
                     match = false;
                 }
@@ -113,12 +94,6 @@ class MonsterEditorModal extends React.Component {
         });
 
         return monsters;
-    }
-
-    copyTrait(trait) {
-        var copy = JSON.parse(JSON.stringify(trait));
-        copy.id = guid();
-        this.props.copyTrait(this.props.combatant, copy);
     }
 
     getHelpSection(monsters) {
@@ -297,7 +272,7 @@ class MonsterEditorModal extends React.Component {
                 </div>
             );
         } else {
-            // TODO: Button to add a random one
+            // TODO: Button to copy a random trait
             return (
                 <div className="action-count">
                     number of {actionType}: <b>{min} - {max} (average {avg})</b>
@@ -307,11 +282,20 @@ class MonsterEditorModal extends React.Component {
     }
 
     getFilterCard() {
+        var buttons = [
+            // TODO: Add explanation
+            <ConfirmButton
+                key="splice"
+                text="gene splice"
+                disabled={true}         // TODO: Disabled if fewer than 2 monsters
+                callback={() => null}   // TODO: Gene splice
+            />
+        ];
+
         var filterContent = null;
         if (this.state.showFilter) {
             filterContent = (
                 <div>
-                    <input type="text" placeholder="filter" value={this.state.filter.text} onChange={event => this.setFilterText(event.target.value)} />
                     <Checkbox
                         label="match size"
                         checked={this.state.filter.size}
@@ -339,11 +323,14 @@ class MonsterEditorModal extends React.Component {
                         checked={this.state.filter.challenge}
                         changeValue={value => this.toggleMatch("challenge")}
                     />
+                    {buttons}
                 </div>
             );
         } else {
             filterContent = (
-                <input type="text" placeholder="filter" value={this.state.filter.text} onChange={event => this.setFilterText(event.target.value)} />
+                <div>
+                    {buttons}
+                </div>
             );
         }
 
@@ -369,7 +356,7 @@ class MonsterEditorModal extends React.Component {
                 <MonsterCard
                     combatant={m}
                     mode={"template " + this.state.page}
-                    copyTrait={trait => this.copyTrait(trait)}
+                    copyTrait={trait => this.props.copyTrait(this.props.combatant, trait)}
                 />
             </div>
         ));
@@ -407,7 +394,7 @@ class MonsterEditorModal extends React.Component {
             ];
 
             var monsters = [];
-            if (this.state.showMonsters) {
+            if (this.props.showMonsters) {
                 monsters = this.getMonsters();
             }
 
@@ -530,7 +517,7 @@ class MonsterEditorModal extends React.Component {
             }
 
             var help = null;
-            if (this.state.showMonsters && (monsters.length > 1)) {
+            if (this.props.showMonsters && (monsters.length > 1)) {
                 var selector = null;
                 if (this.getHelpOptionsForPage(this.state.page).length > 1) {
                     var options = this.getHelpOptionsForPage(this.state.page).map(s => {
@@ -559,7 +546,7 @@ class MonsterEditorModal extends React.Component {
             }
 
             var monsterList = null;
-            if (this.state.showMonsters) {
+            if (this.props.showMonsters) {
                 monsterList = (
                     <div className="columns small-4 medium-4 large-4 scrollable">
                         {this.getFilterCard()}
@@ -570,7 +557,7 @@ class MonsterEditorModal extends React.Component {
 
             return (
                 <div className="row" style={{ height: "100%", margin: "0 -15px" }}>
-                    <div className={this.state.showMonsters ? "columns small-7 medium-7 large-7 scrollable" : "columns small-11 medium-11 large-11 scrollable"}>
+                    <div className={this.props.showMonsters ? "columns small-8 medium-8 large-8 scrollable" : "columns small-12 medium-12 large-12 scrollable"} style={{ transition: "none" }}>
                         <Selector
                             tabs={true}
                             options={pages}
@@ -579,9 +566,6 @@ class MonsterEditorModal extends React.Component {
                         />
                         {content}
                         {help}
-                    </div>
-                    <div className="columns small-1 medium-1 large-1 scrollable">
-                        <img className={this.state.showMonsters ? "vertical-expander rotate" : "vertical-expander"} src="content/down-arrow-black.svg" onClick={() => this.toggleMonsters()}/>
                     </div>
                     {monsterList}
                 </div>

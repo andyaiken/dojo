@@ -8,48 +8,29 @@
 }
 
 .modal {
-    height: calc(100% - 140px);
+    height: calc(100% - 160px);
     width: calc(100% - 100px);
-    margin: 70px 50px;
+    margin: 80px 50px;
     box-shadow: 0 0 50px 10px rgba(0, 0, 0, 0.5);
 }
 
-    .modal .modal-heading {
-        height: 50px;
-        margin: 0;
-        border-bottom: none;
-        background-color: rgb(100, 150, 240);
-        color: white;
+    .modal .modal-header {
+        height: 40px;
+        background-color: #404040;
     }
 
-        .modal .modal-heading .title {
-            display: inline-block;
-            vertical-align: middle;
-            width: calc(100% - 52px);
-            padding: 0 15px;
+        .modal .modal-header .title {
+            height: 40px;
             line-height: 40px;
+            padding-left: 15px;
             font-size: 20px;
             font-weight: 600;
+            color: white;
         }
-
-        .modal .modal-heading .image {
-            display: inline-block;
-            vertical-align: middle;
-            width: 36px;
-            height: 36px;
-            padding: 2px;
-            margin: 8px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-            .modal .modal-heading .image:hover {
-                background-color: rgba(255, 255, 255, 0.3);
-            }
 
     .modal .modal-content {
-        height: calc(100% - 50px);
-        padding: 15px;
+        height: calc(100% - 80px);
+        padding: 0 15px;
         background-color: white;
     }
 
@@ -100,23 +81,18 @@
                 margin-top: 20px;
                 font-size: 15px;
             }
+    
+    .modal .modal-footer {
+        height: 40px;
+        background-color: #404040;
+    }
 
-        .modal .modal-content .vertical-expander {
-            text-align: center;
-            width: 50%;
-            margin: 20px 25% 0 25%;
-            cursor: pointer;
-            transform: rotate(90deg);
-            border-radius: 50%;
+        .modal .modal-footer button,
+        .modal .modal-footer .checkbox {
+            display: inline-block;
+            width: 180px;
+            margin: 4px 5px;
         }
-
-            .modal .modal-content .vertical-expander:hover {
-                background-color: rgba(100, 150, 240, 0.2);
-            }
-
-            .modal .modal-content .vertical-expander.rotate {
-                transform: rotate(-90deg);
-            }
 
 .blur {
     -webkit-filter: blur(2px);
