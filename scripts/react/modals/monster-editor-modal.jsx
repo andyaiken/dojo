@@ -96,44 +96,150 @@ class MonsterEditorModal extends React.Component {
         return monsters;
     }
 
+    setRandomValue(field, monsters, source) {
+        var index = Math.floor(Math.random() * monsters.length);
+        var m = monsters[index];
+        var src = source ? m[source] : m;
+        var value = src[field];
+        this.changeValue(field, source, value);
+        // TODO: Notify that something has changed
+    }
+
+    geneSplice(monsters) {
+        // TODO: Gene splice
+
+        // Take random values for all fields from the source monsters
+        // For traits, if there are any which are common to all, take them; then fill with other random items
+
+        var fields = [
+            {
+                field: "speed",
+                source: null
+            },
+            {
+                field: "senses",
+                source: null
+            },
+            {
+                field: "languages",
+                source: null
+            },
+            {
+                field: "equipment",
+                source: null
+            },
+            {
+                field: "str",
+                source: "abilityScores"
+            },
+            {
+                field: "dex",
+                source: "abilityScores"
+            },
+            {
+                field: "con",
+                source: "abilityScores"
+            },
+            {
+                field: "int",
+                source: "abilityScores"
+            },
+            {
+                field: "wis",
+                source: "abilityScores"
+            },
+            {
+                field: "cha",
+                source: "abilityScores"
+            },
+            {
+                field: "savingThrows",
+                source: null
+            },
+            {
+                field: "skills",
+                source: null
+            },
+            {
+                field: "ac",
+                source: null
+            },
+            {
+                field: "hitDice",
+                source: null
+            },
+            {
+                field: "resist",
+                source: "damage"
+            },
+            {
+                field: "vulnerable",
+                source: "damage"
+            },
+            {
+                field: "immune",
+                source: "damage"
+            },
+            {
+                field: "conditionImmunities",
+                source: null
+            }
+        ];
+
+        fields.forEach(f => {
+            var index = Math.floor(Math.random() * monsters.length);
+            var m = monsters[index];
+            var src = f.source ? m[f.source] : m;
+            var value = src[f.field];
+            this.changeValue(f.field, f.source, value);
+        });
+
+        // TODO: Notify that something has changed
+    }
+
+    changeValue(field, source, value) {
+        var target = source ? this.props.combatant[source] : this.props.combatant;
+        target[field] = value;
+    }
+
     getHelpSection(monsters) {
         switch (this.state.helpSection) {
             case "speed":
-                return this.getValueSection("speed", "count", monsters);
+                return this.getValueSection("speed", "text", monsters);
             case "senses":
-                return this.getValueSection("senses", "count", monsters);
+                return this.getValueSection("senses", "text", monsters);
             case "languages":
-                return this.getValueSection("languages", "count", monsters);
+                return this.getValueSection("languages", "text", monsters);
             case "equipment":
-                return this.getValueSection("equipment", "count", monsters);
+                return this.getValueSection("equipment", "text", monsters);
             case "str":
-                return this.getValueSection("str", "value", monsters.map(m => m.abilityScores));
+                return this.getValueSection("str", "number", monsters, "abilityScores");
             case "dex":
-                return this.getValueSection("dex", "value", monsters.map(m => m.abilityScores));
+                return this.getValueSection("dex", "number", monsters, "abilityScores");
             case "con":
-                return this.getValueSection("con", "value", monsters.map(m => m.abilityScores));
+                return this.getValueSection("con", "number", monsters, "abilityScores");
             case "int":
-                return this.getValueSection("int", "value", monsters.map(m => m.abilityScores));
+                return this.getValueSection("int", "number", monsters, "abilityScores");
             case "wis":
-                return this.getValueSection("wis", "value", monsters.map(m => m.abilityScores));
+                return this.getValueSection("wis", "number", monsters, "abilityScores");
             case "cha":
-                return this.getValueSection("cha", "value", monsters.map(m => m.abilityScores));
+                return this.getValueSection("cha", "number", monsters, "abilityScores");
             case "saves":
-                return this.getValueSection("savingThrows", "count", monsters);
+                return this.getValueSection("savingThrows", "text", monsters);
             case "skills":
-                return this.getValueSection("skills", "count", monsters);
+                return this.getValueSection("skills", "text", monsters);
             case "armor class":
-                return this.getValueSection("ac", "value", monsters);
+                return this.getValueSection("ac", "number", monsters);
             case "hit dice":
-                return this.getValueSection("hitDice", "value", monsters);
+                return this.getValueSection("hitDice", "number", monsters);
             case "resistances":
-                return this.getValueSection("resist", "count", monsters.map(m => m.damage));
+                return this.getValueSection("resist", "text", monsters, "damage");
             case "vulnerabilities":
-                return this.getValueSection("vulnerable", "count", monsters.map(m => m.damage));
+                return this.getValueSection("vulnerable", "text", monsters, "damage");
             case "immunities":
-                return this.getValueSection("immune", "count", monsters.map(m => m.damage));
+                return this.getValueSection("immune", "text", monsters, "damage");
             case "conditions":
-                return this.getValueSection("conditionImmunities", "count", monsters);
+                return this.getValueSection("conditionImmunities", "text", monsters);
             case "actions":
                 return this.getActionsSection(monsters);
         }
@@ -141,13 +247,14 @@ class MonsterEditorModal extends React.Component {
         return null;
     }
 
-    getValueSection(field, sortBy, monsters) {
+    getValueSection(field, dataType, monsters, source) {
         var values = monsters
+            .map(m => source ? m[source] : m)
             .map(m => m[field])
             .filter(v => !!v);
 
         var distinct = [];
-        if (sortBy === "value") {
+        if (dataType === "number") {
             var min = null, max = null;
             values.forEach(v => {
                 if ((min === null) || (v < min)) {
@@ -178,54 +285,77 @@ class MonsterEditorModal extends React.Component {
             }
         });
 
-        if (distinct.length !== 0) {
-            switch (sortBy) {
-                case "value":
-                    sortByValue(distinct);
-                    break;
-                case "count":
-                    sortByCount(distinct);
-                    break;
+        switch (dataType) {
+            case "number":
+                sortByValue(distinct);
+                break;
+            case "text":
+                sortByCount(distinct);
+                break;
+        }
+
+        if (dataType === "text") {
+            var count = monsters.length - values.length;
+            if (count !== 0) {
+                distinct.push({
+                    value: null,
+                    count: monsters.length - values.length
+                });
             }
-    
-            var valueSections = distinct.map(d => {
-                var width = 100 * d.count / monsters.length;
-                return (
-                    <div className="row small-up-3 medium-up-3 large-up-3 value-list" key={distinct.indexOf(d)}>
-                        <div className="column">
-                            <div className="text-container">
-                                {d.value}
-                            </div>
-                        </div>
-                        <div className="column">
-                            <div className="bar-container">
-                                <div className="bar" style={{ width: width + "%" }}></div>
-                            </div>
-                        </div>
-                        <div className="column">
-                            <button onClick={() => this.props.changeValue(this.props.combatant, field, d.value)}>use this value</button>
+        }
+
+        var valueSections = distinct.map(d => {
+            var width = 100 * d.count / monsters.length;
+            return (
+                <div className="row small-up-3 medium-up-3 large-up-3 value-list" key={distinct.indexOf(d)}>
+                    <div className="column">
+                        <div className="text-container">
+                            {d.value || "(none specified)"}
                         </div>
                     </div>
-                );
-            });
-    
-            // TODO: Button to populate with a random value
-            return (
-                <div>
-                    {valueSections}
+                    <div className="column">
+                        <div className="bar-container">
+                            <div className="bar" style={{ width: width + "%" }}></div>
+                        </div>
+                    </div>
+                    <div className="column">
+                        <button onClick={() => this.props.changeValue(this.props.combatant, field, d.value)}>use this value</button>
+                    </div>
                 </div>
             );
-        } else {
-            return (
-                <div className="no-values">
-                    no values
-                </div>
-            );
-        }
+        });
+
+        // TODO: Button to populate with a random value
+        return (
+            <div>
+                {valueSections}
+                <button onClick={() => this.setRandomValue(field, monsters, source)}>select random value</button>
+            </div>
+        );
     }
 
     getActionsSection(monsters) {
         var rows = [];
+        rows.push(
+            <div className="row small-up-3 medium-up-3 large-up-3 value-list" key="header">
+                <div className="column">
+                    <div className="text-container">
+                        <b>type</b>
+                    </div>
+                </div>
+                <div className="column">
+                    <div className="text-container number">
+                        <b>average number</b>
+                    </div>
+                </div>
+                <div className="column">
+                    <div className="text-container number">
+                        <b>min - max</b>
+                    </div>
+                </div>
+            </div>
+        );
+
         ["trait", "action", "legendary", "lair", "regional"].forEach(type => {
             var actionName = null;
             switch (type) {
@@ -328,12 +458,7 @@ class MonsterEditorModal extends React.Component {
                         changeValue={value => this.toggleMatch("challenge")}
                     />
                     <div className="divider"></div>
-                    <ConfirmButton
-                        text="gene splice"
-                        // TODO: Add explanation
-                        disabled={true}         // TODO: Disabled if fewer than 2 monsters
-                        callback={() => null}   // TODO: Gene splice
-                    />
+                    <button className={monsters.length < 2 ? "disabled" : ""} onClick={() => this.geneSplice(monsters)}>build random monster</button>
                     <div className="divider"></div>
                     {similar}
                 </div>
@@ -562,14 +687,16 @@ class MonsterEditorModal extends React.Component {
             return (
                 <div className="row" style={{ height: "100%", margin: "0 -15px" }}>
                     <div className={this.props.showMonsters ? "columns small-8 medium-8 large-8 scrollable" : "columns small-12 medium-12 large-12 scrollable"} style={{ transition: "none" }}>
-                        <Selector
-                            tabs={true}
-                            options={pages}
-                            selectedID={this.state.page}
-                            select={optionID => this.setPage(optionID)}
-                        />
-                        {content}
-                        {help}
+                        <div className="section">
+                            <Selector
+                                tabs={true}
+                                options={pages}
+                                selectedID={this.state.page}
+                                select={optionID => this.setPage(optionID)}
+                            />
+                            {content}
+                            {help}
+                        </div>
                     </div>
                     {monsterList}
                 </div>

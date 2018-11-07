@@ -76,6 +76,11 @@ button {
         pointer-events: none;
     }
 
+    button .details {
+        margin: 3px 0;
+        padding: 5px 0;
+    }
+
     button .destructive, button .non-destructive {
         background-color: white;
         border: 1px solid #C3C3C3;

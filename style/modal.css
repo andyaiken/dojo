@@ -95,13 +95,6 @@
                             height: 100%;
                             background-color: rgb(100, 150, 240);
                         }
-
-            .modal .modal-content .monster-help .action-count,
-            .modal .modal-content .monster-help .no-values {
-                text-align: center;
-                margin-top: 20px;
-                font-size: 15px;
-            }
     
     .modal .modal-footer {
         height: 40px;

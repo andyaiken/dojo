@@ -1,6 +1,7 @@
 /*
 <ConfirmButton
     text="TEXT"
+    details="TEXT"
     disabled={BOOLEAN}
     callback={() => CALLBACK_FUNCTION}
 />
@@ -33,6 +34,7 @@ class ConfirmButton extends React.Component {
                     <div>
                         <div className="title">{this.props.text} - are you sure?</div>
                         <img className="image" src="content/warning.svg" />
+                        {this.props.details ? <div className="details">{this.props.details}</div> : null}
                         <div className="confirmation">
                             <div className="destructive" onClick={() => this.perform()}>yes</div>
                             <div className="non-destructive" onClick={() => this.toggle()}>no</div>
