@@ -21,10 +21,11 @@ class PartiesScreen extends React.Component {
                 );
             };
 
-            var cards = [];
+            var activeCards = [];
+            var inactiveCards = [];
 
             if (this.props.selection) {
-                cards.push(
+                activeCards.push(
                     <div className="column" key="info">
                         <PartyCard
                             selection={this.props.selection}
@@ -36,22 +37,38 @@ class PartiesScreen extends React.Component {
                     </div>
                 );
 
-                if (this.props.selection.pcs.length !== 0) {
-                    this.props.selection.pcs.forEach(pc => {
-                        cards.push(
-                            <div className="column" key={pc.id}>
-                                <PCCard
-                                    combatant={pc}
-                                    mode={"edit"}
-                                    changeValue={(combatant, type, value) => this.props.changeValue(combatant, type, value)}
-                                    nudgeValue={(combatant, type, delta) => this.props.nudgeValue(combatant, type, delta)}
-                                    removeCombatant={combatant => this.props.removePC(combatant)}
-                                />
-                            </div>
-                        );
-                    });
-                } else {
-                    cards.push(
+                var activePCs = this.props.selection.pcs.filter(pc => pc.active);
+                activePCs.forEach(pc => {
+                    activeCards.push(
+                        <div className="column" key={pc.id}>
+                            <PCCard
+                                combatant={pc}
+                                mode={"edit"}
+                                changeValue={(combatant, type, value) => this.props.changeValue(combatant, type, value)}
+                                nudgeValue={(combatant, type, delta) => this.props.nudgeValue(combatant, type, delta)}
+                                removeCombatant={combatant => this.props.removePC(combatant)}
+                            />
+                        </div>
+                    );
+                });
+
+                var inactivePCs = this.props.selection.pcs.filter(pc => !pc.active);
+                inactivePCs.forEach(pc => {
+                    inactiveCards.push(
+                        <div className="column" key={pc.id}>
+                            <PCCard
+                                combatant={pc}
+                                mode={"edit"}
+                                changeValue={(combatant, type, value) => this.props.changeValue(combatant, type, value)}
+                                nudgeValue={(combatant, type, delta) => this.props.nudgeValue(combatant, type, delta)}
+                                removeCombatant={combatant => this.props.removePC(combatant)}
+                            />
+                        </div>
+                    );
+                });
+
+                if (activePCs.length === 0) {
+                    activeCards.push(
                         <div className="column" key="empty">
                             <InfoCard getContent={() => <div className="section">no pcs</div>} />
                         </div>
@@ -78,10 +95,16 @@ class PartiesScreen extends React.Component {
                     </div>
                     <div className="columns small-6 medium-8 large-9 scrollable">
                         <CardGroup
-                            content={cards}
+                            content={activeCards}
                             heading={name}
                             showClose={this.props.selection !== null}
                             close={() => this.props.selectParty(null)}
+                        />
+                        <CardGroup
+                            content={inactiveCards}
+                            heading="inactive pcs"
+                            showClose={false}
+                            hidden={inactiveCards.length === 0}
                         />
                     </div>
                 </div>

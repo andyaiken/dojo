@@ -23,6 +23,11 @@ class PCCard extends React.Component {
         try {
             var options = [];
             if (this.props.mode.indexOf("edit") !== -1) {
+                if (this.props.combatant.active) {
+                    options.push(<button key="toggle-active" onClick={() => this.props.changeValue(this.props.combatant, "active", false)}>mark inactive</button>);
+                } else {
+                    options.push(<button key="toggle-active" onClick={() => this.props.changeValue(this.props.combatant, "active", true)}>mark active</button>);
+                }
                 options.push(<ConfirmButton key="remove" text="delete pc" callback={() => this.props.removeCombatant(this.props.combatant)} />);
             }
             if (this.props.mode.indexOf("combat") !== -1) {
@@ -190,7 +195,9 @@ class PCCard extends React.Component {
                         {stats}
                         <div style={{ display: options.length > 0 ? "" : "none" }}>
                             <div className="divider"></div>
-                            <div className="section">{options}</div>
+                            <div className="section">
+                                {options}
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -60,13 +60,13 @@ class EncounterCard extends React.Component {
                     var xpHard = 0;
                     var xpDeadly = 0;
 
-                    for (var n = 0; n !== selectedParty.pcs.length; ++n) {
-                        var pc = selectedParty.pcs[n];
+                    var pcs = selectedParty.pcs.filter(pc => pc.active);
+                    pcs.forEach(pc => {
                         xpEasy += pcExperience(pc.level, "easy");
                         xpMedium += pcExperience(pc.level, "medium");
                         xpHard += pcExperience(pc.level, "hard");
                         xpDeadly += pcExperience(pc.level, "deadly");
-                    }
+                    });
 
                     if (adjustedXp > 0) {
                         difficulty = "trivial";
@@ -83,8 +83,8 @@ class EncounterCard extends React.Component {
                             difficulty = "deadly";
                         }
 
-                        if ((selectedParty.pcs.length < 3) || (selectedParty.pcs.length > 5)) {
-                            var small = selectedParty.pcs.length < 3;
+                        if ((pcs.length < 3) || (pcs.length > 5)) {
+                            var small = pcs.length < 3;
                             switch (difficulty) {
                                 case "trivial":
                                     adjustedDifficulty = small ? "easy" : "trivial";

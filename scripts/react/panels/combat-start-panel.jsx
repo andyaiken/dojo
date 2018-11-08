@@ -56,11 +56,13 @@ class CombatStartPanel extends React.Component {
                     var pcs = [];
                     for (var n = 0; n !== selectedParty.pcs.length; ++n) {
                         var pc = selectedParty.pcs[n];
-                        var name = pc.name;
-                        if (!name) {
-                            name = "unnamed pc";
+                        if (pc.active) {
+                            var name = pc.name;
+                            if (!name) {
+                                name = "unnamed pc";
+                            }
+                            pcs.push(<li key={pc.id}>{name}</li>);
                         }
-                        pcs.push(<li key={pc.id}>{name}</li>);
                     };
                     if (pcs.length === 0) {
                         pcs.push(<li key={"empty"}>no pcs</li>);

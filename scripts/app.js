@@ -204,13 +204,15 @@ var EncounterCard = function (_React$Component) {
                         var xpHard = 0;
                         var xpDeadly = 0;
 
-                        for (var n = 0; n !== selectedParty.pcs.length; ++n) {
-                            var pc = selectedParty.pcs[n];
+                        var pcs = selectedParty.pcs.filter(function (pc) {
+                            return pc.active;
+                        });
+                        pcs.forEach(function (pc) {
                             xpEasy += pcExperience(pc.level, "easy");
                             xpMedium += pcExperience(pc.level, "medium");
                             xpHard += pcExperience(pc.level, "hard");
                             xpDeadly += pcExperience(pc.level, "deadly");
-                        }
+                        });
 
                         if (adjustedXp > 0) {
                             difficulty = "trivial";
@@ -227,8 +229,8 @@ var EncounterCard = function (_React$Component) {
                                 difficulty = "deadly";
                             }
 
-                            if (selectedParty.pcs.length < 3 || selectedParty.pcs.length > 5) {
-                                var small = selectedParty.pcs.length < 3;
+                            if (pcs.length < 3 || pcs.length > 5) {
+                                var small = pcs.length < 3;
                                 switch (difficulty) {
                                     case "trivial":
                                         adjustedDifficulty = small ? "easy" : "trivial";
@@ -2111,6 +2113,23 @@ var PCCard = function (_React$Component) {
             try {
                 var options = [];
                 if (this.props.mode.indexOf("edit") !== -1) {
+                    if (this.props.combatant.active) {
+                        options.push(React.createElement(
+                            "button",
+                            { key: "toggle-active", onClick: function onClick() {
+                                    return _this2.props.changeValue(_this2.props.combatant, "active", false);
+                                } },
+                            "mark inactive"
+                        ));
+                    } else {
+                        options.push(React.createElement(
+                            "button",
+                            { key: "toggle-active", onClick: function onClick() {
+                                    return _this2.props.changeValue(_this2.props.combatant, "active", true);
+                                } },
+                            "mark active"
+                        ));
+                    }
                     options.push(React.createElement(ConfirmButton, { key: "remove", text: "delete pc", callback: function callback() {
                             return _this2.props.removeCombatant(_this2.props.combatant);
                         } }));
@@ -3409,6 +3428,7 @@ var Dojo = function (_React$Component) {
             var pc = {
                 id: guid(),
                 type: "pc",
+                active: true,
                 player: "",
                 name: name,
                 race: "",
@@ -4003,8 +4023,10 @@ var Dojo = function (_React$Component) {
 
             // Add a copy of each PC to the encounter
             party.pcs.forEach(function (pc) {
-                var copy = JSON.parse(JSON.stringify(pc));
-                combat.combatants.push(copy);
+                if (pc.active) {
+                    var copy = JSON.parse(JSON.stringify(pc));
+                    combat.combatants.push(copy);
+                }
             });
 
             // Add flags to all combatants
@@ -7077,15 +7099,17 @@ var CombatStartPanel = function (_React$Component) {
                         var pcs = [];
                         for (var n = 0; n !== selectedParty.pcs.length; ++n) {
                             var pc = selectedParty.pcs[n];
-                            var name = pc.name;
-                            if (!name) {
-                                name = "unnamed pc";
+                            if (pc.active) {
+                                var name = pc.name;
+                                if (!name) {
+                                    name = "unnamed pc";
+                                }
+                                pcs.push(React.createElement(
+                                    "li",
+                                    { key: pc.id },
+                                    name
+                                ));
                             }
-                            pcs.push(React.createElement(
-                                "li",
-                                { key: pc.id },
-                                name
-                            ));
                         };
                         if (pcs.length === 0) {
                             pcs.push(React.createElement(
@@ -8867,10 +8891,11 @@ var PartiesScreen = function (_React$Component) {
                     }));
                 };
 
-                var cards = [];
+                var activeCards = [];
+                var inactiveCards = [];
 
                 if (this.props.selection) {
-                    cards.push(React.createElement(
+                    activeCards.push(React.createElement(
                         "div",
                         { className: "column", key: "info" },
                         React.createElement(PartyCard, {
@@ -8890,28 +8915,54 @@ var PartiesScreen = function (_React$Component) {
                         })
                     ));
 
-                    if (this.props.selection.pcs.length !== 0) {
-                        this.props.selection.pcs.forEach(function (pc) {
-                            cards.push(React.createElement(
-                                "div",
-                                { className: "column", key: pc.id },
-                                React.createElement(PCCard, {
-                                    combatant: pc,
-                                    mode: "edit",
-                                    changeValue: function changeValue(combatant, type, value) {
-                                        return _this2.props.changeValue(combatant, type, value);
-                                    },
-                                    nudgeValue: function nudgeValue(combatant, type, delta) {
-                                        return _this2.props.nudgeValue(combatant, type, delta);
-                                    },
-                                    removeCombatant: function removeCombatant(combatant) {
-                                        return _this2.props.removePC(combatant);
-                                    }
-                                })
-                            ));
-                        });
-                    } else {
-                        cards.push(React.createElement(
+                    var activePCs = this.props.selection.pcs.filter(function (pc) {
+                        return pc.active;
+                    });
+                    activePCs.forEach(function (pc) {
+                        activeCards.push(React.createElement(
+                            "div",
+                            { className: "column", key: pc.id },
+                            React.createElement(PCCard, {
+                                combatant: pc,
+                                mode: "edit",
+                                changeValue: function changeValue(combatant, type, value) {
+                                    return _this2.props.changeValue(combatant, type, value);
+                                },
+                                nudgeValue: function nudgeValue(combatant, type, delta) {
+                                    return _this2.props.nudgeValue(combatant, type, delta);
+                                },
+                                removeCombatant: function removeCombatant(combatant) {
+                                    return _this2.props.removePC(combatant);
+                                }
+                            })
+                        ));
+                    });
+
+                    var inactivePCs = this.props.selection.pcs.filter(function (pc) {
+                        return !pc.active;
+                    });
+                    inactivePCs.forEach(function (pc) {
+                        inactiveCards.push(React.createElement(
+                            "div",
+                            { className: "column", key: pc.id },
+                            React.createElement(PCCard, {
+                                combatant: pc,
+                                mode: "edit",
+                                changeValue: function changeValue(combatant, type, value) {
+                                    return _this2.props.changeValue(combatant, type, value);
+                                },
+                                nudgeValue: function nudgeValue(combatant, type, delta) {
+                                    return _this2.props.nudgeValue(combatant, type, delta);
+                                },
+                                removeCombatant: function removeCombatant(combatant) {
+                                    return _this2.props.removePC(combatant);
+                                }
+                            })
+                        ));
+                    });
+
+                    if (activePCs.length === 0) {
+                        activeCards.push(React.createElement(
                             "div",
                             { className: "column", key: "empty" },
                             React.createElement(InfoCard, { getContent: function getContent() {
@@ -8957,12 +9008,18 @@ var PartiesScreen = function (_React$Component) {
                         "div",
                         { className: "columns small-6 medium-8 large-9 scrollable" },
                         React.createElement(CardGroup, {
-                            content: cards,
+                            content: activeCards,
                             heading: name,
                             showClose: this.props.selection !== null,
                             close: function close() {
                                 return _this2.props.selectParty(null);
                             }
+                        }),
+                        React.createElement(CardGroup, {
+                            content: inactiveCards,
+                            heading: "inactive pcs",
+                            showClose: false,
+                            hidden: inactiveCards.length === 0
                         })
                     )
                 );

@@ -92,6 +92,7 @@ class Dojo extends React.Component {
         var pc = {
             id: guid(),
             type: "pc",
+            active: true,
             player: "",
             name: name,
             race: "",
@@ -678,8 +679,10 @@ class Dojo extends React.Component {
 
         // Add a copy of each PC to the encounter
         party.pcs.forEach(pc => {
-            var copy = JSON.parse(JSON.stringify(pc));
-            combat.combatants.push(copy);
+            if (pc.active) {
+                var copy = JSON.parse(JSON.stringify(pc));
+                combat.combatants.push(copy);
+            }
         });
 
         // Add flags to all combatants
