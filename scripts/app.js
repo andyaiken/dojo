@@ -546,12 +546,12 @@ var FilterCard = function (_React$Component) {
             var _this2 = this;
 
             try {
-                var sizes = ["all sizes", "tiny", "small", "medium", "large", "huge", "gargantuan"];
+                var sizes = ["all sizes"].concat(SIZE_TYPES);
                 var sizeOptions = sizes.map(function (size) {
                     return { id: size, text: size };
                 });
 
-                var categories = ["all types", "aberration", "beast", "celestial", "construct", "dragon", "elemental", "fey", "fiend", "giant", "humanoid", "monstrosity", "ooze", "plant", "undead"];
+                var categories = ["all types"].concat(CATEGORY_TYPES);
                 var catOptions = categories.map(function (cat) {
                     return { id: cat, text: cat };
                 });
@@ -5484,8 +5484,7 @@ var DemographicsModal = function (_React$Component) {
                             break;
                         case "size":
                             {
-                                var sizes = ["tiny", "small", "medium", "large", "huge", "gargantuan"];
-                                sizes.forEach(function (size) {
+                                SIZE_TYPES.forEach(function (size) {
                                     buckets.push({
                                         value: size,
                                         title: size
@@ -5572,7 +5571,7 @@ var DemographicsModal = function (_React$Component) {
                     demographics = React.createElement(
                         "div",
                         null,
-                        React.createElement(Dropdown, {
+                        React.createElement(Selector, {
                             options: chartOptions,
                             selectedID: this.state.chart,
                             select: function select(optionID) {
@@ -5755,7 +5754,7 @@ var MonsterEditorModal = function (_React$Component) {
                 _this3.setRandomValue(field, monsters, false);
             });
 
-            ["trait", "action", "legendary", "lair", "regional"].forEach(function (type) {
+            TRAIT_TYPES.forEach(function (type) {
                 // Clear current traits of this type
                 var current = _this3.state.monster.traits.filter(function (t) {
                     return t.type === type;
@@ -5867,20 +5866,7 @@ var MonsterEditorModal = function (_React$Component) {
     }, {
         key: "getActionTypeName",
         value: function getActionTypeName(type) {
-            switch (type) {
-                case "trait":
-                    return "traits";
-                case "action":
-                    return "actions";
-                case "legendary":
-                    return "legendary actions";
-                case "lair":
-                    return "lair actions";
-                case "regional":
-                    return "regional effects";
-            }
-
-            return "";
+            return traitType(type) + "s";
         }
     }, {
         key: "copyTrait",
@@ -6166,7 +6152,7 @@ var MonsterEditorModal = function (_React$Component) {
                 )
             ));
 
-            ["trait", "action", "legendary", "lair", "regional"].forEach(function (type) {
+            TRAIT_TYPES.forEach(function (type) {
                 var min = null,
                     max = null,
                     count = null;
@@ -6389,13 +6375,10 @@ var MonsterEditorModal = function (_React$Component) {
                 var help = null;
                 switch (this.state.page) {
                     case 'overview':
-                        var categories = ["aberration", "beast", "celestial", "construct", "dragon", "elemental", "fey", "fiend", "giant", "humanoid", "monstrosity", "ooze", "plant", "undead"];
-                        var catOptions = categories.map(function (cat) {
+                        var catOptions = CATEGORY_TYPES.map(function (cat) {
                             return { id: cat, text: cat };
                         });
-
-                        var sizes = ["tiny", "small", "medium", "large", "huge", "gargantuan"];
-                        var sizeOptions = sizes.map(function (size) {
+                        var sizeOptions = SIZE_TYPES.map(function (size) {
                             return { id: size, text: size };
                         });
 

@@ -142,7 +142,7 @@ class MonsterEditorModal extends React.Component {
             this.setRandomValue(field, monsters, false);
         });
 
-        ["trait", "action", "legendary", "lair", "regional"].forEach(type => {
+        TRAIT_TYPES.forEach(type => {
             // Clear current traits of this type
             var current = this.state.monster.traits.filter(t => t.type === type);
             current.forEach(c => {
@@ -235,20 +235,7 @@ class MonsterEditorModal extends React.Component {
     }
 
     getActionTypeName(type) {
-        switch (type) {
-            case "trait":
-                return "traits";
-            case "action":
-                return "actions";
-            case "legendary":
-                return "legendary actions";
-            case "lair":
-                return "lair actions";
-            case "regional":
-                return "regional effects";
-        }
-
-        return "";
+        return traitType(type) + "s";
     }
 
     copyTrait(trait) {
@@ -470,7 +457,7 @@ class MonsterEditorModal extends React.Component {
             </div>
         );
 
-        ["trait", "action", "legendary", "lair", "regional"].forEach(type => {    
+        TRAIT_TYPES.forEach(type => {    
             var min = null, max = null, count = null;
             monsters.forEach(m => {
                 var n = m.traits.filter(t => t.type === type).length;
@@ -629,11 +616,8 @@ class MonsterEditorModal extends React.Component {
             var help = null;
             switch (this.state.page) {
                 case 'overview':
-                    var categories = ["aberration", "beast", "celestial", "construct", "dragon", "elemental", "fey", "fiend", "giant", "humanoid", "monstrosity", "ooze", "plant", "undead"];
-                    var catOptions = categories.map(cat => { return { id: cat, text: cat }; });
-        
-                    var sizes = ["tiny", "small", "medium", "large", "huge", "gargantuan"];
-                    var sizeOptions = sizes.map(size => { return { id: size, text: size }; });
+                    var catOptions = CATEGORY_TYPES.map(cat => { return { id: cat, text: cat }; });
+                    var sizeOptions = SIZE_TYPES.map(size => { return { id: size, text: size }; });
 
                     content = (
                         <div className="row">

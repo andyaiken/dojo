@@ -45,8 +45,7 @@ class DemographicsModal extends React.Component {
                     }
                         break;
                     case "size": {
-                        var sizes = ["tiny", "small", "medium", "large", "huge", "gargantuan"];
-                        sizes.forEach(size => {
+                        SIZE_TYPES.forEach(size => {
                             buckets.push({
                                 value: size,
                                 title: size
@@ -133,7 +132,7 @@ class DemographicsModal extends React.Component {
 
                 demographics = (
                     <div>
-                        <Dropdown
+                        <Selector
                             options={chartOptions}
                             selectedID={this.state.chart}
                             select={optionID => this.selectChart(optionID)}

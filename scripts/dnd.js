@@ -1,4 +1,34 @@
-﻿function modifier(score) {
+﻿const SIZE_TYPES = [
+    "tiny",
+    "small",
+    "medium",
+    "large",
+    "huge",
+    "gargantuan"
+];
+
+const CATEGORY_TYPES = [
+    "aberration",
+    "beast",
+    "celestial",
+    "construct",
+    "dragon",
+    "elemental",
+    "fey",
+    "fiend",
+    "giant",
+    "humanoid",
+    "monstrosity",
+    "ooze",
+    "plant",
+    "undead"
+];
+
+const TRAIT_TYPES = [
+    "trait", "action", "legendary", "lair", "regional"
+];
+
+function modifier(score) {
     var mod = Math.floor((score - 10) / 2).toString();
     if (mod >= 0) {
         mod = '+' + mod;
@@ -80,7 +110,6 @@ function challengeDetails() {
 
     return result;
 }
-
 
 function experience(cr) {
     switch (cr) {

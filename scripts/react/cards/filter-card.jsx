@@ -14,10 +14,10 @@ class FilterCard extends React.Component {
 
     render() {
         try {
-            var sizes = ["all sizes", "tiny", "small", "medium", "large", "huge", "gargantuan"];
+            var sizes = ["all sizes"].concat(SIZE_TYPES);
             var sizeOptions = sizes.map(size => { return { id: size, text: size }; });
             
-            var categories = ["all types", "aberration", "beast", "celestial", "construct", "dragon", "elemental", "fey", "fiend", "giant", "humanoid", "monstrosity", "ooze", "plant", "undead"];
+            var categories = ["all types"].concat(CATEGORY_TYPES);
             var catOptions = categories.map(cat => { return { id: cat, text: cat }; });
 
             var content = null;
