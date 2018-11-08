@@ -5643,6 +5643,10 @@ var MonsterEditorModal = function (_React$Component) {
                 filter: this.state.filter
             });
         }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Helper methods
+
     }, {
         key: "getHelpOptionsForPage",
         value: function getHelpOptionsForPage(page) {
@@ -5912,6 +5916,10 @@ var MonsterEditorModal = function (_React$Component) {
                 }
             });
         }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // HTML render methods
+
     }, {
         key: "getHelpSection",
         value: function getHelpSection(monsters) {
@@ -6327,6 +6335,9 @@ var MonsterEditorModal = function (_React$Component) {
 
             return monsterCards;
         }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     }, {
         key: "render",
         value: function render() {
