@@ -5,7 +5,6 @@
 
 input[type=text],
 textarea {
-    height: 32px;
     margin: 5px 0;
     padding: 5px 8px;
     border: 1px solid #C3C3C3;
@@ -20,8 +19,12 @@ textarea {
         border-color: rgb(100, 150, 240);
     }
 
+input[type=text] {
+    height: 32px;
+}
+
 textarea {
-    min-height: 64px;
+    min-height: 100px;
     resize: vertical;
 }
 
