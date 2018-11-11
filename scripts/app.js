@@ -4372,14 +4372,6 @@ var Dojo = function (_React$Component) {
                 }
             }
 
-            if (type === "abilityScores.con" || type === "size" || type === "hitDice") {
-                var sides = hitDieType(combatant.size);
-                var conMod = parseInt(modifier(combatant.abilityScores.con));
-                var hpPerDie = (sides + 1) / 2 + conMod;
-                var hp = Math.floor(combatant.hitDice * hpPerDie);
-                combatant.hpMax = hp;
-            }
-
             sort(this.state.parties);
             sort(this.state.library);
             sort(this.state.encounters);
@@ -5834,7 +5826,7 @@ var MonsterEditorModal = function (_React$Component) {
             };
             this.state.monster.traits.push(trait);
             this.setState({
-                library: this.state.library
+                monster: this.state.monster
             });
         }
     }, {
@@ -5860,7 +5852,7 @@ var MonsterEditorModal = function (_React$Component) {
             var index = this.state.monster.traits.indexOf(trait);
             this.state.monster.traits.splice(index, 1);
             this.setState({
-                library: this.state.library
+                monster: this.state.monster
             });
         }
     }, {
@@ -5875,7 +5867,15 @@ var MonsterEditorModal = function (_React$Component) {
             copy.id = guid();
             this.state.monster.traits.push(copy);
             this.setState({
-                library: this.state.library
+                monster: this.state.monster
+            });
+        }
+    }, {
+        key: "changeTrait",
+        value: function changeTrait(trait, field, value) {
+            trait[field] = value;
+            this.setState({
+                monster: this.state.monster
             });
         }
     }, {
@@ -5913,6 +5913,14 @@ var MonsterEditorModal = function (_React$Component) {
             tokens.forEach(function (token) {
                 if (token === tokens[tokens.length - 1]) {
                     source[token] = value;
+
+                    if (field === "abilityScores.con" || field === "size" || field === "hitDice") {
+                        var sides = hitDieType(_this4.state.monster.size);
+                        var conMod = Math.floor((_this4.state.monster.abilityScores.con - 10) / 2);
+                        var hpPerDie = (sides + 1) / 2 + conMod;
+                        var hp = Math.floor(_this4.state.monster.hitDice * hpPerDie);
+                        _this4.state.monster.hpMax = hp;
+                    }
 
                     if (notify) {
                         _this4.setState({
@@ -6405,7 +6413,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     options: sizeOptions,
                                     selectedID: this.state.monster.size,
                                     select: function select(optionID) {
-                                        return _this9.changeTrait("size", optionID);
+                                        return _this9.changeValue("size", optionID);
                                     }
                                 }),
                                 React.createElement(
@@ -6506,7 +6514,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     edit: true,
                                     combatant: this.state.monster,
                                     nudgeValue: function nudgeValue(source, type, delta) {
-                                        return _this9.nudgeValue(source, type, delta);
+                                        return _this9.nudgeValue(type, delta);
                                     }
                                 })
                             ),
@@ -8738,15 +8746,6 @@ var MonsterLibraryScreen = function (_React$Component) {
                                     },
                                     nudgeValue: function nudgeValue(combatant, type, delta) {
                                         return _this3.props.nudgeValue(combatant, type, delta);
-                                    },
-                                    changeTrait: function changeTrait(trait, type, value) {
-                                        return _this3.props.changeValue(trait, type, value);
-                                    },
-                                    addTrait: function addTrait(combatant, type) {
-                                        return _this3.props.addTrait(combatant, type);
-                                    },
-                                    removeTrait: function removeTrait(combatant, trait) {
-                                        return _this3.props.removeTrait(combatant, trait);
                                     },
                                     removeCombatant: function removeCombatant(combatant) {
                                         return _this3.props.removeMonster(combatant);

@@ -207,7 +207,7 @@ class MonsterEditorModal extends React.Component {
         }
         this.state.monster.traits.push(trait);
         this.setState({
-            library: this.state.library
+            monster: this.state.monster
         });
     }
 
@@ -230,7 +230,7 @@ class MonsterEditorModal extends React.Component {
         var index = this.state.monster.traits.indexOf(trait);
         this.state.monster.traits.splice(index, 1);
         this.setState({
-            library: this.state.library
+            monster: this.state.monster
         });
     }
 
@@ -243,7 +243,14 @@ class MonsterEditorModal extends React.Component {
         copy.id = guid();
         this.state.monster.traits.push(copy);
         this.setState({
-            library: this.state.library
+            monster: this.state.monster
+        });
+    }
+
+    changeTrait(trait, field, value) {
+        trait[field] = value;
+        this.setState({
+            monster: this.state.monster
         });
     }
 
@@ -275,6 +282,14 @@ class MonsterEditorModal extends React.Component {
         tokens.forEach(token => {
             if (token === tokens[tokens.length - 1]) {
                 source[token] = value;
+
+                if ((field === "abilityScores.con") || (field === "size") || (field === "hitDice")) {
+                    var sides = hitDieType(this.state.monster.size);
+                    var conMod = Math.floor((this.state.monster.abilityScores.con - 10) / 2)
+                    var hpPerDie = ((sides + 1) / 2) + conMod;
+                    var hp = Math.floor(this.state.monster.hitDice * hpPerDie);
+                    this.state.monster.hpMax = hp;
+                }  
 
                 if (notify) {
                     this.setState({
@@ -628,7 +643,7 @@ class MonsterEditorModal extends React.Component {
                                 <Dropdown
                                     options={sizeOptions}
                                     selectedID={this.state.monster.size}
-                                    select={optionID => this.changeTrait("size", optionID)}
+                                    select={optionID => this.changeValue("size", optionID)}
                                 />
                                 <div className="subheading">type</div>
                                 <Dropdown
@@ -669,7 +684,7 @@ class MonsterEditorModal extends React.Component {
                                 <AbilityScorePanel
                                     edit={true}
                                     combatant={this.state.monster}
-                                    nudgeValue={(source, type, delta) => this.nudgeValue(source, type, delta)}
+                                    nudgeValue={(source, type, delta) => this.nudgeValue(type, delta)}
                                 />
                             </div>
                             <div className="columns small-6 medium-6 large-6">

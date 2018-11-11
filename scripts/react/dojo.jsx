@@ -1001,14 +1001,6 @@ class Dojo extends React.Component {
             }
         }
 
-        if ((type === "abilityScores.con") || (type === "size") || (type === "hitDice")) {
-            var sides = hitDieType(combatant.size);
-            var conMod = parseInt(modifier(combatant.abilityScores.con));
-            var hpPerDie = ((sides + 1) / 2) + conMod;
-            var hp = Math.floor(combatant.hitDice * hpPerDie);
-            combatant.hpMax = hp;
-        }
-
         sort(this.state.parties);
         sort(this.state.library);
         sort(this.state.encounters);
