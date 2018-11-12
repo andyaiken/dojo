@@ -633,17 +633,26 @@ class Dojo extends React.Component {
     /////////////////////////////////////////////////////////////////////////////
     // Combat screen
 
-    startEncounter(partyID, encounterID) {
-        var party = this.getParty(partyID);
-        var partyName = party.name;
-        if (!partyName) {
-            partyName = "unnamed party";
-        }
-        var encounter = this.getEncounter(encounterID);
-        var encounterName = encounter.name;
-        if (!encounterName) {
-            encounterName = "unnamed encounter";
-        }
+    createCombat() {
+        this.setState({
+            modal: {
+                type: "combat-start",
+                combat: {
+                    partyID: null,
+                    encounterID: null,
+                    partyInitMode: "manual",
+                    encounterInitMode: "group"        
+                }
+            }
+        });
+    }
+
+    startCombat() {
+        var party = this.getParty(this.state.modal.combat.partyID);
+        var partyName = party.name || "unnamed party";
+
+        var encounter = this.getEncounter(this.state.modal.combat.encounterID);
+        var encounterName = encounter.name || "unnamed encounter";
 
         var combat = {
             id: guid(),
@@ -653,55 +662,71 @@ class Dojo extends React.Component {
             issues: []
         };
 
+        // Add a copy of each PC to the encounter
+        party.pcs.filter(pc => pc.active).forEach(pc => {
+            var combatant = JSON.parse(JSON.stringify(pc));
+
+            combatant.current = false;
+            combatant.pending = true;
+            combatant.active = false;
+            combatant.defeated = false;
+
+            combat.combatants.push(combatant);
+        });
+
         encounter.slots.forEach(slot => {
             var group = this.getMonsterGroupByName(slot.monsterGroupName);
             var monster = this.getMonster(slot.monsterName, group);
 
             if (monster) {
                 var init = parseInt(modifier(monster.abilityScores.dex));
-                var roll = dieRoll();
+                var groupRoll = dieRoll();
 
                 for (var n = 0; n !== slot.count; ++n) {
-                    var copy = JSON.parse(JSON.stringify(monster));
-                    copy.id = guid();
+                    var singleRoll = dieRoll();
+
+                    var combatant = JSON.parse(JSON.stringify(monster));
+                    combatant.id = guid();
                     if (slot.count > 1) {
-                        copy.name += " " + (n + 1);
+                        combatant.name += " " + (n + 1);
                     }
-                    copy.initiative = init + roll;
-                    copy.hp = copy.hpMax;
-                    copy.conditions = [];
-                    combat.combatants.push(copy);
+
+                    switch (this.state.modal.combat.encounterInitMode) {
+                        case "manual":
+                            combatant.initiative = 10;
+                            break;
+                        case "group":
+                            combatant.initiative = init + groupRoll;
+                            break;
+                        case "individual":
+                            combatant.initiative = init + singleRoll;
+                            break;
+                    }
+
+                    combatant.current = false;
+                    combatant.pending = (this.state.modal.combat.encounterInitMode === "manual");
+                    combatant.active = (this.state.modal.combat.encounterInitMode !== "manual");
+                    combatant.defeated = false;
+        
+                    combatant.hp = combatant.hpMax;
+                    combatant.conditions = [];
+                    combat.combatants.push(combatant);
                 }
             } else {
                 combat.issues.push("unknown monster: " + slot.monsterName + " in group " + slot.monsterGroupName);
             }
         });
 
-        // Add a copy of each PC to the encounter
-        party.pcs.forEach(pc => {
-            if (pc.active) {
-                var copy = JSON.parse(JSON.stringify(pc));
-                combat.combatants.push(copy);
-            }
-        });
-
-        // Add flags to all combatants
-        combat.combatants.forEach(combatant => {
-            combatant.current = false;
-            combatant.pending = (combatant.type === "pc");
-            combatant.active = (combatant.type === "monster");
-            combatant.defeated = false;
-        });
-
         this.sortCombatants(combat);
 
         this.setState({
             combats: [].concat(this.state.combats, [combat]),
-            selectedCombatID: combat.id
+            selectedCombatID: combat.id,
+            modal: null
         });
     }
 
-    pauseEncounter() {
+    pauseCombat() {
         var combat = this.getCombat(this.state.selectedCombatID);
         combat.timestamp = new Date().toLocaleString();
         this.setState({
@@ -710,13 +735,13 @@ class Dojo extends React.Component {
         });
     }
 
-    resumeEncounter(combat) {
+    resumeCombat(combat) {
         this.setState({
             selectedCombatID: combat.id
         });
     }
 
-    endEncounter() {
+    endCombat() {
         var combat = this.getCombat(this.state.selectedCombatID);
         var index = this.state.combats.indexOf(combat);
         this.state.combats.splice(index, 1);
@@ -1128,10 +1153,8 @@ class Dojo extends React.Component {
                             combats={this.state.combats}
                             combat={combat}
                             showHelp={this.state.options.showHelp}
-                            startEncounter={(partyID, encounterID) => this.startEncounter(partyID, encounterID)}
-                            pauseEncounter={() => this.pauseEncounter()}
-                            resumeEncounter={combat => this.resumeEncounter(combat)}
-                            endEncounter={() => this.endEncounter()}
+                            createCombat={() => this.createCombat()}
+                            resumeEncounter={combat => this.resumeCombat(combat)}
                             nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
                             makeCurrent={(combatant) => this.makeCurrent(combatant)}
                             makeActive={(combatant) => this.makeActive(combatant)}
@@ -1158,10 +1181,10 @@ class Dojo extends React.Component {
                                     <div>xp: {xp}</div>
                                 </div>
                                 <div className="section">
-                                    <button onClick={() => this.pauseEncounter()}>pause encounter</button>
+                                    <button onClick={() => this.pauseCombat()}>pause encounter</button>
                                 </div>
                                 <div className="section">
-                                    <button onClick={() => this.endEncounter()}>end encounter</button>
+                                    <button onClick={() => this.endCombat()}>end encounter</button>
                                 </div>
                             </div>
                         );
@@ -1220,6 +1243,23 @@ class Dojo extends React.Component {
                         ];
                         modalButtons.right = [
                             <button key="save" onClick={() => this.saveMonster()}>save</button>,
+                            <button key="cancel" onClick={() => this.closeModal()}>cancel</button>
+                        ];
+                        break;
+                    case "combat-start":
+                        modalTitle = "start a new encounter";
+                        modalContent = (
+                            <CombatStartModal
+                                combat={this.state.modal.combat}
+                                parties={this.state.parties}
+                                encounters={this.state.encounters}
+                                notify={() => this.setState({modal: this.state.modal})}
+                            />
+                        )
+                        modalAllowClose = false;
+                        modalButtons.right = [
+                            // TODO: This button should be disabled if party and encounter are not selected
+                            <button key="start encounter" className={(this.state.modal.combat.partyID && this.state.modal.combat.encounterID) ? "" : "disabled"} onClick={() => this.startCombat()}>start encounter</button>,
                             <button key="cancel" onClick={() => this.closeModal()}>cancel</button>
                         ];
                         break;

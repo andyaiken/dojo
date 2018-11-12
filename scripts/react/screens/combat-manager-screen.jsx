@@ -114,8 +114,8 @@ class CombatManagerScreen extends React.Component {
                             <InfoCard
                                 getContent={() =>
                                     <div>
-                                        <div className="section">these pcs are not yet part of the encounter</div>
-                                        <div className="section">set initiative on each pc, then add them to the encounter</div>
+                                        <div className="section">these combatants are not yet part of the encounter</div>
+                                        <div className="section">set initiative on each of them, then add them to the encounter</div>
                                     </div>
                                 }
                             />
@@ -183,11 +183,9 @@ class CombatManagerScreen extends React.Component {
                 leftPaneContent = (
                     <div>
                         {help}
-                        <CombatStartPanel
-                            parties={this.props.parties}
-                            encounters={this.props.encounters}
-                            startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
-                        />
+                        <div className="group">
+                            <button onClick={() => this.props.createCombat()}>start a new combat</button>
+                        </div>
                         {combats}
                     </div>
                 );

@@ -190,7 +190,7 @@ class MonsterCard extends React.Component {
 
                 stats = (
                     <div className="stats">
-                        <HitPointGauge combatant={this.props.combatant} />
+                        {!this.props.combatant.pending ? <HitPointGauge combatant={this.props.combatant} /> : null}
                         <div className="section key-stats">
                             <div className="key-stat editable" onClick={() => this.toggleInit()}>
                                 <div className="stat-heading">init</div>

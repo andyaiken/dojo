@@ -27,8 +27,9 @@ var CombatManagerCard = function (_React$Component) {
                     React.createElement(
                         "div",
                         { className: "section" },
-                        "here you can run combat by specifying a party and an encounter"
+                        "here you can run a combat encounter by specifying a party and an encounter"
                     ),
+                    React.createElement("div", { className: "divider" }),
                     React.createElement(
                         "div",
                         { className: "section" },
@@ -37,11 +38,11 @@ var CombatManagerCard = function (_React$Component) {
                     React.createElement(
                         "div",
                         { className: "section" },
-                        "you can resume a paused combat by pressing it"
+                        "you can resume a paused combat by selecting it"
                     )
                 );
 
-                return React.createElement(InfoCard, { centered: true, getContent: function getContent() {
+                return React.createElement(InfoCard, { getContent: function getContent() {
                         return content;
                     } });
             } catch (e) {
@@ -107,7 +108,7 @@ var EncounterBuilderCard = function (_React$Component) {
                     action
                 );
 
-                return React.createElement(InfoCard, { centered: true, getContent: function getContent() {
+                return React.createElement(InfoCard, { getContent: function getContent() {
                         return content;
                     } });
             } catch (e) {
@@ -1142,7 +1143,7 @@ var MonsterCard = function (_React$Component) {
                     stats = React.createElement(
                         "div",
                         { className: "stats" },
-                        React.createElement(HitPointGauge, { combatant: this.props.combatant }),
+                        !this.props.combatant.pending ? React.createElement(HitPointGauge, { combatant: this.props.combatant }) : null,
                         React.createElement(
                             "div",
                             { className: "section key-stats" },
@@ -1807,7 +1808,7 @@ var MonsterLibraryCard = function (_React$Component) {
                     action
                 );
 
-                return React.createElement(InfoCard, { centered: true, getContent: function getContent() {
+                return React.createElement(InfoCard, { getContent: function getContent() {
                         return content;
                     } });
             } catch (e) {
@@ -1881,7 +1882,7 @@ var PartiesCard = function (_React$Component) {
                     action
                 );
 
-                return React.createElement(InfoCard, { centered: true, getContent: function getContent() {
+                return React.createElement(InfoCard, { getContent: function getContent() {
                         return content;
                     } });
             } catch (e) {
@@ -3974,20 +3975,30 @@ var Dojo = function (_React$Component) {
         // Combat screen
 
     }, {
-        key: "startEncounter",
-        value: function startEncounter(partyID, encounterID) {
+        key: "createCombat",
+        value: function createCombat() {
+            this.setState({
+                modal: {
+                    type: "combat-start",
+                    combat: {
+                        partyID: null,
+                        encounterID: null,
+                        partyInitMode: "manual",
+                        encounterInitMode: "group"
+                    }
+                }
+            });
+        }
+    }, {
+        key: "startCombat",
+        value: function startCombat() {
             var _this4 = this;
 
-            var party = this.getParty(partyID);
-            var partyName = party.name;
-            if (!partyName) {
-                partyName = "unnamed party";
-            }
-            var encounter = this.getEncounter(encounterID);
-            var encounterName = encounter.name;
-            if (!encounterName) {
-                encounterName = "unnamed encounter";
-            }
+            var party = this.getParty(this.state.modal.combat.partyID);
+            var partyName = party.name || "unnamed party";
+
+            var encounter = this.getEncounter(this.state.modal.combat.encounterID);
+            var encounterName = encounter.name || "unnamed encounter";
 
             var combat = {
                 id: guid(),
@@ -3997,56 +4008,74 @@ var Dojo = function (_React$Component) {
                 issues: []
             };
 
+            // Add a copy of each PC to the encounter
+            party.pcs.filter(function (pc) {
+                return pc.active;
+            }).forEach(function (pc) {
+                var combatant = JSON.parse(JSON.stringify(pc));
+
+                combatant.current = false;
+                combatant.pending = true;
+                combatant.active = false;
+                combatant.defeated = false;
+
+                combat.combatants.push(combatant);
+            });
+
             encounter.slots.forEach(function (slot) {
                 var group = _this4.getMonsterGroupByName(slot.monsterGroupName);
                 var monster = _this4.getMonster(slot.monsterName, group);
 
                 if (monster) {
                     var init = parseInt(modifier(monster.abilityScores.dex));
-                    var roll = dieRoll();
+                    var groupRoll = dieRoll();
 
                     for (var n = 0; n !== slot.count; ++n) {
-                        var copy = JSON.parse(JSON.stringify(monster));
-                        copy.id = guid();
+                        var singleRoll = dieRoll();
+
+                        var combatant = JSON.parse(JSON.stringify(monster));
+                        combatant.id = guid();
                         if (slot.count > 1) {
-                            copy.name += " " + (n + 1);
+                            combatant.name += " " + (n + 1);
                         }
-                        copy.initiative = init + roll;
-                        copy.hp = copy.hpMax;
-                        copy.conditions = [];
-                        combat.combatants.push(copy);
+
+                        switch (_this4.state.modal.combat.encounterInitMode) {
+                            case "manual":
+                                combatant.initiative = 10;
+                                break;
+                            case "group":
+                                combatant.initiative = init + groupRoll;
+                                break;
+                            case "individual":
+                                combatant.initiative = init + singleRoll;
+                                break;
+                        }
+
+                        combatant.current = false;
+                        combatant.pending = _this4.state.modal.combat.encounterInitMode === "manual";
+                        combatant.active = _this4.state.modal.combat.encounterInitMode !== "manual";
+                        combatant.defeated = false;
+
+                        combatant.hp = combatant.hpMax;
+                        combatant.conditions = [];
+                        combat.combatants.push(combatant);
                     }
                 } else {
                     combat.issues.push("unknown monster: " + slot.monsterName + " in group " + slot.monsterGroupName);
                 }
             });
 
-            // Add a copy of each PC to the encounter
-            party.pcs.forEach(function (pc) {
-                if (pc.active) {
-                    var copy = JSON.parse(JSON.stringify(pc));
-                    combat.combatants.push(copy);
-                }
-            });
-
-            // Add flags to all combatants
-            combat.combatants.forEach(function (combatant) {
-                combatant.current = false;
-                combatant.pending = combatant.type === "pc";
-                combatant.active = combatant.type === "monster";
-                combatant.defeated = false;
-            });
-
             this.sortCombatants(combat);
 
             this.setState({
                 combats: [].concat(this.state.combats, [combat]),
-                selectedCombatID: combat.id
+                selectedCombatID: combat.id,
+                modal: null
             });
         }
     }, {
-        key: "pauseEncounter",
-        value: function pauseEncounter() {
+        key: "pauseCombat",
+        value: function pauseCombat() {
             var combat = this.getCombat(this.state.selectedCombatID);
             combat.timestamp = new Date().toLocaleString();
             this.setState({
@@ -4055,15 +4084,15 @@ var Dojo = function (_React$Component) {
             });
         }
     }, {
-        key: "resumeEncounter",
-        value: function resumeEncounter(combat) {
+        key: "resumeCombat",
+        value: function resumeCombat(combat) {
             this.setState({
                 selectedCombatID: combat.id
             });
         }
     }, {
-        key: "endEncounter",
-        value: function endEncounter() {
+        key: "endCombat",
+        value: function endCombat() {
             var combat = this.getCombat(this.state.selectedCombatID);
             var index = this.state.combats.indexOf(combat);
             this.state.combats.splice(index, 1);
@@ -4556,17 +4585,11 @@ var Dojo = function (_React$Component) {
                             combats: this.state.combats,
                             combat: combat,
                             showHelp: this.state.options.showHelp,
-                            startEncounter: function startEncounter(partyID, encounterID) {
-                                return _this5.startEncounter(partyID, encounterID);
-                            },
-                            pauseEncounter: function pauseEncounter() {
-                                return _this5.pauseEncounter();
+                            createCombat: function createCombat() {
+                                return _this5.createCombat();
                             },
                             resumeEncounter: function resumeEncounter(combat) {
-                                return _this5.resumeEncounter(combat);
-                            },
-                            endEncounter: function endEncounter() {
-                                return _this5.endEncounter();
+                                return _this5.resumeCombat(combat);
                             },
                             nudgeValue: function nudgeValue(combatant, type, delta) {
                                 return _this5.nudgeValue(combatant, type, delta);
@@ -4630,7 +4653,7 @@ var Dojo = function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         { onClick: function onClick() {
-                                                return _this5.pauseEncounter();
+                                                return _this5.pauseCombat();
                                             } },
                                         "pause encounter"
                                     )
@@ -4641,7 +4664,7 @@ var Dojo = function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         { onClick: function onClick() {
-                                                return _this5.endEncounter();
+                                                return _this5.endCombat();
                                             } },
                                         "end encounter"
                                     )
@@ -4704,6 +4727,33 @@ var Dojo = function (_React$Component) {
                                         return _this5.saveMonster();
                                     } },
                                 "save"
+                            ), React.createElement(
+                                "button",
+                                { key: "cancel", onClick: function onClick() {
+                                        return _this5.closeModal();
+                                    } },
+                                "cancel"
+                            )];
+                            break;
+                        case "combat-start":
+                            modalTitle = "start a new encounter";
+                            modalContent = React.createElement(CombatStartModal, {
+                                combat: this.state.modal.combat,
+                                parties: this.state.parties,
+                                encounters: this.state.encounters,
+                                notify: function notify() {
+                                    return _this5.setState({ modal: _this5.state.modal });
+                                }
+                            });
+                            modalAllowClose = false;
+                            modalButtons.right = [
+                            // TODO: This button should be disabled if party and encounter are not selected
+                            React.createElement(
+                                "button",
+                                { key: "start encounter", className: this.state.modal.combat.partyID && this.state.modal.combat.encounterID ? "" : "disabled", onClick: function onClick() {
+                                        return _this5.startCombat();
+                                    } },
+                                "start encounter"
                             ), React.createElement(
                                 "button",
                                 { key: "cancel", onClick: function onClick() {
@@ -5399,6 +5449,262 @@ var AboutModal = function (_React$Component) {
     }]);
 
     return AboutModal;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var CombatStartModal = function (_React$Component) {
+    _inherits(CombatStartModal, _React$Component);
+
+    function CombatStartModal(props) {
+        _classCallCheck(this, CombatStartModal);
+
+        var _this = _possibleConstructorReturn(this, (CombatStartModal.__proto__ || Object.getPrototypeOf(CombatStartModal)).call(this));
+
+        _this.state = {
+            combat: props.combat
+        };
+        return _this;
+    }
+
+    _createClass(CombatStartModal, [{
+        key: "setParty",
+        value: function setParty(partyID) {
+            var _this2 = this;
+
+            this.state.combat.partyID = partyID;
+            this.setState({
+                combat: this.state.combat
+            }, function () {
+                return _this2.props.notify();
+            });
+        }
+    }, {
+        key: "setEncounter",
+        value: function setEncounter(encounterID) {
+            var _this3 = this;
+
+            this.state.combat.encounterID = encounterID;
+            this.setState({
+                combat: this.state.combat
+            }, function () {
+                return _this3.props.notify();
+            });
+        }
+    }, {
+        key: "setPartyInitMode",
+        value: function setPartyInitMode(mode) {
+            this.state.combat.partyInitMode = mode;
+            this.setState({
+                combat: this.state.combat
+            });
+        }
+    }, {
+        key: "setEncounterInitMode",
+        value: function setEncounterInitMode(mode) {
+            this.state.combat.encounterInitMode = mode;
+            this.setState({
+                combat: this.state.combat
+            });
+        }
+    }, {
+        key: "getPartySection",
+        value: function getPartySection() {
+            var _this4 = this;
+
+            if (this.props.parties.length === 0) {
+                return React.createElement(
+                    "div",
+                    { className: "text" },
+                    "you have not defined any pcs"
+                );
+            }
+
+            var partyOptions = this.props.parties.map(function (party) {
+                return {
+                    id: party.id,
+                    text: party.name || "unnamed party"
+                };
+            });
+
+            var partyContent = null;
+            if (this.state.combat.partyID) {
+                var selectedParty = this.props.parties.find(function (p) {
+                    return p.id === _this4.state.combat.partyID;
+                });
+                var pcs = selectedParty.pcs.filter(function (pc) {
+                    return pc.active;
+                }).map(function (pc) {
+                    return React.createElement(
+                        "li",
+                        { key: pc.id },
+                        pc.name || "unnamed pc"
+                    );
+                });
+                if (pcs.length === 0) {
+                    pcs.push(React.createElement(
+                        "li",
+                        { key: "empty" },
+                        "no pcs"
+                    ));
+                }
+                partyContent = React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "ul",
+                        null,
+                        pcs
+                    )
+                );
+            }
+
+            return React.createElement(
+                "div",
+                null,
+                React.createElement(
+                    "div",
+                    { className: "subheading" },
+                    "party"
+                ),
+                React.createElement(Dropdown, {
+                    options: partyOptions,
+                    placeholder: "select party...",
+                    selectedID: this.state.combat.partyID,
+                    select: function select(optionID) {
+                        return _this4.setParty(optionID);
+                    }
+                }),
+                partyContent
+            );
+        }
+    }, {
+        key: "getEncounterSection",
+        value: function getEncounterSection() {
+            var _this5 = this;
+
+            if (this.props.encounters.length === 0) {
+                return React.createElement(
+                    "div",
+                    { key: "no-encounters", className: "text" },
+                    "you have not built any encounters"
+                );
+            }
+
+            var encounterOptions = this.props.encounters.map(function (encounter) {
+                return {
+                    id: encounter.id,
+                    text: encounter.name || "unnamed encounter"
+                };
+            });
+
+            var encounterContent = null;
+            if (this.state.combat.encounterID) {
+                var selectedEncounter = this.props.encounters.find(function (e) {
+                    return e.id === _this5.state.combat.encounterID;
+                });
+                var monsters = selectedEncounter.slots.map(function (slot) {
+                    var name = slot.monsterName || "unnamed monster";
+                    if (slot.count > 1) {
+                        name += " x" + slot.count;
+                    }
+                    return React.createElement(
+                        "li",
+                        { key: slot.id },
+                        name
+                    );
+                });
+                if (monsters.length === 0) {
+                    monsters.push(React.createElement(
+                        "li",
+                        { key: "empty" },
+                        "no monsters"
+                    ));
+                }
+                var initOptions = [{
+                    id: "manual",
+                    text: "enter manually"
+                }, {
+                    id: "individual",
+                    text: "roll individually"
+                }, {
+                    id: "group",
+                    text: "roll in groups"
+                }];
+                encounterContent = React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "ul",
+                        null,
+                        monsters
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "subheading" },
+                        "initiative"
+                    ),
+                    React.createElement(Selector, {
+                        options: initOptions,
+                        selectedID: this.state.combat.encounterInitMode,
+                        select: function select(optionID) {
+                            return _this5.setEncounterInitMode(optionID);
+                        }
+                    })
+                );
+            }
+
+            return React.createElement(
+                "div",
+                null,
+                React.createElement(
+                    "div",
+                    { className: "subheading" },
+                    "encounter"
+                ),
+                React.createElement(Dropdown, {
+                    options: encounterOptions,
+                    placeholder: "select encounter...",
+                    selectedID: this.state.combat.encounterID,
+                    select: function select(optionID) {
+                        return _this5.setEncounter(optionID);
+                    }
+                }),
+                encounterContent
+            );
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            try {
+                return React.createElement(
+                    "div",
+                    { className: "row" },
+                    React.createElement(
+                        "div",
+                        { className: "column small-6 medium-6 large-6" },
+                        this.getPartySection()
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "column small-6 medium-6 large-6" },
+                        this.getEncounterSection()
+                    )
+                );
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return CombatStartModal;
 }(React.Component);
 "use strict";
 
@@ -7013,231 +7319,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var CombatStartPanel = function (_React$Component) {
-    _inherits(CombatStartPanel, _React$Component);
-
-    function CombatStartPanel() {
-        _classCallCheck(this, CombatStartPanel);
-
-        var _this = _possibleConstructorReturn(this, (CombatStartPanel.__proto__ || Object.getPrototypeOf(CombatStartPanel)).call(this));
-
-        _this.state = {
-            partyID: null,
-            encounterID: null
-        };
-        return _this;
-    }
-
-    _createClass(CombatStartPanel, [{
-        key: "selectParty",
-        value: function selectParty(partyID) {
-            this.setState({
-                partyID: partyID
-            });
-        }
-    }, {
-        key: "selectEncounter",
-        value: function selectEncounter(encounterID) {
-            this.setState({
-                encounterID: encounterID
-            });
-        }
-    }, {
-        key: "startEncounter",
-        value: function startEncounter() {
-            if (this.state.partyID && this.state.encounterID) {
-                this.props.startEncounter(this.state.partyID, this.state.encounterID);
-            }
-        }
-    }, {
-        key: "render",
-        value: function render() {
-            var _this2 = this;
-
-            try {
-                var items = [];
-
-                if (this.props.parties.length === 0) {
-                    items.push(React.createElement(
-                        "div",
-                        { key: "no-parties", className: "text" },
-                        "you have not defined any pcs"
-                    ));
-                } else {
-                    var partyOptions = [];
-                    for (var n = 0; n !== this.props.parties.length; ++n) {
-                        var party = this.props.parties[n];
-                        var partyName = party.name;
-                        if (!partyName) {
-                            partyName = "unnamed party";
-                        }
-                        partyOptions.push({
-                            id: party.id,
-                            text: partyName
-                        });
-                    }
-
-                    var partyName = "select party";
-                    var partyContent = null;
-                    if (this.state.partyID) {
-                        var selectedParty = this.props.parties.find(function (p) {
-                            return p.id === _this2.state.partyID;
-                        });
-                        partyName = selectedParty.name;
-                        if (!partyName) {
-                            partyName = "unnamed party";
-                        }
-                        var pcs = [];
-                        for (var n = 0; n !== selectedParty.pcs.length; ++n) {
-                            var pc = selectedParty.pcs[n];
-                            if (pc.active) {
-                                var name = pc.name;
-                                if (!name) {
-                                    name = "unnamed pc";
-                                }
-                                pcs.push(React.createElement(
-                                    "li",
-                                    { key: pc.id },
-                                    name
-                                ));
-                            }
-                        };
-                        if (pcs.length === 0) {
-                            pcs.push(React.createElement(
-                                "li",
-                                { key: "empty" },
-                                "no pcs"
-                            ));
-                        }
-                        partyContent = React.createElement(
-                            "ul",
-                            null,
-                            pcs
-                        );
-                    }
-                    items.push(React.createElement(Dropdown, {
-                        key: "party-dropdown",
-                        options: partyOptions,
-                        placeholder: "select party...",
-                        selectedID: this.state.partyID,
-                        select: function select(optionID) {
-                            return _this2.selectParty(optionID);
-                        }
-                    }));
-                    items.push(React.createElement(
-                        "div",
-                        { key: "party", className: "" },
-                        partyContent
-                    ));
-                }
-
-                if (this.props.encounters.length === 0) {
-                    items.push(React.createElement(
-                        "div",
-                        { key: "no-encounters", className: "text" },
-                        "you have not built any encounters"
-                    ));
-                } else {
-                    var encounterOptions = [];
-                    for (var n = 0; n !== this.props.encounters.length; ++n) {
-                        var encounter = this.props.encounters[n];
-                        var encounterName = encounter.name;
-                        if (!encounterName) {
-                            encounterName = "unnamed encounter";
-                        }
-                        encounterOptions.push({
-                            id: encounter.id,
-                            text: encounterName
-                        });
-                    }
-
-                    var encounterName = "select encounter";
-                    var encounterContent = null;
-                    if (this.state.encounterID) {
-                        var selectedEncounter = this.props.encounters.find(function (e) {
-                            return e.id === _this2.state.encounterID;
-                        });
-                        encounterName = selectedEncounter.name;
-                        if (!encounterName) {
-                            encounterName = "unnamed encounter";
-                        }
-                        var monsters = [];
-                        for (var n = 0; n !== selectedEncounter.slots.length; ++n) {
-                            var slot = selectedEncounter.slots[n];
-                            var name = slot.monsterName;
-                            if (!name) {
-                                name = "unnamed monster";
-                            }
-                            if (slot.count > 1) {
-                                name += " x" + slot.count;
-                            }
-                            monsters.push(React.createElement(
-                                "li",
-                                { key: slot.id },
-                                name
-                            ));
-                        };
-                        if (monsters.length === 0) {
-                            monsters.push(React.createElement(
-                                "li",
-                                { key: "empty" },
-                                "no monsters"
-                            ));
-                        }
-                        encounterContent = React.createElement(
-                            "ul",
-                            null,
-                            monsters
-                        );
-                    }
-                    items.push(React.createElement(Dropdown, {
-                        key: "encounter-dropdown",
-                        options: encounterOptions,
-                        placeholder: "select encounter...",
-                        selectedID: this.state.encounterID,
-                        select: function select(optionID) {
-                            return _this2.selectEncounter(optionID);
-                        }
-                    }));
-                    items.push(React.createElement(
-                        "div",
-                        { key: "encounter", className: "" },
-                        encounterContent
-                    ));
-                }
-
-                items.push(React.createElement("div", { key: "start-div", className: "divider" }));
-                items.push(React.createElement(
-                    "button",
-                    { key: "start", className: this.state.partyID && this.state.encounterID ? "" : "disabled", onClick: function onClick() {
-                            return _this2.startEncounter();
-                        } },
-                    "start encounter"
-                ));
-
-                return React.createElement(
-                    "div",
-                    { className: "group options-group" },
-                    items
-                );
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    }]);
-
-    return CombatStartPanel;
-}(React.Component);
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 var ConditionPanel = function (_React$Component) {
     _inherits(ConditionPanel, _React$Component);
 
@@ -8059,12 +8140,12 @@ var CombatManagerScreen = function (_React$Component) {
                                         React.createElement(
                                             "div",
                                             { className: "section" },
-                                            "these pcs are not yet part of the encounter"
+                                            "these combatants are not yet part of the encounter"
                                         ),
                                         React.createElement(
                                             "div",
                                             { className: "section" },
-                                            "set initiative on each pc, then add them to the encounter"
+                                            "set initiative on each of them, then add them to the encounter"
                                         )
                                     );
                                 }
@@ -8147,13 +8228,17 @@ var CombatManagerScreen = function (_React$Component) {
                         "div",
                         null,
                         help,
-                        React.createElement(CombatStartPanel, {
-                            parties: this.props.parties,
-                            encounters: this.props.encounters,
-                            startEncounter: function startEncounter(partyID, encounterID) {
-                                return _this3.props.startEncounter(partyID, encounterID);
-                            }
-                        }),
+                        React.createElement(
+                            "div",
+                            { className: "group" },
+                            React.createElement(
+                                "button",
+                                { onClick: function onClick() {
+                                        return _this3.props.createCombat();
+                                    } },
+                                "start a new combat"
+                            )
+                        ),
                         combats
                     );
                 }

@@ -26,7 +26,7 @@ class PartiesCard extends React.Component {
             );
 
             return (
-                <InfoCard centered={true} getContent={() => content} />
+                <InfoCard getContent={() => content} />
             );
         } catch (e) {
             console.error(e);
