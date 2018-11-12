@@ -21,6 +21,8 @@ textarea {
 
 input[type=text] {
     height: 32px;
+    box-shadow: none;
+    border-radius: 0;
 }
 
 textarea {
