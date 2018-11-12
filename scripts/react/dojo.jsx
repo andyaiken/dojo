@@ -634,12 +634,15 @@ class Dojo extends React.Component {
     // Combat screen
 
     createCombat() {
+        var party = this.state.parties.length === 1 ? this.state.parties[0] : null;
+        var encounter = this.state.encounters.length === 1 ? this.state.encounters[0] : null;
+
         this.setState({
             modal: {
                 type: "combat-start",
                 combat: {
-                    partyID: null,
-                    encounterID: null,
+                    partyID: party ? party.id : null,
+                    encounterID: encounter ? encounter.id : null,
                     partyInitMode: "manual",
                     encounterInitMode: "group"        
                 }
@@ -1257,9 +1260,10 @@ class Dojo extends React.Component {
                             />
                         )
                         modalAllowClose = false;
+                        modalAllowScroll = false;
+                        var canClose = this.state.modal.combat.partyID && this.state.modal.combat.encounterID;
                         modalButtons.right = [
-                            // TODO: This button should be disabled if party and encounter are not selected
-                            <button key="start encounter" className={(this.state.modal.combat.partyID && this.state.modal.combat.encounterID) ? "" : "disabled"} onClick={() => this.startCombat()}>start encounter</button>,
+                            <button key="start encounter" className={canClose ? "" : "disabled"} onClick={() => this.startCombat()}>start encounter</button>,
                             <button key="cancel" onClick={() => this.closeModal()}>cancel</button>
                         ];
                         break;

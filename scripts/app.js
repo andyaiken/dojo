@@ -3977,12 +3977,15 @@ var Dojo = function (_React$Component) {
     }, {
         key: "createCombat",
         value: function createCombat() {
+            var party = this.state.parties.length === 1 ? this.state.parties[0] : null;
+            var encounter = this.state.encounters.length === 1 ? this.state.encounters[0] : null;
+
             this.setState({
                 modal: {
                     type: "combat-start",
                     combat: {
-                        partyID: null,
-                        encounterID: null,
+                        partyID: party ? party.id : null,
+                        encounterID: encounter ? encounter.id : null,
                         partyInitMode: "manual",
                         encounterInitMode: "group"
                     }
@@ -4746,11 +4749,11 @@ var Dojo = function (_React$Component) {
                                 }
                             });
                             modalAllowClose = false;
-                            modalButtons.right = [
-                            // TODO: This button should be disabled if party and encounter are not selected
-                            React.createElement(
+                            modalAllowScroll = false;
+                            var canClose = this.state.modal.combat.partyID && this.state.modal.combat.encounterID;
+                            modalButtons.right = [React.createElement(
                                 "button",
-                                { key: "start encounter", className: this.state.modal.combat.partyID && this.state.modal.combat.encounterID ? "" : "disabled", onClick: function onClick() {
+                                { key: "start encounter", className: canClose ? "" : "disabled", onClick: function onClick() {
                                         return _this5.startCombat();
                                     } },
                                 "start encounter"
@@ -5571,7 +5574,7 @@ var CombatStartModal = function (_React$Component) {
                 null,
                 React.createElement(
                     "div",
-                    { className: "subheading" },
+                    { className: "heading" },
                     "party"
                 ),
                 React.createElement(Dropdown, {
@@ -5666,7 +5669,7 @@ var CombatStartModal = function (_React$Component) {
                 null,
                 React.createElement(
                     "div",
-                    { className: "subheading" },
+                    { className: "heading" },
                     "encounter"
                 ),
                 React.createElement(Dropdown, {
@@ -5686,15 +5689,15 @@ var CombatStartModal = function (_React$Component) {
             try {
                 return React.createElement(
                     "div",
-                    { className: "row" },
+                    { className: "row", style: { height: "100%", margin: "0 -15px" } },
                     React.createElement(
                         "div",
-                        { className: "column small-6 medium-6 large-6" },
+                        { className: "column small-6 medium-6 large-6 scrollable" },
                         this.getPartySection()
                     ),
                     React.createElement(
                         "div",
-                        { className: "column small-6 medium-6 large-6" },
+                        { className: "column small-6 medium-6 large-6 scrollable" },
                         this.getEncounterSection()
                     )
                 );

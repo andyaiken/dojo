@@ -67,7 +67,7 @@ class CombatStartModal extends React.Component {
 
         return (
             <div>
-                <div className="subheading">party</div>
+                <div className="heading">party</div>
                 <Dropdown
                     options={partyOptions}
                     placeholder="select party..."
@@ -139,7 +139,7 @@ class CombatStartModal extends React.Component {
 
         return (
             <div>
-                <div className="subheading">encounter</div>
+                <div className="heading">encounter</div>
                 <Dropdown
                     options={encounterOptions}
                     placeholder="select encounter..."
@@ -154,11 +154,11 @@ class CombatStartModal extends React.Component {
     render() {
         try {
             return (
-                <div className="row">
-                    <div className="column small-6 medium-6 large-6">
+                <div className="row" style={{ height: "100%", margin: "0 -15px" }}>
+                    <div className="column small-6 medium-6 large-6 scrollable">
                         {this.getPartySection()}
                     </div>
-                    <div className="column small-6 medium-6 large-6">
+                    <div className="column small-6 medium-6 large-6 scrollable">
                         {this.getEncounterSection()}
                     </div>
                 </div>
