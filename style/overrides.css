@@ -6,6 +6,7 @@
 input[type=text],
 textarea {
     -webkit-appearance: none;
+    -webkit-user-select: text;
     margin: 5px 0;
     padding: 5px 8px;
     border: 1px solid #C3C3C3;
@@ -13,11 +14,12 @@ textarea {
     border-radius: 0;
     font-size: 12px;
     font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-    -webkit-user-select: text;
 }
 
     input[type=text]:hover,
-    textarea:hover {
+    input[type=text]:focus,
+    textarea:hover,
+    textarea:focus {
         border-color: rgb(100, 150, 240);
     }
 
@@ -69,7 +71,8 @@ button {
     cursor: pointer;
 }
 
-    button:hover {
+    button:hover,
+    button:focus {
         border-color: rgb(100, 150, 240);
     }
 
