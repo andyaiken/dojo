@@ -4,7 +4,7 @@ class CombatManagerScreen extends React.Component {
             return (
                 <InfoCard
                     key={combatant.id}
-                    getHeading={() => <div className="heading">{combatant.name}</div>}
+                    getHeading={() => <div className="heading">{combatant.displayName || combatant.name}</div>}
                     getContent={() => <div className="section">current turn</div>}
                 />
             );

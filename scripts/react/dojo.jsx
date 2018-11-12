@@ -644,7 +644,8 @@ class Dojo extends React.Component {
                     partyID: party ? party.id : null,
                     encounterID: encounter ? encounter.id : null,
                     partyInitMode: "manual",
-                    encounterInitMode: "group"        
+                    encounterInitMode: "group",
+                    monsterNames: getMonsterNames(encounter)
                 }
             }
         });
@@ -690,8 +691,13 @@ class Dojo extends React.Component {
 
                     var combatant = JSON.parse(JSON.stringify(monster));
                     combatant.id = guid();
-                    if (slot.count > 1) {
-                        combatant.name += " " + (n + 1);
+
+                    combatant.displayName = null;
+                    if (this.state.modal.combat.monsterNames) {
+                        var slotNames = this.state.modal.combat.monsterNames.find(names => names.id === slot.id);
+                        if (slotNames) {
+                            combatant.displayName = slotNames.names[n];
+                        }
                     }
 
                     switch (this.state.modal.combat.encounterInitMode) {

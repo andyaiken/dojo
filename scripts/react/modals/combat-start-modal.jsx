@@ -16,6 +16,8 @@ class CombatStartModal extends React.Component {
 
     setEncounter(encounterID) {
         this.state.combat.encounterID = encounterID;
+        var enc = this.props.encounters.find(enc => enc.id === encounterID);
+        this.state.combat.monsterNames = getMonsterNames(enc);
         this.setState({
             combat: this.state.combat
         }, () => this.props.notify());
@@ -79,6 +81,16 @@ class CombatStartModal extends React.Component {
         );
     }
 
+    changeName(slotID, index, name) {
+        var slot = this.state.combat.monsterNames.find(s => s.id === slotID);
+        if (slot) {
+            slot.names[index] = name;
+            this.setState({
+                combat: this.state.combat
+            });
+        }
+    }
+
     getEncounterSection() {
         if (this.props.encounters.length === 0) {
             return (
@@ -124,6 +136,33 @@ class CombatStartModal extends React.Component {
                     text: "roll in groups"
                 }
             ]
+            var names = this.state.combat.monsterNames.map(slotNames => {
+                var slot = selectedEncounter.slots.find(s => s.id === slotNames.id);
+                var inputs = [];
+                for (var n = 0; n !== slotNames.names.length; ++n) {
+                    inputs.push(
+                        <div key={n}>
+                            <MonsterName
+                                value={slotNames.names[n]}
+                                slotID={slot.id}
+                                index={n}
+                                changeName={(slotID, index, value) => this.changeName(slotID, index, value)}
+                            />
+                        </div>
+                    );
+                }
+                return (
+                    <div key={slotNames.id} className="row">
+                        <div className="column small-6 medium-6 large-6">
+                            <div className="section">{slot.monsterName}</div>
+                        </div>
+                        <div className="column small-6 medium-6 large-6">
+                            {inputs}
+                        </div>
+                    </div>
+                );
+            });
+
             encounterContent = (
                 <div>
                     <ul>{monsters}</ul>
@@ -133,6 +172,8 @@ class CombatStartModal extends React.Component {
                         selectedID={this.state.combat.encounterInitMode}
                         select={optionID => this.setEncounterInitMode(optionID)}
                     />
+                    <div className="subheading">names</div>
+                    <div>{names}</div>
                 </div>
             );
         }
@@ -166,5 +207,13 @@ class CombatStartModal extends React.Component {
         } catch (e) {
             console.error(e);
         }
+    }
+}
+
+class MonsterName extends React.Component {
+    render() {
+        return (
+            <input type="text" value={this.props.value} onChange={event => this.props.changeName(this.props.slotID, this.props.index, event.target.value)} />
+        )
     }
 }

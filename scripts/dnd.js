@@ -478,3 +478,26 @@ function conditionText(condition) {
         return [];
     }
 }
+
+function getMonsterNames(encounter) {
+    var monsterNames = [];
+    if (encounter) {
+        encounter.slots.forEach(slot => {
+            var names = [];
+            if (slot.count === 1) {
+                names.push(slot.monsterName);
+            } else {
+                for (var n = 0; n !== slot.count; ++n) {
+                    names.push(slot.monsterName + " " + (n + 1));
+                }
+            }
+
+            monsterNames.push({
+                id: slot.id,
+                names: names
+            });
+        });
+    }
+
+    return monsterNames;
+}

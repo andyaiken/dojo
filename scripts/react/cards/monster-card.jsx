@@ -372,7 +372,7 @@ class MonsterCard extends React.Component {
             return (
                 <div className="card monster">
                     <div className="heading">
-                        <div className="title">{this.props.combatant.name || "unnamed monster"}</div>
+                        <div className="title">{this.props.combatant.displayName || this.props.combatant.name || "unnamed monster"}</div>
                         {toggle}
                     </div>
                     <div className="card-content">

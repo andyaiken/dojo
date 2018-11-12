@@ -174,11 +174,6 @@ class PCCard extends React.Component {
                 );
             }
 
-            var name = this.props.combatant.name;
-            if (!name) {
-                name = "unnamed pc";
-            }
-
             var toggle = null;
             if (!this.props.combatant.current) {
                 var imageStyle = this.state.showDetails ? "image rotate" : "image";
@@ -188,7 +183,7 @@ class PCCard extends React.Component {
             return (
                 <div className="card pc">
                     <div className="heading">
-                        <div className="title">{name}</div>
+                        <div className="title">{this.props.combatant.displayName || this.props.combatant.name || "unnamed pc"}</div>
                         {toggle}
                     </div>
                     <div className="card-content">

@@ -1608,7 +1608,7 @@ var MonsterCard = function (_React$Component) {
                         React.createElement(
                             "div",
                             { className: "title" },
-                            this.props.combatant.name || "unnamed monster"
+                            this.props.combatant.displayName || this.props.combatant.name || "unnamed monster"
                         ),
                         toggle
                     ),
@@ -2503,11 +2503,6 @@ var PCCard = function (_React$Component) {
                     );
                 }
 
-                var name = this.props.combatant.name;
-                if (!name) {
-                    name = "unnamed pc";
-                }
-
                 var toggle = null;
                 if (!this.props.combatant.current) {
                     var imageStyle = this.state.showDetails ? "image rotate" : "image";
@@ -2525,7 +2520,7 @@ var PCCard = function (_React$Component) {
                         React.createElement(
                             "div",
                             { className: "title" },
-                            name
+                            this.props.combatant.displayName || this.props.combatant.name || "unnamed pc"
                         ),
                         toggle
                     ),
@@ -3987,7 +3982,8 @@ var Dojo = function (_React$Component) {
                         partyID: party ? party.id : null,
                         encounterID: encounter ? encounter.id : null,
                         partyInitMode: "manual",
-                        encounterInitMode: "group"
+                        encounterInitMode: "group",
+                        monsterNames: getMonsterNames(encounter)
                     }
                 }
             });
@@ -4038,8 +4034,15 @@ var Dojo = function (_React$Component) {
 
                         var combatant = JSON.parse(JSON.stringify(monster));
                         combatant.id = guid();
-                        if (slot.count > 1) {
-                            combatant.name += " " + (n + 1);
+
+                        combatant.displayName = null;
+                        if (_this4.state.modal.combat.monsterNames) {
+                            var slotNames = _this4.state.modal.combat.monsterNames.find(function (names) {
+                                return names.id === slot.id;
+                            });
+                            if (slotNames) {
+                                combatant.displayName = slotNames.names[n];
+                            }
                         }
 
                         switch (_this4.state.modal.combat.encounterInitMode) {
@@ -5495,6 +5498,10 @@ var CombatStartModal = function (_React$Component) {
             var _this3 = this;
 
             this.state.combat.encounterID = encounterID;
+            var enc = this.props.encounters.find(function (enc) {
+                return enc.id === encounterID;
+            });
+            this.state.combat.monsterNames = getMonsterNames(enc);
             this.setState({
                 combat: this.state.combat
             }, function () {
@@ -5589,6 +5596,19 @@ var CombatStartModal = function (_React$Component) {
             );
         }
     }, {
+        key: "changeName",
+        value: function changeName(slotID, index, name) {
+            var slot = this.state.combat.monsterNames.find(function (s) {
+                return s.id === slotID;
+            });
+            if (slot) {
+                slot.names[index] = name;
+                this.setState({
+                    combat: this.state.combat
+                });
+            }
+        }
+    }, {
         key: "getEncounterSection",
         value: function getEncounterSection() {
             var _this5 = this;
@@ -5641,6 +5661,45 @@ var CombatStartModal = function (_React$Component) {
                     id: "group",
                     text: "roll in groups"
                 }];
+                var names = this.state.combat.monsterNames.map(function (slotNames) {
+                    var slot = selectedEncounter.slots.find(function (s) {
+                        return s.id === slotNames.id;
+                    });
+                    var inputs = [];
+                    for (var n = 0; n !== slotNames.names.length; ++n) {
+                        inputs.push(React.createElement(
+                            "div",
+                            { key: n },
+                            React.createElement(MonsterName, {
+                                value: slotNames.names[n],
+                                slotID: slot.id,
+                                index: n,
+                                changeName: function changeName(slotID, index, value) {
+                                    return _this5.changeName(slotID, index, value);
+                                }
+                            })
+                        ));
+                    }
+                    return React.createElement(
+                        "div",
+                        { key: slotNames.id, className: "row" },
+                        React.createElement(
+                            "div",
+                            { className: "column small-6 medium-6 large-6" },
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                slot.monsterName
+                            )
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "column small-6 medium-6 large-6" },
+                            inputs
+                        )
+                    );
+                });
+
                 encounterContent = React.createElement(
                     "div",
                     null,
@@ -5660,7 +5719,17 @@ var CombatStartModal = function (_React$Component) {
                         select: function select(optionID) {
                             return _this5.setEncounterInitMode(optionID);
                         }
-                    })
+                    }),
+                    React.createElement(
+                        "div",
+                        { className: "subheading" },
+                        "names"
+                    ),
+                    React.createElement(
+                        "div",
+                        null,
+                        names
+                    )
                 );
             }
 
@@ -5708,6 +5777,29 @@ var CombatStartModal = function (_React$Component) {
     }]);
 
     return CombatStartModal;
+}(React.Component);
+
+var MonsterName = function (_React$Component2) {
+    _inherits(MonsterName, _React$Component2);
+
+    function MonsterName() {
+        _classCallCheck(this, MonsterName);
+
+        return _possibleConstructorReturn(this, (MonsterName.__proto__ || Object.getPrototypeOf(MonsterName)).apply(this, arguments));
+    }
+
+    _createClass(MonsterName, [{
+        key: "render",
+        value: function render() {
+            var _this7 = this;
+
+            return React.createElement("input", { type: "text", value: this.props.value, onChange: function onChange(event) {
+                    return _this7.props.changeName(_this7.props.slotID, _this7.props.index, event.target.value);
+                } });
+        }
+    }]);
+
+    return MonsterName;
 }(React.Component);
 "use strict";
 
@@ -7981,7 +8073,7 @@ var CombatManagerScreen = function (_React$Component) {
                         return React.createElement(
                             "div",
                             { className: "heading" },
-                            combatant.name
+                            combatant.displayName || combatant.name
                         );
                     },
                     getContent: function getContent() {
