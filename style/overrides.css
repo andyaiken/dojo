@@ -5,10 +5,12 @@
 
 input[type=text],
 textarea {
+    -webkit-appearance: none;
     margin: 5px 0;
     padding: 5px 8px;
     border: 1px solid #C3C3C3;
     width: calc(100% - 2px);
+    border-radius: 0;
     font-size: 12px;
     font-family: "Segoe UI", Helvetica, Arial, sans-serif;
     -webkit-user-select: text;
@@ -21,8 +23,6 @@ textarea {
 
 input[type=text] {
     height: 32px;
-    box-shadow: none;
-    border-radius: 0;
 }
 
 textarea {
