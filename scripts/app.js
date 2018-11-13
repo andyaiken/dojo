@@ -800,6 +800,11 @@ var MonsterCard = function (_React$Component) {
             return description.toLowerCase();
         }
     }, {
+        key: "rename",
+        value: function rename() {
+            // TODO: Toggle
+        }
+    }, {
         key: "render",
         value: function render() {
             var _this2 = this;
@@ -867,6 +872,18 @@ var MonsterCard = function (_React$Component) {
                         }
                     }
                     if (this.props.mode.indexOf("combat") !== -1) {
+                        options.push(React.createElement(Expander, {
+                            key: "rename",
+                            text: "change name",
+                            content: React.createElement(
+                                "div",
+                                null,
+                                React.createElement("input", { type: "text", value: this.props.combatant.displayName, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "displayName", event.target.value);
+                                    } })
+                            )
+                        }));
+                        options.push(React.createElement("div", { key: "div", className: "divider" }));
                         if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
                             options.push(React.createElement(
                                 "button",
@@ -4566,9 +4583,6 @@ var Dojo = function (_React$Component) {
                             removeEncounter: function removeEncounter(encounter) {
                                 return _this5.removeEncounter(encounter);
                             },
-                            changeValue: function changeValue(combatant, type, value) {
-                                return _this5.changeValue(combatant, type, value);
-                            },
                             getMonster: function getMonster(monsterName, monsterGroupName) {
                                 return _this5.getMonster(monsterName, _this5.getMonsterGroupByName(monsterGroupName));
                             },
@@ -4580,6 +4594,9 @@ var Dojo = function (_React$Component) {
                             },
                             nudgeValue: function nudgeValue(slot, type, delta) {
                                 return _this5.nudgeValue(slot, type, delta);
+                            },
+                            changeValue: function changeValue(combatant, type, value) {
+                                return _this5.changeValue(combatant, type, value);
                             }
                         });
                         break;
@@ -4599,6 +4616,9 @@ var Dojo = function (_React$Component) {
                             },
                             nudgeValue: function nudgeValue(combatant, type, delta) {
                                 return _this5.nudgeValue(combatant, type, delta);
+                            },
+                            changeValue: function changeValue(combatant, type, value) {
+                                return _this5.changeValue(combatant, type, value);
                             },
                             makeCurrent: function makeCurrent(combatant) {
                                 return _this5.makeCurrent(combatant);

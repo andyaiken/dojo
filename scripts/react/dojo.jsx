@@ -1145,11 +1145,11 @@ class Dojo extends React.Component {
                             selectEncounter={encounter => this.selectEncounter(encounter)}
                             addEncounter={name => this.addEncounter(name)}
                             removeEncounter={encounter => this.removeEncounter(encounter)}
-                            changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                             getMonster={(monsterName, monsterGroupName) => this.getMonster(monsterName, this.getMonsterGroupByName(monsterGroupName))}
                             addEncounterSlot={(encounter, monster) => this.addEncounterSlot(encounter, monster)}
                             removeEncounterSlot={(encounter, slot) => this.removeEncounterSlot(encounter, slot)}
                             nudgeValue={(slot, type, delta) => this.nudgeValue(slot, type, delta)}
+                            changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                         />
                     );
                     break;
@@ -1165,6 +1165,7 @@ class Dojo extends React.Component {
                             createCombat={() => this.createCombat()}
                             resumeEncounter={combat => this.resumeCombat(combat)}
                             nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
+                            changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                             makeCurrent={(combatant) => this.makeCurrent(combatant)}
                             makeActive={(combatant) => this.makeActive(combatant)}
                             makeDefeated={(combatant) => this.makeDefeated(combatant)}

@@ -40,6 +40,10 @@ class MonsterCard extends React.Component {
         return description.toLowerCase();
     }
 
+    rename() {
+        // TODO: Toggle
+    }
+
     render() {
         try {
             var options = [];
@@ -78,6 +82,18 @@ class MonsterCard extends React.Component {
                     }
                 }
                 if (this.props.mode.indexOf("combat") !== -1) {
+                    options.push(
+                        <Expander
+                            key="rename"
+                            text="change name"
+                            content={(
+                                <div>
+                                    <input type="text" value={this.props.combatant.displayName} onChange={event => this.props.changeValue(this.props.combatant, "displayName", event.target.value)} />
+                                </div>
+                            )}
+                        />
+                    );
+                    options.push(<div key="div" className="divider"></div>);
                     if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
                         options.push(<button key="makeAdd" onClick={() => this.props.makeActive(this.props.combatant)}>add to encounter</button>);
                         options.push(<ConfirmButton key="remove" text="remove from encounter" callback={() => this.props.removeCombatant(this.props.combatant)} />);

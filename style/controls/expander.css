@@ -1,6 +1,7 @@
 ﻿.expander {
     margin: 5px 0;
-    border: 0px solid #C3C3C3;
+    background-color: white;
+    border: 1px solid #C3C3C3;
     border-left-width: 5px;
 }
 

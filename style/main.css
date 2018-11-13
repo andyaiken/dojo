@@ -1,5 +1,7 @@
 ﻿* {
     box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     transition: all 0.2s ease-in-out;
     -webkit-user-select: none;
     user-select: none;
