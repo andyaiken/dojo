@@ -1,6 +1,7 @@
-﻿b {
+﻿b,
+strong {
     font-weight: 600;
-    color: #000000;
+    color: black;
 }
 
 input[type=text],

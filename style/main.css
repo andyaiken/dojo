@@ -219,6 +219,28 @@ body,
         font-weight: 600;
     }
 
+.name-row {
+    margin: 5px 0;
+    border-left: 5px solid #404040;
+}
+
+    .name-row:hover {
+        border-color: rgb(100, 150, 240);
+    }
+
+    .name-row .name-label {
+        display: inline-block;
+        vertical-align: middle;
+        width: 50%;
+        padding-left: 8px;
+    }
+
+    .name-row .name-inputs {
+        display: inline-block;
+        vertical-align: middle;
+        width: 50%;
+    }
+
 .image.rotate {
     transform: rotate(-180deg);
 }

@@ -5794,7 +5794,7 @@ var CombatStartModal = function (_React$Component) {
                 React.createElement(
                     "div",
                     { className: "section" },
-                    "effective xp for number of monsters (",
+                    "effective xp for this number of monsters (",
                     monsterCount,
                     ")",
                     React.createElement(
@@ -5822,7 +5822,7 @@ var CombatStartModal = function (_React$Component) {
                 React.createElement(
                     "div",
                     { className: "section" },
-                    "effective difficulty for number of pcs (",
+                    "effective difficulty for this number of pcs (",
                     pcs.length,
                     ")",
                     React.createElement(
@@ -5911,19 +5911,15 @@ var CombatStartModal = function (_React$Component) {
                     }
                     return React.createElement(
                         "div",
-                        { key: slotNames.id, className: "row" },
+                        { key: slotNames.id, className: "name-row" },
                         React.createElement(
                             "div",
-                            { className: "column small-6 medium-6 large-6" },
-                            React.createElement(
-                                "div",
-                                { className: "section" },
-                                slot.monsterName
-                            )
+                            { className: "name-label" },
+                            slot.monsterName
                         ),
                         React.createElement(
                             "div",
-                            { className: "column small-6 medium-6 large-6" },
+                            { className: "name-inputs" },
                             inputs
                         )
                     );

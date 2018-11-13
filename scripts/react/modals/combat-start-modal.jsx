@@ -196,7 +196,7 @@ class CombatStartModal extends React.Component {
                     <div className="right">{monsterXp} xp</div>
                 </div>
                 <div className="section">
-                    effective xp for number of monsters ({monsterCount})
+                    effective xp for this number of monsters ({monsterCount})
                     <div className="right">{adjustedXp || monsterXp} xp</div>
                 </div>
                 <div className="subheading">encounter difficulty</div>
@@ -205,7 +205,7 @@ class CombatStartModal extends React.Component {
                     <div className="right">{difficulty}</div>
                 </div>
                 <div className="section">
-                    effective difficulty for number of pcs ({pcs.length})
+                    effective difficulty for this number of pcs ({pcs.length})
                     <div className="right"><b>{adjustedDifficulty || difficulty}</b></div>
                 </div>
             </div>
@@ -273,11 +273,11 @@ class CombatStartModal extends React.Component {
                     );
                 }
                 return (
-                    <div key={slotNames.id} className="row">
-                        <div className="column small-6 medium-6 large-6">
-                            <div className="section">{slot.monsterName}</div>
+                    <div key={slotNames.id} className="name-row">
+                        <div className="name-label">
+                            {slot.monsterName}
                         </div>
-                        <div className="column small-6 medium-6 large-6">
+                        <div className="name-inputs">
                             {inputs}
                         </div>
                     </div>
