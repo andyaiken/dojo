@@ -37,6 +37,18 @@ class CombatStartModal extends React.Component {
         });
     }
 
+    changeName(slotID, index, name) {
+        var slot = this.state.combat.monsterNames.find(s => s.id === slotID);
+        if (slot) {
+            slot.names[index] = name;
+            this.setState({
+                combat: this.state.combat
+            });
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     getPartySection() {
         if (this.props.parties.length === 0) {
             return (
@@ -54,15 +66,18 @@ class CombatStartModal extends React.Component {
         var partyContent = null;
         if (this.state.combat.partyID) {
             var selectedParty = this.props.parties.find(p => p.id === this.state.combat.partyID);
-            var pcs = selectedParty.pcs.filter(pc => pc.active).map(pc => <li key={pc.id}>{pc.name || "unnamed pc"}</li>);
-            if (pcs.length === 0) {
-                pcs.push(
+            var pcs = selectedParty.pcs.filter(pc => pc.active);
+
+            var pcSections = pcs.map(pc => <li key={pc.id}>{pc.name || "unnamed pc"}</li>);
+            if (pcSections.length === 0) {
+                pcSections.push(
                     <li key={"empty"}>no pcs</li>
                 );
             }
+    
             partyContent = (
                 <div>
-                    <ul>{pcs}</ul>
+                    <ul>{pcSections}</ul>
                 </div>
             );
         }
@@ -81,14 +96,120 @@ class CombatStartModal extends React.Component {
         );
     }
 
-    changeName(slotID, index, name) {
-        var slot = this.state.combat.monsterNames.find(s => s.id === slotID);
-        if (slot) {
-            slot.names[index] = name;
-            this.setState({
-                combat: this.state.combat
-            });
+    getDifficultySection() {
+        if (!this.state.combat.partyID || !this.state.combat.encounterID) {
+            return (
+                <div>
+                    <div className="subheading">encounter difficulty</div>
+                    <div className="section">select an encounter on the right to see difficulty information</div>
+                </div>
+            );
         }
+
+        var selectedEncounter = this.props.encounters.find(e => e.id === this.state.combat.encounterID);
+        var selectedParty = this.props.parties.find(p => p.id === this.state.combat.partyID);
+
+        var monsterCount = 0;
+        var monsterXp = 0;
+        selectedEncounter.slots.forEach(slot => {
+            monsterCount += slot.count;
+            var monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
+            if (monster) {
+                monsterXp += experience(monster.challenge) * slot.count;
+            }
+        });
+
+        var adjustedXp = monsterXp * experienceFactor(monsterCount);
+
+        var xpEasy = 0;
+        var xpMedium = 0;
+        var xpHard = 0;
+        var xpDeadly = 0;
+
+        var pcs = selectedParty.pcs.filter(pc => pc.active);
+        pcs.forEach(pc => {
+            xpEasy += pcExperience(pc.level, "easy");
+            xpMedium += pcExperience(pc.level, "medium");
+            xpHard += pcExperience(pc.level, "hard");
+            xpDeadly += pcExperience(pc.level, "deadly");
+        });
+    
+        var difficulty = null;
+        var adjustedDifficulty = null;
+        if (adjustedXp > 0) {
+            difficulty = "trivial";
+            if (adjustedXp >= xpEasy) {
+                difficulty = "easy";
+            }
+            if (adjustedXp >= xpMedium) {
+                difficulty = "medium";
+            }
+            if (adjustedXp >= xpHard) {
+                difficulty = "hard";
+            }
+            if (adjustedXp >= xpDeadly) {
+                difficulty = "deadly";
+            }
+
+            if ((pcs.length < 3) || (pcs.length > 5)) {
+                var small = pcs.length < 3;
+                switch (difficulty) {
+                    case "trivial":
+                        adjustedDifficulty = small ? "easy" : "trivial";
+                        break;
+                    case "easy":
+                        adjustedDifficulty = small ? "medium" : "trivial";
+                        break;
+                    case "medium":
+                        adjustedDifficulty = small ? "hard" : "easy";
+                        break;
+                    case "hard":
+                        adjustedDifficulty = small ? "deadly" : "medium";
+                        break;
+                    case "deadly":
+                        adjustedDifficulty = small ? "deadly" : "hard";
+                        break;
+                }
+            }
+        }
+
+        return (
+            <div>
+                <div className="subheading">xp thresholds for this party</div>
+                <div className="table">
+                    <div>
+                        <div className="cell four"><b>easy</b></div>
+                        <div className="cell four"><b>medium</b></div>
+                        <div className="cell four"><b>hard</b></div>
+                        <div className="cell four"><b>deadly</b></div>
+                    </div>
+                    <div>
+                        <div className="cell four">{xpEasy} xp</div>
+                        <div className="cell four">{xpMedium} xp</div>
+                        <div className="cell four">{xpHard} xp</div>
+                        <div className="cell four">{xpDeadly} xp</div>
+                    </div>
+                </div>
+                <div className="subheading">encounter xp value</div>
+                <div className="section">
+                    xp for this encounter
+                    <div className="right">{monsterXp} xp</div>
+                </div>
+                <div className="section">
+                    effective xp for number of monsters ({monsterCount})
+                    <div className="right">{adjustedXp || monsterXp} xp</div>
+                </div>
+                <div className="subheading">encounter difficulty</div>
+                <div className="section">
+                    difficulty for this party
+                    <div className="right">{difficulty}</div>
+                </div>
+                <div className="section">
+                    effective difficulty for number of pcs ({pcs.length})
+                    <div className="right"><b>{adjustedDifficulty || difficulty}</b></div>
+                </div>
+            </div>
+        );
     }
 
     getEncounterSection() {
@@ -192,12 +313,15 @@ class CombatStartModal extends React.Component {
         )
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     render() {
         try {
             return (
                 <div className="row" style={{ height: "100%", margin: "0 -15px" }}>
                     <div className="column small-6 medium-6 large-6 scrollable">
                         {this.getPartySection()}
+                        {this.getDifficultySection()}
                     </div>
                     <div className="column small-6 medium-6 large-6 scrollable">
                         {this.getEncounterSection()}

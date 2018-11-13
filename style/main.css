@@ -232,6 +232,27 @@ body,
     opacity: 0.5;
 }
 
+.table {
+    background-color: white;
+    border: 1px solid #C3C3C3;
+    margin: 8px 0;
+    padding: 3px 0;
+}
+
+    .table .cell {
+        display: inline-block;
+        padding: 2px 0;
+        text-align: center;
+    }
+
+        .table .cell.three {
+            width: calc((100% - 1px) / 3);
+        }
+
+        .table .cell.four {
+            width: calc((100% - 1px) / 4);
+        }
+
 .vertical-center-outer {
     display: table;
     height: 100%;

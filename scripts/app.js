@@ -4767,6 +4767,9 @@ var Dojo = function (_React$Component) {
                                 combat: this.state.modal.combat,
                                 parties: this.state.parties,
                                 encounters: this.state.encounters,
+                                getMonster: function getMonster(monsterName, monsterGroupName) {
+                                    return _this5.getMonster(monsterName, _this5.getMonsterGroupByName(monsterGroupName));
+                                },
                                 notify: function notify() {
                                     return _this5.setState({ modal: _this5.state.modal });
                                 }
@@ -5545,6 +5548,22 @@ var CombatStartModal = function (_React$Component) {
             });
         }
     }, {
+        key: "changeName",
+        value: function changeName(slotID, index, name) {
+            var slot = this.state.combat.monsterNames.find(function (s) {
+                return s.id === slotID;
+            });
+            if (slot) {
+                slot.names[index] = name;
+                this.setState({
+                    combat: this.state.combat
+                });
+            }
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    }, {
         key: "getPartySection",
         value: function getPartySection() {
             var _this4 = this;
@@ -5571,27 +5590,30 @@ var CombatStartModal = function (_React$Component) {
                 });
                 var pcs = selectedParty.pcs.filter(function (pc) {
                     return pc.active;
-                }).map(function (pc) {
+                });
+
+                var pcSections = pcs.map(function (pc) {
                     return React.createElement(
                         "li",
                         { key: pc.id },
                         pc.name || "unnamed pc"
                     );
                 });
-                if (pcs.length === 0) {
-                    pcs.push(React.createElement(
+                if (pcSections.length === 0) {
+                    pcSections.push(React.createElement(
                         "li",
                         { key: "empty" },
                         "no pcs"
                     ));
                 }
+
                 partyContent = React.createElement(
                     "div",
                     null,
                     React.createElement(
                         "ul",
                         null,
-                        pcs
+                        pcSections
                     )
                 );
             }
@@ -5616,22 +5638,246 @@ var CombatStartModal = function (_React$Component) {
             );
         }
     }, {
-        key: "changeName",
-        value: function changeName(slotID, index, name) {
-            var slot = this.state.combat.monsterNames.find(function (s) {
-                return s.id === slotID;
-            });
-            if (slot) {
-                slot.names[index] = name;
-                this.setState({
-                    combat: this.state.combat
-                });
+        key: "getDifficultySection",
+        value: function getDifficultySection() {
+            var _this5 = this;
+
+            if (!this.state.combat.partyID || !this.state.combat.encounterID) {
+                return React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "div",
+                        { className: "subheading" },
+                        "encounter difficulty"
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        "select an encounter on the right to see difficulty information"
+                    )
+                );
             }
+
+            var selectedEncounter = this.props.encounters.find(function (e) {
+                return e.id === _this5.state.combat.encounterID;
+            });
+            var selectedParty = this.props.parties.find(function (p) {
+                return p.id === _this5.state.combat.partyID;
+            });
+
+            var monsterCount = 0;
+            var monsterXp = 0;
+            selectedEncounter.slots.forEach(function (slot) {
+                monsterCount += slot.count;
+                var monster = _this5.props.getMonster(slot.monsterName, slot.monsterGroupName);
+                if (monster) {
+                    monsterXp += experience(monster.challenge) * slot.count;
+                }
+            });
+
+            var adjustedXp = monsterXp * experienceFactor(monsterCount);
+
+            var xpEasy = 0;
+            var xpMedium = 0;
+            var xpHard = 0;
+            var xpDeadly = 0;
+
+            var pcs = selectedParty.pcs.filter(function (pc) {
+                return pc.active;
+            });
+            pcs.forEach(function (pc) {
+                xpEasy += pcExperience(pc.level, "easy");
+                xpMedium += pcExperience(pc.level, "medium");
+                xpHard += pcExperience(pc.level, "hard");
+                xpDeadly += pcExperience(pc.level, "deadly");
+            });
+
+            var difficulty = null;
+            var adjustedDifficulty = null;
+            if (adjustedXp > 0) {
+                difficulty = "trivial";
+                if (adjustedXp >= xpEasy) {
+                    difficulty = "easy";
+                }
+                if (adjustedXp >= xpMedium) {
+                    difficulty = "medium";
+                }
+                if (adjustedXp >= xpHard) {
+                    difficulty = "hard";
+                }
+                if (adjustedXp >= xpDeadly) {
+                    difficulty = "deadly";
+                }
+
+                if (pcs.length < 3 || pcs.length > 5) {
+                    var small = pcs.length < 3;
+                    switch (difficulty) {
+                        case "trivial":
+                            adjustedDifficulty = small ? "easy" : "trivial";
+                            break;
+                        case "easy":
+                            adjustedDifficulty = small ? "medium" : "trivial";
+                            break;
+                        case "medium":
+                            adjustedDifficulty = small ? "hard" : "easy";
+                            break;
+                        case "hard":
+                            adjustedDifficulty = small ? "deadly" : "medium";
+                            break;
+                        case "deadly":
+                            adjustedDifficulty = small ? "deadly" : "hard";
+                            break;
+                    }
+                }
+            }
+
+            return React.createElement(
+                "div",
+                null,
+                React.createElement(
+                    "div",
+                    { className: "subheading" },
+                    "xp thresholds for this party"
+                ),
+                React.createElement(
+                    "div",
+                    { className: "table" },
+                    React.createElement(
+                        "div",
+                        null,
+                        React.createElement(
+                            "div",
+                            { className: "cell four" },
+                            React.createElement(
+                                "b",
+                                null,
+                                "easy"
+                            )
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "cell four" },
+                            React.createElement(
+                                "b",
+                                null,
+                                "medium"
+                            )
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "cell four" },
+                            React.createElement(
+                                "b",
+                                null,
+                                "hard"
+                            )
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "cell four" },
+                            React.createElement(
+                                "b",
+                                null,
+                                "deadly"
+                            )
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        null,
+                        React.createElement(
+                            "div",
+                            { className: "cell four" },
+                            xpEasy,
+                            " xp"
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "cell four" },
+                            xpMedium,
+                            " xp"
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "cell four" },
+                            xpHard,
+                            " xp"
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "cell four" },
+                            xpDeadly,
+                            " xp"
+                        )
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "subheading" },
+                    "encounter xp value"
+                ),
+                React.createElement(
+                    "div",
+                    { className: "section" },
+                    "xp for this encounter",
+                    React.createElement(
+                        "div",
+                        { className: "right" },
+                        monsterXp,
+                        " xp"
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "section" },
+                    "effective xp for number of monsters (",
+                    monsterCount,
+                    ")",
+                    React.createElement(
+                        "div",
+                        { className: "right" },
+                        adjustedXp || monsterXp,
+                        " xp"
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "subheading" },
+                    "encounter difficulty"
+                ),
+                React.createElement(
+                    "div",
+                    { className: "section" },
+                    "difficulty for this party",
+                    React.createElement(
+                        "div",
+                        { className: "right" },
+                        difficulty
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "section" },
+                    "effective difficulty for number of pcs (",
+                    pcs.length,
+                    ")",
+                    React.createElement(
+                        "div",
+                        { className: "right" },
+                        React.createElement(
+                            "b",
+                            null,
+                            adjustedDifficulty || difficulty
+                        )
+                    )
+                )
+            );
         }
     }, {
         key: "getEncounterSection",
         value: function getEncounterSection() {
-            var _this5 = this;
+            var _this6 = this;
 
             if (this.props.encounters.length === 0) {
                 return React.createElement(
@@ -5651,7 +5897,7 @@ var CombatStartModal = function (_React$Component) {
             var encounterContent = null;
             if (this.state.combat.encounterID) {
                 var selectedEncounter = this.props.encounters.find(function (e) {
-                    return e.id === _this5.state.combat.encounterID;
+                    return e.id === _this6.state.combat.encounterID;
                 });
                 var monsters = selectedEncounter.slots.map(function (slot) {
                     var name = slot.monsterName || "unnamed monster";
@@ -5695,7 +5941,7 @@ var CombatStartModal = function (_React$Component) {
                                 slotID: slot.id,
                                 index: n,
                                 changeName: function changeName(slotID, index, value) {
-                                    return _this5.changeName(slotID, index, value);
+                                    return _this6.changeName(slotID, index, value);
                                 }
                             })
                         ));
@@ -5737,7 +5983,7 @@ var CombatStartModal = function (_React$Component) {
                         options: initOptions,
                         selectedID: this.state.combat.encounterInitMode,
                         select: function select(optionID) {
-                            return _this5.setEncounterInitMode(optionID);
+                            return _this6.setEncounterInitMode(optionID);
                         }
                     }),
                     React.createElement(
@@ -5766,12 +6012,15 @@ var CombatStartModal = function (_React$Component) {
                     placeholder: "select encounter...",
                     selectedID: this.state.combat.encounterID,
                     select: function select(optionID) {
-                        return _this5.setEncounter(optionID);
+                        return _this6.setEncounter(optionID);
                     }
                 }),
                 encounterContent
             );
         }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     }, {
         key: "render",
         value: function render() {
@@ -5782,7 +6031,8 @@ var CombatStartModal = function (_React$Component) {
                     React.createElement(
                         "div",
                         { className: "column small-6 medium-6 large-6 scrollable" },
-                        this.getPartySection()
+                        this.getPartySection(),
+                        this.getDifficultySection()
                     ),
                     React.createElement(
                         "div",
@@ -5811,10 +6061,10 @@ var MonsterName = function (_React$Component2) {
     _createClass(MonsterName, [{
         key: "render",
         value: function render() {
-            var _this7 = this;
+            var _this8 = this;
 
             return React.createElement("input", { type: "text", value: this.props.value, onChange: function onChange(event) {
-                    return _this7.props.changeName(_this7.props.slotID, _this7.props.index, event.target.value);
+                    return _this8.props.changeName(_this8.props.slotID, _this8.props.index, event.target.value);
                 } });
         }
     }]);

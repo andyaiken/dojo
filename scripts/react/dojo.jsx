@@ -1263,6 +1263,7 @@ class Dojo extends React.Component {
                                 combat={this.state.modal.combat}
                                 parties={this.state.parties}
                                 encounters={this.state.encounters}
+                                getMonster={(monsterName, monsterGroupName) => this.getMonster(monsterName, this.getMonsterGroupByName(monsterGroupName))}
                                 notify={() => this.setState({modal: this.state.modal})}
                             />
                         )

@@ -63,27 +63,6 @@
         border-top: 1px solid #650000;
     }
 
-    .card .table {
-        background-color: white;
-        border: 1px solid #C3C3C3;
-        margin: 8px 0;
-        padding: 3px 0;
-    }
-
-        .card .table .cell {
-            display: inline-block;
-            padding: 2px 0;
-            text-align: center;
-        }
-
-            .card .table .cell.three {
-                width: calc((100% - 1px) / 3);
-            }
-
-            .card .table .cell.four {
-                width: calc((100% - 1px) / 4);
-            }
-
     .card .heading .image {
         width: 20px;
         height: 20px;
