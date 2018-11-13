@@ -1217,7 +1217,6 @@ class Dojo extends React.Component {
 
                 switch (this.state.modal.type) {
                     case "about":
-                        modalTitle = "about";
                         modalContent = (
                             <AboutModal
                                 options={this.state.options}

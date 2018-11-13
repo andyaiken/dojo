@@ -4677,7 +4677,6 @@ var Dojo = function (_React$Component) {
 
                     switch (this.state.modal.type) {
                         case "about":
-                            modalTitle = "about";
                             modalContent = React.createElement(AboutModal, {
                                 options: this.state.options,
                                 resetAll: function resetAll() {
