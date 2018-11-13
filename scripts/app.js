@@ -1762,72 +1762,31 @@ var MonsterLibraryCard = function (_React$Component) {
     _createClass(MonsterLibraryCard, [{
         key: "render",
         value: function render() {
-            var _this2 = this;
-
             try {
-                var action = null;
-                if (this.props.library.length === 0) {
-                    action = React.createElement(
-                        "div",
-                        null,
-                        React.createElement(
+                return React.createElement(InfoCard, {
+                    getContent: function getContent() {
+                        return React.createElement(
                             "div",
-                            { className: "section" },
+                            null,
                             React.createElement(
                                 "div",
-                                null,
-                                "since your collection is empty, you might want to start by pressing the button below to add monsters from the ",
-                                React.createElement(
-                                    "a",
-                                    { href: "http://dnd.wizards.com/articles/features/systems-reference-document-srd", target: "_blank" },
-                                    "system reference document"
-                                )
-                            )
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "section" },
+                                { className: "section" },
+                                "you can maintain your menagerie of monsters here"
+                            ),
+                            React.createElement("div", { className: "divider" }),
                             React.createElement(
-                                "button",
-                                { onClick: function onClick() {
-                                        return _this2.props.addOpenGameContent();
-                                    } },
-                                "add monsters"
+                                "div",
+                                { className: "section" },
+                                "select a monster group from the list to see stat blocks for monsters in that group"
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                "to quickly find a monster, type its name into the filter box"
                             )
-                        )
-                    );
-                } else {
-                    action = React.createElement(
-                        "div",
-                        null,
-                        React.createElement(
-                            "div",
-                            { className: "section" },
-                            "select a monster group from the list to see stat blocks for monsters in that group"
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "section" },
-                            "to quickly find a monster, type its name into the filter box"
-                        )
-                    );
-                }
-
-                var content = React.createElement(
-                    "div",
-                    null,
-                    React.createElement(
-                        "div",
-                        { className: "section" },
-                        "you can maintain your menagerie of monsters here"
-                    ),
-                    React.createElement("div", { className: "divider" }),
-                    action
-                );
-
-                return React.createElement(InfoCard, { getContent: function getContent() {
-                        return content;
-                    } });
+                        );
+                    }
+                });
             } catch (e) {
                 console.error(e);
             }
@@ -4474,7 +4433,12 @@ var Dojo = function (_React$Component) {
                 var action = null;
                 switch (this.state.view) {
                     case "home":
-                        content = React.createElement(HomeScreen, null);
+                        content = React.createElement(HomeScreen, {
+                            library: this.state.library,
+                            addOpenGameContent: function addOpenGameContent() {
+                                return _this5.addOpenGameContent();
+                            }
+                        });
                         break;
                     case "parties":
                         content = React.createElement(PartiesScreen, {
@@ -8976,7 +8940,43 @@ var HomeScreen = function (_React$Component) {
     _createClass(HomeScreen, [{
         key: "render",
         value: function render() {
+            var _this2 = this;
+
             try {
+                var monsters = null;
+                if (this.props.library.length === 0) {
+                    monsters = React.createElement(
+                        "div",
+                        null,
+                        React.createElement("div", { className: "divider" }),
+                        React.createElement(
+                            "div",
+                            { className: "text" },
+                            React.createElement(
+                                "div",
+                                null,
+                                "since your collection of monsters is empty, you might want to start by pressing the button below to add monsters from the ",
+                                React.createElement(
+                                    "a",
+                                    { href: "http://dnd.wizards.com/articles/features/systems-reference-document-srd", target: "_blank" },
+                                    "system reference document"
+                                )
+                            )
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "text" },
+                            React.createElement(
+                                "button",
+                                { onClick: function onClick() {
+                                        return _this2.props.addOpenGameContent();
+                                    } },
+                                "add monsters"
+                            )
+                        )
+                    );
+                }
+
                 return React.createElement(
                     "div",
                     { className: "home scrollable" },
@@ -9050,6 +9050,7 @@ var HomeScreen = function (_React$Component) {
                                             )
                                         )
                                     ),
+                                    monsters,
                                     React.createElement("div", { className: "divider" }),
                                     React.createElement(
                                         "div",
@@ -9127,12 +9128,7 @@ var MonsterLibraryScreen = function (_React$Component) {
             try {
                 var help = null;
                 if (this.props.showHelp) {
-                    help = React.createElement(MonsterLibraryCard, {
-                        library: this.props.library,
-                        addOpenGameContent: function addOpenGameContent() {
-                            return _this3.props.addOpenGameContent();
-                        }
-                    });
+                    help = React.createElement(MonsterLibraryCard, null);
                 }
 
                 var listItems = [];

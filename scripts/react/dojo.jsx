@@ -1082,6 +1082,8 @@ class Dojo extends React.Component {
                 case "home":
                     content = (
                         <HomeScreen
+                            library={this.state.library}
+                            addOpenGameContent={() => this.addOpenGameContent()}
                         />
                     );
                     break;

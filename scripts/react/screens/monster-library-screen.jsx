@@ -29,10 +29,7 @@ class MonsterLibraryScreen extends React.Component {
             var help = null;
             if (this.props.showHelp) {
                 help = (
-                    <MonsterLibraryCard
-                        library={this.props.library}
-                        addOpenGameContent={() => this.props.addOpenGameContent()}
-                    />
+                    <MonsterLibraryCard />
                 );
             }
             

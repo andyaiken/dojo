@@ -1,6 +1,21 @@
 class HomeScreen extends React.Component {
     render() {
         try {
+            var monsters = null;
+            if (this.props.library.length === 0) {
+                monsters = (
+                    <div>
+                        <div className="divider"></div>
+                        <div className="text">
+                            <div>since your collection of monsters is empty, you might want to start by pressing the button below to add monsters from the <a href="http://dnd.wizards.com/articles/features/systems-reference-document-srd" target="_blank">system reference document</a></div>
+                        </div>
+                        <div className="text">
+                            <button onClick={() => this.props.addOpenGameContent()}>add monsters</button>
+                        </div>
+                    </div>
+                );
+            }
+
             return (
                 <div className="home scrollable">
                 <div className="vertical-center-outer">
@@ -21,6 +36,7 @@ class HomeScreen extends React.Component {
                                         </ul>
                                     </div>
                                 </div>
+                                {monsters}
                                 <div className="divider"></div>
                                 <div className="text">
                                     <div>use the buttons at the bottom of the screen to access the app's features</div>
