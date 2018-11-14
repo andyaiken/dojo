@@ -40,8 +40,17 @@ class MonsterCard extends React.Component {
         return description.toLowerCase();
     }
 
-    rename() {
-        // TODO: Toggle
+    monsterIsInWave(wave) {
+        return wave.slots.some(s => {
+            var group = null;
+            this.props.library.forEach(g => {
+                if (g.monsters.indexOf(this.props.combatant) !== -1) {
+                    group = g;
+                }
+            });
+        
+            return (s.monsterGroupName === group.name) && (s.monsterName === this.props.combatant.name)
+        })
     }
 
     render() {
@@ -74,10 +83,26 @@ class MonsterCard extends React.Component {
                         options.push(<ConfirmButton key="remove" text="delete monster" callback={() => this.props.removeCombatant(this.props.combatant)} />);
                     }
                     if (this.props.mode.indexOf("encounter") !== -1) {
-                        if (!this.props.slot) {
-                            options.push(<button key="add" onClick={() => this.props.addEncounterSlot(this.props.combatant)}>add to encounter</button>);
-                        } else {
+                        if (this.props.slot) {
+                            // This card is in an encounter or a wave
                             options.push(<button key="remove" onClick={() => this.props.removeEncounterSlot(this.props.slot)}>remove from encounter</button>);
+                        } else {
+                            var canAdd = false;
+                            // This card is in the library list
+                            if (!this.monsterIsInWave(this.props.encounter)) {
+                                options.push(<button key="add encounter" onClick={() => this.props.addEncounterSlot(this.props.combatant, null)}>add to encounter</button>);
+                                canAdd = true;
+                            }
+                            this.props.encounter.waves.forEach(wave => {
+                                if (!this.monsterIsInWave(wave)) {
+                                    options.push(<button key={"add " + wave.id} onClick={() => this.props.addEncounterSlot(this.props.combatant, wave.id)}>add to {wave.name}</button>);
+                                    canAdd = true;
+                                }
+                            });
+                            // If we can't add it anywhere, don't show it
+                            if (!canAdd) {
+                                return null;
+                            }
                         }
                     }
                 }

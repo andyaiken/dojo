@@ -176,6 +176,7 @@ class EncounterCard extends React.Component {
                         </div>
                         <div className="divider"></div>
                         <div className="section">
+                            <button onClick={() => this.props.addWave()}>add a new wave</button>
                             <ConfirmButton text="delete encounter" callback={() => this.props.removeEncounter()} />
                         </div>
                     </div>

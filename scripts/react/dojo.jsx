@@ -570,10 +570,12 @@ class Dojo extends React.Component {
         var encounter = {
             id: guid(),
             name: name,
-            slots: []
+            slots: [],
+            waves: []
         };
         var encounters = [].concat(this.state.encounters, [encounter]);
         sort(encounters);
+
         this.setState({
             encounters: encounters,
             selectedEncounterID: encounter.id
@@ -584,13 +586,14 @@ class Dojo extends React.Component {
         var encounter = this.getEncounter(this.state.selectedEncounterID);
         var index = this.state.encounters.indexOf(encounter);
         this.state.encounters.splice(index, 1);
+
         this.setState({
             encounters: this.state.encounters,
             selectedEncounterID: null
         });
     }
 
-    addEncounterSlot(monster) {
+    addEncounterSlot(monster, waveID) {
         var group = this.findMonster(monster);
         var slot = {
             id: guid(),
@@ -599,32 +602,69 @@ class Dojo extends React.Component {
             count: 1
         }
         var encounter = this.getEncounter(this.state.selectedEncounterID);
-        encounter.slots.push(slot);
-        this.sortEncounterSlots();
+        if (waveID !== null) {
+            var wave = encounter.waves.find(w => w.id === waveID);
+            wave.slots.push(slot);
+            this.sortEncounterSlots(wave);
+        } else {
+            encounter.slots.push(slot);
+            this.sortEncounterSlots(encounter);
+        }
+
         this.setState({
             encounters: this.state.encounters
         });
+
         return slot;
     }
 
-    removeEncounterSlot(slot) {
+    removeEncounterSlot(slot, waveID) {
         var encounter = this.getEncounter(this.state.selectedEncounterID);
-        var index = encounter.slots.indexOf(slot);
-        encounter.slots.splice(index, 1);
+        if (waveID) {
+            var wave = encounter.waves.find(w => w.id === waveID);
+            var index = wave.slots.indexOf(slot);
+            wave.slots.splice(index, 1);
+        } else {
+            var index = encounter.slots.indexOf(slot);
+            encounter.slots.splice(index, 1);
+        }
+
         this.setState({
             encounters: this.state.encounters
         });
     }
 
-    sortEncounterSlots() {
-        var encounter = this.getEncounter(this.state.selectedEncounterID);
-        encounter.slots.sort((a, b) => {
+    sortEncounterSlots(slotContaimer) {
+        slotContaimer.slots.sort((a, b) => {
             var aName = a.monsterName.toLowerCase();
             var bName = b.monsterName.toLowerCase();
             if (aName < bName) return -1;
             if (aName > bName) return 1;
             return 0;
         });
+    }
+
+    addWave() {
+        var encounter = this.getEncounter(this.state.selectedEncounterID);
+        var waveNumber = encounter.waves.length + 2;
+        var waveName = "wave " + waveNumber;
+
+        encounter.waves.push({
+            id: guid(),
+            name: waveName,
+            slots: []
+        });
+
+        this.setState({
+            encounters: this.state.encounters
+        });
+    }
+
+    removeWave(wave) {
+        var encounter = this.getEncounter(this.state.selectedEncounterID);
+        var index = encounter.waves.indexOf(wave);
+        encounter.waves.splice(index, 1);
+
         this.setState({
             encounters: this.state.encounters
         });
@@ -1147,9 +1187,11 @@ class Dojo extends React.Component {
                             selectEncounter={encounter => this.selectEncounter(encounter)}
                             addEncounter={name => this.addEncounter(name)}
                             removeEncounter={encounter => this.removeEncounter(encounter)}
+                            addWave={() => this.addWave()}
+                            removeWave={wave => this.removeWave(wave)}
                             getMonster={(monsterName, monsterGroupName) => this.getMonster(monsterName, this.getMonsterGroupByName(monsterGroupName))}
-                            addEncounterSlot={(encounter, monster) => this.addEncounterSlot(encounter, monster)}
-                            removeEncounterSlot={(encounter, slot) => this.removeEncounterSlot(encounter, slot)}
+                            addEncounterSlot={(monster, waveID) => this.addEncounterSlot(monster, waveID)}
+                            removeEncounterSlot={(slot, waveID) => this.removeEncounterSlot(slot, waveID)}
                             nudgeValue={(slot, type, delta) => this.nudgeValue(slot, type, delta)}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                         />

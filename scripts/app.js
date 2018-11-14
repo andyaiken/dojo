@@ -434,6 +434,13 @@ var EncounterCard = function (_React$Component) {
                         React.createElement(
                             "div",
                             { className: "section" },
+                            React.createElement(
+                                "button",
+                                { onClick: function onClick() {
+                                        return _this2.props.addWave();
+                                    } },
+                                "add a new wave"
+                            ),
                             React.createElement(ConfirmButton, { text: "delete encounter", callback: function callback() {
                                     return _this2.props.removeEncounter();
                                 } })
@@ -800,14 +807,25 @@ var MonsterCard = function (_React$Component) {
             return description.toLowerCase();
         }
     }, {
-        key: "rename",
-        value: function rename() {
-            // TODO: Toggle
+        key: "monsterIsInWave",
+        value: function monsterIsInWave(wave) {
+            var _this2 = this;
+
+            return wave.slots.some(function (s) {
+                var group = null;
+                _this2.props.library.forEach(function (g) {
+                    if (g.monsters.indexOf(_this2.props.combatant) !== -1) {
+                        group = g;
+                    }
+                });
+
+                return s.monsterGroupName === group.name && s.monsterName === _this2.props.combatant.name;
+            });
         }
     }, {
         key: "render",
         value: function render() {
-            var _this2 = this;
+            var _this3 = this;
 
             try {
                 var options = [];
@@ -817,21 +835,21 @@ var MonsterCard = function (_React$Component) {
                             options.push(React.createElement(
                                 "button",
                                 { key: "edit", onClick: function onClick() {
-                                        return _this2.props.editMonster(_this2.props.combatant);
+                                        return _this3.props.editMonster(_this3.props.combatant);
                                     } },
                                 "edit monster"
                             ));
                             options.push(React.createElement(
                                 "button",
                                 { key: "clone", onClick: function onClick() {
-                                        return _this2.props.cloneMonster(_this2.props.combatant);
+                                        return _this3.props.cloneMonster(_this3.props.combatant);
                                     } },
                                 "create a copy"
                             ));
 
                             var groupOptions = [];
                             this.props.library.forEach(function (group) {
-                                if (group.monsters.indexOf(_this2.props.combatant) === -1) {
+                                if (group.monsters.indexOf(_this3.props.combatant) === -1) {
                                     groupOptions.push({
                                         id: group.id,
                                         text: group.name
@@ -843,31 +861,54 @@ var MonsterCard = function (_React$Component) {
                                 options: groupOptions,
                                 placeholder: "move to group...",
                                 select: function select(optionID) {
-                                    return _this2.props.moveToGroup(_this2.props.combatant, optionID);
+                                    return _this3.props.moveToGroup(_this3.props.combatant, optionID);
                                 }
                             }));
 
                             options.push(React.createElement(ConfirmButton, { key: "remove", text: "delete monster", callback: function callback() {
-                                    return _this2.props.removeCombatant(_this2.props.combatant);
+                                    return _this3.props.removeCombatant(_this3.props.combatant);
                                 } }));
                         }
                         if (this.props.mode.indexOf("encounter") !== -1) {
-                            if (!this.props.slot) {
-                                options.push(React.createElement(
-                                    "button",
-                                    { key: "add", onClick: function onClick() {
-                                            return _this2.props.addEncounterSlot(_this2.props.combatant);
-                                        } },
-                                    "add to encounter"
-                                ));
-                            } else {
+                            if (this.props.slot) {
+                                // This card is in an encounter or a wave
                                 options.push(React.createElement(
                                     "button",
                                     { key: "remove", onClick: function onClick() {
-                                            return _this2.props.removeEncounterSlot(_this2.props.slot);
+                                            return _this3.props.removeEncounterSlot(_this3.props.slot);
                                         } },
                                     "remove from encounter"
                                 ));
+                            } else {
+                                var canAdd = false;
+                                // This card is in the library list
+                                if (!this.monsterIsInWave(this.props.encounter)) {
+                                    options.push(React.createElement(
+                                        "button",
+                                        { key: "add encounter", onClick: function onClick() {
+                                                return _this3.props.addEncounterSlot(_this3.props.combatant, null);
+                                            } },
+                                        "add to encounter"
+                                    ));
+                                    canAdd = true;
+                                }
+                                this.props.encounter.waves.forEach(function (wave) {
+                                    if (!_this3.monsterIsInWave(wave)) {
+                                        options.push(React.createElement(
+                                            "button",
+                                            { key: "add " + wave.id, onClick: function onClick() {
+                                                    return _this3.props.addEncounterSlot(_this3.props.combatant, wave.id);
+                                                } },
+                                            "add to ",
+                                            wave.name
+                                        ));
+                                        canAdd = true;
+                                    }
+                                });
+                                // If we can't add it anywhere, don't show it
+                                if (!canAdd) {
+                                    return null;
+                                }
                             }
                         }
                     }
@@ -879,7 +920,7 @@ var MonsterCard = function (_React$Component) {
                                 "div",
                                 null,
                                 React.createElement("input", { type: "text", value: this.props.combatant.displayName, onChange: function onChange(event) {
-                                        return _this2.props.changeValue(_this2.props.combatant, "displayName", event.target.value);
+                                        return _this3.props.changeValue(_this3.props.combatant, "displayName", event.target.value);
                                     } })
                             )
                         }));
@@ -888,12 +929,12 @@ var MonsterCard = function (_React$Component) {
                             options.push(React.createElement(
                                 "button",
                                 { key: "makeAdd", onClick: function onClick() {
-                                        return _this2.props.makeActive(_this2.props.combatant);
+                                        return _this3.props.makeActive(_this3.props.combatant);
                                     } },
                                 "add to encounter"
                             ));
                             options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
-                                    return _this2.props.removeCombatant(_this2.props.combatant);
+                                    return _this3.props.removeCombatant(_this3.props.combatant);
                                 } }));
                         }
                         if (!this.props.combatant.pending && this.props.combatant.active && !this.props.combatant.defeated) {
@@ -901,14 +942,14 @@ var MonsterCard = function (_React$Component) {
                                 options.push(React.createElement(
                                     "button",
                                     { key: "endTurn", onClick: function onClick() {
-                                            return _this2.props.endTurn(_this2.props.combatant);
+                                            return _this3.props.endTurn(_this3.props.combatant);
                                         } },
                                     "end turn"
                                 ));
                                 options.push(React.createElement(
                                     "button",
                                     { key: "makeDefeated", onClick: function onClick() {
-                                            return _this2.props.makeDefeated(_this2.props.combatant);
+                                            return _this3.props.makeDefeated(_this3.props.combatant);
                                         } },
                                     "mark as defeated and end turn"
                                 ));
@@ -916,19 +957,19 @@ var MonsterCard = function (_React$Component) {
                                 options.push(React.createElement(
                                     "button",
                                     { key: "makeCurrent", onClick: function onClick() {
-                                            return _this2.props.makeCurrent(_this2.props.combatant);
+                                            return _this3.props.makeCurrent(_this3.props.combatant);
                                         } },
                                     "start turn"
                                 ));
                                 options.push(React.createElement(
                                     "button",
                                     { key: "makeDefeated", onClick: function onClick() {
-                                            return _this2.props.makeDefeated(_this2.props.combatant);
+                                            return _this3.props.makeDefeated(_this3.props.combatant);
                                         } },
                                     "mark as defeated"
                                 ));
                                 options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
-                                        return _this2.props.removeCombatant(_this2.props.combatant);
+                                        return _this3.props.removeCombatant(_this3.props.combatant);
                                     } }));
                             }
                         }
@@ -936,12 +977,12 @@ var MonsterCard = function (_React$Component) {
                             options.push(React.createElement(
                                 "button",
                                 { key: "makeActive", onClick: function onClick() {
-                                        return _this2.props.makeActive(_this2.props.combatant);
+                                        return _this3.props.makeActive(_this3.props.combatant);
                                     } },
                                 "mark as active"
                             ));
                             options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
-                                    return _this2.props.removeCombatant(_this2.props.combatant);
+                                    return _this3.props.removeCombatant(_this3.props.combatant);
                                 } }));
                         }
                     }
@@ -963,7 +1004,7 @@ var MonsterCard = function (_React$Component) {
                                 name: "count",
                                 label: "count",
                                 nudgeValue: function nudgeValue(delta) {
-                                    return _this2.props.nudgeValue(_this2.props.slot, "count", delta);
+                                    return _this3.props.nudgeValue(_this3.props.slot, "count", delta);
                                 }
                             })
                         );
@@ -1167,7 +1208,7 @@ var MonsterCard = function (_React$Component) {
                             React.createElement(
                                 "div",
                                 { className: "key-stat editable", onClick: function onClick() {
-                                        return _this2.toggleInit();
+                                        return _this3.toggleInit();
                                     } },
                                 React.createElement(
                                     "div",
@@ -1197,7 +1238,7 @@ var MonsterCard = function (_React$Component) {
                             React.createElement(
                                 "div",
                                 { className: "key-stat editable", onClick: function onClick() {
-                                        return _this2.toggleHP();
+                                        return _this3.toggleHP();
                                     } },
                                 React.createElement(
                                     "div",
@@ -1220,7 +1261,7 @@ var MonsterCard = function (_React$Component) {
                                 label: "initiative",
                                 factors: [1, 5, 10],
                                 nudgeValue: function nudgeValue(delta) {
-                                    return _this2.props.nudgeValue(_this2.props.combatant, "initiative", delta);
+                                    return _this3.props.nudgeValue(_this3.props.combatant, "initiative", delta);
                                 }
                             })
                         ),
@@ -1233,7 +1274,7 @@ var MonsterCard = function (_React$Component) {
                                 label: "hit points",
                                 factors: [1, 5, 10],
                                 nudgeValue: function nudgeValue(delta) {
-                                    return _this2.props.nudgeValue(_this2.props.combatant, "hp", delta);
+                                    return _this3.props.nudgeValue(_this3.props.combatant, "hp", delta);
                                 }
                             }),
                             React.createElement(Spin, {
@@ -1242,7 +1283,7 @@ var MonsterCard = function (_React$Component) {
                                 label: "temp hp",
                                 factors: [1, 5, 10],
                                 nudgeValue: function nudgeValue(delta) {
-                                    return _this2.props.nudgeValue(_this2.props.combatant, "hpTemp", delta);
+                                    return _this3.props.nudgeValue(_this3.props.combatant, "hpTemp", delta);
                                 }
                             }),
                             React.createElement(
@@ -1283,13 +1324,13 @@ var MonsterCard = function (_React$Component) {
                         React.createElement(ConditionsPanel, {
                             combatant: this.props.combatant,
                             addCondition: function addCondition(condition) {
-                                return _this2.props.addCondition(_this2.props.combatant, condition);
+                                return _this3.props.addCondition(_this3.props.combatant, condition);
                             },
                             removeCondition: function removeCondition(condition) {
-                                return _this2.props.removeCondition(_this2.props.combatant, condition);
+                                return _this3.props.removeCondition(_this3.props.combatant, condition);
                             },
                             nudgeConditionValue: function nudgeConditionValue(condition, type, delta) {
-                                return _this2.props.nudgeConditionValue(condition, type, delta);
+                                return _this3.props.nudgeConditionValue(condition, type, delta);
                             }
                         }),
                         React.createElement(
@@ -1598,7 +1639,7 @@ var MonsterCard = function (_React$Component) {
                             combatant: this.props.combatant,
                             template: true,
                             copyTrait: function copyTrait(trait) {
-                                return _this2.props.copyTrait(trait);
+                                return _this3.props.copyTrait(trait);
                             }
                         });
                     }
@@ -1612,7 +1653,7 @@ var MonsterCard = function (_React$Component) {
                 } else {
                     var imageStyle = this.state.showDetails ? "image rotate" : "image";
                     toggle = React.createElement("img", { className: imageStyle, src: "content/down-arrow.svg", onClick: function onClick() {
-                            return _this2.toggleDetails();
+                            return _this3.toggleDetails();
                         } });
                 }
 
@@ -2523,6 +2564,74 @@ var PCCard = function (_React$Component) {
     }]);
 
     return PCCard;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var WaveCard = function (_React$Component) {
+    _inherits(WaveCard, _React$Component);
+
+    function WaveCard() {
+        _classCallCheck(this, WaveCard);
+
+        return _possibleConstructorReturn(this, (WaveCard.__proto__ || Object.getPrototypeOf(WaveCard)).apply(this, arguments));
+    }
+
+    _createClass(WaveCard, [{
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                var heading = React.createElement(
+                    "div",
+                    { className: "heading" },
+                    React.createElement(
+                        "div",
+                        { className: "title" },
+                        "wave"
+                    )
+                );
+
+                var content = React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        React.createElement("input", { type: "text", placeholder: "wave name", value: this.props.wave.name, onChange: function onChange(event) {
+                                return _this2.props.changeValue(_this2.props.wave, "name", event.target.value);
+                            } })
+                    ),
+                    React.createElement("div", { className: "divider" }),
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        React.createElement(ConfirmButton, { text: "delete wave", callback: function callback() {
+                                return _this2.props.removeWave(_this2.props.wave);
+                            } })
+                    )
+                );
+
+                return React.createElement(InfoCard, { getHeading: function getHeading() {
+                        return heading;
+                    }, getContent: function getContent() {
+                        return content;
+                    } });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return WaveCard;
 }(React.Component);
 "use strict";
 
@@ -3878,10 +3987,12 @@ var Dojo = function (_React$Component) {
             var encounter = {
                 id: guid(),
                 name: name,
-                slots: []
+                slots: [],
+                waves: []
             };
             var encounters = [].concat(this.state.encounters, [encounter]);
             sort(encounters);
+
             this.setState({
                 encounters: encounters,
                 selectedEncounterID: encounter.id
@@ -3893,6 +4004,7 @@ var Dojo = function (_React$Component) {
             var encounter = this.getEncounter(this.state.selectedEncounterID);
             var index = this.state.encounters.indexOf(encounter);
             this.state.encounters.splice(index, 1);
+
             this.setState({
                 encounters: this.state.encounters,
                 selectedEncounterID: null
@@ -3900,7 +4012,7 @@ var Dojo = function (_React$Component) {
         }
     }, {
         key: "addEncounterSlot",
-        value: function addEncounterSlot(monster) {
+        value: function addEncounterSlot(monster, waveID) {
             var group = this.findMonster(monster);
             var slot = {
                 id: guid(),
@@ -3909,34 +4021,77 @@ var Dojo = function (_React$Component) {
                 count: 1
             };
             var encounter = this.getEncounter(this.state.selectedEncounterID);
-            encounter.slots.push(slot);
-            this.sortEncounterSlots();
+            if (waveID !== null) {
+                var wave = encounter.waves.find(function (w) {
+                    return w.id === waveID;
+                });
+                wave.slots.push(slot);
+                this.sortEncounterSlots(wave);
+            } else {
+                encounter.slots.push(slot);
+                this.sortEncounterSlots(encounter);
+            }
+
             this.setState({
                 encounters: this.state.encounters
             });
+
             return slot;
         }
     }, {
         key: "removeEncounterSlot",
-        value: function removeEncounterSlot(slot) {
+        value: function removeEncounterSlot(slot, waveID) {
             var encounter = this.getEncounter(this.state.selectedEncounterID);
-            var index = encounter.slots.indexOf(slot);
-            encounter.slots.splice(index, 1);
+            if (waveID) {
+                var wave = encounter.waves.find(function (w) {
+                    return w.id === waveID;
+                });
+                var index = wave.slots.indexOf(slot);
+                wave.slots.splice(index, 1);
+            } else {
+                var index = encounter.slots.indexOf(slot);
+                encounter.slots.splice(index, 1);
+            }
+
             this.setState({
                 encounters: this.state.encounters
             });
         }
     }, {
         key: "sortEncounterSlots",
-        value: function sortEncounterSlots() {
-            var encounter = this.getEncounter(this.state.selectedEncounterID);
-            encounter.slots.sort(function (a, b) {
+        value: function sortEncounterSlots(slotContaimer) {
+            slotContaimer.slots.sort(function (a, b) {
                 var aName = a.monsterName.toLowerCase();
                 var bName = b.monsterName.toLowerCase();
                 if (aName < bName) return -1;
                 if (aName > bName) return 1;
                 return 0;
             });
+        }
+    }, {
+        key: "addWave",
+        value: function addWave() {
+            var encounter = this.getEncounter(this.state.selectedEncounterID);
+            var waveNumber = encounter.waves.length + 2;
+            var waveName = "wave " + waveNumber;
+
+            encounter.waves.push({
+                id: guid(),
+                name: waveName,
+                slots: []
+            });
+
+            this.setState({
+                encounters: this.state.encounters
+            });
+        }
+    }, {
+        key: "removeWave",
+        value: function removeWave(wave) {
+            var encounter = this.getEncounter(this.state.selectedEncounterID);
+            var index = encounter.waves.indexOf(wave);
+            encounter.waves.splice(index, 1);
+
             this.setState({
                 encounters: this.state.encounters
             });
@@ -4547,14 +4702,20 @@ var Dojo = function (_React$Component) {
                             removeEncounter: function removeEncounter(encounter) {
                                 return _this5.removeEncounter(encounter);
                             },
+                            addWave: function addWave() {
+                                return _this5.addWave();
+                            },
+                            removeWave: function removeWave(wave) {
+                                return _this5.removeWave(wave);
+                            },
                             getMonster: function getMonster(monsterName, monsterGroupName) {
                                 return _this5.getMonster(monsterName, _this5.getMonsterGroupByName(monsterGroupName));
                             },
-                            addEncounterSlot: function addEncounterSlot(encounter, monster) {
-                                return _this5.addEncounterSlot(encounter, monster);
+                            addEncounterSlot: function addEncounterSlot(monster, waveID) {
+                                return _this5.addEncounterSlot(monster, waveID);
                             },
-                            removeEncounterSlot: function removeEncounterSlot(encounter, slot) {
-                                return _this5.removeEncounterSlot(encounter, slot);
+                            removeEncounterSlot: function removeEncounterSlot(slot, waveID) {
+                                return _this5.removeEncounterSlot(slot, waveID);
                             },
                             nudgeValue: function nudgeValue(slot, type, delta) {
                                 return _this5.nudgeValue(slot, type, delta);
@@ -8693,9 +8854,137 @@ var EncounterBuilderScreen = function (_React$Component) {
             });
         }
     }, {
+        key: "getMonsterCards",
+        value: function getMonsterCards(slots, waveID) {
+            var _this2 = this;
+
+            var cards = [];
+
+            slots.forEach(function (slot) {
+                var monster = _this2.props.getMonster(slot.monsterName, slot.monsterGroupName);
+                if (monster) {
+                    cards.push(React.createElement(
+                        "div",
+                        { className: "column", key: monster.id },
+                        React.createElement(MonsterCard, {
+                            combatant: monster,
+                            slot: slot,
+                            encounter: _this2.props.selection,
+                            mode: "view encounter",
+                            nudgeValue: function nudgeValue(slot, type, delta) {
+                                return _this2.props.nudgeValue(slot, type, delta);
+                            },
+                            removeEncounterSlot: function removeEncounterSlot(slot) {
+                                return _this2.props.removeEncounterSlot(slot, waveID);
+                            }
+                        })
+                    ));
+                } else {
+                    var index = slots.indexOf(slot);
+                    var error = "unknown monster: " + slot.monsterName + " in group " + slot.monsterGroupName;
+                    cards.push(React.createElement(
+                        "div",
+                        { className: "column", key: index },
+                        React.createElement(ErrorCard, {
+                            getContent: function getContent() {
+                                return React.createElement(
+                                    "div",
+                                    { className: "section" },
+                                    error
+                                );
+                            }
+                        })
+                    ));
+                }
+            });
+
+            if (slots.length === 0) {
+                cards.push(React.createElement(
+                    "div",
+                    { className: "column", key: "empty" },
+                    React.createElement(InfoCard, { getContent: function getContent() {
+                            return React.createElement(
+                                "div",
+                                { className: "section" },
+                                "no monsters"
+                            );
+                        } })
+                ));
+            }
+
+            return cards;
+        }
+    }, {
+        key: "getLibrarySection",
+        value: function getLibrarySection() {
+            var _this3 = this;
+
+            if (!this.props.selection) {
+                return null;
+            }
+
+            var libraryCards = [];
+            libraryCards.push(React.createElement(
+                "div",
+                { className: "column", key: "filter" },
+                React.createElement(FilterCard, {
+                    filter: this.state.filter,
+                    changeValue: function changeValue(type, value) {
+                        return _this3.changeFilterValue(type, value);
+                    },
+                    nudgeValue: function nudgeValue(type, delta) {
+                        return _this3.nudgeFilterValue(type, delta);
+                    },
+                    resetFilter: function resetFilter() {
+                        return _this3.resetFilter();
+                    }
+                })
+            ));
+
+            var monsters = [];
+            if (this.props.selection) {
+                this.props.library.forEach(function (group) {
+                    group.monsters.forEach(function (monster) {
+                        if (_this3.matchMonster(monster)) {
+                            monsters.push(monster);
+                        }
+                    });
+                });
+                monsters.sort(function (a, b) {
+                    if (a.name < b.name) return -1;
+                    if (a.name > b.name) return 1;
+                    return 0;
+                });
+            }
+            monsters.forEach(function (monster) {
+                // TODO: Add a note if the monster is already in the encounter or one of its waves
+
+                libraryCards.push(React.createElement(
+                    "div",
+                    { className: "column", key: monster.id },
+                    React.createElement(MonsterCard, {
+                        key: monster.id,
+                        combatant: monster,
+                        encounter: _this3.props.selection,
+                        library: _this3.props.library,
+                        mode: "view encounter",
+                        addEncounterSlot: function addEncounterSlot(combatant, waveID) {
+                            return _this3.props.addEncounterSlot(combatant, waveID);
+                        }
+                    })
+                ));
+            });
+
+            return React.createElement(CardGroup, {
+                heading: "monster library",
+                content: libraryCards,
+                showToggle: true
+            });
+        }
+    }, {
         key: "render",
         value: function render() {
-            var _this2 = this;
+            var _this4 = this;
 
             try {
                 var help = null;
@@ -8711,14 +9000,18 @@ var EncounterBuilderScreen = function (_React$Component) {
                         encounter: encounter,
                         selected: encounter === this.props.selection,
                         setSelection: function setSelection(encounter) {
-                            return _this2.props.selectEncounter(encounter);
+                            return _this4.props.selectEncounter(encounter);
                         }
                     }));
                 };
 
+                var encounterName = null;
                 var encounterCards = [];
+                var waves = [];
 
                 if (this.props.selection) {
+                    encounterName = this.props.selection.name || "unnamed encounter";
+
                     encounterCards.push(React.createElement(
                         "div",
                         { className: "column", key: "info" },
@@ -8726,144 +9019,51 @@ var EncounterBuilderScreen = function (_React$Component) {
                             selection: this.props.selection,
                             parties: this.props.parties,
                             changeValue: function changeValue(type, value) {
-                                return _this2.props.changeValue(_this2.props.selection, type, value);
+                                return _this4.props.changeValue(_this4.props.selection, type, value);
+                            },
+                            addWave: function addWave() {
+                                return _this4.props.addWave();
                             },
                             removeEncounter: function removeEncounter() {
-                                return _this2.props.removeEncounter();
+                                return _this4.props.removeEncounter();
                             },
                             getMonster: function getMonster(monsterName, monsterGroupName) {
-                                return _this2.props.getMonster(monsterName, monsterGroupName);
+                                return _this4.props.getMonster(monsterName, monsterGroupName);
                             }
                         })
                     ));
 
-                    this.props.selection.slots.forEach(function (slot) {
-                        var monster = _this2.props.getMonster(slot.monsterName, slot.monsterGroupName);
-                        if (monster) {
-                            encounterCards.push(React.createElement(
-                                "div",
-                                { className: "column", key: monster.id },
-                                React.createElement(MonsterCard, {
-                                    combatant: monster,
-                                    slot: slot,
-                                    mode: "view encounter",
-                                    nudgeValue: function nudgeValue(slot, type, delta) {
-                                        return _this2.props.nudgeValue(slot, type, delta);
-                                    },
-                                    removeEncounterSlot: function removeEncounterSlot(slot) {
-                                        return _this2.props.removeEncounterSlot(slot);
-                                    }
-                                })
-                            ));
-                        } else {
-                            var index = _this2.props.selection.slots.indexOf(slot);
-                            var error = "unknown monster: " + slot.monsterName + " in group " + slot.monsterGroupName;
-                            encounterCards.push(React.createElement(
-                                "div",
-                                { className: "column", key: index },
-                                React.createElement(ErrorCard, { getContent: function getContent() {
-                                        return React.createElement(
-                                            "div",
-                                            { className: "section" },
-                                            error
-                                        );
-                                    } })
-                            ));
-                        }
+                    this.getMonsterCards(this.props.selection.slots, null).forEach(function (card) {
+                        return encounterCards.push(card);
                     });
-                    if (this.props.selection.slots.length === 0) {
-                        encounterCards.push(React.createElement(
+
+                    waves = this.props.selection.waves.map(function (wave) {
+                        var waveCards = [];
+                        waveCards.push(React.createElement(
                             "div",
-                            { className: "column", key: "empty" },
-                            React.createElement(InfoCard, { getContent: function getContent() {
-                                    return React.createElement(
-                                        "div",
-                                        { className: "section" },
-                                        "no monsters"
-                                    );
-                                } })
+                            { className: "column", key: "info" },
+                            React.createElement(WaveCard, {
+                                wave: wave,
+                                removeWave: function removeWave(wave) {
+                                    return _this4.props.removeWave(wave);
+                                },
+                                changeValue: function changeValue(wave, field, value) {
+                                    return _this4.props.changeValue(wave, field, value);
+                                }
+                            })
                         ));
-                    }
-                }
 
-                var libraryCards = [];
-                libraryCards.push(React.createElement(
-                    "div",
-                    { className: "column", key: "filter" },
-                    React.createElement(FilterCard, {
-                        filter: this.state.filter,
-                        changeValue: function changeValue(type, value) {
-                            return _this2.changeFilterValue(type, value);
-                        },
-                        nudgeValue: function nudgeValue(type, delta) {
-                            return _this2.nudgeFilterValue(type, delta);
-                        },
-                        resetFilter: function resetFilter() {
-                            return _this2.resetFilter();
-                        }
-                    })
-                ));
+                        _this4.getMonsterCards(wave.slots, wave.id).forEach(function (card) {
+                            return waveCards.push(card);
+                        });
 
-                var monsters = [];
-                if (this.props.selection) {
-                    this.props.library.forEach(function (group) {
-                        group.monsters.forEach(function (monster) {
-                            if (_this2.matchMonster(monster)) {
-                                monsters.push(monster);
-                            }
+                        return React.createElement(CardGroup, {
+                            key: wave.id,
+                            heading: wave.name || "unnamed wave",
+                            content: waveCards,
+                            showToggle: true
                         });
                     });
-                    monsters.sort(function (a, b) {
-                        if (a.name < b.name) return -1;
-                        if (a.name > b.name) return 1;
-                        return 0;
-                    });
-                }
-                monsters.forEach(function (monster) {
-                    if (_this2.inEncounter(monster)) {
-                        var title = monster.name;
-                        libraryCards.push(React.createElement(
-                            "div",
-                            { className: "column", key: monster.id },
-                            React.createElement(InfoCard, {
-                                getHeading: function getHeading() {
-                                    return React.createElement(
-                                        "div",
-                                        { className: "heading" },
-                                        title
-                                    );
-                                },
-                                getContent: function getContent() {
-                                    return React.createElement(
-                                        "div",
-                                        { className: "section" },
-                                        "already in encounter"
-                                    );
-                                }
-                            })
-                        ));
-                    } else {
-                        libraryCards.push(React.createElement(
-                            "div",
-                            { className: "column", key: monster.id },
-                            React.createElement(MonsterCard, {
-                                key: monster.id,
-                                combatant: monster,
-                                mode: "view encounter",
-                                addEncounterSlot: function addEncounterSlot(combatant) {
-                                    return _this2.props.addEncounterSlot(combatant);
-                                }
-                            })
-                        ));
-                    }
-                });
-
-                var name = null;
-                if (this.props.selection) {
-                    name = this.props.selection.name;
-                    if (!name) {
-                        name = "unnamed encounter";
-                    }
                 }
 
                 return React.createElement(
@@ -8879,7 +9079,7 @@ var EncounterBuilderScreen = function (_React$Component) {
                             React.createElement(
                                 "button",
                                 { onClick: function onClick() {
-                                        return _this2.props.addEncounter("new encounter");
+                                        return _this4.props.addEncounter("new encounter");
                                     } },
                                 "add a new encounter"
                             )
@@ -8891,18 +9091,14 @@ var EncounterBuilderScreen = function (_React$Component) {
                         { className: "columns small-6 medium-8 large-9 scrollable" },
                         React.createElement(CardGroup, {
                             content: encounterCards,
-                            heading: name,
+                            heading: encounterName,
                             showClose: this.props.selection !== null,
                             close: function close() {
-                                return _this2.props.selectEncounter(null);
+                                return _this4.props.selectEncounter(null);
                             }
                         }),
-                        React.createElement(CardGroup, {
-                            heading: "monster library",
-                            content: libraryCards,
-                            hidden: !this.props.selection,
-                            showToggle: true
-                        })
+                        waves,
+                        this.getLibrarySection()
                     )
                 );
             } catch (e) {
