@@ -683,7 +683,6 @@ class Dojo extends React.Component {
                 combat: {
                     partyID: party ? party.id : null,
                     encounterID: encounter ? encounter.id : null,
-                    partyInitMode: "manual",
                     encounterInitMode: "group",
                     monsterNames: getMonsterNames(encounter)
                 }
@@ -700,6 +699,7 @@ class Dojo extends React.Component {
 
         var combat = {
             id: guid(),
+            encounterID: encounter.id,
             name: partyName + " vs " + encounterName,
             combatants: [],
             round: 1,
@@ -775,6 +775,23 @@ class Dojo extends React.Component {
         });
     }
 
+    openWaveModal() {
+        var combat = this.getCombat(this.state.selectedCombatID);
+        var encounter = this.getEncounter(combat.encounterID);
+
+        this.setState({
+            modal: {
+                type: "combat-wave",
+                combat: {
+                    encounterID: combat.encounterID,
+                    encounterInitMode: "group",
+                    waveID: null,
+                    monsterNames: getMonsterNames(encounter)
+                }
+            }
+        });
+    }
+
     pauseCombat() {
         var combat = this.getCombat(this.state.selectedCombatID);
         combat.timestamp = new Date().toLocaleString();
@@ -844,6 +861,67 @@ class Dojo extends React.Component {
                 combats: this.state.combats
             });
         }
+    }
+
+    addWave() {
+        var encounter = this.getEncounter(this.state.modal.combat.encounterID);
+        var combat = this.getCombat(this.state.selectedCombatID);
+        var wave = encounter.waves.find(w => w.id === this.state.modal.combat.waveID);
+
+        wave.slots.forEach(slot => {
+            var group = this.getMonsterGroupByName(slot.monsterGroupName);
+            var monster = this.getMonster(slot.monsterName, group);
+
+            if (monster) {
+                var init = parseInt(modifier(monster.abilityScores.dex));
+                var groupRoll = dieRoll();
+
+                for (var n = 0; n !== slot.count; ++n) {
+                    var singleRoll = dieRoll();
+
+                    var combatant = JSON.parse(JSON.stringify(monster));
+                    combatant.id = guid();
+
+                    combatant.displayName = null;
+                    if (this.state.modal.combat.monsterNames) {
+                        var slotNames = this.state.modal.combat.monsterNames.find(names => names.id === slot.id);
+                        if (slotNames) {
+                            combatant.displayName = slotNames.names[n];
+                        }
+                    }
+
+                    switch (this.state.modal.combat.encounterInitMode) {
+                        case "manual":
+                            combatant.initiative = 10;
+                            break;
+                        case "group":
+                            combatant.initiative = init + groupRoll;
+                            break;
+                        case "individual":
+                            combatant.initiative = init + singleRoll;
+                            break;
+                    }
+
+                    combatant.current = false;
+                    combatant.pending = (this.state.modal.combat.encounterInitMode === "manual");
+                    combatant.active = (this.state.modal.combat.encounterInitMode !== "manual");
+                    combatant.defeated = false;
+        
+                    combatant.hp = combatant.hpMax;
+                    combatant.conditions = [];
+                    combat.combatants.push(combatant);
+                }
+            } else {
+                combat.issues.push("unknown monster: " + slot.monsterName + " in group " + slot.monsterGroupName);
+            }
+        });
+
+        this.sortCombatants(combat);
+
+        this.setState({
+            combats: this.state.combats,
+            modal: null
+        });
     }
 
     removeCombatant(combatant) {
@@ -1225,6 +1303,8 @@ class Dojo extends React.Component {
                             .forEach(combatant => {
                                 xp += experience(combatant.challenge);
                             });
+                        
+                        var encounter = this.getEncounter(combat.encounterID);
 
                         action = (
                             <div>
@@ -1233,6 +1313,9 @@ class Dojo extends React.Component {
                                 </div>
                                 <div className="section">
                                     <div>xp: {xp}</div>
+                                </div>
+                                <div className="section" style={{ display: encounter.waves.length === 0 ? "none" : ""}}>
+                                    <button onClick={() => this.openWaveModal()}>add wave</button>
                                 </div>
                                 <div className="section">
                                     <button onClick={() => this.pauseCombat()}>pause encounter</button>
@@ -1309,12 +1392,30 @@ class Dojo extends React.Component {
                                 getMonster={(monsterName, monsterGroupName) => this.getMonster(monsterName, this.getMonsterGroupByName(monsterGroupName))}
                                 notify={() => this.setState({modal: this.state.modal})}
                             />
-                        )
+                        );
                         modalAllowClose = false;
                         modalAllowScroll = false;
                         var canClose = this.state.modal.combat.partyID && this.state.modal.combat.encounterID;
                         modalButtons.right = [
                             <button key="start encounter" className={canClose ? "" : "disabled"} onClick={() => this.startCombat()}>start encounter</button>,
+                            <button key="cancel" onClick={() => this.closeModal()}>cancel</button>
+                        ];
+                        break;
+                    case "combat-wave":
+                        modalTitle = "encounter waves";
+                        modalContent = (
+                            <CombatStartModal
+                                combat={this.state.modal.combat}
+                                encounters={this.state.encounters}
+                                getMonster={(monsterName, monsterGroupName) => this.getMonster(monsterName, this.getMonsterGroupByName(monsterGroupName))}
+                                notify={() => this.setState({modal: this.state.modal})}
+                            />
+                        );
+                        modalAllowClose = false;
+                        modalAllowScroll = false;
+                        var canClose = this.state.modal.combat.waveID !== null;
+                        modalButtons.right = [
+                            <button key="add wave" className={canClose ? "" : "disabled"} onClick={() => this.addWave()}>add wave</button>,
                             <button key="cancel" onClick={() => this.closeModal()}>cancel</button>
                         ];
                         break;

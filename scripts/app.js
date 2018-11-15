@@ -4112,7 +4112,6 @@ var Dojo = function (_React$Component) {
                     combat: {
                         partyID: party ? party.id : null,
                         encounterID: encounter ? encounter.id : null,
-                        partyInitMode: "manual",
                         encounterInitMode: "group",
                         monsterNames: getMonsterNames(encounter)
                     }
@@ -4132,6 +4131,7 @@ var Dojo = function (_React$Component) {
 
             var combat = {
                 id: guid(),
+                encounterID: encounter.id,
                 name: partyName + " vs " + encounterName,
                 combatants: [],
                 round: 1,
@@ -4211,6 +4211,24 @@ var Dojo = function (_React$Component) {
             });
         }
     }, {
+        key: "openWaveModal",
+        value: function openWaveModal() {
+            var combat = this.getCombat(this.state.selectedCombatID);
+            var encounter = this.getEncounter(combat.encounterID);
+
+            this.setState({
+                modal: {
+                    type: "combat-wave",
+                    combat: {
+                        encounterID: combat.encounterID,
+                        encounterInitMode: "group",
+                        waveID: null,
+                        monsterNames: getMonsterNames(encounter)
+                    }
+                }
+            });
+        }
+    }, {
         key: "pauseCombat",
         value: function pauseCombat() {
             var combat = this.getCombat(this.state.selectedCombatID);
@@ -4286,6 +4304,74 @@ var Dojo = function (_React$Component) {
                     combats: this.state.combats
                 });
             }
+        }
+    }, {
+        key: "addWave",
+        value: function addWave() {
+            var _this5 = this;
+
+            var encounter = this.getEncounter(this.state.modal.combat.encounterID);
+            var combat = this.getCombat(this.state.selectedCombatID);
+            var wave = encounter.waves.find(function (w) {
+                return w.id === _this5.state.modal.combat.waveID;
+            });
+
+            wave.slots.forEach(function (slot) {
+                var group = _this5.getMonsterGroupByName(slot.monsterGroupName);
+                var monster = _this5.getMonster(slot.monsterName, group);
+
+                if (monster) {
+                    var init = parseInt(modifier(monster.abilityScores.dex));
+                    var groupRoll = dieRoll();
+
+                    for (var n = 0; n !== slot.count; ++n) {
+                        var singleRoll = dieRoll();
+
+                        var combatant = JSON.parse(JSON.stringify(monster));
+                        combatant.id = guid();
+
+                        combatant.displayName = null;
+                        if (_this5.state.modal.combat.monsterNames) {
+                            var slotNames = _this5.state.modal.combat.monsterNames.find(function (names) {
+                                return names.id === slot.id;
+                            });
+                            if (slotNames) {
+                                combatant.displayName = slotNames.names[n];
+                            }
+                        }
+
+                        switch (_this5.state.modal.combat.encounterInitMode) {
+                            case "manual":
+                                combatant.initiative = 10;
+                                break;
+                            case "group":
+                                combatant.initiative = init + groupRoll;
+                                break;
+                            case "individual":
+                                combatant.initiative = init + singleRoll;
+                                break;
+                        }
+
+                        combatant.current = false;
+                        combatant.pending = _this5.state.modal.combat.encounterInitMode === "manual";
+                        combatant.active = _this5.state.modal.combat.encounterInitMode !== "manual";
+                        combatant.defeated = false;
+
+                        combatant.hp = combatant.hpMax;
+                        combatant.conditions = [];
+                        combat.combatants.push(combatant);
+                    }
+                } else {
+                    combat.issues.push("unknown monster: " + slot.monsterName + " in group " + slot.monsterGroupName);
+                }
+            });
+
+            this.sortCombatants(combat);
+
+            this.setState({
+                combats: this.state.combats,
+                modal: null
+            });
         }
     }, {
         key: "removeCombatant",
@@ -4581,7 +4667,7 @@ var Dojo = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            var _this5 = this;
+            var _this6 = this;
 
             try {
                 var content = null;
@@ -4591,7 +4677,7 @@ var Dojo = function (_React$Component) {
                         content = React.createElement(HomeScreen, {
                             library: this.state.library,
                             addOpenGameContent: function addOpenGameContent() {
-                                return _this5.addOpenGameContent();
+                                return _this6.addOpenGameContent();
                             }
                         });
                         break;
@@ -4601,28 +4687,28 @@ var Dojo = function (_React$Component) {
                             selection: this.getParty(this.state.selectedPartyID),
                             showHelp: this.state.options.showHelp,
                             selectParty: function selectParty(party) {
-                                return _this5.selectParty(party);
+                                return _this6.selectParty(party);
                             },
                             addParty: function addParty(name) {
-                                return _this5.addParty(name);
+                                return _this6.addParty(name);
                             },
                             removeParty: function removeParty() {
-                                return _this5.removeParty();
+                                return _this6.removeParty();
                             },
                             addPC: function addPC(name) {
-                                return _this5.addPC(name);
+                                return _this6.addPC(name);
                             },
                             removePC: function removePC(pc) {
-                                return _this5.removePC(pc);
+                                return _this6.removePC(pc);
                             },
                             sortPCs: function sortPCs() {
-                                return _this5.sortPCs();
+                                return _this6.sortPCs();
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this5.changeValue(combatant, type, value);
+                                return _this6.changeValue(combatant, type, value);
                             },
                             nudgeValue: function nudgeValue(combatant, type, delta) {
-                                return _this5.nudgeValue(combatant, type, delta);
+                                return _this6.nudgeValue(combatant, type, delta);
                             }
                         });
                         break;
@@ -4632,40 +4718,40 @@ var Dojo = function (_React$Component) {
                             selection: this.getMonsterGroup(this.state.selectedMonsterGroupID),
                             showHelp: this.state.options.showHelp,
                             selectMonsterGroup: function selectMonsterGroup(group) {
-                                return _this5.selectMonsterGroup(group);
+                                return _this6.selectMonsterGroup(group);
                             },
                             addMonsterGroup: function addMonsterGroup(name) {
-                                return _this5.addMonsterGroup(name);
+                                return _this6.addMonsterGroup(name);
                             },
                             removeMonsterGroup: function removeMonsterGroup() {
-                                return _this5.removeMonsterGroup();
+                                return _this6.removeMonsterGroup();
                             },
                             addMonster: function addMonster(name) {
-                                return _this5.addMonster(name);
+                                return _this6.addMonster(name);
                             },
                             removeMonster: function removeMonster(monster) {
-                                return _this5.removeMonster(monster);
+                                return _this6.removeMonster(monster);
                             },
                             sortMonsters: function sortMonsters() {
-                                return _this5.sortMonsters();
+                                return _this6.sortMonsters();
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this5.changeValue(combatant, type, value);
+                                return _this6.changeValue(combatant, type, value);
                             },
                             nudgeValue: function nudgeValue(combatant, type, delta) {
-                                return _this5.nudgeValue(combatant, type, delta);
+                                return _this6.nudgeValue(combatant, type, delta);
                             },
                             editMonster: function editMonster(combatant) {
-                                return _this5.editMonster(combatant);
+                                return _this6.editMonster(combatant);
                             },
                             cloneMonster: function cloneMonster(combatant) {
-                                return _this5.cloneMonster(combatant);
+                                return _this6.cloneMonster(combatant);
                             },
                             moveToGroup: function moveToGroup(combatant, groupID) {
-                                return _this5.moveToGroup(combatant, groupID);
+                                return _this6.moveToGroup(combatant, groupID);
                             },
                             addOpenGameContent: function addOpenGameContent() {
-                                return _this5.addOpenGameContent();
+                                return _this6.addOpenGameContent();
                             }
                         });
                         var count = 0;
@@ -4679,7 +4765,7 @@ var Dojo = function (_React$Component) {
                                 React.createElement(
                                     "button",
                                     { onClick: function onClick() {
-                                            return _this5.openDemographics();
+                                            return _this6.openDemographics();
                                         } },
                                     "demographics"
                                 )
@@ -4694,34 +4780,34 @@ var Dojo = function (_React$Component) {
                             library: this.state.library,
                             showHelp: this.state.options.showHelp,
                             selectEncounter: function selectEncounter(encounter) {
-                                return _this5.selectEncounter(encounter);
+                                return _this6.selectEncounter(encounter);
                             },
                             addEncounter: function addEncounter(name) {
-                                return _this5.addEncounter(name);
+                                return _this6.addEncounter(name);
                             },
                             removeEncounter: function removeEncounter(encounter) {
-                                return _this5.removeEncounter(encounter);
+                                return _this6.removeEncounter(encounter);
                             },
                             addWave: function addWave() {
-                                return _this5.addWave();
+                                return _this6.addWave();
                             },
                             removeWave: function removeWave(wave) {
-                                return _this5.removeWave(wave);
+                                return _this6.removeWave(wave);
                             },
                             getMonster: function getMonster(monsterName, monsterGroupName) {
-                                return _this5.getMonster(monsterName, _this5.getMonsterGroupByName(monsterGroupName));
+                                return _this6.getMonster(monsterName, _this6.getMonsterGroupByName(monsterGroupName));
                             },
                             addEncounterSlot: function addEncounterSlot(monster, waveID) {
-                                return _this5.addEncounterSlot(monster, waveID);
+                                return _this6.addEncounterSlot(monster, waveID);
                             },
                             removeEncounterSlot: function removeEncounterSlot(slot, waveID) {
-                                return _this5.removeEncounterSlot(slot, waveID);
+                                return _this6.removeEncounterSlot(slot, waveID);
                             },
                             nudgeValue: function nudgeValue(slot, type, delta) {
-                                return _this5.nudgeValue(slot, type, delta);
+                                return _this6.nudgeValue(slot, type, delta);
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this5.changeValue(combatant, type, value);
+                                return _this6.changeValue(combatant, type, value);
                             }
                         });
                         break;
@@ -4734,37 +4820,37 @@ var Dojo = function (_React$Component) {
                             combat: combat,
                             showHelp: this.state.options.showHelp,
                             createCombat: function createCombat() {
-                                return _this5.createCombat();
+                                return _this6.createCombat();
                             },
                             resumeEncounter: function resumeEncounter(combat) {
-                                return _this5.resumeCombat(combat);
+                                return _this6.resumeCombat(combat);
                             },
                             nudgeValue: function nudgeValue(combatant, type, delta) {
-                                return _this5.nudgeValue(combatant, type, delta);
+                                return _this6.nudgeValue(combatant, type, delta);
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this5.changeValue(combatant, type, value);
+                                return _this6.changeValue(combatant, type, value);
                             },
                             makeCurrent: function makeCurrent(combatant) {
-                                return _this5.makeCurrent(combatant);
+                                return _this6.makeCurrent(combatant);
                             },
                             makeActive: function makeActive(combatant) {
-                                return _this5.makeActive(combatant);
+                                return _this6.makeActive(combatant);
                             },
                             makeDefeated: function makeDefeated(combatant) {
-                                return _this5.makeDefeated(combatant);
+                                return _this6.makeDefeated(combatant);
                             },
                             removeCombatant: function removeCombatant(combatant) {
-                                return _this5.removeCombatant(combatant);
+                                return _this6.removeCombatant(combatant);
                             },
                             addCondition: function addCondition(combatant, condition) {
-                                return _this5.addCondition(combatant, condition);
+                                return _this6.addCondition(combatant, condition);
                             },
                             removeCondition: function removeCondition(combatant, condition) {
-                                return _this5.removeCondition(combatant, condition);
+                                return _this6.removeCondition(combatant, condition);
                             },
                             endTurn: function endTurn(combatant) {
-                                return _this5.endTurn(combatant);
+                                return _this6.endTurn(combatant);
                             }
                         });
                         if (combat) {
@@ -4774,6 +4860,8 @@ var Dojo = function (_React$Component) {
                             }).forEach(function (combatant) {
                                 xp += experience(combatant.challenge);
                             });
+
+                            var encounter = this.getEncounter(combat.encounterID);
 
                             action = React.createElement(
                                 "div",
@@ -4800,11 +4888,22 @@ var Dojo = function (_React$Component) {
                                 ),
                                 React.createElement(
                                     "div",
+                                    { className: "section", style: { display: encounter.waves.length === 0 ? "none" : "" } },
+                                    React.createElement(
+                                        "button",
+                                        { onClick: function onClick() {
+                                                return _this6.openWaveModal();
+                                            } },
+                                        "add wave"
+                                    )
+                                ),
+                                React.createElement(
+                                    "div",
                                     { className: "section" },
                                     React.createElement(
                                         "button",
                                         { onClick: function onClick() {
-                                                return _this5.pauseCombat();
+                                                return _this6.pauseCombat();
                                             } },
                                         "pause encounter"
                                     )
@@ -4815,7 +4914,7 @@ var Dojo = function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         { onClick: function onClick() {
-                                                return _this5.endCombat();
+                                                return _this6.endCombat();
                                             } },
                                         "end encounter"
                                     )
@@ -4841,10 +4940,10 @@ var Dojo = function (_React$Component) {
                             modalContent = React.createElement(AboutModal, {
                                 options: this.state.options,
                                 resetAll: function resetAll() {
-                                    return _this5.resetAll();
+                                    return _this6.resetAll();
                                 },
                                 changeValue: function changeValue(source, type, value) {
-                                    return _this5.changeValue(source, type, value);
+                                    return _this6.changeValue(source, type, value);
                                 }
                             });
                             break;
@@ -4868,19 +4967,19 @@ var Dojo = function (_React$Component) {
                                 label: "similar monsters",
                                 checked: this.state.modal.showMonsters,
                                 changeValue: function changeValue() {
-                                    return _this5.toggleShowSimilarMonsters();
+                                    return _this6.toggleShowSimilarMonsters();
                                 }
                             })];
                             modalButtons.right = [React.createElement(
                                 "button",
                                 { key: "save", onClick: function onClick() {
-                                        return _this5.saveMonster();
+                                        return _this6.saveMonster();
                                     } },
                                 "save"
                             ), React.createElement(
                                 "button",
                                 { key: "cancel", onClick: function onClick() {
-                                        return _this5.closeModal();
+                                        return _this6.closeModal();
                                     } },
                                 "cancel"
                             )];
@@ -4892,10 +4991,10 @@ var Dojo = function (_React$Component) {
                                 parties: this.state.parties,
                                 encounters: this.state.encounters,
                                 getMonster: function getMonster(monsterName, monsterGroupName) {
-                                    return _this5.getMonster(monsterName, _this5.getMonsterGroupByName(monsterGroupName));
+                                    return _this6.getMonster(monsterName, _this6.getMonsterGroupByName(monsterGroupName));
                                 },
                                 notify: function notify() {
-                                    return _this5.setState({ modal: _this5.state.modal });
+                                    return _this6.setState({ modal: _this6.state.modal });
                                 }
                             });
                             modalAllowClose = false;
@@ -4904,13 +5003,42 @@ var Dojo = function (_React$Component) {
                             modalButtons.right = [React.createElement(
                                 "button",
                                 { key: "start encounter", className: canClose ? "" : "disabled", onClick: function onClick() {
-                                        return _this5.startCombat();
+                                        return _this6.startCombat();
                                     } },
                                 "start encounter"
                             ), React.createElement(
                                 "button",
                                 { key: "cancel", onClick: function onClick() {
-                                        return _this5.closeModal();
+                                        return _this6.closeModal();
+                                    } },
+                                "cancel"
+                            )];
+                            break;
+                        case "combat-wave":
+                            modalTitle = "encounter waves";
+                            modalContent = React.createElement(CombatStartModal, {
+                                combat: this.state.modal.combat,
+                                encounters: this.state.encounters,
+                                getMonster: function getMonster(monsterName, monsterGroupName) {
+                                    return _this6.getMonster(monsterName, _this6.getMonsterGroupByName(monsterGroupName));
+                                },
+                                notify: function notify() {
+                                    return _this6.setState({ modal: _this6.state.modal });
+                                }
+                            });
+                            modalAllowClose = false;
+                            modalAllowScroll = false;
+                            var canClose = this.state.modal.combat.waveID !== null;
+                            modalButtons.right = [React.createElement(
+                                "button",
+                                { key: "add wave", className: canClose ? "" : "disabled", onClick: function onClick() {
+                                        return _this6.addWave();
+                                    } },
+                                "add wave"
+                            ), React.createElement(
+                                "button",
+                                { key: "cancel", onClick: function onClick() {
+                                        return _this6.closeModal();
                                     } },
                                 "cancel"
                             )];
@@ -4932,7 +5060,7 @@ var Dojo = function (_React$Component) {
                                     modalTitle
                                 ),
                                 modalAllowClose ? React.createElement("img", { className: "image", src: "content/close-white.svg", onClick: function onClick() {
-                                        return _this5.closeModal();
+                                        return _this6.closeModal();
                                     } }) : null
                             ),
                             React.createElement(
@@ -4965,10 +5093,10 @@ var Dojo = function (_React$Component) {
                         action: action,
                         blur: modal !== null,
                         openHome: function openHome() {
-                            return _this5.setView("home");
+                            return _this6.setView("home");
                         },
                         openAbout: function openAbout() {
-                            return _this5.openAbout();
+                            return _this6.openAbout();
                         }
                     }),
                     React.createElement(
@@ -4983,7 +5111,7 @@ var Dojo = function (_React$Component) {
                         encounters: this.state.encounters,
                         blur: modal !== null,
                         setView: function setView(view) {
-                            return _this5.setView(view);
+                            return _this6.setView(view);
                         }
                     }),
                     modal
@@ -5656,11 +5784,22 @@ var CombatStartModal = function (_React$Component) {
             });
         }
     }, {
-        key: "setPartyInitMode",
-        value: function setPartyInitMode(mode) {
-            this.state.combat.partyInitMode = mode;
+        key: "setWave",
+        value: function setWave(waveID) {
+            var _this4 = this;
+
+            this.state.combat.waveID = waveID;
+            var enc = this.props.encounters.find(function (enc) {
+                return enc.id === _this4.state.combat.encounterID;
+            });
+            var wave = enc.waves.find(function (w) {
+                return w.id === waveID;
+            });
+            this.state.combat.monsterNames = getMonsterNames(wave);
             this.setState({
                 combat: this.state.combat
+            }, function () {
+                return _this4.props.notify();
             });
         }
     }, {
@@ -5690,13 +5829,13 @@ var CombatStartModal = function (_React$Component) {
     }, {
         key: "getPartySection",
         value: function getPartySection() {
-            var _this4 = this;
+            var _this5 = this;
 
             if (this.props.parties.length === 0) {
                 return React.createElement(
                     "div",
                     { className: "text" },
-                    "you have not defined any pcs"
+                    "you have not defined any parties"
                 );
             }
 
@@ -5710,7 +5849,7 @@ var CombatStartModal = function (_React$Component) {
             var partyContent = null;
             if (this.state.combat.partyID) {
                 var selectedParty = this.props.parties.find(function (p) {
-                    return p.id === _this4.state.combat.partyID;
+                    return p.id === _this5.state.combat.partyID;
                 });
                 var pcs = selectedParty.pcs.filter(function (pc) {
                     return pc.active;
@@ -5720,9 +5859,13 @@ var CombatStartModal = function (_React$Component) {
                     return React.createElement(
                         "li",
                         { key: pc.id },
-                        pc.name || "unnamed pc"
+                        pc.name || "unnamed pc",
+                        " (level ",
+                        pc.level,
+                        ")"
                     );
                 });
+
                 if (pcSections.length === 0) {
                     pcSections.push(React.createElement(
                         "li",
@@ -5734,6 +5877,11 @@ var CombatStartModal = function (_React$Component) {
                 partyContent = React.createElement(
                     "div",
                     null,
+                    React.createElement(
+                        "div",
+                        { className: "subheading" },
+                        "pcs"
+                    ),
                     React.createElement(
                         "ul",
                         null,
@@ -5755,16 +5903,222 @@ var CombatStartModal = function (_React$Component) {
                     placeholder: "select party...",
                     selectedID: this.state.combat.partyID,
                     select: function select(optionID) {
-                        return _this4.setParty(optionID);
+                        return _this5.setParty(optionID);
                     }
                 }),
                 partyContent
             );
         }
     }, {
+        key: "getEncounterSection",
+        value: function getEncounterSection() {
+            var _this6 = this;
+
+            if (this.props.encounters.length === 0) {
+                return React.createElement(
+                    "div",
+                    { className: "text" },
+                    "you have not built any encounters"
+                );
+            }
+
+            var encounterOptions = this.props.encounters.map(function (encounter) {
+                return {
+                    id: encounter.id,
+                    text: encounter.name || "unnamed encounter"
+                };
+            });
+
+            var encounterContent = null;
+            if (this.state.combat.encounterID) {
+                var selectedEncounter = this.props.encounters.find(function (e) {
+                    return e.id === _this6.state.combat.encounterID;
+                });
+                var monsterSections = selectedEncounter.slots.map(function (slot) {
+                    var name = slot.monsterName || "unnamed monster";
+                    if (slot.count > 1) {
+                        name += " (x" + slot.count + ")";
+                    }
+                    return React.createElement(
+                        "li",
+                        { key: slot.id },
+                        name
+                    );
+                });
+
+                if (monsterSections.length === 0) {
+                    monsterSections.push(React.createElement(
+                        "li",
+                        { key: "empty" },
+                        "no monsters"
+                    ));
+                }
+
+                var waves = selectedEncounter.waves.map(function (wave) {
+                    if (wave.slots.length === 0) {
+                        return null;
+                    }
+
+                    var waveMonsters = wave.slots.map(function (slot) {
+                        var name = slot.monsterName || "unnamed monster";
+                        if (slot.count > 1) {
+                            name += " x" + slot.count;
+                        }
+                        return React.createElement(
+                            "li",
+                            { key: slot.id },
+                            name
+                        );
+                    });
+
+                    return React.createElement(
+                        "div",
+                        { key: wave.id },
+                        React.createElement(
+                            "div",
+                            { className: "subheading" },
+                            wave.name || "unnamed wave"
+                        ),
+                        React.createElement(
+                            "ul",
+                            null,
+                            waveMonsters
+                        )
+                    );
+                });
+
+                encounterContent = React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "div",
+                        { className: "subheading" },
+                        "monsters"
+                    ),
+                    React.createElement(
+                        "ul",
+                        null,
+                        monsterSections
+                    ),
+                    waves
+                );
+            }
+
+            return React.createElement(
+                "div",
+                null,
+                React.createElement(
+                    "div",
+                    { className: "heading" },
+                    "encounter"
+                ),
+                React.createElement(Dropdown, {
+                    options: encounterOptions,
+                    placeholder: "select encounter...",
+                    selectedID: this.state.combat.encounterID,
+                    select: function select(optionID) {
+                        return _this6.setEncounter(optionID);
+                    }
+                }),
+                encounterContent
+            );
+        }
+    }, {
+        key: "getWaveSection",
+        value: function getWaveSection() {
+            var _this7 = this;
+
+            if (this.state.combat.encounterID === null) {
+                return React.createElement(
+                    "div",
+                    { className: "text" },
+                    "you have not selected an encounter"
+                );
+            }
+
+            var selectedEncounter = this.props.encounters.find(function (e) {
+                return e.id === _this7.state.combat.encounterID;
+            });
+            if (selectedEncounter.waves.length === 0) {
+                return React.createElement(
+                    "div",
+                    { className: "text" },
+                    "you have not defined any waves"
+                );
+            }
+
+            var waveOptions = selectedEncounter.waves.map(function (wave) {
+                return {
+                    id: wave.id,
+                    text: wave.name || "unnamed wave"
+                };
+            });
+
+            var waveContent = null;
+            if (this.state.combat.waveID) {
+                var selectedWave = selectedEncounter.waves.find(function (w) {
+                    return w.id === _this7.state.combat.waveID;
+                });
+
+                var monsterSections = selectedWave.slots.map(function (slot) {
+                    var name = slot.monsterName || "unnamed monster";
+                    if (slot.count > 1) {
+                        name += " (x" + slot.count + ")";
+                    }
+                    return React.createElement(
+                        "li",
+                        { key: slot.id },
+                        name
+                    );
+                });
+
+                if (monsterSections.length === 0) {
+                    monsterSections.push(React.createElement(
+                        "li",
+                        { key: "empty" },
+                        "no monsters"
+                    ));
+                }
+
+                waveContent = React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "div",
+                        { className: "subheading" },
+                        "monsters"
+                    ),
+                    React.createElement(
+                        "ul",
+                        null,
+                        monsterSections
+                    )
+                );
+            }
+
+            return React.createElement(
+                "div",
+                null,
+                React.createElement(
+                    "div",
+                    { className: "heading" },
+                    "wave"
+                ),
+                React.createElement(Dropdown, {
+                    options: waveOptions,
+                    placeholder: "select wave...",
+                    selectedID: this.state.combat.waveID,
+                    select: function select(optionID) {
+                        return _this7.setWave(optionID);
+                    }
+                }),
+                waveContent
+            );
+        }
+    }, {
         key: "getDifficultySection",
         value: function getDifficultySection() {
-            var _this5 = this;
+            var _this8 = this;
 
             if (!this.state.combat.partyID || !this.state.combat.encounterID) {
                 return React.createElement(
@@ -5772,29 +6126,35 @@ var CombatStartModal = function (_React$Component) {
                     null,
                     React.createElement(
                         "div",
-                        { className: "subheading" },
+                        { className: "heading" },
                         "encounter difficulty"
                     ),
                     React.createElement(
                         "div",
                         { className: "section" },
-                        "select an encounter on the right to see difficulty information"
+                        "select a party and an encounter on the left to see difficulty information."
                     )
                 );
             }
 
+            // TODO: Add radio selector for difficulty after each wave
+
             var selectedEncounter = this.props.encounters.find(function (e) {
-                return e.id === _this5.state.combat.encounterID;
+                return e.id === _this8.state.combat.encounterID;
             });
             var selectedParty = this.props.parties.find(function (p) {
-                return p.id === _this5.state.combat.partyID;
+                return p.id === _this8.state.combat.partyID;
             });
 
             var monsterCount = 0;
             var monsterXp = 0;
-            selectedEncounter.slots.forEach(function (slot) {
+            var slots = [].concat(selectedEncounter.slots);
+            selectedEncounter.waves.forEach(function (wave) {
+                slots = slots.concat(wave.slots);
+            });
+            slots.forEach(function (slot) {
                 monsterCount += slot.count;
-                var monster = _this5.props.getMonster(slot.monsterName, slot.monsterGroupName);
+                var monster = _this8.props.getMonster(slot.monsterName, slot.monsterGroupName);
                 if (monster) {
                     monsterXp += experience(monster.challenge) * slot.count;
                 }
@@ -5859,6 +6219,11 @@ var CombatStartModal = function (_React$Component) {
             return React.createElement(
                 "div",
                 null,
+                React.createElement(
+                    "div",
+                    { className: "heading" },
+                    "encounter difficulty"
+                ),
                 React.createElement(
                     "div",
                     { className: "subheading" },
@@ -5939,7 +6304,7 @@ var CombatStartModal = function (_React$Component) {
                 React.createElement(
                     "div",
                     { className: "subheading" },
-                    "encounter xp value"
+                    "xp value"
                 ),
                 React.createElement(
                     "div",
@@ -5968,7 +6333,7 @@ var CombatStartModal = function (_React$Component) {
                 React.createElement(
                     "div",
                     { className: "subheading" },
-                    "encounter difficulty"
+                    "difficulty"
                 ),
                 React.createElement(
                     "div",
@@ -5999,125 +6364,98 @@ var CombatStartModal = function (_React$Component) {
             );
         }
     }, {
-        key: "getEncounterSection",
-        value: function getEncounterSection() {
-            var _this6 = this;
+        key: "getMonsterSection",
+        value: function getMonsterSection() {
+            var _this9 = this;
 
-            if (this.props.encounters.length === 0) {
+            if (this.state.combat.encounterID === null) {
                 return React.createElement(
-                    "div",
-                    { key: "no-encounters", className: "text" },
-                    "you have not built any encounters"
-                );
-            }
-
-            var encounterOptions = this.props.encounters.map(function (encounter) {
-                return {
-                    id: encounter.id,
-                    text: encounter.name || "unnamed encounter"
-                };
-            });
-
-            var encounterContent = null;
-            if (this.state.combat.encounterID) {
-                var selectedEncounter = this.props.encounters.find(function (e) {
-                    return e.id === _this6.state.combat.encounterID;
-                });
-                var monsters = selectedEncounter.slots.map(function (slot) {
-                    var name = slot.monsterName || "unnamed monster";
-                    if (slot.count > 1) {
-                        name += " x" + slot.count;
-                    }
-                    return React.createElement(
-                        "li",
-                        { key: slot.id },
-                        name
-                    );
-                });
-                if (monsters.length === 0) {
-                    monsters.push(React.createElement(
-                        "li",
-                        { key: "empty" },
-                        "no monsters"
-                    ));
-                }
-                var initOptions = [{
-                    id: "manual",
-                    text: "enter manually"
-                }, {
-                    id: "individual",
-                    text: "roll individually"
-                }, {
-                    id: "group",
-                    text: "roll in groups"
-                }];
-                var names = this.state.combat.monsterNames.map(function (slotNames) {
-                    var slot = selectedEncounter.slots.find(function (s) {
-                        return s.id === slotNames.id;
-                    });
-                    var inputs = [];
-                    for (var n = 0; n !== slotNames.names.length; ++n) {
-                        inputs.push(React.createElement(
-                            "div",
-                            { key: n },
-                            React.createElement(MonsterName, {
-                                value: slotNames.names[n],
-                                slotID: slot.id,
-                                index: n,
-                                changeName: function changeName(slotID, index, value) {
-                                    return _this6.changeName(slotID, index, value);
-                                }
-                            })
-                        ));
-                    }
-                    return React.createElement(
-                        "div",
-                        { key: slotNames.id, className: "name-row" },
-                        React.createElement(
-                            "div",
-                            { className: "name-label" },
-                            slot.monsterName
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "name-inputs" },
-                            inputs
-                        )
-                    );
-                });
-
-                encounterContent = React.createElement(
                     "div",
                     null,
                     React.createElement(
-                        "ul",
-                        null,
-                        monsters
+                        "div",
+                        { className: "heading" },
+                        "monsters"
                     ),
                     React.createElement(
                         "div",
-                        { className: "subheading" },
-                        "initiative"
-                    ),
-                    React.createElement(Selector, {
-                        options: initOptions,
-                        selectedID: this.state.combat.encounterInitMode,
-                        select: function select(optionID) {
-                            return _this6.setEncounterInitMode(optionID);
-                        }
-                    }),
-                    React.createElement(
-                        "div",
-                        { className: "subheading" },
-                        "names"
-                    ),
-                    React.createElement(
-                        "div",
-                        null,
-                        names
+                        { className: "section" },
+                        "select an encounter to see monster options here."
                     )
                 );
             }
+
+            if (!this.props.parties && this.state.combat.waveID === null) {
+                return React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "div",
+                        { className: "heading" },
+                        "monsters"
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        "select a wave to see monster options here."
+                    )
+                );
+            }
+
+            var selectedEncounter = this.props.encounters.find(function (e) {
+                return e.id === _this9.state.combat.encounterID;
+            });
+            if (this.state.combat.waveID) {
+                selectedEncounter = selectedEncounter.waves.find(function (w) {
+                    return w.id === _this9.state.combat.waveID;
+                });
+            }
+
+            var initOptions = [{
+                id: "manual",
+                text: "enter manually"
+            }, {
+                id: "individual",
+                text: "roll individually"
+            }, {
+                id: "group",
+                text: "roll in groups"
+            }];
+
+            var names = this.state.combat.monsterNames.map(function (slotNames) {
+                var slot = selectedEncounter.slots.find(function (s) {
+                    return s.id === slotNames.id;
+                });
+                var inputs = [];
+                for (var n = 0; n !== slotNames.names.length; ++n) {
+                    inputs.push(React.createElement(
+                        "div",
+                        { key: n },
+                        React.createElement(MonsterName, {
+                            value: slotNames.names[n],
+                            slotID: slot.id,
+                            index: n,
+                            changeName: function changeName(slotID, index, value) {
+                                return _this9.changeName(slotID, index, value);
+                            }
+                        })
+                    ));
+                }
+                return React.createElement(
+                    "div",
+                    { key: slotNames.id, className: "name-row" },
+                    React.createElement(
+                        "div",
+                        { className: "name-label" },
+                        slot.monsterName
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "name-inputs" },
+                        inputs
+                    )
+                );
+            });
 
             return React.createElement(
                 "div",
@@ -6125,17 +6463,30 @@ var CombatStartModal = function (_React$Component) {
                 React.createElement(
                     "div",
                     { className: "heading" },
-                    "encounter"
+                    "monsters"
                 ),
-                React.createElement(Dropdown, {
-                    options: encounterOptions,
-                    placeholder: "select encounter...",
-                    selectedID: this.state.combat.encounterID,
+                React.createElement(
+                    "div",
+                    { className: "subheading" },
+                    "initiative"
+                ),
+                React.createElement(Selector, {
+                    options: initOptions,
+                    selectedID: this.state.combat.encounterInitMode,
                     select: function select(optionID) {
-                        return _this6.setEncounter(optionID);
+                        return _this9.setEncounterInitMode(optionID);
                     }
                 }),
-                encounterContent
+                React.createElement(
+                    "div",
+                    { className: "subheading" },
+                    "names"
+                ),
+                React.createElement(
+                    "div",
+                    null,
+                    names
+                )
             );
         }
 
@@ -6145,19 +6496,49 @@ var CombatStartModal = function (_React$Component) {
         key: "render",
         value: function render() {
             try {
+                var leftSection = null;
+                var rightSection = null;
+
+                if (this.props.parties) {
+                    leftSection = React.createElement(
+                        "div",
+                        null,
+                        this.getPartySection(),
+                        this.getEncounterSection()
+                    );
+
+                    rightSection = React.createElement(
+                        "div",
+                        null,
+                        this.getDifficultySection(),
+                        this.getMonsterSection()
+                    );
+                } else {
+                    leftSection = React.createElement(
+                        "div",
+                        null,
+                        this.getWaveSection()
+                    );
+
+                    rightSection = React.createElement(
+                        "div",
+                        null,
+                        this.getMonsterSection()
+                    );
+                }
+
                 return React.createElement(
                     "div",
                     { className: "row", style: { height: "100%", margin: "0 -15px" } },
                     React.createElement(
                         "div",
                         { className: "column small-6 medium-6 large-6 scrollable" },
-                        this.getPartySection(),
-                        this.getDifficultySection()
+                        leftSection
                     ),
                     React.createElement(
                         "div",
                         { className: "column small-6 medium-6 large-6 scrollable" },
-                        this.getEncounterSection()
+                        rightSection
                     )
                 );
             } catch (e) {
@@ -6181,10 +6562,10 @@ var MonsterName = function (_React$Component2) {
     _createClass(MonsterName, [{
         key: "render",
         value: function render() {
-            var _this8 = this;
+            var _this11 = this;
 
             return React.createElement("input", { type: "text", value: this.props.value, onChange: function onChange(event) {
-                    return _this8.props.changeName(_this8.props.slotID, _this8.props.index, event.target.value);
+                    return _this11.props.changeName(_this11.props.slotID, _this11.props.index, event.target.value);
                 } });
         }
     }]);
