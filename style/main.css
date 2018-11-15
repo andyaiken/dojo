@@ -94,6 +94,7 @@ body,
 
     .list-item.selected {
         cursor: default;
+        border-color: rgba(100, 150, 240);
         background-color: rgba(100, 150, 240, 0.2);
     }
 
