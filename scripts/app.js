@@ -5213,12 +5213,8 @@ var EncounterListItem = function (_React$Component) {
                 }
 
                 var slots = [];
-                for (var n = 0; n !== this.props.encounter.slots.length; ++n) {
-                    var slot = this.props.encounter.slots[n];
-                    var text = slot.monsterName;
-                    if (!text) {
-                        text = "unnamed monster";
-                    }
+                this.props.encounter.slots.forEach(function (slot) {
+                    var text = slot.monsterName || "unnamed monster";
                     if (slot.count > 1) {
                         text += " x" + slot.count;
                     }
@@ -5227,7 +5223,7 @@ var EncounterListItem = function (_React$Component) {
                         { key: slot.id, className: "text" },
                         text
                     ));
-                }
+                });
                 if (slots.length === 0) {
                     slots.push(React.createElement(
                         "div",
@@ -5235,6 +5231,31 @@ var EncounterListItem = function (_React$Component) {
                         "no monsters"
                     ));
                 }
+                this.props.encounter.waves.forEach(function (wave) {
+                    slots.push(React.createElement(
+                        "div",
+                        { key: "name " + wave.id, className: "text subheading" },
+                        wave.name || "unnamed wave"
+                    ));
+                    wave.slots.forEach(function (slot) {
+                        var text = slot.monsterName || "unnamed monster";
+                        if (slot.count > 1) {
+                            text += " x" + slot.count;
+                        }
+                        slots.push(React.createElement(
+                            "div",
+                            { key: slot.id, className: "text" },
+                            text
+                        ));
+                    });
+                    if (slots.length === 0) {
+                        slots.push(React.createElement(
+                            "div",
+                            { key: "empty " + wave.id, className: "text" },
+                            "no monsters"
+                        ));
+                    }
+                });
 
                 return React.createElement(
                     "div",
