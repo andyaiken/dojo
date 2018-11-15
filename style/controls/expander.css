@@ -18,7 +18,6 @@
     }
 
     .expander:hover .expander-header {
-        background-color: rgb(100, 150, 240);
         background-color: rgba(100, 150, 240, 0.1);
     }
 

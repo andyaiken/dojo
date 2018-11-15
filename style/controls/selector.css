@@ -35,8 +35,7 @@
             }
 
             .selector.tabs .option.selected {
-                background-color: rgb(100, 150, 240);
-                background-color: rgba(100, 150, 240, 0.1);
+                background-color: rgba(100, 150, 240, 0.2);
                 border-bottom: 2px solid rgb(100, 150, 240);
                 cursor: default;
             }
@@ -60,12 +59,10 @@
         }
 
             .selector.radio .option:hover {
-                background-color: rgb(100, 150, 240);
                 background-color: rgba(100, 150, 240, 0.1);
             }
 
             .selector.radio .option.selected {
-                background-color: rgb(100, 150, 240);
                 background-color: rgba(100, 150, 240, 0.2);
                 font-weight: 600;
                 cursor: default;
