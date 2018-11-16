@@ -4069,8 +4069,8 @@ var Dojo = function (_React$Component) {
             });
         }
     }, {
-        key: "addWave",
-        value: function addWave() {
+        key: "addWaveToEncounter",
+        value: function addWaveToEncounter() {
             var encounter = this.getEncounter(this.state.selectedEncounterID);
             var waveNumber = encounter.waves.length + 2;
             var waveName = "wave " + waveNumber;
@@ -4306,8 +4306,8 @@ var Dojo = function (_React$Component) {
             }
         }
     }, {
-        key: "addWave",
-        value: function addWave() {
+        key: "addWaveToCombat",
+        value: function addWaveToCombat() {
             var _this5 = this;
 
             var encounter = this.getEncounter(this.state.modal.combat.encounterID);
@@ -4789,7 +4789,7 @@ var Dojo = function (_React$Component) {
                                 return _this6.removeEncounter(encounter);
                             },
                             addWave: function addWave() {
-                                return _this6.addWave();
+                                return _this6.addWaveToEncounter();
                             },
                             removeWave: function removeWave(wave) {
                                 return _this6.removeWave(wave);
@@ -5032,7 +5032,7 @@ var Dojo = function (_React$Component) {
                             modalButtons.right = [React.createElement(
                                 "button",
                                 { key: "add wave", className: canClose ? "" : "disabled", onClick: function onClick() {
-                                        return _this6.addWave();
+                                        return _this6.addWaveToCombat();
                                     } },
                                 "add wave"
                             ), React.createElement(

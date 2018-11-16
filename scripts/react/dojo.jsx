@@ -644,7 +644,7 @@ class Dojo extends React.Component {
         });
     }
 
-    addWave() {
+    addWaveToEncounter() {
         var encounter = this.getEncounter(this.state.selectedEncounterID);
         var waveNumber = encounter.waves.length + 2;
         var waveName = "wave " + waveNumber;
@@ -863,7 +863,7 @@ class Dojo extends React.Component {
         }
     }
 
-    addWave() {
+    addWaveToCombat() {
         var encounter = this.getEncounter(this.state.modal.combat.encounterID);
         var combat = this.getCombat(this.state.selectedCombatID);
         var wave = encounter.waves.find(w => w.id === this.state.modal.combat.waveID);
@@ -1265,7 +1265,7 @@ class Dojo extends React.Component {
                             selectEncounter={encounter => this.selectEncounter(encounter)}
                             addEncounter={name => this.addEncounter(name)}
                             removeEncounter={encounter => this.removeEncounter(encounter)}
-                            addWave={() => this.addWave()}
+                            addWave={() => this.addWaveToEncounter()}
                             removeWave={wave => this.removeWave(wave)}
                             getMonster={(monsterName, monsterGroupName) => this.getMonster(monsterName, this.getMonsterGroupByName(monsterGroupName))}
                             addEncounterSlot={(monster, waveID) => this.addEncounterSlot(monster, waveID)}
@@ -1415,7 +1415,7 @@ class Dojo extends React.Component {
                         modalAllowScroll = false;
                         var canClose = this.state.modal.combat.waveID !== null;
                         modalButtons.right = [
-                            <button key="add wave" className={canClose ? "" : "disabled"} onClick={() => this.addWave()}>add wave</button>,
+                            <button key="add wave" className={canClose ? "" : "disabled"} onClick={() => this.addWaveToCombat()}>add wave</button>,
                             <button key="cancel" onClick={() => this.closeModal()}>cancel</button>
                         ];
                         break;
