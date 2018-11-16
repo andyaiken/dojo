@@ -26,8 +26,7 @@
     }
 
         .spin .spin-button:hover {
-            background-color: rgb(100, 150, 240);
-            background-color: rgba(100, 150, 240, 0.2);
+            background-color: rgba(100, 150, 240, 0.1);
         }
 
     .spin .info {

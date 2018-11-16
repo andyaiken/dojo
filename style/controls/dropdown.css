@@ -70,13 +70,11 @@
 
             .dropdown .dropdown-options .dropdown-option:hover {
                 border-color: rgb(100, 150, 240);
-                background-color: rgb(100, 150, 240);
                 background-color: rgba(100, 150, 240, 0.1);
             }
 
             .dropdown .dropdown-options .dropdown-option.selected {
                 font-weight: 600;
                 border-color: rgb(100, 150, 240);
-                background-color: rgb(100, 150, 240);
-                background-color: rgba(100, 150, 240, 0.1);
+                background-color: rgba(100, 150, 240, 0.2);
             }

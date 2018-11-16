@@ -35,6 +35,10 @@
             font-weight: 600;
         }
 
+            .titlebar .action .section button {
+                min-width: 130px;
+            }
+
     .titlebar .settings-icon {
         position: absolute;
         right: 0;

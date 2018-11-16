@@ -58,7 +58,7 @@ body,
     border-bottom: 1px solid #C3C3C3;
     padding: 5px 0;
     margin: 10px 5px;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 600;
 }
 
@@ -88,14 +88,14 @@ body,
     border-left: 5px solid #404040;
 }
 
-    .list-item.selected {
-        cursor: default;
+    .list-item:hover {
+        background-color: rgba(100, 150, 240, 0.1);
     }
 
-    .list-item.selected,
-    .list-item:hover {
-        border-color: rgb(100, 150, 240);
-        background-color: rgba(100, 150, 240, 0.1);
+    .list-item.selected {
+        cursor: default;
+        border-color: rgba(100, 150, 240);
+        background-color: rgba(100, 150, 240, 0.2);
     }
 
     .list-item .heading {

@@ -7,20 +7,29 @@ class EncounterListItem extends React.Component {
             }
 
             var slots = [];
-            for (var n = 0; n !== this.props.encounter.slots.length; ++n) {
-                var slot = this.props.encounter.slots[n];
-                var text = slot.monsterName;
-                if (!text) {
-                    text = "unnamed monster";
-                }
+            this.props.encounter.slots.forEach(slot => {
+                var text = slot.monsterName || "unnamed monster";
                 if (slot.count > 1) {
                     text += " x" + slot.count;
                 }
                 slots.push(<div key={slot.id} className="text">{text}</div>);
-            }
+            });
             if (slots.length === 0) {
                 slots.push(<div key="empty" className="text">no monsters</div>);
             }
+            this.props.encounter.waves.forEach(wave => {
+                slots.push(<div key={"name " + wave.id} className="text subheading">{wave.name || "unnamed wave"}</div>);
+                wave.slots.forEach(slot => {
+                    var text = slot.monsterName || "unnamed monster";
+                    if (slot.count > 1) {
+                        text += " x" + slot.count;
+                    }
+                    slots.push(<div key={slot.id} className="text">{text}</div>);
+                });
+                if (slots.length === 0) {
+                    slots.push(<div key={"empty " + wave.id} className="text">no monsters</div>);
+                }
+            });
 
             return (
                 <div className="group">
