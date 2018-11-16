@@ -6432,6 +6432,10 @@ var CombatStartModal = function (_React$Component) {
                 });
             }
 
+            if (selectedEncounter.slots.length === 0) {
+                return null;
+            }
+
             var initOptions = [{
                 id: "manual",
                 text: "enter manually"

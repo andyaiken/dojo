@@ -394,6 +394,10 @@ class CombatStartModal extends React.Component {
             selectedEncounter = selectedEncounter.waves.find(w => w.id === this.state.combat.waveID);
         }
 
+        if (selectedEncounter.slots.length === 0) {
+            return null;
+        }
+
         var initOptions = [
             {
                 id: "manual",
