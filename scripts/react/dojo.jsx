@@ -1103,9 +1103,6 @@ class Dojo extends React.Component {
 
     resetAll() {
         this.setState({
-            options: {
-                showHelp: true
-            },
             parties: [],
             selectedPartyID: null,
             library: [],

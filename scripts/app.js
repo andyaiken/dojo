@@ -3072,7 +3072,7 @@ var Expander = function (_React$Component) {
                             { className: "expander-text" },
                             this.props.text
                         ),
-                        React.createElement("img", { className: "expander-button", src: "content/down-arrow-black.svg" })
+                        React.createElement("img", { className: "expander-button", src: "content/down-arrow.svg" })
                     ),
                     content
                 );
@@ -4573,9 +4573,6 @@ var Dojo = function (_React$Component) {
         key: "resetAll",
         value: function resetAll() {
             this.setState({
-                options: {
-                    showHelp: true
-                },
                 parties: [],
                 selectedPartyID: null,
                 library: [],

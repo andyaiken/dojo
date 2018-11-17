@@ -1,24 +1,15 @@
 ﻿.expander {
     margin: 5px 0;
     background-color: white;
-    border: 1px solid #C3C3C3;
-    border-left-width: 5px;
+    border: 1px solid rgb(100, 150, 240);
 }
 
-    .expander:hover {
-        border-color: rgb(100, 150, 240);
-    }
-
     .expander .expander-header {
-        display: block;
         height: 32px;
         padding-left: 10px;
         padding-right: 6px;
         cursor: pointer;
-    }
-
-    .expander:hover .expander-header {
-        background-color: rgba(100, 150, 240, 0.1);
+        background-color: rgb(100, 150, 240);
     }
 
         .expander .expander-header .expander-text {
@@ -27,6 +18,7 @@
             height: 32px;
             line-height: 32px;
             vertical-align: middle;
+            color: white;
             font-weight: 600;
         }
 
