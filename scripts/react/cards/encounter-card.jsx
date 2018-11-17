@@ -50,6 +50,16 @@ class EncounterCard extends React.Component {
                     }
                 });
 
+                this.props.selection.waves.forEach(wave => {
+                    wave.slots.forEach(slot => {
+                        monsterCount += slot.count;
+                        var monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
+                        if (monster) {
+                            monsterXp += experience(monster.challenge) * slot.count;
+                        }
+                    });
+                });
+
                 adjustedXp = monsterXp * experienceFactor(monsterCount);
 
                 if (this.state.partyID) {

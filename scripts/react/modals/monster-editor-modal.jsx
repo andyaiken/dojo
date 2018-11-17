@@ -200,12 +200,40 @@ class MonsterEditorModal extends React.Component {
     addTrait(type) {
         var trait = {
             id: guid(),
-            name: "New " + this.getActionTypeName(type).toLowerCase(),
+            name: "New " + this.getActionTypeName(type, false).toLowerCase(),
             usage: "",
             type: type,
             text: ""
         }
         this.state.monster.traits.push(trait);
+        this.setState({
+            monster: this.state.monster
+        });
+    }
+
+    sortTraits(type) {
+        // Take out traits of this type
+        var traits = this.state.monster.traits.filter(t => t.type === type);
+        traits.forEach(t => {
+            var index = this.state.monster.traits.indexOf(t);
+            this.state.monster.traits.splice(index, 1);
+        });
+
+        // Re-add multiattack
+        var multi = traits.find(t => {
+            var options = ["multiattack", "multi-attack", "multi attack"];
+            return options.indexOf(t.name.toLowerCase()) !== -1;
+        });
+        if (multi) {
+            var index = traits.indexOf(multi);
+            traits.splice(index, 1);
+            this.state.monster.traits.push(multi);
+        }
+
+        // Sort the rest and re-add them
+        traits = sort(traits);
+        traits.forEach(t => this.state.monster.traits.push(t));
+
         this.setState({
             monster: this.state.monster
         });
@@ -234,8 +262,12 @@ class MonsterEditorModal extends React.Component {
         });
     }
 
-    getActionTypeName(type) {
-        return traitType(type) + "s";
+    getActionTypeName(type, plural) {
+        var name = traitType(type);
+        if (plural) {
+            name += "s";
+        }
+        return name;
     }
 
     copyTrait(trait) {
@@ -490,7 +522,7 @@ class MonsterEditorModal extends React.Component {
                 <div className="row small-up-4 medium-up-4 large-up-4 value-list" key={type}>
                     <div className="column">
                         <div className={count === 0 ? "text-container disabled" : "text-container"}>
-                            {this.getActionTypeName(type)}
+                            {this.getActionTypeName(type, true)}
                         </div>
                     </div>
                     <div className="column">
@@ -735,6 +767,7 @@ class MonsterEditorModal extends React.Component {
                             combatant={this.state.monster}
                             edit={true}
                             addTrait={type => this.addTrait(type)}
+                            sortTraits={type => this.sortTraits(type)}
                             removeTrait={trait => this.removeTrait(trait)}
                             changeTrait={(trait, type, value) => this.changeTrait(trait, type, value)}
                         />

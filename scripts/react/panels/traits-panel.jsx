@@ -57,6 +57,32 @@ class TraitsPanel extends React.Component {
                     <button key="add" onClick={() => this.props.addTrait("regional")}>add a new regional effect</button>
                 );
 
+                if (traits.length > 2) {
+                    traits.push(
+                        <button key="sort" onClick={() => this.props.sortTraits("trait")}>sort traits</button>
+                    );
+                }
+                if (actions.length > 2) {
+                    actions.push(
+                        <button key="sort" onClick={() => this.props.sortTraits("action")}>sort actions</button>
+                    );
+                }
+                if (legendaryActions.length > 2) {
+                    legendaryActions.push(
+                        <button key="sort" onClick={() => this.props.sortTraits("legendary")}>sort legendary actions</button>
+                    );
+                }
+                if (lairActions.length > 2) {
+                    lairActions.push(
+                        <button key="sort" onClick={() => this.props.sortTraits("lair")}>sort lair actions</button>
+                    );
+                }
+                if (regionalEffects.length > 2) {
+                    regionalEffects.push(
+                        <button key="sort" onClick={() => this.props.sortTraits("regional")}>sort regional effects</button>
+                    );
+                }
+
                 return (
                     <div className="row">
                         <div className="columns small-6 medium-6 large-6">
