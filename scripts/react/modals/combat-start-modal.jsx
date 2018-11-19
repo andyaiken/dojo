@@ -55,7 +55,7 @@ class CombatStartModal extends React.Component {
     getPartySection() {
         if (this.props.parties.length === 0) {
             return (
-                <div className="text">you have not defined any parties</div>
+                <div className="section">you have not defined any parties</div>
             );
         }
 
@@ -108,7 +108,7 @@ class CombatStartModal extends React.Component {
     getEncounterSection() {
         if (this.props.encounters.length === 0) {
             return (
-                <div className="text">you have not built any encounters</div>
+                <div className="section">you have not built any encounters</div>
             );
         }
 
@@ -187,14 +187,14 @@ class CombatStartModal extends React.Component {
     getWaveSection() {
         if (this.state.combat.encounterID === null) {
             return (
-                <div className="text">you have not selected an encounter</div>
+                <div className="section">you have not selected an encounter</div>
             );
         }
 
         var selectedEncounter = this.props.encounters.find(e => e.id === this.state.combat.encounterID);
         if (selectedEncounter.waves.length === 0) {
             return (
-                <div className="text">you have not defined any waves</div>
+                <div className="section">you have not defined any waves</div>
             );
         }
 

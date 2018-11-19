@@ -1,0 +1,717 @@
+@import 'theme.scss';
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Overrides
+
+b,
+strong {
+    font-weight: 600;
+    color: black;
+}
+
+input[type=text],
+textarea {
+    -webkit-appearance: none;
+    -webkit-user-select: text;
+    margin: 5px 0;
+    padding: 5px 8px;
+    border: 1px solid $control-border;
+    width: calc(100% - 2px);
+    border-radius: 0;
+    font-size: 12px;
+    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+
+    &:hover,
+    &:focus {
+        border-color: $highlight;
+    }
+}
+
+input[type=text] {
+    height: 32px;
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+ul {
+    padding-left: 20px;
+}
+
+li {
+    margin: 5px 0;
+}
+
+a {
+    color: royalblue;
+    text-decoration: none;
+
+    &:visited {
+        color: royalblue;
+    }
+}
+
+:focus {
+    outline: none;
+    border-color: cornflowerblue !important;
+}
+
+button {
+    display: block;
+    min-height: 32px;
+    width: 100%;
+    text-align: left;
+    font-size: 12px;
+    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    color: $foreground;
+    background-color: $background;
+    border: 1px solid $control-border;
+    border-left-width: 5px;
+    margin: 3px 0;
+    padding: 5px 9px 5px 10px;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+        border-color: $highlight;
+    }
+
+    &.disabled {
+        background-color: $background;
+        border-color: $control-border;
+        opacity: 0.5;
+        cursor: default;
+        pointer-events: none;
+    }
+
+    .details {
+        margin: 3px 0;
+        padding: 5px 0;
+    }
+
+    .destructive,
+    .non-destructive {
+        background-color: $background;
+        border: 1px solid $control-border;
+        border-left-width: 5px;
+        margin: 3px 0;
+        padding: 5px 8px;
+        height: 32px;
+        line-height: 18px;
+        cursor: pointer;
+    }
+
+    .destructive {
+        border-color: rgb(170, 0, 0);
+
+        &:hover {
+            background-color: rgba(255, 0, 0, 0.3);
+        }
+    }
+
+    .non-destructive:hover {
+        border-color: $highlight;
+    }
+
+    .title {
+        width: calc(100% - 21px);
+        display: inline-block;
+        vertical-align: middle;
+        min-height: 16px;
+        line-height: 15px;
+    }
+
+    .image {
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .confirmation {
+        padding-top: 10px;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Helper classes
+
+.scrollable {
+    height: 100%;
+    padding: 0 15px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.heading {
+    border-bottom: 1px solid $control-border;
+    padding: 5px 0;
+    margin: 10px 5px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.subheading {
+    font-weight: 600;
+    font-size: 14px;
+    padding-top: 3px;
+    color: #656565;
+}
+
+.divider {
+    margin: 10px 20px;
+    height: 0;
+    border-top: 1px solid $control-border;
+}
+
+.group {
+    padding: 5px 0;
+    margin: 5px;
+
+    .heading {
+        margin: 2px 0;
+    }
+}
+
+.lowercase {
+    text-transform: lowercase;
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.vertical-center-outer {
+    display: table;
+    height: 100%;
+    width: 100%;
+
+    .vertical-center-middle {
+        display: table-cell;
+        vertical-align: middle;
+
+        .vertical-center-inner {
+            margin: 0 auto;
+            width: 50%;
+        }
+    }
+}
+
+.image.rotate {
+    transform: rotate(-180deg);
+}
+
+.table {
+    background-color: $background;
+    border: 1px solid $control-border;
+    margin: 8px 0;
+    padding: 3px 0;
+
+    .cell {
+        display: inline-block;
+        padding: 2px 0;
+        text-align: center;
+
+        &.three {
+            width: calc((100% - 1px) / 3);
+        }
+
+        &.four {
+            width: calc((100% - 1px) / 4);
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Core app classes
+
+* {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+html,
+body,
+#root,
+.dojo {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+.dojo {
+    font-size: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background-color: $background;
+    color: $foreground;
+}
+
+.page-content {
+    height: calc(100% - 110px);
+    margin: 5px 0;
+}
+
+.home,
+.parties,
+.monster-library,
+.encounter-builder,
+.combat-manager,
+.about {
+    height: 100%;
+}
+
+.welcome-panel {
+    padding: 3px;
+    border-left: 5px solid $foreground;
+
+    .heading {
+        padding-left: 8px;
+        margin-left: -3px;
+        margin-top: -3px;
+    }
+
+    .text {
+        margin: 7px;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Card
+
+.card-group {
+    margin-bottom: 20px;
+    padding: 0 5px;
+
+    .heading {
+        .title {
+            width: calc(100% - 20px);
+            display: inline-block;
+            vertical-align: middle;
+        }
+    
+        .image {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            display: inline-block;
+            vertical-align: middle;
+        }
+    }
+}
+
+.card {
+    background-color: #F5F5F5;
+    border: 1px solid #656565;
+    margin: 5px;
+
+    .heading {
+        height: 35px;
+        font-size: 15px;
+        margin: 0;
+        padding-left: 8px;
+        border-bottom: none;
+        background-color: #656565;
+        color: $background;
+
+        .title {
+            width: calc(100% - 25px);
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .image {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            display: inline-block;
+            vertical-align: middle;
+        }
+    }
+
+    .divider {
+        border-top: 1px solid #656565;
+    }
+
+    &.pc {
+        border: 1px solid #006500;
+        background-color: beige;
+
+        .heading {
+            background-color: #006500;
+        }
+
+        .subheading {
+            color: #006500;
+        }
+
+        .divider {
+            border-top: 1px solid #006500;
+        }
+    }
+
+    &.monster {
+        border: 1px solid #650000;
+        background-color: beige;
+
+        .heading {
+            background-color: #650000;
+        }
+
+        .subheading {
+            color: #650000;
+        }
+
+        .divider {
+            border-top: 1px solid #650000;
+        }
+    }
+
+    &.error {
+        background-color: red;
+        color: $background;
+        font-weight: 600;
+    }
+
+    .card-content {
+        padding: 5px 10px;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Chart
+
+.chart {
+    height: 300px;
+    border: 1px solid $control-border;
+    background-color: $background;
+
+    .plot {
+        height: calc(100% - 20px);
+        width: calc(100% - 20px);
+        margin: 10px;
+        border-bottom: 1px solid $control-border;
+
+        .bar-container {
+            display: inline-block;
+            height: 100%;
+
+            .bar {
+                background-color: lightsteelblue;
+                border-top: 1px solid steelblue;
+                vertical-align: bottom;
+            }
+
+            &:hover {
+                .bar {
+                    background-color: steelblue;
+                }
+
+                .bar-space {
+                    background-color: #EEEEEE;
+                }
+            }
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// HP gauge
+
+.hp-gauge {
+    margin: 5px 5px 10px 5px;
+    height: 5px;
+    background-color: lightgrey;
+
+    .bar {
+        float: left;
+        height: 100%;
+
+        &.unhurt {
+            background-color: green;
+        }
+
+        &.injured {
+            background-color: orange;
+        }
+
+        &.bloodied {
+            background-color: crimson;
+        }
+
+        &.temp {
+            background-color: royalblue;
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// List item
+
+.list-item {
+    margin: 3px 0;
+    padding: 3px;
+    cursor: pointer;
+    border-left: 5px solid $foreground;
+
+    &:hover {
+        background-color: $highlight01;
+    }
+
+    &.selected {
+        border-color: $highlight;
+        background-color: $highlight02;
+        cursor: default;
+    }
+
+    .heading {
+        padding-left: 8px;
+        margin-left: -3px;
+        margin-top: -3px;
+    }
+
+    .text {
+        margin: 7px;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Section
+
+.section {
+    margin: 5px 0;
+
+    &.centered {
+        text-align: center;
+    }
+
+    .ability-scores {
+        margin: 10px 0;
+        padding: 5px 0;
+        background-color: $background;
+        border: 1px solid $control-border;
+        border-left-width: 5px;
+        cursor: pointer;
+
+        &:hover {
+            border-color: $highlight;
+        }
+
+        .ability-score {
+            display: inline-block;
+            width: calc((100% - 1px) / 6);
+            padding: 0 5px;
+        }
+
+            .ability-heading {
+                text-align: center;
+                font-weight: 600;
+            }
+
+            .ability-value {
+                text-align: center;
+                padding-top: 5px;
+            }
+    }
+
+    .key-stat {
+        display: inline-block;
+        border: 1px solid transparent;
+        width: calc((100% - 1px) / 3);
+        padding: 5px 0;
+        vertical-align: top;
+
+        &.wide {
+            width: calc(2 * (100% - 1px) / 3);
+        }
+
+        &.editable {
+            cursor: pointer;
+            background-color: $background;
+            border-color: $control-border;
+            border-left-width: 5px;
+
+            &:hover {
+                border-color: $highlight;
+            }
+        }
+
+        .stat-heading {
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            text-align: center;
+            font-weight: 600;
+            font-size: 20px;
+            padding-top: 5px;
+        }
+    }
+
+    .input-label {
+        padding-top: 5px;
+        font-weight: 600;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Modal
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 10;
+}
+
+.blur {
+    -webkit-filter: blur(2px);
+    -moz-filter: blur(2px);
+    -ms-filter: blur(2px);
+    filter: blur(2px);
+}
+
+.modal {
+    height: calc(100% - 160px);
+    width: calc(100% - 100px);
+    margin: 80px 50px;
+    box-shadow: 0 0 50px 10px $header-background-05;
+
+    .modal-header {
+        height: 40px;
+        background-color: $foreground;
+
+        .title {
+            display: inline-block;
+            vertical-align: middle;
+            width: calc(100% - 40px);
+            padding-left: 15px;
+            line-height: 40px;
+            font-size: 20px;
+            font-weight: 600;
+            color: $header-foreground;
+        }
+
+        .image {
+            display: inline-block;
+            vertical-align: middle;
+            width: 30px;
+            height: 30px;
+            padding: 2px;
+            margin: 5px;
+            border-radius: 50%;
+            cursor: pointer;
+
+            &:hover {
+                background-color: $header-foreground-03;
+            }
+        }
+    }
+
+    .modal-content {
+        height: calc(100% - 80px);
+        padding: 0 15px;
+        background-color: $background;
+
+        .hp-value {
+            height: 32px;
+            margin: 5px 0;
+            padding: 5px 8px;
+            border: 1px solid $control-border;
+            font-size: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .monster-help {
+            margin-top: 20px;
+
+            .value-list {
+                margin: 0;
+
+                &:nth-child(odd) {
+                    background-color: $highlight01;
+                }
+
+                .column {
+                    min-height: 38px;
+
+                    .text-container {
+                        margin: 10px 0;
+
+                        &.number {
+                            text-align: right;
+                        }
+                    }
+
+                    .bar-container {
+                        height: 18px;
+                        margin: 10px 0;
+                        border-bottom: 1px solid $highlight02;
+
+                        .bar {
+                            height: 100%;
+                            background-color: $highlight;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    .modal-footer {
+        height: 40px;
+        background-color: $foreground;
+
+        button,
+        .checkbox {
+            display: inline-block;
+            width: 180px;
+            margin: 4px 5px;
+        }
+    }
+}
+
+.name-row {
+    margin: 5px 0;
+    border-left: 5px solid $foreground;
+
+    &:hover {
+        border-color: $highlight;
+    }
+
+    .name-label {
+        display: inline-block;
+        vertical-align: middle;
+        width: 50%;
+        padding-left: 8px;
+    }
+
+    .name-inputs {
+        display: inline-block;
+        vertical-align: middle;
+        width: 50%;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

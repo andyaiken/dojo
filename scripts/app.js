@@ -3105,6 +3105,85 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var Navbar = function (_React$Component) {
+    _inherits(Navbar, _React$Component);
+
+    function Navbar() {
+        _classCallCheck(this, Navbar);
+
+        return _possibleConstructorReturn(this, (Navbar.__proto__ || Object.getPrototypeOf(Navbar)).apply(this, arguments));
+    }
+
+    _createClass(Navbar, [{
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                var partiesStyle = this.props.view === "parties" ? "navigator-item selected" : "navigator-item";
+                var libraryStyle = this.props.view === "library" ? "navigator-item selected" : "navigator-item";
+                var encounterStyle = this.props.view === "encounter" ? "navigator-item selected" : "navigator-item";
+                var combatStyle = this.props.view === "combat" ? "navigator-item selected" : "navigator-item";
+
+                var encountersEnabled = this.props.library.length !== 0;
+                var combatEnabled = this.props.parties.length !== 0 && this.props.encounters.length !== 0;
+                if (!encountersEnabled) {
+                    encounterStyle += " disabled";
+                }
+                if (!combatEnabled) {
+                    combatStyle += " disabled";
+                }
+
+                return React.createElement(
+                    "div",
+                    { className: this.props.blur ? "navbar blur" : "navbar" },
+                    React.createElement(
+                        "div",
+                        { className: partiesStyle, onClick: function onClick() {
+                                return _this2.props.setView("parties");
+                            } },
+                        "player characters"
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: libraryStyle, onClick: function onClick() {
+                                return _this2.props.setView("library");
+                            } },
+                        "monster library"
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: encounterStyle, onClick: function onClick() {
+                                return encountersEnabled ? _this2.props.setView("encounter") : null;
+                            } },
+                        "encounter builder"
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: combatStyle, onClick: function onClick() {
+                                return combatEnabled ? _this2.props.setView("combat") : null;
+                            } },
+                        "combat manager"
+                    )
+                );
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return Navbar;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 /*
 var options = [
     {
@@ -3403,6 +3482,63 @@ var Spin = function (_React$Component) {
     }]);
 
     return Spin;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Titlebar = function (_React$Component) {
+    _inherits(Titlebar, _React$Component);
+
+    function Titlebar() {
+        _classCallCheck(this, Titlebar);
+
+        return _possibleConstructorReturn(this, (Titlebar.__proto__ || Object.getPrototypeOf(Titlebar)).apply(this, arguments));
+    }
+
+    _createClass(Titlebar, [{
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                var actionSection = null;
+                if (this.props.action) {
+                    actionSection = React.createElement(
+                        "div",
+                        { className: "action" },
+                        this.props.action
+                    );
+                };
+
+                return React.createElement(
+                    "div",
+                    { className: this.props.blur ? "titlebar blur" : "titlebar" },
+                    React.createElement(
+                        "div",
+                        { className: "app-name", onClick: function onClick() {
+                                return _this2.props.openHome();
+                            } },
+                        "dojo"
+                    ),
+                    actionSection,
+                    React.createElement("img", { className: "settings-icon", src: "content/settings.svg", title: "about", onClick: function onClick() {
+                            return _this2.props.openAbout();
+                        } })
+                );
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return Titlebar;
 }(React.Component);
 "use strict";
 
@@ -5609,7 +5745,7 @@ var AboutModal = function (_React$Component) {
                                 ),
                                 React.createElement(
                                     "div",
-                                    { className: "text" },
+                                    { className: "section" },
                                     "dojo by ",
                                     React.createElement(
                                         "a",
@@ -5619,7 +5755,7 @@ var AboutModal = function (_React$Component) {
                                 ),
                                 React.createElement(
                                     "div",
-                                    { className: "text" },
+                                    { className: "section" },
                                     "dungeons and dragons copyright wizards of the coast"
                                 )
                             )
@@ -5665,7 +5801,7 @@ var AboutModal = function (_React$Component) {
                                 ),
                                 React.createElement(
                                     "div",
-                                    { className: "text" },
+                                    { className: "section" },
                                     "The following text is the property of Wizards of the Coast, Inc. and is Copyright 2000 Wizards of the Coast, Inc (\"Wizards\"). All Rights Reserved."
                                 ),
                                 React.createElement(
@@ -5862,7 +5998,7 @@ var CombatStartModal = function (_React$Component) {
             if (this.props.parties.length === 0) {
                 return React.createElement(
                     "div",
-                    { className: "text" },
+                    { className: "section" },
                     "you have not defined any parties"
                 );
             }
@@ -5945,7 +6081,7 @@ var CombatStartModal = function (_React$Component) {
             if (this.props.encounters.length === 0) {
                 return React.createElement(
                     "div",
-                    { className: "text" },
+                    { className: "section" },
                     "you have not built any encounters"
                 );
             }
@@ -6059,7 +6195,7 @@ var CombatStartModal = function (_React$Component) {
             if (this.state.combat.encounterID === null) {
                 return React.createElement(
                     "div",
-                    { className: "text" },
+                    { className: "section" },
                     "you have not selected an encounter"
                 );
             }
@@ -6070,7 +6206,7 @@ var CombatStartModal = function (_React$Component) {
             if (selectedEncounter.waves.length === 0) {
                 return React.createElement(
                     "div",
-                    { className: "text" },
+                    { className: "section" },
                     "you have not defined any waves"
                 );
             }
@@ -8446,142 +8582,6 @@ var HitPointGauge = function (_React$Component) {
     }]);
 
     return HitPointGauge;
-}(React.Component);
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Navbar = function (_React$Component) {
-    _inherits(Navbar, _React$Component);
-
-    function Navbar() {
-        _classCallCheck(this, Navbar);
-
-        return _possibleConstructorReturn(this, (Navbar.__proto__ || Object.getPrototypeOf(Navbar)).apply(this, arguments));
-    }
-
-    _createClass(Navbar, [{
-        key: "render",
-        value: function render() {
-            var _this2 = this;
-
-            try {
-                var partiesStyle = this.props.view === "parties" ? "navigator-item selected" : "navigator-item";
-                var libraryStyle = this.props.view === "library" ? "navigator-item selected" : "navigator-item";
-                var encounterStyle = this.props.view === "encounter" ? "navigator-item selected" : "navigator-item";
-                var combatStyle = this.props.view === "combat" ? "navigator-item selected" : "navigator-item";
-
-                var encountersEnabled = this.props.library.length !== 0;
-                var combatEnabled = this.props.parties.length !== 0 && this.props.encounters.length !== 0;
-                if (!encountersEnabled) {
-                    encounterStyle += " disabled";
-                }
-                if (!combatEnabled) {
-                    combatStyle += " disabled";
-                }
-
-                return React.createElement(
-                    "div",
-                    { className: this.props.blur ? "navbar blur" : "navbar" },
-                    React.createElement(
-                        "div",
-                        { className: partiesStyle, onClick: function onClick() {
-                                return _this2.props.setView("parties");
-                            } },
-                        "player characters"
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: libraryStyle, onClick: function onClick() {
-                                return _this2.props.setView("library");
-                            } },
-                        "monster library"
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: encounterStyle, onClick: function onClick() {
-                                return encountersEnabled ? _this2.props.setView("encounter") : null;
-                            } },
-                        "encounter builder"
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: combatStyle, onClick: function onClick() {
-                                return combatEnabled ? _this2.props.setView("combat") : null;
-                            } },
-                        "combat manager"
-                    )
-                );
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    }]);
-
-    return Navbar;
-}(React.Component);
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Titlebar = function (_React$Component) {
-    _inherits(Titlebar, _React$Component);
-
-    function Titlebar() {
-        _classCallCheck(this, Titlebar);
-
-        return _possibleConstructorReturn(this, (Titlebar.__proto__ || Object.getPrototypeOf(Titlebar)).apply(this, arguments));
-    }
-
-    _createClass(Titlebar, [{
-        key: "render",
-        value: function render() {
-            var _this2 = this;
-
-            try {
-                var actionSection = null;
-                if (this.props.action) {
-                    actionSection = React.createElement(
-                        "div",
-                        { className: "action" },
-                        this.props.action
-                    );
-                };
-
-                return React.createElement(
-                    "div",
-                    { className: this.props.blur ? "titlebar blur" : "titlebar" },
-                    React.createElement(
-                        "div",
-                        { className: "app-name", onClick: function onClick() {
-                                return _this2.props.openHome();
-                            } },
-                        "dojo"
-                    ),
-                    actionSection,
-                    React.createElement("img", { className: "settings-icon", src: "content/settings.svg", title: "about", onClick: function onClick() {
-                            return _this2.props.openAbout();
-                        } })
-                );
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    }]);
-
-    return Titlebar;
 }(React.Component);
 "use strict";
 
