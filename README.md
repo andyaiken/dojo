@@ -6,7 +6,7 @@ Dojo is a web app for D&D (5E) dungeon masters.
 
 It can be used to design monsters and to plan and run combat encounters.
 
-Dojo is written in JS, using React and SCSS. If you would like to contribute to this project, the instructions are below.
+Dojo is written in JS, using React and SCSS. If you would like to contribute to this project, you are welcome to do so; the instructions are below.
 
 ## Initial set up
 
