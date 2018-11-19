@@ -2,37 +2,37 @@
 
 <html>
 
-<head>
-    <meta charset="UTF-8" />
-    <title>dojo</title>
+    <head>
+        <meta charset="UTF-8" />
+        <title>dojo</title>
 
-    <link rel="shortcut icon" type="image/png" href="content/icons/favicon.png" />
-    <link rel="apple-touch-icon" href="content/icons/favicon.png" />
+        <link rel="shortcut icon" type="image/png" href="resources/icons/favicon.png" />
+        <link rel="apple-touch-icon" href="resources/icons/favicon.png" />
 
-    <!-- React.js -->
-    <script src="scripts/packages/react.js"></script>
-    <script src="scripts/packages/react-dom.js"></script>
+        <!-- React.js -->
+        <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
 
-    <!-- Styling -->
-    <link rel="stylesheet" type="text/css" href="css/foundation.css" />
-    <link rel="stylesheet" type="text/css" href="css/app.css" />
-    <link rel="stylesheet" type="text/css" href="css/controls.css" />
-    <link rel="stylesheet" type="text/css" href="css/theme.css" />
+        <!-- Styling -->
+        <link rel="stylesheet" type="text/css" href="style/css/foundation.css" />
+        <link rel="stylesheet" type="text/css" href="style/css/app.css" />
+        <link rel="stylesheet" type="text/css" href="style/css/controls.css" />
+        <link rel="stylesheet" type="text/css" href="style/css/theme.css" />
 
-    <script src="scripts/code.js"></script>
-    <script src="scripts/dnd.js"></script>
-</head>
+        <script src="scripts/js/code.js"></script>
+        <script src="scripts/js/dnd.js"></script>
+        <script src="scripts/js/app.js"></script>
+    </head>
 
-<body>
-    <div id="root"></div>
+    <body>
+        <div id="root"></div>
 
-    <script src="scripts/app.js"></script>
-    <script>
-        ReactDOM.render(
-            React.createElement(Dojo, null),
-            document.getElementById('root')
-        );
-    </script>
-</body>
+        <script>
+            ReactDOM.render(
+                React.createElement(Dojo, null),
+                document.getElementById('root')
+            );
+        </script>
+    </body>
 
 </html>

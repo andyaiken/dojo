@@ -17,7 +17,7 @@ class Checkbox extends React.Component {
         try {
             return (
                 <div className={this.props.disabled ? "checkbox disabled" : "checkbox"} onClick={e => this.click(e)}>
-                    <img className="image" src={this.props.checked ? "content/checked.svg" : "content/unchecked.svg"} />
+                    <img className="image" src={this.props.checked ? "resources/images/checked.svg" : "resources/images/unchecked.svg"} />
                     <div className="checkbox-label">{this.props.label}</div>
                 </div>
             );

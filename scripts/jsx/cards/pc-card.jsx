@@ -177,7 +177,7 @@ class PCCard extends React.Component {
             var toggle = null;
             if (!this.props.combatant.current) {
                 var imageStyle = this.state.showDetails ? "image rotate" : "image";
-                toggle = <img className={imageStyle} src="content/down-arrow.svg" onClick={() => this.toggleDetails()} />
+                toggle = <img className={imageStyle} src="resources/images/down-arrow.svg" onClick={() => this.toggleDetails()} />
             }
 
             return (

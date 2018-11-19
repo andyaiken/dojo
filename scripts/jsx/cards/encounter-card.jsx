@@ -171,7 +171,7 @@ class EncounterCard extends React.Component {
                 heading = (
                     <div className="heading">
                         <div className="title">encounter</div>
-                        <img className={imageStyle} src="content/down-arrow.svg" onClick={() => this.toggleDetails()} />
+                        <img className={imageStyle} src="resources/images/down-arrow.svg" onClick={() => this.toggleDetails()} />
                     </div>
                 );
 

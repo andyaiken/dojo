@@ -24,7 +24,7 @@ class CardGroup extends React.Component {
                 var close = null;
                 if (this.props.showClose) {
                     close = (
-                        <img className="image" src="content/close-black.svg" onClick={() => this.props.close()} />
+                        <img className="image" src="resources/images/close-black.svg" onClick={() => this.props.close()} />
                     );
                 }
 
@@ -32,7 +32,7 @@ class CardGroup extends React.Component {
                 if (this.props.showToggle) {
                     var style = this.state.showCards ? "image rotate" : "image";
                     toggle = (
-                        <img className={style} src="content/down-arrow-black.svg" onClick={() => this.toggleCards()} />
+                        <img className={style} src="resources/images/down-arrow-black.svg" onClick={() => this.toggleCards()} />
                     );
                 }
 

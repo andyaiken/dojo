@@ -419,7 +419,7 @@ var EncounterCard = function (_React$Component) {
                             { className: "title" },
                             "encounter"
                         ),
-                        React.createElement("img", { className: imageStyle, src: "content/down-arrow.svg", onClick: function onClick() {
+                        React.createElement("img", { className: imageStyle, src: "resources/images/down-arrow.svg", onClick: function onClick() {
                                 return _this2.toggleDetails();
                             } })
                     );
@@ -677,7 +677,7 @@ var FilterCard = function (_React$Component) {
                             { className: "title" },
                             "filter"
                         ),
-                        React.createElement("img", { className: this.state.showAll ? "image rotate" : "image", src: "content/down-arrow.svg", onClick: function onClick() {
+                        React.createElement("img", { className: this.state.showAll ? "image rotate" : "image", src: "resources/images/down-arrow.svg", onClick: function onClick() {
                                 return _this2.toggleAll();
                             } })
                     ),
@@ -1662,7 +1662,7 @@ var MonsterCard = function (_React$Component) {
                     // Don't show toggle button for template
                 } else {
                     var imageStyle = this.state.showDetails ? "image rotate" : "image";
-                    toggle = React.createElement("img", { className: imageStyle, src: "content/down-arrow.svg", onClick: function onClick() {
+                    toggle = React.createElement("img", { className: imageStyle, src: "resources/images/down-arrow.svg", onClick: function onClick() {
                             return _this3.toggleDetails();
                         } });
                 }
@@ -2533,7 +2533,7 @@ var PCCard = function (_React$Component) {
                 var toggle = null;
                 if (!this.props.combatant.current) {
                     var imageStyle = this.state.showDetails ? "image rotate" : "image";
-                    toggle = React.createElement("img", { className: imageStyle, src: "content/down-arrow.svg", onClick: function onClick() {
+                    toggle = React.createElement("img", { className: imageStyle, src: "resources/images/down-arrow.svg", onClick: function onClick() {
                             return _this2.toggleDetails();
                         } });
                 }
@@ -2688,7 +2688,7 @@ var Checkbox = function (_React$Component) {
                     { className: this.props.disabled ? "checkbox disabled" : "checkbox", onClick: function onClick(e) {
                             return _this2.click(e);
                         } },
-                    React.createElement("img", { className: "image", src: this.props.checked ? "content/checked.svg" : "content/unchecked.svg" }),
+                    React.createElement("img", { className: "image", src: this.props.checked ? "resources/images/checked.svg" : "resources/images/unchecked.svg" }),
                     React.createElement(
                         "div",
                         { className: "checkbox-label" },
@@ -2767,7 +2767,7 @@ var ConfirmButton = function (_React$Component) {
                             this.props.text,
                             " - are you sure?"
                         ),
-                        React.createElement("img", { className: "image", src: "content/warning.svg" }),
+                        React.createElement("img", { className: "image", src: "resources/images/warning.svg" }),
                         this.props.details ? React.createElement(
                             "div",
                             { className: "details" },
@@ -2801,7 +2801,7 @@ var ConfirmButton = function (_React$Component) {
                             { className: "title" },
                             this.props.text
                         ),
-                        React.createElement("img", { className: "image", src: "content/warning.svg" })
+                        React.createElement("img", { className: "image", src: "resources/images/warning.svg" })
                     );
                 }
 
@@ -2922,7 +2922,7 @@ var Dropdown = function (_React$Component) {
                         { className: "item-text" },
                         selectedText
                     ),
-                    React.createElement("img", { className: this.state.open ? "arrow open" : "arrow", src: "content/down-arrow-black.svg" })
+                    React.createElement("img", { className: this.state.open ? "arrow open" : "arrow", src: "resources/images/down-arrow-black.svg" })
                 ));
 
                 if (this.state.open) {
@@ -3082,7 +3082,7 @@ var Expander = function (_React$Component) {
                             { className: "expander-text" },
                             this.props.text
                         ),
-                        React.createElement("img", { className: "expander-button", src: "content/down-arrow.svg" })
+                        React.createElement("img", { className: "expander-button", src: "resources/images/down-arrow.svg" })
                     ),
                     content
                 );
@@ -3446,7 +3446,7 @@ var Spin = function (_React$Component) {
                             }, onClick: function onClick(e) {
                                 return _this2.click(e, -1);
                             } },
-                        React.createElement("img", { className: "image", src: "content/minus.svg" })
+                        React.createElement("img", { className: "image", src: "resources/images/minus.svg" })
                     ),
                     React.createElement(
                         "div",
@@ -3469,7 +3469,7 @@ var Spin = function (_React$Component) {
                             }, onClick: function onClick(e) {
                                 return _this2.click(e, +1);
                             } },
-                        React.createElement("img", { className: "image", src: "content/plus.svg" })
+                        React.createElement("img", { className: "image", src: "resources/images/plus.svg" })
                     ),
                     expander,
                     factorSelector
@@ -3528,7 +3528,7 @@ var Titlebar = function (_React$Component) {
                         "dojo"
                     ),
                     actionSection,
-                    React.createElement("img", { className: "settings-icon", src: "content/settings.svg", title: "about", onClick: function onClick() {
+                    React.createElement("img", { className: "settings-icon", src: "resources/images/settings.svg", title: "about", onClick: function onClick() {
                             return _this2.props.openAbout();
                         } })
                 );
@@ -3586,6 +3586,12 @@ var Dojo = function (_React$Component) {
             }
 
             if (data !== null) {
+                data.encounters.forEach(function (enc) {
+                    if (!enc.waves) {
+                        enc.waves = [];
+                    }
+                });
+
                 _this.state = data;
                 _this.state.view = "home";
                 _this.state.modal = null;
@@ -3917,7 +3923,7 @@ var Dojo = function (_React$Component) {
 
             var request = new XMLHttpRequest();
             request.overrideMimeType("application/json");
-            request.open('GET', 'data/monsters.json', true);
+            request.open('GET', 'resources/data/monsters.json', true);
             request.onreadystatechange = function () {
                 if (request.readyState === 4 && request.status === 200) {
                     var monsters = JSON.parse(request.responseText);
@@ -5202,7 +5208,7 @@ var Dojo = function (_React$Component) {
                                     { className: "title" },
                                     modalTitle
                                 ),
-                                modalAllowClose ? React.createElement("img", { className: "image", src: "content/close-white.svg", onClick: function onClick() {
+                                modalAllowClose ? React.createElement("img", { className: "image", src: "resources/images/close-white.svg", onClick: function onClick() {
                                         return _this6.closeModal();
                                     } }) : null
                             ),
@@ -7696,7 +7702,7 @@ var MonsterEditorModal = function (_React$Component) {
                             { className: "title" },
                             "similar monsters"
                         ),
-                        React.createElement("img", { className: this.state.showFilter ? "image rotate" : "image", src: "content/down-arrow.svg", onClick: function onClick() {
+                        React.createElement("img", { className: this.state.showFilter ? "image rotate" : "image", src: "resources/images/down-arrow.svg", onClick: function onClick() {
                                 return _this8.toggleFilter();
                             } })
                     ),
@@ -8336,7 +8342,7 @@ var CardGroup = function (_React$Component) {
                 if (this.props.heading) {
                     var close = null;
                     if (this.props.showClose) {
-                        close = React.createElement("img", { className: "image", src: "content/close-black.svg", onClick: function onClick() {
+                        close = React.createElement("img", { className: "image", src: "resources/images/close-black.svg", onClick: function onClick() {
                                 return _this2.props.close();
                             } });
                     }
@@ -8344,7 +8350,7 @@ var CardGroup = function (_React$Component) {
                     var toggle = null;
                     if (this.props.showToggle) {
                         var style = this.state.showCards ? "image rotate" : "image";
-                        toggle = React.createElement("img", { className: style, src: "content/down-arrow-black.svg", onClick: function onClick() {
+                        toggle = React.createElement("img", { className: style, src: "resources/images/down-arrow-black.svg", onClick: function onClick() {
                                 return _this2.toggleCards();
                             } });
                     }

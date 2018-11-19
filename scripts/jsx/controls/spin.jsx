@@ -80,14 +80,14 @@ class Spin extends React.Component {
             return (
                 <div className={this.props.disabled ? "spin disabled" : "spin"}>
                     <div className="spin-button" onTouchEnd={e => this.touchEnd(e, -1)} onClick={e => this.click(e, -1)}>
-                        <img className="image" src="content/minus.svg" />
+                        <img className="image" src="resources/images/minus.svg" />
                     </div>
                     <div className="info">
                         <div className="info-label">{this.props.label}</div>
                         <div className={style}>{value}</div>
                     </div>
                     <div className="spin-button" onTouchEnd={e => this.touchEnd(e, +1)} onClick={e => this.click(e, +1)}>
-                        <img className="image" src="content/plus.svg" />
+                        <img className="image" src="resources/images/plus.svg" />
                     </div>
                     {expander}
                     {factorSelector}

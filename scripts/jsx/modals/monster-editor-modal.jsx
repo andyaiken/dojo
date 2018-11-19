@@ -606,7 +606,7 @@ class MonsterEditorModal extends React.Component {
                 <div className="card">
                     <div className="heading">
                         <div className="title">similar monsters</div>
-                        <img className={this.state.showFilter ? "image rotate" : "image"} src="content/down-arrow.svg" onClick={() => this.toggleFilter()} />
+                        <img className={this.state.showFilter ? "image rotate" : "image"} src="resources/images/down-arrow.svg" onClick={() => this.toggleFilter()} />
                     </div>
                     <div className="card-content">
                         {filterContent}

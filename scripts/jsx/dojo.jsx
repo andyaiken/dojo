@@ -30,6 +30,12 @@ class Dojo extends React.Component {
             }
 
             if (data !== null) {
+                data.encounters.forEach(enc => {
+                    if (!enc.waves) {
+                        enc.waves = [];
+                    }
+                });
+
                 this.state = data;
                 this.state.view = "home";
                 this.state.modal = null;
@@ -332,7 +338,7 @@ class Dojo extends React.Component {
     addOpenGameContent() {
         var request = new XMLHttpRequest();
         request.overrideMimeType("application/json");
-        request.open('GET', 'data/monsters.json', true);
+        request.open('GET', 'resources/data/monsters.json', true);
         request.onreadystatechange = () => {
             if (request.readyState === 4 && request.status === 200) {
                 var monsters = JSON.parse(request.responseText);
@@ -1423,7 +1429,7 @@ class Dojo extends React.Component {
                         <div className="modal">
                             <div className="modal-header">
                                 <div className="title">{modalTitle}</div>
-                                {modalAllowClose ? <img className="image" src="content/close-white.svg" onClick={() => this.closeModal()} /> : null}
+                                {modalAllowClose ? <img className="image" src="resources/images/close-white.svg" onClick={() => this.closeModal()} /> : null}
                             </div>
                             <div className={modalAllowScroll ? "modal-content scrollable" : "modal-content"}>
                                 {modalContent}

@@ -33,7 +33,7 @@ class ConfirmButton extends React.Component {
                 content = (
                     <div>
                         <div className="title">{this.props.text} - are you sure?</div>
-                        <img className="image" src="content/warning.svg" />
+                        <img className="image" src="resources/images/warning.svg" />
                         {this.props.details ? <div className="details">{this.props.details}</div> : null}
                         <div className="confirmation">
                             <div className="destructive" onClick={() => this.perform()}>yes</div>
@@ -45,7 +45,7 @@ class ConfirmButton extends React.Component {
                 content = (
                     <div>
                         <div className="title">{this.props.text}</div>
-                        <img className="image" src="content/warning.svg" />
+                        <img className="image" src="resources/images/warning.svg" />
                     </div>
                 );
             }

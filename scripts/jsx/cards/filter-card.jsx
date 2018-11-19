@@ -83,7 +83,7 @@ class FilterCard extends React.Component {
                 <div className="card">
                     <div className="heading">
                         <div className="title">filter</div>
-                        <img className={this.state.showAll ? "image rotate" : "image"} src="content/down-arrow.svg" onClick={() => this.toggleAll()} />
+                        <img className={this.state.showAll ? "image rotate" : "image"} src="resources/images/down-arrow.svg" onClick={() => this.toggleAll()} />
                     </div>
                     <div className="card-content">
                         {content}
