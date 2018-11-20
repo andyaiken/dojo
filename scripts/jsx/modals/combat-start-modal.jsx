@@ -257,115 +257,16 @@ class CombatStartModal extends React.Component {
             );
         }
 
-        // TODO: Add radio selector for difficulty after each wave
-
-        var selectedEncounter = this.props.encounters.find(e => e.id === this.state.combat.encounterID);
-        var selectedParty = this.props.parties.find(p => p.id === this.state.combat.partyID);
-
-        var monsterCount = 0;
-        var monsterXp = 0;
-        var slots = [].concat(selectedEncounter.slots);
-        selectedEncounter.waves.forEach(wave => {
-            slots = slots.concat(wave.slots);
-        })
-        slots.forEach(slot => {
-            monsterCount += slot.count;
-            var monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
-            if (monster) {
-                monsterXp += experience(monster.challenge) * slot.count;
-            }
-        });
-
-        var adjustedXp = monsterXp * experienceFactor(monsterCount);
-
-        var xpEasy = 0;
-        var xpMedium = 0;
-        var xpHard = 0;
-        var xpDeadly = 0;
-
-        var pcs = selectedParty.pcs.filter(pc => pc.active);
-        pcs.forEach(pc => {
-            xpEasy += pcExperience(pc.level, "easy");
-            xpMedium += pcExperience(pc.level, "medium");
-            xpHard += pcExperience(pc.level, "hard");
-            xpDeadly += pcExperience(pc.level, "deadly");
-        });
-    
-        var difficulty = null;
-        var adjustedDifficulty = null;
-        if (adjustedXp > 0) {
-            difficulty = "trivial";
-            if (adjustedXp >= xpEasy) {
-                difficulty = "easy";
-            }
-            if (adjustedXp >= xpMedium) {
-                difficulty = "medium";
-            }
-            if (adjustedXp >= xpHard) {
-                difficulty = "hard";
-            }
-            if (adjustedXp >= xpDeadly) {
-                difficulty = "deadly";
-            }
-
-            if ((pcs.length < 3) || (pcs.length > 5)) {
-                var small = pcs.length < 3;
-                switch (difficulty) {
-                    case "trivial":
-                        adjustedDifficulty = small ? "easy" : "trivial";
-                        break;
-                    case "easy":
-                        adjustedDifficulty = small ? "medium" : "trivial";
-                        break;
-                    case "medium":
-                        adjustedDifficulty = small ? "hard" : "easy";
-                        break;
-                    case "hard":
-                        adjustedDifficulty = small ? "deadly" : "medium";
-                        break;
-                    case "deadly":
-                        adjustedDifficulty = small ? "deadly" : "hard";
-                        break;
-                }
-            }
-        }
-
         return (
             <div>
                 <div className="heading">encounter difficulty</div>
-                <div className="subheading">xp thresholds for this party</div>
-                <div className="table">
-                    <div>
-                        <div className="cell four"><b>easy</b></div>
-                        <div className="cell four"><b>medium</b></div>
-                        <div className="cell four"><b>hard</b></div>
-                        <div className="cell four"><b>deadly</b></div>
-                    </div>
-                    <div>
-                        <div className="cell four">{xpEasy} xp</div>
-                        <div className="cell four">{xpMedium} xp</div>
-                        <div className="cell four">{xpHard} xp</div>
-                        <div className="cell four">{xpDeadly} xp</div>
-                    </div>
-                </div>
-                <div className="subheading">xp value</div>
-                <div className="section">
-                    xp for this encounter
-                    <div className="right">{monsterXp} xp</div>
-                </div>
-                <div className="section">
-                    effective xp for this number of monsters ({monsterCount})
-                    <div className="right">{adjustedXp || monsterXp} xp</div>
-                </div>
-                <div className="subheading">difficulty</div>
-                <div className="section">
-                    difficulty for this party
-                    <div className="right">{difficulty}</div>
-                </div>
-                <div className="section">
-                    effective difficulty for this number of pcs ({pcs.length})
-                    <div className="right"><b>{adjustedDifficulty || difficulty}</b></div>
-                </div>
+                <DifficultyChartPanel
+                    partyID={this.state.combat.partyID}
+                    encounterID={this.state.combat.encounterID}
+                    parties={this.props.parties}
+                    encounters={this.props.encounters}
+                    getMonster={(monsterName, monsterGroupName) => this.props.getMonster(monsterName, monsterGroupName)}
+                />
             </div>
         );
     }

@@ -12,7 +12,7 @@ Dojo is written in JS, using React and SCSS. If you would like to contribute to 
 
 * Open a command line in the root folder
 * Run `npm install babel-cli`
-* Run `npm install babel-preset-es2015 babel-preset-react`
+* Run `npm install babel-preset-env babel-preset-react`
 * Run `npm install node-sass`
 * Run `npm install http-server`
 
@@ -21,7 +21,7 @@ Dojo is written in JS, using React and SCSS. If you would like to contribute to 
 To compile JSX to JS as changes are made:
 
 * Open a command line in the root folder
-* Run `babel --presets es2015,react --watch scripts/jsx --out-file scripts/js/app.js`
+* Run `babel --presets env,react --watch scripts/jsx --out-file scripts/js/app.js`
 
 To compile SCSS to CSS as changes are made:
 

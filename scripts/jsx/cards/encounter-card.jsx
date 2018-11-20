@@ -36,133 +36,21 @@ class EncounterCard extends React.Component {
                     }
                 }
 
-                var monsterCount = 0;
-                var monsterXp = 0;
-                var adjustedXp = 0;
-                var difficulty = "";
-                var adjustedDifficulty = "";
-
-                this.props.selection.slots.forEach(slot => {
-                    monsterCount += slot.count;
-                    var monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
-                    if (monster) {
-                        monsterXp += experience(monster.challenge) * slot.count;
-                    }
-                });
-
-                this.props.selection.waves.forEach(wave => {
-                    wave.slots.forEach(slot => {
-                        monsterCount += slot.count;
-                        var monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
-                        if (monster) {
-                            monsterXp += experience(monster.challenge) * slot.count;
-                        }
-                    });
-                });
-
-                adjustedXp = monsterXp * experienceFactor(monsterCount);
-
-                if (this.state.partyID) {
-                    var selectedParty = this.props.parties.find(p => p.id === this.state.partyID);
-
-                    var xpEasy = 0;
-                    var xpMedium = 0;
-                    var xpHard = 0;
-                    var xpDeadly = 0;
-
-                    var pcs = selectedParty.pcs.filter(pc => pc.active);
-                    pcs.forEach(pc => {
-                        xpEasy += pcExperience(pc.level, "easy");
-                        xpMedium += pcExperience(pc.level, "medium");
-                        xpHard += pcExperience(pc.level, "hard");
-                        xpDeadly += pcExperience(pc.level, "deadly");
-                    });
-
-                    if (adjustedXp > 0) {
-                        difficulty = "trivial";
-                        if (adjustedXp >= xpEasy) {
-                            difficulty = "easy";
-                        }
-                        if (adjustedXp >= xpMedium) {
-                            difficulty = "medium";
-                        }
-                        if (adjustedXp >= xpHard) {
-                            difficulty = "hard";
-                        }
-                        if (adjustedXp >= xpDeadly) {
-                            difficulty = "deadly";
-                        }
-
-                        if ((pcs.length < 3) || (pcs.length > 5)) {
-                            var small = pcs.length < 3;
-                            switch (difficulty) {
-                                case "trivial":
-                                    adjustedDifficulty = small ? "easy" : "trivial";
-                                    break;
-                                case "easy":
-                                    adjustedDifficulty = small ? "medium" : "trivial";
-                                    break;
-                                case "medium":
-                                    adjustedDifficulty = small ? "hard" : "easy";
-                                    break;
-                                case "hard":
-                                    adjustedDifficulty = small ? "deadly" : "medium";
-                                    break;
-                                case "deadly":
-                                    adjustedDifficulty = small ? "deadly" : "hard";
-                                    break;
-                            }
-                        }
-                    }
-                }
-
                 var difficultySection = (
                     <div>
-                        <div className="section">
-                            <div className="subheading">difficulty</div>
-                        </div>
-                        <div style={{ display: this.props.parties.length !== 0 ? "" : "none" }}>
-                            <Dropdown
-                                options={partyOptions}
-                                placeholder="select party..."
-                                selectedID={this.state.partyID}
-                                select={optionID => this.selectParty(optionID)}
-                            />
-                        </div>
-                        <div className="table" style={{ display: this.state.partyID ? "" : "none" }}>
-                            <div>
-                                <div className="cell four"><b>easy</b></div>
-                                <div className="cell four"><b>medium</b></div>
-                                <div className="cell four"><b>hard</b></div>
-                                <div className="cell four"><b>deadly</b></div>
-                            </div>
-                            <div>
-                                <div className="cell four">{xpEasy}</div>
-                                <div className="cell four">{xpMedium}</div>
-                                <div className="cell four">{xpHard}</div>
-                                <div className="cell four">{xpDeadly}</div>
-                            </div>
-                        </div>
-                        <div className="section">
-                            monsters
-                            <div className="right">{monsterCount}</div>
-                        </div>
-                        <div className="section">
-                            xp value
-                            <div className="right">{monsterXp} xp</div>
-                        </div>
-                        <div className="section" style={{ display: monsterCount > 1 ? "" : "none" }}>
-                            adjusted for number of monsters
-                            <div className="right">{adjustedXp} xp</div>
-                        </div>
-                        <div className="section" style={{ display: difficulty ? "" : "none" }}>
-                            difficulty
-                            <div className="right">{difficulty}</div>
-                        </div>
-                        <div className="section" style={{ display: adjustedDifficulty ? "" : "none" }}>
-                            adjusted for number of pcs
-                            <div className="right">{adjustedDifficulty}</div>
-                        </div>
+                        <Dropdown
+                            options={partyOptions}
+                            placeholder="select party..."
+                            selectedID={this.state.partyID}
+                            select={optionID => this.selectParty(optionID)}
+                        />
+                        <DifficultyChartPanel
+                            partyID={this.state.partyID}
+                            encounterID={this.props.selection.id}
+                            parties={this.props.parties}
+                            encounters={this.props.encounters}
+                            getMonster={(monsterName, monsterGroupName) => this.props.getMonster(monsterName, monsterGroupName)}
+                        />
                     </div>
                 );
 

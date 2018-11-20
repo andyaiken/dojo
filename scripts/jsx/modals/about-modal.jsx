@@ -96,6 +96,7 @@ class AboutModal extends React.Component {
                             <div className="group">
                                 <div className="heading">about</div>
                                 <div className="section">dojo by <a href="mailto:andy.aiken@live.co.uk">andy aiken</a></div>
+                                <div className="section">if you would like to contribut to this project, you can do so <a href="https://github.com/andyaiken/dojo" target="_blank">here</a></div>
                                 <div className="section">dungeons and dragons copyright wizards of the coast</div>
                             </div>
                         </div>

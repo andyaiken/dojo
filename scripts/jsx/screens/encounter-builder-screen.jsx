@@ -214,6 +214,7 @@ class EncounterBuilderScreen extends React.Component {
                         <EncounterCard
                             selection={this.props.selection}
                             parties={this.props.parties}
+                            encounters={this.props.encounters}
                             changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
                             addWave={() => this.props.addWave()}
                             removeEncounter={() => this.props.removeEncounter()}
