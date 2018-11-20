@@ -155,8 +155,6 @@ class EncounterBuilderScreen extends React.Component {
             });
         }
         monsters.forEach(monster => {
-            // TODO: Add a note if the monster is already in the encounter or one of its waves
-            
             libraryCards.push(
                 <div className="column" key={monster.id}>
                     <MonsterCard

@@ -101,7 +101,24 @@ class MonsterCard extends React.Component {
                             });
                             // If we can't add it anywhere, don't show it
                             if (!canAdd) {
-                                return null;
+                                return (
+                                    <InfoCard
+                                        getHeading={() => {
+                                            return (
+                                                <div className="heading">
+                                                    <div className="title">{this.props.combatant.name}</div>
+                                                </div>
+                                            );
+                                        }}
+                                        getContent={() => {
+                                            return (
+                                                <div className="section centered">
+                                                    <i>this monster is already part of this encounter</i>
+                                                </div>
+                                            );
+                                        }}
+                                    />
+                                );
                             }
                         }
                     }

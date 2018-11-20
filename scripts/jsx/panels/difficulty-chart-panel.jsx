@@ -55,6 +55,7 @@ class DifficultyChartPanel extends React.Component {
                 if (adjustedXp >= xpDeadly) {
                     difficulty = "deadly";
                 }
+                adjustedDifficulty = difficulty;
 
                 if ((pcs.length < 3) || (pcs.length > 5)) {
                     var small = pcs.length < 3;
@@ -79,27 +80,53 @@ class DifficultyChartPanel extends React.Component {
             }
 
             xpThresholds = (
-                <div>
-                    <div className="subheading">xp thresholds for this party</div>
-                    <div className="table">
-                        <div>
-                            <div className="cell four"><b>easy</b></div>
-                            <div className="cell four"><b>medium</b></div>
-                            <div className="cell four"><b>hard</b></div>
-                            <div className="cell four"><b>deadly</b></div>
-                        </div>
-                        <div>
-                            <div className="cell four">{xpEasy} xp</div>
-                            <div className="cell four">{xpMedium} xp</div>
-                            <div className="cell four">{xpHard} xp</div>
-                            <div className="cell four">{xpDeadly} xp</div>
-                        </div>
+                <div className="table">
+                    <div>
+                        <div className="cell four"><b>easy</b></div>
+                        <div className="cell four"><b>medium</b></div>
+                        <div className="cell four"><b>hard</b></div>
+                        <div className="cell four"><b>deadly</b></div>
+                    </div>
+                    <div>
+                        <div className="cell four">{xpEasy} xp</div>
+                        <div className="cell four">{xpMedium} xp</div>
+                        <div className="cell four">{xpHard} xp</div>
+                        <div className="cell four">{xpDeadly} xp</div>
                     </div>
                 </div>
             );
 
+            var getLeft = (xp) => {
+                var max = Math.max(adjustedXp, (xpDeadly * 1.2));
+                return (100 * xp) / max;
+            };
+
+            var getRight = (xp) => {
+                return 100 - getLeft(xp);
+            };
+
             difficulty = (
                 <div>
+                    <div className="difficulty-gauge">
+                        <div className="bar-container">
+                            <div className="bar trivial" style={{ left: "0", right: getRight(xpEasy) + "%" }}></div>
+                        </div>
+                        <div className="bar-container">
+                            <div className="bar easy" style={{ left: getLeft(xpEasy) + "%", right: getRight(xpMedium) + "%" }}></div>
+                        </div>
+                        <div className="bar-container">
+                            <div className="bar medium" style={{ left: getLeft(xpMedium) + "%", right: getRight(xpHard) + "%" }}></div>
+                        </div>
+                        <div className="bar-container">
+                            <div className="bar hard" style={{ left: getLeft(xpHard) + "%", right: getRight(xpDeadly) + "%" }}></div>
+                        </div>
+                        <div className="bar-container">
+                            <div className="bar deadly" style={{ left: getLeft(xpDeadly) + "%", right: "0" }}></div>
+                        </div>
+                        <div className="encounter-container">
+                            <div className="encounter" style={{ left: (getLeft(adjustedXp) - 0.5) + "%" }}></div>
+                        </div>
+                    </div>
                     <div className="subheading">difficulty</div>
                     <div className="section">
                         difficulty for this party
@@ -115,7 +142,6 @@ class DifficultyChartPanel extends React.Component {
 
         return (
             <div>
-                {xpThresholds}
                 <div className="subheading">xp value</div>
                 <div className="section">
                     xp for this encounter
@@ -125,6 +151,7 @@ class DifficultyChartPanel extends React.Component {
                     effective xp for {monsterCount} monster(s)
                     <div className="right">{adjustedXp} xp</div>
                 </div>
+                {xpThresholds}
                 {difficulty}
             </div>
         );

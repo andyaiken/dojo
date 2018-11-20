@@ -17,7 +17,7 @@ textarea {
   input[type=text]:hover, input[type=text]:focus,
   textarea:hover,
   textarea:focus {
-    border-color: #6496f0; }
+    border-color: #3c78dc; }
 
 input[type=text] {
   height: 32px; }
@@ -58,7 +58,7 @@ button {
   padding: 5px 9px 5px 10px;
   cursor: pointer; }
   button:hover, button:focus {
-    border-color: #6496f0; }
+    border-color: #3c78dc; }
   button.disabled {
     background-color: white;
     border-color: #c3c3c3;
@@ -83,7 +83,7 @@ button {
     button .destructive:hover {
       background-color: rgba(255, 0, 0, 0.3); }
   button .non-destructive:hover {
-    border-color: #6496f0; }
+    border-color: #3c78dc; }
   button .title {
     width: calc(100% - 21px);
     display: inline-block;
@@ -315,16 +315,47 @@ body,
     .hp-gauge .bar.temp {
       background-color: royalblue; }
 
+.difficulty-gauge {
+  margin: 5px 0;
+  padding: 1px 3px;
+  border: 1px solid #c3c3c3;
+  background-color: white; }
+  .difficulty-gauge .bar-container {
+    margin: 2px 0;
+    height: 5px;
+    position: relative; }
+    .difficulty-gauge .bar-container .bar {
+      height: 5px;
+      position: absolute; }
+      .difficulty-gauge .bar-container .bar.trivial {
+        background-color: lightgreen; }
+      .difficulty-gauge .bar-container .bar.easy {
+        background-color: green; }
+      .difficulty-gauge .bar-container .bar.medium {
+        background-color: orange; }
+      .difficulty-gauge .bar-container .bar.hard {
+        background-color: crimson; }
+      .difficulty-gauge .bar-container .bar.deadly {
+        background-color: black; }
+  .difficulty-gauge .encounter-container {
+    position: relative; }
+    .difficulty-gauge .encounter-container .encounter {
+      width: 1%;
+      height: 35px;
+      top: -36px;
+      position: absolute;
+      background-color: royalblue; }
+
 .list-item {
   margin: 3px 0;
   padding: 3px;
   cursor: pointer;
   border-left: 5px solid #404040; }
   .list-item:hover {
-    background-color: rgba(100, 150, 240, 0.1); }
+    background-color: rgba(60, 120, 220, 0.1); }
   .list-item.selected {
-    border-color: #6496f0;
-    background-color: rgba(100, 150, 240, 0.2);
+    border-color: #3c78dc;
+    background-color: rgba(60, 120, 220, 0.2);
     cursor: default; }
   .list-item .heading {
     padding-left: 8px;
@@ -345,7 +376,7 @@ body,
     border-left-width: 5px;
     cursor: pointer; }
     .section .ability-scores:hover {
-      border-color: #6496f0; }
+      border-color: #3c78dc; }
     .section .ability-scores .ability-score {
       display: inline-block;
       width: calc((100% - 1px) / 6);
@@ -370,7 +401,7 @@ body,
       border-color: #c3c3c3;
       border-left-width: 5px; }
       .section .key-stat.editable:hover {
-        border-color: #6496f0; }
+        border-color: #3c78dc; }
     .section .key-stat .stat-heading {
       text-align: center;
       font-weight: 600; }
@@ -442,7 +473,7 @@ body,
       .modal .modal-content .monster-help .value-list {
         margin: 0; }
         .modal .modal-content .monster-help .value-list:nth-child(odd) {
-          background-color: rgba(100, 150, 240, 0.1); }
+          background-color: rgba(60, 120, 220, 0.1); }
         .modal .modal-content .monster-help .value-list .column {
           min-height: 38px; }
           .modal .modal-content .monster-help .value-list .column .text-container {
@@ -452,10 +483,10 @@ body,
           .modal .modal-content .monster-help .value-list .column .bar-container {
             height: 18px;
             margin: 10px 0;
-            border-bottom: 1px solid rgba(100, 150, 240, 0.2); }
+            border-bottom: 1px solid rgba(60, 120, 220, 0.2); }
             .modal .modal-content .monster-help .value-list .column .bar-container .bar {
               height: 100%;
-              background-color: #6496f0; }
+              background-color: #3c78dc; }
   .modal .modal-footer {
     height: 40px;
     background-color: #404040; }
@@ -469,7 +500,7 @@ body,
   margin: 5px 0;
   border-left: 5px solid #404040; }
   .name-row:hover {
-    border-color: #6496f0; }
+    border-color: #3c78dc; }
   .name-row .name-label {
     display: inline-block;
     vertical-align: middle;

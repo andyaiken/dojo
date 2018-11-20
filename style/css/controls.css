@@ -5,8 +5,8 @@
   background-color: white;
   cursor: pointer;
   padding: 5px; }
-  .checkbox :hover {
-    border-color: #6496f0; }
+  .checkbox:hover {
+    border-color: #3c78dc; }
   .checkbox .image {
     display: inline-block;
     vertical-align: middle;
@@ -28,7 +28,7 @@
   position: relative; }
   .dropdown:hover .dropdown-top,
   .dropdown:hover .dropdown-options {
-    border-color: #6496f0; }
+    border-color: #3c78dc; }
   .dropdown.open .dropdown-top .arrow {
     transform: rotate(-180deg); }
   .dropdown .dropdown-top {
@@ -71,23 +71,23 @@
       overflow: hidden;
       text-overflow: ellipsis; }
       .dropdown .dropdown-options .dropdown-option:hover {
-        border-color: #6496f0;
-        background-color: rgba(100, 150, 240, 0.1); }
+        border-color: #3c78dc;
+        background-color: rgba(60, 120, 220, 0.1); }
       .dropdown .dropdown-options .dropdown-option.selected {
         font-weight: 600;
-        border-color: #6496f0;
-        background-color: rgba(100, 150, 240, 0.2); }
+        border-color: #3c78dc;
+        background-color: rgba(60, 120, 220, 0.2); }
 
 .expander {
   margin: 5px 0;
   background-color: white;
-  border: 1px solid #6496f0; }
+  border: 1px solid #3c78dc; }
   .expander .expander-header {
     height: 32px;
     padding-left: 10px;
     padding-right: 6px;
     cursor: pointer;
-    background-color: #6496f0; }
+    background-color: #3c78dc; }
     .expander .expander-header .expander-text {
       display: inline-block;
       width: calc(100% - 40px);
@@ -108,7 +108,7 @@
     transform: rotate(-180deg); }
   .expander.expanded .expander-content {
     padding: 5px 10px;
-    background-color: rgba(100, 150, 240, 0.1); }
+    background-color: rgba(60, 120, 220, 0.1); }
 
 .navbar {
   height: 50px;
@@ -150,10 +150,10 @@
       letter-spacing: 1px;
       border-bottom: 2px solid rgba(255, 255, 255, 0.2); }
       .selector.tabs .option:hover {
-        border-bottom: 2px solid #6496f0; }
+        border-bottom: 2px solid #3c78dc; }
       .selector.tabs .option.selected {
-        background-color: rgba(100, 150, 240, 0.2);
-        border-bottom: 2px solid #6496f0; }
+        background-color: rgba(60, 120, 220, 0.2);
+        border-bottom: 2px solid #3c78dc; }
   .selector.radio {
     padding: 2px;
     background-color: white;
@@ -161,13 +161,13 @@
   .selector.no-border {
     border: none; }
   .selector:hover {
-    border-color: #6496f0; }
+    border-color: #3c78dc; }
   .selector .option {
     vertical-align: middle; }
     .selector .option:hover {
-      background-color: rgba(100, 150, 240, 0.1); }
+      background-color: rgba(60, 120, 220, 0.1); }
     .selector .option.selected {
-      background-color: rgba(100, 150, 240, 0.2);
+      background-color: rgba(60, 120, 220, 0.2);
       font-weight: 600; }
 
 .spin {
@@ -175,7 +175,7 @@
   border: 1px solid #c3c3c3;
   background-color: white; }
   .spin:hover {
-    border-color: #6496f0; }
+    border-color: #3c78dc; }
   .spin .spin-button,
   .spin .info {
     display: inline-block;
@@ -190,7 +190,7 @@
     margin: 0 5px;
     border-radius: 50%; }
     .spin .spin-button:hover {
-      background-color: rgba(100, 150, 240, 0.1); }
+      background-color: rgba(60, 120, 220, 0.1); }
   .spin .info {
     width: calc(100% - 80px);
     margin: 2px 0; }
@@ -207,7 +207,7 @@
     height: 15px;
     line-height: 12px; }
     .spin .spin-expander:hover {
-      background-color: rgba(100, 150, 240, 0.1); }
+      background-color: rgba(60, 120, 220, 0.1); }
   .spin .factor-selector {
     margin: 0 5px; }
 

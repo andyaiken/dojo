@@ -1,11 +1,6 @@
 class InfoCard extends React.Component {
     render() {
         try {
-            var style = "card";
-            if (this.props.welcome) {
-                style += " welcome";
-            }
-
             var heading = null;
             if (this.props.getHeading) {
                 heading = this.props.getHeading();
@@ -20,7 +15,7 @@ class InfoCard extends React.Component {
             }
 
             return (
-                <div className={style}>
+                <div className="card">
                     {heading}
                     <div className="card-content">
                         {content}

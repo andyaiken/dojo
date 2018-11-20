@@ -510,11 +510,6 @@ var InfoCard = function (_React$Component) {
         key: "render",
         value: function render() {
             try {
-                var style = "card";
-                if (this.props.welcome) {
-                    style += " welcome";
-                }
-
                 var heading = null;
                 if (this.props.getHeading) {
                     heading = this.props.getHeading();
@@ -530,7 +525,7 @@ var InfoCard = function (_React$Component) {
 
                 return React.createElement(
                     "div",
-                    { className: style },
+                    { className: "card" },
                     heading,
                     React.createElement(
                         "div",
@@ -709,7 +704,30 @@ var MonsterCard = function (_React$Component) {
                                 });
                                 // If we can't add it anywhere, don't show it
                                 if (!canAdd) {
-                                    return null;
+                                    return React.createElement(InfoCard, {
+                                        getHeading: function getHeading() {
+                                            return React.createElement(
+                                                "div",
+                                                { className: "heading" },
+                                                React.createElement(
+                                                    "div",
+                                                    { className: "title" },
+                                                    _this3.props.combatant.name
+                                                )
+                                            );
+                                        },
+                                        getContent: function getContent() {
+                                            return React.createElement(
+                                                "div",
+                                                { className: "section centered" },
+                                                React.createElement(
+                                                    "i",
+                                                    null,
+                                                    "this monster is already part of this encounter"
+                                                )
+                                            );
+                                        }
+                                    });
                                 }
                             }
                         }
@@ -8214,6 +8232,7 @@ var DifficultyChartPanel = function (_React$Component) {
                     if (adjustedXp >= xpDeadly) {
                         difficulty = "deadly";
                     }
+                    adjustedDifficulty = difficulty;
 
                     if (pcs.length < 3 || pcs.length > 5) {
                         var small = pcs.length < 3;
@@ -8239,89 +8258,123 @@ var DifficultyChartPanel = function (_React$Component) {
 
                 xpThresholds = React.createElement(
                     "div",
-                    null,
+                    { className: "table" },
                     React.createElement(
                         "div",
-                        { className: "subheading" },
-                        "xp thresholds for this party"
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "table" },
+                        null,
                         React.createElement(
                             "div",
-                            null,
+                            { className: "cell four" },
                             React.createElement(
-                                "div",
-                                { className: "cell four" },
-                                React.createElement(
-                                    "b",
-                                    null,
-                                    "easy"
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "cell four" },
-                                React.createElement(
-                                    "b",
-                                    null,
-                                    "medium"
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "cell four" },
-                                React.createElement(
-                                    "b",
-                                    null,
-                                    "hard"
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "cell four" },
-                                React.createElement(
-                                    "b",
-                                    null,
-                                    "deadly"
-                                )
+                                "b",
+                                null,
+                                "easy"
                             )
                         ),
                         React.createElement(
                             "div",
-                            null,
+                            { className: "cell four" },
                             React.createElement(
-                                "div",
-                                { className: "cell four" },
-                                xpEasy,
-                                " xp"
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "cell four" },
-                                xpMedium,
-                                " xp"
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "cell four" },
-                                xpHard,
-                                " xp"
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "cell four" },
-                                xpDeadly,
-                                " xp"
+                                "b",
+                                null,
+                                "medium"
                             )
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "cell four" },
+                            React.createElement(
+                                "b",
+                                null,
+                                "hard"
+                            )
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "cell four" },
+                            React.createElement(
+                                "b",
+                                null,
+                                "deadly"
+                            )
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        null,
+                        React.createElement(
+                            "div",
+                            { className: "cell four" },
+                            xpEasy,
+                            " xp"
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "cell four" },
+                            xpMedium,
+                            " xp"
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "cell four" },
+                            xpHard,
+                            " xp"
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "cell four" },
+                            xpDeadly,
+                            " xp"
                         )
                     )
                 );
 
+                var getLeft = function getLeft(xp) {
+                    var max = Math.max(adjustedXp, xpDeadly * 1.2);
+                    return 100 * xp / max;
+                };
+
+                var getRight = function getRight(xp) {
+                    return 100 - getLeft(xp);
+                };
+
                 difficulty = React.createElement(
                     "div",
                     null,
+                    React.createElement(
+                        "div",
+                        { className: "difficulty-gauge" },
+                        React.createElement(
+                            "div",
+                            { className: "bar-container" },
+                            React.createElement("div", { className: "bar trivial", style: { left: "0", right: getRight(xpEasy) + "%" } })
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "bar-container" },
+                            React.createElement("div", { className: "bar easy", style: { left: getLeft(xpEasy) + "%", right: getRight(xpMedium) + "%" } })
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "bar-container" },
+                            React.createElement("div", { className: "bar medium", style: { left: getLeft(xpMedium) + "%", right: getRight(xpHard) + "%" } })
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "bar-container" },
+                            React.createElement("div", { className: "bar hard", style: { left: getLeft(xpHard) + "%", right: getRight(xpDeadly) + "%" } })
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "bar-container" },
+                            React.createElement("div", { className: "bar deadly", style: { left: getLeft(xpDeadly) + "%", right: "0" } })
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "encounter-container" },
+                            React.createElement("div", { className: "encounter", style: { left: getLeft(adjustedXp) - 0.5 + "%" } })
+                        )
+                    ),
                     React.createElement(
                         "div",
                         { className: "subheading" },
@@ -8359,7 +8412,6 @@ var DifficultyChartPanel = function (_React$Component) {
             return React.createElement(
                 "div",
                 null,
-                xpThresholds,
                 React.createElement(
                     "div",
                     { className: "subheading" },
@@ -8389,6 +8441,7 @@ var DifficultyChartPanel = function (_React$Component) {
                         " xp"
                     )
                 ),
+                xpThresholds,
                 difficulty
             );
         }
@@ -9327,8 +9380,6 @@ var EncounterBuilderScreen = function (_React$Component) {
                 });
             }
             monsters.forEach(function (monster) {
-                // TODO: Add a note if the monster is already in the encounter or one of its waves
-
                 libraryCards.push(React.createElement(
                     "div",
                     { className: "column", key: monster.id },
