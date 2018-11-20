@@ -423,14 +423,17 @@ body,
   left: 0;
   height: 100%;
   width: 100%;
-  z-index: 10; }
+  z-index: 10;
+  touch-action: none;
+  pointer-events: none; }
 
 .blur {
   -webkit-filter: blur(2px);
   -moz-filter: blur(2px);
   -ms-filter: blur(2px);
   filter: blur(2px);
-  touch-action: none; }
+  touch-action: none;
+  pointer-events: none; }
 
 .modal {
   height: calc(100% - 160px);

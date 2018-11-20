@@ -634,6 +634,8 @@ body,
     height: 100%;
     width: 100%;
     z-index: 10;
+    touch-action: none;
+    pointer-events: none;
 }
 
 .blur {
@@ -642,6 +644,7 @@ body,
     -ms-filter: blur(2px);
     filter: blur(2px);
     touch-action: none;
+    pointer-events: none;
 }
 
 .modal {
