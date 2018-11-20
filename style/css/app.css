@@ -423,9 +423,7 @@ body,
   left: 0;
   height: 100%;
   width: 100%;
-  z-index: 10;
-  touch-action: none;
-  pointer-events: none; }
+  z-index: 10; }
 
 .blur {
   -webkit-filter: blur(2px);
