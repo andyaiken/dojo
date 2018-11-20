@@ -148,12 +148,12 @@
       font-size: 16px;
       font-weight: 600;
       letter-spacing: 1px;
-      border-bottom: 2px solid rgba(255, 255, 255, 0.2); }
+      border-bottom: 2px solid #c3c3c3; }
       .selector.tabs .option:hover {
-        border-bottom: 2px solid #3c78dc; }
+        border-bottom-color: #3c78dc; }
       .selector.tabs .option.selected {
         background-color: rgba(60, 120, 220, 0.2);
-        border-bottom: 2px solid #3c78dc; }
+        border-bottom-color: #3c78dc; }
   .selector.radio {
     padding: 2px;
     background-color: white;

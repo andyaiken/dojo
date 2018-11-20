@@ -5006,7 +5006,9 @@ var Dojo = function (_React$Component) {
 
                     modal = React.createElement(
                         "div",
-                        { className: "overlay" },
+                        { className: "overlay", onTouchStart: function onTouchStart(e) {
+                                return e.preventDefault();
+                            } },
                         React.createElement(
                             "div",
                             { className: "modal" },

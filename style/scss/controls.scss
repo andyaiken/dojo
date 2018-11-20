@@ -218,15 +218,15 @@
             font-size: 16px;
             font-weight: 600;
             letter-spacing: 1px;
-            border-bottom: 2px solid $header-foreground-03;
+            border-bottom: 2px solid $control-border;
 
             &:hover {
-                border-bottom: 2px solid $highlight;
+                border-bottom-color: $highlight;
             }
 
             &.selected {
                 background-color: $highlight02;
-                border-bottom: 2px solid $highlight;
+                border-bottom-color: $highlight;
             }
         }
     }
