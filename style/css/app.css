@@ -185,8 +185,9 @@ body,
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow: hidden;
-  -webkit-overflow-scrolling: auto; }
+  width: 100%;
+  position: fixed;
+  overflow: hidden; }
 
 .dojo {
   font-size: 12px;
