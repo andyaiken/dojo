@@ -641,6 +641,7 @@ body,
     -moz-filter: blur(2px);
     -ms-filter: blur(2px);
     filter: blur(2px);
+    touch-action: none;
 }
 
 .modal {

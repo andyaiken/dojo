@@ -429,7 +429,8 @@ body,
   -webkit-filter: blur(2px);
   -moz-filter: blur(2px);
   -ms-filter: blur(2px);
-  filter: blur(2px); }
+  filter: blur(2px);
+  touch-action: none; }
 
 .modal {
   height: calc(100% - 160px);

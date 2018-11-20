@@ -1425,7 +1425,7 @@ class Dojo extends React.Component {
                 }
 
                 modal = (
-                    <div className="overlay" onTouchStart={e => e.preventDefault()}>
+                    <div className="overlay">
                         <div className="modal">
                             <div className="modal-header">
                                 <div className="title">{modalTitle}</div>
