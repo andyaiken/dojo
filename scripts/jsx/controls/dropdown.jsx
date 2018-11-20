@@ -73,7 +73,7 @@ class Dropdown extends React.Component {
             content.push(
                 <div key="selection" className="dropdown-top" title={title}>
                     <div className="item-text">{selectedText}</div>
-                    <img className={this.state.open ? "arrow open" : "arrow"} src="resources/images/down-arrow-black.svg" />
+                    <img className="arrow" src="resources/images/ellipsis.svg" />
                 </div>
             );
 

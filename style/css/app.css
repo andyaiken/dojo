@@ -59,6 +59,8 @@ button {
   cursor: pointer; }
   button:hover, button:focus {
     border-color: #3c78dc; }
+    button:hover .image, button:focus .image {
+      opacity: 1; }
   button.disabled {
     background-color: white;
     border-color: #c3c3c3;
@@ -94,7 +96,8 @@ button {
     width: 20px;
     height: 20px;
     display: inline-block;
-    vertical-align: middle; }
+    vertical-align: middle;
+    opacity: 0; }
   button .confirmation {
     padding-top: 10px; }
 

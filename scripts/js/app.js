@@ -733,6 +733,21 @@ var MonsterCard = function (_React$Component) {
                         }
                     }
                     if (this.props.mode.indexOf("combat") !== -1) {
+                        options.push(React.createElement(ConditionsPanel, {
+                            combatant: this.props.combatant,
+                            addCondition: function addCondition(condition) {
+                                return _this3.props.addCondition(_this3.props.combatant, condition);
+                            },
+                            removeCondition: function removeCondition(conditionID) {
+                                return _this3.props.removeCondition(_this3.props.combatant, conditionID);
+                            },
+                            nudgeConditionValue: function nudgeConditionValue(condition, type, delta) {
+                                return _this3.props.nudgeConditionValue(condition, type, delta);
+                            },
+                            changeConditionValue: function changeConditionValue(condition, type, value) {
+                                return _this3.props.changeConditionValue(condition, type, value);
+                            }
+                        }));
                         options.push(React.createElement(Expander, {
                             key: "rename",
                             text: "change name",
@@ -1140,19 +1155,6 @@ var MonsterCard = function (_React$Component) {
                                 this.props.combatant.damage.immune
                             )
                         ),
-                        React.createElement("div", { className: "divider" }),
-                        React.createElement(ConditionsPanel, {
-                            combatant: this.props.combatant,
-                            addCondition: function addCondition(condition) {
-                                return _this3.props.addCondition(_this3.props.combatant, condition);
-                            },
-                            removeCondition: function removeCondition(condition) {
-                                return _this3.props.removeCondition(_this3.props.combatant, condition);
-                            },
-                            nudgeConditionValue: function nudgeConditionValue(condition, type, delta) {
-                                return _this3.props.nudgeConditionValue(condition, type, delta);
-                            }
-                        }),
                         React.createElement(
                             "div",
                             { className: "section", style: { display: this.props.combatant.conditionImmunities !== "" ? "" : "none" } },
@@ -2732,7 +2734,7 @@ var Dropdown = function (_React$Component) {
                         { className: "item-text" },
                         selectedText
                     ),
-                    React.createElement("img", { className: this.state.open ? "arrow open" : "arrow", src: "resources/images/down-arrow-black.svg" })
+                    React.createElement("img", { className: "arrow", src: "resources/images/ellipsis.svg" })
                 ));
 
                 if (this.state.open) {
@@ -4221,6 +4223,8 @@ var Dojo = function (_React$Component) {
     }, {
         key: "makeCurrent",
         value: function makeCurrent(combatant, newRound) {
+            // TODO: Handle conditions
+
             var combat = this.getCombat(this.state.selectedCombatID);
 
             combat.combatants.forEach(function (combatant) {
@@ -4349,6 +4353,8 @@ var Dojo = function (_React$Component) {
     }, {
         key: "endTurn",
         value: function endTurn(combatant) {
+            // TODO: Handle conditions
+
             var combat = this.getCombat(this.state.selectedCombatID);
             var active = combat.combatants.filter(function (combatant) {
                 return combatant.current || !combatant.pending && combatant.active && !combatant.defeated;
@@ -4380,7 +4386,10 @@ var Dojo = function (_React$Component) {
         }
     }, {
         key: "removeCondition",
-        value: function removeCondition(combatant, condition) {
+        value: function removeCondition(combatant, conditionID) {
+            var condition = combatant.conditions.find(function (c) {
+                return c.id === conditionID;
+            });
             var index = combatant.conditions.indexOf(condition);
             combatant.conditions.splice(index, 1);
 
@@ -4805,8 +4814,8 @@ var Dojo = function (_React$Component) {
                             addCondition: function addCondition(combatant, condition) {
                                 return _this6.addCondition(combatant, condition);
                             },
-                            removeCondition: function removeCondition(combatant, condition) {
-                                return _this6.removeCondition(combatant, condition);
+                            removeCondition: function removeCondition(combatant, conditionID) {
+                                return _this6.removeCondition(combatant, conditionID);
                             },
                             endTurn: function endTurn(combatant) {
                                 return _this6.endTurn(combatant);
@@ -8017,54 +8026,291 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var ConditionPanel = function (_React$Component) {
     _inherits(ConditionPanel, _React$Component);
 
-    function ConditionPanel() {
+    function ConditionPanel(props) {
         _classCallCheck(this, ConditionPanel);
 
-        return _possibleConstructorReturn(this, (ConditionPanel.__proto__ || Object.getPrototypeOf(ConditionPanel)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (ConditionPanel.__proto__ || Object.getPrototypeOf(ConditionPanel)).call(this));
+
+        _this.state = {
+            mode: props.mode || "view"
+        };
+        return _this;
     }
 
     _createClass(ConditionPanel, [{
-        key: "render",
-        value: function render() {
+        key: "setMode",
+        value: function setMode(mode) {
+            this.setState({
+                mode: mode
+            });
+        }
+    }, {
+        key: "setConditionType",
+        value: function setConditionType(type) {
+            // TODO
+        }
+    }, {
+        key: "setStandardCondition",
+        value: function setStandardCondition(condition) {
+            // TODO
+        }
+    }, {
+        key: "setDurationType",
+        value: function setDurationType(type) {
+            // TODO
+        }
+    }, {
+        key: "getEdit",
+        value: function getEdit() {
             var _this2 = this;
 
-            try {
-                var details = [];
-                if (this.props.condition.name === "exhausted") {
-                    details.push(React.createElement(Spin, {
-                        key: "level",
+            var details = [];
+
+            var typeOptions = [{
+                id: "standard",
+                text: "standard"
+            }, {
+                id: "custom",
+                text: "custom"
+            }];
+            details.push(React.createElement(
+                "div",
+                { key: "type", className: "section" },
+                React.createElement(Selector, {
+                    options: typeOptions,
+                    selectedID: this.props.condition.type,
+                    select: function select(optionID) {
+                        return _this2.setConditionType(optionID);
+                    }
+                })
+            ));
+
+            if (this.props.condition.type === "standard") {
+                var options = CONDITION_TYPES.map(function (c) {
+                    return { id: c, text: c };
+                });
+                details.push(React.createElement(
+                    "div",
+                    { key: "standard", className: "section" },
+                    React.createElement(Selector, {
+                        options: options,
+                        selectedID: this.props.condition.name,
+                        itemsPerRow: 3,
+                        select: function select(optionID) {
+                            return _this2.setStandardCondition(optionID);
+                        }
+                    })
+                ));
+            }
+
+            if (this.props.condition.type === "standard" && this.props.condition.name === "exhausted") {
+                details.push(React.createElement(
+                    "div",
+                    { key: "level", className: "section" },
+                    React.createElement(Spin, {
                         source: this.props.condition,
                         name: "level",
                         label: "level",
                         nudgeValue: function nudgeValue(delta) {
                             return _this2.props.nudgeConditionValue(_this2.props.condition, "level", delta);
                         }
-                    }));
-                    details.push(React.createElement("div", { key: "div1", className: "divider" }));
-                }
-                var text = conditionText(this.props.condition);
-                for (var n = 0; n !== text.length; ++n) {
-                    details.push(React.createElement(
-                        "div",
-                        { key: n, className: "section" },
-                        text[n]
-                    ));
-                }
-                details.push(React.createElement("div", { key: "div2", className: "divider" }));
+                    })
+                ));
+            }
+
+            if (this.props.condition.type === "custom") {
                 details.push(React.createElement(
                     "div",
-                    { key: "remove", className: "section" },
-                    React.createElement(ConfirmButton, { key: "remove", text: "remove condition", callback: function callback() {
-                            return _this2.props.removeCondition(_this2.props.condition);
+                    { key: "name", className: "section" },
+                    React.createElement("input", { type: "text", placeholder: "name", value: this.props.condition.name, onChange: function onChange(event) {
+                            return _this2.props.changeConditionValue(_this2.props.condition, "name", event.target.value);
                         } })
                 ));
+                details.push(React.createElement(
+                    "div",
+                    { key: "text", className: "section" },
+                    React.createElement("textarea", { placeholder: "details", value: this.props.condition.text, onChange: function onChange(event) {
+                            return _this2.props.changeConditionValue(_this2.props.condition, "text", event.target.value);
+                        } })
+                ));
+            }
 
-                var name = this.props.condition.name;
+            var options = [{
+                id: "none",
+                text: "none"
+            }, {
+                id: "save",
+                text: "until saved"
+            }, {
+                id: "combatant",
+                text: "next turn"
+            }, {
+                id: "rounds",
+                text: "number of rounds"
+            }];
+            var duration = null;
+            if (this.props.condition.duration) {
+                switch (this.props.condition.duration.type) {
+                    case "save":
+                        duration = React.createElement(
+                            "div",
+                            null,
+                            "UNTIL [N] [TYPE] TURNS"
+                        );
+                        break;
+                    case "combatant":
+                        duration = React.createElement(
+                            "div",
+                            null,
+                            "UNTIL [START|END] of [X]'S NEXT TURN"
+                        );
+                        break;
+                    case "rounds":
+                        duration = React.createElement(
+                            "div",
+                            null,
+                            "FOR [N] ROUNDS"
+                        );
+                        break;
+                };
+            }
+            details.push(React.createElement(
+                "div",
+                { key: "duration", className: "section" },
+                React.createElement(Selector, {
+                    options: options,
+                    selectedID: this.props.condition.duration ? this.props.condition.duration.type : "none",
+                    select: function select(optionID) {
+                        return _this2.setDurationType(optionID);
+                    }
+                }),
+                duration
+            ));
+
+            details.push(React.createElement(
+                "div",
+                { key: "remove", className: "section" },
+                React.createElement("div", { className: "divider" }),
+                React.createElement(
+                    "button",
+                    { onClick: function onClick() {
+                            return _this2.setMode("view");
+                        } },
+                    "close"
+                ),
+                React.createElement(ConfirmButton, { key: "remove", text: "remove condition", callback: function callback() {
+                        return _this2.props.removeCondition(_this2.props.condition.id);
+                    } })
+            ));
+
+            return details;
+        }
+    }, {
+        key: "getView",
+        value: function getView() {
+            var _this3 = this;
+
+            var details = [];
+
+            // TODO: Allow custom conditions (with custom text)
+            var text = conditionText(this.props.condition);
+            for (var n = 0; n !== text.length; ++n) {
+                details.push(React.createElement(
+                    "div",
+                    { key: n, className: "section" },
+                    text[n]
+                ));
+            }
+
+            if (this.props.condition.duration !== null) {
+                var duration = null;
+                switch (this.props.condition.duration.type) {
+                    case "save":
+                        duration = React.createElement(
+                            "div",
+                            null,
+                            "until you make ",
+                            this.props.condition.duration.turns,
+                            " ",
+                            this.props.condition.duration.savetype,
+                            " saves"
+                        );
+                        break;
+                    case "combatant":
+                        var point = this.props.condition.duration.point;
+                        var combatant = this.props.condition.duration.combatantID ? "[COMBATANT]'s" : "my"; // TODO: Get combatant
+                        duration = React.createElement(
+                            "div",
+                            null,
+                            "until the ",
+                            point,
+                            " of ",
+                            combatant,
+                            " next turn"
+                        );
+                        break;
+                    case "turns":
+                        duration = React.createElement(
+                            "div",
+                            null,
+                            "for ",
+                            this.props.condition.duration.turns,
+                            " turns"
+                        );
+                        break;
+                }
+                details.push(React.createElement(
+                    "div",
+                    { key: "duration", className: "section centered" },
+                    React.createElement(
+                        "i",
+                        null,
+                        duration
+                    )
+                ));
+            }
+
+            details.push(React.createElement(
+                "div",
+                { key: "remove", className: "section" },
+                React.createElement("div", { className: "divider" }),
+                React.createElement(
+                    "button",
+                    { onClick: function onClick() {
+                            return _this3.setMode("edit");
+                        } },
+                    "edit condition"
+                ),
+                React.createElement(ConfirmButton, { key: "remove", text: "remove condition", callback: function callback() {
+                        return _this3.props.removeCondition(_this3.props.condition.id);
+                    } })
+            ));
+
+            return details;
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            try {
+                var content = null;
+                switch (this.state.mode) {
+                    case "edit":
+                        content = this.getEdit();
+                        break;
+                    case "view":
+                        content = this.getView();
+                        break;
+                }
+
+                var name = this.props.condition.name || "unnamed condition";
                 if (this.props.condition.name === "exhausted") {
                     name += " (" + this.props.condition.level + ")";
                 }
 
-                return React.createElement(Expander, { text: name, content: details });
+                return React.createElement(Expander, {
+                    text: name,
+                    content: content
+                });
             } catch (e) {
                 console.error(e);
             }
@@ -8094,10 +8340,14 @@ var ConditionsPanel = function (_React$Component) {
 
     _createClass(ConditionsPanel, [{
         key: "addCondition",
-        value: function addCondition(condition) {
+        value: function addCondition() {
             this.props.addCondition({
-                name: condition,
-                level: 1
+                id: guid(),
+                type: "standard",
+                name: null,
+                text: null,
+                level: 1,
+                duration: null
             });
         }
     }, {
@@ -8106,11 +8356,6 @@ var ConditionsPanel = function (_React$Component) {
             var _this2 = this;
 
             try {
-                var conditions = ["blinded", "charmed", "deafened", "exhausted", "frightened", "grappled", "incapacitated", "invisible", "paralyzed", "petrified", "poisoned", "prone", "restrained", "stunned", "unconscious"];
-                var options = conditions.map(function (c) {
-                    return { id: c, text: c };
-                });
-
                 var conditions = [];
                 for (var n = 0; n !== this.props.combatant.conditions.length; ++n) {
                     var condition = this.props.combatant.conditions[n];
@@ -8120,8 +8365,11 @@ var ConditionsPanel = function (_React$Component) {
                         nudgeConditionValue: function nudgeConditionValue(condition, type, delta) {
                             return _this2.props.nudgeConditionValue(condition, type, delta);
                         },
-                        removeCondition: function removeCondition(condition) {
-                            return _this2.props.removeCondition(condition);
+                        changeConditionValue: function changeConditionValue(condition, type, value) {
+                            return _this2.props.changeConditionValue(condition, type, value);
+                        },
+                        removeCondition: function removeCondition(conditionID) {
+                            return _this2.props.removeCondition(conditionID);
                         }
                     }));
                 }
@@ -8130,13 +8378,13 @@ var ConditionsPanel = function (_React$Component) {
                     "div",
                     { className: "section" },
                     conditions,
-                    React.createElement(Dropdown, {
-                        options: options,
-                        placeholder: "add condition...",
-                        select: function select(optionID) {
-                            return _this2.addCondition(optionID);
-                        }
-                    })
+                    React.createElement(
+                        "button",
+                        { onClick: function onClick() {
+                                return _this2.addCondition();
+                            } },
+                        "add a condition"
+                    )
                 );
             } catch (e) {
                 console.error(e);
@@ -8951,11 +9199,14 @@ var CombatManagerScreen = function (_React$Component) {
                         addCondition: function addCondition(combatant, condition) {
                             return _this2.props.addCondition(combatant, condition);
                         },
-                        removeCondition: function removeCondition(combatant, condition) {
-                            return _this2.props.removeCondition(combatant, condition);
+                        removeCondition: function removeCondition(combatant, conditionID) {
+                            return _this2.props.removeCondition(combatant, conditionID);
                         },
                         nudgeConditionValue: function nudgeConditionValue(condition, type, delta) {
                             return _this2.props.nudgeValue(condition, type, delta);
+                        },
+                        changeConditionValue: function changeConditionValue(condition, type, value) {
+                            return _this2.props.changeValue(condition, type, value);
                         },
                         endTurn: function endTurn(combatant) {
                             return _this2.props.endTurn(combatant);

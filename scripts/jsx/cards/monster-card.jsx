@@ -125,6 +125,15 @@ class MonsterCard extends React.Component {
                 }
                 if (this.props.mode.indexOf("combat") !== -1) {
                     options.push(
+                        <ConditionsPanel
+                            combatant={this.props.combatant}
+                            addCondition={condition => this.props.addCondition(this.props.combatant, condition)}
+                            removeCondition={conditionID => this.props.removeCondition(this.props.combatant, conditionID)}
+                            nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
+                            changeConditionValue={(condition, type, value) => this.props.changeConditionValue(condition, type, value)}
+                        />
+                    );
+                    options.push(
                         <Expander
                             key="rename"
                             text="change name"
@@ -297,13 +306,6 @@ class MonsterCard extends React.Component {
                                 <b>damage immunities</b> {this.props.combatant.damage.immune}
                             </div>
                         </div>
-                        <div className="divider"></div>
-                        <ConditionsPanel
-                            combatant={this.props.combatant}
-                            addCondition={condition => this.props.addCondition(this.props.combatant, condition)}
-                            removeCondition={condition => this.props.removeCondition(this.props.combatant, condition)}
-                            nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
-                        />
                         <div className="section" style={{ display: this.props.combatant.conditionImmunities !== "" ? "" : "none" }}>
                             <b>condition immunities</b> {this.props.combatant.conditionImmunities}
                         </div>

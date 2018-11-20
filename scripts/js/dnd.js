@@ -25,7 +25,29 @@ const CATEGORY_TYPES = [
 ];
 
 const TRAIT_TYPES = [
-    "trait", "action", "legendary", "lair", "regional"
+    "trait",
+    "action",
+    "legendary",
+    "lair",
+    "regional"
+];
+
+const CONDITION_TYPES = [
+    "blinded",
+    "charmed",
+    "deafened",
+    "exhausted",
+    "frightened",
+    "grappled",
+    "incapacitated",
+    "invisible",
+    "paralyzed",
+    "petrified",
+    "poisoned",
+    "prone",
+    "restrained",
+    "stunned",
+    "unconscious"
 ];
 
 function modifier(score) {
@@ -283,12 +305,18 @@ function pcExperience(level, difficulty) {
 
 function traitType(type) {
     switch (type) {
-    case 'trait': return 'trait';
-    case 'action': return 'action';
-    case 'legendary': return 'legendary action';
-    case 'lair': return 'lair action';
-    case 'regional': return 'regional effect';
-    default: return type;
+        case 'trait':
+            return 'trait';
+        case 'action':
+            return 'action';
+        case 'legendary':
+            return 'legendary action';
+        case 'lair':
+            return 'lair action';
+        case 'regional':
+            return 'regional effect';
+        default:
+            return type;
     }
 }
 

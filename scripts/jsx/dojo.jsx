@@ -824,6 +824,8 @@ class Dojo extends React.Component {
     }
 
     makeCurrent(combatant, newRound) {
+        // TODO: Handle conditions
+
         var combat = this.getCombat(this.state.selectedCombatID);
 
         combat.combatants.forEach(combatant => {
@@ -839,7 +841,7 @@ class Dojo extends React.Component {
 
         this.setState({
             combats: this.state.combats
-        })
+        });
     }
 
     makeActive(combatant) {
@@ -941,6 +943,8 @@ class Dojo extends React.Component {
     }
 
     endTurn(combatant) {
+        // TODO: Handle conditions
+
         var combat = this.getCombat(this.state.selectedCombatID);
         var active = combat.combatants.filter(combatant => {
             return combatant.current || (!combatant.pending && combatant.active && !combatant.defeated);
@@ -970,7 +974,8 @@ class Dojo extends React.Component {
         });
     }
 
-    removeCondition(combatant, condition) {
+    removeCondition(combatant, conditionID) {
+        var condition = combatant.conditions.find(c => c.id === conditionID);
         var index = combatant.conditions.indexOf(condition);
         combatant.conditions.splice(index, 1);
 
@@ -1296,7 +1301,7 @@ class Dojo extends React.Component {
                             makeDefeated={(combatant) => this.makeDefeated(combatant)}
                             removeCombatant={(combatant) => this.removeCombatant(combatant)}
                             addCondition={(combatant, condition) => this.addCondition(combatant, condition)}
-                            removeCondition={(combatant, condition) => this.removeCondition(combatant, condition)}
+                            removeCondition={(combatant, conditionID) => this.removeCondition(combatant, conditionID)}
                             endTurn={(combatant) => this.endTurn(combatant)}
                         />
                     );

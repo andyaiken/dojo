@@ -1,32 +1,17 @@
 class ConditionsPanel extends React.Component {
-    addCondition(condition) {
+    addCondition() {
         this.props.addCondition({
-            name: condition,
-            level: 1
+            id: guid(),
+            type: "standard",
+            name: null,
+            text: null,
+            level: 1,
+            duration: null
         });
     }
 
     render() {
         try {
-            var conditions = [
-                "blinded",
-                "charmed",
-                "deafened",
-                "exhausted",
-                "frightened",
-                "grappled",
-                "incapacitated",
-                "invisible",
-                "paralyzed",
-                "petrified",
-                "poisoned",
-                "prone",
-                "restrained",
-                "stunned",
-                "unconscious"
-            ];
-            var options = conditions.map(c => { return { id: c, text: c }; });
-
             var conditions = [];
             for (var n = 0; n !== this.props.combatant.conditions.length; ++n) {
                 var condition = this.props.combatant.conditions[n];
@@ -35,7 +20,8 @@ class ConditionsPanel extends React.Component {
                         key={n}
                         condition={condition}
                         nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
-                        removeCondition={condition => this.props.removeCondition(condition)}
+                        changeConditionValue={(condition, type, value) => this.props.changeConditionValue(condition, type, value)}
+                        removeCondition={conditionID => this.props.removeCondition(conditionID)}
                     />
                 );
             }
@@ -43,11 +29,7 @@ class ConditionsPanel extends React.Component {
             return (
                 <div className="section">
                     {conditions}
-                    <Dropdown
-                        options={options}
-                        placeholder="add condition..."
-                        select={optionID => this.addCondition(optionID)}
-                    />
+                    <button onClick={() => this.addCondition()}>add a condition</button>
                 </div>
             );
         } catch (e) {

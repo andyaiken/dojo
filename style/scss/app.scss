@@ -77,6 +77,10 @@ button {
     &:hover,
     &:focus {
         border-color: $highlight;
+
+        .image {
+            opacity: 1;
+        }
     }
 
     &.disabled {
@@ -129,6 +133,7 @@ button {
         height: 20px;
         display: inline-block;
         vertical-align: middle;
+        opacity: 0;
     }
 
     .confirmation {
