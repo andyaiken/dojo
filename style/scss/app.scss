@@ -45,17 +45,21 @@ li {
 }
 
 a {
-    color: royalblue;
+    color: $highlight;
     text-decoration: none;
 
+    &:hover {
+        background-color: $highlight01;
+    }
+
     &:visited {
-        color: royalblue;
+        color: $highlight;
     }
 }
 
 :focus {
     outline: none;
-    border-color: cornflowerblue !important;
+    border-color: $highlight !important;
 }
 
 button {
