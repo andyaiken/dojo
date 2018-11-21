@@ -43,7 +43,7 @@ class Expander extends React.Component {
                 <div className={style}>
                     <div className="expander-header" onClick={() => this.toggle()}>
                         <div className="expander-text">{this.props.text}</div>
-                        <img className="expander-button" src="resources/images/down-arrow.svg" />
+                        <img className="expander-button" src="resources/images/down-arrow-black.svg" />
                     </div>
                     {content}
                 </div>

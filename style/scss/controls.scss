@@ -121,22 +121,21 @@
 .expander {
     margin: 5px 0;
     background-color: $background;
-    border: 1px solid $highlight;
+    border: 1px solid $control-border;
+    border-left-width: 5px;
 
     .expander-header {
-        height: 32px;
+        min-height: 32px;
         padding-left: 10px;
         padding-right: 6px;
         cursor: pointer;
-        background-color: $highlight;
 
         .expander-text {
             display: inline-block;
             width: calc(100% - 40px);
-            height: 32px;
-            line-height: 32px;
             vertical-align: middle;
-            color: white;
+            padding: 8px 0;
+            color: $foreground;
             font-weight: 600;
         }
 
@@ -151,14 +150,23 @@
         }
     }
 
-    &.expanded {
-        .expander-header .expander-button {
-            transform: rotate(-180deg);
-        }
+    .expander-content {
+        padding: 5px 10px;
+    }
 
-        .expander-content {
-            padding: 5px 10px;
+    &:hover,
+    &.expanded {
+        border-color: $highlight;
+    }
+
+    &.expanded {
+
+        &>.expander-header {
             background-color: $highlight01;
+
+            .expander-button {
+                transform: rotate(-180deg);
+            }
         }
     }
 }

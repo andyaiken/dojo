@@ -64,8 +64,10 @@ class Dropdown extends React.Component {
                     }
                 });
 
-                selectedText = option.text;
-                title = option.text;
+                if (option) {
+                    selectedText = option.text;
+                    title = option.text;
+                }
             } else {
                 selectedText = this.props.text || this.props.placeholder || "select...";
             }

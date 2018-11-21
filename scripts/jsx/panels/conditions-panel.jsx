@@ -4,7 +4,6 @@ class ConditionsPanel extends React.Component {
             id: guid(),
             type: "standard",
             name: null,
-            text: null,
             level: 1,
             duration: null
         });
@@ -19,6 +18,7 @@ class ConditionsPanel extends React.Component {
                     <ConditionPanel
                         key={n}
                         condition={condition}
+                        combat={this.props.combat}
                         nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
                         changeConditionValue={(condition, type, value) => this.props.changeConditionValue(condition, type, value)}
                         removeCondition={conditionID => this.props.removeCondition(conditionID)}

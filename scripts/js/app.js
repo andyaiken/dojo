@@ -601,6 +601,7 @@ var MonsterCard = function (_React$Component) {
             if (this.props.combatant.alignment) {
                 description += ", " + this.props.combatant.alignment;
             }
+            description += ", cr " + challenge(this.props.combatant.challenge);
             return description.toLowerCase();
         }
     }, {
@@ -735,6 +736,7 @@ var MonsterCard = function (_React$Component) {
                     if (this.props.mode.indexOf("combat") !== -1) {
                         options.push(React.createElement(ConditionsPanel, {
                             combatant: this.props.combatant,
+                            combat: this.props.combat,
                             addCondition: function addCondition(condition) {
                                 return _this3.props.addCondition(_this3.props.combatant, condition);
                             },
@@ -988,20 +990,6 @@ var MonsterCard = function (_React$Component) {
                                 " ",
                                 this.props.combatant.equipment
                             ),
-                            React.createElement(
-                                "div",
-                                { className: "section" },
-                                React.createElement(
-                                    "b",
-                                    null,
-                                    "challenge"
-                                ),
-                                " ",
-                                challenge(this.props.combatant.challenge),
-                                " (",
-                                experience(this.props.combatant.challenge),
-                                " xp)"
-                            ),
                             React.createElement("div", { className: "divider" }),
                             React.createElement(TraitsPanel, { combatant: this.props.combatant })
                         );
@@ -1254,20 +1242,6 @@ var MonsterCard = function (_React$Component) {
                                 " ",
                                 this.props.combatant.equipment
                             ),
-                            React.createElement(
-                                "div",
-                                { className: "section" },
-                                React.createElement(
-                                    "b",
-                                    null,
-                                    "challenge"
-                                ),
-                                " ",
-                                challenge(this.props.combatant.challenge),
-                                " (",
-                                experience(this.props.combatant.challenge),
-                                " xp)"
-                            ),
                             React.createElement("div", { className: "divider" }),
                             React.createElement(TraitsPanel, { combatant: this.props.combatant })
                         )
@@ -1285,24 +1259,6 @@ var MonsterCard = function (_React$Component) {
                                     "div",
                                     null,
                                     this.description()
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "section" },
-                                React.createElement(
-                                    "div",
-                                    null,
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "challenge"
-                                    ),
-                                    " ",
-                                    challenge(this.props.combatant.challenge),
-                                    " (",
-                                    experience(this.props.combatant.challenge),
-                                    " xp)"
                                 )
                             ),
                             React.createElement(
@@ -2720,8 +2676,10 @@ var Dropdown = function (_React$Component) {
                         }
                     });
 
-                    selectedText = option.text;
-                    title = option.text;
+                    if (option) {
+                        selectedText = option.text;
+                        title = option.text;
+                    }
                 } else {
                     selectedText = this.props.text || this.props.placeholder || "select...";
                 }
@@ -2894,7 +2852,7 @@ var Expander = function (_React$Component) {
                             { className: "expander-text" },
                             this.props.text
                         ),
-                        React.createElement("img", { className: "expander-button", src: "resources/images/down-arrow.svg" })
+                        React.createElement("img", { className: "expander-button", src: "resources/images/down-arrow-black.svg" })
                     ),
                     content
                 );
@@ -7998,84 +7956,105 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var ConditionPanel = function (_React$Component) {
     _inherits(ConditionPanel, _React$Component);
 
-    function ConditionPanel(props) {
+    function ConditionPanel() {
         _classCallCheck(this, ConditionPanel);
 
-        var _this = _possibleConstructorReturn(this, (ConditionPanel.__proto__ || Object.getPrototypeOf(ConditionPanel)).call(this));
-
-        _this.state = {
-            mode: props.mode || "view"
-        };
-        return _this;
+        return _possibleConstructorReturn(this, (ConditionPanel.__proto__ || Object.getPrototypeOf(ConditionPanel)).apply(this, arguments));
     }
 
     _createClass(ConditionPanel, [{
-        key: "setMode",
-        value: function setMode(mode) {
-            this.setState({
-                mode: mode
-            });
-        }
-    }, {
-        key: "setConditionType",
-        value: function setConditionType(type) {
-            // TODO
-        }
-    }, {
-        key: "setStandardCondition",
-        value: function setStandardCondition(condition) {
-            // TODO
-        }
-    }, {
         key: "setDurationType",
         value: function setDurationType(type) {
-            // TODO
+            var duration = null;
+            switch (type) {
+                case "none":
+                    duration = null;
+                    break;
+                case "save":
+                    duration = {
+                        type: type,
+                        count: 1,
+                        saveType: "str"
+                    };
+                    break;
+                case "combatant":
+                    duration = {
+                        type: type,
+                        point: "start",
+                        combatantID: null
+                    };
+                    break;
+                case "rounds":
+                    duration = {
+                        type: type,
+                        count: 1
+                    };
+                    break;
+            }
+
+            this.props.changeConditionValue(this.props.condition, "duration", duration);
         }
     }, {
-        key: "getEdit",
-        value: function getEdit() {
+        key: "getView",
+        value: function getView() {
             var _this2 = this;
 
             var details = [];
 
-            var typeOptions = [{
-                id: "standard",
-                text: "standard"
-            }, {
-                id: "custom",
-                text: "custom"
-            }];
-            details.push(React.createElement(
-                "div",
-                { key: "type", className: "section" },
-                React.createElement(Selector, {
-                    options: typeOptions,
-                    selectedID: this.props.condition.type,
-                    select: function select(optionID) {
-                        return _this2.setConditionType(optionID);
-                    }
-                })
-            ));
-
-            if (this.props.condition.type === "standard") {
-                var options = CONDITION_TYPES.map(function (c) {
-                    return { id: c, text: c };
-                });
-                details.push(React.createElement(
-                    "div",
-                    { key: "standard", className: "section" },
-                    React.createElement(Selector, {
-                        options: options,
-                        selectedID: this.props.condition.name,
-                        itemsPerRow: 3,
-                        select: function select(optionID) {
-                            return _this2.setStandardCondition(optionID);
-                        }
-                    })
-                ));
+            var name = this.props.condition.name || "condition";
+            if (this.props.condition.type === "standard" && this.props.condition.name === "exhausted") {
+                name += " (" + this.props.condition.level + ")";
             }
 
-            if (this.props.condition.type === "standard" && this.props.condition.name === "exhausted") {
+            if (this.props.condition.duration !== null) {
+                switch (this.props.condition.duration.type) {
+                    case "save":
+                        name += " until you make " + this.props.condition.duration.count + " " + this.props.condition.duration.saveType + " save(s)";
+                        break;
+                    case "combatant":
+                        var point = this.props.condition.duration.point;
+                        var c = this.props.combat.combatants.find(function (c) {
+                            return c.id == _this2.props.condition.duration.combatantID;
+                        });
+                        var combatant = c ? c.name + "'s" : "someone's";
+                        name += " until the " + point + " of " + combatant + " next turn";
+                        break;
+                    case "rounds":
+                        name += " for " + this.props.condition.duration.count + " round(s)";
+                        break;
+                }
+            }
+            details.push(React.createElement(
+                "div",
+                { key: "name" },
+                name
+            ));
+
+            return React.createElement(
+                "div",
+                null,
+                details
+            );
+        }
+    }, {
+        key: "getEdit",
+        value: function getEdit() {
+            var _this3 = this;
+
+            var details = [];
+
+            if (this.props.condition.type === "standard") {
+                var text = conditionText(this.props.condition);
+                for (var n = 0; n !== text.length; ++n) {
+                    details.push(React.createElement(
+                        "div",
+                        { key: n, className: "section" },
+                        text[n]
+                    ));
+                }
+            }
+
+            if (this.props.condition.name === "exhausted") {
                 details.push(React.createElement(
                     "div",
                     { key: "level", className: "section" },
@@ -8084,204 +8063,239 @@ var ConditionPanel = function (_React$Component) {
                         name: "level",
                         label: "level",
                         nudgeValue: function nudgeValue(delta) {
-                            return _this2.props.nudgeConditionValue(_this2.props.condition, "level", delta);
+                            return _this3.props.nudgeConditionValue(_this3.props.condition, "level", delta);
+                        }
+                    })
+                ));
+            }
+
+            details.push(React.createElement("div", { key: "div", className: "divider" }));
+
+            var editCondition = [];
+            var editDuration = [];
+
+            var typeOptions = [{
+                id: "standard",
+                text: "standard"
+            }, {
+                id: "custom",
+                text: "custom"
+            }];
+            editCondition.push(React.createElement(
+                "div",
+                { key: "type", className: "section" },
+                React.createElement(
+                    "div",
+                    { className: "subheading" },
+                    "condition type"
+                ),
+                React.createElement(Selector, {
+                    options: typeOptions,
+                    selectedID: this.props.condition.type,
+                    select: function select(optionID) {
+                        return _this3.props.changeConditionValue(_this3.props.condition, "type", optionID);
+                    }
+                })
+            ));
+
+            if (this.props.condition.type === "standard") {
+                var options = CONDITION_TYPES.map(function (c) {
+                    return { id: c, text: c };
+                });
+                editCondition.push(React.createElement(
+                    "div",
+                    { key: "standard", className: "section" },
+                    React.createElement(
+                        "div",
+                        { className: "subheading" },
+                        "standard conditions"
+                    ),
+                    React.createElement(Dropdown, {
+                        options: options,
+                        selectedID: this.props.condition.name,
+                        select: function select(optionID) {
+                            return _this3.props.changeConditionValue(_this3.props.condition, "name", optionID);
                         }
                     })
                 ));
             }
 
             if (this.props.condition.type === "custom") {
-                details.push(React.createElement(
+                editCondition.push(React.createElement(
                     "div",
                     { key: "name", className: "section" },
+                    React.createElement(
+                        "div",
+                        { className: "subheading" },
+                        "custom condition text"
+                    ),
                     React.createElement("input", { type: "text", placeholder: "name", value: this.props.condition.name, onChange: function onChange(event) {
-                            return _this2.props.changeConditionValue(_this2.props.condition, "name", event.target.value);
-                        } })
-                ));
-                details.push(React.createElement(
-                    "div",
-                    { key: "text", className: "section" },
-                    React.createElement("textarea", { placeholder: "details", value: this.props.condition.text, onChange: function onChange(event) {
-                            return _this2.props.changeConditionValue(_this2.props.condition, "text", event.target.value);
+                            return _this3.props.changeConditionValue(_this3.props.condition, "name", event.target.value);
                         } })
                 ));
             }
 
             var options = [{
                 id: "none",
-                text: "none"
+                text: "until removed (default)"
             }, {
                 id: "save",
-                text: "until saved"
+                text: "until a successful save"
             }, {
                 id: "combatant",
-                text: "next turn"
+                text: "until someone's next turn"
             }, {
                 id: "rounds",
-                text: "number of rounds"
+                text: "for a number of rounds"
             }];
             var duration = null;
             if (this.props.condition.duration) {
                 switch (this.props.condition.duration.type) {
                     case "save":
+                        var saveOptions = ["str", "dex", "con", "int", "wis", "cha", "death"].map(function (c) {
+                            return { id: c, text: c };
+                        });
                         duration = React.createElement(
                             "div",
                             null,
-                            "UNTIL [N] [TYPE] TURNS"
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "div",
+                                    { className: "subheading" },
+                                    "number of saves required"
+                                ),
+                                React.createElement(Spin, {
+                                    source: this.props.condition.duration,
+                                    name: "count",
+                                    nudgeValue: function nudgeValue(delta) {
+                                        return _this3.props.nudgeConditionValue(_this3.props.condition.duration, "count", delta);
+                                    }
+                                })
+                            ),
+                            React.createElement(
+                                "div",
+                                { key: "standard", className: "section" },
+                                React.createElement(
+                                    "div",
+                                    { className: "subheading" },
+                                    "type of save"
+                                ),
+                                React.createElement(Dropdown, {
+                                    options: saveOptions,
+                                    selectedID: this.props.condition.duration.saveType,
+                                    select: function select(optionID) {
+                                        return _this3.props.changeConditionValue(_this3.props.condition.duration, "saveType", optionID);
+                                    }
+                                })
+                            )
                         );
                         break;
                     case "combatant":
+                        var pointOptions = ["start", "end"].map(function (c) {
+                            return { id: c, text: c };
+                        });
+                        var combatantOptions = this.props.combat.combatants.map(function (c) {
+                            return { id: c.id, text: c.name };
+                        });
                         duration = React.createElement(
                             "div",
                             null,
-                            "UNTIL [START|END] of [X]'S NEXT TURN"
+                            React.createElement(
+                                "div",
+                                { key: "standard", className: "section" },
+                                React.createElement(
+                                    "div",
+                                    { className: "subheading" },
+                                    "start or end"
+                                ),
+                                React.createElement(Selector, {
+                                    options: pointOptions,
+                                    selectedID: this.props.condition.duration.point,
+                                    select: function select(optionID) {
+                                        return _this3.props.changeConditionValue(_this3.props.condition.duration, "point", optionID);
+                                    }
+                                })
+                            ),
+                            React.createElement(
+                                "div",
+                                { key: "standard", className: "section" },
+                                React.createElement(
+                                    "div",
+                                    { className: "subheading" },
+                                    "combatant"
+                                ),
+                                React.createElement(Dropdown, {
+                                    options: combatantOptions,
+                                    selectedID: this.props.condition.duration.combatantID,
+                                    select: function select(optionID) {
+                                        return _this3.props.changeConditionValue(_this3.props.condition.duration, "combatantID", optionID);
+                                    }
+                                })
+                            )
                         );
                         break;
                     case "rounds":
                         duration = React.createElement(
                             "div",
                             null,
-                            "FOR [N] ROUNDS"
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "div",
+                                    { className: "subheading" },
+                                    "number of rounds"
+                                ),
+                                React.createElement(Spin, {
+                                    source: this.props.condition.duration,
+                                    name: "count",
+                                    nudgeValue: function nudgeValue(delta) {
+                                        return _this3.props.nudgeConditionValue(_this3.props.condition.duration, "count", delta);
+                                    }
+                                })
+                            )
                         );
                         break;
                 };
             }
-            details.push(React.createElement(
+            editDuration.push(React.createElement(
                 "div",
                 { key: "duration", className: "section" },
-                React.createElement(Selector, {
+                React.createElement(
+                    "div",
+                    { className: "subheading" },
+                    "duration type"
+                ),
+                React.createElement(Dropdown, {
                     options: options,
                     selectedID: this.props.condition.duration ? this.props.condition.duration.type : "none",
                     select: function select(optionID) {
-                        return _this2.setDurationType(optionID);
+                        return _this3.setDurationType(optionID);
                     }
                 }),
                 duration
             ));
 
-            details.push(React.createElement(
+            return React.createElement(
                 "div",
-                { key: "remove", className: "section" },
-                React.createElement("div", { className: "divider" }),
-                React.createElement(
-                    "button",
-                    { onClick: function onClick() {
-                            return _this2.setMode("view");
-                        } },
-                    "close"
-                ),
-                React.createElement(ConfirmButton, { key: "remove", text: "remove condition", callback: function callback() {
-                        return _this2.props.removeCondition(_this2.props.condition.id);
-                    } })
-            ));
-
-            return details;
-        }
-    }, {
-        key: "getView",
-        value: function getView() {
-            var _this3 = this;
-
-            var details = [];
-
-            // TODO: Allow custom conditions (with custom text)
-            var text = conditionText(this.props.condition);
-            for (var n = 0; n !== text.length; ++n) {
-                details.push(React.createElement(
-                    "div",
-                    { key: n, className: "section" },
-                    text[n]
-                ));
-            }
-
-            if (this.props.condition.duration !== null) {
-                var duration = null;
-                switch (this.props.condition.duration.type) {
-                    case "save":
-                        duration = React.createElement(
-                            "div",
-                            null,
-                            "until you make ",
-                            this.props.condition.duration.turns,
-                            " ",
-                            this.props.condition.duration.savetype,
-                            " saves"
-                        );
-                        break;
-                    case "combatant":
-                        var point = this.props.condition.duration.point;
-                        var combatant = this.props.condition.duration.combatantID ? "[COMBATANT]'s" : "my"; // TODO: Get combatant
-                        duration = React.createElement(
-                            "div",
-                            null,
-                            "until the ",
-                            point,
-                            " of ",
-                            combatant,
-                            " next turn"
-                        );
-                        break;
-                    case "turns":
-                        duration = React.createElement(
-                            "div",
-                            null,
-                            "for ",
-                            this.props.condition.duration.turns,
-                            " turns"
-                        );
-                        break;
-                }
-                details.push(React.createElement(
-                    "div",
-                    { key: "duration", className: "section centered" },
-                    React.createElement(
-                        "i",
-                        null,
-                        duration
-                    )
-                ));
-            }
-
-            details.push(React.createElement(
-                "div",
-                { key: "remove", className: "section" },
-                React.createElement("div", { className: "divider" }),
-                React.createElement(
-                    "button",
-                    { onClick: function onClick() {
-                            return _this3.setMode("edit");
-                        } },
-                    "edit condition"
-                ),
+                null,
+                details,
+                React.createElement(Expander, { text: "edit condition", content: editCondition }),
+                React.createElement(Expander, { text: "edit duration", content: editDuration }),
                 React.createElement(ConfirmButton, { key: "remove", text: "remove condition", callback: function callback() {
                         return _this3.props.removeCondition(_this3.props.condition.id);
                     } })
-            ));
-
-            return details;
+            );
         }
     }, {
         key: "render",
         value: function render() {
             try {
-                var content = null;
-                switch (this.state.mode) {
-                    case "edit":
-                        content = this.getEdit();
-                        break;
-                    case "view":
-                        content = this.getView();
-                        break;
-                }
-
-                var name = this.props.condition.name || "unnamed condition";
-                if (this.props.condition.name === "exhausted") {
-                    name += " (" + this.props.condition.level + ")";
-                }
-
                 return React.createElement(Expander, {
-                    text: name,
-                    content: content
+                    text: this.getView(),
+                    content: this.getEdit()
                 });
             } catch (e) {
                 console.error(e);
@@ -8317,7 +8331,6 @@ var ConditionsPanel = function (_React$Component) {
                 id: guid(),
                 type: "standard",
                 name: null,
-                text: null,
                 level: 1,
                 duration: null
             });
@@ -8334,6 +8347,7 @@ var ConditionsPanel = function (_React$Component) {
                     conditions.push(React.createElement(ConditionPanel, {
                         key: n,
                         condition: condition,
+                        combat: this.props.combat,
                         nudgeConditionValue: function nudgeConditionValue(condition, type, delta) {
                             return _this2.props.nudgeConditionValue(condition, type, delta);
                         },
@@ -9150,6 +9164,7 @@ var CombatManagerScreen = function (_React$Component) {
                     return React.createElement(MonsterCard, {
                         combatant: combatant,
                         mode: "combat",
+                        combat: this.props.combat,
                         changeValue: function changeValue(combatant, type, value) {
                             return _this2.props.changeValue(combatant, type, value);
                         },

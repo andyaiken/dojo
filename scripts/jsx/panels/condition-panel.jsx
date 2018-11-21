@@ -1,67 +1,75 @@
 class ConditionPanel extends React.Component {
-    constructor(props) {
-        super();
-        this.state = {
-            mode: props.mode || "view"
-        };
-    }
-
-    setMode(mode) {
-        this.setState({
-            mode: mode
-        });
-    }
-
-    setConditionType(type) {
-        // TODO
-    }
-
-    setStandardCondition(condition) {
-        // TODO
-    }
-
     setDurationType(type) {
-        // TODO
+        var duration = null;
+        switch (type) {
+            case "none":
+                duration = null;
+                break;
+            case "save":
+                duration = {
+                    type: type,
+                    count: 1,
+                    saveType: "str"
+                };
+                break;
+            case "combatant":
+                duration = {
+                    type: type,
+                    point: "start",
+                    combatantID: null
+                };
+                break;
+            case "rounds":
+                duration = {
+                    type: type,
+                    count: 1
+                };
+                break;
+        }
+
+        this.props.changeConditionValue(this.props.condition, "duration", duration);
+    }
+
+    getView() {
+        var details = [];
+
+        var name = this.props.condition.name || "condition";
+        if ((this.props.condition.type === "standard") && (this.props.condition.name === "exhausted")) {
+            name += " (" + this.props.condition.level + ")";
+        }
+
+        if (this.props.condition.duration !== null) {
+            switch (this.props.condition.duration.type) {
+                case "save":
+                    name += " until you make " + this.props.condition.duration.count + " " + this.props.condition.duration.saveType + " save(s)";
+                    break;
+                case "combatant":
+                    var point = this.props.condition.duration.point;
+                    var c = this.props.combat.combatants.find(c => c.id == this.props.condition.duration.combatantID);
+                    var combatant = c ? c.name + "'s" : "someone's";
+                    name += " until the " + point + " of " + combatant + " next turn";
+                    break;
+                case "rounds":
+                    name += " for " + this.props.condition.duration.count + " round(s)";
+                    break;
+            }
+        }
+        details.push(<div key="name">{name}</div>);
+
+        return <div>{details}</div>;
     }
 
     getEdit() {
         var details = [];
-
-        var typeOptions = [
-            {
-                id: "standard",
-                text: "standard"
-            },
-            {
-                id: "custom",
-                text: "custom"
-            }
-        ];
-        details.push(
-            <div key="type" className="section">
-                <Selector
-                    options={typeOptions}
-                    selectedID={this.props.condition.type}
-                    select={optionID => this.setConditionType(optionID)}
-                />
-            </div>
-        );
-
+        
         if (this.props.condition.type === "standard") {
-            var options = CONDITION_TYPES.map(c => { return { id: c, text: c }; });
-            details.push(
-                <div key="standard" className="section">
-                    <Selector
-                        options={options}
-                        selectedID={this.props.condition.name}
-                        itemsPerRow={3}
-                        select={optionID => this.setStandardCondition(optionID)}
-                    />
-                </div>
-            );
+            var text = conditionText(this.props.condition);
+            for (var n = 0; n !== text.length; ++n) {
+                details.push(<div key={n} className="section">{text[n]}</div>);
+            }
         }
 
-        if ((this.props.condition.type === "standard") && (this.props.condition.name === "exhausted")) {
+        if (this.props.condition.name === "exhausted") {
             details.push(
                 <div key="level" className="section">
                     <Spin
@@ -74,15 +82,51 @@ class ConditionPanel extends React.Component {
             );
         }
 
-        if (this.props.condition.type === "custom") {
-            details.push(
-                <div key="name" className="section">
-                    <input type="text" placeholder="name" value={this.props.condition.name} onChange={event => this.props.changeConditionValue(this.props.condition, "name", event.target.value)} />
+        details.push(<div key="div" className="divider"></div>);
+
+        var editCondition = [];
+        var editDuration = [];
+
+        var typeOptions = [
+            {
+                id: "standard",
+                text: "standard"
+            },
+            {
+                id: "custom",
+                text: "custom"
+            }
+        ];
+        editCondition.push(
+            <div key="type" className="section">
+                <div className="subheading">condition type</div>
+                <Selector
+                    options={typeOptions}
+                    selectedID={this.props.condition.type}
+                    select={optionID => this.props.changeConditionValue(this.props.condition, "type", optionID)}
+                />
+            </div>
+        );
+
+        if (this.props.condition.type === "standard") {
+            var options = CONDITION_TYPES.map(c => { return { id: c, text: c }; });
+            editCondition.push(
+                <div key="standard" className="section">
+                    <div className="subheading">standard conditions</div>
+                    <Dropdown
+                        options={options}
+                        selectedID={this.props.condition.name}
+                        select={optionID => this.props.changeConditionValue(this.props.condition, "name", optionID)}
+                    />
                 </div>
             );
-            details.push(
-                <div key="text" className="section">
-                    <textarea placeholder="details" value={this.props.condition.text} onChange={event => this.props.changeConditionValue(this.props.condition, "text", event.target.value)} />
+        }
+
+        if (this.props.condition.type === "custom") {
+            editCondition.push(
+                <div key="name" className="section">
+                    <div className="subheading">custom condition text</div>
+                    <input type="text" placeholder="name" value={this.props.condition.name} onChange={event => this.props.changeConditionValue(this.props.condition, "name", event.target.value)} />
                 </div>
             );
         }
@@ -90,44 +134,91 @@ class ConditionPanel extends React.Component {
         var options = [
             {
                 id: "none",
-                text: "none"
+                text: "until removed (default)"
             },
             {
                 id: "save",
-                text: "until saved"
+                text: "until a successful save"
             },
             {
                 id: "combatant",
-                text: "next turn"
+                text: "until someone's next turn"
             },
             {
                 id: "rounds",
-                text: "number of rounds"
+                text: "for a number of rounds"
             },
         ];
         var duration = null;
         if (this.props.condition.duration) {
             switch (this.props.condition.duration.type) {
                 case "save":
+                    var saveOptions = ["str", "dex", "con", "int", "wis", "cha", "death"].map(c => { return { id: c, text: c }; });
                     duration = (
-                        <div>UNTIL [N] [TYPE] TURNS</div>
+                        <div>
+                            <div className="section">
+                                <div className="subheading">number of saves required</div>
+                                <Spin
+                                    source={this.props.condition.duration}
+                                    name="count"
+                                    nudgeValue={delta => this.props.nudgeConditionValue(this.props.condition.duration, "count", delta)}
+                                />
+                            </div>
+                            <div key="standard" className="section">
+                                <div className="subheading">type of save</div>
+                                <Dropdown
+                                    options={saveOptions}
+                                    selectedID={this.props.condition.duration.saveType}
+                                    select={optionID => this.props.changeConditionValue(this.props.condition.duration, "saveType", optionID)}
+                                />
+                            </div>
+                        </div>
                     );
                     break;
                 case "combatant":
+                    var pointOptions = ["start", "end"].map(c => { return { id: c, text: c }; });
+                    var combatantOptions = this.props.combat.combatants.map(c => { return { id: c.id, text: c.name }; });
                     duration = (
-                        <div>UNTIL [START|END] of [X]'S NEXT TURN</div>
+                        <div>
+                            <div key="standard" className="section">
+                                <div className="subheading">start or end</div>
+                                <Selector
+                                    options={pointOptions}
+                                    selectedID={this.props.condition.duration.point}
+                                    select={optionID => this.props.changeConditionValue(this.props.condition.duration, "point", optionID)}
+                                />
+                            </div>
+                            <div key="standard" className="section">
+                                <div className="subheading">combatant</div>
+                                <Dropdown
+                                    options={combatantOptions}
+                                    selectedID={this.props.condition.duration.combatantID}
+                                    select={optionID => this.props.changeConditionValue(this.props.condition.duration, "combatantID", optionID)}
+                                />
+                            </div>
+                        </div>
                     );
                     break;
                 case "rounds":
                     duration = (
-                        <div>FOR [N] ROUNDS</div>
+                        <div>
+                            <div className="section">
+                                <div className="subheading">number of rounds</div>
+                                <Spin
+                                    source={this.props.condition.duration}
+                                    name="count"
+                                    nudgeValue={delta => this.props.nudgeConditionValue(this.props.condition.duration, "count", delta)}
+                                />
+                            </div>
+                        </div>
                     );
                     break;
             };
         }
-        details.push(
+        editDuration.push(
             <div key="duration" className="section">
-                <Selector
+                <div className="subheading">duration type</div>
+                <Dropdown
                     options={options}
                     selectedID={this.props.condition.duration ? this.props.condition.duration.type : "none"}
                     select={optionID => this.setDurationType(optionID)}
@@ -136,86 +227,22 @@ class ConditionPanel extends React.Component {
             </div>
         );
 
-        details.push(
-            <div key="remove" className="section">
-                <div className="divider"></div>
-                <button onClick={() => this.setMode("view")}>close</button>
+        return (
+            <div>
+                {details}
+                <Expander text="edit condition" content={editCondition} />
+                <Expander text="edit duration" content={editDuration} />
                 <ConfirmButton key="remove" text="remove condition" callback={() => this.props.removeCondition(this.props.condition.id)} />
             </div>
         );
-
-        return details;
-    }
-
-    getView() {
-        var details = [];
-
-        // TODO: Allow custom conditions (with custom text)
-        var text = conditionText(this.props.condition);
-        for (var n = 0; n !== text.length; ++n) {
-            details.push(<div key={n} className="section">{text[n]}</div>);
-        }
-
-        if (this.props.condition.duration !== null) {
-            var duration = null;
-            switch (this.props.condition.duration.type) {
-                case "save":
-                    duration = (
-                        <div>until you make {this.props.condition.duration.turns} {this.props.condition.duration.savetype} saves</div>
-                    );
-                    break;
-                case "combatant":
-                    var point = this.props.condition.duration.point;
-                    var combatant = this.props.condition.duration.combatantID ? "[COMBATANT]'s" : "my"; // TODO: Get combatant
-                    duration = (
-                        <div>until the {point} of {combatant} next turn</div>
-                    );
-                    break;
-                case "turns":
-                    duration = (
-                        <div>for {this.props.condition.duration.turns} turns</div>
-                    );
-                    break;
-            }
-            details.push(
-                <div key="duration" className="section centered">
-                    <i>{duration}</i>
-                </div>
-            );
-        }
-
-        details.push(
-            <div key="remove" className="section">
-                <div className="divider"></div>
-                <button onClick={() => this.setMode("edit")}>edit condition</button>
-                <ConfirmButton key="remove" text="remove condition" callback={() => this.props.removeCondition(this.props.condition.id)} />
-            </div>
-        );
-
-        return details;
     }
 
     render() {
         try {
-            var content = null;
-            switch (this.state.mode) {
-                case "edit":
-                    content = this.getEdit();
-                    break;
-                case "view":
-                    content = this.getView();
-                    break;
-            }
-
-            var name = this.props.condition.name || "unnamed condition";
-            if (this.props.condition.name === "exhausted") {
-                name += " (" + this.props.condition.level + ")";
-            }
-    
             return (
                 <Expander
-                    text={name}
-                    content={content}
+                    text={this.getView()}
+                    content={this.getEdit()}
                 />
             );
         } catch (e) {

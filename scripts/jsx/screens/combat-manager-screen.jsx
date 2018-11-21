@@ -30,6 +30,7 @@ class CombatManagerScreen extends React.Component {
                     <MonsterCard
                         combatant={combatant}
                         mode={"combat"}
+                        combat={this.props.combat}
                         changeValue={(combatant, type, value) => this.props.changeValue(combatant, type, value)}
                         nudgeValue={(combatant, type, delta) => this.props.nudgeValue(combatant, type, delta)}
                         makeCurrent={combatant => this.props.makeCurrent(combatant)}

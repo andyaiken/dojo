@@ -82,20 +82,19 @@
 .expander {
   margin: 5px 0;
   background-color: white;
-  border: 1px solid #3c78dc; }
+  border: 1px solid #c3c3c3;
+  border-left-width: 5px; }
   .expander .expander-header {
-    height: 32px;
+    min-height: 32px;
     padding-left: 10px;
     padding-right: 6px;
-    cursor: pointer;
-    background-color: #3c78dc; }
+    cursor: pointer; }
     .expander .expander-header .expander-text {
       display: inline-block;
       width: calc(100% - 40px);
-      height: 32px;
-      line-height: 32px;
       vertical-align: middle;
-      color: white;
+      padding: 8px 0;
+      color: #404040;
       font-weight: 600; }
     .expander .expander-header .expander-button {
       display: inline-block;
@@ -105,11 +104,14 @@
       margin-left: 10px;
       vertical-align: middle;
       border-radius: 50%; }
-  .expander.expanded .expander-header .expander-button {
-    transform: rotate(-180deg); }
-  .expander.expanded .expander-content {
-    padding: 5px 10px;
+  .expander .expander-content {
+    padding: 5px 10px; }
+  .expander:hover, .expander.expanded {
+    border-color: #3c78dc; }
+  .expander.expanded > .expander-header {
     background-color: rgba(60, 120, 220, 0.1); }
+    .expander.expanded > .expander-header .expander-button {
+      transform: rotate(-180deg); }
 
 .navbar {
   height: 50px;
