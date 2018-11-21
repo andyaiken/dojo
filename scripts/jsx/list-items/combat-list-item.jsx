@@ -7,11 +7,9 @@ class CombatListItem extends React.Component {
             }
 
             return (
-                <div className="group">
-                    <div className={this.props.selected ? "list-item selected" : "list-item"} onClick={() => this.props.setSelection(this.props.combat)}>
-                        <div className="heading">{combatName}</div>
-                        <div className="text">{this.props.combat.timestamp}</div>
-                    </div>
+                <div className={this.props.selected ? "list-item selected" : "list-item"} onClick={() => this.props.setSelection(this.props.combat)}>
+                    <div className="heading">{combatName}</div>
+                    <div className="text">{this.props.combat.timestamp}</div>
                 </div>
             );
         } catch (e) {

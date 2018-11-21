@@ -181,13 +181,8 @@ button {
     border-top: 1px solid $control-border;
 }
 
-.group {
-    padding: 5px 0;
-    margin: 5px;
-
-    .heading {
-        margin: 2px 0;
-    }
+.list-column {
+    padding: 10px 5px !important
 }
 
 .lowercase {

@@ -132,11 +132,8 @@ button {
   height: 0;
   border-top: 1px solid #c3c3c3; }
 
-.group {
-  padding: 5px 0;
-  margin: 5px; }
-  .group .heading {
-    margin: 2px 0; }
+.list-column {
+  padding: 10px 5px !important; }
 
 .lowercase {
   text-transform: lowercase; }

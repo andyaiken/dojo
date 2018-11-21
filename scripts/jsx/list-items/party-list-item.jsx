@@ -23,11 +23,9 @@ class PartyListItem extends React.Component {
             }
 
             return (
-                <div className="group">
-                    <div className={this.props.selected ? "list-item selected" : "list-item"} onClick={() => this.props.setSelection(this.props.party)}>
-                        <div className="heading">{partyName}</div>
-                        {pcs}
-                    </div>
+                <div className={this.props.selected ? "list-item selected" : "list-item"} onClick={() => this.props.setSelection(this.props.party)}>
+                    <div className="heading">{partyName}</div>
+                    {pcs}
                 </div>
             );
         } catch (e) {

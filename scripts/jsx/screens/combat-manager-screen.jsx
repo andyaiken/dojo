@@ -184,9 +184,7 @@ class CombatManagerScreen extends React.Component {
                 leftPaneContent = (
                     <div>
                         {help}
-                        <div className="group">
-                            <button onClick={() => this.props.createCombat()}>start a new combat</button>
-                        </div>
+                        <button onClick={() => this.props.createCombat()}>start a new combat</button>
                         {combats}
                     </div>
                 );
@@ -194,7 +192,7 @@ class CombatManagerScreen extends React.Component {
 
             return (
                 <div className="combat-manager row collapse">
-                    <div className="columns small-6 medium-4 large-3 scrollable">
+                    <div className="columns small-6 medium-4 large-3 scrollable list-column">
                         {leftPaneContent}
                     </div>
                     <div className="columns small-6 medium-8 large-9 scrollable">

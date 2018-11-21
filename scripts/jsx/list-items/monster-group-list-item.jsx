@@ -25,11 +25,9 @@ class MonsterGroupListItem extends React.Component {
             }
 
             return (
-                <div className="group">
-                    <div className={this.props.selected ? "list-item selected" : "list-item"} onClick={() => this.props.setSelection(this.props.group)}>
-                        <div className="heading">{groupName}</div>
-                        {monsters}
-                    </div>
+                <div className={this.props.selected ? "list-item selected" : "list-item"} onClick={() => this.props.setSelection(this.props.group)}>
+                    <div className="heading">{groupName}</div>
+                    {monsters}
                 </div>
             );
         } catch (e) {
