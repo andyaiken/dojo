@@ -2699,14 +2699,18 @@ var Dropdown = function (_React$Component) {
                     style += " open";
 
                     var items = this.props.options.map(function (option) {
-                        return React.createElement(DropdownOption, {
-                            key: option.id,
-                            option: option,
-                            selected: option.id === _this2.props.selectedID,
-                            select: function select(optionID) {
-                                return _this2.select(optionID);
-                            }
-                        });
+                        if (option.text === null) {
+                            return React.createElement("div", { key: option.id, className: "divider" });
+                        } else {
+                            return React.createElement(DropdownOption, {
+                                key: option.id,
+                                option: option,
+                                selected: option.id === _this2.props.selectedID,
+                                select: function select(optionID) {
+                                    return _this2.select(optionID);
+                                }
+                            });
+                        }
                     });
 
                     content.push(React.createElement(
@@ -2746,7 +2750,9 @@ var DropdownOption = function (_React$Component2) {
         key: "click",
         value: function click(e) {
             e.stopPropagation();
-            this.props.select(this.props.option.id);
+            if (!this.props.option.disabled) {
+                this.props.select(this.props.option.id);
+            }
         }
     }, {
         key: "render",
@@ -2758,7 +2764,7 @@ var DropdownOption = function (_React$Component2) {
                 if (this.props.selected) {
                     style += " selected";
                 }
-                if (this.props.disabled) {
+                if (this.props.option.disabled) {
                     style += " disabled";
                 }
 
@@ -3065,7 +3071,9 @@ var SelectorOption = function (_React$Component2) {
         key: "click",
         value: function click(e) {
             e.stopPropagation();
-            this.props.select(this.props.option.id);
+            if (!this.props.option.disabled) {
+                this.props.select(this.props.option.id);
+            }
         }
     }, {
         key: "render",
@@ -3079,7 +3087,7 @@ var SelectorOption = function (_React$Component2) {
                 if (this.props.selected) {
                     style += " selected";
                 }
-                if (this.props.disabled) {
+                if (this.props.option.disabled) {
                     style += " disabled";
                 }
 
@@ -8339,11 +8347,11 @@ var ConditionsPanel = function (_React$Component) {
 
     _createClass(ConditionsPanel, [{
         key: "addCondition",
-        value: function addCondition() {
+        value: function addCondition(condition) {
             this.props.addCondition({
                 id: guid(),
-                type: "standard",
-                name: null,
+                type: condition ? "standard" : "custom",
+                name: condition || "custom condition",
                 level: 1,
                 duration: null
             });
@@ -8373,17 +8381,28 @@ var ConditionsPanel = function (_React$Component) {
                     }));
                 }
 
+                var conditionOptions = [{
+                    id: null,
+                    text: "custom condition"
+                }, {
+                    id: "div",
+                    text: null,
+                    disabled: true
+                }].concat(CONDITION_TYPES.map(function (c) {
+                    return { id: c, text: c };
+                }));
+
                 return React.createElement(
                     "div",
                     { className: "section" },
                     conditions,
-                    React.createElement(
-                        "button",
-                        { onClick: function onClick() {
-                                return _this2.addCondition();
-                            } },
-                        "add a condition"
-                    )
+                    React.createElement(Dropdown, {
+                        options: conditionOptions,
+                        placeholder: "add a condition",
+                        select: function select(optionID) {
+                            return _this2.addCondition(optionID);
+                        }
+                    })
                 );
             } catch (e) {
                 console.error(e);

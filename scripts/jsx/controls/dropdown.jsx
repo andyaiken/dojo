@@ -83,14 +83,18 @@ class Dropdown extends React.Component {
                 style += " open";
 
                 var items = this.props.options.map(option => {
-                    return (
-                        <DropdownOption
-                            key={option.id}
-                            option={option}
-                            selected={option.id === this.props.selectedID}
-                            select={optionID => this.select(optionID)}
-                        />
-                    );
+                    if (option.text === null) {
+                        return <div key={option.id} className="divider"></div>
+                    } else {
+                        return (
+                            <DropdownOption
+                                key={option.id}
+                                option={option}
+                                selected={option.id === this.props.selectedID}
+                                select={optionID => this.select(optionID)}
+                            />
+                        );
+                    }
                 });
 
                 content.push(
@@ -115,7 +119,9 @@ class Dropdown extends React.Component {
 class DropdownOption extends React.Component {
     click(e) {
         e.stopPropagation();
-        this.props.select(this.props.option.id);
+        if (!this.props.option.disabled) {
+            this.props.select(this.props.option.id);
+        }
     }
 
     render() {
@@ -124,7 +130,7 @@ class DropdownOption extends React.Component {
             if (this.props.selected) {
                 style += " selected";
             }
-            if (this.props.disabled) {
+            if (this.props.option.disabled) {
                 style += " disabled";
             }
 

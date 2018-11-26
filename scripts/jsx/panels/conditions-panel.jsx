@@ -1,9 +1,9 @@
 class ConditionsPanel extends React.Component {
-    addCondition() {
+    addCondition(condition) {
         this.props.addCondition({
             id: guid(),
-            type: "standard",
-            name: null,
+            type: condition ? "standard" : "custom",
+            name: condition || "custom condition",
             level: 1,
             duration: null
         });
@@ -26,10 +26,28 @@ class ConditionsPanel extends React.Component {
                 );
             }
 
+            var conditionOptions = [
+                {
+                    id: null,
+                    text: "custom condition"
+                },
+                {
+                    id: "div",
+                    text: null,
+                    disabled: true
+                }
+            ].concat(CONDITION_TYPES.map(c => {
+                return { id: c, text: c};
+            }));
+
             return (
                 <div className="section">
                     {conditions}
-                    <button onClick={() => this.addCondition()}>add a condition</button>
+                    <Dropdown
+                        options={conditionOptions}
+                        placeholder="add a condition"
+                        select={optionID => this.addCondition(optionID)}
+                    />
                 </div>
             );
         } catch (e) {

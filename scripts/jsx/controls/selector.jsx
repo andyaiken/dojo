@@ -80,7 +80,9 @@ class Selector extends React.Component {
 class SelectorOption extends React.Component {
     click(e) {
         e.stopPropagation();
-        this.props.select(this.props.option.id);
+        if (!this.props.option.disabled) {
+            this.props.select(this.props.option.id);
+        }
     }
 
     render() {
@@ -91,7 +93,7 @@ class SelectorOption extends React.Component {
             if (this.props.selected) {
                 style += " selected";
             }
-            if (this.props.disabled) {
+            if (this.props.option.disabled) {
                 style += " disabled";
             }
 
