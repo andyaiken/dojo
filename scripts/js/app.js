@@ -7978,7 +7978,7 @@ var ConditionPanel = function (_React$Component) {
                 case "none":
                     duration = null;
                     break;
-                case "save":
+                case "saves":
                     duration = {
                         type: type,
                         count: 1,
@@ -8297,7 +8297,7 @@ var ConditionPanel = function (_React$Component) {
 
                 if (this.props.condition.duration !== null) {
                     switch (this.props.condition.duration.type) {
-                        case "save":
+                        case "saves":
                             name += " until you make " + this.props.condition.duration.count + " " + this.props.condition.duration.saveType + " save(s)";
                             break;
                         case "combatant":
