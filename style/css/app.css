@@ -417,6 +417,9 @@ body,
   .section .input-label {
     padding-top: 5px;
     font-weight: 600; }
+  .section.small-text {
+    font-size: 10px;
+    font-weight: normal; }
 
 .overlay {
   position: fixed;

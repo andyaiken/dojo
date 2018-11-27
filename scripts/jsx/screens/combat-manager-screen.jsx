@@ -49,18 +49,6 @@ class CombatManagerScreen extends React.Component {
         }
     }
 
-    saveSuccess(notification) {
-        // TODO: Reduce save by 1
-        // TODO: If 0, remove condition
-
-        this.closeNotification(notification);
-    }
-
-    closeNotification(notification) {
-        // TODO: Remove notification
-        // TODO: Notify owner
-    }
-
     render() {
         try {
             var leftPaneContent = null;
@@ -154,34 +142,13 @@ class CombatManagerScreen extends React.Component {
                     active = [].concat(help, active);
                 }
 
-                var notifications = this.props.combat.notifications.map(n => {
-                    var name = n.combatant.displayName || n.combatant.name || "unnamed monster";
-                    switch (n.type) {
-                        case "condition-save":
-                            return (
-                                <div key={n.id} className="notification">
-                                    <div className="text">
-                                        {name} must make a {n.condition.duration.saveType} save against DC {n.condition.duration.saveDC}
-                                    </div>
-                                    <div className="buttons">
-                                        <button click={() => this.saveSuccess(n)}>success</button>
-                                        <button click={() => this.closeNotification(n)}>ok</button>
-                                    </div>
-                                </div>
-                            );
-                        case "condition-end":
-                            return (
-                                <div key={n.id} className="notification">
-                                    <div className="text">
-                                        {name} is no longer affected by condition {n.condition.name}
-                                    </div>
-                                    <div className="buttons">
-                                        <button click={() => this.closeNotification(n)}>ok</button>
-                                    </div>
-                                </div>
-                            );
-                    }
-                });
+                var notifications = this.props.combat.notifications.map(n =>
+                    <Notification
+                        id={n.id}
+                        notification={n}
+                        close={(notification, removeCondition) => this.props.close(notification, removeCondition)}
+                    />
+                );
 
                 rightPaneContent = (
                     <div>
@@ -245,6 +212,52 @@ class CombatManagerScreen extends React.Component {
             );
         } catch (e) {
             console.error(e);
+        }
+    }
+}
+
+class Notification extends React.Component {
+    saveSuccess(notification) {
+        // Reduce save by 1
+        this.props.notification.condition.duration.count -= 1;
+        if (this.props.notification.condition.duration.count === 0) {
+            // Remove the condition
+            this.close(notification, true);
+        } else {
+            this.close(notification);
+        }
+    }
+
+    close(notification, removeCondition = false) {
+        this.props.close(notification, removeCondition);
+    }
+
+    render() {
+        var name = this.props.notification.combatant.displayName || this.props.notification.combatant.name || "unnamed monster";
+        switch (this.props.notification.type) {
+            case "condition-save":
+                return (
+                    <div key={this.props.notification.id} className="notification">
+                        <div className="text">
+                            {name} must make a {this.props.notification.condition.duration.saveType} save against dc {this.props.notification.condition.duration.saveDC}
+                        </div>
+                        <div className="buttons">
+                            <button onClick={() => this.saveSuccess(this.props.notification)}>success</button>
+                            <button onClick={() => this.close(this.props.notification)}>ok</button>
+                        </div>
+                    </div>
+                );
+            case "condition-end":
+                return (
+                    <div key={this.props.notification.id} className="notification">
+                        <div className="text">
+                            {name} is no longer affected by condition {this.props.notification.condition.name}
+                        </div>
+                        <div className="buttons">
+                            <button onClick={() => this.close(this.props.notification)}>ok</button>
+                        </div>
+                    </div>
+                );
         }
     }
 }

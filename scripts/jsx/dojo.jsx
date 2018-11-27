@@ -1009,7 +1009,7 @@ class Dojo extends React.Component {
                     switch (c.duration.type) {
                         case "saves":
                             // If it's my condition, and point is END, notify the user
-                            if ((actor.id === combatant.id) && (c.duration.point === "start")) {
+                            if ((actor.id === combatant.id) && (c.duration.point === "end")) {
                                 combat.notifications.push({
                                     id: guid(),
                                     type: "condition-save",
@@ -1086,6 +1086,21 @@ class Dojo extends React.Component {
             if (a.name < b.name) return -1;
             if (a.name > b.name) return 1;
             return 0;
+        });
+    }
+
+    closeNotification(notification, removeCondition) {
+        var combat = this.getCombat(this.state.selectedCombatID);
+        var index = combat.notifications.indexOf(notification);
+        combat.notifications.splice(index, 1);
+
+        if (removeCondition) {
+            var conditionIndex = notification.combatant.conditions.indexOf(notification.condition);
+            notification.combatant.conditions.splice(conditionIndex, 1);
+        }
+
+        this.setState({
+            combats: this.state.combats
         });
     }
 
@@ -1396,6 +1411,7 @@ class Dojo extends React.Component {
                             addCondition={(combatant, condition) => this.addCondition(combatant, condition)}
                             removeCondition={(combatant, conditionID) => this.removeCondition(combatant, conditionID)}
                             endTurn={(combatant) => this.endTurn(combatant)}
+                            close={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
                         />
                     );
                     if (combat) {

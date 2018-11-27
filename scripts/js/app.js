@@ -4387,7 +4387,7 @@ var Dojo = function (_React$Component) {
                     switch (c.duration.type) {
                         case "saves":
                             // If it's my condition, and point is END, notify the user
-                            if (actor.id === combatant.id && c.duration.point === "start") {
+                            if (actor.id === combatant.id && c.duration.point === "end") {
                                 combat.notifications.push({
                                     id: guid(),
                                     type: "condition-save",
@@ -4469,6 +4469,22 @@ var Dojo = function (_React$Component) {
                 if (a.name < b.name) return -1;
                 if (a.name > b.name) return 1;
                 return 0;
+            });
+        }
+    }, {
+        key: "closeNotification",
+        value: function closeNotification(notification, removeCondition) {
+            var combat = this.getCombat(this.state.selectedCombatID);
+            var index = combat.notifications.indexOf(notification);
+            combat.notifications.splice(index, 1);
+
+            if (removeCondition) {
+                var conditionIndex = notification.combatant.conditions.indexOf(notification.condition);
+                notification.combatant.conditions.splice(conditionIndex, 1);
+            }
+
+            this.setState({
+                combats: this.state.combats
             });
         }
 
@@ -4880,6 +4896,9 @@ var Dojo = function (_React$Component) {
                             },
                             endTurn: function endTurn(combatant) {
                                 return _this6.endTurn(combatant);
+                            },
+                            close: function close(notification, removeCondition) {
+                                return _this6.closeNotification(notification, removeCondition);
                             }
                         });
                         if (combat) {
@@ -8364,15 +8383,6 @@ var ConditionPanel = function (_React$Component) {
             var details = [];
 
             if (this.props.condition.type === "standard") {
-                var text = conditionText(this.props.condition);
-                for (var n = 0; n !== text.length; ++n) {
-                    details.push(React.createElement(
-                        "div",
-                        { key: n, className: "section" },
-                        text[n]
-                    ));
-                }
-
                 if (this.props.condition.name === "exhausted") {
                     details.push(React.createElement(
                         "div",
@@ -8387,28 +8397,12 @@ var ConditionPanel = function (_React$Component) {
                         })
                     ));
                 }
-
-                if (this.props.condition.duration && this.props.condition.duration.type === "saves") {
-                    details.push(React.createElement(
-                        "div",
-                        { key: "count", className: "section" },
-                        React.createElement(Spin, {
-                            source: this.props.condition.duration,
-                            name: "count",
-                            label: "saves remaining",
-                            nudgeValue: function nudgeValue(delta) {
-                                return _this4.props.nudgeConditionValue(_this4.props.condition.duration, "count", delta);
-                            }
-                        })
-                    ));
-                }
             }
 
             return React.createElement(
                 "div",
                 null,
                 details,
-                React.createElement("div", { className: "divider" }),
                 React.createElement(Expander, { text: "edit condition", content: this.getConditionContent() }),
                 React.createElement(Expander, { text: "edit duration", content: this.getDurationContent() }),
                 React.createElement(ConfirmButton, { key: "remove", text: "remove condition", callback: function callback() {
@@ -8446,8 +8440,27 @@ var ConditionPanel = function (_React$Component) {
                     }
                 }
 
+                var description = [];
+                if (this.props.condition.type === "standard") {
+                    var text = conditionText(this.props.condition);
+                    for (var n = 0; n !== text.length; ++n) {
+                        description.push(React.createElement(
+                            "div",
+                            { key: n, className: "section small-text" },
+                            text[n]
+                        ));
+                    }
+                }
+
+                var header = React.createElement(
+                    "div",
+                    null,
+                    name,
+                    description
+                );
+
                 return React.createElement(Expander, {
-                    text: name,
+                    text: header,
                     content: this.getDetails()
                 });
             } catch (e) {
@@ -9363,20 +9376,6 @@ var CombatManagerScreen = function (_React$Component) {
             }
         }
     }, {
-        key: "saveSuccess",
-        value: function saveSuccess(notification) {
-            // TODO: Reduce save by 1
-            // TODO: If 0, remove condition
-
-            this.closeNotification(notification);
-        }
-    }, {
-        key: "closeNotification",
-        value: function closeNotification(notification) {
-            // TODO: Remove notification
-            // TODO: Notify owner
-        }
-    }, {
         key: "render",
         value: function render() {
             var _this3 = this;
@@ -9506,64 +9505,13 @@ var CombatManagerScreen = function (_React$Component) {
                     }
 
                     var notifications = this.props.combat.notifications.map(function (n) {
-                        var name = n.combatant.displayName || n.combatant.name || "unnamed monster";
-                        switch (n.type) {
-                            case "condition-save":
-                                return React.createElement(
-                                    "div",
-                                    { key: n.id, className: "notification" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "text" },
-                                        name,
-                                        " must make a ",
-                                        n.condition.duration.saveType,
-                                        " save against DC ",
-                                        n.condition.duration.saveDC
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "buttons" },
-                                        React.createElement(
-                                            "button",
-                                            { click: function click() {
-                                                    return _this3.saveSuccess(n);
-                                                } },
-                                            "success"
-                                        ),
-                                        React.createElement(
-                                            "button",
-                                            { click: function click() {
-                                                    return _this3.closeNotification(n);
-                                                } },
-                                            "ok"
-                                        )
-                                    )
-                                );
-                            case "condition-end":
-                                return React.createElement(
-                                    "div",
-                                    { key: n.id, className: "notification" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "text" },
-                                        name,
-                                        " is no longer affected by condition ",
-                                        n.condition.name
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "buttons" },
-                                        React.createElement(
-                                            "button",
-                                            { click: function click() {
-                                                    return _this3.closeNotification(n);
-                                                } },
-                                            "ok"
-                                        )
-                                    )
-                                );
-                        }
+                        return React.createElement(Notification, {
+                            id: n.id,
+                            notification: n,
+                            close: function close(notification, removeCondition) {
+                                return _this3.props.close(notification, removeCondition);
+                            }
+                        });
                     });
 
                     rightPaneContent = React.createElement(
@@ -9641,6 +9589,103 @@ var CombatManagerScreen = function (_React$Component) {
     }]);
 
     return CombatManagerScreen;
+}(React.Component);
+
+var Notification = function (_React$Component2) {
+    _inherits(Notification, _React$Component2);
+
+    function Notification() {
+        _classCallCheck(this, Notification);
+
+        return _possibleConstructorReturn(this, (Notification.__proto__ || Object.getPrototypeOf(Notification)).apply(this, arguments));
+    }
+
+    _createClass(Notification, [{
+        key: "saveSuccess",
+        value: function saveSuccess(notification) {
+            // Reduce save by 1
+            this.props.notification.condition.duration.count -= 1;
+            if (this.props.notification.condition.duration.count === 0) {
+                // Remove the condition
+                this.close(notification, true);
+            } else {
+                this.close(notification);
+            }
+        }
+    }, {
+        key: "close",
+        value: function close(notification) {
+            var removeCondition = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+            this.props.close(notification, removeCondition);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this5 = this;
+
+            var name = this.props.notification.combatant.displayName || this.props.notification.combatant.name || "unnamed monster";
+            switch (this.props.notification.type) {
+                case "condition-save":
+                    return React.createElement(
+                        "div",
+                        { key: this.props.notification.id, className: "notification" },
+                        React.createElement(
+                            "div",
+                            { className: "text" },
+                            name,
+                            " must make a ",
+                            this.props.notification.condition.duration.saveType,
+                            " save against dc ",
+                            this.props.notification.condition.duration.saveDC
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "buttons" },
+                            React.createElement(
+                                "button",
+                                { onClick: function onClick() {
+                                        return _this5.saveSuccess(_this5.props.notification);
+                                    } },
+                                "success"
+                            ),
+                            React.createElement(
+                                "button",
+                                { onClick: function onClick() {
+                                        return _this5.close(_this5.props.notification);
+                                    } },
+                                "ok"
+                            )
+                        )
+                    );
+                case "condition-end":
+                    return React.createElement(
+                        "div",
+                        { key: this.props.notification.id, className: "notification" },
+                        React.createElement(
+                            "div",
+                            { className: "text" },
+                            name,
+                            " is no longer affected by condition ",
+                            this.props.notification.condition.name
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "buttons" },
+                            React.createElement(
+                                "button",
+                                { onClick: function onClick() {
+                                        return _this5.close(_this5.props.notification);
+                                    } },
+                                "ok"
+                            )
+                        )
+                    );
+            }
+        }
+    }]);
+
+    return Notification;
 }(React.Component);
 "use strict";
 
