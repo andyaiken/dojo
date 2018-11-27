@@ -36,6 +36,12 @@ class Dojo extends React.Component {
                     }
                 });
 
+                data.combats.forEach(c => {
+                    if (!c.notifications) {
+                        c.notifications = [];
+                    }
+                });
+
                 this.state = data;
                 this.state.view = "home";
                 this.state.modal = null;
@@ -709,6 +715,7 @@ class Dojo extends React.Component {
             name: partyName + " vs " + encounterName,
             combatants: [],
             round: 1,
+            notifications: [],
             issues: []
         };
 
@@ -824,9 +831,59 @@ class Dojo extends React.Component {
     }
 
     makeCurrent(combatant, newRound) {
-        // TODO: Handle conditions
-
         var combat = this.getCombat(this.state.selectedCombatID);
+
+        // Handle start-of-turn conditions
+        combat.combatants.forEach(actor => {
+            actor.conditions.filter(c => c.duration !== null)
+                .forEach(c => {
+                    switch (c.duration.type) {
+                        case "saves":
+                            // If it's my condition, and point is START, notify the user
+                            if ((actor.id === combatant.id) && (c.duration.point === "start")) {
+                                combat.notifications.push({
+                                    id: guid(),
+                                    type: "condition-save",
+                                    condition: c,
+                                    combatant: combatant
+                                });
+                            }
+                            break;
+                        case "combatant":
+                            // If this refers to me, and point is START, remove it
+                            if ((c.duration.combatantID === combatant.id) && (c.duration.point === "start")) {
+                                var index = actor.conditions.indexOf(c);
+                                actor.conditions.splice(index, 1);
+                                // Notify the user
+                                combat.notifications.push({
+                                    id: guid(),
+                                    type: "condition-end",
+                                    condition: c,
+                                    combatant: combatant
+                                });
+                            }
+                            break;
+                        case "rounds":
+                            // If it's my condition, decrement the condition
+                            if (actor.id === combatant.id) {
+                                c.duration.count -= 1;
+                            }
+                            // If it's now at 0, remove it
+                            if (c.duration.count === 0) {
+                                var index = actor.conditions.indexOf(c);
+                                actor.conditions.splice(index, 1);
+                                // Notify the user
+                                combat.notifications.push({
+                                    id: guid(),
+                                    type: "condition-end",
+                                    condition: c,
+                                    combatant: combatant
+                                });
+                            }
+                            break;
+                    }
+                });
+        });
 
         combat.combatants.forEach(combatant => {
             combatant.current = false;
@@ -943,9 +1000,45 @@ class Dojo extends React.Component {
     }
 
     endTurn(combatant) {
-        // TODO: Handle conditions
-
         var combat = this.getCombat(this.state.selectedCombatID);
+
+        // Handle end-of-turn conditions
+        combat.combatants.forEach(actor => {
+            actor.conditions.filter(c => c.duration !== null)
+                .forEach(c => {
+                    switch (c.duration.type) {
+                        case "saves":
+                            // If it's my condition, and point is END, notify the user
+                            if ((actor.id === combatant.id) && (c.duration.point === "start")) {
+                                combat.notifications.push({
+                                    id: guid(),
+                                    type: "condition-save",
+                                    condition: c,
+                                    combatant: combatant
+                                });
+                            }
+                            break;
+                        case "combatant":
+                            // If this refers to me, and point is END, remove it
+                            if ((c.duration.combatantID === combatant.id) && (c.duration.point === "end")) {
+                                var index = actor.conditions.indexOf(c);
+                                actor.conditions.splice(index, 1);
+                                // Notify the user
+                                combat.notifications.push({
+                                    id: guid(),
+                                    type: "condition-end",
+                                    condition: c,
+                                    combatant: combatant
+                                });
+                            }
+                            break;
+                        case "rounds":
+                            // We check this at the beginning of each turn, not at the end
+                            break;
+                    }
+                });
+        });
+
         var active = combat.combatants.filter(combatant => {
             return combatant.current || (!combatant.pending && combatant.active && !combatant.defeated);
         });

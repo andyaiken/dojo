@@ -1,8 +1,4 @@
 class DifficultyChartPanel extends React.Component {
-
-    // TODO: Add radio selector for difficulty after each wave
-    // TODO: Show party difficulty as a horizontal bar chart
-
     render() {
         var encounter = this.props.encounters.find(e => e.id === this.props.encounterID);
         var party = this.props.parties.find(p => p.id === this.props.partyID);

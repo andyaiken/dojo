@@ -9,7 +9,9 @@ class ConditionPanel extends React.Component {
                 duration = {
                     type: type,
                     count: 1,
-                    saveType: "str"
+                    saveType: "str",
+                    saveDC: 10,
+                    point: "start"
                 };
                 break;
             case "combatant":
@@ -106,6 +108,7 @@ class ConditionPanel extends React.Component {
             switch (this.props.condition.duration.type) {
                 case "saves":
                     var saveOptions = ["str", "dex", "con", "int", "wis", "cha", "death"].map(c => { return { id: c, text: c }; });
+                    var pointOptions = ["start", "end"].map(c => { return { id: c, text: c }; });
                     duration = (
                         <div>
                             <div className="section">
@@ -116,7 +119,7 @@ class ConditionPanel extends React.Component {
                                     nudgeValue={delta => this.props.nudgeConditionValue(this.props.condition.duration, "count", delta)}
                                 />
                             </div>
-                            <div key="standard" className="section">
+                            <div className="section">
                                 <div className="subheading">type of save</div>
                                 <Dropdown
                                     options={saveOptions}
@@ -124,15 +127,15 @@ class ConditionPanel extends React.Component {
                                     select={optionID => this.props.changeConditionValue(this.props.condition.duration, "saveType", optionID)}
                                 />
                             </div>
-                        </div>
-                    );
-                    break;
-                case "combatant":
-                    var pointOptions = ["start", "end"].map(c => { return { id: c, text: c }; });
-                    var combatantOptions = this.props.combat.combatants.map(c => { return { id: c.id, text: c.name }; });
-                    duration = (
-                        <div>
-                            <div key="standard" className="section">
+                            <div className="section">
+                                <div className="subheading">save dc</div>
+                                <Spin
+                                    source={this.props.condition.duration}
+                                    name="saveDC"
+                                    nudgeValue={delta => this.props.nudgeConditionValue(this.props.condition.duration, "saveDC", delta)}
+                                />
+                            </div>
+                            <div className="section">
                                 <div className="subheading">start or end</div>
                                 <Selector
                                     options={pointOptions}
@@ -140,7 +143,23 @@ class ConditionPanel extends React.Component {
                                     select={optionID => this.props.changeConditionValue(this.props.condition.duration, "point", optionID)}
                                 />
                             </div>
-                            <div key="standard" className="section">
+                        </div>
+                    );
+                    break;
+                case "combatant":
+                    var pointOptions = ["start", "end"].map(c => { return { id: c, text: c }; });
+                    var combatantOptions = this.props.combat.combatants.map(c => { return { id: c.id, text: (c.displayName || c.name || "unnamed monster") }; });
+                    duration = (
+                        <div>
+                            <div className="section">
+                                <div className="subheading">start or end</div>
+                                <Selector
+                                    options={pointOptions}
+                                    selectedID={this.props.condition.duration.point}
+                                    select={optionID => this.props.changeConditionValue(this.props.condition.duration, "point", optionID)}
+                                />
+                            </div>
+                            <div className="section">
                                 <div className="subheading">combatant</div>
                                 <Dropdown
                                     options={combatantOptions}
@@ -239,12 +258,12 @@ class ConditionPanel extends React.Component {
             if (this.props.condition.duration !== null) {
                 switch (this.props.condition.duration.type) {
                     case "saves":
-                        name += " until you make " + this.props.condition.duration.count + " " + this.props.condition.duration.saveType + " save(s)";
+                        name += " until you make " + this.props.condition.duration.count + " " + this.props.condition.duration.saveType + " save(s) at dc " + this.props.condition.duration.saveDC;
                         break;
                     case "combatant":
                         var point = this.props.condition.duration.point;
                         var c = this.props.combat.combatants.find(c => c.id == this.props.condition.duration.combatantID);
-                        var combatant = c ? c.name + "'s" : "someone's";
+                        var combatant = c ? (c.displayName || c.name || "unnamed monster") + "'s" : "someone's";
                         name += " until the " + point + " of " + combatant + " next turn";
                         break;
                     case "rounds":

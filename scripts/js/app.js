@@ -3370,6 +3370,12 @@ var Dojo = function (_React$Component) {
                     }
                 });
 
+                data.combats.forEach(function (c) {
+                    if (!c.notifications) {
+                        c.notifications = [];
+                    }
+                });
+
                 _this.state = data;
                 _this.state.view = "home";
                 _this.state.modal = null;
@@ -4065,6 +4071,7 @@ var Dojo = function (_React$Component) {
                 name: partyName + " vs " + encounterName,
                 combatants: [],
                 round: 1,
+                notifications: [],
                 issues: []
             };
 
@@ -4189,9 +4196,60 @@ var Dojo = function (_React$Component) {
     }, {
         key: "makeCurrent",
         value: function makeCurrent(combatant, newRound) {
-            // TODO: Handle conditions
-
             var combat = this.getCombat(this.state.selectedCombatID);
+
+            // Handle start-of-turn conditions
+            combat.combatants.forEach(function (actor) {
+                actor.conditions.filter(function (c) {
+                    return c.duration !== null;
+                }).forEach(function (c) {
+                    switch (c.duration.type) {
+                        case "saves":
+                            // If it's my condition, and point is START, notify the user
+                            if (actor.id === combatant.id && c.duration.point === "start") {
+                                combat.notifications.push({
+                                    id: guid(),
+                                    type: "condition-save",
+                                    condition: c,
+                                    combatant: combatant
+                                });
+                            }
+                            break;
+                        case "combatant":
+                            // If this refers to me, and point is START, remove it
+                            if (c.duration.combatantID === combatant.id && c.duration.point === "start") {
+                                var index = actor.conditions.indexOf(c);
+                                actor.conditions.splice(index, 1);
+                                // Notify the user
+                                combat.notifications.push({
+                                    id: guid(),
+                                    type: "condition-end",
+                                    condition: c,
+                                    combatant: combatant
+                                });
+                            }
+                            break;
+                        case "rounds":
+                            // If it's my condition, decrement the condition
+                            if (actor.id === combatant.id) {
+                                c.duration.count -= 1;
+                            }
+                            // If it's now at 0, remove it
+                            if (c.duration.count === 0) {
+                                var index = actor.conditions.indexOf(c);
+                                actor.conditions.splice(index, 1);
+                                // Notify the user
+                                combat.notifications.push({
+                                    id: guid(),
+                                    type: "condition-end",
+                                    condition: c,
+                                    combatant: combatant
+                                });
+                            }
+                            break;
+                    }
+                });
+            });
 
             combat.combatants.forEach(function (combatant) {
                 combatant.current = false;
@@ -4319,9 +4377,46 @@ var Dojo = function (_React$Component) {
     }, {
         key: "endTurn",
         value: function endTurn(combatant) {
-            // TODO: Handle conditions
-
             var combat = this.getCombat(this.state.selectedCombatID);
+
+            // Handle end-of-turn conditions
+            combat.combatants.forEach(function (actor) {
+                actor.conditions.filter(function (c) {
+                    return c.duration !== null;
+                }).forEach(function (c) {
+                    switch (c.duration.type) {
+                        case "saves":
+                            // If it's my condition, and point is END, notify the user
+                            if (actor.id === combatant.id && c.duration.point === "start") {
+                                combat.notifications.push({
+                                    id: guid(),
+                                    type: "condition-save",
+                                    condition: c,
+                                    combatant: combatant
+                                });
+                            }
+                            break;
+                        case "combatant":
+                            // If this refers to me, and point is END, remove it
+                            if (c.duration.combatantID === combatant.id && c.duration.point === "end") {
+                                var index = actor.conditions.indexOf(c);
+                                actor.conditions.splice(index, 1);
+                                // Notify the user
+                                combat.notifications.push({
+                                    id: guid(),
+                                    type: "condition-end",
+                                    condition: c,
+                                    combatant: combatant
+                                });
+                            }
+                            break;
+                        case "rounds":
+                            // We check this at the beginning of each turn, not at the end
+                            break;
+                    }
+                });
+            });
+
             var active = combat.combatants.filter(function (combatant) {
                 return combatant.current || !combatant.pending && combatant.active && !combatant.defeated;
             });
@@ -7982,7 +8077,9 @@ var ConditionPanel = function (_React$Component) {
                     duration = {
                         type: type,
                         count: 1,
-                        saveType: "str"
+                        saveType: "str",
+                        saveDC: 10,
+                        point: "start"
                     };
                     break;
                 case "combatant":
@@ -8099,6 +8196,9 @@ var ConditionPanel = function (_React$Component) {
                         var saveOptions = ["str", "dex", "con", "int", "wis", "cha", "death"].map(function (c) {
                             return { id: c, text: c };
                         });
+                        var pointOptions = ["start", "end"].map(function (c) {
+                            return { id: c, text: c };
+                        });
                         duration = React.createElement(
                             "div",
                             null,
@@ -8120,7 +8220,7 @@ var ConditionPanel = function (_React$Component) {
                             ),
                             React.createElement(
                                 "div",
-                                { key: "standard", className: "section" },
+                                { className: "section" },
                                 React.createElement(
                                     "div",
                                     { className: "subheading" },
@@ -8133,6 +8233,38 @@ var ConditionPanel = function (_React$Component) {
                                         return _this3.props.changeConditionValue(_this3.props.condition.duration, "saveType", optionID);
                                     }
                                 })
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "div",
+                                    { className: "subheading" },
+                                    "save dc"
+                                ),
+                                React.createElement(Spin, {
+                                    source: this.props.condition.duration,
+                                    name: "saveDC",
+                                    nudgeValue: function nudgeValue(delta) {
+                                        return _this3.props.nudgeConditionValue(_this3.props.condition.duration, "saveDC", delta);
+                                    }
+                                })
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "div",
+                                    { className: "subheading" },
+                                    "start or end"
+                                ),
+                                React.createElement(Selector, {
+                                    options: pointOptions,
+                                    selectedID: this.props.condition.duration.point,
+                                    select: function select(optionID) {
+                                        return _this3.props.changeConditionValue(_this3.props.condition.duration, "point", optionID);
+                                    }
+                                })
                             )
                         );
                         break;
@@ -8141,14 +8273,14 @@ var ConditionPanel = function (_React$Component) {
                             return { id: c, text: c };
                         });
                         var combatantOptions = this.props.combat.combatants.map(function (c) {
-                            return { id: c.id, text: c.name };
+                            return { id: c.id, text: c.displayName || c.name || "unnamed monster" };
                         });
                         duration = React.createElement(
                             "div",
                             null,
                             React.createElement(
                                 "div",
-                                { key: "standard", className: "section" },
+                                { className: "section" },
                                 React.createElement(
                                     "div",
                                     { className: "subheading" },
@@ -8164,7 +8296,7 @@ var ConditionPanel = function (_React$Component) {
                             ),
                             React.createElement(
                                 "div",
-                                { key: "standard", className: "section" },
+                                { className: "section" },
                                 React.createElement(
                                     "div",
                                     { className: "subheading" },
@@ -8298,14 +8430,14 @@ var ConditionPanel = function (_React$Component) {
                 if (this.props.condition.duration !== null) {
                     switch (this.props.condition.duration.type) {
                         case "saves":
-                            name += " until you make " + this.props.condition.duration.count + " " + this.props.condition.duration.saveType + " save(s)";
+                            name += " until you make " + this.props.condition.duration.count + " " + this.props.condition.duration.saveType + " save(s) at dc " + this.props.condition.duration.saveDC;
                             break;
                         case "combatant":
                             var point = this.props.condition.duration.point;
                             var c = this.props.combat.combatants.find(function (c) {
                                 return c.id == _this5.props.condition.duration.combatantID;
                             });
-                            var combatant = c ? c.name + "'s" : "someone's";
+                            var combatant = c ? (c.displayName || c.name || "unnamed monster") + "'s" : "someone's";
                             name += " until the " + point + " of " + combatant + " next turn";
                             break;
                         case "rounds":
@@ -8433,11 +8565,6 @@ var DifficultyChartPanel = function (_React$Component) {
 
     _createClass(DifficultyChartPanel, [{
         key: "render",
-
-
-        // TODO: Add radio selector for difficulty after each wave
-        // TODO: Show party difficulty as a horizontal bar chart
-
         value: function render() {
             var _this2 = this;
 
@@ -9236,6 +9363,20 @@ var CombatManagerScreen = function (_React$Component) {
             }
         }
     }, {
+        key: "saveSuccess",
+        value: function saveSuccess(notification) {
+            // TODO: Reduce save by 1
+            // TODO: If 0, remove condition
+
+            this.closeNotification(notification);
+        }
+    }, {
+        key: "closeNotification",
+        value: function closeNotification(notification) {
+            // TODO: Remove notification
+            // TODO: Notify owner
+        }
+    }, {
         key: "render",
         value: function render() {
             var _this3 = this;
@@ -9364,9 +9505,71 @@ var CombatManagerScreen = function (_React$Component) {
                         active = [].concat(help, active);
                     }
 
+                    var notifications = this.props.combat.notifications.map(function (n) {
+                        var name = n.combatant.displayName || n.combatant.name || "unnamed monster";
+                        switch (n.type) {
+                            case "condition-save":
+                                return React.createElement(
+                                    "div",
+                                    { key: n.id, className: "notification" },
+                                    React.createElement(
+                                        "div",
+                                        { className: "text" },
+                                        name,
+                                        " must make a ",
+                                        n.condition.duration.saveType,
+                                        " save against DC ",
+                                        n.condition.duration.saveDC
+                                    ),
+                                    React.createElement(
+                                        "div",
+                                        { className: "buttons" },
+                                        React.createElement(
+                                            "button",
+                                            { click: function click() {
+                                                    return _this3.saveSuccess(n);
+                                                } },
+                                            "success"
+                                        ),
+                                        React.createElement(
+                                            "button",
+                                            { click: function click() {
+                                                    return _this3.closeNotification(n);
+                                                } },
+                                            "ok"
+                                        )
+                                    )
+                                );
+                            case "condition-end":
+                                return React.createElement(
+                                    "div",
+                                    { key: n.id, className: "notification" },
+                                    React.createElement(
+                                        "div",
+                                        { className: "text" },
+                                        name,
+                                        " is no longer affected by condition ",
+                                        n.condition.name
+                                    ),
+                                    React.createElement(
+                                        "div",
+                                        { className: "buttons" },
+                                        React.createElement(
+                                            "button",
+                                            { click: function click() {
+                                                    return _this3.closeNotification(n);
+                                                } },
+                                            "ok"
+                                        )
+                                    )
+                                );
+                        }
+                    });
+
                     rightPaneContent = React.createElement(
                         "div",
                         null,
+                        notifications,
                         React.createElement(CardGroup, {
                             heading: "waiting for intiative to be entered",
                             content: pending,

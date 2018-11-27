@@ -773,3 +773,32 @@ body,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+.notification {
+    min-height: 40px;
+    margin: 5px;
+    border-left: 5px solid $foreground;
+    font-weight: 600;
+    position: relative;
+
+    &:hover {
+        background-color: $highlight01;
+        border-color: $highlight;
+    }
+
+    .text {
+        padding: 11px 5px;
+    }
+
+    .buttons {
+        position: absolute;
+        right: 0;
+        top: 4px;
+
+        button {
+            width: 90px;
+            display: inline-block;
+            margin: 0 3px;
+        }
+    }
+}

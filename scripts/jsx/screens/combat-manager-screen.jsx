@@ -49,6 +49,18 @@ class CombatManagerScreen extends React.Component {
         }
     }
 
+    saveSuccess(notification) {
+        // TODO: Reduce save by 1
+        // TODO: If 0, remove condition
+
+        this.closeNotification(notification);
+    }
+
+    closeNotification(notification) {
+        // TODO: Remove notification
+        // TODO: Notify owner
+    }
+
     render() {
         try {
             var leftPaneContent = null;
@@ -142,8 +154,38 @@ class CombatManagerScreen extends React.Component {
                     active = [].concat(help, active);
                 }
 
+                var notifications = this.props.combat.notifications.map(n => {
+                    var name = n.combatant.displayName || n.combatant.name || "unnamed monster";
+                    switch (n.type) {
+                        case "condition-save":
+                            return (
+                                <div key={n.id} className="notification">
+                                    <div className="text">
+                                        {name} must make a {n.condition.duration.saveType} save against DC {n.condition.duration.saveDC}
+                                    </div>
+                                    <div className="buttons">
+                                        <button click={() => this.saveSuccess(n)}>success</button>
+                                        <button click={() => this.closeNotification(n)}>ok</button>
+                                    </div>
+                                </div>
+                            );
+                        case "condition-end":
+                            return (
+                                <div key={n.id} className="notification">
+                                    <div className="text">
+                                        {name} is no longer affected by condition {n.condition.name}
+                                    </div>
+                                    <div className="buttons">
+                                        <button click={() => this.closeNotification(n)}>ok</button>
+                                    </div>
+                                </div>
+                            );
+                    }
+                });
+
                 rightPaneContent = (
                     <div>
+                        {notifications}
                         <CardGroup
                             heading="waiting for intiative to be entered"
                             content={pending}
