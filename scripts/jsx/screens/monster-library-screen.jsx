@@ -106,14 +106,10 @@ class MonsterLibraryScreen extends React.Component {
 
             return (
                 <div className="monster-library row collapse">
-                    <div className="columns small-6 medium-4 large-3 scrollable">
+                    <div className="columns small-6 medium-4 large-3 scrollable list-column">
                         {help}
-                        <div className="group">
-                            <button onClick={() => this.props.addMonsterGroup("new group")}>add a new monster group</button>
-                        </div>
-                        <div className="group">
-                            <input type="text" placeholder="filter" value={this.state.filter} onChange={event => this.setFilter(event.target.value)} />
-                        </div>
+                        <button onClick={() => this.props.addMonsterGroup("new group")}>add a new monster group</button>
+                        <input type="text" placeholder="filter" value={this.state.filter} onChange={event => this.setFilter(event.target.value)} />
                         {listItems}
                     </div>
                     <div className="columns small-6 medium-8 large-9 scrollable">

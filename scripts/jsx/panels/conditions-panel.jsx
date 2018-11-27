@@ -1,32 +1,16 @@
 class ConditionsPanel extends React.Component {
     addCondition(condition) {
         this.props.addCondition({
-            name: condition,
-            level: 1
+            id: guid(),
+            type: condition ? "standard" : "custom",
+            name: condition || "custom condition",
+            level: 1,
+            duration: null
         });
     }
 
     render() {
         try {
-            var conditions = [
-                "blinded",
-                "charmed",
-                "deafened",
-                "exhausted",
-                "frightened",
-                "grappled",
-                "incapacitated",
-                "invisible",
-                "paralyzed",
-                "petrified",
-                "poisoned",
-                "prone",
-                "restrained",
-                "stunned",
-                "unconscious"
-            ];
-            var options = conditions.map(c => { return { id: c, text: c }; });
-
             var conditions = [];
             for (var n = 0; n !== this.props.combatant.conditions.length; ++n) {
                 var condition = this.props.combatant.conditions[n];
@@ -34,18 +18,34 @@ class ConditionsPanel extends React.Component {
                     <ConditionPanel
                         key={n}
                         condition={condition}
+                        combat={this.props.combat}
                         nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
-                        removeCondition={condition => this.props.removeCondition(condition)}
+                        changeConditionValue={(condition, type, value) => this.props.changeConditionValue(condition, type, value)}
+                        removeCondition={conditionID => this.props.removeCondition(conditionID)}
                     />
                 );
             }
+
+            var conditionOptions = [
+                {
+                    id: null,
+                    text: "custom condition"
+                },
+                {
+                    id: "div",
+                    text: null,
+                    disabled: true
+                }
+            ].concat(CONDITION_TYPES.map(c => {
+                return { id: c, text: c};
+            }));
 
             return (
                 <div className="section">
                     {conditions}
                     <Dropdown
-                        options={options}
-                        placeholder="add condition..."
+                        options={conditionOptions}
+                        placeholder="add a condition"
                         select={optionID => this.addCondition(optionID)}
                     />
                 </div>

@@ -601,6 +601,7 @@ var MonsterCard = function (_React$Component) {
             if (this.props.combatant.alignment) {
                 description += ", " + this.props.combatant.alignment;
             }
+            description += ", cr " + challenge(this.props.combatant.challenge);
             return description.toLowerCase();
         }
     }, {
@@ -733,6 +734,22 @@ var MonsterCard = function (_React$Component) {
                         }
                     }
                     if (this.props.mode.indexOf("combat") !== -1) {
+                        options.push(React.createElement(ConditionsPanel, {
+                            combatant: this.props.combatant,
+                            combat: this.props.combat,
+                            addCondition: function addCondition(condition) {
+                                return _this3.props.addCondition(_this3.props.combatant, condition);
+                            },
+                            removeCondition: function removeCondition(conditionID) {
+                                return _this3.props.removeCondition(_this3.props.combatant, conditionID);
+                            },
+                            nudgeConditionValue: function nudgeConditionValue(condition, type, delta) {
+                                return _this3.props.nudgeConditionValue(condition, type, delta);
+                            },
+                            changeConditionValue: function changeConditionValue(condition, type, value) {
+                                return _this3.props.changeConditionValue(condition, type, value);
+                            }
+                        }));
                         options.push(React.createElement(Expander, {
                             key: "rename",
                             text: "change name",
@@ -973,20 +990,6 @@ var MonsterCard = function (_React$Component) {
                                 " ",
                                 this.props.combatant.equipment
                             ),
-                            React.createElement(
-                                "div",
-                                { className: "section" },
-                                React.createElement(
-                                    "b",
-                                    null,
-                                    "challenge"
-                                ),
-                                " ",
-                                challenge(this.props.combatant.challenge),
-                                " (",
-                                experience(this.props.combatant.challenge),
-                                " xp)"
-                            ),
                             React.createElement("div", { className: "divider" }),
                             React.createElement(TraitsPanel, { combatant: this.props.combatant })
                         );
@@ -1140,19 +1143,6 @@ var MonsterCard = function (_React$Component) {
                                 this.props.combatant.damage.immune
                             )
                         ),
-                        React.createElement("div", { className: "divider" }),
-                        React.createElement(ConditionsPanel, {
-                            combatant: this.props.combatant,
-                            addCondition: function addCondition(condition) {
-                                return _this3.props.addCondition(_this3.props.combatant, condition);
-                            },
-                            removeCondition: function removeCondition(condition) {
-                                return _this3.props.removeCondition(_this3.props.combatant, condition);
-                            },
-                            nudgeConditionValue: function nudgeConditionValue(condition, type, delta) {
-                                return _this3.props.nudgeConditionValue(condition, type, delta);
-                            }
-                        }),
                         React.createElement(
                             "div",
                             { className: "section", style: { display: this.props.combatant.conditionImmunities !== "" ? "" : "none" } },
@@ -1252,20 +1242,6 @@ var MonsterCard = function (_React$Component) {
                                 " ",
                                 this.props.combatant.equipment
                             ),
-                            React.createElement(
-                                "div",
-                                { className: "section" },
-                                React.createElement(
-                                    "b",
-                                    null,
-                                    "challenge"
-                                ),
-                                " ",
-                                challenge(this.props.combatant.challenge),
-                                " (",
-                                experience(this.props.combatant.challenge),
-                                " xp)"
-                            ),
                             React.createElement("div", { className: "divider" }),
                             React.createElement(TraitsPanel, { combatant: this.props.combatant })
                         )
@@ -1283,24 +1259,6 @@ var MonsterCard = function (_React$Component) {
                                     "div",
                                     null,
                                     this.description()
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "section" },
-                                React.createElement(
-                                    "div",
-                                    null,
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "challenge"
-                                    ),
-                                    " ",
-                                    challenge(this.props.combatant.challenge),
-                                    " (",
-                                    experience(this.props.combatant.challenge),
-                                    " xp)"
                                 )
                             ),
                             React.createElement(
@@ -2718,8 +2676,10 @@ var Dropdown = function (_React$Component) {
                         }
                     });
 
-                    selectedText = option.text;
-                    title = option.text;
+                    if (option) {
+                        selectedText = option.text;
+                        title = option.text;
+                    }
                 } else {
                     selectedText = this.props.text || this.props.placeholder || "select...";
                 }
@@ -2732,21 +2692,25 @@ var Dropdown = function (_React$Component) {
                         { className: "item-text" },
                         selectedText
                     ),
-                    React.createElement("img", { className: this.state.open ? "arrow open" : "arrow", src: "resources/images/down-arrow-black.svg" })
+                    React.createElement("img", { className: "arrow", src: "resources/images/ellipsis.svg" })
                 ));
 
                 if (this.state.open) {
                     style += " open";
 
                     var items = this.props.options.map(function (option) {
-                        return React.createElement(DropdownOption, {
-                            key: option.id,
-                            option: option,
-                            selected: option.id === _this2.props.selectedID,
-                            select: function select(optionID) {
-                                return _this2.select(optionID);
-                            }
-                        });
+                        if (option.text === null) {
+                            return React.createElement("div", { key: option.id, className: "divider" });
+                        } else {
+                            return React.createElement(DropdownOption, {
+                                key: option.id,
+                                option: option,
+                                selected: option.id === _this2.props.selectedID,
+                                select: function select(optionID) {
+                                    return _this2.select(optionID);
+                                }
+                            });
+                        }
                     });
 
                     content.push(React.createElement(
@@ -2786,7 +2750,9 @@ var DropdownOption = function (_React$Component2) {
         key: "click",
         value: function click(e) {
             e.stopPropagation();
-            this.props.select(this.props.option.id);
+            if (!this.props.option.disabled) {
+                this.props.select(this.props.option.id);
+            }
         }
     }, {
         key: "render",
@@ -2798,7 +2764,7 @@ var DropdownOption = function (_React$Component2) {
                 if (this.props.selected) {
                     style += " selected";
                 }
-                if (this.props.disabled) {
+                if (this.props.option.disabled) {
                     style += " disabled";
                 }
 
@@ -2892,7 +2858,7 @@ var Expander = function (_React$Component) {
                             { className: "expander-text" },
                             this.props.text
                         ),
-                        React.createElement("img", { className: "expander-button", src: "resources/images/down-arrow.svg" })
+                        React.createElement("img", { className: "expander-button", src: "resources/images/down-arrow-black.svg" })
                     ),
                     content
                 );
@@ -3105,7 +3071,9 @@ var SelectorOption = function (_React$Component2) {
         key: "click",
         value: function click(e) {
             e.stopPropagation();
-            this.props.select(this.props.option.id);
+            if (!this.props.option.disabled) {
+                this.props.select(this.props.option.id);
+            }
         }
     }, {
         key: "render",
@@ -3119,7 +3087,7 @@ var SelectorOption = function (_React$Component2) {
                 if (this.props.selected) {
                     style += " selected";
                 }
-                if (this.props.disabled) {
+                if (this.props.option.disabled) {
                     style += " disabled";
                 }
 
@@ -3399,6 +3367,12 @@ var Dojo = function (_React$Component) {
                 data.encounters.forEach(function (enc) {
                     if (!enc.waves) {
                         enc.waves = [];
+                    }
+                });
+
+                data.combats.forEach(function (c) {
+                    if (!c.notifications) {
+                        c.notifications = [];
                     }
                 });
 
@@ -4097,6 +4071,7 @@ var Dojo = function (_React$Component) {
                 name: partyName + " vs " + encounterName,
                 combatants: [],
                 round: 1,
+                notifications: [],
                 issues: []
             };
 
@@ -4222,6 +4197,59 @@ var Dojo = function (_React$Component) {
         key: "makeCurrent",
         value: function makeCurrent(combatant, newRound) {
             var combat = this.getCombat(this.state.selectedCombatID);
+
+            // Handle start-of-turn conditions
+            combat.combatants.forEach(function (actor) {
+                actor.conditions.filter(function (c) {
+                    return c.duration !== null;
+                }).forEach(function (c) {
+                    switch (c.duration.type) {
+                        case "saves":
+                            // If it's my condition, and point is START, notify the user
+                            if (actor.id === combatant.id && c.duration.point === "start") {
+                                combat.notifications.push({
+                                    id: guid(),
+                                    type: "condition-save",
+                                    condition: c,
+                                    combatant: combatant
+                                });
+                            }
+                            break;
+                        case "combatant":
+                            // If this refers to me, and point is START, remove it
+                            if (c.duration.combatantID === combatant.id && c.duration.point === "start") {
+                                var index = actor.conditions.indexOf(c);
+                                actor.conditions.splice(index, 1);
+                                // Notify the user
+                                combat.notifications.push({
+                                    id: guid(),
+                                    type: "condition-end",
+                                    condition: c,
+                                    combatant: combatant
+                                });
+                            }
+                            break;
+                        case "rounds":
+                            // If it's my condition, decrement the condition
+                            if (actor.id === combatant.id) {
+                                c.duration.count -= 1;
+                            }
+                            // If it's now at 0, remove it
+                            if (c.duration.count === 0) {
+                                var index = actor.conditions.indexOf(c);
+                                actor.conditions.splice(index, 1);
+                                // Notify the user
+                                combat.notifications.push({
+                                    id: guid(),
+                                    type: "condition-end",
+                                    condition: c,
+                                    combatant: combatant
+                                });
+                            }
+                            break;
+                    }
+                });
+            });
 
             combat.combatants.forEach(function (combatant) {
                 combatant.current = false;
@@ -4350,6 +4378,45 @@ var Dojo = function (_React$Component) {
         key: "endTurn",
         value: function endTurn(combatant) {
             var combat = this.getCombat(this.state.selectedCombatID);
+
+            // Handle end-of-turn conditions
+            combat.combatants.forEach(function (actor) {
+                actor.conditions.filter(function (c) {
+                    return c.duration !== null;
+                }).forEach(function (c) {
+                    switch (c.duration.type) {
+                        case "saves":
+                            // If it's my condition, and point is END, notify the user
+                            if (actor.id === combatant.id && c.duration.point === "end") {
+                                combat.notifications.push({
+                                    id: guid(),
+                                    type: "condition-save",
+                                    condition: c,
+                                    combatant: combatant
+                                });
+                            }
+                            break;
+                        case "combatant":
+                            // If this refers to me, and point is END, remove it
+                            if (c.duration.combatantID === combatant.id && c.duration.point === "end") {
+                                var index = actor.conditions.indexOf(c);
+                                actor.conditions.splice(index, 1);
+                                // Notify the user
+                                combat.notifications.push({
+                                    id: guid(),
+                                    type: "condition-end",
+                                    condition: c,
+                                    combatant: combatant
+                                });
+                            }
+                            break;
+                        case "rounds":
+                            // We check this at the beginning of each turn, not at the end
+                            break;
+                    }
+                });
+            });
+
             var active = combat.combatants.filter(function (combatant) {
                 return combatant.current || !combatant.pending && combatant.active && !combatant.defeated;
             });
@@ -4380,7 +4447,10 @@ var Dojo = function (_React$Component) {
         }
     }, {
         key: "removeCondition",
-        value: function removeCondition(combatant, condition) {
+        value: function removeCondition(combatant, conditionID) {
+            var condition = combatant.conditions.find(function (c) {
+                return c.id === conditionID;
+            });
             var index = combatant.conditions.indexOf(condition);
             combatant.conditions.splice(index, 1);
 
@@ -4399,6 +4469,22 @@ var Dojo = function (_React$Component) {
                 if (a.name < b.name) return -1;
                 if (a.name > b.name) return 1;
                 return 0;
+            });
+        }
+    }, {
+        key: "closeNotification",
+        value: function closeNotification(notification, removeCondition) {
+            var combat = this.getCombat(this.state.selectedCombatID);
+            var index = combat.notifications.indexOf(notification);
+            combat.notifications.splice(index, 1);
+
+            if (removeCondition) {
+                var conditionIndex = notification.combatant.conditions.indexOf(notification.condition);
+                notification.combatant.conditions.splice(conditionIndex, 1);
+            }
+
+            this.setState({
+                combats: this.state.combats
             });
         }
 
@@ -4805,11 +4891,14 @@ var Dojo = function (_React$Component) {
                             addCondition: function addCondition(combatant, condition) {
                                 return _this6.addCondition(combatant, condition);
                             },
-                            removeCondition: function removeCondition(combatant, condition) {
-                                return _this6.removeCondition(combatant, condition);
+                            removeCondition: function removeCondition(combatant, conditionID) {
+                                return _this6.removeCondition(combatant, conditionID);
                             },
                             endTurn: function endTurn(combatant) {
                                 return _this6.endTurn(combatant);
+                            },
+                            close: function close(notification, removeCondition) {
+                                return _this6.closeNotification(notification, removeCondition);
                             }
                         });
                         if (combat) {
@@ -5115,22 +5204,18 @@ var CombatListItem = function (_React$Component) {
 
                 return React.createElement(
                     "div",
-                    { className: "group" },
+                    { className: this.props.selected ? "list-item selected" : "list-item", onClick: function onClick() {
+                            return _this2.props.setSelection(_this2.props.combat);
+                        } },
                     React.createElement(
                         "div",
-                        { className: this.props.selected ? "list-item selected" : "list-item", onClick: function onClick() {
-                                return _this2.props.setSelection(_this2.props.combat);
-                            } },
-                        React.createElement(
-                            "div",
-                            { className: "heading" },
-                            combatName
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "text" },
-                            this.props.combat.timestamp
-                        )
+                        { className: "heading" },
+                        combatName
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "text" },
+                        this.props.combat.timestamp
                     )
                 );
             } catch (e) {
@@ -5218,19 +5303,15 @@ var EncounterListItem = function (_React$Component) {
 
                 return React.createElement(
                     "div",
-                    { className: "group" },
+                    { className: this.props.selected ? "list-item selected" : "list-item", onClick: function onClick() {
+                            return _this2.props.setSelection(_this2.props.encounter);
+                        } },
                     React.createElement(
                         "div",
-                        { className: this.props.selected ? "list-item selected" : "list-item", onClick: function onClick() {
-                                return _this2.props.setSelection(_this2.props.encounter);
-                            } },
-                        React.createElement(
-                            "div",
-                            { className: "heading" },
-                            encounterName
-                        ),
-                        slots
-                    )
+                        { className: "heading" },
+                        encounterName
+                    ),
+                    slots
                 );
             } catch (e) {
                 console.error(e);
@@ -5298,19 +5379,15 @@ var MonsterGroupListItem = function (_React$Component) {
 
                 return React.createElement(
                     "div",
-                    { className: "group" },
+                    { className: this.props.selected ? "list-item selected" : "list-item", onClick: function onClick() {
+                            return _this2.props.setSelection(_this2.props.group);
+                        } },
                     React.createElement(
                         "div",
-                        { className: this.props.selected ? "list-item selected" : "list-item", onClick: function onClick() {
-                                return _this2.props.setSelection(_this2.props.group);
-                            } },
-                        React.createElement(
-                            "div",
-                            { className: "heading" },
-                            groupName
-                        ),
-                        monsters
-                    )
+                        { className: "heading" },
+                        groupName
+                    ),
+                    monsters
                 );
             } catch (e) {
                 console.error(e);
@@ -5376,19 +5453,15 @@ var PartyListItem = function (_React$Component) {
 
                 return React.createElement(
                     "div",
-                    { className: "group" },
+                    { className: this.props.selected ? "list-item selected" : "list-item", onClick: function onClick() {
+                            return _this2.props.setSelection(_this2.props.party);
+                        } },
                     React.createElement(
                         "div",
-                        { className: this.props.selected ? "list-item selected" : "list-item", onClick: function onClick() {
-                                return _this2.props.setSelection(_this2.props.party);
-                            } },
-                        React.createElement(
-                            "div",
-                            { className: "heading" },
-                            partyName
-                        ),
-                        pcs
-                    )
+                        { className: "heading" },
+                        partyName
+                    ),
+                    pcs
                 );
             } catch (e) {
                 console.error(e);
@@ -5550,64 +5623,56 @@ var AboutModal = function (_React$Component) {
                         { className: "row" },
                         React.createElement(
                             "div",
-                            { className: "columns small-6 medium-6 large-6" },
+                            { className: "columns small-6 medium-6 large-6 list-column" },
                             React.createElement(
                                 "div",
-                                { className: "group" },
+                                { className: "heading" },
+                                "about"
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                "dojo by ",
                                 React.createElement(
-                                    "div",
-                                    { className: "heading" },
-                                    "about"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "section" },
-                                    "dojo by ",
-                                    React.createElement(
-                                        "a",
-                                        { href: "mailto:andy.aiken@live.co.uk" },
-                                        "andy aiken"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "section" },
-                                    "if you would like to contribut to this project, you can do so ",
-                                    React.createElement(
-                                        "a",
-                                        { href: "https://github.com/andyaiken/dojo", target: "_blank" },
-                                        "here"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "section" },
-                                    "dungeons and dragons copyright wizards of the coast"
+                                    "a",
+                                    { href: "mailto:andy.aiken@live.co.uk" },
+                                    "andy aiken"
                                 )
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                "if you would like to contribut to this project, you can do so ",
+                                React.createElement(
+                                    "a",
+                                    { href: "https://github.com/andyaiken/dojo", target: "_blank" },
+                                    "here"
+                                )
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                "dungeons and dragons copyright wizards of the coast"
                             )
                         ),
                         React.createElement(
                             "div",
-                            { className: "columns small-6 medium-6 large-6" },
+                            { className: "columns small-6 medium-6 large-6 list-column" },
                             React.createElement(
                                 "div",
-                                { className: "group" },
-                                React.createElement(
-                                    "div",
-                                    { className: "heading" },
-                                    "options"
-                                ),
-                                React.createElement(ConfirmButton, { text: "clear all data", callback: function callback() {
-                                        return _this3.props.resetAll();
-                                    } }),
-                                React.createElement(Checkbox, {
-                                    label: "show help cards",
-                                    checked: this.props.options.showHelp,
-                                    changeValue: function changeValue(value) {
-                                        return _this3.props.changeValue(_this3.props.options, "showHelp", value);
-                                    }
-                                })
-                            )
+                                { className: "heading" },
+                                "options"
+                            ),
+                            React.createElement(ConfirmButton, { text: "clear all data", callback: function callback() {
+                                    return _this3.props.resetAll();
+                                } }),
+                            React.createElement(Checkbox, {
+                                label: "show help cards",
+                                checked: this.props.options.showHelp,
+                                changeValue: function changeValue(value) {
+                                    return _this3.props.changeValue(_this3.props.options, "showHelp", value);
+                                }
+                            })
                         )
                     ),
                     this.getDevSection(),
@@ -5616,98 +5681,94 @@ var AboutModal = function (_React$Component) {
                         { className: "row" },
                         React.createElement(
                             "div",
-                            { className: "columns small-12 medium-12 large-12" },
+                            { className: "columns small-12 medium-12 large-12 list-column" },
                             React.createElement(
                                 "div",
-                                { className: "group" },
+                                { className: "heading" },
+                                "open game license version 1.0a"
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                "The following text is the property of Wizards of the Coast, Inc. and is Copyright 2000 Wizards of the Coast, Inc (\"Wizards\"). All Rights Reserved."
+                            ),
+                            React.createElement(
+                                "ol",
+                                null,
                                 React.createElement(
-                                    "div",
-                                    { className: "heading" },
-                                    "open game license version 1.0a"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "section" },
-                                    "The following text is the property of Wizards of the Coast, Inc. and is Copyright 2000 Wizards of the Coast, Inc (\"Wizards\"). All Rights Reserved."
-                                ),
-                                React.createElement(
-                                    "ol",
+                                    "li",
                                     null,
-                                    React.createElement(
-                                        "li",
-                                        null,
-                                        "Definitions: (a)\"Contributors\" means the copyright and/or trademark owners who have contributed Open Game Content; (b)\"Derivative Material\" means copyrighted material including derivative works and translations (including into other computer languages), potation, modification, correction, addition, extension, upgrade, improvement, compilation, abridgment or other form in which an existing work may be recast, transformed or adapted; (c) \"Distribute\" means to reproduce, license, rent, lease, sell, broadcast, publicly display, transmit or otherwise distribute; (d)\"Open Game Content\" means the game mechanic and includes the methods, procedures, processes and routines to the extent such content does not embody the Product Identity and is an enhancement over the prior art and any additional content clearly identified as Open Game Content by the Contributor, and means any work covered by this License, including translations and derivative works under copyright law, but specifically excludes Product Identity. (e) \"Product Identity\" means product and product line names, logos and identifying marks including trade dress; artifacts; creatures characters; stories, storylines, plots, thematic elements, dialogue, incidents, language, artwork, symbols, designs, depictions, likenesses, formats, poses, concepts, themes and graphic, photographic and other visual or audio representations; names and descriptions of characters, spells, enchantments, personalities, teams, personas, likenesses and special abilities; places, locations, environments, creatures, equipment, magical or supernatural abilities or effects, logos, symbols, or graphic designs; and any other trademark or registered trademark clearly identified as Product identity by the owner of the Product Identity, and which specifically excludes the Open Game Content; (f) \"Trademark\" means the logos, names, mark, sign, motto, designs that are used by a Contributor to identify itself or its products or the associated products contributed to the Open Game License by the Contributor (g) \"Use\", \"Used\" or \"Using\" means to use, Distribute, copy, edit, format, modify, translate and otherwise create Derivative Material of Open Game Content. (h) \"You\" or \"Your\" means the licensee in terms of this agreement."
-                                    ),
-                                    React.createElement(
-                                        "li",
-                                        null,
-                                        "The License: This License applies to any Open Game Content that contains a notice indicating that the Open Game Content may only be Used under and in terms of this License. You must affix such a notice to any Open Game Content that you Use. No terms may be added to or subtracted from this License except as described by the License itself. No other terms or conditions may be applied to any Open Game Content distributed using this License."
-                                    ),
-                                    React.createElement(
-                                        "li",
-                                        null,
-                                        "Offer and Acceptance: By Using the Open Game Content You indicate Your acceptance of the terms of this License."
-                                    ),
-                                    React.createElement(
-                                        "li",
-                                        null,
-                                        "Grant and Consideration: In consideration for agreeing to use this License, the Contributors grant You a perpetual, worldwide, royalty-free, non-exclusive license with the exact terms of this License to Use, the Open Game Content."
-                                    ),
-                                    React.createElement(
-                                        "li",
-                                        null,
-                                        "Representation of Authority to Contribute: If You are contributing original material as Open Game Content, You represent that Your Contributions are Your original creation and/or You have sufficient rights to grant the rights conveyed by this License."
-                                    ),
-                                    React.createElement(
-                                        "li",
-                                        null,
-                                        "Notice of License Copyright: You must update the COPYRIGHT NOTICE portion of this License to include the exact text of the COPYRIGHT NOTICE of any Open Game Content You are copying, modifying or distributing, and You must add the title, the copyright date, and the copyright holder's name to the COPYRIGHT NOTICE of any original Open Game Content you Distribute."
-                                    ),
-                                    React.createElement(
-                                        "li",
-                                        null,
-                                        "Use of Product Identity: You agree not to Use any Product Identity, including as an indication as to compatibility, except as expressly licensed in another, independent Agreement with the owner of each element of that Product Identity. You agree not to indicate compatibility or co-adaptability with any Trademark or Registered Trademark in conjunction with a work containing Open Game Content except as expressly licensed in another, independent Agreement with the owner of such Trademark or Registered Trademark. The use of any Product Identity in Open Game Content does not constitute a challenge to the ownership of that Product Identity. The owner of any Product Identity used in Open Game Content shall retain all rights, title and interest in and to that Product Identity."
-                                    ),
-                                    React.createElement(
-                                        "li",
-                                        null,
-                                        "Identification: If you distribute Open Game Content You must clearly indicate which portions of the work that you are distributing are Open Game Content."
-                                    ),
-                                    React.createElement(
-                                        "li",
-                                        null,
-                                        "Updating the License: Wizards or its designated Agents may publish updated versions of this License. You may use any authorized version of this License to copy, modify and distribute any Open Game Content originally distributed under any version of this License."
-                                    ),
-                                    React.createElement(
-                                        "li",
-                                        null,
-                                        "Copy of this License: You MUST include a copy of this License with every copy of the Open Game Content You Distribute."
-                                    ),
-                                    React.createElement(
-                                        "li",
-                                        null,
-                                        "Use of Contributor Credits: You may not market or advertise the Open Game Content using the name of any Contributor unless You have written permission from the Contributor to do so."
-                                    ),
-                                    React.createElement(
-                                        "li",
-                                        null,
-                                        "Inability to Comply: If it is impossible for You to comply with any of the terms of this License with respect to some or all of the Open Game Content due to statute, judicial order, or governmental regulation then You may not Use any Open Game Material so affected."
-                                    ),
-                                    React.createElement(
-                                        "li",
-                                        null,
-                                        "Termination: This License will terminate automatically if You fail to comply with all terms herein and fail to cure such breach within 30 days of becoming aware of the breach. All sublicenses shall survive the termination of this License."
-                                    ),
-                                    React.createElement(
-                                        "li",
-                                        null,
-                                        "Reformation: If any provision of this License is held to be unenforceable, such provision shall be reformed only to the extent necessary to make it enforceable."
-                                    ),
-                                    React.createElement(
-                                        "li",
-                                        null,
-                                        "COPYRIGHT NOTICE Open Game License v 1.0 Copyright 2000, Wizards of the Coast, Inc."
-                                    )
+                                    "Definitions: (a)\"Contributors\" means the copyright and/or trademark owners who have contributed Open Game Content; (b)\"Derivative Material\" means copyrighted material including derivative works and translations (including into other computer languages), potation, modification, correction, addition, extension, upgrade, improvement, compilation, abridgment or other form in which an existing work may be recast, transformed or adapted; (c) \"Distribute\" means to reproduce, license, rent, lease, sell, broadcast, publicly display, transmit or otherwise distribute; (d)\"Open Game Content\" means the game mechanic and includes the methods, procedures, processes and routines to the extent such content does not embody the Product Identity and is an enhancement over the prior art and any additional content clearly identified as Open Game Content by the Contributor, and means any work covered by this License, including translations and derivative works under copyright law, but specifically excludes Product Identity. (e) \"Product Identity\" means product and product line names, logos and identifying marks including trade dress; artifacts; creatures characters; stories, storylines, plots, thematic elements, dialogue, incidents, language, artwork, symbols, designs, depictions, likenesses, formats, poses, concepts, themes and graphic, photographic and other visual or audio representations; names and descriptions of characters, spells, enchantments, personalities, teams, personas, likenesses and special abilities; places, locations, environments, creatures, equipment, magical or supernatural abilities or effects, logos, symbols, or graphic designs; and any other trademark or registered trademark clearly identified as Product identity by the owner of the Product Identity, and which specifically excludes the Open Game Content; (f) \"Trademark\" means the logos, names, mark, sign, motto, designs that are used by a Contributor to identify itself or its products or the associated products contributed to the Open Game License by the Contributor (g) \"Use\", \"Used\" or \"Using\" means to use, Distribute, copy, edit, format, modify, translate and otherwise create Derivative Material of Open Game Content. (h) \"You\" or \"Your\" means the licensee in terms of this agreement."
+                                ),
+                                React.createElement(
+                                    "li",
+                                    null,
+                                    "The License: This License applies to any Open Game Content that contains a notice indicating that the Open Game Content may only be Used under and in terms of this License. You must affix such a notice to any Open Game Content that you Use. No terms may be added to or subtracted from this License except as described by the License itself. No other terms or conditions may be applied to any Open Game Content distributed using this License."
+                                ),
+                                React.createElement(
+                                    "li",
+                                    null,
+                                    "Offer and Acceptance: By Using the Open Game Content You indicate Your acceptance of the terms of this License."
+                                ),
+                                React.createElement(
+                                    "li",
+                                    null,
+                                    "Grant and Consideration: In consideration for agreeing to use this License, the Contributors grant You a perpetual, worldwide, royalty-free, non-exclusive license with the exact terms of this License to Use, the Open Game Content."
+                                ),
+                                React.createElement(
+                                    "li",
+                                    null,
+                                    "Representation of Authority to Contribute: If You are contributing original material as Open Game Content, You represent that Your Contributions are Your original creation and/or You have sufficient rights to grant the rights conveyed by this License."
+                                ),
+                                React.createElement(
+                                    "li",
+                                    null,
+                                    "Notice of License Copyright: You must update the COPYRIGHT NOTICE portion of this License to include the exact text of the COPYRIGHT NOTICE of any Open Game Content You are copying, modifying or distributing, and You must add the title, the copyright date, and the copyright holder's name to the COPYRIGHT NOTICE of any original Open Game Content you Distribute."
+                                ),
+                                React.createElement(
+                                    "li",
+                                    null,
+                                    "Use of Product Identity: You agree not to Use any Product Identity, including as an indication as to compatibility, except as expressly licensed in another, independent Agreement with the owner of each element of that Product Identity. You agree not to indicate compatibility or co-adaptability with any Trademark or Registered Trademark in conjunction with a work containing Open Game Content except as expressly licensed in another, independent Agreement with the owner of such Trademark or Registered Trademark. The use of any Product Identity in Open Game Content does not constitute a challenge to the ownership of that Product Identity. The owner of any Product Identity used in Open Game Content shall retain all rights, title and interest in and to that Product Identity."
+                                ),
+                                React.createElement(
+                                    "li",
+                                    null,
+                                    "Identification: If you distribute Open Game Content You must clearly indicate which portions of the work that you are distributing are Open Game Content."
+                                ),
+                                React.createElement(
+                                    "li",
+                                    null,
+                                    "Updating the License: Wizards or its designated Agents may publish updated versions of this License. You may use any authorized version of this License to copy, modify and distribute any Open Game Content originally distributed under any version of this License."
+                                ),
+                                React.createElement(
+                                    "li",
+                                    null,
+                                    "Copy of this License: You MUST include a copy of this License with every copy of the Open Game Content You Distribute."
+                                ),
+                                React.createElement(
+                                    "li",
+                                    null,
+                                    "Use of Contributor Credits: You may not market or advertise the Open Game Content using the name of any Contributor unless You have written permission from the Contributor to do so."
+                                ),
+                                React.createElement(
+                                    "li",
+                                    null,
+                                    "Inability to Comply: If it is impossible for You to comply with any of the terms of this License with respect to some or all of the Open Game Content due to statute, judicial order, or governmental regulation then You may not Use any Open Game Material so affected."
+                                ),
+                                React.createElement(
+                                    "li",
+                                    null,
+                                    "Termination: This License will terminate automatically if You fail to comply with all terms herein and fail to cure such breach within 30 days of becoming aware of the breach. All sublicenses shall survive the termination of this License."
+                                ),
+                                React.createElement(
+                                    "li",
+                                    null,
+                                    "Reformation: If any provision of this License is held to be unenforceable, such provision shall be reformed only to the extent necessary to make it enforceable."
+                                ),
+                                React.createElement(
+                                    "li",
+                                    null,
+                                    "COPYRIGHT NOTICE Open Game License v 1.0 Copyright 2000, Wizards of the Coast, Inc."
                                 )
                             )
                         )
@@ -8024,47 +8085,384 @@ var ConditionPanel = function (_React$Component) {
     }
 
     _createClass(ConditionPanel, [{
-        key: "render",
-        value: function render() {
+        key: "setDurationType",
+        value: function setDurationType(type) {
+            var duration = null;
+            switch (type) {
+                case "none":
+                    duration = null;
+                    break;
+                case "saves":
+                    duration = {
+                        type: type,
+                        count: 1,
+                        saveType: "str",
+                        saveDC: 10,
+                        point: "start"
+                    };
+                    break;
+                case "combatant":
+                    duration = {
+                        type: type,
+                        point: "start",
+                        combatantID: null
+                    };
+                    break;
+                case "rounds":
+                    duration = {
+                        type: type,
+                        count: 1
+                    };
+                    break;
+            }
+
+            this.props.changeConditionValue(this.props.condition, "duration", duration);
+        }
+    }, {
+        key: "getConditionContent",
+        value: function getConditionContent() {
             var _this2 = this;
 
-            try {
-                var details = [];
-                if (this.props.condition.name === "exhausted") {
-                    details.push(React.createElement(Spin, {
-                        key: "level",
-                        source: this.props.condition,
-                        name: "level",
-                        label: "level",
-                        nudgeValue: function nudgeValue(delta) {
-                            return _this2.props.nudgeConditionValue(_this2.props.condition, "level", delta);
-                        }
-                    }));
-                    details.push(React.createElement("div", { key: "div1", className: "divider" }));
-                }
-                var text = conditionText(this.props.condition);
-                for (var n = 0; n !== text.length; ++n) {
-                    details.push(React.createElement(
-                        "div",
-                        { key: n, className: "section" },
-                        text[n]
-                    ));
-                }
-                details.push(React.createElement("div", { key: "div2", className: "divider" }));
-                details.push(React.createElement(
+            var content = [];
+
+            var typeOptions = [{
+                id: "standard",
+                text: "standard"
+            }, {
+                id: "custom",
+                text: "custom"
+            }];
+            content.push(React.createElement(
+                "div",
+                { key: "type", className: "section" },
+                React.createElement(
                     "div",
-                    { key: "remove", className: "section" },
-                    React.createElement(ConfirmButton, { key: "remove", text: "remove condition", callback: function callback() {
-                            return _this2.props.removeCondition(_this2.props.condition);
+                    { className: "subheading" },
+                    "condition type"
+                ),
+                React.createElement(Selector, {
+                    options: typeOptions,
+                    selectedID: this.props.condition.type,
+                    select: function select(optionID) {
+                        return _this2.props.changeConditionValue(_this2.props.condition, "type", optionID);
+                    }
+                })
+            ));
+
+            if (this.props.condition.type === "standard") {
+                var options = CONDITION_TYPES.map(function (c) {
+                    return { id: c, text: c };
+                });
+                content.push(React.createElement(
+                    "div",
+                    { key: "standard", className: "section" },
+                    React.createElement(
+                        "div",
+                        { className: "subheading" },
+                        "standard conditions"
+                    ),
+                    React.createElement(Dropdown, {
+                        options: options,
+                        selectedID: this.props.condition.name,
+                        select: function select(optionID) {
+                            return _this2.props.changeConditionValue(_this2.props.condition, "name", optionID);
+                        }
+                    })
+                ));
+            }
+
+            if (this.props.condition.type === "custom") {
+                content.push(React.createElement(
+                    "div",
+                    { key: "name", className: "section" },
+                    React.createElement(
+                        "div",
+                        { className: "subheading" },
+                        "custom condition text"
+                    ),
+                    React.createElement("input", { type: "text", placeholder: "name", value: this.props.condition.name, onChange: function onChange(event) {
+                            return _this2.props.changeConditionValue(_this2.props.condition, "name", event.target.value);
                         } })
                 ));
+            }
 
-                var name = this.props.condition.name;
+            return content;
+        }
+    }, {
+        key: "getDurationContent",
+        value: function getDurationContent() {
+            var _this3 = this;
+
+            var content = [];
+
+            var options = [{
+                id: "none",
+                text: "until removed (default)"
+            }, {
+                id: "saves",
+                text: "until a successful save"
+            }, {
+                id: "combatant",
+                text: "until someone's next turn"
+            }, {
+                id: "rounds",
+                text: "for a number of rounds"
+            }];
+            var duration = null;
+            if (this.props.condition.duration) {
+                switch (this.props.condition.duration.type) {
+                    case "saves":
+                        var saveOptions = ["str", "dex", "con", "int", "wis", "cha", "death"].map(function (c) {
+                            return { id: c, text: c };
+                        });
+                        var pointOptions = ["start", "end"].map(function (c) {
+                            return { id: c, text: c };
+                        });
+                        duration = React.createElement(
+                            "div",
+                            null,
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "div",
+                                    { className: "subheading" },
+                                    "number of saves required"
+                                ),
+                                React.createElement(Spin, {
+                                    source: this.props.condition.duration,
+                                    name: "count",
+                                    nudgeValue: function nudgeValue(delta) {
+                                        return _this3.props.nudgeConditionValue(_this3.props.condition.duration, "count", delta);
+                                    }
+                                })
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "div",
+                                    { className: "subheading" },
+                                    "type of save"
+                                ),
+                                React.createElement(Dropdown, {
+                                    options: saveOptions,
+                                    selectedID: this.props.condition.duration.saveType,
+                                    select: function select(optionID) {
+                                        return _this3.props.changeConditionValue(_this3.props.condition.duration, "saveType", optionID);
+                                    }
+                                })
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "div",
+                                    { className: "subheading" },
+                                    "save dc"
+                                ),
+                                React.createElement(Spin, {
+                                    source: this.props.condition.duration,
+                                    name: "saveDC",
+                                    nudgeValue: function nudgeValue(delta) {
+                                        return _this3.props.nudgeConditionValue(_this3.props.condition.duration, "saveDC", delta);
+                                    }
+                                })
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "div",
+                                    { className: "subheading" },
+                                    "start or end"
+                                ),
+                                React.createElement(Selector, {
+                                    options: pointOptions,
+                                    selectedID: this.props.condition.duration.point,
+                                    select: function select(optionID) {
+                                        return _this3.props.changeConditionValue(_this3.props.condition.duration, "point", optionID);
+                                    }
+                                })
+                            )
+                        );
+                        break;
+                    case "combatant":
+                        var pointOptions = ["start", "end"].map(function (c) {
+                            return { id: c, text: c };
+                        });
+                        var combatantOptions = this.props.combat.combatants.map(function (c) {
+                            return { id: c.id, text: c.displayName || c.name || "unnamed monster" };
+                        });
+                        duration = React.createElement(
+                            "div",
+                            null,
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "div",
+                                    { className: "subheading" },
+                                    "start or end"
+                                ),
+                                React.createElement(Selector, {
+                                    options: pointOptions,
+                                    selectedID: this.props.condition.duration.point,
+                                    select: function select(optionID) {
+                                        return _this3.props.changeConditionValue(_this3.props.condition.duration, "point", optionID);
+                                    }
+                                })
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "div",
+                                    { className: "subheading" },
+                                    "combatant"
+                                ),
+                                React.createElement(Dropdown, {
+                                    options: combatantOptions,
+                                    selectedID: this.props.condition.duration.combatantID,
+                                    select: function select(optionID) {
+                                        return _this3.props.changeConditionValue(_this3.props.condition.duration, "combatantID", optionID);
+                                    }
+                                })
+                            )
+                        );
+                        break;
+                    case "rounds":
+                        duration = React.createElement(
+                            "div",
+                            null,
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                React.createElement(
+                                    "div",
+                                    { className: "subheading" },
+                                    "number of rounds"
+                                ),
+                                React.createElement(Spin, {
+                                    source: this.props.condition.duration,
+                                    name: "count",
+                                    nudgeValue: function nudgeValue(delta) {
+                                        return _this3.props.nudgeConditionValue(_this3.props.condition.duration, "count", delta);
+                                    }
+                                })
+                            )
+                        );
+                        break;
+                };
+            }
+            content.push(React.createElement(
+                "div",
+                { key: "duration", className: "section" },
+                React.createElement(
+                    "div",
+                    { className: "subheading" },
+                    "duration type"
+                ),
+                React.createElement(Dropdown, {
+                    options: options,
+                    selectedID: this.props.condition.duration ? this.props.condition.duration.type : "none",
+                    select: function select(optionID) {
+                        return _this3.setDurationType(optionID);
+                    }
+                }),
+                duration
+            ));
+
+            return content;
+        }
+    }, {
+        key: "getDetails",
+        value: function getDetails() {
+            var _this4 = this;
+
+            var details = [];
+
+            if (this.props.condition.type === "standard") {
                 if (this.props.condition.name === "exhausted") {
+                    details.push(React.createElement(
+                        "div",
+                        { key: "level", className: "section" },
+                        React.createElement(Spin, {
+                            source: this.props.condition,
+                            name: "level",
+                            label: "level",
+                            nudgeValue: function nudgeValue(delta) {
+                                return _this4.props.nudgeConditionValue(_this4.props.condition, "level", delta);
+                            }
+                        })
+                    ));
+                }
+            }
+
+            return React.createElement(
+                "div",
+                null,
+                details,
+                React.createElement(Expander, { text: "edit condition", content: this.getConditionContent() }),
+                React.createElement(Expander, { text: "edit duration", content: this.getDurationContent() }),
+                React.createElement(ConfirmButton, { key: "remove", text: "remove condition", callback: function callback() {
+                        return _this4.props.removeCondition(_this4.props.condition.id);
+                    } })
+            );
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this5 = this;
+
+            try {
+                var name = this.props.condition.name || "condition";
+                if (this.props.condition.type === "standard" && this.props.condition.name === "exhausted") {
                     name += " (" + this.props.condition.level + ")";
                 }
 
-                return React.createElement(Expander, { text: name, content: details });
+                if (this.props.condition.duration !== null) {
+                    switch (this.props.condition.duration.type) {
+                        case "saves":
+                            name += " until you make " + this.props.condition.duration.count + " " + this.props.condition.duration.saveType + " save(s) at dc " + this.props.condition.duration.saveDC;
+                            break;
+                        case "combatant":
+                            var point = this.props.condition.duration.point;
+                            var c = this.props.combat.combatants.find(function (c) {
+                                return c.id == _this5.props.condition.duration.combatantID;
+                            });
+                            var combatant = c ? (c.displayName || c.name || "unnamed monster") + "'s" : "someone's";
+                            name += " until the " + point + " of " + combatant + " next turn";
+                            break;
+                        case "rounds":
+                            name += " for " + this.props.condition.duration.count + " round(s)";
+                            break;
+                    }
+                }
+
+                var description = [];
+                if (this.props.condition.type === "standard") {
+                    var text = conditionText(this.props.condition);
+                    for (var n = 0; n !== text.length; ++n) {
+                        description.push(React.createElement(
+                            "div",
+                            { key: n, className: "section small-text" },
+                            text[n]
+                        ));
+                    }
+                }
+
+                var header = React.createElement(
+                    "div",
+                    null,
+                    name,
+                    description
+                );
+
+                return React.createElement(Expander, {
+                    text: header,
+                    content: this.getDetails()
+                });
             } catch (e) {
                 console.error(e);
             }
@@ -8096,8 +8494,11 @@ var ConditionsPanel = function (_React$Component) {
         key: "addCondition",
         value: function addCondition(condition) {
             this.props.addCondition({
-                name: condition,
-                level: 1
+                id: guid(),
+                type: condition ? "standard" : "custom",
+                name: condition || "custom condition",
+                level: 1,
+                duration: null
             });
         }
     }, {
@@ -8106,33 +8507,43 @@ var ConditionsPanel = function (_React$Component) {
             var _this2 = this;
 
             try {
-                var conditions = ["blinded", "charmed", "deafened", "exhausted", "frightened", "grappled", "incapacitated", "invisible", "paralyzed", "petrified", "poisoned", "prone", "restrained", "stunned", "unconscious"];
-                var options = conditions.map(function (c) {
-                    return { id: c, text: c };
-                });
-
                 var conditions = [];
                 for (var n = 0; n !== this.props.combatant.conditions.length; ++n) {
                     var condition = this.props.combatant.conditions[n];
                     conditions.push(React.createElement(ConditionPanel, {
                         key: n,
                         condition: condition,
+                        combat: this.props.combat,
                         nudgeConditionValue: function nudgeConditionValue(condition, type, delta) {
                             return _this2.props.nudgeConditionValue(condition, type, delta);
                         },
-                        removeCondition: function removeCondition(condition) {
-                            return _this2.props.removeCondition(condition);
+                        changeConditionValue: function changeConditionValue(condition, type, value) {
+                            return _this2.props.changeConditionValue(condition, type, value);
+                        },
+                        removeCondition: function removeCondition(conditionID) {
+                            return _this2.props.removeCondition(conditionID);
                         }
                     }));
                 }
+
+                var conditionOptions = [{
+                    id: null,
+                    text: "custom condition"
+                }, {
+                    id: "div",
+                    text: null,
+                    disabled: true
+                }].concat(CONDITION_TYPES.map(function (c) {
+                    return { id: c, text: c };
+                }));
 
                 return React.createElement(
                     "div",
                     { className: "section" },
                     conditions,
                     React.createElement(Dropdown, {
-                        options: options,
-                        placeholder: "add condition...",
+                        options: conditionOptions,
+                        placeholder: "add a condition",
                         select: function select(optionID) {
                             return _this2.addCondition(optionID);
                         }
@@ -8167,11 +8578,6 @@ var DifficultyChartPanel = function (_React$Component) {
 
     _createClass(DifficultyChartPanel, [{
         key: "render",
-
-
-        // TODO: Add radio selector for difficulty after each wave
-        // TODO: Show party difficulty as a horizontal bar chart
-
         value: function render() {
             var _this2 = this;
 
@@ -8930,6 +9336,7 @@ var CombatManagerScreen = function (_React$Component) {
                     return React.createElement(MonsterCard, {
                         combatant: combatant,
                         mode: "combat",
+                        combat: this.props.combat,
                         changeValue: function changeValue(combatant, type, value) {
                             return _this2.props.changeValue(combatant, type, value);
                         },
@@ -8951,11 +9358,14 @@ var CombatManagerScreen = function (_React$Component) {
                         addCondition: function addCondition(combatant, condition) {
                             return _this2.props.addCondition(combatant, condition);
                         },
-                        removeCondition: function removeCondition(combatant, condition) {
-                            return _this2.props.removeCondition(combatant, condition);
+                        removeCondition: function removeCondition(combatant, conditionID) {
+                            return _this2.props.removeCondition(combatant, conditionID);
                         },
                         nudgeConditionValue: function nudgeConditionValue(condition, type, delta) {
                             return _this2.props.nudgeValue(condition, type, delta);
+                        },
+                        changeConditionValue: function changeConditionValue(condition, type, value) {
+                            return _this2.props.changeValue(condition, type, value);
                         },
                         endTurn: function endTurn(combatant) {
                             return _this2.props.endTurn(combatant);
@@ -9030,11 +9440,11 @@ var CombatManagerScreen = function (_React$Component) {
                         }));
                     }
 
-                    leftPaneContent = React.createElement(CardGroup, {
-                        heading: "current turn",
-                        content: current,
-                        hidden: current.length === 0
-                    });
+                    leftPaneContent = React.createElement(
+                        "div",
+                        null,
+                        current
+                    );
 
                     if (this.props.showHelp && pending.length !== 0) {
                         var help = React.createElement(
@@ -9094,9 +9504,20 @@ var CombatManagerScreen = function (_React$Component) {
                         active = [].concat(help, active);
                     }
 
+                    var notifications = this.props.combat.notifications.map(function (n) {
+                        return React.createElement(Notification, {
+                            id: n.id,
+                            notification: n,
+                            close: function close(notification, removeCondition) {
+                                return _this3.props.close(notification, removeCondition);
+                            }
+                        });
+                    });
+
                     rightPaneContent = React.createElement(
                         "div",
                         null,
+                        notifications,
                         React.createElement(CardGroup, {
                             heading: "waiting for intiative to be entered",
                             content: pending,
@@ -9134,18 +9555,14 @@ var CombatManagerScreen = function (_React$Component) {
 
                     leftPaneContent = React.createElement(
                         "div",
-                        null,
+                        { className: "list-column" },
                         help,
                         React.createElement(
-                            "div",
-                            { className: "group" },
-                            React.createElement(
-                                "button",
-                                { onClick: function onClick() {
-                                        return _this3.props.createCombat();
-                                    } },
-                                "start a new combat"
-                            )
+                            "button",
+                            { onClick: function onClick() {
+                                    return _this3.props.createCombat();
+                                } },
+                            "start a new combat"
                         ),
                         combats
                     );
@@ -9172,6 +9589,103 @@ var CombatManagerScreen = function (_React$Component) {
     }]);
 
     return CombatManagerScreen;
+}(React.Component);
+
+var Notification = function (_React$Component2) {
+    _inherits(Notification, _React$Component2);
+
+    function Notification() {
+        _classCallCheck(this, Notification);
+
+        return _possibleConstructorReturn(this, (Notification.__proto__ || Object.getPrototypeOf(Notification)).apply(this, arguments));
+    }
+
+    _createClass(Notification, [{
+        key: "saveSuccess",
+        value: function saveSuccess(notification) {
+            // Reduce save by 1
+            this.props.notification.condition.duration.count -= 1;
+            if (this.props.notification.condition.duration.count === 0) {
+                // Remove the condition
+                this.close(notification, true);
+            } else {
+                this.close(notification);
+            }
+        }
+    }, {
+        key: "close",
+        value: function close(notification) {
+            var removeCondition = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+            this.props.close(notification, removeCondition);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this5 = this;
+
+            var name = this.props.notification.combatant.displayName || this.props.notification.combatant.name || "unnamed monster";
+            switch (this.props.notification.type) {
+                case "condition-save":
+                    return React.createElement(
+                        "div",
+                        { key: this.props.notification.id, className: "notification" },
+                        React.createElement(
+                            "div",
+                            { className: "text" },
+                            name,
+                            " must make a ",
+                            this.props.notification.condition.duration.saveType,
+                            " save against dc ",
+                            this.props.notification.condition.duration.saveDC
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "buttons" },
+                            React.createElement(
+                                "button",
+                                { onClick: function onClick() {
+                                        return _this5.saveSuccess(_this5.props.notification);
+                                    } },
+                                "success"
+                            ),
+                            React.createElement(
+                                "button",
+                                { onClick: function onClick() {
+                                        return _this5.close(_this5.props.notification);
+                                    } },
+                                "ok"
+                            )
+                        )
+                    );
+                case "condition-end":
+                    return React.createElement(
+                        "div",
+                        { key: this.props.notification.id, className: "notification" },
+                        React.createElement(
+                            "div",
+                            { className: "text" },
+                            name,
+                            " is no longer affected by condition ",
+                            this.props.notification.condition.name
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "buttons" },
+                            React.createElement(
+                                "button",
+                                { onClick: function onClick() {
+                                        return _this5.close(_this5.props.notification);
+                                    } },
+                                "ok"
+                            )
+                        )
+                    );
+            }
+        }
+    }]);
+
+    return Notification;
 }(React.Component);
 "use strict";
 
@@ -9493,18 +10007,14 @@ var EncounterBuilderScreen = function (_React$Component) {
                     { className: "encounter-builder row collapse" },
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-4 large-3 scrollable" },
+                        { className: "columns small-6 medium-4 large-3 scrollable list-column" },
                         help,
                         React.createElement(
-                            "div",
-                            { className: "group" },
-                            React.createElement(
-                                "button",
-                                { onClick: function onClick() {
-                                        return _this4.props.addEncounter("new encounter");
-                                    } },
-                                "add a new encounter"
-                            )
+                            "button",
+                            { onClick: function onClick() {
+                                    return _this4.props.addEncounter("new encounter");
+                                } },
+                            "add a new encounter"
                         ),
                         encounters
                     ),
@@ -9846,26 +10356,18 @@ var MonsterLibraryScreen = function (_React$Component) {
                     { className: "monster-library row collapse" },
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-4 large-3 scrollable" },
+                        { className: "columns small-6 medium-4 large-3 scrollable list-column" },
                         help,
                         React.createElement(
-                            "div",
-                            { className: "group" },
-                            React.createElement(
-                                "button",
-                                { onClick: function onClick() {
-                                        return _this3.props.addMonsterGroup("new group");
-                                    } },
-                                "add a new monster group"
-                            )
+                            "button",
+                            { onClick: function onClick() {
+                                    return _this3.props.addMonsterGroup("new group");
+                                } },
+                            "add a new monster group"
                         ),
-                        React.createElement(
-                            "div",
-                            { className: "group" },
-                            React.createElement("input", { type: "text", placeholder: "filter", value: this.state.filter, onChange: function onChange(event) {
-                                    return _this3.setFilter(event.target.value);
-                                } })
-                        ),
+                        React.createElement("input", { type: "text", placeholder: "filter", value: this.state.filter, onChange: function onChange(event) {
+                                return _this3.setFilter(event.target.value);
+                            } }),
                         listItems
                     ),
                     React.createElement(
@@ -10030,18 +10532,14 @@ var PartiesScreen = function (_React$Component) {
                     { className: "parties row collapse" },
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-4 large-3 scrollable" },
+                        { className: "columns small-6 medium-4 large-3 scrollable list-column" },
                         help,
                         React.createElement(
-                            "div",
-                            { className: "group" },
-                            React.createElement(
-                                "button",
-                                { onClick: function onClick() {
-                                        return _this2.props.addParty("new party");
-                                    } },
-                                "add a new party"
-                            )
+                            "button",
+                            { onClick: function onClick() {
+                                    return _this2.props.addParty("new party");
+                                } },
+                            "add a new party"
                         ),
                         parties
                     ),

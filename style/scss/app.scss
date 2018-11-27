@@ -45,17 +45,21 @@ li {
 }
 
 a {
-    color: royalblue;
+    color: $highlight;
     text-decoration: none;
 
+    &:hover {
+        background-color: $highlight01;
+    }
+
     &:visited {
-        color: royalblue;
+        color: $highlight;
     }
 }
 
 :focus {
     outline: none;
-    border-color: cornflowerblue !important;
+    border-color: $highlight !important;
 }
 
 button {
@@ -77,6 +81,10 @@ button {
     &:hover,
     &:focus {
         border-color: $highlight;
+
+        .image {
+            opacity: 1;
+        }
     }
 
     &.disabled {
@@ -129,6 +137,7 @@ button {
         height: 20px;
         display: inline-block;
         vertical-align: middle;
+        opacity: 0;
     }
 
     .confirmation {
@@ -176,13 +185,8 @@ button {
     border-top: 1px solid $control-border;
 }
 
-.group {
-    padding: 5px 0;
-    margin: 5px;
-
-    .heading {
-        margin: 2px 0;
-    }
+.list-column {
+    padding: 10px 5px !important
 }
 
 .lowercase {
@@ -438,7 +442,7 @@ body,
 // HP gauge
 
 .hp-gauge {
-    margin: 5px 5px 10px 5px;
+    margin: 5px 0 10px 0;
     height: 5px;
     background-color: lightgrey;
 
@@ -621,6 +625,11 @@ body,
         padding-top: 5px;
         font-weight: 600;
     }
+
+    &.small-text {
+        font-size: 10px;
+        font-weight: normal;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -769,3 +778,32 @@ body,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+.notification {
+    min-height: 40px;
+    margin: 5px;
+    border-left: 5px solid $foreground;
+    font-weight: 600;
+    position: relative;
+
+    &:hover {
+        background-color: $highlight01;
+        border-color: $highlight;
+    }
+
+    .text {
+        padding: 11px 5px;
+    }
+
+    .buttons {
+        position: absolute;
+        right: 0;
+        top: 4px;
+
+        button {
+            width: 90px;
+            display: inline-block;
+            margin: 0 3px;
+        }
+    }
+}

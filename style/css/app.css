@@ -33,14 +33,16 @@ li {
   margin: 5px 0; }
 
 a {
-  color: royalblue;
+  color: #3c78dc;
   text-decoration: none; }
+  a:hover {
+    background-color: rgba(60, 120, 220, 0.1); }
   a:visited {
-    color: royalblue; }
+    color: #3c78dc; }
 
 :focus {
   outline: none;
-  border-color: cornflowerblue !important; }
+  border-color: #3c78dc !important; }
 
 button {
   display: block;
@@ -59,6 +61,8 @@ button {
   cursor: pointer; }
   button:hover, button:focus {
     border-color: #3c78dc; }
+    button:hover .image, button:focus .image {
+      opacity: 1; }
   button.disabled {
     background-color: white;
     border-color: #c3c3c3;
@@ -94,7 +98,8 @@ button {
     width: 20px;
     height: 20px;
     display: inline-block;
-    vertical-align: middle; }
+    vertical-align: middle;
+    opacity: 0; }
   button .confirmation {
     padding-top: 10px; }
 
@@ -129,11 +134,8 @@ button {
   height: 0;
   border-top: 1px solid #c3c3c3; }
 
-.group {
-  padding: 5px 0;
-  margin: 5px; }
-  .group .heading {
-    margin: 2px 0; }
+.list-column {
+  padding: 10px 5px !important; }
 
 .lowercase {
   text-transform: lowercase; }
@@ -302,7 +304,7 @@ body,
         background-color: #EEEEEE; }
 
 .hp-gauge {
-  margin: 5px 5px 10px 5px;
+  margin: 5px 0 10px 0;
   height: 5px;
   background-color: lightgrey; }
   .hp-gauge .bar {
@@ -415,6 +417,9 @@ body,
   .section .input-label {
     padding-top: 5px;
     font-weight: 600; }
+  .section.small-text {
+    font-size: 10px;
+    font-weight: normal; }
 
 .overlay {
   position: fixed;
@@ -515,3 +520,23 @@ body,
     display: inline-block;
     vertical-align: middle;
     width: 50%; }
+
+.notification {
+  min-height: 40px;
+  margin: 5px;
+  border-left: 5px solid #404040;
+  font-weight: 600;
+  position: relative; }
+  .notification:hover {
+    background-color: rgba(60, 120, 220, 0.1);
+    border-color: #3c78dc; }
+  .notification .text {
+    padding: 11px 5px; }
+  .notification .buttons {
+    position: absolute;
+    right: 0;
+    top: 4px; }
+    .notification .buttons button {
+      width: 90px;
+      display: inline-block;
+      margin: 0 3px; }

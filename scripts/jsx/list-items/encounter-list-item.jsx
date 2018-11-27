@@ -32,11 +32,9 @@ class EncounterListItem extends React.Component {
             });
 
             return (
-                <div className="group">
-                    <div className={this.props.selected ? "list-item selected" : "list-item"} onClick={() => this.props.setSelection(this.props.encounter)}>
-                        <div className="heading">{encounterName}</div>
-                        {slots}
-                    </div>
+                <div className={this.props.selected ? "list-item selected" : "list-item"} onClick={() => this.props.setSelection(this.props.encounter)}>
+                    <div className="heading">{encounterName}</div>
+                    {slots}
                 </div>
             );
         } catch (e) {

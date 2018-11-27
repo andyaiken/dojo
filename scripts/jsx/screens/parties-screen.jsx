@@ -86,11 +86,9 @@ class PartiesScreen extends React.Component {
 
             return (
                 <div className="parties row collapse">
-                    <div className="columns small-6 medium-4 large-3 scrollable">
+                    <div className="columns small-6 medium-4 large-3 scrollable list-column">
                         {help}
-                        <div className="group">
-                            <button onClick={() => this.props.addParty("new party")}>add a new party</button>
-                        </div>
+                        <button onClick={() => this.props.addParty("new party")}>add a new party</button>
                         {parties}
                     </div>
                     <div className="columns small-6 medium-8 large-9 scrollable">

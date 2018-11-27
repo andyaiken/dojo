@@ -37,6 +37,7 @@ class MonsterCard extends React.Component {
         if (this.props.combatant.alignment) {
             description += ", " + this.props.combatant.alignment;
         }
+        description += ", cr " + challenge(this.props.combatant.challenge);
         return description.toLowerCase();
     }
 
@@ -124,6 +125,16 @@ class MonsterCard extends React.Component {
                     }
                 }
                 if (this.props.mode.indexOf("combat") !== -1) {
+                    options.push(
+                        <ConditionsPanel
+                            combatant={this.props.combatant}
+                            combat={this.props.combat}
+                            addCondition={condition => this.props.addCondition(this.props.combatant, condition)}
+                            removeCondition={conditionID => this.props.removeCondition(this.props.combatant, conditionID)}
+                            nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
+                            changeConditionValue={(condition, type, value) => this.props.changeConditionValue(condition, type, value)}
+                        />
+                    );
                     options.push(
                         <Expander
                             key="rename"
@@ -221,9 +232,6 @@ class MonsterCard extends React.Component {
                             <div className="section" style={{ display: this.props.combatant.equipment !== "" ? "" : "none" }}>
                                 <b>equipment</b> {this.props.combatant.equipment}
                             </div>
-                            <div className="section">
-                                <b>challenge</b> {challenge(this.props.combatant.challenge)} ({experience(this.props.combatant.challenge)} xp)
-                            </div>
                             <div className="divider"></div>
                             <TraitsPanel combatant={this.props.combatant} />
                         </div>
@@ -297,13 +305,6 @@ class MonsterCard extends React.Component {
                                 <b>damage immunities</b> {this.props.combatant.damage.immune}
                             </div>
                         </div>
-                        <div className="divider"></div>
-                        <ConditionsPanel
-                            combatant={this.props.combatant}
-                            addCondition={condition => this.props.addCondition(this.props.combatant, condition)}
-                            removeCondition={condition => this.props.removeCondition(this.props.combatant, condition)}
-                            nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
-                        />
                         <div className="section" style={{ display: this.props.combatant.conditionImmunities !== "" ? "" : "none" }}>
                             <b>condition immunities</b> {this.props.combatant.conditionImmunities}
                         </div>
@@ -333,9 +334,6 @@ class MonsterCard extends React.Component {
                             <div className="section" style={{ display: this.props.combatant.equipment !== "" ? "" : "none" }}>
                                 <b>equipment</b> {this.props.combatant.equipment}
                             </div>
-                            <div className="section">
-                                <b>challenge</b> {challenge(this.props.combatant.challenge)} ({experience(this.props.combatant.challenge)} xp)
-                            </div>
                             <div className="divider"></div>
                             <TraitsPanel combatant={this.props.combatant} />
                         </div>
@@ -348,9 +346,6 @@ class MonsterCard extends React.Component {
                         <div>
                             <div className="section">
                                 <div>{this.description()}</div>
-                            </div>
-                            <div className="section">
-                                <div><b>challenge</b> {challenge(this.props.combatant.challenge)} ({experience(this.props.combatant.challenge)} xp)</div>
                             </div>
                             <div className="section">
                                 <b>speed</b> {this.props.combatant.speed || "-"}
