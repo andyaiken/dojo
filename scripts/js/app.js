@@ -9440,11 +9440,11 @@ var CombatManagerScreen = function (_React$Component) {
                         }));
                     }
 
-                    leftPaneContent = React.createElement(CardGroup, {
-                        heading: "current turn",
-                        content: current,
-                        hidden: current.length === 0
-                    });
+                    leftPaneContent = React.createElement(
+                        "div",
+                        null,
+                        current
+                    );
 
                     if (this.props.showHelp && pending.length !== 0) {
                         var help = React.createElement(
@@ -9555,7 +9555,7 @@ var CombatManagerScreen = function (_React$Component) {
 
                     leftPaneContent = React.createElement(
                         "div",
-                        null,
+                        { className: "list-column" },
                         help,
                         React.createElement(
                             "button",
@@ -9573,7 +9573,7 @@ var CombatManagerScreen = function (_React$Component) {
                     { className: "combat-manager row collapse" },
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-4 large-3 scrollable list-column" },
+                        { className: "columns small-6 medium-4 large-3 scrollable" },
                         leftPaneContent
                     ),
                     React.createElement(
