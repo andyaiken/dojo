@@ -834,7 +834,7 @@ class Dojo extends React.Component {
         var combat = this.getCombat(this.state.selectedCombatID);
 
         // Handle start-of-turn conditions
-        combat.combatants.forEach(actor => {
+        combat.combatants.filter(actor => actor.conditions).forEach(actor => {
             actor.conditions.filter(c => c.duration !== null)
                 .forEach(c => {
                     switch (c.duration.type) {

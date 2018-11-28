@@ -4199,7 +4199,9 @@ var Dojo = function (_React$Component) {
             var combat = this.getCombat(this.state.selectedCombatID);
 
             // Handle start-of-turn conditions
-            combat.combatants.forEach(function (actor) {
+            combat.combatants.filter(function (actor) {
+                return actor.conditions;
+            }).forEach(function (actor) {
                 actor.conditions.filter(function (c) {
                     return c.duration !== null;
                 }).forEach(function (c) {
