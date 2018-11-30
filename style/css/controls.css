@@ -60,12 +60,12 @@
     top: 31px;
     left: 0px;
     right: 0px;
-    box-shadow: 0 3px 5px 0 rgba(64, 64, 64, 0.5);
+    box-shadow: 0 3px 5px 0 rgba(220, 220, 220, 0.5);
     z-index: 1; }
     .dropdown .dropdown-options .dropdown-option {
       margin: 5px;
       padding-left: 5px;
-      border-left: 3px solid #404040;
+      border-left: 3px solid #3c3c3c;
       height: 25px;
       line-height: 25px;
       white-space: nowrap;
@@ -94,7 +94,7 @@
       width: calc(100% - 40px);
       vertical-align: middle;
       padding: 8px 0;
-      color: #404040;
+      color: #3c3c3c;
       font-weight: 600; }
     .expander .expander-header .expander-button {
       display: inline-block;
@@ -117,8 +117,8 @@
   height: 50px;
   padding: 10px 5px;
   text-align: center;
-  background-color: #404040;
-  box-shadow: 0 0 10px 0 rgba(64, 64, 64, 0.5); }
+  background-color: gainsboro;
+  border-top: 1px solid #c3c3c3; }
   .navbar .navigator-item {
     display: inline-block;
     padding: 5px;
@@ -127,9 +127,9 @@
     height: 30px;
     width: calc(((100% - 1px) / 4) - 10px);
     font-size: 14px;
-    color: white; }
+    color: #3c3c3c; }
     .navbar .navigator-item.selected, .navbar .navigator-item:hover {
-      background-color: rgba(255, 255, 255, 0.2);
+      background-color: rgba(60, 60, 60, 0.2);
       cursor: default; }
 
 .selector {
@@ -218,8 +218,8 @@
 .titlebar {
   height: 50px;
   padding: 10px 5px;
-  background-color: #404040;
-  box-shadow: 0 0 10px 0 rgba(64, 64, 64, 0.5); }
+  background-color: gainsboro;
+  border-bottom: 1px solid #c3c3c3; }
   .titlebar .app-name {
     display: inline-block;
     padding: 4px 6px 8px 6px;
@@ -228,21 +228,22 @@
     line-height: 20px;
     font-size: 20px;
     font-weight: 600;
-    color: white;
-    border-left: 3px solid white;
+    color: #3c3c3c;
+    border-left: 3px solid #3c3c3c;
     cursor: pointer; }
     .titlebar .app-name:hover {
-      background-color: rgba(255, 255, 255, 0.2); }
-  .titlebar .action {
+      background-color: rgba(60, 60, 60, 0.2); }
+  .titlebar .actions {
     position: absolute;
     right: 50px;
-    top: 6px; }
-    .titlebar .action .section {
+    top: 4px;
+    vertical-align: middle; }
+    .titlebar .actions .section {
       display: inline-block;
       margin: 0 5px;
-      color: white;
+      color: #3c3c3c;
       font-weight: 600; }
-      .titlebar .action .section button {
+      .titlebar .actions .section button {
         min-width: 130px; }
   .titlebar .settings-icon {
     position: absolute;
@@ -255,4 +256,4 @@
     border-radius: 50%;
     cursor: pointer; }
     .titlebar .settings-icon:hover {
-      background-color: rgba(255, 255, 255, 0.2); }
+      background-color: rgba(60, 120, 220, 0.2); }

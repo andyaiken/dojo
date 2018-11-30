@@ -1,23 +1,10 @@
 class MonsterLibraryScreen extends React.Component {
-    constructor() {
-        super();
-        this.state = {
-            filter: ""
-        };
-    }
-
-    setFilter(filter) {
-        this.setState({
-            filter: filter
-        });
-    }
-
     showMonsterGroup(group) {
-        var result = match(this.state.filter, group.name);
+        var result = match(this.props.filter, group.name);
 
         if (!result) {
             group.monsters.forEach(monster => {
-                result = match(this.state.filter, monster.name) || result;
+                result = match(this.props.filter, monster.name) || result;
             });
         }
 
@@ -41,7 +28,7 @@ class MonsterLibraryScreen extends React.Component {
                         <MonsterGroupListItem
                             key={group.id}
                             group={group}
-                            filter={this.state.filter}
+                            filter={this.props.filter}
                             selected={group === this.props.selection}
                             setSelection={group => this.props.selectMonsterGroup(group)}
                         />
@@ -56,7 +43,7 @@ class MonsterLibraryScreen extends React.Component {
                     <div className="column" key="info">
                         <MonsterGroupCard
                             selection={this.props.selection}
-                            filter={this.state.filter}
+                            filter={this.props.filter}
                             addMonster={name => this.props.addMonster(name)}
                             sortMonsters={() => this.props.sortMonsters()}
                             changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
@@ -66,7 +53,7 @@ class MonsterLibraryScreen extends React.Component {
                 );
 
                 var monsters = this.props.selection.monsters.filter(monster => {
-                    return match(this.state.filter, monster.name);
+                    return match(this.props.filter, monster.name);
                 });
 
                 if (monsters.length !== 0) {
@@ -109,7 +96,6 @@ class MonsterLibraryScreen extends React.Component {
                     <div className="columns small-6 medium-4 large-3 scrollable list-column">
                         {help}
                         <button onClick={() => this.props.addMonsterGroup("new group")}>add a new monster group</button>
-                        <input type="text" placeholder="filter" value={this.state.filter} onChange={event => this.setFilter(event.target.value)} />
                         {listItems}
                     </div>
                     <div className="columns small-6 medium-8 large-9 scrollable">

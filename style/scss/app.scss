@@ -74,7 +74,7 @@ button {
     background-color: $background;
     border: 1px solid $control-border;
     border-left-width: 5px;
-    margin: 3px 0;
+    margin: 5px 0;
     padding: 5px 9px 5px 10px;
     cursor: pointer;
 
@@ -165,8 +165,8 @@ button {
 }
 
 .heading {
+    padding-bottom: 5px;
     border-bottom: 1px solid $control-border;
-    padding: 5px 0;
     margin: 10px 0;
     font-size: 16px;
     font-weight: 600;
@@ -271,8 +271,7 @@ body,
 }
 
 .page-content {
-    height: calc(100% - 110px);
-    margin: 5px 0;
+    height: calc(100% - 100px);
 }
 
 .home,
@@ -521,7 +520,7 @@ body,
 // List item
 
 .list-item {
-    margin: 3px 0;
+    margin: 5px 0;
     padding: 3px;
     cursor: pointer;
     border-left: 5px solid $foreground;
@@ -658,11 +657,13 @@ body,
     height: calc(100% - 160px);
     width: calc(100% - 100px);
     margin: 80px 50px;
+    border-left: 5px solid $foreground;
     box-shadow: 0 0 50px 10px $header-background-05;
 
     .modal-header {
         height: 40px;
-        background-color: $foreground;
+        background-color: $header-background;
+        border-bottom: 1px solid $control-border;
 
         .title {
             display: inline-block;
@@ -686,7 +687,7 @@ body,
             cursor: pointer;
 
             &:hover {
-                background-color: $header-foreground-03;
+                background-color: $highlight02;
             }
         }
     }
@@ -744,7 +745,8 @@ body,
     
     .modal-footer {
         height: 40px;
-        background-color: $foreground;
+        background-color: $header-background;
+        border-top: 1px solid $control-border;
 
         button,
         .checkbox {

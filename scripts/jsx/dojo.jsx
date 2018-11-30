@@ -1311,7 +1311,7 @@ class Dojo extends React.Component {
     render() {
         try {
             var content = null;
-            var action = null;
+            var actions = null;
             switch (this.state.view) {
                 case "home":
                     content = (
@@ -1343,6 +1343,7 @@ class Dojo extends React.Component {
                         <MonsterLibraryScreen
                             library={this.state.library}
                             selection={this.getMonsterGroup(this.state.selectedMonsterGroupID)}
+                            filter={this.state.libraryFilter}
                             showHelp={this.state.options.showHelp}
                             selectMonsterGroup={group => this.selectMonsterGroup(group)}
                             addMonsterGroup={name => this.addMonsterGroup(name)}
@@ -1363,9 +1364,14 @@ class Dojo extends React.Component {
                         count += group.monsters.length;
                     });
                     if (count > 0) {
-                        action = (
-                            <div className="section">
-                                <button onClick={() => this.openDemographics()}>demographics</button>
+                        actions = (
+                            <div className="actions">
+                                <div className="section">
+                                    <input type="text" placeholder="filter" value={this.state.libraryFilter} onChange={event => this.changeValue(this.state, "libraryFilter", event.target.value)} />
+                                </div>
+                                <div className="section">
+                                    <button onClick={() => this.openDemographics()}>demographics</button>
+                                </div>
                             </div>
                         );
                     }
@@ -1423,8 +1429,8 @@ class Dojo extends React.Component {
                         
                         var encounter = this.getEncounter(combat.encounterID);
 
-                        action = (
-                            <div>
+                        actions = (
+                            <div className="actions">
                                 <div className="section">
                                     <div>round: {combat.round}</div>
                                 </div>
@@ -1543,7 +1549,7 @@ class Dojo extends React.Component {
                         <div className="modal">
                             <div className="modal-header">
                                 <div className="title">{modalTitle}</div>
-                                {modalAllowClose ? <img className="image" src="resources/images/close-white.svg" onClick={() => this.closeModal()} /> : null}
+                                {modalAllowClose ? <img className="image" src="resources/images/close-black.svg" onClick={() => this.closeModal()} /> : null}
                             </div>
                             <div className={modalAllowScroll ? "modal-content scrollable" : "modal-content"}>
                                 {modalContent}
@@ -1560,7 +1566,7 @@ class Dojo extends React.Component {
             return (
                 <div className="dojo">
                     <Titlebar
-                        action={action}
+                        actions={actions}
                         blur={modal !== null}
                         openHome={() => this.setView("home")}
                         openAbout={() => this.openAbout()}

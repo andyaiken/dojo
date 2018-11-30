@@ -3286,15 +3286,6 @@ var Titlebar = function (_React$Component) {
             var _this2 = this;
 
             try {
-                var actionSection = null;
-                if (this.props.action) {
-                    actionSection = React.createElement(
-                        "div",
-                        { className: "action" },
-                        this.props.action
-                    );
-                };
-
                 return React.createElement(
                     "div",
                     { className: this.props.blur ? "titlebar blur" : "titlebar" },
@@ -3305,7 +3296,7 @@ var Titlebar = function (_React$Component) {
                             } },
                         "dojo"
                     ),
-                    actionSection,
+                    this.props.actions,
                     React.createElement("img", { className: "settings-icon", src: "resources/images/settings.svg", title: "about", onClick: function onClick() {
                             return _this2.props.openAbout();
                         } })
@@ -4718,7 +4709,7 @@ var Dojo = function (_React$Component) {
 
             try {
                 var content = null;
-                var action = null;
+                var actions = null;
                 switch (this.state.view) {
                     case "home":
                         content = React.createElement(HomeScreen, {
@@ -4763,6 +4754,7 @@ var Dojo = function (_React$Component) {
                         content = React.createElement(MonsterLibraryScreen, {
                             library: this.state.library,
                             selection: this.getMonsterGroup(this.state.selectedMonsterGroupID),
+                            filter: this.state.libraryFilter,
                             showHelp: this.state.options.showHelp,
                             selectMonsterGroup: function selectMonsterGroup(group) {
                                 return _this6.selectMonsterGroup(group);
@@ -4806,15 +4798,26 @@ var Dojo = function (_React$Component) {
                             count += group.monsters.length;
                         });
                         if (count > 0) {
-                            action = React.createElement(
+                            actions = React.createElement(
                                 "div",
-                                { className: "section" },
+                                { className: "actions" },
                                 React.createElement(
-                                    "button",
-                                    { onClick: function onClick() {
-                                            return _this6.openDemographics();
-                                        } },
-                                    "demographics"
+                                    "div",
+                                    { className: "section" },
+                                    React.createElement("input", { type: "text", placeholder: "filter", value: this.state.libraryFilter, onChange: function onChange(event) {
+                                            return _this6.changeValue(_this6.state, "libraryFilter", event.target.value);
+                                        } })
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "section" },
+                                    React.createElement(
+                                        "button",
+                                        { onClick: function onClick() {
+                                                return _this6.openDemographics();
+                                            } },
+                                        "demographics"
+                                    )
                                 )
                             );
                         }
@@ -4913,9 +4916,9 @@ var Dojo = function (_React$Component) {
 
                             var encounter = this.getEncounter(combat.encounterID);
 
-                            action = React.createElement(
+                            actions = React.createElement(
                                 "div",
-                                null,
+                                { className: "actions" },
                                 React.createElement(
                                     "div",
                                     { className: "section" },
@@ -5109,7 +5112,7 @@ var Dojo = function (_React$Component) {
                                     { className: "title" },
                                     modalTitle
                                 ),
-                                modalAllowClose ? React.createElement("img", { className: "image", src: "resources/images/close-white.svg", onClick: function onClick() {
+                                modalAllowClose ? React.createElement("img", { className: "image", src: "resources/images/close-black.svg", onClick: function onClick() {
                                         return _this6.closeModal();
                                     } }) : null
                             ),
@@ -5140,7 +5143,7 @@ var Dojo = function (_React$Component) {
                     "div",
                     { className: "dojo" },
                     React.createElement(Titlebar, {
-                        action: action,
+                        actions: actions,
                         blur: modal !== null,
                         openHome: function openHome() {
                             return _this6.setView("home");
@@ -9557,7 +9560,7 @@ var CombatManagerScreen = function (_React$Component) {
 
                     leftPaneContent = React.createElement(
                         "div",
-                        { className: "list-column" },
+                        null,
                         help,
                         React.createElement(
                             "button",
@@ -9575,7 +9578,7 @@ var CombatManagerScreen = function (_React$Component) {
                     { className: "combat-manager row collapse" },
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-4 large-3 scrollable" },
+                        { className: "columns small-6 medium-4 large-3 scrollable list-column" },
                         leftPaneContent
                     ),
                     React.createElement(
@@ -10215,31 +10218,19 @@ var MonsterLibraryScreen = function (_React$Component) {
     function MonsterLibraryScreen() {
         _classCallCheck(this, MonsterLibraryScreen);
 
-        var _this = _possibleConstructorReturn(this, (MonsterLibraryScreen.__proto__ || Object.getPrototypeOf(MonsterLibraryScreen)).call(this));
-
-        _this.state = {
-            filter: ""
-        };
-        return _this;
+        return _possibleConstructorReturn(this, (MonsterLibraryScreen.__proto__ || Object.getPrototypeOf(MonsterLibraryScreen)).apply(this, arguments));
     }
 
     _createClass(MonsterLibraryScreen, [{
-        key: "setFilter",
-        value: function setFilter(filter) {
-            this.setState({
-                filter: filter
-            });
-        }
-    }, {
         key: "showMonsterGroup",
         value: function showMonsterGroup(group) {
             var _this2 = this;
 
-            var result = match(this.state.filter, group.name);
+            var result = match(this.props.filter, group.name);
 
             if (!result) {
                 group.monsters.forEach(function (monster) {
-                    result = match(_this2.state.filter, monster.name) || result;
+                    result = match(_this2.props.filter, monster.name) || result;
                 });
             }
 
@@ -10263,7 +10254,7 @@ var MonsterLibraryScreen = function (_React$Component) {
                         listItems.push(React.createElement(MonsterGroupListItem, {
                             key: group.id,
                             group: group,
-                            filter: this.state.filter,
+                            filter: this.props.filter,
                             selected: group === this.props.selection,
                             setSelection: function setSelection(group) {
                                 return _this3.props.selectMonsterGroup(group);
@@ -10280,7 +10271,7 @@ var MonsterLibraryScreen = function (_React$Component) {
                         { className: "column", key: "info" },
                         React.createElement(MonsterGroupCard, {
                             selection: this.props.selection,
-                            filter: this.state.filter,
+                            filter: this.props.filter,
                             addMonster: function addMonster(name) {
                                 return _this3.props.addMonster(name);
                             },
@@ -10297,7 +10288,7 @@ var MonsterLibraryScreen = function (_React$Component) {
                     ));
 
                     var monsters = this.props.selection.monsters.filter(function (monster) {
-                        return match(_this3.state.filter, monster.name);
+                        return match(_this3.props.filter, monster.name);
                     });
 
                     if (monsters.length !== 0) {
@@ -10367,9 +10358,6 @@ var MonsterLibraryScreen = function (_React$Component) {
                                 } },
                             "add a new monster group"
                         ),
-                        React.createElement("input", { type: "text", placeholder: "filter", value: this.state.filter, onChange: function onChange(event) {
-                                return _this3.setFilter(event.target.value);
-                            } }),
                         listItems
                     ),
                     React.createElement(

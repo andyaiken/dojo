@@ -179,7 +179,7 @@
     padding: 10px 5px;
     text-align: center;
     background-color: $header-background;
-    box-shadow: 0 0 10px 0 $header-background-05;
+    border-top: 1px solid $control-border;
 
     .navigator-item {
         display: inline-block;
@@ -343,7 +343,7 @@
     height: 50px;
     padding: 10px 5px;
     background-color: $header-background;
-    box-shadow: 0 0 10px 0 $header-background-05;
+    border-bottom: 1px solid $control-border;
 
     .app-name {
         display: inline-block;
@@ -362,10 +362,11 @@
         }
     }
 
-    .action {
+    .actions {
         position: absolute;
         right: 50px;
-        top: 6px;
+        top: 4px;
+        vertical-align: middle;
 
         .section {
             display: inline-block;
@@ -391,7 +392,7 @@
         cursor: pointer;
 
         &:hover {
-            background-color: $header-foreground-03;
+            background-color: $highlight02;
         }
     }
 }
