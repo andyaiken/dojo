@@ -117,7 +117,7 @@ button {
   float: right; }
 
 .heading {
-  padding-bottom: 5px;
+  padding: 5px 0;
   border-bottom: 1px solid #c3c3c3;
   margin: 10px 0;
   font-size: 16px;
