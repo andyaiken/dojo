@@ -1,29 +1,29 @@
 @font-face {
-  font-family: Bookinsanity;
+  font-family: BodyText;
   src: url("/resources/fonts/Bookinsanity.otf") format("opentype"); }
 
 @font-face {
-  font-family: MrEaves;
+  font-family: Heading;
   src: url("/resources/fonts/Mr Eaves Small Caps.otf") format("opentype"); }
 
 @font-face {
-  font-family: Nodesto;
+  font-family: Title;
   src: url("/resources/fonts/Nodesto Caps Condensed.otf") format("opentype"); }
 
 @font-face {
-  font-family: ScalySans;
+  font-family: CalloutText;
   src: url("/resources/fonts/Scaly Sans.otf") format("opentype"); }
 
 @font-face {
-  font-family: ScalySansCaps;
+  font-family: CalloutHeading;
   src: url("/resources/fonts/Scaly Sans Caps.otf") format("opentype"); }
 
 @font-face {
-  font-family: Solbera;
+  font-family: DropCap;
   src: url("/resources/fonts/Solbera Imitation.otf") format("opentype"); }
 
 @font-face {
-  font-family: Zatanna;
+  font-family: Caption;
   src: url("/resources/fonts/Zatanna Misdirection.otf") format("opentype"); }
 
 b,
@@ -41,7 +41,7 @@ textarea {
   width: calc(100% - 2px);
   border-radius: 0;
   font-size: 12px;
-  font-family: "Segoe UI", Helvetica, Arial, sans-serif; }
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
   input[type=text]:hover, input[type=text]:focus,
   textarea:hover,
   textarea:focus {
@@ -78,7 +78,7 @@ button {
   width: 100%;
   text-align: left;
   font-size: 12px;
-  font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   font-weight: 600;
   color: #3c3c3c;
   background-color: white;
@@ -470,10 +470,11 @@ body,
   width: calc(100% - 100px);
   margin: 80px 50px;
   border-left: 5px solid #3c3c3c;
-  box-shadow: 0 0 50px 10px rgba(220, 220, 220, 0.5); }
+  box-shadow: 0 0 50px 10px gainsboro; }
   .modal .modal-header {
     height: 40px;
     background-color: gainsboro;
+    border-top: 1px solid #c3c3c3;
     border-bottom: 1px solid #c3c3c3; }
     .modal .modal-header .title {
       display: inline-block;
@@ -496,7 +497,7 @@ body,
       .modal .modal-header .image:hover {
         background-color: rgba(60, 120, 220, 0.2); }
   .modal .modal-content {
-    height: calc(100% - 80px);
+    height: calc(100% - 82px);
     padding: 0 15px;
     background-color: white; }
     .modal .modal-content .hp-value {
@@ -527,9 +528,10 @@ body,
               height: 100%;
               background-color: #3c78dc; }
   .modal .modal-footer {
-    height: 40px;
+    height: 42px;
     background-color: gainsboro;
-    border-top: 1px solid #c3c3c3; }
+    border-top: 1px solid #c3c3c3;
+    border-bottom: 1px solid #c3c3c3; }
     .modal .modal-footer button,
     .modal .modal-footer .checkbox {
       display: inline-block;
