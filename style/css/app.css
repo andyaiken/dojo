@@ -1,3 +1,31 @@
+@font-face {
+  font-family: Bookinsanity;
+  src: url("/resources/fonts/Bookinsanity.otf") format("opentype"); }
+
+@font-face {
+  font-family: MrEaves;
+  src: url("/resources/fonts/Mr Eaves Small Caps.otf") format("opentype"); }
+
+@font-face {
+  font-family: Nodesto;
+  src: url("/resources/fonts/Nodesto Caps Condensed.otf") format("opentype"); }
+
+@font-face {
+  font-family: ScalySans;
+  src: url("/resources/fonts/Scaly Sans.otf") format("opentype"); }
+
+@font-face {
+  font-family: ScalySansCaps;
+  src: url("/resources/fonts/Scaly Sans Caps.otf") format("opentype"); }
+
+@font-face {
+  font-family: Solbera;
+  src: url("/resources/fonts/Solbera Imitation.otf") format("opentype"); }
+
+@font-face {
+  font-family: Zatanna;
+  src: url("/resources/fonts/Zatanna Misdirection.otf") format("opentype"); }
+
 b,
 strong {
   font-weight: 600;

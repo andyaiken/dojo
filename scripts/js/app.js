@@ -5690,7 +5690,7 @@ var AboutModal = function (_React$Component) {
                             React.createElement(
                                 "div",
                                 { className: "heading" },
-                                "open game license version 1.0a"
+                                "open game license"
                             ),
                             React.createElement(
                                 "div",
