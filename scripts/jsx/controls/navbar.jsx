@@ -4,6 +4,7 @@ class Navbar extends React.Component {
             var partiesStyle = this.props.view === "parties" ? "navigator-item selected" : "navigator-item";
             var libraryStyle = this.props.view === "library" ? "navigator-item selected" : "navigator-item";
             var encounterStyle = this.props.view === "encounter" ? "navigator-item selected" : "navigator-item";
+            var mapStyle = this.props.view === "maps" ? "navigator-item selected" : "navigator-item";
             var combatStyle = this.props.view === "combat" ? "navigator-item selected" : "navigator-item";
 
             var encountersEnabled = this.props.library.length !== 0;
@@ -20,6 +21,7 @@ class Navbar extends React.Component {
                     <div className={partiesStyle} onClick={() => this.props.setView("parties")}>player characters</div>
                     <div className={libraryStyle} onClick={() => this.props.setView("library")}>monster library</div>
                     <div className={encounterStyle} onClick={() => encountersEnabled ? this.props.setView("encounter") : null}>encounter builder</div>
+                    <div className={mapStyle} onClick={() => this.props.setView("maps")}>map builder</div>
                     <div className={combatStyle} onClick={() => combatEnabled ? this.props.setView("combat") : null}>combat manager</div>
                 </div>
             );

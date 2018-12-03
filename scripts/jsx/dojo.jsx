@@ -10,10 +10,12 @@ class Dojo extends React.Component {
             parties: [],
             library: [],
             encounters: [],
+            maps: [],
             combats: [],
             selectedPartyID: null,
             selectedMonsterGroupID: null,
             selectedEncounterID: null,
+            selectedMapID: null,
             selectedCombatID: null,
             modal: null
         };
@@ -30,6 +32,11 @@ class Dojo extends React.Component {
             }
 
             if (data !== null) {
+                if (!data.maps) {
+                    data.maps = [];
+                    data.selectedMapID = null;
+                }
+
                 data.encounters.forEach(enc => {
                     if (!enc.waves) {
                         enc.waves = [];
@@ -51,10 +58,12 @@ class Dojo extends React.Component {
             this.state.parties = [];
             this.state.library = [];
             this.state.encounters = [];
+            this.state.maps = [];
             this.state.combats = [];
             this.state.selectedPartyID = null;
             this.state.selectedMonsterGroupID = null;
             this.state.selectedEncounterID = null;
+            this.state.selectedMapID = null;
             this.state.selectedCombatID = null;
         }
     }
@@ -683,6 +692,34 @@ class Dojo extends React.Component {
     }
 
     /////////////////////////////////////////////////////////////////////////////
+    // Map screen
+
+    addMap(name) {
+        var map = {
+            id: guid(),
+            name: name
+        };
+        var maps = [].concat(this.state.maps, [map]);
+        sort(maps);
+
+        this.setState({
+            maps: maps,
+            selectedMapID: map.id
+        });
+    }
+
+    removeMap() {
+        var map = this.getEncounter(this.state.selectedMapID);
+        var index = this.state.maps.indexOf(map);
+        this.state.maps.splice(index, 1);
+
+        this.setState({
+            maps: this.state.maps,
+            selectedMapID: null
+        });
+    }
+
+    /////////////////////////////////////////////////////////////////////////////
     // Combat screen
 
     createCombat() {
@@ -1144,6 +1181,12 @@ class Dojo extends React.Component {
         });
     }
 
+    selectMap(map) {
+        this.setState({
+            selectedMapID: map ? map.id : null
+        });
+    }
+
     getParty(id) {
         var result = null;
         this.state.parties.forEach(party => {
@@ -1169,6 +1212,16 @@ class Dojo extends React.Component {
         this.state.encounters.forEach(encounter => {
             if (encounter.id === id) {
                 result = encounter;
+            }
+        });
+        return result;
+    }
+
+    getMap(id) {
+        var result = null;
+        this.state.maps.forEach(map => {
+            if (map.id === id) {
+                result = map;
             }
         });
         return result;
@@ -1228,6 +1281,8 @@ class Dojo extends React.Component {
             selectedMonsterGroupID: null,
             encounters: [],
             selectedEncounterID: null,
+            maps: [],
+            selectedMapID: null,
             combats: [],
             selectedCombatID: null
         });
@@ -1376,7 +1431,7 @@ class Dojo extends React.Component {
                         );
                     }
                     break;
-                case "encounter":
+                    case "encounter":
                     content = (
                         <EncounterBuilderScreen
                             encounters={this.state.encounters}
@@ -1394,6 +1449,20 @@ class Dojo extends React.Component {
                             removeEncounterSlot={(slot, waveID) => this.removeEncounterSlot(slot, waveID)}
                             nudgeValue={(slot, type, delta) => this.nudgeValue(slot, type, delta)}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
+                        />
+                    );
+                    break;
+                case "maps":
+                    content = (
+                        <MapBuilderScreen
+                            maps={this.state.maps}
+                            selection={this.getMap(this.state.selectedMapID)}
+                            showHelp={this.state.options.showHelp}
+                            selectMap={map => this.selectMap(map)}
+                            addMap={name => this.addMap(name)}
+                            removeMap={map => this.removeMap(map)}
+                            nudgeValue={(source, type, delta) => this.nudgeValue(source, type, delta)}
+                            changeValue={(source, type, value) => this.changeValue(source, type, value)}
                         />
                     );
                     break;

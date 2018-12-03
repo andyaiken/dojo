@@ -551,6 +551,145 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var MapBuilderCard = function (_React$Component) {
+    _inherits(MapBuilderCard, _React$Component);
+
+    function MapBuilderCard() {
+        _classCallCheck(this, MapBuilderCard);
+
+        return _possibleConstructorReturn(this, (MapBuilderCard.__proto__ || Object.getPrototypeOf(MapBuilderCard)).apply(this, arguments));
+    }
+
+    _createClass(MapBuilderCard, [{
+        key: "render",
+        value: function render() {
+            try {
+                var action = null;
+                if (this.props.maps.length === 0) {
+                    action = React.createElement(
+                        "div",
+                        { className: "section" },
+                        "to start building a map, press the button below"
+                    );
+                } else {
+                    action = React.createElement(
+                        "div",
+                        { className: "section" },
+                        "select a map from the list to edit it"
+                    );
+                }
+
+                var content = React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        "on this page you can set up tactical maps"
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        "when you have created a map you can use it in encounters"
+                    ),
+                    React.createElement("div", { className: "divider" }),
+                    action
+                );
+
+                return React.createElement(InfoCard, { getContent: function getContent() {
+                        return content;
+                    } });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return MapBuilderCard;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var MapCard = function (_React$Component) {
+    _inherits(MapCard, _React$Component);
+
+    function MapCard() {
+        _classCallCheck(this, MapCard);
+
+        return _possibleConstructorReturn(this, (MapCard.__proto__ || Object.getPrototypeOf(MapCard)).apply(this, arguments));
+    }
+
+    _createClass(MapCard, [{
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                var heading = null;
+                var content = null;
+
+                if (this.props.selection) {
+                    heading = React.createElement(
+                        "div",
+                        { className: "heading" },
+                        React.createElement(
+                            "div",
+                            { className: "title" },
+                            "map"
+                        )
+                    );
+
+                    content = React.createElement(
+                        "div",
+                        null,
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            React.createElement("input", { type: "text", placeholder: "map name", value: this.props.selection.name, onChange: function onChange(event) {
+                                    return _this2.props.changeValue("name", event.target.value);
+                                } })
+                        ),
+                        React.createElement("div", { className: "divider" }),
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            React.createElement(ConfirmButton, { text: "delete map", callback: function callback() {
+                                    return _this2.props.removeMap();
+                                } })
+                        )
+                    );
+                }
+
+                return React.createElement(InfoCard, { getHeading: function getHeading() {
+                        return heading;
+                    }, getContent: function getContent() {
+                        return content;
+                    } });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return MapCard;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 var MonsterCard = function (_React$Component) {
     _inherits(MonsterCard, _React$Component);
 
@@ -2899,6 +3038,7 @@ var Navbar = function (_React$Component) {
                 var partiesStyle = this.props.view === "parties" ? "navigator-item selected" : "navigator-item";
                 var libraryStyle = this.props.view === "library" ? "navigator-item selected" : "navigator-item";
                 var encounterStyle = this.props.view === "encounter" ? "navigator-item selected" : "navigator-item";
+                var mapStyle = this.props.view === "maps" ? "navigator-item selected" : "navigator-item";
                 var combatStyle = this.props.view === "combat" ? "navigator-item selected" : "navigator-item";
 
                 var encountersEnabled = this.props.library.length !== 0;
@@ -2933,6 +3073,13 @@ var Navbar = function (_React$Component) {
                                 return encountersEnabled ? _this2.props.setView("encounter") : null;
                             } },
                         "encounter builder"
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: mapStyle, onClick: function onClick() {
+                                return _this2.props.setView("maps");
+                            } },
+                        "map builder"
                     ),
                     React.createElement(
                         "div",
@@ -3335,10 +3482,12 @@ var Dojo = function (_React$Component) {
             parties: [],
             library: [],
             encounters: [],
+            maps: [],
             combats: [],
             selectedPartyID: null,
             selectedMonsterGroupID: null,
             selectedEncounterID: null,
+            selectedMapID: null,
             selectedCombatID: null,
             modal: null
         };
@@ -3355,6 +3504,11 @@ var Dojo = function (_React$Component) {
             }
 
             if (data !== null) {
+                if (!data.maps) {
+                    data.maps = [];
+                    data.selectedMapID = null;
+                }
+
                 data.encounters.forEach(function (enc) {
                     if (!enc.waves) {
                         enc.waves = [];
@@ -3376,10 +3530,12 @@ var Dojo = function (_React$Component) {
             _this.state.parties = [];
             _this.state.library = [];
             _this.state.encounters = [];
+            _this.state.maps = [];
             _this.state.combats = [];
             _this.state.selectedPartyID = null;
             _this.state.selectedMonsterGroupID = null;
             _this.state.selectedEncounterID = null;
+            _this.state.selectedMapID = null;
             _this.state.selectedCombatID = null;
         }
         return _this;
@@ -4025,6 +4181,37 @@ var Dojo = function (_React$Component) {
         }
 
         /////////////////////////////////////////////////////////////////////////////
+        // Map screen
+
+    }, {
+        key: "addMap",
+        value: function addMap(name) {
+            var map = {
+                id: guid(),
+                name: name
+            };
+            var maps = [].concat(this.state.maps, [map]);
+            sort(maps);
+
+            this.setState({
+                maps: maps,
+                selectedMapID: map.id
+            });
+        }
+    }, {
+        key: "removeMap",
+        value: function removeMap() {
+            var map = this.getEncounter(this.state.selectedMapID);
+            var index = this.state.maps.indexOf(map);
+            this.state.maps.splice(index, 1);
+
+            this.setState({
+                maps: this.state.maps,
+                selectedMapID: null
+            });
+        }
+
+        /////////////////////////////////////////////////////////////////////////////
         // Combat screen
 
     }, {
@@ -4528,6 +4715,13 @@ var Dojo = function (_React$Component) {
             });
         }
     }, {
+        key: "selectMap",
+        value: function selectMap(map) {
+            this.setState({
+                selectedMapID: map ? map.id : null
+            });
+        }
+    }, {
         key: "getParty",
         value: function getParty(id) {
             var result = null;
@@ -4556,6 +4750,17 @@ var Dojo = function (_React$Component) {
             this.state.encounters.forEach(function (encounter) {
                 if (encounter.id === id) {
                     result = encounter;
+                }
+            });
+            return result;
+        }
+    }, {
+        key: "getMap",
+        value: function getMap(id) {
+            var result = null;
+            this.state.maps.forEach(function (map) {
+                if (map.id === id) {
+                    result = map;
                 }
             });
             return result;
@@ -4620,6 +4825,8 @@ var Dojo = function (_React$Component) {
                 selectedMonsterGroupID: null,
                 encounters: [],
                 selectedEncounterID: null,
+                maps: [],
+                selectedMapID: null,
                 combats: [],
                 selectedCombatID: null
             });
@@ -4858,6 +5065,28 @@ var Dojo = function (_React$Component) {
                             },
                             changeValue: function changeValue(combatant, type, value) {
                                 return _this6.changeValue(combatant, type, value);
+                            }
+                        });
+                        break;
+                    case "maps":
+                        content = React.createElement(MapBuilderScreen, {
+                            maps: this.state.maps,
+                            selection: this.getMap(this.state.selectedMapID),
+                            showHelp: this.state.options.showHelp,
+                            selectMap: function selectMap(map) {
+                                return _this6.selectMap(map);
+                            },
+                            addMap: function addMap(name) {
+                                return _this6.addMap(name);
+                            },
+                            removeMap: function removeMap(map) {
+                                return _this6.removeMap(map);
+                            },
+                            nudgeValue: function nudgeValue(source, type, delta) {
+                                return _this6.nudgeValue(source, type, delta);
+                            },
+                            changeValue: function changeValue(source, type, value) {
+                                return _this6.changeValue(source, type, value);
                             }
                         });
                         break;
@@ -5325,6 +5554,50 @@ var EncounterListItem = function (_React$Component) {
     }]);
 
     return EncounterListItem;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var MapListItem = function (_React$Component) {
+    _inherits(MapListItem, _React$Component);
+
+    function MapListItem() {
+        _classCallCheck(this, MapListItem);
+
+        return _possibleConstructorReturn(this, (MapListItem.__proto__ || Object.getPrototypeOf(MapListItem)).apply(this, arguments));
+    }
+
+    _createClass(MapListItem, [{
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                return React.createElement(
+                    "div",
+                    { className: this.props.selected ? "list-item selected" : "list-item", onClick: function onClick() {
+                            return _this2.props.setSelection(_this2.props.map);
+                        } },
+                    React.createElement(
+                        "div",
+                        { className: "heading" },
+                        this.props.map.name || "unnamed map"
+                    )
+                );
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return MapListItem;
 }(React.Component);
 "use strict";
 
@@ -10201,6 +10474,105 @@ var HomeScreen = function (_React$Component) {
     }]);
 
     return HomeScreen;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var MapBuilderScreen = function (_React$Component) {
+    _inherits(MapBuilderScreen, _React$Component);
+
+    function MapBuilderScreen() {
+        _classCallCheck(this, MapBuilderScreen);
+
+        return _possibleConstructorReturn(this, (MapBuilderScreen.__proto__ || Object.getPrototypeOf(MapBuilderScreen)).apply(this, arguments));
+    }
+
+    _createClass(MapBuilderScreen, [{
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                var help = null;
+                if (this.props.showHelp) {
+                    help = React.createElement(MapBuilderCard, { maps: this.props.maps });
+                }
+
+                var maps = [];
+                for (var n = 0; n !== this.props.maps.length; ++n) {
+                    var map = this.props.maps[n];
+                    maps.push(React.createElement(MapListItem, {
+                        key: map.id,
+                        map: map,
+                        selected: map === this.props.selection,
+                        setSelection: function setSelection(map) {
+                            return _this2.props.selectMap(map);
+                        }
+                    }));
+                };
+
+                var map = null;
+                if (this.props.selection) {
+                    var mapCard = React.createElement(
+                        "div",
+                        { className: "column" },
+                        React.createElement(MapCard, {
+                            selection: this.props.selection,
+                            changeValue: function changeValue(type, value) {
+                                return _this2.props.changeValue(_this2.props.selection, type, value);
+                            },
+                            removeMap: function removeMap() {
+                                return _this2.props.removeMap();
+                            }
+                        })
+                    );
+
+                    map = React.createElement(CardGroup, {
+                        content: [mapCard],
+                        heading: this.props.selection.name || "unnamed map",
+                        showClose: this.props.selection !== null,
+                        close: function close() {
+                            return _this2.props.selectMap(null);
+                        }
+                    });
+                }
+
+                return React.createElement(
+                    "div",
+                    { className: "map-builder row collapse" },
+                    React.createElement(
+                        "div",
+                        { className: "columns small-6 medium-4 large-3 scrollable list-column" },
+                        help,
+                        React.createElement(
+                            "button",
+                            { onClick: function onClick() {
+                                    return _this2.props.addMap("new map");
+                                } },
+                            "add a new map"
+                        ),
+                        maps
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "columns small-6 medium-8 large-9 scrollable" },
+                        map
+                    )
+                );
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return MapBuilderScreen;
 }(React.Component);
 "use strict";
 
