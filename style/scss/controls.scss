@@ -192,8 +192,7 @@
         color: $header-foreground;
         border-top: 1px solid $control-border;
 
-        &.selected,
-        &:hover {
+        &.selected {
             background-color: $background;
             border-top: 1px solid transparent;
             border-left: 1px solid $control-border;
@@ -201,7 +200,7 @@
             cursor: default;
         }
 
-        &.selected {
+        &:hover {
             font-weight: 600;
         }
     }

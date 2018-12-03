@@ -129,13 +129,13 @@
     font-size: 14px;
     color: #3c3c3c;
     border-top: 1px solid #c3c3c3; }
-    .navbar .navigator-item.selected, .navbar .navigator-item:hover {
+    .navbar .navigator-item.selected {
       background-color: white;
       border-top: 1px solid transparent;
       border-left: 1px solid #c3c3c3;
       border-right: 1px solid #c3c3c3;
       cursor: default; }
-    .navbar .navigator-item.selected {
+    .navbar .navigator-item:hover {
       font-weight: 600; }
 
 .selector {
