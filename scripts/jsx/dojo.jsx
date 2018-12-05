@@ -10,12 +10,12 @@ class Dojo extends React.Component {
             parties: [],
             library: [],
             encounters: [],
-            maps: [],
+            mapFolios: [],
             combats: [],
             selectedPartyID: null,
             selectedMonsterGroupID: null,
             selectedEncounterID: null,
-            selectedMapID: null,
+            selectedMapFolioID: null,
             selectedCombatID: null,
             modal: null
         };
@@ -32,9 +32,9 @@ class Dojo extends React.Component {
             }
 
             if (data !== null) {
-                if (!data.maps) {
-                    data.maps = [];
-                    data.selectedMapID = null;
+                if (!data.mapFolios) {
+                    data.mapFolios = [];
+                    data.selectedMapFolioID = null;
                 }
 
                 data.encounters.forEach(enc => {
@@ -58,12 +58,12 @@ class Dojo extends React.Component {
             this.state.parties = [];
             this.state.library = [];
             this.state.encounters = [];
-            this.state.maps = [];
+            this.state.mapFolios = [];
             this.state.combats = [];
             this.state.selectedPartyID = null;
             this.state.selectedMonsterGroupID = null;
             this.state.selectedEncounterID = null;
-            this.state.selectedMapID = null;
+            this.state.selectedMapFolioID = null;
             this.state.selectedCombatID = null;
         }
     }
@@ -694,22 +694,48 @@ class Dojo extends React.Component {
     /////////////////////////////////////////////////////////////////////////////
     // Map screen
 
-    addMap(name) {
-        var map = {
+    addMapFolio(name) {
+        var folio = {
             id: guid(),
-            name: name
+            name: name,
+            maps: []
         };
-        var maps = [].concat(this.state.maps, [map]);
-        sort(maps);
+        var folios = [].concat(this.state.mapFolios, [folio]);
+        sort(folios);
 
         this.setState({
-            maps: maps,
-            selectedMapID: map.id
+            mapFolios: folios,
+            selectedMapFolioID: folio.id
         });
     }
 
-    editMap() {
-        var map = this.getMap(this.state.selectedMapID);
+    removeMapFolio() {
+        var folio = this.getMapFolio(this.state.selectedMapFolioID);
+        var index = this.state.mapFolios.indexOf(folio);
+        this.state.mapFolios.splice(index, 1);
+
+        this.setState({
+            mapFolios: this.state.mapFolios,
+            selectedMapFolioID: null
+        });
+    }
+
+    addMap(name) {
+        var map = {
+            id: guid(),
+            name: name,
+            tiles: []
+        };
+
+        var folio = this.getMapFolio(this.state.selectedMapFolioID);
+        folio.maps.push(map);
+
+        this.setState({
+            mapFolios: this.state.mapFolios
+        });
+    }
+
+    editMap(map) {
         var copy = JSON.parse(JSON.stringify(map));
         this.setState({
             modal: {
@@ -720,23 +746,22 @@ class Dojo extends React.Component {
     }
 
     saveMap() {
-        var original = this.state.maps.find(m => m.id === this.state.modal.map.id);
-        var index = this.state.maps.indexOf(original);
-        this.state.maps[index] = this.state.modal.map;
+        var folio = this.getMapFolio(this.state.selectedMapFolioID);
+        var original = folio.maps.find(m => m.id === this.state.modal.map.id);
+        var index = folio.maps.indexOf(original);
+        folio.maps[index] = this.state.modal.map;
         this.setState({
-            maps: this.state.maps,
+            mapFolios: this.state.mapFolios,
             modal: null
         });
     }
 
-    removeMap() {
-        var map = this.getMap(this.state.selectedMapID);
-        var index = this.state.maps.indexOf(map);
-        this.state.maps.splice(index, 1);
-
+    removeMap(map) {
+        var folio = this.getMapFolio(this.state.selectedMapFolioID);
+        var index = folio.maps.indexOf(map);
+        folio.maps.splice(index, 1);
         this.setState({
-            maps: this.state.maps,
-            selectedMapID: null
+            mapFolios: this.state.mapFolios
         });
     }
 
@@ -1202,9 +1227,9 @@ class Dojo extends React.Component {
         });
     }
 
-    selectMap(map) {
+    selectMapFolio(mapFolio) {
         this.setState({
-            selectedMapID: map ? map.id : null
+            selectedMapFolioID: mapFolio ? mapFolio.id : null
         });
     }
 
@@ -1238,11 +1263,11 @@ class Dojo extends React.Component {
         return result;
     }
 
-    getMap(id) {
+    getMapFolio(id) {
         var result = null;
-        this.state.maps.forEach(map => {
-            if (map.id === id) {
-                result = map;
+        this.state.mapFolios.forEach(folio => {
+            if (folio.id === id) {
+                result = folio;
             }
         });
         return result;
@@ -1302,8 +1327,8 @@ class Dojo extends React.Component {
             selectedMonsterGroupID: null,
             encounters: [],
             selectedEncounterID: null,
-            maps: [],
-            selectedMapID: null,
+            mapFolios: [],
+            selectedMapFolioID: null,
             combats: [],
             selectedCombatID: null
         });
@@ -1475,14 +1500,16 @@ class Dojo extends React.Component {
                     break;
                 case "maps":
                     content = (
-                        <MapBuilderScreen
-                            maps={this.state.maps}
-                            selection={this.getMap(this.state.selectedMapID)}
+                        <MapFoliosScreen
+                            mapFolios={this.state.mapFolios}
+                            selection={this.getMapFolio(this.state.selectedMapFolioID)}
                             showHelp={this.state.options.showHelp}
-                            selectMap={map => this.selectMap(map)}
+                            selectMapFolio={folio => this.selectMapFolio(folio)}
+                            addMapFolio={name => this.addMapFolio(name)}
+                            removeMapFolio={() => this.removeMapFolio()}
                             addMap={name => this.addMap(name)}
-                            editMap={() => this.editMap()}
-                            removeMap={() => this.removeMap()}
+                            editMap={map => this.editMap(map)}
+                            removeMap={map => this.removeMap(map)}
                             nudgeValue={(source, type, delta) => this.nudgeValue(source, type, delta)}
                             changeValue={(source, type, value) => this.changeValue(source, type, value)}
                         />

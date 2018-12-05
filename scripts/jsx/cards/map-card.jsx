@@ -1,32 +1,27 @@
 class MapCard extends React.Component {
     render() {
         try {
-            var heading = null;
-            var content = null;
-
-            if (this.props.selection) {
-                heading = (
+            return (
+                <div className="card map">
                     <div className="heading">
-                        <div className="title">map</div>
+                        <div className="title">{this.props.map.name || "unnamed map"}</div>
                     </div>
-                );
-
-                content = (
-                    <div>
+                    <div className="card-content">
                         <div className="section">
-                            <input type="text" placeholder="map name" value={this.props.selection.name} onChange={event => this.props.changeValue("name", event.target.value)} />
+                            <input type="text" placeholder="map name" value={this.props.map.name} onChange={event => this.props.changeValue(this.props.map, "name", event.target.value)} />
                         </div>
                         <div className="divider"></div>
+                        <MapPanel
+                            map={this.props.map}
+                            mode="thumbnail"
+                        />
+                        <div className="divider"></div>
                         <div className="section">
-                            <button onClick={() => this.props.editMap()}>edit map</button>
-                            <ConfirmButton text="delete map" callback={() => this.props.removeMap()} />
+                            <button onClick={() => this.props.editMap(this.props.map)}>edit map</button>
+                            <ConfirmButton text="delete map" callback={() => this.props.removeMap(this.props.map)} />
                         </div>
                     </div>
-                )
-            }
-
-            return (
-                <InfoCard getHeading={() => heading} getContent={() => content} />
+                </div>
             );
         } catch (e) {
             console.error(e);

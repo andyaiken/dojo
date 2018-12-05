@@ -21,7 +21,7 @@ class Navbar extends React.Component {
                     <div className={partiesStyle} onClick={() => this.props.setView("parties")}>player characters</div>
                     <div className={libraryStyle} onClick={() => this.props.setView("library")}>monster library</div>
                     <div className={encounterStyle} onClick={() => encountersEnabled ? this.props.setView("encounter") : null}>encounter builder</div>
-                    <div className={mapStyle} onClick={() => this.props.setView("maps")}>map builder</div>
+                    <div className={mapStyle} onClick={() => this.props.setView("maps")}>map folios</div>
                     <div className={combatStyle} onClick={() => combatEnabled ? this.props.setView("combat") : null}>combat manager</div>
                 </div>
             );

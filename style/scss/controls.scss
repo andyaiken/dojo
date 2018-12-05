@@ -200,6 +200,7 @@
             cursor: default;
         }
 
+        &.selected,
         &:hover {
             font-weight: 600;
         }

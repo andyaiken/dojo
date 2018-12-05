@@ -302,6 +302,15 @@ body,
       color: #650000; }
     .card.monster .divider {
       border-top: 1px solid #650000; }
+  .card.map {
+    border: 1px solid #000065;
+    background-color: beige; }
+    .card.map .heading {
+      background-color: #000065; }
+    .card.map .subheading {
+      color: #000065; }
+    .card.map .divider {
+      border-top: 1px solid #000065; }
   .card.error {
     background-color: red;
     color: white;

@@ -2,7 +2,7 @@ class MapEditorModal extends React.Component {
     constructor(props) {
         super();
         this.state = {
-            monster: props.monster
+            map: props.map
         };
     }
 
@@ -10,7 +10,7 @@ class MapEditorModal extends React.Component {
     // Helper methods
 
     nudgeValue(field, delta) {
-        var source = this.state.monster;
+        var source = this.state.map;
         var value = null;
         var tokens = field.split(".");
         tokens.forEach(token => {
@@ -26,7 +26,7 @@ class MapEditorModal extends React.Component {
     }
 
     changeValue(field, value, notify = true) {
-        var source = this.state.monster;
+        var source = this.state.map;
         var tokens = field.split(".");
         tokens.forEach(token => {
             if (token === tokens[tokens.length - 1]) {
@@ -34,7 +34,7 @@ class MapEditorModal extends React.Component {
 
                 if (notify) {
                     this.setState({
-                        monster: this.state.monster
+                        map: this.state.map
                     });
                 }
             } else {
@@ -51,7 +51,10 @@ class MapEditorModal extends React.Component {
                 <div className="about">
                     <div className="row">
                         <div className="columns small-12 medium-12 large-12 list-column">
-                            <div className="heading">X</div>
+                            <MapPanel
+                                map={this.props.map}
+                                mode="edit"
+                            />
                         </div>
                     </div>
                 </div>

@@ -427,6 +427,23 @@ body,
         }
     }
 
+    &.map {
+        border: 1px solid #000065;
+        background-color: beige;
+
+        .heading {
+            background-color: #000065;
+        }
+
+        .subheading {
+            color: #000065;
+        }
+
+        .divider {
+            border-top: 1px solid #000065;
+        }
+    }
+
     &.error {
         background-color: red;
         color: $background;

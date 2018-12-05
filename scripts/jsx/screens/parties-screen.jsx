@@ -78,10 +78,7 @@ class PartiesScreen extends React.Component {
 
             var name = null;
             if (this.props.selection) {
-                name = this.props.selection.name;
-                if (!name) {
-                    name = "unnamed party";
-                }
+                name = this.props.selection.name || "unnamed party";
             }
 
             return (
