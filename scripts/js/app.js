@@ -8,127 +8,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var CombatManagerCard = function (_React$Component) {
-    _inherits(CombatManagerCard, _React$Component);
-
-    function CombatManagerCard() {
-        _classCallCheck(this, CombatManagerCard);
-
-        return _possibleConstructorReturn(this, (CombatManagerCard.__proto__ || Object.getPrototypeOf(CombatManagerCard)).apply(this, arguments));
-    }
-
-    _createClass(CombatManagerCard, [{
-        key: "render",
-        value: function render() {
-            try {
-                var content = React.createElement(
-                    "div",
-                    null,
-                    React.createElement(
-                        "div",
-                        { className: "section" },
-                        "here you can run a combat encounter by specifying a party and an encounter"
-                    ),
-                    React.createElement("div", { className: "divider" }),
-                    React.createElement(
-                        "div",
-                        { className: "section" },
-                        "below you will see a list of encounters that you have paused"
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "section" },
-                        "you can resume a paused combat by selecting it"
-                    )
-                );
-
-                return React.createElement(InfoCard, { getContent: function getContent() {
-                        return content;
-                    } });
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    }]);
-
-    return CombatManagerCard;
-}(React.Component);
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var EncounterBuilderCard = function (_React$Component) {
-    _inherits(EncounterBuilderCard, _React$Component);
-
-    function EncounterBuilderCard() {
-        _classCallCheck(this, EncounterBuilderCard);
-
-        return _possibleConstructorReturn(this, (EncounterBuilderCard.__proto__ || Object.getPrototypeOf(EncounterBuilderCard)).apply(this, arguments));
-    }
-
-    _createClass(EncounterBuilderCard, [{
-        key: "render",
-        value: function render() {
-            try {
-                var action = null;
-                if (this.props.encounters.length === 0) {
-                    action = React.createElement(
-                        "div",
-                        { className: "section" },
-                        "to start building an encounter, press the button below"
-                    );
-                } else {
-                    action = React.createElement(
-                        "div",
-                        { className: "section" },
-                        "select an encounter from the list to add monsters to it"
-                    );
-                }
-
-                var content = React.createElement(
-                    "div",
-                    null,
-                    React.createElement(
-                        "div",
-                        { className: "section" },
-                        "on this page you can set up encounters"
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "section" },
-                        "when you have created an encounter you can add monsters to it, then gauge its difficulty for a party of pcs"
-                    ),
-                    React.createElement("div", { className: "divider" }),
-                    action
-                );
-
-                return React.createElement(InfoCard, { getContent: function getContent() {
-                        return content;
-                    } });
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    }]);
-
-    return EncounterBuilderCard;
-}(React.Component);
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 var EncounterCard = function (_React$Component) {
     _inherits(EncounterCard, _React$Component);
 
@@ -551,6 +430,127 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var CombatManagerCard = function (_React$Component) {
+    _inherits(CombatManagerCard, _React$Component);
+
+    function CombatManagerCard() {
+        _classCallCheck(this, CombatManagerCard);
+
+        return _possibleConstructorReturn(this, (CombatManagerCard.__proto__ || Object.getPrototypeOf(CombatManagerCard)).apply(this, arguments));
+    }
+
+    _createClass(CombatManagerCard, [{
+        key: "render",
+        value: function render() {
+            try {
+                var content = React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        "here you can run a combat encounter by specifying a party and an encounter"
+                    ),
+                    React.createElement("div", { className: "divider" }),
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        "below you will see a list of encounters that you have paused"
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        "you can resume a paused combat by selecting it"
+                    )
+                );
+
+                return React.createElement(InfoCard, { getContent: function getContent() {
+                        return content;
+                    } });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return CombatManagerCard;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var EncounterBuilderCard = function (_React$Component) {
+    _inherits(EncounterBuilderCard, _React$Component);
+
+    function EncounterBuilderCard() {
+        _classCallCheck(this, EncounterBuilderCard);
+
+        return _possibleConstructorReturn(this, (EncounterBuilderCard.__proto__ || Object.getPrototypeOf(EncounterBuilderCard)).apply(this, arguments));
+    }
+
+    _createClass(EncounterBuilderCard, [{
+        key: "render",
+        value: function render() {
+            try {
+                var action = null;
+                if (this.props.encounters.length === 0) {
+                    action = React.createElement(
+                        "div",
+                        { className: "section" },
+                        "to start building an encounter, press the button below"
+                    );
+                } else {
+                    action = React.createElement(
+                        "div",
+                        { className: "section" },
+                        "select an encounter from the list to add monsters to it"
+                    );
+                }
+
+                var content = React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        "on this page you can set up encounters"
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        "when you have created an encounter you can add monsters to it, then gauge its difficulty for a party of pcs"
+                    ),
+                    React.createElement("div", { className: "divider" }),
+                    action
+                );
+
+                return React.createElement(InfoCard, { getContent: function getContent() {
+                        return content;
+                    } });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return EncounterBuilderCard;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 var MapBuilderCard = function (_React$Component) {
     _inherits(MapBuilderCard, _React$Component);
 
@@ -617,6 +617,135 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var MonsterLibraryCard = function (_React$Component) {
+    _inherits(MonsterLibraryCard, _React$Component);
+
+    function MonsterLibraryCard() {
+        _classCallCheck(this, MonsterLibraryCard);
+
+        return _possibleConstructorReturn(this, (MonsterLibraryCard.__proto__ || Object.getPrototypeOf(MonsterLibraryCard)).apply(this, arguments));
+    }
+
+    _createClass(MonsterLibraryCard, [{
+        key: "render",
+        value: function render() {
+            try {
+                return React.createElement(InfoCard, {
+                    getContent: function getContent() {
+                        return React.createElement(
+                            "div",
+                            null,
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                "you can maintain your menagerie of monsters here"
+                            ),
+                            React.createElement("div", { className: "divider" }),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                "select a monster group from the list to see stat blocks for monsters in that group"
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                "to quickly find a monster, type its name into the filter box"
+                            )
+                        );
+                    }
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return MonsterLibraryCard;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var PartiesCard = function (_React$Component) {
+    _inherits(PartiesCard, _React$Component);
+
+    function PartiesCard() {
+        _classCallCheck(this, PartiesCard);
+
+        return _possibleConstructorReturn(this, (PartiesCard.__proto__ || Object.getPrototypeOf(PartiesCard)).apply(this, arguments));
+    }
+
+    _createClass(PartiesCard, [{
+        key: "render",
+        value: function render() {
+            try {
+                var action = null;
+                if (this.props.parties.length === 0) {
+                    action = React.createElement(
+                        "div",
+                        { className: "section" },
+                        "to start adding a party, press the button below"
+                    );
+                } else {
+                    action = React.createElement(
+                        "div",
+                        { className: "section" },
+                        "select a party from the list to see pc details"
+                    );
+                }
+
+                var content = React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        React.createElement(
+                            "div",
+                            null,
+                            "this page is where you can tell dojo all about your pcs"
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        React.createElement(
+                            "div",
+                            null,
+                            "you can add a party for each of your gaming groups"
+                        )
+                    ),
+                    React.createElement("div", { className: "divider" }),
+                    action
+                );
+
+                return React.createElement(InfoCard, { getContent: function getContent() {
+                        return content;
+                    } });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return PartiesCard;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 var MapCard = function (_React$Component) {
     _inherits(MapCard, _React$Component);
 
@@ -660,6 +789,13 @@ var MapCard = function (_React$Component) {
                         React.createElement(
                             "div",
                             { className: "section" },
+                            React.createElement(
+                                "button",
+                                { onClick: function onClick() {
+                                        return _this2.props.editMap();
+                                    } },
+                                "edit map"
+                            ),
                             React.createElement(ConfirmButton, { text: "delete map", callback: function callback() {
                                     return _this2.props.removeMap();
                                 } })
@@ -1697,135 +1833,6 @@ var MonsterGroupCard = function (_React$Component) {
     }]);
 
     return MonsterGroupCard;
-}(React.Component);
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var MonsterLibraryCard = function (_React$Component) {
-    _inherits(MonsterLibraryCard, _React$Component);
-
-    function MonsterLibraryCard() {
-        _classCallCheck(this, MonsterLibraryCard);
-
-        return _possibleConstructorReturn(this, (MonsterLibraryCard.__proto__ || Object.getPrototypeOf(MonsterLibraryCard)).apply(this, arguments));
-    }
-
-    _createClass(MonsterLibraryCard, [{
-        key: "render",
-        value: function render() {
-            try {
-                return React.createElement(InfoCard, {
-                    getContent: function getContent() {
-                        return React.createElement(
-                            "div",
-                            null,
-                            React.createElement(
-                                "div",
-                                { className: "section" },
-                                "you can maintain your menagerie of monsters here"
-                            ),
-                            React.createElement("div", { className: "divider" }),
-                            React.createElement(
-                                "div",
-                                { className: "section" },
-                                "select a monster group from the list to see stat blocks for monsters in that group"
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "section" },
-                                "to quickly find a monster, type its name into the filter box"
-                            )
-                        );
-                    }
-                });
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    }]);
-
-    return MonsterLibraryCard;
-}(React.Component);
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var PartiesCard = function (_React$Component) {
-    _inherits(PartiesCard, _React$Component);
-
-    function PartiesCard() {
-        _classCallCheck(this, PartiesCard);
-
-        return _possibleConstructorReturn(this, (PartiesCard.__proto__ || Object.getPrototypeOf(PartiesCard)).apply(this, arguments));
-    }
-
-    _createClass(PartiesCard, [{
-        key: "render",
-        value: function render() {
-            try {
-                var action = null;
-                if (this.props.parties.length === 0) {
-                    action = React.createElement(
-                        "div",
-                        { className: "section" },
-                        "to start adding a party, press the button below"
-                    );
-                } else {
-                    action = React.createElement(
-                        "div",
-                        { className: "section" },
-                        "select a party from the list to see pc details"
-                    );
-                }
-
-                var content = React.createElement(
-                    "div",
-                    null,
-                    React.createElement(
-                        "div",
-                        { className: "section" },
-                        React.createElement(
-                            "div",
-                            null,
-                            "this page is where you can tell dojo all about your pcs"
-                        )
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "section" },
-                        React.createElement(
-                            "div",
-                            null,
-                            "you can add a party for each of your gaming groups"
-                        )
-                    ),
-                    React.createElement("div", { className: "divider" }),
-                    action
-                );
-
-                return React.createElement(InfoCard, { getContent: function getContent() {
-                        return content;
-                    } });
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    }]);
-
-    return PartiesCard;
 }(React.Component);
 "use strict";
 
@@ -4199,9 +4206,36 @@ var Dojo = function (_React$Component) {
             });
         }
     }, {
+        key: "editMap",
+        value: function editMap() {
+            var map = this.getMap(this.state.selectedMapID);
+            var copy = JSON.parse(JSON.stringify(map));
+            this.setState({
+                modal: {
+                    type: "map",
+                    map: copy
+                }
+            });
+        }
+    }, {
+        key: "saveMap",
+        value: function saveMap() {
+            var _this4 = this;
+
+            var original = this.state.maps.find(function (m) {
+                return m.id === _this4.state.modal.map.id;
+            });
+            var index = this.state.maps.indexOf(original);
+            this.state.maps[index] = this.state.modal.map;
+            this.setState({
+                maps: this.state.maps,
+                modal: null
+            });
+        }
+    }, {
         key: "removeMap",
         value: function removeMap() {
-            var map = this.getEncounter(this.state.selectedMapID);
+            var map = this.getMap(this.state.selectedMapID);
             var index = this.state.maps.indexOf(map);
             this.state.maps.splice(index, 1);
 
@@ -4235,7 +4269,7 @@ var Dojo = function (_React$Component) {
     }, {
         key: "startCombat",
         value: function startCombat() {
-            var _this4 = this;
+            var _this5 = this;
 
             var party = this.getParty(this.state.modal.combat.partyID);
             var partyName = party.name || "unnamed party";
@@ -4268,8 +4302,8 @@ var Dojo = function (_React$Component) {
             });
 
             encounter.slots.forEach(function (slot) {
-                var group = _this4.getMonsterGroupByName(slot.monsterGroupName);
-                var monster = _this4.getMonster(slot.monsterName, group);
+                var group = _this5.getMonsterGroupByName(slot.monsterGroupName);
+                var monster = _this5.getMonster(slot.monsterName, group);
 
                 if (monster) {
                     var init = parseInt(modifier(monster.abilityScores.dex));
@@ -4282,8 +4316,8 @@ var Dojo = function (_React$Component) {
                         combatant.id = guid();
 
                         combatant.displayName = null;
-                        if (_this4.state.modal.combat.monsterNames) {
-                            var slotNames = _this4.state.modal.combat.monsterNames.find(function (names) {
+                        if (_this5.state.modal.combat.monsterNames) {
+                            var slotNames = _this5.state.modal.combat.monsterNames.find(function (names) {
                                 return names.id === slot.id;
                             });
                             if (slotNames) {
@@ -4291,7 +4325,7 @@ var Dojo = function (_React$Component) {
                             }
                         }
 
-                        switch (_this4.state.modal.combat.encounterInitMode) {
+                        switch (_this5.state.modal.combat.encounterInitMode) {
                             case "manual":
                                 combatant.initiative = 10;
                                 break;
@@ -4304,8 +4338,8 @@ var Dojo = function (_React$Component) {
                         }
 
                         combatant.current = false;
-                        combatant.pending = _this4.state.modal.combat.encounterInitMode === "manual";
-                        combatant.active = _this4.state.modal.combat.encounterInitMode !== "manual";
+                        combatant.pending = _this5.state.modal.combat.encounterInitMode === "manual";
+                        combatant.active = _this5.state.modal.combat.encounterInitMode !== "manual";
                         combatant.defeated = false;
 
                         combatant.hp = combatant.hpMax;
@@ -4478,17 +4512,17 @@ var Dojo = function (_React$Component) {
     }, {
         key: "addWaveToCombat",
         value: function addWaveToCombat() {
-            var _this5 = this;
+            var _this6 = this;
 
             var encounter = this.getEncounter(this.state.modal.combat.encounterID);
             var combat = this.getCombat(this.state.selectedCombatID);
             var wave = encounter.waves.find(function (w) {
-                return w.id === _this5.state.modal.combat.waveID;
+                return w.id === _this6.state.modal.combat.waveID;
             });
 
             wave.slots.forEach(function (slot) {
-                var group = _this5.getMonsterGroupByName(slot.monsterGroupName);
-                var monster = _this5.getMonster(slot.monsterName, group);
+                var group = _this6.getMonsterGroupByName(slot.monsterGroupName);
+                var monster = _this6.getMonster(slot.monsterName, group);
 
                 if (monster) {
                     var init = parseInt(modifier(monster.abilityScores.dex));
@@ -4501,8 +4535,8 @@ var Dojo = function (_React$Component) {
                         combatant.id = guid();
 
                         combatant.displayName = null;
-                        if (_this5.state.modal.combat.monsterNames) {
-                            var slotNames = _this5.state.modal.combat.monsterNames.find(function (names) {
+                        if (_this6.state.modal.combat.monsterNames) {
+                            var slotNames = _this6.state.modal.combat.monsterNames.find(function (names) {
                                 return names.id === slot.id;
                             });
                             if (slotNames) {
@@ -4510,7 +4544,7 @@ var Dojo = function (_React$Component) {
                             }
                         }
 
-                        switch (_this5.state.modal.combat.encounterInitMode) {
+                        switch (_this6.state.modal.combat.encounterInitMode) {
                             case "manual":
                                 combatant.initiative = 10;
                                 break;
@@ -4523,8 +4557,8 @@ var Dojo = function (_React$Component) {
                         }
 
                         combatant.current = false;
-                        combatant.pending = _this5.state.modal.combat.encounterInitMode === "manual";
-                        combatant.active = _this5.state.modal.combat.encounterInitMode !== "manual";
+                        combatant.pending = _this6.state.modal.combat.encounterInitMode === "manual";
+                        combatant.active = _this6.state.modal.combat.encounterInitMode !== "manual";
                         combatant.defeated = false;
 
                         combatant.hp = combatant.hpMax;
@@ -4912,7 +4946,7 @@ var Dojo = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            var _this6 = this;
+            var _this7 = this;
 
             try {
                 var content = null;
@@ -4922,7 +4956,7 @@ var Dojo = function (_React$Component) {
                         content = React.createElement(HomeScreen, {
                             library: this.state.library,
                             addOpenGameContent: function addOpenGameContent() {
-                                return _this6.addOpenGameContent();
+                                return _this7.addOpenGameContent();
                             }
                         });
                         break;
@@ -4932,28 +4966,28 @@ var Dojo = function (_React$Component) {
                             selection: this.getParty(this.state.selectedPartyID),
                             showHelp: this.state.options.showHelp,
                             selectParty: function selectParty(party) {
-                                return _this6.selectParty(party);
+                                return _this7.selectParty(party);
                             },
                             addParty: function addParty(name) {
-                                return _this6.addParty(name);
+                                return _this7.addParty(name);
                             },
                             removeParty: function removeParty() {
-                                return _this6.removeParty();
+                                return _this7.removeParty();
                             },
                             addPC: function addPC(name) {
-                                return _this6.addPC(name);
+                                return _this7.addPC(name);
                             },
                             removePC: function removePC(pc) {
-                                return _this6.removePC(pc);
+                                return _this7.removePC(pc);
                             },
                             sortPCs: function sortPCs() {
-                                return _this6.sortPCs();
+                                return _this7.sortPCs();
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this6.changeValue(combatant, type, value);
+                                return _this7.changeValue(combatant, type, value);
                             },
                             nudgeValue: function nudgeValue(combatant, type, delta) {
-                                return _this6.nudgeValue(combatant, type, delta);
+                                return _this7.nudgeValue(combatant, type, delta);
                             }
                         });
                         break;
@@ -4964,40 +4998,40 @@ var Dojo = function (_React$Component) {
                             filter: this.state.libraryFilter,
                             showHelp: this.state.options.showHelp,
                             selectMonsterGroup: function selectMonsterGroup(group) {
-                                return _this6.selectMonsterGroup(group);
+                                return _this7.selectMonsterGroup(group);
                             },
                             addMonsterGroup: function addMonsterGroup(name) {
-                                return _this6.addMonsterGroup(name);
+                                return _this7.addMonsterGroup(name);
                             },
                             removeMonsterGroup: function removeMonsterGroup() {
-                                return _this6.removeMonsterGroup();
+                                return _this7.removeMonsterGroup();
                             },
                             addMonster: function addMonster(name) {
-                                return _this6.addMonster(name);
+                                return _this7.addMonster(name);
                             },
                             removeMonster: function removeMonster(monster) {
-                                return _this6.removeMonster(monster);
+                                return _this7.removeMonster(monster);
                             },
                             sortMonsters: function sortMonsters() {
-                                return _this6.sortMonsters();
+                                return _this7.sortMonsters();
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this6.changeValue(combatant, type, value);
+                                return _this7.changeValue(combatant, type, value);
                             },
                             nudgeValue: function nudgeValue(combatant, type, delta) {
-                                return _this6.nudgeValue(combatant, type, delta);
+                                return _this7.nudgeValue(combatant, type, delta);
                             },
                             editMonster: function editMonster(combatant) {
-                                return _this6.editMonster(combatant);
+                                return _this7.editMonster(combatant);
                             },
                             cloneMonster: function cloneMonster(combatant) {
-                                return _this6.cloneMonster(combatant);
+                                return _this7.cloneMonster(combatant);
                             },
                             moveToGroup: function moveToGroup(combatant, groupID) {
-                                return _this6.moveToGroup(combatant, groupID);
+                                return _this7.moveToGroup(combatant, groupID);
                             },
                             addOpenGameContent: function addOpenGameContent() {
-                                return _this6.addOpenGameContent();
+                                return _this7.addOpenGameContent();
                             }
                         });
                         var count = 0;
@@ -5012,7 +5046,7 @@ var Dojo = function (_React$Component) {
                                     "div",
                                     { className: "section" },
                                     React.createElement("input", { type: "text", placeholder: "filter", value: this.state.libraryFilter, onChange: function onChange(event) {
-                                            return _this6.changeValue(_this6.state, "libraryFilter", event.target.value);
+                                            return _this7.changeValue(_this7.state, "libraryFilter", event.target.value);
                                         } })
                                 ),
                                 React.createElement(
@@ -5021,7 +5055,7 @@ var Dojo = function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         { onClick: function onClick() {
-                                                return _this6.openDemographics();
+                                                return _this7.openDemographics();
                                             } },
                                         "demographics"
                                     )
@@ -5037,34 +5071,34 @@ var Dojo = function (_React$Component) {
                             library: this.state.library,
                             showHelp: this.state.options.showHelp,
                             selectEncounter: function selectEncounter(encounter) {
-                                return _this6.selectEncounter(encounter);
+                                return _this7.selectEncounter(encounter);
                             },
                             addEncounter: function addEncounter(name) {
-                                return _this6.addEncounter(name);
+                                return _this7.addEncounter(name);
                             },
                             removeEncounter: function removeEncounter(encounter) {
-                                return _this6.removeEncounter(encounter);
+                                return _this7.removeEncounter(encounter);
                             },
                             addWave: function addWave() {
-                                return _this6.addWaveToEncounter();
+                                return _this7.addWaveToEncounter();
                             },
                             removeWave: function removeWave(wave) {
-                                return _this6.removeWave(wave);
+                                return _this7.removeWave(wave);
                             },
                             getMonster: function getMonster(monsterName, monsterGroupName) {
-                                return _this6.getMonster(monsterName, _this6.getMonsterGroupByName(monsterGroupName));
+                                return _this7.getMonster(monsterName, _this7.getMonsterGroupByName(monsterGroupName));
                             },
                             addEncounterSlot: function addEncounterSlot(monster, waveID) {
-                                return _this6.addEncounterSlot(monster, waveID);
+                                return _this7.addEncounterSlot(monster, waveID);
                             },
                             removeEncounterSlot: function removeEncounterSlot(slot, waveID) {
-                                return _this6.removeEncounterSlot(slot, waveID);
+                                return _this7.removeEncounterSlot(slot, waveID);
                             },
                             nudgeValue: function nudgeValue(slot, type, delta) {
-                                return _this6.nudgeValue(slot, type, delta);
+                                return _this7.nudgeValue(slot, type, delta);
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this6.changeValue(combatant, type, value);
+                                return _this7.changeValue(combatant, type, value);
                             }
                         });
                         break;
@@ -5074,19 +5108,22 @@ var Dojo = function (_React$Component) {
                             selection: this.getMap(this.state.selectedMapID),
                             showHelp: this.state.options.showHelp,
                             selectMap: function selectMap(map) {
-                                return _this6.selectMap(map);
+                                return _this7.selectMap(map);
                             },
                             addMap: function addMap(name) {
-                                return _this6.addMap(name);
+                                return _this7.addMap(name);
                             },
-                            removeMap: function removeMap(map) {
-                                return _this6.removeMap(map);
+                            editMap: function editMap() {
+                                return _this7.editMap();
+                            },
+                            removeMap: function removeMap() {
+                                return _this7.removeMap();
                             },
                             nudgeValue: function nudgeValue(source, type, delta) {
-                                return _this6.nudgeValue(source, type, delta);
+                                return _this7.nudgeValue(source, type, delta);
                             },
                             changeValue: function changeValue(source, type, value) {
-                                return _this6.changeValue(source, type, value);
+                                return _this7.changeValue(source, type, value);
                             }
                         });
                         break;
@@ -5099,40 +5136,40 @@ var Dojo = function (_React$Component) {
                             combat: combat,
                             showHelp: this.state.options.showHelp,
                             createCombat: function createCombat() {
-                                return _this6.createCombat();
+                                return _this7.createCombat();
                             },
                             resumeEncounter: function resumeEncounter(combat) {
-                                return _this6.resumeCombat(combat);
+                                return _this7.resumeCombat(combat);
                             },
                             nudgeValue: function nudgeValue(combatant, type, delta) {
-                                return _this6.nudgeValue(combatant, type, delta);
+                                return _this7.nudgeValue(combatant, type, delta);
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this6.changeValue(combatant, type, value);
+                                return _this7.changeValue(combatant, type, value);
                             },
                             makeCurrent: function makeCurrent(combatant) {
-                                return _this6.makeCurrent(combatant);
+                                return _this7.makeCurrent(combatant);
                             },
                             makeActive: function makeActive(combatant) {
-                                return _this6.makeActive(combatant);
+                                return _this7.makeActive(combatant);
                             },
                             makeDefeated: function makeDefeated(combatant) {
-                                return _this6.makeDefeated(combatant);
+                                return _this7.makeDefeated(combatant);
                             },
                             removeCombatant: function removeCombatant(combatant) {
-                                return _this6.removeCombatant(combatant);
+                                return _this7.removeCombatant(combatant);
                             },
                             addCondition: function addCondition(combatant, condition) {
-                                return _this6.addCondition(combatant, condition);
+                                return _this7.addCondition(combatant, condition);
                             },
                             removeCondition: function removeCondition(combatant, conditionID) {
-                                return _this6.removeCondition(combatant, conditionID);
+                                return _this7.removeCondition(combatant, conditionID);
                             },
                             endTurn: function endTurn(combatant) {
-                                return _this6.endTurn(combatant);
+                                return _this7.endTurn(combatant);
                             },
                             close: function close(notification, removeCondition) {
-                                return _this6.closeNotification(notification, removeCondition);
+                                return _this7.closeNotification(notification, removeCondition);
                             }
                         });
                         if (combat) {
@@ -5174,7 +5211,7 @@ var Dojo = function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         { onClick: function onClick() {
-                                                return _this6.openWaveModal();
+                                                return _this7.openWaveModal();
                                             } },
                                         "add wave"
                                     )
@@ -5185,7 +5222,7 @@ var Dojo = function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         { onClick: function onClick() {
-                                                return _this6.pauseCombat();
+                                                return _this7.pauseCombat();
                                             } },
                                         "pause encounter"
                                     )
@@ -5196,7 +5233,7 @@ var Dojo = function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         { onClick: function onClick() {
-                                                return _this6.endCombat();
+                                                return _this7.endCombat();
                                             } },
                                         "end encounter"
                                     )
@@ -5222,10 +5259,10 @@ var Dojo = function (_React$Component) {
                             modalContent = React.createElement(AboutModal, {
                                 options: this.state.options,
                                 resetAll: function resetAll() {
-                                    return _this6.resetAll();
+                                    return _this7.resetAll();
                                 },
                                 changeValue: function changeValue(source, type, value) {
-                                    return _this6.changeValue(source, type, value);
+                                    return _this7.changeValue(source, type, value);
                                 }
                             });
                             break;
@@ -5249,19 +5286,40 @@ var Dojo = function (_React$Component) {
                                 label: "similar monsters",
                                 checked: this.state.modal.showMonsters,
                                 changeValue: function changeValue() {
-                                    return _this6.toggleShowSimilarMonsters();
+                                    return _this7.toggleShowSimilarMonsters();
                                 }
                             })];
                             modalButtons.right = [React.createElement(
                                 "button",
                                 { key: "save", onClick: function onClick() {
-                                        return _this6.saveMonster();
+                                        return _this7.saveMonster();
                                     } },
                                 "save"
                             ), React.createElement(
                                 "button",
                                 { key: "cancel", onClick: function onClick() {
-                                        return _this6.closeModal();
+                                        return _this7.closeModal();
+                                    } },
+                                "cancel"
+                            )];
+                            break;
+                        case "map":
+                            modalTitle = "map editor";
+                            modalContent = React.createElement(MapEditorModal, {
+                                map: this.state.modal.map
+                            });
+                            modalAllowClose = false;
+                            // modalAllowScroll = false;
+                            modalButtons.right = [React.createElement(
+                                "button",
+                                { key: "save", onClick: function onClick() {
+                                        return _this7.saveMap();
+                                    } },
+                                "save"
+                            ), React.createElement(
+                                "button",
+                                { key: "cancel", onClick: function onClick() {
+                                        return _this7.closeModal();
                                     } },
                                 "cancel"
                             )];
@@ -5273,10 +5331,10 @@ var Dojo = function (_React$Component) {
                                 parties: this.state.parties,
                                 encounters: this.state.encounters,
                                 getMonster: function getMonster(monsterName, monsterGroupName) {
-                                    return _this6.getMonster(monsterName, _this6.getMonsterGroupByName(monsterGroupName));
+                                    return _this7.getMonster(monsterName, _this7.getMonsterGroupByName(monsterGroupName));
                                 },
                                 notify: function notify() {
-                                    return _this6.setState({ modal: _this6.state.modal });
+                                    return _this7.setState({ modal: _this7.state.modal });
                                 }
                             });
                             modalAllowClose = false;
@@ -5285,13 +5343,13 @@ var Dojo = function (_React$Component) {
                             modalButtons.right = [React.createElement(
                                 "button",
                                 { key: "start encounter", className: canClose ? "" : "disabled", onClick: function onClick() {
-                                        return _this6.startCombat();
+                                        return _this7.startCombat();
                                     } },
                                 "start encounter"
                             ), React.createElement(
                                 "button",
                                 { key: "cancel", onClick: function onClick() {
-                                        return _this6.closeModal();
+                                        return _this7.closeModal();
                                     } },
                                 "cancel"
                             )];
@@ -5302,10 +5360,10 @@ var Dojo = function (_React$Component) {
                                 combat: this.state.modal.combat,
                                 encounters: this.state.encounters,
                                 getMonster: function getMonster(monsterName, monsterGroupName) {
-                                    return _this6.getMonster(monsterName, _this6.getMonsterGroupByName(monsterGroupName));
+                                    return _this7.getMonster(monsterName, _this7.getMonsterGroupByName(monsterGroupName));
                                 },
                                 notify: function notify() {
-                                    return _this6.setState({ modal: _this6.state.modal });
+                                    return _this7.setState({ modal: _this7.state.modal });
                                 }
                             });
                             modalAllowClose = false;
@@ -5314,13 +5372,13 @@ var Dojo = function (_React$Component) {
                             modalButtons.right = [React.createElement(
                                 "button",
                                 { key: "add wave", className: canClose ? "" : "disabled", onClick: function onClick() {
-                                        return _this6.addWaveToCombat();
+                                        return _this7.addWaveToCombat();
                                     } },
                                 "add wave"
                             ), React.createElement(
                                 "button",
                                 { key: "cancel", onClick: function onClick() {
-                                        return _this6.closeModal();
+                                        return _this7.closeModal();
                                     } },
                                 "cancel"
                             )];
@@ -5342,7 +5400,7 @@ var Dojo = function (_React$Component) {
                                     modalTitle
                                 ),
                                 modalAllowClose ? React.createElement("img", { className: "image", src: "resources/images/close-black.svg", onClick: function onClick() {
-                                        return _this6.closeModal();
+                                        return _this7.closeModal();
                                     } }) : null
                             ),
                             React.createElement(
@@ -5375,10 +5433,10 @@ var Dojo = function (_React$Component) {
                         actions: actions,
                         blur: modal !== null,
                         openHome: function openHome() {
-                            return _this6.setView("home");
+                            return _this7.setView("home");
                         },
                         openAbout: function openAbout() {
-                            return _this6.openAbout();
+                            return _this7.openAbout();
                         }
                     }),
                     React.createElement(
@@ -5393,7 +5451,7 @@ var Dojo = function (_React$Component) {
                         encounters: this.state.encounters,
                         blur: modal !== null,
                         setView: function setView(view) {
-                            return _this6.setView(view);
+                            return _this7.setView(view);
                         }
                     }),
                     modal
@@ -6888,6 +6946,105 @@ var DemographicsModal = function (_React$Component) {
     }]);
 
     return DemographicsModal;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var MapEditorModal = function (_React$Component) {
+    _inherits(MapEditorModal, _React$Component);
+
+    function MapEditorModal(props) {
+        _classCallCheck(this, MapEditorModal);
+
+        var _this = _possibleConstructorReturn(this, (MapEditorModal.__proto__ || Object.getPrototypeOf(MapEditorModal)).call(this));
+
+        _this.state = {
+            monster: props.monster
+        };
+        return _this;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Helper methods
+
+    _createClass(MapEditorModal, [{
+        key: "nudgeValue",
+        value: function nudgeValue(field, delta) {
+            var source = this.state.monster;
+            var value = null;
+            var tokens = field.split(".");
+            tokens.forEach(function (token) {
+                if (token === tokens[tokens.length - 1]) {
+                    value = source[token];
+                } else {
+                    source = source[token];
+                }
+            });
+
+            var newValue = value + delta;
+            this.changeValue(field, newValue);
+        }
+    }, {
+        key: "changeValue",
+        value: function changeValue(field, value) {
+            var _this2 = this;
+
+            var notify = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+
+            var source = this.state.monster;
+            var tokens = field.split(".");
+            tokens.forEach(function (token) {
+                if (token === tokens[tokens.length - 1]) {
+                    source[token] = value;
+
+                    if (notify) {
+                        _this2.setState({
+                            monster: _this2.state.monster
+                        });
+                    }
+                } else {
+                    source = source[token];
+                }
+            });
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    }, {
+        key: "render",
+        value: function render() {
+            try {
+                return React.createElement(
+                    "div",
+                    { className: "about" },
+                    React.createElement(
+                        "div",
+                        { className: "row" },
+                        React.createElement(
+                            "div",
+                            { className: "columns small-12 medium-12 large-12 list-column" },
+                            React.createElement(
+                                "div",
+                                { className: "heading" },
+                                "X"
+                            )
+                        )
+                    )
+                );
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return MapEditorModal;
 }(React.Component);
 "use strict";
 
@@ -10527,6 +10684,9 @@ var MapBuilderScreen = function (_React$Component) {
                             selection: this.props.selection,
                             changeValue: function changeValue(type, value) {
                                 return _this2.props.changeValue(_this2.props.selection, type, value);
+                            },
+                            editMap: function editMap() {
+                                return _this2.props.editMap();
                             },
                             removeMap: function removeMap() {
                                 return _this2.props.removeMap();

@@ -708,8 +708,29 @@ class Dojo extends React.Component {
         });
     }
 
+    editMap() {
+        var map = this.getMap(this.state.selectedMapID);
+        var copy = JSON.parse(JSON.stringify(map));
+        this.setState({
+            modal: {
+                type: "map",
+                map: copy
+            }
+        });
+    }
+
+    saveMap() {
+        var original = this.state.maps.find(m => m.id === this.state.modal.map.id);
+        var index = this.state.maps.indexOf(original);
+        this.state.maps[index] = this.state.modal.map;
+        this.setState({
+            maps: this.state.maps,
+            modal: null
+        });
+    }
+
     removeMap() {
-        var map = this.getEncounter(this.state.selectedMapID);
+        var map = this.getMap(this.state.selectedMapID);
         var index = this.state.maps.indexOf(map);
         this.state.maps.splice(index, 1);
 
@@ -1460,7 +1481,8 @@ class Dojo extends React.Component {
                             showHelp={this.state.options.showHelp}
                             selectMap={map => this.selectMap(map)}
                             addMap={name => this.addMap(name)}
-                            removeMap={map => this.removeMap(map)}
+                            editMap={() => this.editMap()}
+                            removeMap={() => this.removeMap()}
                             nudgeValue={(source, type, delta) => this.nudgeValue(source, type, delta)}
                             changeValue={(source, type, value) => this.changeValue(source, type, value)}
                         />
@@ -1571,6 +1593,20 @@ class Dojo extends React.Component {
                         ];
                         modalButtons.right = [
                             <button key="save" onClick={() => this.saveMonster()}>save</button>,
+                            <button key="cancel" onClick={() => this.closeModal()}>cancel</button>
+                        ];
+                        break;
+                    case "map":
+                        modalTitle = "map editor";
+                        modalContent = (
+                            <MapEditorModal
+                                map={this.state.modal.map}
+                            />
+                        );
+                        modalAllowClose = false;
+                        // modalAllowScroll = false;
+                        modalButtons.right = [
+                            <button key="save" onClick={() => this.saveMap()}>save</button>,
                             <button key="cancel" onClick={() => this.closeModal()}>cancel</button>
                         ];
                         break;

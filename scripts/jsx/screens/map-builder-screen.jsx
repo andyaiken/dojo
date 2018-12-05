@@ -28,6 +28,7 @@ class MapBuilderScreen extends React.Component {
                         <MapCard
                             selection={this.props.selection}
                             changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
+                            editMap={() => this.props.editMap()}
                             removeMap={() => this.props.removeMap()}
                         />
                     </div>

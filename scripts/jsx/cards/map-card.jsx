@@ -18,6 +18,7 @@ class MapCard extends React.Component {
                         </div>
                         <div className="divider"></div>
                         <div className="section">
+                            <button onClick={() => this.props.editMap()}>edit map</button>
                             <ConfirmButton text="delete map" callback={() => this.props.removeMap()} />
                         </div>
                     </div>
