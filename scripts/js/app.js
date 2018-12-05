@@ -4301,7 +4301,7 @@ var Dojo = function (_React$Component) {
             var map = {
                 id: guid(),
                 name: name,
-                tiles: []
+                items: []
             };
 
             var folio = this.getMapFolio(this.state.selectedMapFolioID);
@@ -5419,7 +5419,7 @@ var Dojo = function (_React$Component) {
                                 map: this.state.modal.map
                             });
                             modalAllowClose = false;
-                            // modalAllowScroll = false;
+                            modalAllowScroll = false;
                             modalButtons.right = [React.createElement(
                                 "button",
                                 { key: "save", onClick: function onClick() {
@@ -7152,19 +7152,11 @@ var MapEditorModal = function (_React$Component) {
             try {
                 return React.createElement(
                     "div",
-                    { className: "about" },
-                    React.createElement(
-                        "div",
-                        { className: "row" },
-                        React.createElement(
-                            "div",
-                            { className: "columns small-12 medium-12 large-12 list-column" },
-                            React.createElement(MapPanel, {
-                                map: this.props.map,
-                                mode: "edit"
-                            })
-                        )
-                    )
+                    { className: "map-editor" },
+                    React.createElement(MapPanel, {
+                        map: this.props.map,
+                        mode: "edit"
+                    })
                 );
             } catch (e) {
                 console.error(e);
@@ -9494,17 +9486,94 @@ var MapPanel = function (_React$Component) {
     }
 
     _createClass(MapPanel, [{
+        key: "getMapDimensions",
+        value: function getMapDimensions() {
+            // Calculate map dimensions
+            return {
+                minX: 0,
+                maxX: 0,
+                minY: 0,
+                maxY: 0,
+                width: function width() {
+                    return 1 + maxX - minX;
+                },
+                height: function height() {
+                    return 1 + maxY - minY;
+                }
+            };
+        }
+    }, {
+        key: "getLocation",
+        value: function getLocation(mapItem) {
+            // TODO: Translate tile location to canvas location
+            return {
+                left: 0,
+                right: 1,
+                top: 0,
+                bottom: 1
+            };
+        }
+    }, {
         key: "render",
         value: function render() {
             try {
+
+                // TODO: Find the dimensions of the map
+                var mapDimensions = this.getMapDimensions();
+
+                // TODO: Build the grid squares
+                var grid = [];
+
+                var tiles = this.props.map.items.filter(function (i) {
+                    return i.type === "tile";
+                }).map(function (i) {
+                    // TODO: Draw tile
+                    return React.createElement(
+                        "div",
+                        { className: "tile" },
+                        i.type
+                    );
+                });
+
+                var tokens = this.props.map.items.filter(function (i) {
+                    return i.type === "token";
+                }).map(function (i) {
+                    // TODO: Draw token
+                    return React.createElement(
+                        "div",
+                        { className: "token" },
+                        i.type
+                    );
+                });
+
+                var tools = null;
+                switch (this.props.mode) {
+                    case "view":
+                        // No tools in view mode
+                        break;
+                    case "edit":
+                        // TODO: Draw tools
+                        // If no selection: tiles you can drag onto the map
+                        // If selection: allow editing the selection
+                        break;
+                    case "combat":
+                        // TODO: Draw tools
+                        // If no selection: combatants that aren't on the map
+                        // If selection: allow editing the selection
+                        break;
+                }
+
                 return React.createElement(
                     "div",
-                    { className: "map-panel" },
+                    { className: "map-panel " + this.props.mode },
                     React.createElement(
                         "div",
-                        null,
-                        "MAP PANEL"
-                    )
+                        { className: "tileContainer" },
+                        grid,
+                        tiles,
+                        tokens
+                    ),
+                    tools
                 );
             } catch (e) {
                 console.error(e);

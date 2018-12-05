@@ -536,6 +536,11 @@ body,
             .modal .modal-content .monster-help .value-list .column .bar-container .bar {
               height: 100%;
               background-color: #3c78dc; }
+    .modal .modal-content .map-editor {
+      height: 100%;
+      padding: 15px 0; }
+      .modal .modal-content .map-editor .map-panel {
+        height: 100%; }
   .modal .modal-footer {
     height: 42px;
     background-color: gainsboro;
@@ -581,3 +586,9 @@ body,
       width: 90px;
       display: inline-block;
       margin: 0 3px; }
+
+.map-panel {
+  min-height: 100px;
+  padding: 20px; }
+  .map-panel.edit {
+    background-color: lightblue; }

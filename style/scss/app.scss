@@ -797,6 +797,15 @@ body,
                 }
             }
         }
+
+        .map-editor {
+            height: 100%;
+            padding: 15px 0;
+
+            .map-panel {
+                height: 100%;
+            }
+        }
     }
     
     .modal-footer {
@@ -864,5 +873,16 @@ body,
             display: inline-block;
             margin: 0 3px;
         }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+.map-panel {
+    min-height: 100px;
+    padding: 20px;
+
+    &.edit {
+        background-color: lightblue;
     }
 }

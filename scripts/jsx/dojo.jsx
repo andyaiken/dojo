@@ -724,7 +724,7 @@ class Dojo extends React.Component {
         var map = {
             id: guid(),
             name: name,
-            tiles: []
+            items: []
         };
 
         var folio = this.getMapFolio(this.state.selectedMapFolioID);
@@ -1631,7 +1631,7 @@ class Dojo extends React.Component {
                             />
                         );
                         modalAllowClose = false;
-                        // modalAllowScroll = false;
+                        modalAllowScroll = false;
                         modalButtons.right = [
                             <button key="save" onClick={() => this.saveMap()}>save</button>,
                             <button key="cancel" onClick={() => this.closeModal()}>cancel</button>

@@ -48,15 +48,11 @@ class MapEditorModal extends React.Component {
     render() {
         try {
             return (
-                <div className="about">
-                    <div className="row">
-                        <div className="columns small-12 medium-12 large-12 list-column">
-                            <MapPanel
-                                map={this.props.map}
-                                mode="edit"
-                            />
-                        </div>
-                    </div>
+                <div className="map-editor">
+                    <MapPanel
+                        map={this.props.map}
+                        mode="edit"
+                    />
                 </div>
             );
         } catch (e) {
