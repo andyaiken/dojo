@@ -588,18 +588,39 @@ body,
       margin: 0 3px; }
 
 .map-panel {
-  min-height: 100px;
-  padding: 20px; }
-  .map-panel.edit {
-    background-color: lightblue; }
+  padding: 5px; }
+  .map-panel .tools {
+    display: inline-block;
+    max-height: 100%;
+    vertical-align: top;
+    overflow: auto;
+    width: 250px;
+    padding-right: 20px; }
   .map-panel .grid {
-    position: relative; }
+    position: relative;
+    overflow: auto; }
     .map-panel .grid .grid-square {
       position: absolute;
-      border: 1px solid white; }
+      border: 1px solid white;
+      background-color: blue;
+      opacity: 0.1; }
   .map-panel .tile {
+    position: absolute;
+    border: 1px solid darkgrey;
     background-color: lightgrey; }
   .map-panel .token {
-    background-color: black;
-    border: 1px solid black;
+    position: absolute;
+    border: 1px solid white;
     border-radius: 50%; }
+    .map-panel .token.monster {
+      background-color: #650000; }
+    .map-panel .token.pc {
+      background-color: #006500; }
+  .map-panel.thumbnail .grid {
+    max-height: 200px; }
+  .map-panel.edit .grid,
+  .map-panel.combat .grid {
+    display: inline-block;
+    vertical-align: top;
+    max-height: 100%;
+    width: calc(100% - 250px); }

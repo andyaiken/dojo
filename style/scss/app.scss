@@ -879,29 +879,60 @@ body,
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 .map-panel {
-    min-height: 100px;
-    padding: 20px;
+    padding: 5px;
 
-    &.edit {
-        background-color: lightblue;
+    .tools {
+        display: inline-block;
+        max-height: 100%;
+        vertical-align: top;
+        overflow: auto;
+        width: 250px;
+        padding-right: 20px;
     }
 
     .grid {
         position: relative;
+        overflow: auto;
 
         .grid-square {
             position: absolute;
             border: 1px solid white;
+            background-color: blue;
+            opacity: 0.1;
         }
     }
 
     .tile {
+        position: absolute;
+        border: 1px solid darkgrey;
         background-color: lightgrey;
     }
 
     .token {
-        background-color: black;
-        border: 1px solid black;
+        position: absolute;
+        border: 1px solid white;
         border-radius: 50%;
+
+        &.monster {
+            background-color: #650000;
+        }
+
+        &.pc {
+            background-color: #006500;
+        }
+    }
+
+    &.thumbnail .grid {
+        max-height: 200px;
+    }
+
+    &.edit .grid,
+    &.combat .grid {
+        display: inline-block;
+        vertical-align: top;
+        max-height: 100%;
+        width: calc(100% - 250px);
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
