@@ -408,6 +408,9 @@ body,
   margin: 5px 0; }
   .section.centered {
     text-align: center; }
+  .section.side-by-side > * {
+    display: inline-block;
+    margin-right: 5px; }
   .section .ability-scores {
     margin: 10px 0;
     padding: 5px 0;
@@ -593,7 +596,7 @@ body,
     display: inline-block;
     max-height: 100%;
     vertical-align: top;
-    overflow: auto;
+    overflow-y: auto;
     width: 250px;
     padding-right: 20px; }
   .map-panel .grid {
@@ -602,12 +605,14 @@ body,
     .map-panel .grid .grid-square {
       position: absolute;
       border: 1px solid white;
-      background-color: blue;
-      opacity: 0.1; }
+      background-color: rgba(0, 60, 200, 0.2); }
   .map-panel .tile {
     position: absolute;
     border: 1px solid darkgrey;
     background-color: lightgrey; }
+    .map-panel .tile.selected {
+      border-color: #3c78dc;
+      border-width: 2px; }
   .map-panel .token {
     position: absolute;
     border: 1px solid white;
@@ -616,6 +621,9 @@ body,
       background-color: #650000; }
     .map-panel .token.pc {
       background-color: #006500; }
+    .map-panel .token.selected {
+      border-color: #3c78dc;
+      border-width: 2px; }
   .map-panel.thumbnail .grid {
     max-height: 200px; }
   .map-panel.edit .grid,
@@ -624,3 +632,7 @@ body,
     vertical-align: top;
     max-height: 100%;
     width: calc(100% - 250px); }
+  .map-panel.edit .tile:hover {
+    border-color: #3c78dc; }
+  .map-panel.combat .token:hover {
+    border-color: #3c78dc; }

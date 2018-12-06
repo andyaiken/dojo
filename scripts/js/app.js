@@ -3192,6 +3192,99 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /*
+<Radial
+    click={dir => console.log(dir)}
+    inverted=BOOLEAN
+    disabled-BOOLEAN
+/>
+*/
+
+var Radial = function (_React$Component) {
+    _inherits(Radial, _React$Component);
+
+    function Radial() {
+        _classCallCheck(this, Radial);
+
+        return _possibleConstructorReturn(this, (Radial.__proto__ || Object.getPrototypeOf(Radial)).apply(this, arguments));
+    }
+
+    _createClass(Radial, [{
+        key: "click",
+        value: function click(e, dir) {
+            e.stopPropagation();
+            this.props.click(dir);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                var style = "radial";
+                if (this.props.inverted) {
+                    style += " inverted";
+                }
+                if (this.props.disabled) {
+                    style += " disabled";
+                }
+
+                return React.createElement(
+                    "div",
+                    { className: style },
+                    React.createElement("div", { className: "empty" }),
+                    React.createElement(
+                        "div",
+                        { className: "btn n", onClick: function onClick(e) {
+                                return _this2.click(e, "N");
+                            } },
+                        React.createElement("img", { src: "resources/images/down-arrow-black.svg" })
+                    ),
+                    React.createElement("div", { className: "empty" }),
+                    React.createElement(
+                        "div",
+                        { className: "btn w", onClick: function onClick(e) {
+                                return _this2.click(e, "W");
+                            } },
+                        React.createElement("img", { src: "resources/images/down-arrow-black.svg" })
+                    ),
+                    React.createElement("div", { className: "empty" }),
+                    React.createElement(
+                        "div",
+                        { className: "btn e", onClick: function onClick(e) {
+                                return _this2.click(e, "E");
+                            } },
+                        React.createElement("img", { src: "resources/images/down-arrow-black.svg" })
+                    ),
+                    React.createElement("div", { className: "empty" }),
+                    React.createElement(
+                        "div",
+                        { className: "btn s", onClick: function onClick(e) {
+                                return _this2.click(e, "S");
+                            } },
+                        React.createElement("img", { src: "resources/images/down-arrow-black.svg" })
+                    ),
+                    React.createElement("div", { className: "empty" })
+                );
+            } catch (ex) {
+                console.error(ex);
+                return null;
+            }
+        }
+    }]);
+
+    return Radial;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/*
 var options = [
     {
         id: "one",
@@ -9478,11 +9571,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /*
 Map item is: {
-    type: tile | monster | pc
+    id: id,
+    type: tile | monster | pc,
     x: number,
     y: number,
     width: number,
-    height: number,
+    height: number
 }
 */
 
@@ -9495,25 +9589,144 @@ var MapPanel = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (MapPanel.__proto__ || Object.getPrototypeOf(MapPanel)).call(this));
 
         _this.state = {
-            map: props.map
+            map: props.map,
+            selectedItemID: null
         };
         return _this;
     }
 
     _createClass(MapPanel, [{
+        key: "setSelectedItem",
+        value: function setSelectedItem(id) {
+            this.setState({
+                selectedItemID: id
+            });
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Map manipulation methods
+
+    }, {
+        key: "getMapItem",
+        value: function getMapItem(id) {
+            return this.state.map.items.find(function (i) {
+                return i.id === id;
+            });
+        }
+    }, {
+        key: "removeMapItem",
+        value: function removeMapItem(item) {
+            var index = this.state.map.items.indexOf(item);
+            this.state.map.items.splice(index, 1);
+
+            this.setState({
+                map: this.state.map,
+                selectedItemID: null
+            });
+        }
+    }, {
+        key: "moveMapItem",
+        value: function moveMapItem(item, dir) {
+            switch (dir) {
+                case "N":
+                    item.y -= 1;
+                    break;
+                case "E":
+                    item.x += 1;
+                    break;
+                case "S":
+                    item.y += 1;
+                    break;
+                case "W":
+                    item.x -= 1;
+                    break;
+            }
+
+            this.setState({
+                map: this.state.map
+            });
+        }
+    }, {
+        key: "bigMapItem",
+        value: function bigMapItem(item, dir) {
+            switch (dir) {
+                case "N":
+                    item.y -= 1;
+                    item.height += 1;
+                    break;
+                case "E":
+                    item.width += 1;
+                    break;
+                case "S":
+                    item.height += 1;
+                    break;
+                case "W":
+                    item.x -= 1;
+                    item.width += 1;
+                    break;
+            }
+
+            this.setState({
+                map: this.state.map
+            });
+        }
+    }, {
+        key: "smallMapItem",
+        value: function smallMapItem(item, dir) {
+            switch (dir) {
+                case "N":
+                    if (item.height > 1) {
+                        item.y += 1;
+                        item.height -= 1;
+                    }
+                    break;
+                case "E":
+                    if (item.width > 1) {
+                        item.width -= 1;
+                    }
+                    break;
+                case "S":
+                    if (item.height > 1) {
+                        item.height -= 1;
+                    }
+                    break;
+                case "W":
+                    if (item.width > 1) {
+                        item.x += 1;
+                        item.width -= 1;
+                    }
+                    break;
+            }
+
+            this.setState({
+                map: this.state.map
+            });
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Rendering helper methods
+
+    }, {
         key: "getMapDimensions",
         value: function getMapDimensions() {
+            var _this2 = this;
+
             var border = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
             var dimensions = null;
 
-            this.state.map.items.forEach(function (i) {
+            this.state.map.items.filter(function (i) {
+                if (_this2.props.mode === "edit") {
+                    return i.type === "tile";
+                }
+                return true;
+            }).forEach(function (i) {
                 if (!dimensions) {
                     dimensions = {
                         minX: i.x,
-                        maxX: i.x,
+                        maxX: i.x + i.width - 1,
                         minY: i.y,
-                        maxY: i.y
+                        maxY: i.y + i.height - 1
                     };
                 } else {
                     dimensions.minX = Math.min(dimensions.minX, i.x);
@@ -9559,38 +9772,48 @@ var MapPanel = function (_React$Component) {
                 height: "calc(" + sideLength + "px * " + height + ")"
             };
         }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Rendering methods
+
     }, {
         key: "render",
         value: function render() {
-            var _this2 = this;
+            var _this3 = this;
 
             try {
                 // TEMP
-                this.state.map.items = [{
-                    type: "tile",
-                    x: 0,
-                    y: 0,
-                    width: 10,
-                    height: 5
-                }, {
-                    type: "tile",
-                    x: 10,
-                    y: 0,
-                    width: 2,
-                    height: 10
-                }, {
-                    type: "monster",
-                    x: 2,
-                    y: 2,
-                    width: 2,
-                    height: 2
-                }, {
-                    type: "pc",
-                    x: 4,
-                    y: 2,
-                    width: 1,
-                    height: 1
-                }];
+                if (this.state.map.items.length === 0) {
+                    this.state.map.items = [{
+                        id: "1",
+                        type: "tile",
+                        x: 0,
+                        y: 0,
+                        width: 10,
+                        height: 5
+                    }, {
+                        id: "2",
+                        type: "tile",
+                        x: 10,
+                        y: 0,
+                        width: 2,
+                        height: 10
+                    }, {
+                        id: "3",
+                        type: "monster",
+                        x: 2,
+                        y: 2,
+                        width: 2,
+                        height: 2
+                    }, {
+                        id: "4",
+                        type: "pc",
+                        x: 4,
+                        y: 2,
+                        width: 1,
+                        height: 1
+                    }];
+                }
 
                 var border = 2;
                 var mapDimensions = this.getMapDimensions(border);
@@ -9601,7 +9824,12 @@ var MapPanel = function (_React$Component) {
                     for (var x = mapDimensions.minX; x !== mapDimensions.maxX + 1; ++x) {
                         for (var y = mapDimensions.minY; y !== mapDimensions.maxY + 1; ++y) {
                             var pos = this.getPosition(x, y, 1, 1, mapDimensions);
-                            grid.push(React.createElement("div", { className: "grid-square", style: pos }));
+                            grid.push(React.createElement("div", {
+                                className: "grid-square",
+                                style: pos,
+                                onClick: function onClick() {
+                                    return _this3.setSelectedItem(null);
+                                } }));
                         }
                     }
                 }
@@ -9610,8 +9838,14 @@ var MapPanel = function (_React$Component) {
                 var tiles = this.state.map.items.filter(function (i) {
                     return i.type === "tile";
                 }).map(function (i) {
-                    var pos = _this2.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
-                    return React.createElement("div", { className: "tile", style: pos });
+                    var pos = _this3.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
+                    var style = _this3.state.selectedItemID === i.id ? "tile selected" : "tile";
+                    return React.createElement("div", {
+                        className: style,
+                        style: pos,
+                        onClick: function onClick() {
+                            return _this3.props.mode === "edit" ? _this3.setSelectedItem(i.id) : null;
+                        } });
                 });
 
                 // Draw the tokens
@@ -9620,8 +9854,14 @@ var MapPanel = function (_React$Component) {
                     tokens = this.state.map.items.filter(function (i) {
                         return i.type === "monster" || i.type === "pc";
                     }).map(function (i) {
-                        var pos = _this2.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
-                        return React.createElement("div", { className: "token " + i.type, style: pos });
+                        var pos = _this3.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
+                        var style = (_this3.state.selectedItemID === i.id ? "token selected" : "token") + " " + i.type;
+                        return React.createElement("div", {
+                            className: style,
+                            style: pos,
+                            onClick: function onClick() {
+                                return _this3.props.mode === "combat" ? _this3.setSelectedItem(i.id) : null;
+                            } });
                     });
                 }
 
@@ -9632,32 +9872,135 @@ var MapPanel = function (_React$Component) {
                         // No tools in thumbnail mode
                         break;
                     case "edit":
-                        // TODO: Draw tools
-                        // If no selection: tiles you can drag onto the map
-                        // If selection: allow editing the selection
-                        tools = React.createElement(
-                            "div",
-                            { className: "tools" },
-                            React.createElement(
+                        if (this.state.selectedItemID) {
+                            var item = this.getMapItem(this.state.selectedItemID);
+                            tools = React.createElement(
                                 "div",
-                                { className: "heading" },
-                                "tools"
-                            )
-                        );
+                                { className: "tools" },
+                                React.createElement(
+                                    "div",
+                                    { className: "heading" },
+                                    "selected tile"
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "subheading" },
+                                    "size"
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "section" },
+                                    item.width,
+                                    " sq x ",
+                                    item.height,
+                                    " sq"
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "section" },
+                                    item.width * 5,
+                                    " ft x ",
+                                    item.height * 5,
+                                    " ft"
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "subheading" },
+                                    "move"
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "section" },
+                                    React.createElement(Radial, {
+                                        click: function click(dir) {
+                                            return _this3.moveMapItem(item, dir);
+                                        }
+                                    })
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "subheading" },
+                                    "resize"
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "section side-by-side" },
+                                    React.createElement(Radial, {
+                                        click: function click(dir) {
+                                            return _this3.bigMapItem(item, dir);
+                                        }
+                                    }),
+                                    React.createElement(Radial, {
+                                        inverted: true,
+                                        click: function click(dir) {
+                                            return _this3.smallMapItem(item, dir);
+                                        }
+                                    })
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "subheading" },
+                                    "rotate"
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "section" },
+                                    "anti-clockwise | clockwise"
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "subheading" },
+                                    "remove"
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "section" },
+                                    React.createElement(
+                                        "button",
+                                        { onClick: function onClick() {
+                                                return _this3.removeMapItem(item);
+                                            } },
+                                        "remove tile"
+                                    )
+                                )
+                            );
+                        } else {
+                            // TODO: Tiles you can drag onto the map
+                            tools = React.createElement(
+                                "div",
+                                { className: "tools" },
+                                React.createElement(
+                                    "div",
+                                    { className: "heading" },
+                                    "tools"
+                                )
+                            );
+                        }
                         break;
                     case "combat":
-                        // TODO: Draw tools
-                        // If no selection: combatants that aren't on the map
-                        // If selection: allow editing the selection
-                        tools = React.createElement(
-                            "div",
-                            { className: "tools" },
-                            React.createElement(
+                        if (this.state.selectedItemID) {
+                            // TODO: Allow editing the selection
+                            tools = React.createElement(
                                 "div",
-                                { className: "heading" },
-                                "tools"
-                            )
-                        );
+                                { className: "tools" },
+                                React.createElement(
+                                    "div",
+                                    { className: "heading" },
+                                    "tools"
+                                )
+                            );
+                        } else {
+                            // TODO: Combatants that aren't on the map
+                            tools = React.createElement(
+                                "div",
+                                { className: "tools" },
+                                React.createElement(
+                                    "div",
+                                    { className: "heading" },
+                                    "tools"
+                                )
+                            );
+                        }
                         break;
                 }
 
@@ -10934,6 +11277,11 @@ var HomeScreen = function (_React$Component) {
                                                     "li",
                                                     null,
                                                     "create encounters of just the right difficulty for your players"
+                                                ),
+                                                React.createElement(
+                                                    "li",
+                                                    null,
+                                                    "design intricate tactical maps"
                                                 ),
                                                 React.createElement(
                                                     "li",

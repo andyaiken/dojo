@@ -1,10 +1,11 @@
 /*
 Map item is: {
-    type: tile | monster | pc
+    id: id,
+    type: tile | monster | pc,
     x: number,
     y: number,
     width: number,
-    height: number,
+    height: number
 }
 */
 
@@ -12,20 +13,127 @@ class MapPanel extends React.Component {
     constructor(props) {
         super();
         this.state = {
-            map: props.map
+            map: props.map,
+            selectedItemID: null
         };
     }
+
+    setSelectedItem(id) {
+        this.setState({
+            selectedItemID: id
+        });
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Map manipulation methods
+
+    getMapItem(id) {
+        return this.state.map.items.find(i => i.id === id);
+    }
+
+    removeMapItem(item) {
+        var index = this.state.map.items.indexOf(item);
+        this.state.map.items.splice(index, 1);
+
+        this.setState({
+            map: this.state.map,
+            selectedItemID: null
+        });
+    }
+
+    moveMapItem(item, dir) {
+        switch (dir) {
+            case "N":
+                item.y -= 1;
+                break;
+            case "E":
+                item.x += 1;
+                break;
+            case "S":
+                item.y += 1;
+                break;
+            case "W":
+                item.x -= 1;
+                break;
+        }
+
+        this.setState({
+            map: this.state.map
+        });
+    }
+
+    bigMapItem(item, dir) {
+        switch (dir) {
+            case "N":
+                item.y -= 1;
+                item.height += 1;
+                break;
+            case "E":
+                item.width += 1;
+                break;
+            case "S":
+                item.height += 1;
+                break;
+            case "W":
+                item.x -= 1;
+                item.width += 1;
+                break;
+        }
+
+        this.setState({
+            map: this.state.map
+        });
+    }
+
+    smallMapItem(item, dir) {
+        switch (dir) {
+            case "N":
+                if (item.height > 1) {
+                    item.y += 1;
+                    item.height -= 1;
+                }
+                break;
+            case "E":
+                if (item.width > 1) {
+                    item.width -= 1;
+                }
+                break;
+            case "S":
+                if (item.height > 1) {
+                    item.height -= 1;
+                }
+                break;
+            case "W":
+                if (item.width > 1) {
+                    item.x += 1;
+                    item.width -= 1;
+                }
+                break;
+        }
+
+        this.setState({
+            map: this.state.map
+        });
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Rendering helper methods
 
     getMapDimensions(border = 1) {
         var dimensions = null;
 
-        this.state.map.items.forEach(i => {
+        this.state.map.items.filter(i => {
+            if (this.props.mode === "edit") {
+                return i.type === "tile";
+            }
+            return true;
+        }).forEach(i => {
             if (!dimensions) {
                 dimensions = {
                     minX: i.x,
-                    maxX: i.x,
+                    maxX: i.x + i.width - 1,
                     minY: i.y,
-                    maxY: i.y
+                    maxY: i.y + i.height - 1
                 };
             } else {
                 dimensions.minX = Math.min(dimensions.minX, i.x);
@@ -70,36 +178,45 @@ class MapPanel extends React.Component {
         };
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Rendering methods
+
     render() {
         try {
             // TEMP
-            this.state.map.items = [
-                {
-                    type: "tile",
-                    x: 0,
-                    y: 0,
-                    width: 10,
-                    height: 5,
-                }, {
-                    type: "tile",
-                    x: 10,
-                    y: 0,
-                    width: 2,
-                    height: 10,
-                }, {
-                    type: "monster",
-                    x: 2,
-                    y: 2,
-                    width: 2,
-                    height: 2,
-                }, {
-                    type: "pc",
-                    x: 4,
-                    y: 2,
-                    width: 1,
-                    height: 1,
-                }
-            ];
+            if (this.state.map.items.length === 0) {
+                this.state.map.items = [
+                    {
+                        id: "1",
+                        type: "tile",
+                        x: 0,
+                        y: 0,
+                        width: 10,
+                        height: 5,
+                    }, {
+                        id: "2",
+                        type: "tile",
+                        x: 10,
+                        y: 0,
+                        width: 2,
+                        height: 10,
+                    }, {
+                        id: "3",
+                        type: "monster",
+                        x: 2,
+                        y: 2,
+                        width: 2,
+                        height: 2,
+                    }, {
+                        id: "4",
+                        type: "pc",
+                        x: 4,
+                        y: 2,
+                        width: 1,
+                        height: 1,
+                    }
+                ];
+            }
 
             var border = 2;
             var mapDimensions = this.getMapDimensions(border);
@@ -111,7 +228,11 @@ class MapPanel extends React.Component {
                     for (var y = mapDimensions.minY; y !== mapDimensions.maxY + 1; ++y) {
                         var pos = this.getPosition(x, y, 1, 1, mapDimensions);
                         grid.push(
-                            <div className="grid-square" style={pos}></div>
+                            <div
+                                className="grid-square"
+                                style={pos}
+                                onClick={() => this.setSelectedItem(null)}>
+                            </div>
                         );
                     }
                 }
@@ -122,8 +243,13 @@ class MapPanel extends React.Component {
                 .filter(i => i.type === "tile")
                 .map(i => {
                     var pos = this.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
+                    var style = this.state.selectedItemID ===  i.id ? "tile selected" : "tile";
                     return (
-                        <div className="tile" style={pos}></div>
+                        <div
+                            className={style}
+                            style={pos}
+                            onClick={() => this.props.mode === "edit" ? this.setSelectedItem(i.id) : null}>
+                        </div>
                     );
                 });
 
@@ -134,8 +260,13 @@ class MapPanel extends React.Component {
                 .filter(i => (i.type === "monster") || (i.type === "pc"))
                 .map(i => {
                     var pos = this.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
+                    var style = (this.state.selectedItemID ===  i.id ? "token selected" : "token") + " " + i.type;
                     return (
-                        <div className={"token " + i.type} style={pos}></div>
+                        <div
+                            className={style}
+                            style={pos}
+                            onClick={() => this.props.mode === "combat" ? this.setSelectedItem(i.id) : null}>
+                        </div>
                     );
                 });
             }
@@ -147,25 +278,64 @@ class MapPanel extends React.Component {
                     // No tools in thumbnail mode
                     break
                 case "edit":
-                    // TODO: Draw tools
-                    // If no selection: tiles you can drag onto the map
-                    // If selection: allow editing the selection
-                    tools = (
-                        <div className="tools">
-                            <div className="heading">tools</div>
-                        </div>
-                    )
-                    break
+                    if (this.state.selectedItemID) {
+                        var item = this.getMapItem(this.state.selectedItemID);
+                        tools = (
+                            <div className="tools">
+                                <div className="heading">selected tile</div>
+                                <div className="subheading">size</div>
+                                <div className="section">{item.width} sq x {item.height} sq</div>
+                                <div className="section">{item.width * 5} ft x {item.height * 5} ft</div>
+                                <div className="subheading">move</div>
+                                <div className="section">
+                                    <Radial
+                                        click={dir => this.moveMapItem(item, dir)}
+                                    />
+                                </div>
+                                <div className="subheading">resize</div>
+                                <div className="section side-by-side">
+                                    <Radial
+                                        click={dir => this.bigMapItem(item, dir)}
+                                    />
+                                    <Radial
+                                        inverted={true}
+                                        click={dir => this.smallMapItem(item, dir)}
+                                    />
+                                </div>
+                                <div className="subheading">rotate</div>
+                                <div className="section">anti-clockwise | clockwise</div>
+                                <div className="subheading">remove</div>
+                                <div className="section">
+                                    <button onClick={() => this.removeMapItem(item)}>remove tile</button>
+                                </div>
+                            </div>
+                        );
+                    } else {
+                        // TODO: Tiles you can drag onto the map
+                        tools = (
+                            <div className="tools">
+                                <div className="heading">tools</div>
+                            </div>
+                        );
+                    }
+                    break;
                 case "combat":
-                    // TODO: Draw tools
-                    // If no selection: combatants that aren't on the map
-                    // If selection: allow editing the selection
-                    tools = (
-                        <div className="tools">
-                            <div className="heading">tools</div>
-                        </div>
-                    )
-                    break
+                    if (this.state.selectedItemID) {
+                        // TODO: Allow editing the selection
+                        tools = (
+                            <div className="tools">
+                                <div className="heading">tools</div>
+                            </div>
+                        );
+                    } else {
+                        // TODO: Combatants that aren't on the map
+                        tools = (
+                            <div className="tools">
+                                <div className="heading">tools</div>
+                            </div>
+                        );
+                    }
+                    break;
             }
 
             return (
