@@ -885,4 +885,23 @@ body,
     &.edit {
         background-color: lightblue;
     }
+
+    .grid {
+        position: relative;
+
+        .grid-square {
+            position: absolute;
+            border: 1px solid white;
+        }
+    }
+
+    .tile {
+        background-color: lightgrey;
+    }
+
+    .token {
+        background-color: black;
+        border: 1px solid black;
+        border-radius: 50%;
+    }
 }

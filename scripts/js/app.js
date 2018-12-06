@@ -9476,6 +9476,16 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+/*
+Tile is: {
+    type: tile | token
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+}
+*/
+
 var MapPanel = function (_React$Component) {
     _inherits(MapPanel, _React$Component);
 
@@ -9488,8 +9498,7 @@ var MapPanel = function (_React$Component) {
     _createClass(MapPanel, [{
         key: "getMapDimensions",
         value: function getMapDimensions() {
-            // Calculate map dimensions
-            return {
+            var dimensions = {
                 minX: 0,
                 maxX: 0,
                 minY: 0,
@@ -9501,33 +9510,56 @@ var MapPanel = function (_React$Component) {
                     return 1 + maxY - minY;
                 }
             };
+
+            this.props.map.items.forEach(function (i) {
+                dimensions.minX = Math.min(dimensions.minX, i.x);
+                dimensions.maxX = Math.max(dimensions.maxX, i.x);
+                dimensions.minY = Math.min(dimensions.minY, i.y);
+                dimensions.maxY = Math.max(dimensions.maxY, i.y);
+            });
+
+            return dimensions;
         }
     }, {
         key: "getLocation",
-        value: function getLocation(mapItem) {
+        value: function getLocation(x, y, width, height, mapDimensions) {
             // TODO: Translate tile location to canvas location
             return {
                 left: 0,
-                right: 1,
                 top: 0,
-                bottom: 1
+                width: "5px",
+                height: "5px"
             };
         }
     }, {
         key: "render",
         value: function render() {
-            try {
+            var _this2 = this;
 
+            try {
                 // TODO: Find the dimensions of the map
                 var mapDimensions = this.getMapDimensions();
 
                 // TODO: Build the grid squares
                 var grid = [];
+                for (var x = mapDimensions.minX; x !== mapDimensions.maxX + 1; ++x) {
+                    for (var y = mapDimensions.minY; y !== mapDimensions.maxY + 1; ++y) {
+                        var loc = this.getLocation(x, y, 1, 1);
+                        grid.push(React.createElement(
+                            "div",
+                            { className: "grid-square", style: loc },
+                            x,
+                            ", ",
+                            y
+                        ));
+                    }
+                }
 
                 var tiles = this.props.map.items.filter(function (i) {
                     return i.type === "tile";
                 }).map(function (i) {
                     // TODO: Draw tile
+                    var loc = _this2.getLocation(i.x, i.y, i.width, i.height);
                     return React.createElement(
                         "div",
                         { className: "tile" },
@@ -9539,6 +9571,7 @@ var MapPanel = function (_React$Component) {
                     return i.type === "token";
                 }).map(function (i) {
                     // TODO: Draw token
+                    var loc = _this2.getLocation(i.x, i.y, i.width, i.height);
                     return React.createElement(
                         "div",
                         { className: "token" },
@@ -9568,7 +9601,7 @@ var MapPanel = function (_React$Component) {
                     { className: "map-panel " + this.props.mode },
                     React.createElement(
                         "div",
-                        { className: "tileContainer" },
+                        { className: "grid" },
                         grid,
                         tiles,
                         tokens

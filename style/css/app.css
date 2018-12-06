@@ -592,3 +592,14 @@ body,
   padding: 20px; }
   .map-panel.edit {
     background-color: lightblue; }
+  .map-panel .grid {
+    position: relative; }
+    .map-panel .grid .grid-square {
+      position: absolute;
+      border: 1px solid white; }
+  .map-panel .tile {
+    background-color: lightgrey; }
+  .map-panel .token {
+    background-color: black;
+    border: 1px solid black;
+    border-radius: 50%; }
