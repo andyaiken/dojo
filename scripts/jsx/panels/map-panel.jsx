@@ -31,13 +31,20 @@ class MapPanel extends React.Component {
         return this.state.map.items.find(i => i.id === id);
     }
 
-    removeMapItem(item) {
-        var index = this.state.map.items.indexOf(item);
-        this.state.map.items.splice(index, 1);
+    addMapItem(x, y) {
+        var item = {
+            id: guid(),
+            type: "tile",
+            x: x,
+            y: y,
+            width: 4,
+            height: 4
+        };
+        this.state.map.items.push(item);
 
         this.setState({
             map: this.state.map,
-            selectedItemID: null
+            selectedItemID: item.id
         });
     }
 
@@ -116,6 +123,29 @@ class MapPanel extends React.Component {
         });
     }
 
+    cloneMapItem(item) {
+        var copy = JSON.parse(JSON.stringify(item));
+        copy.id = guid();
+        copy.x += 1;
+        copy.y += 1;
+        this.state.map.items.push(copy);
+
+        this.setState({
+            map: this.state.map,
+            selectedItemID: copy.id
+        });
+    }
+
+    removeMapItem(item) {
+        var index = this.state.map.items.indexOf(item);
+        this.state.map.items.splice(index, 1);
+
+        this.setState({
+            map: this.state.map,
+            selectedItemID: null
+        });
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Rendering helper methods
 
@@ -173,8 +203,8 @@ class MapPanel extends React.Component {
         return {
             left: "calc(" + sideLength + "px * " + (x - mapDimensions.minX) + ")",
             top: "calc(" + sideLength + "px * " + (y - mapDimensions.minY) + ")",
-            width: "calc(" + sideLength + "px * " + width + ")",
-            height: "calc(" + sideLength + "px * " + height + ")"
+            width: "calc((" + sideLength + "px * " + width + ") + 1px)",
+            height: "calc((" + sideLength + "px * " + height + ") + 1px)"
         };
     }
 
@@ -183,56 +213,24 @@ class MapPanel extends React.Component {
 
     render() {
         try {
-            // TEMP
-            if (this.state.map.items.length === 0) {
-                this.state.map.items = [
-                    {
-                        id: "1",
-                        type: "tile",
-                        x: 0,
-                        y: 0,
-                        width: 10,
-                        height: 5,
-                    }, {
-                        id: "2",
-                        type: "tile",
-                        x: 10,
-                        y: 0,
-                        width: 2,
-                        height: 10,
-                    }, {
-                        id: "3",
-                        type: "monster",
-                        x: 2,
-                        y: 2,
-                        width: 2,
-                        height: 2,
-                    }, {
-                        id: "4",
-                        type: "pc",
-                        x: 4,
-                        y: 2,
-                        width: 1,
-                        height: 1,
-                    }
-                ];
-            }
-
             var border = 2;
             var mapDimensions = this.getMapDimensions(border);
 
             // Draw the grid squares
             var grid = [];
             if (this.props.mode === "edit") {
-                for (var x = mapDimensions.minX; x !== mapDimensions.maxX + 1; ++x) {
-                    for (var y = mapDimensions.minY; y !== mapDimensions.maxY + 1; ++y) {
+                for (var y = mapDimensions.minY; y !== mapDimensions.maxY + 1; ++y) {
+                    for (var x = mapDimensions.minX; x !== mapDimensions.maxX + 1; ++x) {
                         var pos = this.getPosition(x, y, 1, 1, mapDimensions);
                         grid.push(
-                            <div
-                                className="grid-square"
-                                style={pos}
-                                onClick={() => this.setSelectedItem(null)}>
-                            </div>
+                            <GridSquare
+                                key={x + "," + y}
+                                x={x}
+                                y={y}
+                                position={pos}
+                                click={() => this.setSelectedItem(null)}
+                                doubleClick={(x, y) => this.addMapItem(x, y)}
+                            />
                         );
                     }
                 }
@@ -246,6 +244,7 @@ class MapPanel extends React.Component {
                     var style = this.state.selectedItemID ===  i.id ? "tile selected" : "tile";
                     return (
                         <div
+                            key={i.id}
                             className={style}
                             style={pos}
                             onClick={() => this.props.mode === "edit" ? this.setSelectedItem(i.id) : null}>
@@ -263,6 +262,7 @@ class MapPanel extends React.Component {
                     var style = (this.state.selectedItemID ===  i.id ? "token selected" : "token") + " " + i.type;
                     return (
                         <div
+                            key={i.id}
                             className={style}
                             style={pos}
                             onClick={() => this.props.mode === "combat" ? this.setSelectedItem(i.id) : null}>
@@ -287,25 +287,27 @@ class MapPanel extends React.Component {
                                 <div className="section">{item.width} sq x {item.height} sq</div>
                                 <div className="section">{item.width * 5} ft x {item.height * 5} ft</div>
                                 <div className="subheading">move</div>
-                                <div className="section">
-                                    <Radial
-                                        click={dir => this.moveMapItem(item, dir)}
-                                    />
+                                <div className="section centered">
+                                    <div>
+                                        <Radial click={dir => this.moveMapItem(item, dir)} />
+                                    </div>
                                 </div>
                                 <div className="subheading">resize</div>
-                                <div className="section side-by-side">
-                                    <Radial
-                                        click={dir => this.bigMapItem(item, dir)}
-                                    />
-                                    <Radial
-                                        inverted={true}
-                                        click={dir => this.smallMapItem(item, dir)}
-                                    />
+                                <div className="section centered">
+                                    <div className="side-by-side">
+                                        <div>
+                                            <div>bigger</div>
+                                            <Radial click={dir => this.bigMapItem(item, dir)} />
+                                        </div>
+                                        <div>
+                                            <div>smaller</div>
+                                            <Radial inverted={true} click={dir => this.smallMapItem(item, dir)} />
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="subheading">rotate</div>
-                                <div className="section">anti-clockwise | clockwise</div>
-                                <div className="subheading">remove</div>
+                                <div className="divider"></div>
                                 <div className="section">
+                                    <button onClick={() => this.cloneMapItem(item)}>clone tile</button>
                                     <button onClick={() => this.removeMapItem(item)}>remove tile</button>
                                 </div>
                             </div>
@@ -314,7 +316,8 @@ class MapPanel extends React.Component {
                         // TODO: Tiles you can drag onto the map
                         tools = (
                             <div className="tools">
-                                <div className="heading">tools</div>
+                                <p>to add a new tile to the map, double-click on an empty grid square</p>
+                                <p>to edit an existing tile, click on it once to select it</p>
                             </div>
                         );
                     }
@@ -351,5 +354,19 @@ class MapPanel extends React.Component {
         } catch (e) {
             console.error(e);
         }
+    };
+}
+
+class GridSquare extends React.Component {
+    render() {
+        return (
+            <div
+                className="grid-square"
+                style={this.props.position}
+                onClick={() => this.props.click()}
+                onDoubleClick={() => this.props.doubleClick(this.props.x, this.props.y)}
+            >
+            </div>
+        );
     };
 }

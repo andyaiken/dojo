@@ -611,9 +611,10 @@ body,
         text-align: center;
     }
 
-    &.side-by-side > * {
+    .side-by-side > * {
         display: inline-block;
-        margin-right: 5px;
+        margin-left: 10px;
+        margin-right: 10px;
     }
 
     .ability-scores {
