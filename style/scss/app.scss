@@ -609,12 +609,10 @@ body,
 
     &.centered {
         text-align: center;
-    }
 
-    .side-by-side > * {
-        display: inline-block;
-        margin-left: 10px;
-        margin-right: 10px;
+        &>* {
+            margin: 0 auto;
+        }
     }
 
     .ability-scores {

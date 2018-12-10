@@ -408,10 +408,8 @@ body,
   margin: 5px 0; }
   .section.centered {
     text-align: center; }
-  .section .side-by-side > * {
-    display: inline-block;
-    margin-left: 10px;
-    margin-right: 10px; }
+    .section.centered > * {
+      margin: 0 auto; }
   .section .ability-scores {
     margin: 10px 0;
     padding: 5px 0;

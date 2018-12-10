@@ -3193,9 +3193,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /*
 <Radial
-    click={dir => console.log(dir)}
-    inverted=BOOLEAN
-    disabled-BOOLEAN
+    direction="out" "in" "both"
+    disabled=BOOLEAN
+    click={(dir, in|out => null}
 />
 */
 
@@ -3210,9 +3210,9 @@ var Radial = function (_React$Component) {
 
     _createClass(Radial, [{
         key: "click",
-        value: function click(e, dir) {
+        value: function click(e, dir, dir2) {
             e.stopPropagation();
-            this.props.click(dir);
+            this.props.click(dir, dir2);
         }
     }, {
         key: "render",
@@ -3220,13 +3220,13 @@ var Radial = function (_React$Component) {
             var _this2 = this;
 
             try {
-                var style = "radial";
-                if (this.props.inverted) {
-                    style += " inverted";
-                }
+                var style = "radial " + (this.props.direction || "out");
                 if (this.props.disabled) {
                     style += " disabled";
                 }
+
+                var showOut = this.props.direction === "out" | this.props.direction === "both";
+                var showIn = this.props.direction === "in" | this.props.direction === "both";
 
                 return React.createElement(
                     "div",
@@ -3234,34 +3234,62 @@ var Radial = function (_React$Component) {
                     React.createElement("div", { className: "empty" }),
                     React.createElement(
                         "div",
-                        { className: "btn n", onClick: function onClick(e) {
-                                return _this2.click(e, "N");
-                            } },
-                        React.createElement("img", { src: "resources/images/down-arrow-black.svg" })
+                        { className: "btn" },
+                        React.createElement(
+                            "div",
+                            null,
+                            React.createElement("img", { src: "resources/images/down-arrow-black.svg", style: { display: showOut ? "inline-block" : "none", transform: "rotate(180deg)" }, onClick: function onClick(e) {
+                                    return _this2.click(e, "N", "out");
+                                } })
+                        ),
+                        React.createElement(
+                            "div",
+                            null,
+                            React.createElement("img", { src: "resources/images/down-arrow-black.svg", style: { display: showIn ? "inline-block" : "none" }, onClick: function onClick(e) {
+                                    return _this2.click(e, "N", "in");
+                                } })
+                        )
                     ),
                     React.createElement("div", { className: "empty" }),
                     React.createElement(
                         "div",
-                        { className: "btn w", onClick: function onClick(e) {
-                                return _this2.click(e, "W");
-                            } },
-                        React.createElement("img", { src: "resources/images/down-arrow-black.svg" })
+                        { className: "btn", style: { padding: showIn && showOut ? "10px 0" : "0" } },
+                        React.createElement("img", { src: "resources/images/down-arrow-black.svg", style: { display: showOut ? "inline-block" : "none", transform: "rotate(90deg)" }, onClick: function onClick(e) {
+                                return _this2.click(e, "W", "out");
+                            } }),
+                        React.createElement("img", { src: "resources/images/down-arrow-black.svg", style: { display: showIn ? "inline-block" : "none", transform: "rotate(-90deg)" }, onClick: function onClick(e) {
+                                return _this2.click(e, "W", "in");
+                            } })
                     ),
                     React.createElement("div", { className: "empty" }),
                     React.createElement(
                         "div",
-                        { className: "btn e", onClick: function onClick(e) {
-                                return _this2.click(e, "E");
-                            } },
-                        React.createElement("img", { src: "resources/images/down-arrow-black.svg" })
+                        { className: "btn", style: { padding: showIn && showOut ? "10px 0" : "0" } },
+                        React.createElement("img", { src: "resources/images/down-arrow-black.svg", style: { display: showIn ? "inline-block" : "none", transform: "rotate(90deg)" }, onClick: function onClick(e) {
+                                return _this2.click(e, "E", "in");
+                            } }),
+                        React.createElement("img", { src: "resources/images/down-arrow-black.svg", style: { display: showOut ? "inline-block" : "none", transform: "rotate(-90deg)" }, onClick: function onClick(e) {
+                                return _this2.click(e, "E", "out");
+                            } })
                     ),
                     React.createElement("div", { className: "empty" }),
                     React.createElement(
                         "div",
-                        { className: "btn s", onClick: function onClick(e) {
-                                return _this2.click(e, "S");
-                            } },
-                        React.createElement("img", { src: "resources/images/down-arrow-black.svg" })
+                        { className: "btn" },
+                        React.createElement(
+                            "div",
+                            null,
+                            React.createElement("img", { src: "resources/images/down-arrow-black.svg", style: { display: showIn ? "inline-block" : "none", transform: "rotate(180deg)" }, onClick: function onClick(e) {
+                                    return _this2.click(e, "S", "in");
+                                } })
+                        ),
+                        React.createElement(
+                            "div",
+                            null,
+                            React.createElement("img", { src: "resources/images/down-arrow-black.svg", style: { display: showOut ? "inline-block" : "none" }, onClick: function onClick(e) {
+                                    return _this2.click(e, "S", "out");
+                                } })
+                        )
                     ),
                     React.createElement("div", { className: "empty" })
                 );
@@ -9710,6 +9738,18 @@ var MapPanel = function (_React$Component) {
             });
         }
     }, {
+        key: "resizeMapItem",
+        value: function resizeMapItem(item, dir, dir2) {
+            switch (dir2) {
+                case "in":
+                    this.smallMapItem(item, dir);
+                    break;
+                case "out":
+                    this.bigMapItem(item, dir);
+                    break;
+            }
+        }
+    }, {
         key: "cloneMapItem",
         value: function cloneMapItem(item) {
             var copy = JSON.parse(JSON.stringify(item));
@@ -9918,13 +9958,9 @@ var MapPanel = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "section centered" },
-                                    React.createElement(
-                                        "div",
-                                        null,
-                                        React.createElement(Radial, { click: function click(dir) {
-                                                return _this3.moveMapItem(item, dir);
-                                            } })
-                                    )
+                                    React.createElement(Radial, { direction: "out", click: function click(dir) {
+                                            return _this3.moveMapItem(item, dir);
+                                        } })
                                 ),
                                 React.createElement(
                                     "div",
@@ -9934,34 +9970,9 @@ var MapPanel = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "section centered" },
-                                    React.createElement(
-                                        "div",
-                                        { className: "side-by-side" },
-                                        React.createElement(
-                                            "div",
-                                            null,
-                                            React.createElement(
-                                                "div",
-                                                null,
-                                                "bigger"
-                                            ),
-                                            React.createElement(Radial, { click: function click(dir) {
-                                                    return _this3.bigMapItem(item, dir);
-                                                } })
-                                        ),
-                                        React.createElement(
-                                            "div",
-                                            null,
-                                            React.createElement(
-                                                "div",
-                                                null,
-                                                "smaller"
-                                            ),
-                                            React.createElement(Radial, { inverted: true, click: function click(dir) {
-                                                    return _this3.smallMapItem(item, dir);
-                                                } })
-                                        )
-                                    )
+                                    React.createElement(Radial, { direction: "both", click: function click(dir, dir2) {
+                                            return _this3.resizeMapItem(item, dir, dir2);
+                                        } })
                                 ),
                                 React.createElement("div", { className: "divider" }),
                                 React.createElement(

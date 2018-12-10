@@ -123,6 +123,17 @@ class MapPanel extends React.Component {
         });
     }
 
+    resizeMapItem(item, dir, dir2) {
+        switch (dir2) {
+            case "in":
+                this.smallMapItem(item, dir);
+                break;
+            case "out":
+                this.bigMapItem(item, dir);
+                break;
+        }
+    }
+
     cloneMapItem(item) {
         var copy = JSON.parse(JSON.stringify(item));
         copy.id = guid();
@@ -288,22 +299,11 @@ class MapPanel extends React.Component {
                                 <div className="section">{item.width * 5} ft x {item.height * 5} ft</div>
                                 <div className="subheading">move</div>
                                 <div className="section centered">
-                                    <div>
-                                        <Radial click={dir => this.moveMapItem(item, dir)} />
-                                    </div>
+                                    <Radial direction="out" click={dir => this.moveMapItem(item, dir)} />
                                 </div>
                                 <div className="subheading">resize</div>
                                 <div className="section centered">
-                                    <div className="side-by-side">
-                                        <div>
-                                            <div>bigger</div>
-                                            <Radial click={dir => this.bigMapItem(item, dir)} />
-                                        </div>
-                                        <div>
-                                            <div>smaller</div>
-                                            <Radial inverted={true} click={dir => this.smallMapItem(item, dir)} />
-                                        </div>
-                                    </div>
+                                    <Radial direction="both" click={(dir, dir2) => this.resizeMapItem(item, dir, dir2)} />
                                 </div>
                                 <div className="divider"></div>
                                 <div className="section">
