@@ -778,8 +778,11 @@ class Dojo extends React.Component {
                 combat: {
                     partyID: party ? party.id : null,
                     encounterID: encounter ? encounter.id : null,
+                    folioID: null,
+                    mapID: null,
                     encounterInitMode: "group",
-                    monsterNames: getMonsterNames(encounter)
+                    monsterNames: getMonsterNames(encounter),
+                    map: null
                 }
             }
         });
@@ -797,6 +800,7 @@ class Dojo extends React.Component {
             encounterID: encounter.id,
             name: partyName + " vs " + encounterName,
             combatants: [],
+            map: null,
             round: 1,
             notifications: [],
             issues: []
@@ -863,6 +867,12 @@ class Dojo extends React.Component {
         });
 
         this.sortCombatants(combat);
+
+        if (this.state.modal.combat.folioID && this.state.modal.combat.mapID) {
+            var folio = this.getMapFolio(this.state.modal.combat.folioID);
+            var map = folio.maps.find(m => m.id === this.state.modal.combat.mapID);
+            combat.map = JSON.parse(JSON.stringify(map));
+        }
 
         this.setState({
             combats: [].concat(this.state.combats, [combat]),
@@ -1644,6 +1654,7 @@ class Dojo extends React.Component {
                                 combat={this.state.modal.combat}
                                 parties={this.state.parties}
                                 encounters={this.state.encounters}
+                                mapFolios={this.state.mapFolios}
                                 getMonster={(monsterName, monsterGroupName) => this.getMonster(monsterName, this.getMonsterGroupByName(monsterGroupName))}
                                 notify={() => this.setState({modal: this.state.modal})}
                             />

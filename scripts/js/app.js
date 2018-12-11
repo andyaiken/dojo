@@ -4601,8 +4601,11 @@ var Dojo = function (_React$Component) {
                     combat: {
                         partyID: party ? party.id : null,
                         encounterID: encounter ? encounter.id : null,
+                        folioID: null,
+                        mapID: null,
                         encounterInitMode: "group",
-                        monsterNames: getMonsterNames(encounter)
+                        monsterNames: getMonsterNames(encounter),
+                        map: null
                     }
                 }
             });
@@ -4623,6 +4626,7 @@ var Dojo = function (_React$Component) {
                 encounterID: encounter.id,
                 name: partyName + " vs " + encounterName,
                 combatants: [],
+                map: null,
                 round: 1,
                 notifications: [],
                 issues: []
@@ -4693,6 +4697,14 @@ var Dojo = function (_React$Component) {
             });
 
             this.sortCombatants(combat);
+
+            if (this.state.modal.combat.folioID && this.state.modal.combat.mapID) {
+                var folio = this.getMapFolio(this.state.modal.combat.folioID);
+                var map = folio.maps.find(function (m) {
+                    return m.id === _this5.state.modal.combat.mapID;
+                });
+                combat.map = JSON.parse(JSON.stringify(map));
+            }
 
             this.setState({
                 combats: [].concat(this.state.combats, [combat]),
@@ -5677,6 +5689,7 @@ var Dojo = function (_React$Component) {
                                 combat: this.state.modal.combat,
                                 parties: this.state.parties,
                                 encounters: this.state.encounters,
+                                mapFolios: this.state.mapFolios,
                                 getMonster: function getMonster(monsterName, monsterGroupName) {
                                     return _this7.getMonster(monsterName, _this7.getMonsterGroupByName(monsterGroupName));
                                 },
@@ -5841,6 +5854,19 @@ var CombatListItem = function (_React$Component) {
                     combatName = "unnamed combat";
                 }
 
+                var map = null;
+                if (this.props.combat.map) {
+                    map = React.createElement(
+                        "div",
+                        null,
+                        React.createElement("div", { className: "divider" }),
+                        React.createElement(MapPanel, {
+                            map: this.props.combat.map,
+                            mode: "thumbnail"
+                        })
+                    );
+                }
+
                 return React.createElement(
                     "div",
                     { className: this.props.selected ? "list-item selected" : "list-item", onClick: function onClick() {
@@ -5855,7 +5881,8 @@ var CombatListItem = function (_React$Component) {
                         "div",
                         { className: "text" },
                         this.props.combat.timestamp
-                    )
+                    ),
+                    map
                 );
             } catch (e) {
                 console.error(e);
@@ -6537,6 +6564,31 @@ var CombatStartModal = function (_React$Component) {
             });
         }
     }, {
+        key: "setFolioID",
+        value: function setFolioID(id) {
+            if (id) {
+                var folio = this.props.mapFolios.find(function (f) {
+                    return f.id === id;
+                });
+                this.state.combat.folioID = folio.id;
+                this.state.combat.mapID = folio.maps.length === 1 ? folio.maps[0].id : null;
+            } else {
+                this.state.combat.folioID = null;
+                this.state.combat.mapID = null;
+            }
+            this.setState({
+                combat: this.state.combat
+            });
+        }
+    }, {
+        key: "setMapID",
+        value: function setMapID(id) {
+            this.state.combat.mapID = id;
+            this.setState({
+                combat: this.state.combat
+            });
+        }
+    }, {
         key: "setWave",
         value: function setWave(waveID) {
             var _this4 = this;
@@ -6777,9 +6829,85 @@ var CombatStartModal = function (_React$Component) {
             );
         }
     }, {
+        key: "getMapSection",
+        value: function getMapSection() {
+            var _this7 = this;
+
+            var folios = this.props.mapFolios.filter(function (folio) {
+                return folio.maps.length > 0;
+            });
+            if (folios.length === 0) {
+                return null;
+            }
+
+            var folioOptions = folios.map(function (folio) {
+                return {
+                    id: folio.id,
+                    text: folio.name
+                };
+            });
+            folioOptions = [{ id: null, text: "none" }].concat(folioOptions);
+
+            var selectMapSection = null;
+            var thumbnailSection = null;
+
+            if (this.state.combat.folioID) {
+                var folio = this.props.mapFolios.find(function (f) {
+                    return f.id === _this7.state.combat.folioID;
+                });
+                var mapOptions = folio.maps.map(function (m) {
+                    return {
+                        id: m.id,
+                        text: m.name
+                    };
+                });
+
+                if (mapOptions.length !== 1) {
+                    selectMapSection = React.createElement(Selector, {
+                        options: mapOptions,
+                        placeholder: "select map...",
+                        selectedID: this.state.combatmapID,
+                        select: function select(optionID) {
+                            return _this7.setMapID(optionID);
+                        }
+                    });
+                }
+
+                if (this.state.combat.mapID) {
+                    var map = folio.maps.find(function (m) {
+                        return m.id === _this7.state.combat.mapID;
+                    });
+                    thumbnailSection = React.createElement(MapPanel, {
+                        map: map,
+                        mode: "thumbnail"
+                    });
+                }
+            }
+
+            return React.createElement(
+                "div",
+                null,
+                React.createElement(
+                    "div",
+                    { className: "heading" },
+                    "map"
+                ),
+                React.createElement(Dropdown, {
+                    options: folioOptions,
+                    placeholder: "select map folio...",
+                    selectedID: this.state.combat.folioID,
+                    select: function select(optionID) {
+                        return _this7.setFolioID(optionID);
+                    }
+                }),
+                selectMapSection,
+                thumbnailSection
+            );
+        }
+    }, {
         key: "getWaveSection",
         value: function getWaveSection() {
-            var _this7 = this;
+            var _this8 = this;
 
             if (this.state.combat.encounterID === null) {
                 return React.createElement(
@@ -6790,7 +6918,7 @@ var CombatStartModal = function (_React$Component) {
             }
 
             var selectedEncounter = this.props.encounters.find(function (e) {
-                return e.id === _this7.state.combat.encounterID;
+                return e.id === _this8.state.combat.encounterID;
             });
             if (selectedEncounter.waves.length === 0) {
                 return React.createElement(
@@ -6810,7 +6938,7 @@ var CombatStartModal = function (_React$Component) {
             var waveContent = null;
             if (this.state.combat.waveID) {
                 var selectedWave = selectedEncounter.waves.find(function (w) {
-                    return w.id === _this7.state.combat.waveID;
+                    return w.id === _this8.state.combat.waveID;
                 });
 
                 var monsterSections = selectedWave.slots.map(function (slot) {
@@ -6862,7 +6990,7 @@ var CombatStartModal = function (_React$Component) {
                     placeholder: "select wave...",
                     selectedID: this.state.combat.waveID,
                     select: function select(optionID) {
-                        return _this7.setWave(optionID);
+                        return _this8.setWave(optionID);
                     }
                 }),
                 waveContent
@@ -6871,7 +6999,7 @@ var CombatStartModal = function (_React$Component) {
     }, {
         key: "getDifficultySection",
         value: function getDifficultySection() {
-            var _this8 = this;
+            var _this9 = this;
 
             if (!this.state.combat.partyID || !this.state.combat.encounterID) {
                 return React.createElement(
@@ -6904,7 +7032,7 @@ var CombatStartModal = function (_React$Component) {
                     parties: this.props.parties,
                     encounters: this.props.encounters,
                     getMonster: function getMonster(monsterName, monsterGroupName) {
-                        return _this8.props.getMonster(monsterName, monsterGroupName);
+                        return _this9.props.getMonster(monsterName, monsterGroupName);
                     }
                 })
             );
@@ -6912,7 +7040,7 @@ var CombatStartModal = function (_React$Component) {
     }, {
         key: "getMonsterSection",
         value: function getMonsterSection() {
-            var _this9 = this;
+            var _this10 = this;
 
             if (this.state.combat.encounterID === null) {
                 return React.createElement(
@@ -6949,11 +7077,11 @@ var CombatStartModal = function (_React$Component) {
             }
 
             var selectedEncounter = this.props.encounters.find(function (e) {
-                return e.id === _this9.state.combat.encounterID;
+                return e.id === _this10.state.combat.encounterID;
             });
             if (this.state.combat.waveID) {
                 selectedEncounter = selectedEncounter.waves.find(function (w) {
-                    return w.id === _this9.state.combat.waveID;
+                    return w.id === _this10.state.combat.waveID;
                 });
             }
 
@@ -6986,7 +7114,7 @@ var CombatStartModal = function (_React$Component) {
                             slotID: slot.id,
                             index: n,
                             changeName: function changeName(slotID, index, value) {
-                                return _this9.changeName(slotID, index, value);
+                                return _this10.changeName(slotID, index, value);
                             }
                         })
                     ));
@@ -7024,7 +7152,7 @@ var CombatStartModal = function (_React$Component) {
                     options: initOptions,
                     selectedID: this.state.combat.encounterInitMode,
                     select: function select(optionID) {
-                        return _this9.setEncounterInitMode(optionID);
+                        return _this10.setEncounterInitMode(optionID);
                     }
                 }),
                 React.createElement(
@@ -7054,7 +7182,8 @@ var CombatStartModal = function (_React$Component) {
                         "div",
                         null,
                         this.getPartySection(),
-                        this.getEncounterSection()
+                        this.getEncounterSection(),
+                        this.getMapSection()
                     );
 
                     rightSection = React.createElement(
@@ -7112,10 +7241,10 @@ var MonsterName = function (_React$Component2) {
     _createClass(MonsterName, [{
         key: "render",
         value: function render() {
-            var _this11 = this;
+            var _this12 = this;
 
             return React.createElement("input", { type: "text", value: this.props.value, onChange: function onChange(event) {
-                    return _this11.props.changeName(_this11.props.slotID, _this11.props.index, event.target.value);
+                    return _this12.props.changeName(_this12.props.slotID, _this12.props.index, event.target.value);
                 } });
         }
     }]);

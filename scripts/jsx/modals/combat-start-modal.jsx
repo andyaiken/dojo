@@ -23,6 +23,27 @@ class CombatStartModal extends React.Component {
         }, () => this.props.notify());
     }
 
+    setFolioID(id) {
+        if (id) {
+            var folio = this.props.mapFolios.find(f => f.id === id);
+            this.state.combat.folioID = folio.id;
+            this.state.combat.mapID = folio.maps.length === 1 ? folio.maps[0].id : null;
+        } else {
+            this.state.combat.folioID = null;
+            this.state.combat.mapID = null;    
+        }
+        this.setState({
+            combat: this.state.combat
+        });
+    }
+
+    setMapID(id) {
+        this.state.combat.mapID = id;
+        this.setState({
+            combat: this.state.combat
+        });
+    }
+
     setWave(waveID) {
         this.state.combat.waveID = waveID;
         var enc = this.props.encounters.find(enc => enc.id === this.state.combat.encounterID);
@@ -180,6 +201,69 @@ class CombatStartModal extends React.Component {
                     select={optionID => this.setEncounter(optionID)}
                 />
                 {encounterContent}
+            </div>
+        );
+    }
+
+    getMapSection() {
+        var folios = this.props.mapFolios.filter(folio => folio.maps.length > 0);
+        if (folios.length === 0) {
+            return null;
+        }
+
+        var folioOptions = folios.map(folio => {
+            return {
+                id: folio.id,
+                text: folio.name
+            };
+        });
+        folioOptions = [{id: null, text: "none"}].concat(folioOptions);
+
+        var selectMapSection = null;
+        var thumbnailSection = null;
+
+        if (this.state.combat.folioID) {
+            var folio = this.props.mapFolios.find(f => f.id === this.state.combat.folioID);
+            var mapOptions = folio.maps.map(m => {
+                return {
+                    id: m.id,
+                    text: m.name
+                };
+            });            
+
+            if (mapOptions.length !== 1) {
+                selectMapSection = (
+                    <Selector
+                        options={mapOptions}
+                        placeholder="select map..."
+                        selectedID={this.state.combatmapID}
+                        select={optionID => this.setMapID(optionID)}
+                    />
+                );
+            }
+
+            if (this.state.combat.mapID) {
+                var map = folio.maps.find(m => m.id === this.state.combat.mapID);
+                thumbnailSection = (
+                    <MapPanel
+                        map={map}
+                        mode="thumbnail"
+                    />
+                );
+            }
+        }
+
+        return (
+            <div>
+                <div className="heading">map</div>
+                <Dropdown
+                    options={folioOptions}
+                    placeholder="select map folio..."
+                    selectedID={this.state.combat.folioID}
+                    select={optionID => this.setFolioID(optionID)}
+                />
+                {selectMapSection}
+                {thumbnailSection}
             </div>
         );
     }
@@ -368,6 +452,7 @@ class CombatStartModal extends React.Component {
                     <div>
                         {this.getPartySection()}
                         {this.getEncounterSection()}
+                        {this.getMapSection()}
                     </div>
                 );
     
