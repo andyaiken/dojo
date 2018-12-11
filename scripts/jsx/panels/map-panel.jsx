@@ -293,23 +293,13 @@ class MapPanel extends React.Component {
                         var item = this.getMapItem(this.state.selectedItemID);
                         tools = (
                             <div className="tools">
-                                <div className="heading">selected tile</div>
-                                <div className="subheading">size</div>
-                                <div className="section">{item.width} sq x {item.height} sq</div>
-                                <div className="section">{item.width * 5} ft x {item.height * 5} ft</div>
-                                <div className="subheading">move</div>
-                                <div className="section centered">
-                                    <Radial direction="out" click={dir => this.moveMapItem(item, dir)} />
-                                </div>
-                                <div className="subheading">resize</div>
-                                <div className="section centered">
-                                    <Radial direction="both" click={(dir, dir2) => this.resizeMapItem(item, dir, dir2)} />
-                                </div>
-                                <div className="divider"></div>
-                                <div className="section">
-                                    <button onClick={() => this.cloneMapItem(item)}>clone tile</button>
-                                    <button onClick={() => this.removeMapItem(item)}>remove tile</button>
-                                </div>
+                                <MapTileCard
+                                    tile={item}
+                                    moveMapItem={(item, dir) => this.moveMapItem(item, dir)}
+                                    resizeMapItem={(item, dir, dir2) => this.resizeMapItem(item, dir, dir2)}
+                                    cloneMapItem={item => this.cloneMapItem(item)}
+                                    removeMapItem={item => this.removeMapItem(item)}
+                                />
                             </div>
                         );
                     } else {
@@ -344,7 +334,7 @@ class MapPanel extends React.Component {
             return (
                 <div className={"map-panel " + this.props.mode}>
                     {tools}
-                    <div className="grid" style={{ height: (this.getSideLength() * mapDimensions.height) + "px" }}>
+                    <div className="grid" style={{ height: ((this.getSideLength() * mapDimensions.height) + 1) + "px" }}>
                         {grid}
                         {tiles}
                         {tokens}

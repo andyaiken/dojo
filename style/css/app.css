@@ -311,6 +311,15 @@ body,
       color: #000065; }
     .card.map .divider {
       border-top: 1px solid #000065; }
+  .card.map-tile {
+    border: 1px solid #650065;
+    background-color: beige; }
+    .card.map-tile .heading {
+      background-color: #650065; }
+    .card.map-tile .subheading {
+      color: #650065; }
+    .card.map-tile .divider {
+      border-top: 1px solid #650065; }
   .card.error {
     background-color: red;
     color: white;
@@ -540,7 +549,7 @@ body,
               background-color: #3c78dc; }
     .modal .modal-content .map-editor {
       height: 100%;
-      padding: 15px 0; }
+      margin: 0 -15px; }
       .modal .modal-content .map-editor .map-panel {
         height: 100%; }
   .modal .modal-footer {
@@ -597,7 +606,7 @@ body,
     vertical-align: top;
     overflow-y: auto;
     width: 250px;
-    padding-right: 20px; }
+    padding: 10px; }
   .map-panel .grid {
     position: relative;
     overflow: auto; }

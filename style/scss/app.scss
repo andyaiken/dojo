@@ -444,6 +444,23 @@ body,
         }
     }
 
+    &.map-tile {
+        border: 1px solid #650065;
+        background-color: beige;
+
+        .heading {
+            background-color: #650065;
+        }
+
+        .subheading {
+            color: #650065;
+        }
+
+        .divider {
+            border-top: 1px solid #650065;
+        }
+    }
+
     &.error {
         background-color: red;
         color: $background;
@@ -804,7 +821,7 @@ body,
 
         .map-editor {
             height: 100%;
-            padding: 15px 0;
+            margin: 0 -15px;
 
             .map-panel {
                 height: 100%;
@@ -891,7 +908,7 @@ body,
         vertical-align: top;
         overflow-y: auto;
         width: 250px;
-        padding-right: 20px;
+        padding: 10px;
     }
 
     .grid {

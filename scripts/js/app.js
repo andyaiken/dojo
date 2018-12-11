@@ -903,6 +903,122 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var MapTileCard = function (_React$Component) {
+    _inherits(MapTileCard, _React$Component);
+
+    function MapTileCard() {
+        _classCallCheck(this, MapTileCard);
+
+        return _possibleConstructorReturn(this, (MapTileCard.__proto__ || Object.getPrototypeOf(MapTileCard)).apply(this, arguments));
+    }
+
+    _createClass(MapTileCard, [{
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                return React.createElement(
+                    "div",
+                    { className: "card map-tile" },
+                    React.createElement(
+                        "div",
+                        { className: "heading" },
+                        React.createElement(
+                            "div",
+                            { className: "title" },
+                            "map tile"
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "card-content" },
+                        React.createElement(
+                            "div",
+                            { className: "subheading" },
+                            "size"
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            this.props.tile.width,
+                            " sq x ",
+                            this.props.tile.height,
+                            " sq"
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            this.props.tile.width * 5,
+                            " ft x ",
+                            this.props.tile.height * 5,
+                            " ft"
+                        ),
+                        React.createElement("div", { className: "divider" }),
+                        React.createElement(
+                            "div",
+                            { className: "subheading" },
+                            "move"
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section centered" },
+                            React.createElement(Radial, { direction: "out", click: function click(dir) {
+                                    return _this2.props.moveMapItem(_this2.props.tile, dir);
+                                } })
+                        ),
+                        React.createElement("div", { className: "divider" }),
+                        React.createElement(
+                            "div",
+                            { className: "subheading" },
+                            "resize"
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section centered" },
+                            React.createElement(Radial, { direction: "both", click: function click(dir, dir2) {
+                                    return _this2.props.resizeMapItem(_this2.props.tile, dir, dir2);
+                                } })
+                        ),
+                        React.createElement("div", { className: "divider" }),
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            React.createElement(
+                                "button",
+                                { onClick: function onClick() {
+                                        return _this2.props.cloneMapItem(_this2.props.tile);
+                                    } },
+                                "clone tile"
+                            ),
+                            React.createElement(
+                                "button",
+                                { onClick: function onClick() {
+                                        return _this2.props.removeMapItem(_this2.props.tile);
+                                    } },
+                                "remove tile"
+                            )
+                        )
+                    )
+                );
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return MapTileCard;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 var MonsterCard = function (_React$Component) {
     _inherits(MonsterCard, _React$Component);
 
@@ -9924,75 +10040,21 @@ var MapPanel = function (_React$Component) {
                             tools = React.createElement(
                                 "div",
                                 { className: "tools" },
-                                React.createElement(
-                                    "div",
-                                    { className: "heading" },
-                                    "selected tile"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "subheading" },
-                                    "size"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "section" },
-                                    item.width,
-                                    " sq x ",
-                                    item.height,
-                                    " sq"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "section" },
-                                    item.width * 5,
-                                    " ft x ",
-                                    item.height * 5,
-                                    " ft"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "subheading" },
-                                    "move"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "section centered" },
-                                    React.createElement(Radial, { direction: "out", click: function click(dir) {
-                                            return _this3.moveMapItem(item, dir);
-                                        } })
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "subheading" },
-                                    "resize"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "section centered" },
-                                    React.createElement(Radial, { direction: "both", click: function click(dir, dir2) {
-                                            return _this3.resizeMapItem(item, dir, dir2);
-                                        } })
-                                ),
-                                React.createElement("div", { className: "divider" }),
-                                React.createElement(
-                                    "div",
-                                    { className: "section" },
-                                    React.createElement(
-                                        "button",
-                                        { onClick: function onClick() {
-                                                return _this3.cloneMapItem(item);
-                                            } },
-                                        "clone tile"
-                                    ),
-                                    React.createElement(
-                                        "button",
-                                        { onClick: function onClick() {
-                                                return _this3.removeMapItem(item);
-                                            } },
-                                        "remove tile"
-                                    )
-                                )
+                                React.createElement(MapTileCard, {
+                                    tile: item,
+                                    moveMapItem: function moveMapItem(item, dir) {
+                                        return _this3.moveMapItem(item, dir);
+                                    },
+                                    resizeMapItem: function resizeMapItem(item, dir, dir2) {
+                                        return _this3.resizeMapItem(item, dir, dir2);
+                                    },
+                                    cloneMapItem: function cloneMapItem(item) {
+                                        return _this3.cloneMapItem(item);
+                                    },
+                                    removeMapItem: function removeMapItem(item) {
+                                        return _this3.removeMapItem(item);
+                                    }
+                                })
                             );
                         } else {
                             // TODO: Tiles you can drag onto the map
@@ -10045,7 +10107,7 @@ var MapPanel = function (_React$Component) {
                     tools,
                     React.createElement(
                         "div",
-                        { className: "grid", style: { height: this.getSideLength() * mapDimensions.height + "px" } },
+                        { className: "grid", style: { height: this.getSideLength() * mapDimensions.height + 1 + "px" } },
                         grid,
                         tiles,
                         tokens
