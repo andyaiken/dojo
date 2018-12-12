@@ -214,7 +214,7 @@ class CombatStartModal extends React.Component {
         var folioOptions = folios.map(folio => {
             return {
                 id: folio.id,
-                text: folio.name
+                text: folio.name || "unnamed folio"
             };
         });
         folioOptions = [{id: null, text: "none"}].concat(folioOptions);
@@ -227,7 +227,7 @@ class CombatStartModal extends React.Component {
             var mapOptions = folio.maps.map(m => {
                 return {
                     id: m.id,
-                    text: m.name
+                    text: m.name || "unnamed map"
                 };
             });            
 

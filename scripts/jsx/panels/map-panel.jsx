@@ -1,14 +1,3 @@
-/*
-Map item is: {
-    id: id,
-    type: tile | monster | pc,
-    x: number,
-    y: number,
-    width: number,
-    height: number
-}
-*/
-
 class MapPanel extends React.Component {
     constructor(props) {
         super();
@@ -19,9 +8,26 @@ class MapPanel extends React.Component {
     }
 
     setSelectedItem(id) {
-        this.setState({
-            selectedItemID: id
-        });
+        if (id) {
+            var item = this.getMapItem(id);
+            var canSelect = false;
+            switch (item.type) {
+                case "tile":
+                    canSelect = (this.props.mode === "edit");
+                    break;
+                case "monster":
+                case "pc":
+                    canSelect = (this.props.mode === "combat");
+                    break;
+            }
+            this.setState({
+                selectedItemID: canSelect ? id : null
+            });
+        } else {
+            this.setState({
+                selectedItemID: null
+            });
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,14 +38,9 @@ class MapPanel extends React.Component {
     }
 
     addMapItem(x, y) {
-        var item = {
-            id: guid(),
-            type: "tile",
-            x: x,
-            y: y,
-            width: 4,
-            height: 4
-        };
+        var item = createMapItem();
+        item.x = x;
+        item.y = y;
         this.state.map.items.push(item);
 
         this.setState({
@@ -184,6 +185,20 @@ class MapPanel extends React.Component {
             }
         });
 
+        if (!dimensions) {
+            // The map is blank
+            if (this.props.mode === 'thumbnail') {
+                return null;
+            }
+
+            dimensions = {
+                minX: 0,
+                maxX: 0,
+                minY: 0,
+                maxY: 0
+            };
+        }
+
         // Apply the border
         dimensions.minX -= border;
         dimensions.maxX += border;
@@ -226,6 +241,11 @@ class MapPanel extends React.Component {
         try {
             var border = 2;
             var mapDimensions = this.getMapDimensions(border);
+            if (!mapDimensions) {
+                return (
+                    <div>(blank map)</div>
+                );
+            }
 
             // Draw the grid squares
             var grid = [];
@@ -258,7 +278,7 @@ class MapPanel extends React.Component {
                             key={i.id}
                             className={style}
                             style={pos}
-                            onClick={() => this.props.mode === "edit" ? this.setSelectedItem(i.id) : null}>
+                            onClick={() => this.setSelectedItem(i.id)}>
                         </div>
                     );
                 });
@@ -276,14 +296,15 @@ class MapPanel extends React.Component {
                             key={i.id}
                             className={style}
                             style={pos}
-                            onClick={() => this.props.mode === "combat" ? this.setSelectedItem(i.id) : null}>
+                            onClick={() => this.setSelectedItem(i.id)}>
                         </div>
                     );
                 });
             }
 
             // Draw tools
-            var tools = null;
+            var leftTools = null;
+            var rightTools = null;
             switch (this.props.mode) {
                 case "thumbnail":
                     // No tools in thumbnail mode
@@ -291,7 +312,7 @@ class MapPanel extends React.Component {
                 case "edit":
                     if (this.state.selectedItemID) {
                         var item = this.getMapItem(this.state.selectedItemID);
-                        tools = (
+                        leftTools = (
                             <div className="tools">
                                 <MapTileCard
                                     tile={item}
@@ -304,7 +325,7 @@ class MapPanel extends React.Component {
                         );
                     } else {
                         // TODO: Tiles you can drag onto the map
-                        tools = (
+                        leftTools = (
                             <div className="tools">
                                 <p>to add a new tile to the map, double-click on an empty grid square</p>
                                 <p>to edit an existing tile, click on it once to select it</p>
@@ -315,16 +336,18 @@ class MapPanel extends React.Component {
                 case "combat":
                     if (this.state.selectedItemID) {
                         // TODO: Allow editing the selection
-                        tools = (
+                        rightTools = (
                             <div className="tools">
                                 <div className="heading">tools</div>
+                                <div>token selected</div>
                             </div>
                         );
                     } else {
                         // TODO: Combatants that aren't on the map
-                        tools = (
+                        rightTools = (
                             <div className="tools">
                                 <div className="heading">tools</div>
+                                <div>no selection</div>
                             </div>
                         );
                     }
@@ -333,12 +356,13 @@ class MapPanel extends React.Component {
 
             return (
                 <div className={"map-panel " + this.props.mode}>
-                    {tools}
+                    {leftTools}
                     <div className="grid" style={{ height: ((this.getSideLength() * mapDimensions.height) + 1) + "px" }}>
                         {grid}
                         {tiles}
                         {tokens}
                     </div>
+                    {rightTools}
                 </div>
             );
         } catch (e) {

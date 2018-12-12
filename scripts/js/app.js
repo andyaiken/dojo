@@ -784,10 +784,14 @@ var MapCard = function (_React$Component) {
                                 } })
                         ),
                         React.createElement("div", { className: "divider" }),
-                        React.createElement(MapPanel, {
-                            map: this.props.map,
-                            mode: "thumbnail"
-                        }),
+                        React.createElement(
+                            "div",
+                            { className: "section centered" },
+                            React.createElement(MapPanel, {
+                                map: this.props.map,
+                                mode: "thumbnail"
+                            })
+                        ),
                         React.createElement("div", { className: "divider" }),
                         React.createElement(
                             "div",
@@ -3884,11 +3888,8 @@ var Dojo = function (_React$Component) {
     }, {
         key: "addParty",
         value: function addParty(name) {
-            var party = {
-                id: guid(),
-                name: name,
-                pcs: []
-            };
+            var party = createParty();
+            party.name = name;
             var parties = [].concat(this.state.parties, [party]);
             sort(parties);
             this.setState({
@@ -3910,23 +3911,8 @@ var Dojo = function (_React$Component) {
     }, {
         key: "addPC",
         value: function addPC(name) {
-            var pc = {
-                id: guid(),
-                type: "pc",
-                active: true,
-                player: "",
-                name: name,
-                race: "",
-                classes: "",
-                background: "",
-                level: 1,
-                languages: "Common",
-                passiveInsight: 10,
-                passiveInvestigation: 10,
-                passivePerception: 10,
-                initiative: 10,
-                url: ""
-            };
+            var pc = createPC();
+            pc.name = name;
             var party = this.getParty(this.state.selectedPartyID);
             party.pcs.push(pc);
             this.setState({
@@ -3960,11 +3946,8 @@ var Dojo = function (_React$Component) {
     }, {
         key: "addMonsterGroup",
         value: function addMonsterGroup(name) {
-            var group = {
-                id: guid(),
-                name: name,
-                monsters: []
-            };
+            var group = createMonsterGroup();
+            group.name = name;
             var library = [].concat(this.state.library, [group]);
             sort(library);
             this.setState({
@@ -3986,52 +3969,13 @@ var Dojo = function (_React$Component) {
     }, {
         key: "addMonster",
         value: function addMonster(name) {
-            var monster = this.createMonster();
+            var monster = createMonster();
             monster.name = name;
             var group = this.getMonsterGroup(this.state.selectedMonsterGroupID);
             group.monsters.push(monster);
             this.setState({
                 library: this.state.library
             });
-        }
-    }, {
-        key: "createMonster",
-        value: function createMonster() {
-            return {
-                id: guid(),
-                type: "monster",
-                name: "",
-                size: "medium",
-                category: "humanoid",
-                tag: "",
-                alignment: "",
-                challenge: 1,
-                abilityScores: {
-                    str: 10,
-                    dex: 10,
-                    con: 10,
-                    int: 10,
-                    wis: 10,
-                    cha: 10
-                },
-                ac: 10,
-                hpMax: 4,
-                hpTemp: 0,
-                hitDice: 1,
-                damage: {
-                    resist: "",
-                    vulnerable: "",
-                    immune: ""
-                },
-                savingThrows: "",
-                speed: "",
-                skills: "",
-                senses: "",
-                languages: "",
-                equipment: "",
-                traits: [],
-                conditionImmunities: ""
-            };
         }
     }, {
         key: "removeMonster",
@@ -4388,12 +4332,8 @@ var Dojo = function (_React$Component) {
         // Encounter screen
 
         value: function addEncounter(name) {
-            var encounter = {
-                id: guid(),
-                name: name,
-                slots: [],
-                waves: []
-            };
+            var encounter = createEncounter();
+            encounter.name = name;
             var encounters = [].concat(this.state.encounters, [encounter]);
             sort(encounters);
 
@@ -4418,12 +4358,10 @@ var Dojo = function (_React$Component) {
         key: "addEncounterSlot",
         value: function addEncounterSlot(monster, waveID) {
             var group = this.findMonster(monster);
-            var slot = {
-                id: guid(),
-                monsterGroupName: group.name,
-                monsterName: monster.name,
-                count: 1
-            };
+
+            var slot = createEncounterSlot();
+            slot.monsterGroupName = group.name;
+            slot.monsterName = monster.name;
             var encounter = this.getEncounter(this.state.selectedEncounterID);
             if (waveID !== null) {
                 var wave = encounter.waves.find(function (w) {
@@ -4476,14 +4414,10 @@ var Dojo = function (_React$Component) {
         key: "addWaveToEncounter",
         value: function addWaveToEncounter() {
             var encounter = this.getEncounter(this.state.selectedEncounterID);
-            var waveNumber = encounter.waves.length + 2;
-            var waveName = "wave " + waveNumber;
 
-            encounter.waves.push({
-                id: guid(),
-                name: waveName,
-                slots: []
-            });
+            var wave = createEncounterWave();
+            wave.name = "wave " + (encounter.waves.length + 2);
+            encounter.waves.push(wave);
 
             this.setState({
                 encounters: this.state.encounters
@@ -4507,11 +4441,8 @@ var Dojo = function (_React$Component) {
     }, {
         key: "addMapFolio",
         value: function addMapFolio(name) {
-            var folio = {
-                id: guid(),
-                name: name,
-                maps: []
-            };
+            var folio = createMapFolio();
+            folio.name = name;
             var folios = [].concat(this.state.mapFolios, [folio]);
             sort(folios);
 
@@ -4535,11 +4466,8 @@ var Dojo = function (_React$Component) {
     }, {
         key: "addMap",
         value: function addMap(name) {
-            var map = {
-                id: guid(),
-                name: name,
-                items: []
-            };
+            var map = createMap();
+            map.name = name;
 
             var folio = this.getMapFolio(this.state.selectedMapFolioID);
             folio.maps.push(map);
@@ -4621,16 +4549,9 @@ var Dojo = function (_React$Component) {
             var encounter = this.getEncounter(this.state.modal.combat.encounterID);
             var encounterName = encounter.name || "unnamed encounter";
 
-            var combat = {
-                id: guid(),
-                encounterID: encounter.id,
-                name: partyName + " vs " + encounterName,
-                combatants: [],
-                map: null,
-                round: 1,
-                notifications: [],
-                issues: []
-            };
+            var combat = createCombat();
+            combat.name = partyName + " vs " + encounterName;
+            combat.encounterID = encounter.id;
 
             // Add a copy of each PC to the encounter
             party.pcs.filter(function (pc) {
@@ -5856,15 +5777,10 @@ var CombatListItem = function (_React$Component) {
 
                 var map = null;
                 if (this.props.combat.map) {
-                    map = React.createElement(
-                        "div",
-                        null,
-                        React.createElement("div", { className: "divider" }),
-                        React.createElement(MapPanel, {
-                            map: this.props.combat.map,
-                            mode: "thumbnail"
-                        })
-                    );
+                    map = React.createElement(MapPanel, {
+                        map: this.props.combat.map,
+                        mode: "thumbnail"
+                    });
                 }
 
                 return React.createElement(
@@ -5880,6 +5796,7 @@ var CombatListItem = function (_React$Component) {
                     React.createElement(
                         "div",
                         { className: "text" },
+                        "paused at ",
                         this.props.combat.timestamp
                     ),
                     map
@@ -6843,7 +6760,7 @@ var CombatStartModal = function (_React$Component) {
             var folioOptions = folios.map(function (folio) {
                 return {
                     id: folio.id,
-                    text: folio.name
+                    text: folio.name || "unnamed folio"
                 };
             });
             folioOptions = [{ id: null, text: "none" }].concat(folioOptions);
@@ -6858,7 +6775,7 @@ var CombatStartModal = function (_React$Component) {
                 var mapOptions = folio.maps.map(function (m) {
                     return {
                         id: m.id,
-                        text: m.name
+                        text: m.name || "unnamed map"
                     };
                 });
 
@@ -7455,64 +7372,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var MapEditorModal = function (_React$Component) {
     _inherits(MapEditorModal, _React$Component);
 
-    function MapEditorModal(props) {
+    function MapEditorModal() {
         _classCallCheck(this, MapEditorModal);
 
-        var _this = _possibleConstructorReturn(this, (MapEditorModal.__proto__ || Object.getPrototypeOf(MapEditorModal)).call(this));
-
-        _this.state = {
-            map: props.map
-        };
-        return _this;
+        return _possibleConstructorReturn(this, (MapEditorModal.__proto__ || Object.getPrototypeOf(MapEditorModal)).apply(this, arguments));
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Helper methods
-
     _createClass(MapEditorModal, [{
-        key: "nudgeValue",
-        value: function nudgeValue(field, delta) {
-            var source = this.state.map;
-            var value = null;
-            var tokens = field.split(".");
-            tokens.forEach(function (token) {
-                if (token === tokens[tokens.length - 1]) {
-                    value = source[token];
-                } else {
-                    source = source[token];
-                }
-            });
-
-            var newValue = value + delta;
-            this.changeValue(field, newValue);
-        }
-    }, {
-        key: "changeValue",
-        value: function changeValue(field, value) {
-            var _this2 = this;
-
-            var notify = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-
-            var source = this.state.map;
-            var tokens = field.split(".");
-            tokens.forEach(function (token) {
-                if (token === tokens[tokens.length - 1]) {
-                    source[token] = value;
-
-                    if (notify) {
-                        _this2.setState({
-                            map: _this2.state.map
-                        });
-                    }
-                } else {
-                    source = source[token];
-                }
-            });
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    }, {
         key: "render",
         value: function render() {
             try {
@@ -7758,13 +7624,8 @@ var MonsterEditorModal = function (_React$Component) {
     }, {
         key: "addTrait",
         value: function addTrait(type) {
-            var trait = {
-                id: guid(),
-                name: "New " + this.getActionTypeName(type, false).toLowerCase(),
-                usage: "",
-                type: type,
-                text: ""
-            };
+            var trait = createTrait();
+            trait.name = "New " + this.getActionTypeName(type, false).toLowerCase();
             this.state.monster.traits.push(trait);
             this.setState({
                 monster: this.state.monster
@@ -9842,17 +9703,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-/*
-Map item is: {
-    id: id,
-    type: tile | monster | pc,
-    x: number,
-    y: number,
-    width: number,
-    height: number
-}
-*/
-
 var MapPanel = function (_React$Component) {
     _inherits(MapPanel, _React$Component);
 
@@ -9871,9 +9721,26 @@ var MapPanel = function (_React$Component) {
     _createClass(MapPanel, [{
         key: "setSelectedItem",
         value: function setSelectedItem(id) {
-            this.setState({
-                selectedItemID: id
-            });
+            if (id) {
+                var item = this.getMapItem(id);
+                var canSelect = false;
+                switch (item.type) {
+                    case "tile":
+                        canSelect = this.props.mode === "edit";
+                        break;
+                    case "monster":
+                    case "pc":
+                        canSelect = this.props.mode === "combat";
+                        break;
+                }
+                this.setState({
+                    selectedItemID: canSelect ? id : null
+                });
+            } else {
+                this.setState({
+                    selectedItemID: null
+                });
+            }
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -9889,14 +9756,9 @@ var MapPanel = function (_React$Component) {
     }, {
         key: "addMapItem",
         value: function addMapItem(x, y) {
-            var item = {
-                id: guid(),
-                type: "tile",
-                x: x,
-                y: y,
-                width: 4,
-                height: 4
-            };
+            var item = createMapItem();
+            item.x = x;
+            item.y = y;
             this.state.map.items.push(item);
 
             this.setState({
@@ -10053,6 +9915,20 @@ var MapPanel = function (_React$Component) {
                 }
             });
 
+            if (!dimensions) {
+                // The map is blank
+                if (this.props.mode === 'thumbnail') {
+                    return null;
+                }
+
+                dimensions = {
+                    minX: 0,
+                    maxX: 0,
+                    minY: 0,
+                    maxY: 0
+                };
+            }
+
             // Apply the border
             dimensions.minX -= border;
             dimensions.maxX += border;
@@ -10101,6 +9977,13 @@ var MapPanel = function (_React$Component) {
             try {
                 var border = 2;
                 var mapDimensions = this.getMapDimensions(border);
+                if (!mapDimensions) {
+                    return React.createElement(
+                        "div",
+                        null,
+                        "(blank map)"
+                    );
+                }
 
                 // Draw the grid squares
                 var grid = [];
@@ -10135,7 +10018,7 @@ var MapPanel = function (_React$Component) {
                         className: style,
                         style: pos,
                         onClick: function onClick() {
-                            return _this3.props.mode === "edit" ? _this3.setSelectedItem(i.id) : null;
+                            return _this3.setSelectedItem(i.id);
                         } });
                 });
 
@@ -10152,13 +10035,14 @@ var MapPanel = function (_React$Component) {
                             className: style,
                             style: pos,
                             onClick: function onClick() {
-                                return _this3.props.mode === "combat" ? _this3.setSelectedItem(i.id) : null;
+                                return _this3.setSelectedItem(i.id);
                             } });
                     });
                 }
 
                 // Draw tools
-                var tools = null;
+                var leftTools = null;
+                var rightTools = null;
                 switch (this.props.mode) {
                     case "thumbnail":
                         // No tools in thumbnail mode
@@ -10166,7 +10050,7 @@ var MapPanel = function (_React$Component) {
                     case "edit":
                         if (this.state.selectedItemID) {
                             var item = this.getMapItem(this.state.selectedItemID);
-                            tools = React.createElement(
+                            leftTools = React.createElement(
                                 "div",
                                 { className: "tools" },
                                 React.createElement(MapTileCard, {
@@ -10187,7 +10071,7 @@ var MapPanel = function (_React$Component) {
                             );
                         } else {
                             // TODO: Tiles you can drag onto the map
-                            tools = React.createElement(
+                            leftTools = React.createElement(
                                 "div",
                                 { className: "tools" },
                                 React.createElement(
@@ -10206,24 +10090,34 @@ var MapPanel = function (_React$Component) {
                     case "combat":
                         if (this.state.selectedItemID) {
                             // TODO: Allow editing the selection
-                            tools = React.createElement(
+                            rightTools = React.createElement(
                                 "div",
                                 { className: "tools" },
                                 React.createElement(
                                     "div",
                                     { className: "heading" },
                                     "tools"
+                                ),
+                                React.createElement(
+                                    "div",
+                                    null,
+                                    "token selected"
                                 )
                             );
                         } else {
                             // TODO: Combatants that aren't on the map
-                            tools = React.createElement(
+                            rightTools = React.createElement(
                                 "div",
                                 { className: "tools" },
                                 React.createElement(
                                     "div",
                                     { className: "heading" },
                                     "tools"
+                                ),
+                                React.createElement(
+                                    "div",
+                                    null,
+                                    "no selection"
                                 )
                             );
                         }
@@ -10233,14 +10127,15 @@ var MapPanel = function (_React$Component) {
                 return React.createElement(
                     "div",
                     { className: "map-panel " + this.props.mode },
-                    tools,
+                    leftTools,
                     React.createElement(
                         "div",
                         { className: "grid", style: { height: this.getSideLength() * mapDimensions.height + 1 + "px" } },
                         grid,
                         tiles,
                         tokens
-                    )
+                    ),
+                    rightTools
                 );
             } catch (e) {
                 console.error(e);
@@ -10646,10 +10541,22 @@ var CombatManagerScreen = function (_React$Component) {
     function CombatManagerScreen() {
         _classCallCheck(this, CombatManagerScreen);
 
-        return _possibleConstructorReturn(this, (CombatManagerScreen.__proto__ || Object.getPrototypeOf(CombatManagerScreen)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (CombatManagerScreen.__proto__ || Object.getPrototypeOf(CombatManagerScreen)).call(this));
+
+        _this.state = {
+            mode: "list"
+        };
+        return _this;
     }
 
     _createClass(CombatManagerScreen, [{
+        key: "setMode",
+        value: function setMode(mode) {
+            this.setState({
+                mode: mode
+            });
+        }
+    }, {
         key: "createCard",
         value: function createCard(combatant, isPlaceholder) {
             var _this2 = this;
@@ -10809,9 +10716,28 @@ var CombatManagerScreen = function (_React$Component) {
                         }));
                     }
 
+                    var mapSwitch = null;
+                    if (this.props.combat.map) {
+                        var options = [{
+                            id: "list",
+                            text: "list"
+                        }, {
+                            id: "map",
+                            text: "map"
+                        }];
+                        mapSwitch = React.createElement(Selector, {
+                            options: options,
+                            selectedID: this.state.mode,
+                            select: function select(optionID) {
+                                return _this3.setMode(optionID);
+                            }
+                        });
+                    }
+
                     leftPaneContent = React.createElement(
                         "div",
                         null,
+                        mapSwitch,
                         current
                     );
 
@@ -10883,28 +10809,43 @@ var CombatManagerScreen = function (_React$Component) {
                         });
                     });
 
-                    rightPaneContent = React.createElement(
-                        "div",
-                        null,
-                        notifications,
-                        React.createElement(CardGroup, {
-                            heading: "waiting for intiative to be entered",
-                            content: pending,
-                            hidden: pending.length === 0,
-                            showToggle: true
-                        }),
-                        React.createElement(CardGroup, {
-                            heading: "active combatants",
-                            content: active,
-                            hidden: active.length === 0
-                        }),
-                        React.createElement(CardGroup, {
-                            heading: "defeated",
-                            content: defeated,
-                            hidden: defeated.length === 0,
-                            showToggle: true
-                        })
-                    );
+                    switch (this.state.mode) {
+                        case "list":
+                            rightPaneContent = React.createElement(
+                                "div",
+                                null,
+                                notifications,
+                                React.createElement(CardGroup, {
+                                    heading: "waiting for intiative to be entered",
+                                    content: pending,
+                                    hidden: pending.length === 0,
+                                    showToggle: true
+                                }),
+                                React.createElement(CardGroup, {
+                                    heading: "active combatants",
+                                    content: active,
+                                    hidden: active.length === 0
+                                }),
+                                React.createElement(CardGroup, {
+                                    heading: "defeated",
+                                    content: defeated,
+                                    hidden: defeated.length === 0,
+                                    showToggle: true
+                                })
+                            );
+                            break;
+                        case "map":
+                            rightPaneContent = React.createElement(
+                                "div",
+                                null,
+                                notifications,
+                                React.createElement(MapPanel, {
+                                    map: this.props.combat.map,
+                                    mode: "combat"
+                                })
+                            );
+                            break;
+                    }
                 } else {
                     var help = null;
                     if (this.props.showHelp) {

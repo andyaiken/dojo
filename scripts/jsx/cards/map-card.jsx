@@ -11,10 +11,12 @@ class MapCard extends React.Component {
                             <input type="text" placeholder="map name" value={this.props.map.name} onChange={event => this.props.changeValue(this.props.map, "name", event.target.value)} />
                         </div>
                         <div className="divider"></div>
-                        <MapPanel
-                            map={this.props.map}
-                            mode="thumbnail"
-                        />
+                        <div className="section centered">
+                            <MapPanel
+                                map={this.props.map}
+                                mode="thumbnail"
+                            />
+                        </div>
                         <div className="divider"></div>
                         <div className="section">
                             <button onClick={() => this.props.editMap(this.props.map)}>edit map</button>

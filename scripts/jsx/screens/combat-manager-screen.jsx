@@ -1,4 +1,18 @@
 class CombatManagerScreen extends React.Component {
+    constructor() {
+        super();
+
+        this.state = {
+            mode: "list"
+        };
+    }
+
+    setMode(mode) {
+        this.setState({
+            mode: mode
+        });
+    }
+
     createCard(combatant, isPlaceholder) {
         if (isPlaceholder && isPlaceholder(combatant)) {
             return (
@@ -102,8 +116,30 @@ class CombatManagerScreen extends React.Component {
                     );
                 }
 
+                var mapSwitch = null;
+                if (this.props.combat.map) {
+                    var options = [
+                        {
+                            id: "list",
+                            text: "list"
+                        },
+                        {
+                            id: "map",
+                            text: "map"
+                        }
+                    ];
+                    mapSwitch = (
+                        <Selector
+                            options={options}
+                            selectedID={this.state.mode}
+                            select={optionID => this.setMode(optionID)}
+                        />
+                    );
+                }
+
                 leftPaneContent = (
                     <div>
+                        {mapSwitch}
                         {current}
                     </div>
                 );
@@ -148,28 +184,43 @@ class CombatManagerScreen extends React.Component {
                     />
                 );
 
-                rightPaneContent = (
-                    <div>
-                        {notifications}
-                        <CardGroup
-                            heading="waiting for intiative to be entered"
-                            content={pending}
-                            hidden={pending.length === 0}
-                            showToggle={true}
-                        />
-                        <CardGroup
-                            heading="active combatants"
-                            content={active}
-                            hidden={active.length === 0}
-                        />
-                        <CardGroup
-                            heading="defeated"
-                            content={defeated}
-                            hidden={defeated.length === 0}
-                            showToggle={true}
-                        />
-                    </div>
-                );
+                switch (this.state.mode) {
+                    case "list":
+                        rightPaneContent = (
+                            <div>
+                                {notifications}
+                                <CardGroup
+                                    heading="waiting for intiative to be entered"
+                                    content={pending}
+                                    hidden={pending.length === 0}
+                                    showToggle={true}
+                                />
+                                <CardGroup
+                                    heading="active combatants"
+                                    content={active}
+                                    hidden={active.length === 0}
+                                />
+                                <CardGroup
+                                    heading="defeated"
+                                    content={defeated}
+                                    hidden={defeated.length === 0}
+                                    showToggle={true}
+                                />
+                            </div>
+                        );
+                        break;
+                    case "map":
+                        rightPaneContent = (
+                            <div>
+                                {notifications}
+                                <MapPanel
+                                    map={this.props.combat.map}
+                                    mode="combat"
+                                />
+                            </div>
+                        );
+                        break;
+                }
             } else {
                 var help = null;
                 if (this.props.showHelp) {
