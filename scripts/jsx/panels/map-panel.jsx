@@ -177,13 +177,11 @@ class MapPanel extends React.Component {
     }
 
     dropItem(x, y) {
-        var item = createMapItem();
-        item.id = this.state.drag.id;
-        item.type = this.state.drag.type;
+        var item = this.state.drag;
         item.x = x;
         item.y = y;
-        item.width = this.state.drag.size;
-        item.height = this.state.drag.size;
+
+        this.state.map.items = this.state.map.items.filter(i => i.id !== item.id);
         this.state.map.items.push(item);
 
         this.setState({
@@ -278,10 +276,7 @@ class MapPanel extends React.Component {
 
     render() {
         try {
-            var border = 3;
-            if (this.props.mode === "combat") {
-                border = 1;
-            }
+            var border = 1;
             var mapDimensions = this.getMapDimensions(border);
             if (!mapDimensions) {
                 return (
@@ -314,14 +309,14 @@ class MapPanel extends React.Component {
                 .filter(i => i.type === "tile")
                 .map(i => {
                     var pos = this.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
-                    var style = this.state.selectedItemID ===  i.id ? "tile selected" : "tile";
                     return (
-                        <div
+                        <MapTile
                             key={i.id}
-                            className={style}
-                            style={pos}
-                            onClick={e => this.setSelectedItem(e, i.id)}>
-                        </div>
+                            tile={i}
+                            position={pos}
+                            selected={this.state.selectedItemID === i.id}
+                            select={(e, id) => this.setSelectedItem(e, id)}
+                        />
                     );
                 });
 
@@ -332,14 +327,15 @@ class MapPanel extends React.Component {
                 .filter(i => (i.type === "monster") || (i.type === "pc"))
                 .map(i => {
                     var pos = this.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
-                    var style = (this.state.selectedItemID ===  i.id ? "token selected" : "token") + " " + i.type;
                     return (
-                        <div
+                        <MapToken
                             key={i.id}
-                            className={style}
-                            style={pos}
-                            onClick={e => this.setSelectedItem(e, i.id)}>
-                        </div>
+                            token={i}
+                            position={pos}
+                            selected={this.state.selectedItemID ===  i.id}
+                            select={(e, id) => this.setSelectedItem(e, id)}
+                            dragToken={item => this.setDrag(item)}
+                        />
                     );
                 });
             }
@@ -429,8 +425,8 @@ class MapPanel extends React.Component {
                         <div className="grid" style={{ height: ((this.getSideLength() * mapDimensions.height) + 1) + "px" }}>
                             {grid}
                             {tiles}
-                            {tokens}
                             {dragOverlay}
+                            {tokens}
                         </div>
                     </div>
                     {lowerTools}
@@ -463,18 +459,73 @@ class GridSquare extends React.Component {
     }
 }
 
-class AbsentCombatant extends React.Component {
+class MapTile extends React.Component {
+    render() {
+        var style = "tile";
+        if (this.props.selected) {
+            style += " selected";
+        }
+
+        return (
+            <div
+                className={style}
+                style={this.props.position}
+                onClick={e => this.props.select(e, this.props.tile.id)}>
+            </div>
+        );
+    }
+}
+
+class MapToken extends React.Component {
     startDrag() {
         var data = {
-            id: this.props.combatant.id,
-            type: this.props.combatant.type,
-            size: miniSize(this.props.combatant.size)
+            id: this.props.token.id,
+            type: this.props.token.type,
+            height: this.props.token.height,
+            width: this.props.token.width
         }
         this.props.dragToken(data);
     }
 
     stopDrag() {
         this.props.dragToken(null);
+    }
+
+    render() {
+        var style = "token " + this.props.token.type;
+        if (this.props.selected) {
+            style += " selected";
+        }
+
+        return (
+            <div
+                className={style}
+                style={this.props.position}
+                onClick={e => this.props.select(e, this.props.token.id)}
+                draggable="true"
+                onDragStart={() => this.startDrag()}
+                onDragEnd={() => this.stopDrag()}
+            >
+            </div>
+        );
+    }
+}
+
+class AbsentCombatant extends React.Component {
+    constructor(props) {
+        super();
+
+        var size = miniSize(props.combatant.size);
+
+        var token = createMapItem();
+        token.id = props.combatant.id;
+        token.type = props.combatant.type;
+        token.width = size;
+        token.height = size;
+
+        this.state = {
+            token: token
+        }
     }
 
     render() {
@@ -485,7 +536,12 @@ class AbsentCombatant extends React.Component {
 
         return (
             <div key={this.props.combatant.id} className={style} title={this.props.combatant.name} onClick={e => this.props.click(e, this.props.combatant.id)}>
-                <div className={"token " + this.props.combatant.type} draggable="true" onDragStart={e => this.startDrag()} onDragEnd={() => this.stopDrag()}></div>
+                <MapToken
+                    token={this.state.token}
+                    selected={this.state.selectedItemID ===  this.state.token.id}
+                    select={(e, id) => this.setSelectedItem(e, id)}
+                    dragToken={item => this.props.dragToken(item)}
+                />
                 <div className="name">{this.props.combatant.name}</div>
             </div>
         );

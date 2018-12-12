@@ -9907,13 +9907,13 @@ var MapPanel = function (_React$Component) {
         value: function dropItem(x, y) {
             var _this3 = this;
 
-            var item = createMapItem();
-            item.id = this.state.drag.id;
-            item.type = this.state.drag.type;
+            var item = this.state.drag;
             item.x = x;
             item.y = y;
-            item.width = this.state.drag.size;
-            item.height = this.state.drag.size;
+
+            this.state.map.items = this.state.map.items.filter(function (i) {
+                return i.id !== item.id;
+            });
             this.state.map.items.push(item);
 
             this.setState({
@@ -10020,10 +10020,7 @@ var MapPanel = function (_React$Component) {
             var _this5 = this;
 
             try {
-                var border = 3;
-                if (this.props.mode === "combat") {
-                    border = 1;
-                }
+                var border = 1;
                 var mapDimensions = this.getMapDimensions(border);
                 if (!mapDimensions) {
                     return React.createElement(
@@ -10060,14 +10057,15 @@ var MapPanel = function (_React$Component) {
                     return i.type === "tile";
                 }).map(function (i) {
                     var pos = _this5.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
-                    var style = _this5.state.selectedItemID === i.id ? "tile selected" : "tile";
-                    return React.createElement("div", {
+                    return React.createElement(MapTile, {
                         key: i.id,
-                        className: style,
-                        style: pos,
-                        onClick: function onClick(e) {
-                            return _this5.setSelectedItem(e, i.id);
-                        } });
+                        tile: i,
+                        position: pos,
+                        selected: _this5.state.selectedItemID === i.id,
+                        select: function select(e, id) {
+                            return _this5.setSelectedItem(e, id);
+                        }
+                    });
                 });
 
                 // Draw the tokens
@@ -10077,14 +10075,18 @@ var MapPanel = function (_React$Component) {
                         return i.type === "monster" || i.type === "pc";
                     }).map(function (i) {
                         var pos = _this5.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
-                        var style = (_this5.state.selectedItemID === i.id ? "token selected" : "token") + " " + i.type;
-                        return React.createElement("div", {
+                        return React.createElement(MapToken, {
                             key: i.id,
-                            className: style,
-                            style: pos,
-                            onClick: function onClick(e) {
-                                return _this5.setSelectedItem(e, i.id);
-                            } });
+                            token: i,
+                            position: pos,
+                            selected: _this5.state.selectedItemID === i.id,
+                            select: function select(e, id) {
+                                return _this5.setSelectedItem(e, id);
+                            },
+                            dragToken: function dragToken(item) {
+                                return _this5.setDrag(item);
+                            }
+                        });
                     });
                 }
 
@@ -10200,8 +10202,8 @@ var MapPanel = function (_React$Component) {
                             { className: "grid", style: { height: this.getSideLength() * mapDimensions.height + 1 + "px" } },
                             grid,
                             tiles,
-                            tokens,
-                            dragOverlay
+                            dragOverlay,
+                            tokens
                         )
                     ),
                     lowerTools
@@ -10256,22 +10258,54 @@ var GridSquare = function (_React$Component2) {
     return GridSquare;
 }(React.Component);
 
-var AbsentCombatant = function (_React$Component3) {
-    _inherits(AbsentCombatant, _React$Component3);
+var MapTile = function (_React$Component3) {
+    _inherits(MapTile, _React$Component3);
 
-    function AbsentCombatant() {
-        _classCallCheck(this, AbsentCombatant);
+    function MapTile() {
+        _classCallCheck(this, MapTile);
 
-        return _possibleConstructorReturn(this, (AbsentCombatant.__proto__ || Object.getPrototypeOf(AbsentCombatant)).apply(this, arguments));
+        return _possibleConstructorReturn(this, (MapTile.__proto__ || Object.getPrototypeOf(MapTile)).apply(this, arguments));
     }
 
-    _createClass(AbsentCombatant, [{
+    _createClass(MapTile, [{
+        key: "render",
+        value: function render() {
+            var _this9 = this;
+
+            var style = "tile";
+            if (this.props.selected) {
+                style += " selected";
+            }
+
+            return React.createElement("div", {
+                className: style,
+                style: this.props.position,
+                onClick: function onClick(e) {
+                    return _this9.props.select(e, _this9.props.tile.id);
+                } });
+        }
+    }]);
+
+    return MapTile;
+}(React.Component);
+
+var MapToken = function (_React$Component4) {
+    _inherits(MapToken, _React$Component4);
+
+    function MapToken() {
+        _classCallCheck(this, MapToken);
+
+        return _possibleConstructorReturn(this, (MapToken.__proto__ || Object.getPrototypeOf(MapToken)).apply(this, arguments));
+    }
+
+    _createClass(MapToken, [{
         key: "startDrag",
         value: function startDrag() {
             var data = {
-                id: this.props.combatant.id,
-                type: this.props.combatant.type,
-                size: miniSize(this.props.combatant.size)
+                id: this.props.token.id,
+                type: this.props.token.type,
+                height: this.props.token.height,
+                width: this.props.token.width
             };
             this.props.dragToken(data);
         }
@@ -10283,7 +10317,59 @@ var AbsentCombatant = function (_React$Component3) {
     }, {
         key: "render",
         value: function render() {
-            var _this9 = this;
+            var _this11 = this;
+
+            var style = "token " + this.props.token.type;
+            if (this.props.selected) {
+                style += " selected";
+            }
+
+            return React.createElement("div", {
+                className: style,
+                style: this.props.position,
+                onClick: function onClick(e) {
+                    return _this11.props.select(e, _this11.props.token.id);
+                },
+                draggable: "true",
+                onDragStart: function onDragStart() {
+                    return _this11.startDrag();
+                },
+                onDragEnd: function onDragEnd() {
+                    return _this11.stopDrag();
+                }
+            });
+        }
+    }]);
+
+    return MapToken;
+}(React.Component);
+
+var AbsentCombatant = function (_React$Component5) {
+    _inherits(AbsentCombatant, _React$Component5);
+
+    function AbsentCombatant(props) {
+        _classCallCheck(this, AbsentCombatant);
+
+        var _this12 = _possibleConstructorReturn(this, (AbsentCombatant.__proto__ || Object.getPrototypeOf(AbsentCombatant)).call(this));
+
+        var size = miniSize(props.combatant.size);
+
+        var token = createMapItem();
+        token.id = props.combatant.id;
+        token.type = props.combatant.type;
+        token.width = size;
+        token.height = size;
+
+        _this12.state = {
+            token: token
+        };
+        return _this12;
+    }
+
+    _createClass(AbsentCombatant, [{
+        key: "render",
+        value: function render() {
+            var _this13 = this;
 
             var style = "absent-token";
             if (this.props.selected) {
@@ -10293,13 +10379,18 @@ var AbsentCombatant = function (_React$Component3) {
             return React.createElement(
                 "div",
                 { key: this.props.combatant.id, className: style, title: this.props.combatant.name, onClick: function onClick(e) {
-                        return _this9.props.click(e, _this9.props.combatant.id);
+                        return _this13.props.click(e, _this13.props.combatant.id);
                     } },
-                React.createElement("div", { className: "token " + this.props.combatant.type, draggable: "true", onDragStart: function onDragStart(e) {
-                        return _this9.startDrag();
-                    }, onDragEnd: function onDragEnd() {
-                        return _this9.stopDrag();
-                    } }),
+                React.createElement(MapToken, {
+                    token: this.state.token,
+                    selected: this.state.selectedItemID === this.state.token.id,
+                    select: function select(e, id) {
+                        return _this13.setSelectedItem(e, id);
+                    },
+                    dragToken: function dragToken(item) {
+                        return _this13.props.dragToken(item);
+                    }
+                }),
                 React.createElement(
                     "div",
                     { className: "name" },
