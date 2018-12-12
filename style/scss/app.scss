@@ -980,8 +980,12 @@ body,
         }
     }
 
-    &.thumbnail .grid {
-        max-height: 200px;
+    &.thumbnail {
+        pointer-events: none;
+
+        .grid {
+            max-height: 200px;
+        }
     }
 
     &.edit .grid {

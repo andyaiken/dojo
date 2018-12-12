@@ -651,8 +651,10 @@ body,
       text-align: center; }
     .map-panel .absent-token:hover, .map-panel .absent-token.selected {
       border-color: #3c78dc; }
-  .map-panel.thumbnail .grid {
-    max-height: 200px; }
+  .map-panel.thumbnail {
+    pointer-events: none; }
+    .map-panel.thumbnail .grid {
+      max-height: 200px; }
   .map-panel.edit .grid {
     display: inline-block;
     vertical-align: top;
