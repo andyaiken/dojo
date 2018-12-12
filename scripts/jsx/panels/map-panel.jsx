@@ -7,27 +7,38 @@ class MapPanel extends React.Component {
         };
     }
 
-    setSelectedItem(id) {
+    setSelectedItem(e, id) {
+        e.stopPropagation();
+
         if (id) {
             var item = this.getMapItem(id);
             var canSelect = false;
-            switch (item.type) {
-                case "tile":
-                    canSelect = (this.props.mode === "edit");
-                    break;
-                case "monster":
-                case "pc":
-                    canSelect = (this.props.mode === "combat");
-                    break;
+            if (item) {
+                switch (item.type) {
+                    case "tile":
+                        canSelect = (this.props.mode === "edit");
+                        break;
+                    case "monster":
+                    case "pc":
+                        canSelect = (this.props.mode === "combat");
+                        break;
+                }
+            } else {
+                // We selected an absent token
+                canSelect = true;
             }
-            this.setState({
-                selectedItemID: canSelect ? id : null
-            });
-        } else {
-            this.setState({
-                selectedItemID: null
-            });
+            if (!canSelect) {
+                id = null;
+            }
         }
+
+        this.setState({
+            selectedItemID: id
+        }, () => {
+            if (this.props.selectionChanged) {
+                this.props.selectionChanged(id);
+            }
+        });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -239,7 +250,10 @@ class MapPanel extends React.Component {
 
     render() {
         try {
-            var border = 2;
+            var border = 3;
+            if (this.props.mode === "combat") {
+                border = 1;
+            }
             var mapDimensions = this.getMapDimensions(border);
             if (!mapDimensions) {
                 return (
@@ -259,8 +273,8 @@ class MapPanel extends React.Component {
                                 x={x}
                                 y={y}
                                 position={pos}
-                                click={() => this.setSelectedItem(null)}
-                                doubleClick={(x, y) => this.addMapItem(x, y)}
+                                onClick={e => this.setSelectedItem(e, null)}
+                                onDoubleClick={(x, y) => this.addMapItem(x, y)}
                             />
                         );
                     }
@@ -278,7 +292,7 @@ class MapPanel extends React.Component {
                             key={i.id}
                             className={style}
                             style={pos}
-                            onClick={() => this.setSelectedItem(i.id)}>
+                            onClick={e => this.setSelectedItem(e, i.id)}>
                         </div>
                     );
                 });
@@ -296,7 +310,7 @@ class MapPanel extends React.Component {
                             key={i.id}
                             className={style}
                             style={pos}
-                            onClick={() => this.setSelectedItem(i.id)}>
+                            onClick={e => this.setSelectedItem(e, i.id)}>
                         </div>
                     );
                 });
@@ -304,7 +318,7 @@ class MapPanel extends React.Component {
 
             // Draw tools
             var leftTools = null;
-            var rightTools = null;
+            var lowerTools = null;
             switch (this.props.mode) {
                 case "thumbnail":
                     // No tools in thumbnail mode
@@ -324,7 +338,6 @@ class MapPanel extends React.Component {
                             </div>
                         );
                     } else {
-                        // TODO: Tiles you can drag onto the map
                         leftTools = (
                             <div className="tools">
                                 <p>to add a new tile to the map, double-click on an empty grid square</p>
@@ -334,20 +347,26 @@ class MapPanel extends React.Component {
                     }
                     break;
                 case "combat":
-                    if (this.state.selectedItemID) {
-                        // TODO: Allow editing the selection
-                        rightTools = (
-                            <div className="tools">
-                                <div className="heading">tools</div>
-                                <div>token selected</div>
-                            </div>
-                        );
-                    } else {
-                        // TODO: Combatants that aren't on the map
-                        rightTools = (
-                            <div className="tools">
-                                <div className="heading">tools</div>
-                                <div>no selection</div>
+                    var tokenIDs = this.state.map.items
+                        .filter(item => (item.type === "monster") || (item.type === "pc"))
+                        .map(item => item.id);
+                    var absent = this.props.combatants
+                        .filter(c => !tokenIDs.includes(c.id))
+                        .map(c => {
+                            return (
+                                <AbsentCombatant
+                                    combatant={c}
+                                    selected={c.id === this.state.selectedItemID}
+                                    click={(e, id) => this.setSelectedItem(e, id)}
+                                />
+                            );
+                        });
+
+                    if (absent.length > 0) {
+                        lowerTools = (
+                            <div>
+                                <div className="divider"></div>
+                                {absent}
                             </div>
                         );
                     }
@@ -355,20 +374,22 @@ class MapPanel extends React.Component {
             }
 
             return (
-                <div className={"map-panel " + this.props.mode}>
-                    {leftTools}
-                    <div className="grid" style={{ height: ((this.getSideLength() * mapDimensions.height) + 1) + "px" }}>
-                        {grid}
-                        {tiles}
-                        {tokens}
+                <div className={"map-panel " + this.props.mode} onClick={e => this.setSelectedItem(e, null)}>
+                    <div>
+                        {leftTools}
+                        <div className="grid" style={{ height: ((this.getSideLength() * mapDimensions.height) + 1) + "px" }}>
+                            {grid}
+                            {tiles}
+                            {tokens}
+                        </div>
                     </div>
-                    {rightTools}
+                    {lowerTools}
                 </div>
             );
         } catch (e) {
             console.error(e);
         }
-    };
+    }
 }
 
 class GridSquare extends React.Component {
@@ -382,5 +403,21 @@ class GridSquare extends React.Component {
             >
             </div>
         );
-    };
+    }
+}
+
+class AbsentCombatant extends React.Component {
+    render() {
+        var style = "absent-token";
+        if (this.props.selected) {
+            style += " selected";
+        }
+
+        return (
+            <div key={this.props.combatant.id} className={style} title={this.props.combatant.name} onClick={e => this.props.click(e, this.props.combatant.id)}>
+                <div className={"token " + this.props.combatant.type}></div>
+                <div className="name">{this.props.combatant.name}</div>
+            </div>
+        );
+    }
 }

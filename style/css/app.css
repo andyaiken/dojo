@@ -263,7 +263,8 @@ body,
 .card {
   background-color: #F5F5F5;
   border: 1px solid #656565;
-  margin: 5px; }
+  margin: 5px;
+  max-width: 350px; }
   .card .heading {
     height: 35px;
     font-size: 15px;
@@ -632,15 +633,32 @@ body,
     .map-panel .token.selected {
       border-color: #3c78dc;
       border-width: 2px; }
+  .map-panel .absent-token {
+    display: inline-block;
+    vertical-align: top;
+    width: 80px;
+    margin: 10px;
+    padding: 5px;
+    border: 1px solid #c3c3c3; }
+    .map-panel .absent-token .token {
+      position: relative;
+      height: 30px;
+      width: 30px;
+      margin: 20px; }
+    .map-panel .absent-token .name {
+      border-top: 1px solid #c3c3c3;
+      padding-top: 5px;
+      text-align: center; }
+    .map-panel .absent-token:hover, .map-panel .absent-token.selected {
+      border-color: #3c78dc; }
   .map-panel.thumbnail .grid {
     max-height: 200px; }
-  .map-panel.edit .grid,
-  .map-panel.combat .grid {
+  .map-panel.edit .grid {
     display: inline-block;
     vertical-align: top;
     max-height: 100%;
     width: calc(100% - 250px); }
   .map-panel.edit .tile:hover {
     border-color: #3c78dc; }
-  .map-panel.combat .token:hover {
+  .map-panel.combat .grid .token:hover {
     border-color: #3c78dc; }

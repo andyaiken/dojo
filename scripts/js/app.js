@@ -9720,27 +9720,40 @@ var MapPanel = function (_React$Component) {
 
     _createClass(MapPanel, [{
         key: "setSelectedItem",
-        value: function setSelectedItem(id) {
+        value: function setSelectedItem(e, id) {
+            var _this2 = this;
+
+            e.stopPropagation();
+
             if (id) {
                 var item = this.getMapItem(id);
                 var canSelect = false;
-                switch (item.type) {
-                    case "tile":
-                        canSelect = this.props.mode === "edit";
-                        break;
-                    case "monster":
-                    case "pc":
-                        canSelect = this.props.mode === "combat";
-                        break;
+                if (item) {
+                    switch (item.type) {
+                        case "tile":
+                            canSelect = this.props.mode === "edit";
+                            break;
+                        case "monster":
+                        case "pc":
+                            canSelect = this.props.mode === "combat";
+                            break;
+                    }
+                } else {
+                    // We selected an absent token
+                    canSelect = true;
                 }
-                this.setState({
-                    selectedItemID: canSelect ? id : null
-                });
-            } else {
-                this.setState({
-                    selectedItemID: null
-                });
+                if (!canSelect) {
+                    id = null;
+                }
             }
+
+            this.setState({
+                selectedItemID: id
+            }, function () {
+                if (_this2.props.selectionChanged) {
+                    _this2.props.selectionChanged(id);
+                }
+            });
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -9888,14 +9901,14 @@ var MapPanel = function (_React$Component) {
     }, {
         key: "getMapDimensions",
         value: function getMapDimensions() {
-            var _this2 = this;
+            var _this3 = this;
 
             var border = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
             var dimensions = null;
 
             this.state.map.items.filter(function (i) {
-                if (_this2.props.mode === "edit") {
+                if (_this3.props.mode === "edit") {
                     return i.type === "tile";
                 }
                 return true;
@@ -9972,10 +9985,13 @@ var MapPanel = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            var _this3 = this;
+            var _this4 = this;
 
             try {
-                var border = 2;
+                var border = 3;
+                if (this.props.mode === "combat") {
+                    border = 1;
+                }
                 var mapDimensions = this.getMapDimensions(border);
                 if (!mapDimensions) {
                     return React.createElement(
@@ -9996,11 +10012,11 @@ var MapPanel = function (_React$Component) {
                                 x: x,
                                 y: y,
                                 position: pos,
-                                click: function click() {
-                                    return _this3.setSelectedItem(null);
+                                onClick: function onClick(e) {
+                                    return _this4.setSelectedItem(e, null);
                                 },
-                                doubleClick: function doubleClick(x, y) {
-                                    return _this3.addMapItem(x, y);
+                                onDoubleClick: function onDoubleClick(x, y) {
+                                    return _this4.addMapItem(x, y);
                                 }
                             }));
                         }
@@ -10011,14 +10027,14 @@ var MapPanel = function (_React$Component) {
                 var tiles = this.state.map.items.filter(function (i) {
                     return i.type === "tile";
                 }).map(function (i) {
-                    var pos = _this3.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
-                    var style = _this3.state.selectedItemID === i.id ? "tile selected" : "tile";
+                    var pos = _this4.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
+                    var style = _this4.state.selectedItemID === i.id ? "tile selected" : "tile";
                     return React.createElement("div", {
                         key: i.id,
                         className: style,
                         style: pos,
-                        onClick: function onClick() {
-                            return _this3.setSelectedItem(i.id);
+                        onClick: function onClick(e) {
+                            return _this4.setSelectedItem(e, i.id);
                         } });
                 });
 
@@ -10028,21 +10044,21 @@ var MapPanel = function (_React$Component) {
                     tokens = this.state.map.items.filter(function (i) {
                         return i.type === "monster" || i.type === "pc";
                     }).map(function (i) {
-                        var pos = _this3.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
-                        var style = (_this3.state.selectedItemID === i.id ? "token selected" : "token") + " " + i.type;
+                        var pos = _this4.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
+                        var style = (_this4.state.selectedItemID === i.id ? "token selected" : "token") + " " + i.type;
                         return React.createElement("div", {
                             key: i.id,
                             className: style,
                             style: pos,
-                            onClick: function onClick() {
-                                return _this3.setSelectedItem(i.id);
+                            onClick: function onClick(e) {
+                                return _this4.setSelectedItem(e, i.id);
                             } });
                     });
                 }
 
                 // Draw tools
                 var leftTools = null;
-                var rightTools = null;
+                var lowerTools = null;
                 switch (this.props.mode) {
                     case "thumbnail":
                         // No tools in thumbnail mode
@@ -10056,21 +10072,20 @@ var MapPanel = function (_React$Component) {
                                 React.createElement(MapTileCard, {
                                     tile: item,
                                     moveMapItem: function moveMapItem(item, dir) {
-                                        return _this3.moveMapItem(item, dir);
+                                        return _this4.moveMapItem(item, dir);
                                     },
                                     resizeMapItem: function resizeMapItem(item, dir, dir2) {
-                                        return _this3.resizeMapItem(item, dir, dir2);
+                                        return _this4.resizeMapItem(item, dir, dir2);
                                     },
                                     cloneMapItem: function cloneMapItem(item) {
-                                        return _this3.cloneMapItem(item);
+                                        return _this4.cloneMapItem(item);
                                     },
                                     removeMapItem: function removeMapItem(item) {
-                                        return _this3.removeMapItem(item);
+                                        return _this4.removeMapItem(item);
                                     }
                                 })
                             );
                         } else {
-                            // TODO: Tiles you can drag onto the map
                             leftTools = React.createElement(
                                 "div",
                                 { className: "tools" },
@@ -10088,37 +10103,29 @@ var MapPanel = function (_React$Component) {
                         }
                         break;
                     case "combat":
-                        if (this.state.selectedItemID) {
-                            // TODO: Allow editing the selection
-                            rightTools = React.createElement(
+                        var tokenIDs = this.state.map.items.filter(function (item) {
+                            return item.type === "monster" || item.type === "pc";
+                        }).map(function (item) {
+                            return item.id;
+                        });
+                        var absent = this.props.combatants.filter(function (c) {
+                            return !tokenIDs.includes(c.id);
+                        }).map(function (c) {
+                            return React.createElement(AbsentCombatant, {
+                                combatant: c,
+                                selected: c.id === _this4.state.selectedItemID,
+                                click: function click(e, id) {
+                                    return _this4.setSelectedItem(e, id);
+                                }
+                            });
+                        });
+
+                        if (absent.length > 0) {
+                            lowerTools = React.createElement(
                                 "div",
-                                { className: "tools" },
-                                React.createElement(
-                                    "div",
-                                    { className: "heading" },
-                                    "tools"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    null,
-                                    "token selected"
-                                )
-                            );
-                        } else {
-                            // TODO: Combatants that aren't on the map
-                            rightTools = React.createElement(
-                                "div",
-                                { className: "tools" },
-                                React.createElement(
-                                    "div",
-                                    { className: "heading" },
-                                    "tools"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    null,
-                                    "no selection"
-                                )
+                                null,
+                                React.createElement("div", { className: "divider" }),
+                                absent
                             );
                         }
                         break;
@@ -10126,16 +10133,22 @@ var MapPanel = function (_React$Component) {
 
                 return React.createElement(
                     "div",
-                    { className: "map-panel " + this.props.mode },
-                    leftTools,
+                    { className: "map-panel " + this.props.mode, onClick: function onClick(e) {
+                            return _this4.setSelectedItem(e, null);
+                        } },
                     React.createElement(
                         "div",
-                        { className: "grid", style: { height: this.getSideLength() * mapDimensions.height + 1 + "px" } },
-                        grid,
-                        tiles,
-                        tokens
+                        null,
+                        leftTools,
+                        React.createElement(
+                            "div",
+                            { className: "grid", style: { height: this.getSideLength() * mapDimensions.height + 1 + "px" } },
+                            grid,
+                            tiles,
+                            tokens
+                        )
                     ),
-                    rightTools
+                    lowerTools
                 );
             } catch (e) {
                 console.error(e);
@@ -10158,22 +10171,59 @@ var GridSquare = function (_React$Component2) {
     _createClass(GridSquare, [{
         key: "render",
         value: function render() {
-            var _this5 = this;
+            var _this6 = this;
 
             return React.createElement("div", {
                 className: "grid-square",
                 style: this.props.position,
                 onClick: function onClick() {
-                    return _this5.props.click();
+                    return _this6.props.click();
                 },
                 onDoubleClick: function onDoubleClick() {
-                    return _this5.props.doubleClick(_this5.props.x, _this5.props.y);
+                    return _this6.props.doubleClick(_this6.props.x, _this6.props.y);
                 }
             });
         }
     }]);
 
     return GridSquare;
+}(React.Component);
+
+var AbsentCombatant = function (_React$Component3) {
+    _inherits(AbsentCombatant, _React$Component3);
+
+    function AbsentCombatant() {
+        _classCallCheck(this, AbsentCombatant);
+
+        return _possibleConstructorReturn(this, (AbsentCombatant.__proto__ || Object.getPrototypeOf(AbsentCombatant)).apply(this, arguments));
+    }
+
+    _createClass(AbsentCombatant, [{
+        key: "render",
+        value: function render() {
+            var _this8 = this;
+
+            var style = "absent-token";
+            if (this.props.selected) {
+                style += " selected";
+            }
+
+            return React.createElement(
+                "div",
+                { key: this.props.combatant.id, className: style, title: this.props.combatant.name, onClick: function onClick(e) {
+                        return _this8.props.click(e, _this8.props.combatant.id);
+                    } },
+                React.createElement("div", { className: "token " + this.props.combatant.type }),
+                React.createElement(
+                    "div",
+                    { className: "name" },
+                    this.props.combatant.name
+                )
+            );
+        }
+    }]);
+
+    return AbsentCombatant;
 }(React.Component);
 "use strict";
 
@@ -10544,7 +10594,8 @@ var CombatManagerScreen = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (CombatManagerScreen.__proto__ || Object.getPrototypeOf(CombatManagerScreen)).call(this));
 
         _this.state = {
-            mode: "list"
+            mode: "list",
+            mapSelectionID: null
         };
         return _this;
     }
@@ -10554,6 +10605,13 @@ var CombatManagerScreen = function (_React$Component) {
         value: function setMode(mode) {
             this.setState({
                 mode: mode
+            });
+        }
+    }, {
+        key: "setMapSelectionID",
+        value: function setMapSelectionID(id) {
+            this.setState({
+                mapSelectionID: id
             });
         }
     }, {
@@ -10835,14 +10893,28 @@ var CombatManagerScreen = function (_React$Component) {
                             );
                             break;
                         case "map":
+                            var selection = null;
+                            if (this.state.mapSelectionID) {
+                                var combatant = this.props.combat.combatants.find(function (c) {
+                                    return c.id === _this3.state.mapSelectionID;
+                                });
+                                if (combatant) {
+                                    selection = this.createCard(combatant);
+                                }
+                            }
                             rightPaneContent = React.createElement(
                                 "div",
                                 null,
                                 notifications,
                                 React.createElement(MapPanel, {
                                     map: this.props.combat.map,
-                                    mode: "combat"
-                                })
+                                    mode: "combat",
+                                    combatants: this.props.combat.combatants,
+                                    selectionChanged: function selectionChanged(id) {
+                                        return _this3.setMapSelectionID(id);
+                                    }
+                                }),
+                                selection
                             );
                             break;
                     }

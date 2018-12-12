@@ -364,6 +364,7 @@ body,
     background-color: #F5F5F5;
     border: 1px solid #656565;
     margin: 5px;
+    max-width: 350px;
 
     .heading {
         height: 35px;
@@ -952,12 +953,38 @@ body,
         }
     }
 
+    .absent-token {
+        display: inline-block;
+        vertical-align: top;
+        width: 80px;
+        margin: 10px;
+        padding: 5px;
+        border: 1px solid $control-border;
+
+        .token {
+            position: relative;
+            height: 30px;
+            width: 30px;
+            margin: 20px;
+        }
+
+        .name {
+            border-top: 1px solid $control-border;
+            padding-top: 5px;
+            text-align: center;
+        }
+
+        &:hover,
+        &.selected {
+            border-color: $highlight;
+        }
+    }
+
     &.thumbnail .grid {
         max-height: 200px;
     }
 
-    &.edit .grid,
-    &.combat .grid {
+    &.edit .grid {
         display: inline-block;
         vertical-align: top;
         max-height: 100%;
@@ -968,7 +995,7 @@ body,
         border-color: $highlight;
     }
 
-    &.combat .token:hover {
+    &.combat .grid .token:hover {
         border-color: $highlight;
     }
 }

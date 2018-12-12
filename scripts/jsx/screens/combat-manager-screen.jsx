@@ -3,13 +3,20 @@ class CombatManagerScreen extends React.Component {
         super();
 
         this.state = {
-            mode: "list"
+            mode: "list",
+            mapSelectionID: null
         };
     }
 
     setMode(mode) {
         this.setState({
             mode: mode
+        });
+    }
+
+    setMapSelectionID(id) {
+        this.setState({
+            mapSelectionID: id
         });
     }
 
@@ -210,13 +217,23 @@ class CombatManagerScreen extends React.Component {
                         );
                         break;
                     case "map":
+                        var selection = null;
+                        if (this.state.mapSelectionID) {
+                            var combatant = this.props.combat.combatants.find(c => c.id === this.state.mapSelectionID);
+                            if (combatant) {
+                                selection = this.createCard(combatant);
+                            }
+                        }
                         rightPaneContent = (
                             <div>
                                 {notifications}
                                 <MapPanel
                                     map={this.props.combat.map}
                                     mode="combat"
+                                    combatants={this.props.combat.combatants}
+                                    selectionChanged={id => this.setMapSelectionID(id)}
                                 />
+                                {selection}
                             </div>
                         );
                         break;
