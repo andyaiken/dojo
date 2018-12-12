@@ -62,6 +62,18 @@ function dieRoll() {
     return Math.floor(Math.random() * 20) + 1;
 }
 
+function miniSize(size) {
+    switch (size) {
+    case 'tiny': return 1;
+    case 'small': return 1;
+    case 'medium': return 1;
+    case 'large': return 2;
+    case 'huge': return 3;
+    case 'gargantuan': return 4;
+    default: return 1;
+    }
+}
+
 function hitDieType(size) {
     switch (size) {
     case 'tiny': return 4;

@@ -920,6 +920,10 @@ body,
             position: absolute;
             border: 1px solid white;
             background-color: rgba(0, 60, 200, 0.2);
+
+            &.grid-overlay {
+                opacity: 0.5;
+            }
         }
     }
 
@@ -963,9 +967,9 @@ body,
 
         .token {
             position: relative;
-            height: 30px;
-            width: 30px;
-            margin: 20px;
+            height: 26px;
+            width: 26px;
+            margin: 22px;
         }
 
         .name {

@@ -3,7 +3,8 @@ class MapPanel extends React.Component {
         super();
         this.state = {
             map: props.map,
-            selectedItemID: null
+            selectedItemID: null,
+            drag: null
         };
     }
 
@@ -41,6 +42,12 @@ class MapPanel extends React.Component {
         });
     }
 
+    setDrag(item) {
+        this.setState({
+            drag: item
+        });
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Map manipulation methods
 
@@ -48,7 +55,7 @@ class MapPanel extends React.Component {
         return this.state.map.items.find(i => i.id === id);
     }
 
-    addMapItem(x, y) {
+    addMapTile(x, y) {
         var item = createMapItem();
         item.x = x;
         item.y = y;
@@ -169,6 +176,27 @@ class MapPanel extends React.Component {
         });
     }
 
+    dropItem(x, y) {
+        var item = createMapItem();
+        item.id = this.state.drag.id;
+        item.type = this.state.drag.type;
+        item.x = x;
+        item.y = y;
+        item.width = this.state.drag.size;
+        item.height = this.state.drag.size;
+        this.state.map.items.push(item);
+
+        this.setState({
+            map: this.state.map,
+            selectedItemID: item.id,
+            drag: null
+        }, () => {
+            if (this.props.selectionChanged) {
+                this.props.selectionChanged(item.id);
+            }
+        });
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Rendering helper methods
 
@@ -274,7 +302,7 @@ class MapPanel extends React.Component {
                                 y={y}
                                 position={pos}
                                 onClick={e => this.setSelectedItem(e, null)}
-                                onDoubleClick={(x, y) => this.addMapItem(x, y)}
+                                onDoubleClick={(x, y) => this.addMapTile(x, y)}
                             />
                         );
                     }
@@ -314,6 +342,26 @@ class MapPanel extends React.Component {
                         </div>
                     );
                 });
+            }
+
+            // Drag overlay
+            var dragOverlay = [];
+            if (this.state.drag) {
+                for (var y = mapDimensions.minY; y !== mapDimensions.maxY + 1; ++y) {
+                    for (var x = mapDimensions.minX; x !== mapDimensions.maxX + 1; ++x) {
+                        var pos = this.getPosition(x, y, 1, 1, mapDimensions);
+                        dragOverlay.push(
+                            <GridSquare
+                                key={x + "," + y}
+                                x={x}
+                                y={y}
+                                position={pos}
+                                overlay={true}
+                                dropItem={(x, y) => this.dropItem(x, y)}
+                            />
+                        );
+                    }
+                }
             }
 
             // Draw tools
@@ -358,6 +406,7 @@ class MapPanel extends React.Component {
                                     combatant={c}
                                     selected={c.id === this.state.selectedItemID}
                                     click={(e, id) => this.setSelectedItem(e, id)}
+                                    dragToken={item => this.setDrag(item)}
                                 />
                             );
                         });
@@ -381,6 +430,7 @@ class MapPanel extends React.Component {
                             {grid}
                             {tiles}
                             {tokens}
+                            {dragOverlay}
                         </div>
                     </div>
                     {lowerTools}
@@ -394,12 +444,19 @@ class MapPanel extends React.Component {
 
 class GridSquare extends React.Component {
     render() {
+        var style = "grid-square";
+        if (this.props.overlay) {
+            style += " grid-overlay";
+        }
+
         return (
             <div
-                className="grid-square"
+                className={style}
                 style={this.props.position}
-                onClick={() => this.props.click()}
-                onDoubleClick={() => this.props.doubleClick(this.props.x, this.props.y)}
+                onClick={e => this.props.onClick(e)}
+                onDoubleClick={() => this.props.onDoubleClick(this.props.x, this.props.y)}
+                onDragOver={e => e.preventDefault()}
+                onDrop={() => this.props.dropItem(this.props.x, this.props.y)}
             >
             </div>
         );
@@ -407,6 +464,19 @@ class GridSquare extends React.Component {
 }
 
 class AbsentCombatant extends React.Component {
+    startDrag() {
+        var data = {
+            id: this.props.combatant.id,
+            type: this.props.combatant.type,
+            size: miniSize(this.props.combatant.size)
+        }
+        this.props.dragToken(data);
+    }
+
+    stopDrag() {
+        this.props.dragToken(null);
+    }
+
     render() {
         var style = "absent-token";
         if (this.props.selected) {
@@ -415,7 +485,7 @@ class AbsentCombatant extends React.Component {
 
         return (
             <div key={this.props.combatant.id} className={style} title={this.props.combatant.name} onClick={e => this.props.click(e, this.props.combatant.id)}>
-                <div className={"token " + this.props.combatant.type}></div>
+                <div className={"token " + this.props.combatant.type} draggable="true" onDragStart={e => this.startDrag()} onDragEnd={() => this.stopDrag()}></div>
                 <div className="name">{this.props.combatant.name}</div>
             </div>
         );

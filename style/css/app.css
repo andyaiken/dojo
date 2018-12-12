@@ -615,6 +615,8 @@ body,
       position: absolute;
       border: 1px solid white;
       background-color: rgba(0, 60, 200, 0.2); }
+      .map-panel .grid .grid-square.grid-overlay {
+        opacity: 0.5; }
   .map-panel .tile {
     position: absolute;
     border: 1px solid darkgrey;
@@ -642,9 +644,9 @@ body,
     border: 1px solid #c3c3c3; }
     .map-panel .absent-token .token {
       position: relative;
-      height: 30px;
-      width: 30px;
-      margin: 20px; }
+      height: 26px;
+      width: 26px;
+      margin: 22px; }
     .map-panel .absent-token .name {
       border-top: 1px solid #c3c3c3;
       padding-top: 5px;
