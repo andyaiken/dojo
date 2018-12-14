@@ -9936,13 +9936,7 @@ var MapPanel = function (_React$Component) {
             }) !== null;
             if (onMap) {
                 e.preventDefault();
-                // TODO: Set off-map area as drop target
             }
-        }
-    }, {
-        key: "offMapDragLeave",
-        value: function offMapDragLeave() {
-            // TODO: Leave the off-map area
         }
     }, {
         key: "offMapDrop",
@@ -10051,7 +10045,7 @@ var MapPanel = function (_React$Component) {
             var _this7 = this;
 
             try {
-                var border = 1;
+                var border = this.props.mode === "edit" ? 2 : 0;
                 var mapDimensions = this.getMapDimensions(border);
                 if (!mapDimensions) {
                     return React.createElement(
@@ -10197,6 +10191,7 @@ var MapPanel = function (_React$Component) {
                             return !tokenIDs.includes(c.id);
                         }).map(function (c) {
                             return React.createElement(OffMapCombatant, {
+                                key: c.id,
                                 combatant: c,
                                 selected: c.id === _this7.state.selectedItemID,
                                 click: function click(e, id) {
@@ -10207,16 +10202,24 @@ var MapPanel = function (_React$Component) {
                                 }
                             });
                         });
+                        if (offmap.length === 0) {
+                            offmap.push(React.createElement(
+                                "div",
+                                { key: "empty", className: "empty" },
+                                "drag tokens here to remove them from the map"
+                            ));
+                        }
 
+                        var style = "off-map-tokens";
+                        if (this.state.drag) {
+                            style += " drop-target";
+                        }
                         lowerTools = React.createElement(
                             "div",
                             {
-                                className: "off-map-tokens",
+                                className: style,
                                 onDragOver: function onDragOver(e) {
                                     return _this7.offMapDragOver(e);
-                                },
-                                onDragLeave: function onDragLeave() {
-                                    return _this7.offMapDragLeave();
                                 },
                                 onDrop: function onDrop() {
                                     return _this7.offMapDrop();
@@ -10290,7 +10293,7 @@ var OffMapCombatant = function (_React$Component2) {
 
             return React.createElement(
                 "div",
-                { key: this.props.combatant.id, className: style, title: this.props.combatant.name, onClick: function onClick(e) {
+                { className: style, title: this.props.combatant.name, onClick: function onClick(e) {
                         return _this9.props.click(e, _this9.props.combatant.id);
                     } },
                 React.createElement(MapToken, {

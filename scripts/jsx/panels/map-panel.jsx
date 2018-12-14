@@ -199,12 +199,7 @@ class MapPanel extends React.Component {
         var onMap = this.state.map.items.find(i => i.id === this.state.drag.id) !== null;
         if (onMap) {
             e.preventDefault();
-            // TODO: Set off-map area as drop target
         }
-    }
-
-    offMapDragLeave() {
-        // TODO: Leave the off-map area
     }
 
     offMapDrop() {
@@ -296,7 +291,7 @@ class MapPanel extends React.Component {
 
     render() {
         try {
-            var border = 1;
+            var border = (this.props.mode === "edit") ? 2 : 0;
             var mapDimensions = this.getMapDimensions(border);
             if (!mapDimensions) {
                 return (
@@ -419,6 +414,7 @@ class MapPanel extends React.Component {
                         .map(c => {
                             return (
                                 <OffMapCombatant
+                                    key={c.id}
                                     combatant={c}
                                     selected={c.id === this.state.selectedItemID}
                                     click={(e, id) => this.setSelectedItem(e, id)}
@@ -426,12 +422,22 @@ class MapPanel extends React.Component {
                                 />
                             );
                         });
+                    if (offmap.length === 0) {
+                        offmap.push(
+                            <div key="empty" className="empty">
+                                drag tokens here to remove them from the map
+                            </div>
+                        );
+                    }
 
+                    var style = "off-map-tokens";
+                    if (this.state.drag) {
+                        style += " drop-target";
+                    }
                     lowerTools = (
                         <div
-                            className="off-map-tokens"
+                            className={style}
                             onDragOver={e => this.offMapDragOver(e)}
-                            onDragLeave={() => this.offMapDragLeave()}
                             onDrop={() => this.offMapDrop()}
                         >
                             {offmap}
@@ -484,7 +490,7 @@ class OffMapCombatant extends React.Component {
         }
 
         return (
-            <div key={this.props.combatant.id} className={style} title={this.props.combatant.name} onClick={e => this.props.click(e, this.props.combatant.id)}>
+            <div className={style} title={this.props.combatant.name} onClick={e => this.props.click(e, this.props.combatant.id)}>
                 <MapToken
                     token={this.state.token}
                     selected={this.state.selectedItemID ===  this.state.token.id}

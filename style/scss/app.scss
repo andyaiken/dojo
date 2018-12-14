@@ -901,7 +901,6 @@ body,
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 .map-panel {
-    padding: 5px;
 
     .tools {
         display: inline-block;
@@ -934,9 +933,14 @@ body,
 
     .off-map-tokens {
         min-height: 50px;
-        margin: 0 25px 25px 25px;
+        margin-top: 10px;
         background-color: $header-background-02;
         border: 1px solid $control-border;
+
+        &.drop-target {
+            border-color: $highlight;
+            background-color: $highlight01;
+        }
 
         .off-map-token {
             display: inline-block;
@@ -944,12 +948,14 @@ body,
             margin: 10px;
             padding: 5px;
             border: 1px solid $control-border;
+            background-color: $background;
     
             .token {
                 position: relative;
                 height: 26px;
                 width: 26px;
                 margin: 22px;
+                cursor: pointer;
             }
     
             .name {
@@ -962,6 +968,11 @@ body,
             &.selected {
                 border-color: $highlight;
             }
+        }
+
+        .empty {
+            text-align: center;
+            line-height: 50px;
         }
     }
 
@@ -1015,8 +1026,12 @@ body,
         border-color: $highlight;
     }
 
-    &.combat .grid .token:hover {
-        border-color: $highlight;
+    &.combat {
+        margin: 10px;
+
+        .grid .token:hover {
+            border-color: $highlight;
+        }
     }
 }
 
