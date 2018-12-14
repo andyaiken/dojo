@@ -9740,7 +9740,7 @@ var MapPanel = function (_React$Component) {
                             break;
                     }
                 } else {
-                    // We selected an absent token
+                    // We selected an off-map token
                     canSelect = true;
                 }
                 if (!canSelect) {
@@ -9926,6 +9926,37 @@ var MapPanel = function (_React$Component) {
                 }
             });
         }
+    }, {
+        key: "offMapDragOver",
+        value: function offMapDragOver(e) {
+            var _this4 = this;
+
+            var onMap = this.state.map.items.find(function (i) {
+                return i.id === _this4.state.drag.id;
+            }) !== null;
+            if (onMap) {
+                e.preventDefault();
+                // TODO: Set off-map area as drop target
+            }
+        }
+    }, {
+        key: "offMapDragLeave",
+        value: function offMapDragLeave() {
+            // TODO: Leave the off-map area
+        }
+    }, {
+        key: "offMapDrop",
+        value: function offMapDrop() {
+            var _this5 = this;
+
+            this.state.map.items = this.state.map.items.filter(function (i) {
+                return i.id !== _this5.state.drag.id;
+            });
+            this.setState({
+                map: this.state.map,
+                drag: null
+            });
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Rendering helper methods
@@ -9933,14 +9964,14 @@ var MapPanel = function (_React$Component) {
     }, {
         key: "getMapDimensions",
         value: function getMapDimensions() {
-            var _this4 = this;
+            var _this6 = this;
 
             var border = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
             var dimensions = null;
 
             this.state.map.items.filter(function (i) {
-                if (_this4.props.mode === "edit") {
+                if (_this6.props.mode === "edit") {
                     return i.type === "tile";
                 }
                 return true;
@@ -10017,7 +10048,7 @@ var MapPanel = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            var _this5 = this;
+            var _this7 = this;
 
             try {
                 var border = 1;
@@ -10042,10 +10073,10 @@ var MapPanel = function (_React$Component) {
                                 y: y,
                                 position: pos,
                                 onClick: function onClick(e) {
-                                    return _this5.setSelectedItem(e, null);
+                                    return _this7.setSelectedItem(e, null);
                                 },
                                 onDoubleClick: function onDoubleClick(x, y) {
-                                    return _this5.addMapTile(x, y);
+                                    return _this7.addMapTile(x, y);
                                 }
                             }));
                         }
@@ -10056,14 +10087,14 @@ var MapPanel = function (_React$Component) {
                 var tiles = this.state.map.items.filter(function (i) {
                     return i.type === "tile";
                 }).map(function (i) {
-                    var pos = _this5.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
+                    var pos = _this7.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
                     return React.createElement(MapTile, {
                         key: i.id,
                         tile: i,
                         position: pos,
-                        selected: _this5.state.selectedItemID === i.id,
+                        selected: _this7.state.selectedItemID === i.id,
                         select: function select(e, id) {
-                            return _this5.setSelectedItem(e, id);
+                            return _this7.setSelectedItem(e, id);
                         }
                     });
                 });
@@ -10074,17 +10105,17 @@ var MapPanel = function (_React$Component) {
                     tokens = this.state.map.items.filter(function (i) {
                         return i.type === "monster" || i.type === "pc";
                     }).map(function (i) {
-                        var pos = _this5.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
+                        var pos = _this7.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
                         return React.createElement(MapToken, {
                             key: i.id,
                             token: i,
                             position: pos,
-                            selected: _this5.state.selectedItemID === i.id,
+                            selected: _this7.state.selectedItemID === i.id,
                             select: function select(e, id) {
-                                return _this5.setSelectedItem(e, id);
+                                return _this7.setSelectedItem(e, id);
                             },
                             dragToken: function dragToken(item) {
-                                return _this5.setDrag(item);
+                                return _this7.setDrag(item);
                             }
                         });
                     });
@@ -10103,7 +10134,7 @@ var MapPanel = function (_React$Component) {
                                 position: pos,
                                 overlay: true,
                                 dropItem: function dropItem(x, y) {
-                                    return _this5.dropItem(x, y);
+                                    return _this7.dropItem(x, y);
                                 }
                             }));
                         }
@@ -10126,16 +10157,16 @@ var MapPanel = function (_React$Component) {
                                 React.createElement(MapTileCard, {
                                     tile: item,
                                     moveMapItem: function moveMapItem(item, dir) {
-                                        return _this5.moveMapItem(item, dir);
+                                        return _this7.moveMapItem(item, dir);
                                     },
                                     resizeMapItem: function resizeMapItem(item, dir, dir2) {
-                                        return _this5.resizeMapItem(item, dir, dir2);
+                                        return _this7.resizeMapItem(item, dir, dir2);
                                     },
                                     cloneMapItem: function cloneMapItem(item) {
-                                        return _this5.cloneMapItem(item);
+                                        return _this7.cloneMapItem(item);
                                     },
                                     removeMapItem: function removeMapItem(item) {
-                                        return _this5.removeMapItem(item);
+                                        return _this7.removeMapItem(item);
                                     }
                                 })
                             );
@@ -10162,36 +10193,44 @@ var MapPanel = function (_React$Component) {
                         }).map(function (item) {
                             return item.id;
                         });
-                        var absent = this.props.combatants.filter(function (c) {
+                        var offmap = this.props.combatants.filter(function (c) {
                             return !tokenIDs.includes(c.id);
                         }).map(function (c) {
-                            return React.createElement(AbsentCombatant, {
+                            return React.createElement(OffMapCombatant, {
                                 combatant: c,
-                                selected: c.id === _this5.state.selectedItemID,
+                                selected: c.id === _this7.state.selectedItemID,
                                 click: function click(e, id) {
-                                    return _this5.setSelectedItem(e, id);
+                                    return _this7.setSelectedItem(e, id);
                                 },
                                 dragToken: function dragToken(item) {
-                                    return _this5.setDrag(item);
+                                    return _this7.setDrag(item);
                                 }
                             });
                         });
 
-                        if (absent.length > 0) {
-                            lowerTools = React.createElement(
-                                "div",
-                                null,
-                                React.createElement("div", { className: "divider" }),
-                                absent
-                            );
-                        }
+                        lowerTools = React.createElement(
+                            "div",
+                            {
+                                className: "off-map-tokens",
+                                onDragOver: function onDragOver(e) {
+                                    return _this7.offMapDragOver(e);
+                                },
+                                onDragLeave: function onDragLeave() {
+                                    return _this7.offMapDragLeave();
+                                },
+                                onDrop: function onDrop() {
+                                    return _this7.offMapDrop();
+                                }
+                            },
+                            offmap
+                        );
                         break;
                 }
 
                 return React.createElement(
                     "div",
                     { className: "map-panel " + this.props.mode, onClick: function onClick(e) {
-                            return _this5.setSelectedItem(e, null);
+                            return _this7.setSelectedItem(e, null);
                         } },
                     React.createElement(
                         "div",
@@ -10217,18 +10256,77 @@ var MapPanel = function (_React$Component) {
     return MapPanel;
 }(React.Component);
 
-var GridSquare = function (_React$Component2) {
-    _inherits(GridSquare, _React$Component2);
+var OffMapCombatant = function (_React$Component2) {
+    _inherits(OffMapCombatant, _React$Component2);
+
+    function OffMapCombatant(props) {
+        _classCallCheck(this, OffMapCombatant);
+
+        var _this8 = _possibleConstructorReturn(this, (OffMapCombatant.__proto__ || Object.getPrototypeOf(OffMapCombatant)).call(this));
+
+        var size = miniSize(props.combatant.size);
+
+        var token = createMapItem();
+        token.id = props.combatant.id;
+        token.type = props.combatant.type;
+        token.width = size;
+        token.height = size;
+
+        _this8.state = {
+            token: token
+        };
+        return _this8;
+    }
+
+    _createClass(OffMapCombatant, [{
+        key: "render",
+        value: function render() {
+            var _this9 = this;
+
+            var style = "off-map-token";
+            if (this.props.selected) {
+                style += " selected";
+            }
+
+            return React.createElement(
+                "div",
+                { key: this.props.combatant.id, className: style, title: this.props.combatant.name, onClick: function onClick(e) {
+                        return _this9.props.click(e, _this9.props.combatant.id);
+                    } },
+                React.createElement(MapToken, {
+                    token: this.state.token,
+                    selected: this.state.selectedItemID === this.state.token.id,
+                    select: function select(e, id) {
+                        return _this9.props.click(e, id);
+                    },
+                    dragToken: function dragToken(token) {
+                        return _this9.props.dragToken(token);
+                    }
+                }),
+                React.createElement(
+                    "div",
+                    { className: "name" },
+                    this.props.combatant.name
+                )
+            );
+        }
+    }]);
+
+    return OffMapCombatant;
+}(React.Component);
+
+var GridSquare = function (_React$Component3) {
+    _inherits(GridSquare, _React$Component3);
 
     function GridSquare() {
         _classCallCheck(this, GridSquare);
 
-        var _this6 = _possibleConstructorReturn(this, (GridSquare.__proto__ || Object.getPrototypeOf(GridSquare)).call(this));
+        var _this10 = _possibleConstructorReturn(this, (GridSquare.__proto__ || Object.getPrototypeOf(GridSquare)).call(this));
 
-        _this6.state = {
+        _this10.state = {
             dropTarget: false
         };
-        return _this6;
+        return _this10;
     }
 
     _createClass(GridSquare, [{
@@ -10252,7 +10350,7 @@ var GridSquare = function (_React$Component2) {
     }, {
         key: "render",
         value: function render() {
-            var _this7 = this;
+            var _this11 = this;
 
             var style = "grid-square";
             if (this.props.overlay) {
@@ -10266,19 +10364,19 @@ var GridSquare = function (_React$Component2) {
                 className: style,
                 style: this.props.position,
                 onClick: function onClick(e) {
-                    return _this7.props.onClick(e);
+                    return _this11.props.onClick(e);
                 },
                 onDoubleClick: function onDoubleClick() {
-                    return _this7.props.onDoubleClick(_this7.props.x, _this7.props.y);
+                    return _this11.props.onDoubleClick(_this11.props.x, _this11.props.y);
                 },
                 onDragOver: function onDragOver(e) {
-                    return _this7.dragOver(e);
+                    return _this11.dragOver(e);
                 },
                 onDragLeave: function onDragLeave() {
-                    return _this7.dragLeave();
+                    return _this11.dragLeave();
                 },
                 onDrop: function onDrop() {
-                    return _this7.props.dropItem(_this7.props.x, _this7.props.y);
+                    return _this11.props.dropItem(_this11.props.x, _this11.props.y);
                 }
             });
         }
@@ -10287,8 +10385,8 @@ var GridSquare = function (_React$Component2) {
     return GridSquare;
 }(React.Component);
 
-var MapTile = function (_React$Component3) {
-    _inherits(MapTile, _React$Component3);
+var MapTile = function (_React$Component4) {
+    _inherits(MapTile, _React$Component4);
 
     function MapTile() {
         _classCallCheck(this, MapTile);
@@ -10299,7 +10397,7 @@ var MapTile = function (_React$Component3) {
     _createClass(MapTile, [{
         key: "render",
         value: function render() {
-            var _this9 = this;
+            var _this13 = this;
 
             var style = "tile";
             if (this.props.selected) {
@@ -10310,7 +10408,7 @@ var MapTile = function (_React$Component3) {
                 className: style,
                 style: this.props.position,
                 onClick: function onClick(e) {
-                    return _this9.props.select(e, _this9.props.tile.id);
+                    return _this13.props.select(e, _this13.props.tile.id);
                 } });
         }
     }]);
@@ -10318,8 +10416,8 @@ var MapTile = function (_React$Component3) {
     return MapTile;
 }(React.Component);
 
-var MapToken = function (_React$Component4) {
-    _inherits(MapToken, _React$Component4);
+var MapToken = function (_React$Component5) {
+    _inherits(MapToken, _React$Component5);
 
     function MapToken() {
         _classCallCheck(this, MapToken);
@@ -10330,13 +10428,7 @@ var MapToken = function (_React$Component4) {
     _createClass(MapToken, [{
         key: "startDrag",
         value: function startDrag() {
-            var data = {
-                id: this.props.token.id,
-                type: this.props.token.type,
-                height: this.props.token.height,
-                width: this.props.token.width
-            };
-            this.props.dragToken(data);
+            this.props.dragToken(this.props.token);
         }
     }, {
         key: "stopDrag",
@@ -10346,7 +10438,7 @@ var MapToken = function (_React$Component4) {
     }, {
         key: "render",
         value: function render() {
-            var _this11 = this;
+            var _this15 = this;
 
             var style = "token " + this.props.token.type;
             if (this.props.selected) {
@@ -10364,79 +10456,20 @@ var MapToken = function (_React$Component4) {
                 className: style,
                 style: this.props.position,
                 onClick: function onClick(e) {
-                    return _this11.props.select(e, _this11.props.token.id);
+                    return _this15.props.select(e, _this15.props.token.id);
                 },
                 draggable: "true",
                 onDragStart: function onDragStart() {
-                    return _this11.startDrag();
+                    return _this15.startDrag();
                 },
                 onDragEnd: function onDragEnd() {
-                    return _this11.stopDrag();
+                    return _this15.stopDrag();
                 }
             });
         }
     }]);
 
     return MapToken;
-}(React.Component);
-
-var AbsentCombatant = function (_React$Component5) {
-    _inherits(AbsentCombatant, _React$Component5);
-
-    function AbsentCombatant(props) {
-        _classCallCheck(this, AbsentCombatant);
-
-        var _this12 = _possibleConstructorReturn(this, (AbsentCombatant.__proto__ || Object.getPrototypeOf(AbsentCombatant)).call(this));
-
-        var size = miniSize(props.combatant.size);
-
-        var token = createMapItem();
-        token.id = props.combatant.id;
-        token.type = props.combatant.type;
-        token.width = size;
-        token.height = size;
-
-        _this12.state = {
-            token: token
-        };
-        return _this12;
-    }
-
-    _createClass(AbsentCombatant, [{
-        key: "render",
-        value: function render() {
-            var _this13 = this;
-
-            var style = "absent-token";
-            if (this.props.selected) {
-                style += " selected";
-            }
-
-            return React.createElement(
-                "div",
-                { key: this.props.combatant.id, className: style, title: this.props.combatant.name, onClick: function onClick(e) {
-                        return _this13.props.click(e, _this13.props.combatant.id);
-                    } },
-                React.createElement(MapToken, {
-                    token: this.state.token,
-                    selected: this.state.selectedItemID === this.state.token.id,
-                    select: function select(e, id) {
-                        return _this13.setSelectedItem(e, id);
-                    },
-                    dragToken: function dragToken(item) {
-                        return _this13.props.dragToken(item);
-                    }
-                }),
-                React.createElement(
-                    "div",
-                    { className: "name" },
-                    this.props.combatant.name
-                )
-            );
-        }
-    }]);
-
-    return AbsentCombatant;
 }(React.Component);
 "use strict";
 

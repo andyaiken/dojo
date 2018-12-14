@@ -620,6 +620,28 @@ body,
       .map-panel .grid .grid-square.drop-target {
         background-color: #3c78dc;
         opacity: 1; }
+  .map-panel .off-map-tokens {
+    min-height: 50px;
+    margin: 0 25px 25px 25px;
+    background-color: rgba(220, 220, 220, 0.2);
+    border: 1px solid #c3c3c3; }
+    .map-panel .off-map-tokens .off-map-token {
+      display: inline-block;
+      vertical-align: top;
+      margin: 10px;
+      padding: 5px;
+      border: 1px solid #c3c3c3; }
+      .map-panel .off-map-tokens .off-map-token .token {
+        position: relative;
+        height: 26px;
+        width: 26px;
+        margin: 22px; }
+      .map-panel .off-map-tokens .off-map-token .name {
+        border-top: 1px solid #c3c3c3;
+        padding-top: 5px;
+        text-align: center; }
+      .map-panel .off-map-tokens .off-map-token:hover, .map-panel .off-map-tokens .off-map-token.selected {
+        border-color: #3c78dc; }
   .map-panel .tile {
     position: absolute;
     border: 1px solid darkgrey;
@@ -639,23 +661,6 @@ body,
     .map-panel .token.selected {
       border-color: #3c78dc;
       border-width: 2px; }
-  .map-panel .absent-token {
-    display: inline-block;
-    vertical-align: top;
-    margin: 10px;
-    padding: 5px;
-    border: 1px solid #c3c3c3; }
-    .map-panel .absent-token .token {
-      position: relative;
-      height: 26px;
-      width: 26px;
-      margin: 22px; }
-    .map-panel .absent-token .name {
-      border-top: 1px solid #c3c3c3;
-      padding-top: 5px;
-      text-align: center; }
-    .map-panel .absent-token:hover, .map-panel .absent-token.selected {
-      border-color: #3c78dc; }
   .map-panel.thumbnail {
     pointer-events: none; }
     .map-panel.thumbnail .grid {

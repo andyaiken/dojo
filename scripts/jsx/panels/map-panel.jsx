@@ -25,7 +25,7 @@ class MapPanel extends React.Component {
                         break;
                 }
             } else {
-                // We selected an absent token
+                // We selected an off-map token
                 canSelect = true;
             }
             if (!canSelect) {
@@ -192,6 +192,26 @@ class MapPanel extends React.Component {
             if (this.props.selectionChanged) {
                 this.props.selectionChanged(item.id);
             }
+        });
+    }
+
+    offMapDragOver(e) {
+        var onMap = this.state.map.items.find(i => i.id === this.state.drag.id) !== null;
+        if (onMap) {
+            e.preventDefault();
+            // TODO: Set off-map area as drop target
+        }
+    }
+
+    offMapDragLeave() {
+        // TODO: Leave the off-map area
+    }
+
+    offMapDrop() {
+        this.state.map.items = this.state.map.items.filter(i => i.id !== this.state.drag.id);
+        this.setState({
+            map: this.state.map,
+            drag: null
         });
     }
 
@@ -394,11 +414,11 @@ class MapPanel extends React.Component {
                     var tokenIDs = this.state.map.items
                         .filter(item => (item.type === "monster") || (item.type === "pc"))
                         .map(item => item.id);
-                    var absent = this.props.combatants
+                    var offmap = this.props.combatants
                         .filter(c => !tokenIDs.includes(c.id))
                         .map(c => {
                             return (
-                                <AbsentCombatant
+                                <OffMapCombatant
                                     combatant={c}
                                     selected={c.id === this.state.selectedItemID}
                                     click={(e, id) => this.setSelectedItem(e, id)}
@@ -407,14 +427,16 @@ class MapPanel extends React.Component {
                             );
                         });
 
-                    if (absent.length > 0) {
-                        lowerTools = (
-                            <div>
-                                <div className="divider"></div>
-                                {absent}
-                            </div>
-                        );
-                    }
+                    lowerTools = (
+                        <div
+                            className="off-map-tokens"
+                            onDragOver={e => this.offMapDragOver(e)}
+                            onDragLeave={() => this.offMapDragLeave()}
+                            onDrop={() => this.offMapDrop()}
+                        >
+                            {offmap}
+                        </div>
+                    );
                     break;
             }
 
@@ -435,6 +457,43 @@ class MapPanel extends React.Component {
         } catch (e) {
             console.error(e);
         }
+    }
+}
+
+class OffMapCombatant extends React.Component {
+    constructor(props) {
+        super();
+
+        var size = miniSize(props.combatant.size);
+
+        var token = createMapItem();
+        token.id = props.combatant.id;
+        token.type = props.combatant.type;
+        token.width = size;
+        token.height = size;
+
+        this.state = {
+            token: token
+        }
+    }
+
+    render() {
+        var style = "off-map-token";
+        if (this.props.selected) {
+            style += " selected";
+        }
+
+        return (
+            <div key={this.props.combatant.id} className={style} title={this.props.combatant.name} onClick={e => this.props.click(e, this.props.combatant.id)}>
+                <MapToken
+                    token={this.state.token}
+                    selected={this.state.selectedItemID ===  this.state.token.id}
+                    select={(e, id) => this.props.click(e, id)}
+                    dragToken={token => this.props.dragToken(token)}
+                />
+                <div className="name">{this.props.combatant.name}</div>
+            </div>
+        );
     }
 }
 
@@ -505,13 +564,7 @@ class MapTile extends React.Component {
 
 class MapToken extends React.Component {
     startDrag() {
-        var data = {
-            id: this.props.token.id,
-            type: this.props.token.type,
-            height: this.props.token.height,
-            width: this.props.token.width
-        }
-        this.props.dragToken(data);
+        this.props.dragToken(this.props.token);
     }
 
     stopDrag() {
@@ -540,43 +593,6 @@ class MapToken extends React.Component {
                 onDragStart={() => this.startDrag()}
                 onDragEnd={() => this.stopDrag()}
             >
-            </div>
-        );
-    }
-}
-
-class AbsentCombatant extends React.Component {
-    constructor(props) {
-        super();
-
-        var size = miniSize(props.combatant.size);
-
-        var token = createMapItem();
-        token.id = props.combatant.id;
-        token.type = props.combatant.type;
-        token.width = size;
-        token.height = size;
-
-        this.state = {
-            token: token
-        }
-    }
-
-    render() {
-        var style = "absent-token";
-        if (this.props.selected) {
-            style += " selected";
-        }
-
-        return (
-            <div key={this.props.combatant.id} className={style} title={this.props.combatant.name} onClick={e => this.props.click(e, this.props.combatant.id)}>
-                <MapToken
-                    token={this.state.token}
-                    selected={this.state.selectedItemID ===  this.state.token.id}
-                    select={(e, id) => this.setSelectedItem(e, id)}
-                    dragToken={item => this.props.dragToken(item)}
-                />
-                <div className="name">{this.props.combatant.name}</div>
             </div>
         );
     }

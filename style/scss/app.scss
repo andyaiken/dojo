@@ -932,6 +932,39 @@ body,
         }
     }
 
+    .off-map-tokens {
+        min-height: 50px;
+        margin: 0 25px 25px 25px;
+        background-color: $header-background-02;
+        border: 1px solid $control-border;
+
+        .off-map-token {
+            display: inline-block;
+            vertical-align: top;
+            margin: 10px;
+            padding: 5px;
+            border: 1px solid $control-border;
+    
+            .token {
+                position: relative;
+                height: 26px;
+                width: 26px;
+                margin: 22px;
+            }
+    
+            .name {
+                border-top: 1px solid $control-border;
+                padding-top: 5px;
+                text-align: center;
+            }
+    
+            &:hover,
+            &.selected {
+                border-color: $highlight;
+            }
+        }
+    }
+
     .tile {
         position: absolute;
         border: 1px solid darkgrey;
@@ -960,32 +993,6 @@ body,
         &.selected {
             border-color: $highlight;
             border-width: 2px;
-        }
-    }
-
-    .absent-token {
-        display: inline-block;
-        vertical-align: top;
-        margin: 10px;
-        padding: 5px;
-        border: 1px solid $control-border;
-
-        .token {
-            position: relative;
-            height: 26px;
-            width: 26px;
-            margin: 22px;
-        }
-
-        .name {
-            border-top: 1px solid $control-border;
-            padding-top: 5px;
-            text-align: center;
-        }
-
-        &:hover,
-        &.selected {
-            border-color: $highlight;
         }
     }
 
