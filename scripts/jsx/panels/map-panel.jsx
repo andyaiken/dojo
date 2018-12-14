@@ -347,6 +347,7 @@ class MapPanel extends React.Component {
                             key={i.id}
                             token={i}
                             position={pos}
+                            combatant={this.props.combatants.find(c => c.id === i.id)}
                             selected={this.state.selectedItemID ===  i.id}
                             select={(e, id) => this.setSelectedItem(e, id)}
                             dragToken={item => this.setDrag(item)}
@@ -493,6 +494,7 @@ class OffMapCombatant extends React.Component {
             <div className={style} title={this.props.combatant.name} onClick={e => this.props.click(e, this.props.combatant.id)}>
                 <MapToken
                     token={this.state.token}
+                    combatant={this.props.combatant}
                     selected={this.state.selectedItemID ===  this.state.token.id}
                     select={(e, id) => this.props.click(e, id)}
                     dragToken={token => this.props.dragToken(token)}
@@ -582,6 +584,9 @@ class MapToken extends React.Component {
         if (this.props.selected) {
             style += " selected";
         }
+        if (this.props.combatant.current) {
+            style += " current";
+        }
 
         if (!this.props.position) {
             this.props.position = {
@@ -592,6 +597,7 @@ class MapToken extends React.Component {
 
         return (
             <div
+                title={this.props.combatant.name}
                 className={style}
                 style={this.props.position}
                 onClick={e => this.props.select(e, this.props.token.id)}

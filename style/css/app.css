@@ -668,6 +668,8 @@ body,
     background-color: #650000; }
   .map-panel .token.pc {
     background-color: #006500; }
+  .map-panel .token.current {
+    background-color: white; }
   .map-panel .token.selected {
     border-color: #3c78dc;
     border-width: 2px; }

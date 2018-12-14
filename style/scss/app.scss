@@ -1001,6 +1001,10 @@ body,
             background-color: #006500;
         }
 
+        &.current {
+            background-color: white;
+        }
+
         &.selected {
             border-color: $highlight;
             border-width: 2px;

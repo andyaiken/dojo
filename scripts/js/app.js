@@ -4868,7 +4868,9 @@ var Dojo = function (_React$Component) {
             var combat = this.getCombat(this.state.selectedCombatID);
 
             // Handle end-of-turn conditions
-            combat.combatants.forEach(function (actor) {
+            combat.combatants.filter(function (actor) {
+                return actor.conditions;
+            }).forEach(function (actor) {
                 actor.conditions.filter(function (c) {
                     return c.duration !== null;
                 }).forEach(function (c) {
@@ -10104,6 +10106,9 @@ var MapPanel = function (_React$Component) {
                             key: i.id,
                             token: i,
                             position: pos,
+                            combatant: _this7.props.combatants.find(function (c) {
+                                return c.id === i.id;
+                            }),
                             selected: _this7.state.selectedItemID === i.id,
                             select: function select(e, id) {
                                 return _this7.setSelectedItem(e, id);
@@ -10298,6 +10303,7 @@ var OffMapCombatant = function (_React$Component2) {
                     } },
                 React.createElement(MapToken, {
                     token: this.state.token,
+                    combatant: this.props.combatant,
                     selected: this.state.selectedItemID === this.state.token.id,
                     select: function select(e, id) {
                         return _this9.props.click(e, id);
@@ -10447,6 +10453,9 @@ var MapToken = function (_React$Component5) {
             if (this.props.selected) {
                 style += " selected";
             }
+            if (this.props.combatant.current) {
+                style += " current";
+            }
 
             if (!this.props.position) {
                 this.props.position = {
@@ -10456,6 +10465,7 @@ var MapToken = function (_React$Component5) {
             }
 
             return React.createElement("div", {
+                title: this.props.combatant.name,
                 className: style,
                 style: this.props.position,
                 onClick: function onClick(e) {
