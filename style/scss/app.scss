@@ -934,8 +934,9 @@ body,
     .off-map-tokens {
         min-height: 50px;
         margin-top: 10px;
-        background-color: $header-background-02;
+        background-color: $background;
         border: 1px solid $control-border;
+        border-left-width: 5px;
 
         &.drop-target {
             border-color: $highlight;
