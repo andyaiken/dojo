@@ -439,10 +439,36 @@ class MapPanel extends React.Component {
 }
 
 class GridSquare extends React.Component {
+    constructor() {
+        super();
+
+        this.state = {
+            dropTarget: false
+        };
+    }
+
+    setDropTarget(value) {
+        this.setState({
+            dropTarget: value
+        });
+    }
+
+    dragOver(e) {
+        e.preventDefault();
+        this.setDropTarget(true);
+    }
+
+    dragLeave() {
+        this.setDropTarget(false);
+    }
+
     render() {
         var style = "grid-square";
         if (this.props.overlay) {
             style += " grid-overlay";
+        }
+        if (this.state.dropTarget) {
+            style += "drop-target";
         }
 
         return (
@@ -451,7 +477,8 @@ class GridSquare extends React.Component {
                 style={this.props.position}
                 onClick={e => this.props.onClick(e)}
                 onDoubleClick={() => this.props.onDoubleClick(this.props.x, this.props.y)}
-                onDragOver={e => e.preventDefault()}
+                onDragOver={e => this.dragOver(e)}
+                onDragLeave={() => this.dragLeave()}
                 onDrop={() => this.props.dropItem(this.props.x, this.props.y)}
             >
             </div>
@@ -495,6 +522,13 @@ class MapToken extends React.Component {
         var style = "token " + this.props.token.type;
         if (this.props.selected) {
             style += " selected";
+        }
+
+        if (!this.props.position) {
+            this.props.position = {
+                width: (this.props.token.width * 25) + "px",
+                height: (this.props.token.height * 25) + "px"
+            }
         }
 
         return (

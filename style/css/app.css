@@ -617,6 +617,9 @@ body,
       background-color: rgba(0, 60, 200, 0.2); }
       .map-panel .grid .grid-square.grid-overlay {
         opacity: 0.5; }
+      .map-panel .grid .grid-square.drop-target {
+        background-color: #3c78dc;
+        opacity: 1; }
   .map-panel .tile {
     position: absolute;
     border: 1px solid darkgrey;
@@ -627,7 +630,8 @@ body,
   .map-panel .token {
     position: absolute;
     border: 1px solid white;
-    border-radius: 50%; }
+    border-radius: 50%;
+    box-shadow: inset 0 0 6px 3px rgba(0, 0, 0, 0.1); }
     .map-panel .token.monster {
       background-color: #650000; }
     .map-panel .token.pc {
@@ -638,7 +642,6 @@ body,
   .map-panel .absent-token {
     display: inline-block;
     vertical-align: top;
-    width: 80px;
     margin: 10px;
     padding: 5px;
     border: 1px solid #c3c3c3; }

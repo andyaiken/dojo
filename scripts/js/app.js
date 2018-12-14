@@ -10223,10 +10223,33 @@ var GridSquare = function (_React$Component2) {
     function GridSquare() {
         _classCallCheck(this, GridSquare);
 
-        return _possibleConstructorReturn(this, (GridSquare.__proto__ || Object.getPrototypeOf(GridSquare)).apply(this, arguments));
+        var _this6 = _possibleConstructorReturn(this, (GridSquare.__proto__ || Object.getPrototypeOf(GridSquare)).call(this));
+
+        _this6.state = {
+            dropTarget: false
+        };
+        return _this6;
     }
 
     _createClass(GridSquare, [{
+        key: "setDropTarget",
+        value: function setDropTarget(value) {
+            this.setState({
+                dropTarget: value
+            });
+        }
+    }, {
+        key: "dragOver",
+        value: function dragOver(e) {
+            e.preventDefault();
+            this.setDropTarget(true);
+        }
+    }, {
+        key: "dragLeave",
+        value: function dragLeave() {
+            this.setDropTarget(false);
+        }
+    }, {
         key: "render",
         value: function render() {
             var _this7 = this;
@@ -10234,6 +10257,9 @@ var GridSquare = function (_React$Component2) {
             var style = "grid-square";
             if (this.props.overlay) {
                 style += " grid-overlay";
+            }
+            if (this.state.dropTarget) {
+                style += "drop-target";
             }
 
             return React.createElement("div", {
@@ -10246,7 +10272,10 @@ var GridSquare = function (_React$Component2) {
                     return _this7.props.onDoubleClick(_this7.props.x, _this7.props.y);
                 },
                 onDragOver: function onDragOver(e) {
-                    return e.preventDefault();
+                    return _this7.dragOver(e);
+                },
+                onDragLeave: function onDragLeave() {
+                    return _this7.dragLeave();
                 },
                 onDrop: function onDrop() {
                     return _this7.props.dropItem(_this7.props.x, _this7.props.y);
@@ -10322,6 +10351,13 @@ var MapToken = function (_React$Component4) {
             var style = "token " + this.props.token.type;
             if (this.props.selected) {
                 style += " selected";
+            }
+
+            if (!this.props.position) {
+                this.props.position = {
+                    width: this.props.token.width * 25 + "px",
+                    height: this.props.token.height * 25 + "px"
+                };
             }
 
             return React.createElement("div", {

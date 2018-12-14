@@ -924,6 +924,11 @@ body,
             &.grid-overlay {
                 opacity: 0.5;
             }
+
+            &.drop-target {
+                background-color: $highlight;
+                opacity: 1;
+            }
         }
     }
 
@@ -942,6 +947,7 @@ body,
         position: absolute;
         border: 1px solid white;
         border-radius: 50%;
+        box-shadow: inset 0 0 6px 3px rgba(0, 0, 0, 0.1);
 
         &.monster {
             background-color: #650000;
@@ -960,7 +966,6 @@ body,
     .absent-token {
         display: inline-block;
         vertical-align: top;
-        width: 80px;
         margin: 10px;
         padding: 5px;
         border: 1px solid $control-border;
