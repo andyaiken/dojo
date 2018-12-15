@@ -597,6 +597,20 @@ class MapToken extends React.Component {
 
         var initials = this.props.combatant.name.split(' ').map(s => s[0]);
 
+        var hpGauge = null;
+        if (this.props.combatant.type === "monster") {
+            hpGauge = (
+                <HitPointGauge combatant={this.props.combatant} />
+            );
+        }
+
+        var conditionsBadge = null;
+        if ((this.props.combatant.conditions) && (this.props.combatant.conditions.length > 0)) {
+            conditionsBadge = (
+                <div className="badge">{this.props.combatant.conditions.length}</div>
+            );
+        }
+
         return (
             <div
                 title={this.props.combatant.name}
@@ -608,6 +622,8 @@ class MapToken extends React.Component {
                 onDragEnd={() => this.stopDrag()}
             >
                 <div className="initials">{initials}</div>
+                {hpGauge}
+                {conditionsBadge}
             </div>
         );
     }

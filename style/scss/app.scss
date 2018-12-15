@@ -336,6 +336,10 @@ body,
     }
 }
 
+.combat-selection {
+    padding: 0 5px;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Card
 
@@ -388,6 +392,10 @@ body,
             display: inline-block;
             vertical-align: middle;
         }
+    }
+
+    .hp-gauge {
+        margin: 5px 0 10px 0;
     }
 
     .divider {
@@ -514,7 +522,6 @@ body,
 // HP gauge
 
 .hp-gauge {
-    margin: 5px 0 10px 0;
     height: 5px;
     background-color: lightgrey;
 
@@ -990,7 +997,7 @@ body,
 
     .token {
         position: absolute;
-        border: 1px solid white;
+        border: 1px solid $control-border;
         border-radius: 50%;
         box-shadow: inset 0 0 6px 3px rgba(0, 0, 0, 0.1);
 
@@ -1008,7 +1015,6 @@ body,
 
         &.selected {
             border-color: $highlight;
-            border-width: 2px;
         }
 
         .initials {
@@ -1020,6 +1026,27 @@ body,
             left: 50%;
             transform: translate(-50%, -50%);
             text-shadow: 0 0 2px $foreground;
+        }
+
+        .hp-gauge {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -6px;
+        }
+
+        .badge {
+            background-color: white;
+            border: 1px solid $control-border;
+            border-radius: 50%;
+            height: 14px;
+            width: 14px;
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            font-size: 8px;
+            font-weight: 600;
+            text-align: center;
         }
     }
 

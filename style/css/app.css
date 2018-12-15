@@ -246,6 +246,9 @@ body,
   .welcome-panel .text {
     margin: 7px; }
 
+.combat-selection {
+  padding: 0 5px; }
+
 .card-group {
   margin-bottom: 20px;
   padding: 0 5px; }
@@ -283,6 +286,8 @@ body,
       cursor: pointer;
       display: inline-block;
       vertical-align: middle; }
+  .card .hp-gauge {
+    margin: 5px 0 10px 0; }
   .card .divider {
     border-top: 1px solid #656565; }
   .card.pc {
@@ -350,7 +355,6 @@ body,
         background-color: #EEEEEE; }
 
 .hp-gauge {
-  margin: 5px 0 10px 0;
   height: 5px;
   background-color: lightgrey; }
   .hp-gauge .bar {
@@ -662,7 +666,7 @@ body,
 
 .map-panel .token {
   position: absolute;
-  border: 1px solid white;
+  border: 1px solid #c3c3c3;
   border-radius: 50%;
   box-shadow: inset 0 0 6px 3px rgba(0, 0, 0, 0.1); }
   .map-panel .token.monster {
@@ -672,8 +676,7 @@ body,
   .map-panel .token.current {
     background-color: white; }
   .map-panel .token.selected {
-    border-color: #3c78dc;
-    border-width: 2px; }
+    border-color: #3c78dc; }
   .map-panel .token .initials {
     font-size: 10px;
     text-transform: uppercase;
@@ -683,6 +686,23 @@ body,
     left: 50%;
     transform: translate(-50%, -50%);
     text-shadow: 0 0 2px #3c3c3c; }
+  .map-panel .token .hp-gauge {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px; }
+  .map-panel .token .badge {
+    background-color: white;
+    border: 1px solid #c3c3c3;
+    border-radius: 50%;
+    height: 14px;
+    width: 14px;
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    font-size: 8px;
+    font-weight: 600;
+    text-align: center; }
 
 .map-panel.thumbnail {
   pointer-events: none; }

@@ -10468,6 +10468,20 @@ var MapToken = function (_React$Component5) {
                 return s[0];
             });
 
+            var hpGauge = null;
+            if (this.props.combatant.type === "monster") {
+                hpGauge = React.createElement(HitPointGauge, { combatant: this.props.combatant });
+            }
+
+            var conditionsBadge = null;
+            if (this.props.combatant.conditions && this.props.combatant.conditions.length > 0) {
+                conditionsBadge = React.createElement(
+                    "div",
+                    { className: "badge" },
+                    this.props.combatant.conditions.length
+                );
+            }
+
             return React.createElement(
                 "div",
                 {
@@ -10489,7 +10503,9 @@ var MapToken = function (_React$Component5) {
                     "div",
                     { className: "initials" },
                     initials
-                )
+                ),
+                hpGauge,
+                conditionsBadge
             );
         }
     }]);
@@ -11166,7 +11182,9 @@ var CombatManagerScreen = function (_React$Component) {
                         case "map":
                             var selection = null;
                             if (this.state.mapSelectionID) {
-                                var combatant = this.props.combat.combatants.find(function (c) {
+                                var combatant = this.props.combat.combatants.filter(function (c) {
+                                    return !c.current;
+                                }).find(function (c) {
                                     return c.id === _this3.state.mapSelectionID;
                                 });
                                 if (combatant) {
@@ -11185,7 +11203,11 @@ var CombatManagerScreen = function (_React$Component) {
                                         return _this3.setMapSelectionID(id);
                                     }
                                 }),
-                                selection
+                                React.createElement(
+                                    "div",
+                                    { className: "combat-selection" },
+                                    selection
+                                )
                             );
                             break;
                     }

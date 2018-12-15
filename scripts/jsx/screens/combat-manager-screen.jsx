@@ -219,7 +219,9 @@ class CombatManagerScreen extends React.Component {
                     case "map":
                         var selection = null;
                         if (this.state.mapSelectionID) {
-                            var combatant = this.props.combat.combatants.find(c => c.id === this.state.mapSelectionID);
+                            var combatant = this.props.combat.combatants
+                                .filter(c => !c.current)
+                                .find(c => c.id === this.state.mapSelectionID);
                             if (combatant) {
                                 selection = this.createCard(combatant);
                             }
@@ -233,7 +235,9 @@ class CombatManagerScreen extends React.Component {
                                     combatants={this.props.combat.combatants}
                                     selectionChanged={id => this.setMapSelectionID(id)}
                                 />
-                                {selection}
+                                <div className="combat-selection">
+                                    {selection}
+                                </div>
                             </div>
                         );
                         break;
