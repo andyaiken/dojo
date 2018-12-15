@@ -1010,6 +1010,17 @@ body,
             border-color: $highlight;
             border-width: 2px;
         }
+
+        .initials {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-shadow: 0 0 2px $foreground;
+        }
     }
 
     &.thumbnail {

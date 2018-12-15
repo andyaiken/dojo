@@ -595,6 +595,8 @@ class MapToken extends React.Component {
             }
         }
 
+        var initials = this.props.combatant.name.split(' ').map(s => s[0]);
+
         return (
             <div
                 title={this.props.combatant.name}
@@ -605,6 +607,7 @@ class MapToken extends React.Component {
                 onDragStart={() => this.startDrag()}
                 onDragEnd={() => this.stopDrag()}
             >
+                <div className="initials">{initials}</div>
             </div>
         );
     }

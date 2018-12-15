@@ -674,6 +674,15 @@ body,
   .map-panel .token.selected {
     border-color: #3c78dc;
     border-width: 2px; }
+  .map-panel .token .initials {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-shadow: 0 0 2px #3c3c3c; }
 
 .map-panel.thumbnail {
   pointer-events: none; }

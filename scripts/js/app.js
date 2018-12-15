@@ -10464,21 +10464,33 @@ var MapToken = function (_React$Component5) {
                 };
             }
 
-            return React.createElement("div", {
-                title: this.props.combatant.name,
-                className: style,
-                style: this.props.position,
-                onClick: function onClick(e) {
-                    return _this15.props.select(e, _this15.props.token.id);
-                },
-                draggable: "true",
-                onDragStart: function onDragStart() {
-                    return _this15.startDrag();
-                },
-                onDragEnd: function onDragEnd() {
-                    return _this15.stopDrag();
-                }
+            var initials = this.props.combatant.name.split(' ').map(function (s) {
+                return s[0];
             });
+
+            return React.createElement(
+                "div",
+                {
+                    title: this.props.combatant.name,
+                    className: style,
+                    style: this.props.position,
+                    onClick: function onClick(e) {
+                        return _this15.props.select(e, _this15.props.token.id);
+                    },
+                    draggable: "true",
+                    onDragStart: function onDragStart() {
+                        return _this15.startDrag();
+                    },
+                    onDragEnd: function onDragEnd() {
+                        return _this15.stopDrag();
+                    }
+                },
+                React.createElement(
+                    "div",
+                    { className: "initials" },
+                    initials
+                )
+            );
         }
     }]);
 
