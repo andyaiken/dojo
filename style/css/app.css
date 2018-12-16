@@ -246,6 +246,9 @@ body,
   .welcome-panel .text {
     margin: 7px; }
 
+.combat-selection {
+  padding: 0 5px; }
+
 .card-group {
   margin-bottom: 20px;
   padding: 0 5px; }
@@ -263,7 +266,8 @@ body,
 .card {
   background-color: #F5F5F5;
   border: 1px solid #656565;
-  margin: 5px; }
+  margin: 5px;
+  max-width: 350px; }
   .card .heading {
     height: 35px;
     font-size: 15px;
@@ -282,6 +286,8 @@ body,
       cursor: pointer;
       display: inline-block;
       vertical-align: middle; }
+  .card .hp-gauge {
+    margin: 5px 0 10px 0; }
   .card .divider {
     border-top: 1px solid #656565; }
   .card.pc {
@@ -302,6 +308,24 @@ body,
       color: #650000; }
     .card.monster .divider {
       border-top: 1px solid #650000; }
+  .card.map {
+    border: 1px solid #000065;
+    background-color: beige; }
+    .card.map .heading {
+      background-color: #000065; }
+    .card.map .subheading {
+      color: #000065; }
+    .card.map .divider {
+      border-top: 1px solid #000065; }
+  .card.map-tile {
+    border: 1px solid #650065;
+    background-color: beige; }
+    .card.map-tile .heading {
+      background-color: #650065; }
+    .card.map-tile .subheading {
+      color: #650065; }
+    .card.map-tile .divider {
+      border-top: 1px solid #650065; }
   .card.error {
     background-color: red;
     color: white;
@@ -331,7 +355,6 @@ body,
         background-color: #EEEEEE; }
 
 .hp-gauge {
-  margin: 5px 0 10px 0;
   height: 5px;
   background-color: lightgrey; }
   .hp-gauge .bar {
@@ -399,6 +422,8 @@ body,
   margin: 5px 0; }
   .section.centered {
     text-align: center; }
+    .section.centered > * {
+      margin: 0 auto; }
   .section .ability-scores {
     margin: 10px 0;
     padding: 5px 0;
@@ -527,6 +552,11 @@ body,
             .modal .modal-content .monster-help .value-list .column .bar-container .bar {
               height: 100%;
               background-color: #3c78dc; }
+    .modal .modal-content .map-editor {
+      height: 100%;
+      margin: 0 -15px; }
+      .modal .modal-content .map-editor .map-panel {
+        height: 100%; }
   .modal .modal-footer {
     height: 42px;
     background-color: gainsboro;
@@ -572,3 +602,123 @@ body,
       width: 90px;
       display: inline-block;
       margin: 0 3px; }
+
+.map-panel .tools {
+  display: inline-block;
+  max-height: 100%;
+  vertical-align: top;
+  overflow-y: auto;
+  width: 250px;
+  padding: 10px; }
+
+.map-panel .grid {
+  position: relative;
+  overflow: auto; }
+  .map-panel .grid .grid-square {
+    position: absolute;
+    border: 1px solid white;
+    background-color: rgba(0, 60, 200, 0.2); }
+    .map-panel .grid .grid-square.grid-overlay {
+      opacity: 0.5; }
+    .map-panel .grid .grid-square.drop-target {
+      background-color: #3c78dc;
+      opacity: 1; }
+
+.map-panel .off-map-tokens {
+  min-height: 50px;
+  margin-top: 10px;
+  background-color: white;
+  border: 1px solid #c3c3c3;
+  border-left-width: 5px; }
+  .map-panel .off-map-tokens.drop-target {
+    border-color: #3c78dc;
+    background-color: rgba(60, 120, 220, 0.1); }
+  .map-panel .off-map-tokens .off-map-token {
+    display: inline-block;
+    vertical-align: top;
+    margin: 10px;
+    padding: 5px;
+    border: 1px solid #c3c3c3;
+    background-color: white; }
+    .map-panel .off-map-tokens .off-map-token .token {
+      position: relative;
+      height: 26px;
+      width: 26px;
+      margin: 22px;
+      cursor: pointer; }
+    .map-panel .off-map-tokens .off-map-token .name {
+      border-top: 1px solid #c3c3c3;
+      padding-top: 5px;
+      text-align: center; }
+    .map-panel .off-map-tokens .off-map-token:hover, .map-panel .off-map-tokens .off-map-token.selected {
+      border-color: #3c78dc; }
+  .map-panel .off-map-tokens .empty {
+    text-align: center;
+    line-height: 50px; }
+
+.map-panel .tile {
+  position: absolute;
+  border: 1px solid darkgrey;
+  background-color: lightgrey; }
+  .map-panel .tile.selected {
+    border-color: #3c78dc;
+    border-width: 2px; }
+
+.map-panel .token {
+  position: absolute;
+  border: 1px solid #c3c3c3;
+  border-radius: 50%;
+  box-shadow: inset 0 0 6px 3px rgba(0, 0, 0, 0.1); }
+  .map-panel .token.monster {
+    background-color: #650000; }
+  .map-panel .token.pc {
+    background-color: #006500; }
+  .map-panel .token.current {
+    background-color: white; }
+  .map-panel .token.selected {
+    border-color: #3c78dc; }
+  .map-panel .token .initials {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-shadow: 0 0 2px #3c3c3c; }
+  .map-panel .token .hp-gauge {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px; }
+  .map-panel .token .badge {
+    background-color: white;
+    border: 1px solid #c3c3c3;
+    border-radius: 50%;
+    height: 14px;
+    width: 14px;
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    font-size: 8px;
+    font-weight: 600;
+    text-align: center; }
+
+.map-panel.thumbnail {
+  pointer-events: none; }
+  .map-panel.thumbnail .grid {
+    max-height: 200px; }
+
+.map-panel.edit .grid {
+  display: inline-block;
+  vertical-align: top;
+  max-height: 100%;
+  width: calc(100% - 250px); }
+
+.map-panel.edit .tile:hover {
+  border-color: #3c78dc; }
+
+.map-panel.combat {
+  margin: 10px; }
+  .map-panel.combat .grid .token:hover {
+    border-color: #3c78dc; }

@@ -32,6 +32,7 @@ class HomeScreen extends React.Component {
                                         <ul>
                                             <li>build unique, challenging monsters</li>
                                             <li>create encounters of just the right difficulty for your players</li>
+                                            <li>design intricate tactical maps</li>
                                             <li>run combat without the book-keeping</li>
                                         </ul>
                                     </div>

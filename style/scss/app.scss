@@ -336,6 +336,10 @@ body,
     }
 }
 
+.combat-selection {
+    padding: 0 5px;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Card
 
@@ -364,6 +368,7 @@ body,
     background-color: #F5F5F5;
     border: 1px solid #656565;
     margin: 5px;
+    max-width: 350px;
 
     .heading {
         height: 35px;
@@ -387,6 +392,10 @@ body,
             display: inline-block;
             vertical-align: middle;
         }
+    }
+
+    .hp-gauge {
+        margin: 5px 0 10px 0;
     }
 
     .divider {
@@ -424,6 +433,40 @@ body,
 
         .divider {
             border-top: 1px solid #650000;
+        }
+    }
+
+    &.map {
+        border: 1px solid #000065;
+        background-color: beige;
+
+        .heading {
+            background-color: #000065;
+        }
+
+        .subheading {
+            color: #000065;
+        }
+
+        .divider {
+            border-top: 1px solid #000065;
+        }
+    }
+
+    &.map-tile {
+        border: 1px solid #650065;
+        background-color: beige;
+
+        .heading {
+            background-color: #650065;
+        }
+
+        .subheading {
+            color: #650065;
+        }
+
+        .divider {
+            border-top: 1px solid #650065;
         }
     }
 
@@ -479,7 +522,6 @@ body,
 // HP gauge
 
 .hp-gauge {
-    margin: 5px 0 10px 0;
     height: 5px;
     background-color: lightgrey;
 
@@ -592,6 +634,10 @@ body,
 
     &.centered {
         text-align: center;
+
+        &>* {
+            margin: 0 auto;
+        }
     }
 
     .ability-scores {
@@ -780,6 +826,15 @@ body,
                 }
             }
         }
+
+        .map-editor {
+            height: 100%;
+            margin: 0 -15px;
+
+            .map-panel {
+                height: 100%;
+            }
+        }
     }
     
     .modal-footer {
@@ -849,3 +904,178 @@ body,
         }
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+.map-panel {
+
+    .tools {
+        display: inline-block;
+        max-height: 100%;
+        vertical-align: top;
+        overflow-y: auto;
+        width: 250px;
+        padding: 10px;
+    }
+
+    .grid {
+        position: relative;
+        overflow: auto;
+
+        .grid-square {
+            position: absolute;
+            border: 1px solid white;
+            background-color: rgba(0, 60, 200, 0.2);
+
+            &.grid-overlay {
+                opacity: 0.5;
+            }
+
+            &.drop-target {
+                background-color: $highlight;
+                opacity: 1;
+            }
+        }
+    }
+
+    .off-map-tokens {
+        min-height: 50px;
+        margin-top: 10px;
+        background-color: $background;
+        border: 1px solid $control-border;
+        border-left-width: 5px;
+
+        &.drop-target {
+            border-color: $highlight;
+            background-color: $highlight01;
+        }
+
+        .off-map-token {
+            display: inline-block;
+            vertical-align: top;
+            margin: 10px;
+            padding: 5px;
+            border: 1px solid $control-border;
+            background-color: $background;
+    
+            .token {
+                position: relative;
+                height: 26px;
+                width: 26px;
+                margin: 22px;
+                cursor: pointer;
+            }
+    
+            .name {
+                border-top: 1px solid $control-border;
+                padding-top: 5px;
+                text-align: center;
+            }
+    
+            &:hover,
+            &.selected {
+                border-color: $highlight;
+            }
+        }
+
+        .empty {
+            text-align: center;
+            line-height: 50px;
+        }
+    }
+
+    .tile {
+        position: absolute;
+        border: 1px solid darkgrey;
+        background-color: lightgrey;
+
+        &.selected {
+            border-color: $highlight;
+            border-width: 2px;
+        }
+    }
+
+    .token {
+        position: absolute;
+        border: 1px solid $control-border;
+        border-radius: 50%;
+        box-shadow: inset 0 0 6px 3px rgba(0, 0, 0, 0.1);
+
+        &.monster {
+            background-color: #650000;
+        }
+
+        &.pc {
+            background-color: #006500;
+        }
+
+        &.current {
+            background-color: white;
+        }
+
+        &.selected {
+            border-color: $highlight;
+        }
+
+        .initials {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-shadow: 0 0 2px $foreground;
+        }
+
+        .hp-gauge {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -6px;
+        }
+
+        .badge {
+            background-color: white;
+            border: 1px solid $control-border;
+            border-radius: 50%;
+            height: 14px;
+            width: 14px;
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            font-size: 8px;
+            font-weight: 600;
+            text-align: center;
+        }
+    }
+
+    &.thumbnail {
+        pointer-events: none;
+
+        .grid {
+            max-height: 200px;
+        }
+    }
+
+    &.edit .grid {
+        display: inline-block;
+        vertical-align: top;
+        max-height: 100%;
+        width: calc(100% - 250px);
+    }
+
+    &.edit .tile:hover {
+        border-color: $highlight;
+    }
+
+    &.combat {
+        margin: 10px;
+
+        .grid .token:hover {
+            border-color: $highlight;
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

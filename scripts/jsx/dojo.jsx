@@ -10,10 +10,12 @@ class Dojo extends React.Component {
             parties: [],
             library: [],
             encounters: [],
+            mapFolios: [],
             combats: [],
             selectedPartyID: null,
             selectedMonsterGroupID: null,
             selectedEncounterID: null,
+            selectedMapFolioID: null,
             selectedCombatID: null,
             modal: null
         };
@@ -30,6 +32,11 @@ class Dojo extends React.Component {
             }
 
             if (data !== null) {
+                if (!data.mapFolios) {
+                    data.mapFolios = [];
+                    data.selectedMapFolioID = null;
+                }
+
                 data.encounters.forEach(enc => {
                     if (!enc.waves) {
                         enc.waves = [];
@@ -51,10 +58,12 @@ class Dojo extends React.Component {
             this.state.parties = [];
             this.state.library = [];
             this.state.encounters = [];
+            this.state.mapFolios = [];
             this.state.combats = [];
             this.state.selectedPartyID = null;
             this.state.selectedMonsterGroupID = null;
             this.state.selectedEncounterID = null;
+            this.state.selectedMapFolioID = null;
             this.state.selectedCombatID = null;
         }
     }
@@ -77,11 +86,8 @@ class Dojo extends React.Component {
     // Party screen
 
     addParty(name) {
-        var party = {
-            id: guid(),
-            name: name,
-            pcs: []
-        };
+        var party = createParty();
+        party.name = name;
         var parties = [].concat(this.state.parties, [party]);
         sort(parties);
         this.setState({
@@ -101,23 +107,8 @@ class Dojo extends React.Component {
     }
 
     addPC(name) {
-        var pc = {
-            id: guid(),
-            type: "pc",
-            active: true,
-            player: "",
-            name: name,
-            race: "",
-            classes: "",
-            background: "",
-            level: 1,
-            languages: "Common",
-            passiveInsight: 10,
-            passiveInvestigation: 10,
-            passivePerception: 10,
-            initiative: 10,
-            url: ""
-        };
+        var pc = createPC();
+        pc.name = name;
         var party = this.getParty(this.state.selectedPartyID);
         party.pcs.push(pc);
         this.setState({
@@ -147,11 +138,8 @@ class Dojo extends React.Component {
     // Library screen
 
     addMonsterGroup(name) {
-        var group = {
-            id: guid(),
-            name: name,
-            monsters: []
-        };
+        var group = createMonsterGroup();
+        group.name = name;
         var library = [].concat(this.state.library, [group]);
         sort(library);
         this.setState({
@@ -171,51 +159,13 @@ class Dojo extends React.Component {
     }
 
     addMonster(name) {
-        var monster = this.createMonster();
+        var monster = createMonster();
         monster.name = name;
         var group = this.getMonsterGroup(this.state.selectedMonsterGroupID);
         group.monsters.push(monster);
         this.setState({
             library: this.state.library
         });
-    }
-
-    createMonster() {
-        return {
-            id: guid(),
-            type: "monster",
-            name: "",
-            size: "medium",
-            category: "humanoid",
-            tag: "",
-            alignment: "",
-            challenge: 1,
-            abilityScores: {
-                str: 10,
-                dex: 10,
-                con: 10,
-                int: 10,
-                wis: 10,
-                cha: 10
-            },
-            ac: 10,
-            hpMax: 4,
-            hpTemp: 0,
-            hitDice: 1,
-            damage: {
-                resist: "",
-                vulnerable: "",
-                immune: ""
-            },
-            savingThrows: "",
-            speed: "",
-            skills: "",
-            senses: "",
-            languages: "",
-            equipment: "",
-            traits: [],
-            conditionImmunities: ""
-        };
     }
 
     removeMonster(monster) {
@@ -579,12 +529,8 @@ class Dojo extends React.Component {
     // Encounter screen
 
     addEncounter(name) {
-        var encounter = {
-            id: guid(),
-            name: name,
-            slots: [],
-            waves: []
-        };
+        var encounter = createEncounter();
+        encounter.name = name;
         var encounters = [].concat(this.state.encounters, [encounter]);
         sort(encounters);
 
@@ -607,12 +553,10 @@ class Dojo extends React.Component {
 
     addEncounterSlot(monster, waveID) {
         var group = this.findMonster(monster);
-        var slot = {
-            id: guid(),
-            monsterGroupName: group.name,
-            monsterName: monster.name,
-            count: 1
-        }
+
+        var slot = createEncounterSlot();
+        slot.monsterGroupName = group.name;
+        slot.monsterName = monster.name;
         var encounter = this.getEncounter(this.state.selectedEncounterID);
         if (waveID !== null) {
             var wave = encounter.waves.find(w => w.id === waveID);
@@ -658,14 +602,10 @@ class Dojo extends React.Component {
 
     addWaveToEncounter() {
         var encounter = this.getEncounter(this.state.selectedEncounterID);
-        var waveNumber = encounter.waves.length + 2;
-        var waveName = "wave " + waveNumber;
 
-        encounter.waves.push({
-            id: guid(),
-            name: waveName,
-            slots: []
-        });
+        var wave = createEncounterWave();
+        wave.name = "wave " + (encounter.waves.length + 2);
+        encounter.waves.push(wave);
 
         this.setState({
             encounters: this.state.encounters
@@ -683,6 +623,74 @@ class Dojo extends React.Component {
     }
 
     /////////////////////////////////////////////////////////////////////////////
+    // Map screen
+
+    addMapFolio(name) {
+        var folio = createMapFolio();
+        folio.name = name;
+        var folios = [].concat(this.state.mapFolios, [folio]);
+        sort(folios);
+
+        this.setState({
+            mapFolios: folios,
+            selectedMapFolioID: folio.id
+        });
+    }
+
+    removeMapFolio() {
+        var folio = this.getMapFolio(this.state.selectedMapFolioID);
+        var index = this.state.mapFolios.indexOf(folio);
+        this.state.mapFolios.splice(index, 1);
+
+        this.setState({
+            mapFolios: this.state.mapFolios,
+            selectedMapFolioID: null
+        });
+    }
+
+    addMap(name) {
+        var map = createMap();
+        map.name = name;
+
+        var folio = this.getMapFolio(this.state.selectedMapFolioID);
+        folio.maps.push(map);
+
+        this.setState({
+            mapFolios: this.state.mapFolios
+        });
+    }
+
+    editMap(map) {
+        var copy = JSON.parse(JSON.stringify(map));
+        this.setState({
+            modal: {
+                type: "map",
+                map: copy
+            }
+        });
+    }
+
+    saveMap() {
+        var folio = this.getMapFolio(this.state.selectedMapFolioID);
+        var original = folio.maps.find(m => m.id === this.state.modal.map.id);
+        var index = folio.maps.indexOf(original);
+        folio.maps[index] = this.state.modal.map;
+        this.setState({
+            mapFolios: this.state.mapFolios,
+            modal: null
+        });
+    }
+
+    removeMap(map) {
+        var folio = this.getMapFolio(this.state.selectedMapFolioID);
+        var index = folio.maps.indexOf(map);
+        folio.maps.splice(index, 1);
+        this.setState({
+            mapFolios: this.state.mapFolios
+        });
+    }
+
+    /////////////////////////////////////////////////////////////////////////////
     // Combat screen
 
     createCombat() {
@@ -695,8 +703,11 @@ class Dojo extends React.Component {
                 combat: {
                     partyID: party ? party.id : null,
                     encounterID: encounter ? encounter.id : null,
+                    folioID: null,
+                    mapID: null,
                     encounterInitMode: "group",
-                    monsterNames: getMonsterNames(encounter)
+                    monsterNames: getMonsterNames(encounter),
+                    map: null
                 }
             }
         });
@@ -709,15 +720,9 @@ class Dojo extends React.Component {
         var encounter = this.getEncounter(this.state.modal.combat.encounterID);
         var encounterName = encounter.name || "unnamed encounter";
 
-        var combat = {
-            id: guid(),
-            encounterID: encounter.id,
-            name: partyName + " vs " + encounterName,
-            combatants: [],
-            round: 1,
-            notifications: [],
-            issues: []
-        };
+        var combat = createCombat();
+        combat.name = partyName + " vs " + encounterName;
+        combat.encounterID = encounter.id;
 
         // Add a copy of each PC to the encounter
         party.pcs.filter(pc => pc.active).forEach(pc => {
@@ -780,6 +785,12 @@ class Dojo extends React.Component {
         });
 
         this.sortCombatants(combat);
+
+        if (this.state.modal.combat.folioID && this.state.modal.combat.mapID) {
+            var folio = this.getMapFolio(this.state.modal.combat.folioID);
+            var map = folio.maps.find(m => m.id === this.state.modal.combat.mapID);
+            combat.map = JSON.parse(JSON.stringify(map));
+        }
 
         this.setState({
             combats: [].concat(this.state.combats, [combat]),
@@ -1003,7 +1014,7 @@ class Dojo extends React.Component {
         var combat = this.getCombat(this.state.selectedCombatID);
 
         // Handle end-of-turn conditions
-        combat.combatants.forEach(actor => {
+        combat.combatants.filter(actor => actor.conditions).forEach(actor => {
             actor.conditions.filter(c => c.duration !== null)
                 .forEach(c => {
                     switch (c.duration.type) {
@@ -1144,6 +1155,12 @@ class Dojo extends React.Component {
         });
     }
 
+    selectMapFolio(mapFolio) {
+        this.setState({
+            selectedMapFolioID: mapFolio ? mapFolio.id : null
+        });
+    }
+
     getParty(id) {
         var result = null;
         this.state.parties.forEach(party => {
@@ -1169,6 +1186,16 @@ class Dojo extends React.Component {
         this.state.encounters.forEach(encounter => {
             if (encounter.id === id) {
                 result = encounter;
+            }
+        });
+        return result;
+    }
+
+    getMapFolio(id) {
+        var result = null;
+        this.state.mapFolios.forEach(folio => {
+            if (folio.id === id) {
+                result = folio;
             }
         });
         return result;
@@ -1228,6 +1255,8 @@ class Dojo extends React.Component {
             selectedMonsterGroupID: null,
             encounters: [],
             selectedEncounterID: null,
+            mapFolios: [],
+            selectedMapFolioID: null,
             combats: [],
             selectedCombatID: null
         });
@@ -1376,7 +1405,7 @@ class Dojo extends React.Component {
                         );
                     }
                     break;
-                case "encounter":
+                    case "encounter":
                     content = (
                         <EncounterBuilderScreen
                             encounters={this.state.encounters}
@@ -1394,6 +1423,23 @@ class Dojo extends React.Component {
                             removeEncounterSlot={(slot, waveID) => this.removeEncounterSlot(slot, waveID)}
                             nudgeValue={(slot, type, delta) => this.nudgeValue(slot, type, delta)}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
+                        />
+                    );
+                    break;
+                case "maps":
+                    content = (
+                        <MapFoliosScreen
+                            mapFolios={this.state.mapFolios}
+                            selection={this.getMapFolio(this.state.selectedMapFolioID)}
+                            showHelp={this.state.options.showHelp}
+                            selectMapFolio={folio => this.selectMapFolio(folio)}
+                            addMapFolio={name => this.addMapFolio(name)}
+                            removeMapFolio={() => this.removeMapFolio()}
+                            addMap={name => this.addMap(name)}
+                            editMap={map => this.editMap(map)}
+                            removeMap={map => this.removeMap(map)}
+                            nudgeValue={(source, type, delta) => this.nudgeValue(source, type, delta)}
+                            changeValue={(source, type, value) => this.changeValue(source, type, value)}
                         />
                     );
                     break;
@@ -1505,6 +1551,20 @@ class Dojo extends React.Component {
                             <button key="cancel" onClick={() => this.closeModal()}>cancel</button>
                         ];
                         break;
+                    case "map":
+                        modalTitle = "map editor";
+                        modalContent = (
+                            <MapEditorModal
+                                map={this.state.modal.map}
+                            />
+                        );
+                        modalAllowClose = false;
+                        modalAllowScroll = false;
+                        modalButtons.right = [
+                            <button key="save" onClick={() => this.saveMap()}>save</button>,
+                            <button key="cancel" onClick={() => this.closeModal()}>cancel</button>
+                        ];
+                        break;
                     case "combat-start":
                         modalTitle = "start a new encounter";
                         modalContent = (
@@ -1512,6 +1572,7 @@ class Dojo extends React.Component {
                                 combat={this.state.modal.combat}
                                 parties={this.state.parties}
                                 encounters={this.state.encounters}
+                                mapFolios={this.state.mapFolios}
                                 getMonster={(monsterName, monsterGroupName) => this.getMonster(monsterName, this.getMonsterGroupByName(monsterGroupName))}
                                 notify={() => this.setState({modal: this.state.modal})}
                             />

@@ -125,7 +125,7 @@
     cursor: pointer;
     height: 50px;
     line-height: 35px;
-    width: calc((100% - 1px) / 4);
+    width: calc((100% - 1px) / 5);
     font-size: 14px;
     color: #3c3c3c;
     border-top: 1px solid #c3c3c3; }
@@ -135,8 +135,34 @@
       border-left: 1px solid #c3c3c3;
       border-right: 1px solid #c3c3c3;
       cursor: default; }
-    .navbar .navigator-item:hover {
+    .navbar .navigator-item.selected, .navbar .navigator-item:hover {
       font-weight: 600; }
+
+.radial {
+  width: 122px;
+  background-color: white;
+  border: 1px solid #c3c3c3;
+  border-radius: 50%;
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.1);
+  margin: 5px 0; }
+  .radial .btn,
+  .radial .empty {
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    height: 40px;
+    width: 40px; }
+    .radial .btn img,
+    .radial .empty img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%; }
+      .radial .btn img:hover,
+      .radial .empty img:hover {
+        background-color: rgba(60, 120, 220, 0.2); }
+  .radial.both .btn img {
+    width: 20px;
+    height: 20px; }
 
 .selector {
   margin: 5px 0; }

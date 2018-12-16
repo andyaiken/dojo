@@ -1,4 +1,25 @@
 class CombatManagerScreen extends React.Component {
+    constructor() {
+        super();
+
+        this.state = {
+            mode: "list",
+            mapSelectionID: null
+        };
+    }
+
+    setMode(mode) {
+        this.setState({
+            mode: mode
+        });
+    }
+
+    setMapSelectionID(id) {
+        this.setState({
+            mapSelectionID: id
+        });
+    }
+
     createCard(combatant, isPlaceholder) {
         if (isPlaceholder && isPlaceholder(combatant)) {
             return (
@@ -102,8 +123,30 @@ class CombatManagerScreen extends React.Component {
                     );
                 }
 
+                var mapSwitch = null;
+                if (this.props.combat.map) {
+                    var options = [
+                        {
+                            id: "list",
+                            text: "list"
+                        },
+                        {
+                            id: "map",
+                            text: "map"
+                        }
+                    ];
+                    mapSwitch = (
+                        <Selector
+                            options={options}
+                            selectedID={this.state.mode}
+                            select={optionID => this.setMode(optionID)}
+                        />
+                    );
+                }
+
                 leftPaneContent = (
                     <div>
+                        {mapSwitch}
                         {current}
                     </div>
                 );
@@ -148,28 +191,57 @@ class CombatManagerScreen extends React.Component {
                     />
                 );
 
-                rightPaneContent = (
-                    <div>
-                        {notifications}
-                        <CardGroup
-                            heading="waiting for intiative to be entered"
-                            content={pending}
-                            hidden={pending.length === 0}
-                            showToggle={true}
-                        />
-                        <CardGroup
-                            heading="active combatants"
-                            content={active}
-                            hidden={active.length === 0}
-                        />
-                        <CardGroup
-                            heading="defeated"
-                            content={defeated}
-                            hidden={defeated.length === 0}
-                            showToggle={true}
-                        />
-                    </div>
-                );
+                switch (this.state.mode) {
+                    case "list":
+                        rightPaneContent = (
+                            <div>
+                                {notifications}
+                                <CardGroup
+                                    heading="waiting for intiative to be entered"
+                                    content={pending}
+                                    hidden={pending.length === 0}
+                                    showToggle={true}
+                                />
+                                <CardGroup
+                                    heading="active combatants"
+                                    content={active}
+                                    hidden={active.length === 0}
+                                />
+                                <CardGroup
+                                    heading="defeated"
+                                    content={defeated}
+                                    hidden={defeated.length === 0}
+                                    showToggle={true}
+                                />
+                            </div>
+                        );
+                        break;
+                    case "map":
+                        var selection = null;
+                        if (this.state.mapSelectionID) {
+                            var combatant = this.props.combat.combatants
+                                .filter(c => !c.current)
+                                .find(c => c.id === this.state.mapSelectionID);
+                            if (combatant) {
+                                selection = this.createCard(combatant);
+                            }
+                        }
+                        rightPaneContent = (
+                            <div>
+                                {notifications}
+                                <MapPanel
+                                    map={this.props.combat.map}
+                                    mode="combat"
+                                    combatants={this.props.combat.combatants}
+                                    selectionChanged={id => this.setMapSelectionID(id)}
+                                />
+                                <div className="combat-selection">
+                                    {selection}
+                                </div>
+                            </div>
+                        );
+                        break;
+                }
             } else {
                 var help = null;
                 if (this.props.showHelp) {

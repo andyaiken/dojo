@@ -187,7 +187,7 @@
         cursor: pointer;
         height: 50px;
         line-height: 35px;
-        width: calc((100% - 1px) / 4);
+        width: calc((100% - 1px) / 5);
         font-size: 14px;
         color: $header-foreground;
         border-top: 1px solid $control-border;
@@ -200,8 +200,50 @@
             cursor: default;
         }
 
+        &.selected,
         &:hover {
             font-weight: 600;
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Radial
+
+.radial {
+    width: 122px;
+    background-color: $background;
+    border: 1px solid $control-border;
+    border-radius: 50%;
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.1);
+    margin: 5px 0;
+
+    .btn,
+    .empty {
+        display: inline-block;
+        vertical-align: middle;
+        text-align: center;
+        height: 40px;
+        width: 40px;
+
+        img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+
+            &:hover {
+                background-color: $highlight02;
+            }
+        }
+    }
+
+    &.both {
+        .btn {
+
+            img {
+                width: 20px;
+                height: 20px;
+            }
         }
     }
 }

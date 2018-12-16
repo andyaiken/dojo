@@ -8,127 +8,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var CombatManagerCard = function (_React$Component) {
-    _inherits(CombatManagerCard, _React$Component);
-
-    function CombatManagerCard() {
-        _classCallCheck(this, CombatManagerCard);
-
-        return _possibleConstructorReturn(this, (CombatManagerCard.__proto__ || Object.getPrototypeOf(CombatManagerCard)).apply(this, arguments));
-    }
-
-    _createClass(CombatManagerCard, [{
-        key: "render",
-        value: function render() {
-            try {
-                var content = React.createElement(
-                    "div",
-                    null,
-                    React.createElement(
-                        "div",
-                        { className: "section" },
-                        "here you can run a combat encounter by specifying a party and an encounter"
-                    ),
-                    React.createElement("div", { className: "divider" }),
-                    React.createElement(
-                        "div",
-                        { className: "section" },
-                        "below you will see a list of encounters that you have paused"
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "section" },
-                        "you can resume a paused combat by selecting it"
-                    )
-                );
-
-                return React.createElement(InfoCard, { getContent: function getContent() {
-                        return content;
-                    } });
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    }]);
-
-    return CombatManagerCard;
-}(React.Component);
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var EncounterBuilderCard = function (_React$Component) {
-    _inherits(EncounterBuilderCard, _React$Component);
-
-    function EncounterBuilderCard() {
-        _classCallCheck(this, EncounterBuilderCard);
-
-        return _possibleConstructorReturn(this, (EncounterBuilderCard.__proto__ || Object.getPrototypeOf(EncounterBuilderCard)).apply(this, arguments));
-    }
-
-    _createClass(EncounterBuilderCard, [{
-        key: "render",
-        value: function render() {
-            try {
-                var action = null;
-                if (this.props.encounters.length === 0) {
-                    action = React.createElement(
-                        "div",
-                        { className: "section" },
-                        "to start building an encounter, press the button below"
-                    );
-                } else {
-                    action = React.createElement(
-                        "div",
-                        { className: "section" },
-                        "select an encounter from the list to add monsters to it"
-                    );
-                }
-
-                var content = React.createElement(
-                    "div",
-                    null,
-                    React.createElement(
-                        "div",
-                        { className: "section" },
-                        "on this page you can set up encounters"
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "section" },
-                        "when you have created an encounter you can add monsters to it, then gauge its difficulty for a party of pcs"
-                    ),
-                    React.createElement("div", { className: "divider" }),
-                    action
-                );
-
-                return React.createElement(InfoCard, { getContent: function getContent() {
-                        return content;
-                    } });
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    }]);
-
-    return EncounterBuilderCard;
-}(React.Component);
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 var EncounterCard = function (_React$Component) {
     _inherits(EncounterCard, _React$Component);
 
@@ -540,6 +419,599 @@ var InfoCard = function (_React$Component) {
     }]);
 
     return InfoCard;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var CombatManagerCard = function (_React$Component) {
+    _inherits(CombatManagerCard, _React$Component);
+
+    function CombatManagerCard() {
+        _classCallCheck(this, CombatManagerCard);
+
+        return _possibleConstructorReturn(this, (CombatManagerCard.__proto__ || Object.getPrototypeOf(CombatManagerCard)).apply(this, arguments));
+    }
+
+    _createClass(CombatManagerCard, [{
+        key: "render",
+        value: function render() {
+            try {
+                var content = React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        "here you can run a combat encounter by specifying a party and an encounter"
+                    ),
+                    React.createElement("div", { className: "divider" }),
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        "below you will see a list of encounters that you have paused"
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        "you can resume a paused combat by selecting it"
+                    )
+                );
+
+                return React.createElement(InfoCard, { getContent: function getContent() {
+                        return content;
+                    } });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return CombatManagerCard;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var EncounterBuilderCard = function (_React$Component) {
+    _inherits(EncounterBuilderCard, _React$Component);
+
+    function EncounterBuilderCard() {
+        _classCallCheck(this, EncounterBuilderCard);
+
+        return _possibleConstructorReturn(this, (EncounterBuilderCard.__proto__ || Object.getPrototypeOf(EncounterBuilderCard)).apply(this, arguments));
+    }
+
+    _createClass(EncounterBuilderCard, [{
+        key: "render",
+        value: function render() {
+            try {
+                var action = null;
+                if (this.props.encounters.length === 0) {
+                    action = React.createElement(
+                        "div",
+                        { className: "section" },
+                        "to start building an encounter, press the button below"
+                    );
+                } else {
+                    action = React.createElement(
+                        "div",
+                        { className: "section" },
+                        "select an encounter from the list to add monsters to it"
+                    );
+                }
+
+                var content = React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        "on this page you can set up encounters"
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        "when you have created an encounter you can add monsters to it, then gauge its difficulty for a party of pcs"
+                    ),
+                    React.createElement("div", { className: "divider" }),
+                    action
+                );
+
+                return React.createElement(InfoCard, { getContent: function getContent() {
+                        return content;
+                    } });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return EncounterBuilderCard;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var MapFoliosCard = function (_React$Component) {
+    _inherits(MapFoliosCard, _React$Component);
+
+    function MapFoliosCard() {
+        _classCallCheck(this, MapFoliosCard);
+
+        return _possibleConstructorReturn(this, (MapFoliosCard.__proto__ || Object.getPrototypeOf(MapFoliosCard)).apply(this, arguments));
+    }
+
+    _createClass(MapFoliosCard, [{
+        key: "render",
+        value: function render() {
+            try {
+                var action = null;
+                if (this.props.mapFolios.length === 0) {
+                    action = React.createElement(
+                        "div",
+                        { className: "section" },
+                        "to start a new folio, press the button below"
+                    );
+                } else {
+                    action = React.createElement(
+                        "div",
+                        { className: "section" },
+                        "select a map folio from the list to see the maps it contains"
+                    );
+                }
+
+                var content = React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        "on this page you can set up folios containing tactical maps"
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        "when you have created a map you can use it in encounters"
+                    ),
+                    React.createElement("div", { className: "divider" }),
+                    action
+                );
+
+                return React.createElement(InfoCard, { getContent: function getContent() {
+                        return content;
+                    } });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return MapFoliosCard;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var MonsterLibraryCard = function (_React$Component) {
+    _inherits(MonsterLibraryCard, _React$Component);
+
+    function MonsterLibraryCard() {
+        _classCallCheck(this, MonsterLibraryCard);
+
+        return _possibleConstructorReturn(this, (MonsterLibraryCard.__proto__ || Object.getPrototypeOf(MonsterLibraryCard)).apply(this, arguments));
+    }
+
+    _createClass(MonsterLibraryCard, [{
+        key: "render",
+        value: function render() {
+            try {
+                return React.createElement(InfoCard, {
+                    getContent: function getContent() {
+                        return React.createElement(
+                            "div",
+                            null,
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                "you can maintain your menagerie of monsters here"
+                            ),
+                            React.createElement("div", { className: "divider" }),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                "select a monster group from the list to see stat blocks for monsters in that group"
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "section" },
+                                "to quickly find a monster, type its name into the filter box"
+                            )
+                        );
+                    }
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return MonsterLibraryCard;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var PartiesCard = function (_React$Component) {
+    _inherits(PartiesCard, _React$Component);
+
+    function PartiesCard() {
+        _classCallCheck(this, PartiesCard);
+
+        return _possibleConstructorReturn(this, (PartiesCard.__proto__ || Object.getPrototypeOf(PartiesCard)).apply(this, arguments));
+    }
+
+    _createClass(PartiesCard, [{
+        key: "render",
+        value: function render() {
+            try {
+                var action = null;
+                if (this.props.parties.length === 0) {
+                    action = React.createElement(
+                        "div",
+                        { className: "section" },
+                        "to start adding a party, press the button below"
+                    );
+                } else {
+                    action = React.createElement(
+                        "div",
+                        { className: "section" },
+                        "select a party from the list to see pc details"
+                    );
+                }
+
+                var content = React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        React.createElement(
+                            "div",
+                            null,
+                            "this page is where you can tell dojo all about your pcs"
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        React.createElement(
+                            "div",
+                            null,
+                            "you can add a party for each of your gaming groups"
+                        )
+                    ),
+                    React.createElement("div", { className: "divider" }),
+                    action
+                );
+
+                return React.createElement(InfoCard, { getContent: function getContent() {
+                        return content;
+                    } });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return PartiesCard;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var MapCard = function (_React$Component) {
+    _inherits(MapCard, _React$Component);
+
+    function MapCard() {
+        _classCallCheck(this, MapCard);
+
+        return _possibleConstructorReturn(this, (MapCard.__proto__ || Object.getPrototypeOf(MapCard)).apply(this, arguments));
+    }
+
+    _createClass(MapCard, [{
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                return React.createElement(
+                    "div",
+                    { className: "card map" },
+                    React.createElement(
+                        "div",
+                        { className: "heading" },
+                        React.createElement(
+                            "div",
+                            { className: "title" },
+                            this.props.map.name || "unnamed map"
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "card-content" },
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            React.createElement("input", { type: "text", placeholder: "map name", value: this.props.map.name, onChange: function onChange(event) {
+                                    return _this2.props.changeValue(_this2.props.map, "name", event.target.value);
+                                } })
+                        ),
+                        React.createElement("div", { className: "divider" }),
+                        React.createElement(
+                            "div",
+                            { className: "section centered" },
+                            React.createElement(MapPanel, {
+                                map: this.props.map,
+                                mode: "thumbnail"
+                            })
+                        ),
+                        React.createElement("div", { className: "divider" }),
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            React.createElement(
+                                "button",
+                                { onClick: function onClick() {
+                                        return _this2.props.editMap(_this2.props.map);
+                                    } },
+                                "edit map"
+                            ),
+                            React.createElement(ConfirmButton, { text: "delete map", callback: function callback() {
+                                    return _this2.props.removeMap(_this2.props.map);
+                                } })
+                        )
+                    )
+                );
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return MapCard;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var MapFolioCard = function (_React$Component) {
+    _inherits(MapFolioCard, _React$Component);
+
+    function MapFolioCard() {
+        _classCallCheck(this, MapFolioCard);
+
+        return _possibleConstructorReturn(this, (MapFolioCard.__proto__ || Object.getPrototypeOf(MapFolioCard)).apply(this, arguments));
+    }
+
+    _createClass(MapFolioCard, [{
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                var heading = null;
+                var content = null;
+
+                if (this.props.selection) {
+                    heading = React.createElement(
+                        "div",
+                        { className: "heading" },
+                        React.createElement(
+                            "div",
+                            { className: "title" },
+                            "map folio"
+                        )
+                    );
+
+                    content = React.createElement(
+                        "div",
+                        null,
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            React.createElement("input", { type: "text", placeholder: "folio name", value: this.props.selection.name, onChange: function onChange(event) {
+                                    return _this2.props.changeValue(_this2.props.selection, "name", event.target.value);
+                                } })
+                        ),
+                        React.createElement("div", { className: "divider" }),
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            React.createElement(
+                                "button",
+                                { onClick: function onClick() {
+                                        return _this2.props.addMap();
+                                    } },
+                                "add a new map"
+                            ),
+                            React.createElement(ConfirmButton, { text: "delete folio", callback: function callback() {
+                                    return _this2.props.removeMapFolio();
+                                } })
+                        )
+                    );
+                }
+
+                return React.createElement(InfoCard, { getHeading: function getHeading() {
+                        return heading;
+                    }, getContent: function getContent() {
+                        return content;
+                    } });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return MapFolioCard;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var MapTileCard = function (_React$Component) {
+    _inherits(MapTileCard, _React$Component);
+
+    function MapTileCard() {
+        _classCallCheck(this, MapTileCard);
+
+        return _possibleConstructorReturn(this, (MapTileCard.__proto__ || Object.getPrototypeOf(MapTileCard)).apply(this, arguments));
+    }
+
+    _createClass(MapTileCard, [{
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                return React.createElement(
+                    "div",
+                    { className: "card map-tile" },
+                    React.createElement(
+                        "div",
+                        { className: "heading" },
+                        React.createElement(
+                            "div",
+                            { className: "title" },
+                            "map tile"
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "card-content" },
+                        React.createElement(
+                            "div",
+                            { className: "subheading" },
+                            "size"
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            this.props.tile.width,
+                            " sq x ",
+                            this.props.tile.height,
+                            " sq"
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            this.props.tile.width * 5,
+                            " ft x ",
+                            this.props.tile.height * 5,
+                            " ft"
+                        ),
+                        React.createElement("div", { className: "divider" }),
+                        React.createElement(
+                            "div",
+                            { className: "subheading" },
+                            "move"
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section centered" },
+                            React.createElement(Radial, { direction: "out", click: function click(dir) {
+                                    return _this2.props.moveMapItem(_this2.props.tile, dir);
+                                } })
+                        ),
+                        React.createElement("div", { className: "divider" }),
+                        React.createElement(
+                            "div",
+                            { className: "subheading" },
+                            "resize"
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section centered" },
+                            React.createElement(Radial, { direction: "both", click: function click(dir, dir2) {
+                                    return _this2.props.resizeMapItem(_this2.props.tile, dir, dir2);
+                                } })
+                        ),
+                        React.createElement("div", { className: "divider" }),
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            React.createElement(
+                                "button",
+                                { onClick: function onClick() {
+                                        return _this2.props.cloneMapItem(_this2.props.tile);
+                                    } },
+                                "clone tile"
+                            ),
+                            React.createElement(
+                                "button",
+                                { onClick: function onClick() {
+                                        return _this2.props.removeMapItem(_this2.props.tile);
+                                    } },
+                                "remove tile"
+                            )
+                        )
+                    )
+                );
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return MapTileCard;
 }(React.Component);
 "use strict";
 
@@ -1558,135 +2030,6 @@ var MonsterGroupCard = function (_React$Component) {
     }]);
 
     return MonsterGroupCard;
-}(React.Component);
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var MonsterLibraryCard = function (_React$Component) {
-    _inherits(MonsterLibraryCard, _React$Component);
-
-    function MonsterLibraryCard() {
-        _classCallCheck(this, MonsterLibraryCard);
-
-        return _possibleConstructorReturn(this, (MonsterLibraryCard.__proto__ || Object.getPrototypeOf(MonsterLibraryCard)).apply(this, arguments));
-    }
-
-    _createClass(MonsterLibraryCard, [{
-        key: "render",
-        value: function render() {
-            try {
-                return React.createElement(InfoCard, {
-                    getContent: function getContent() {
-                        return React.createElement(
-                            "div",
-                            null,
-                            React.createElement(
-                                "div",
-                                { className: "section" },
-                                "you can maintain your menagerie of monsters here"
-                            ),
-                            React.createElement("div", { className: "divider" }),
-                            React.createElement(
-                                "div",
-                                { className: "section" },
-                                "select a monster group from the list to see stat blocks for monsters in that group"
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "section" },
-                                "to quickly find a monster, type its name into the filter box"
-                            )
-                        );
-                    }
-                });
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    }]);
-
-    return MonsterLibraryCard;
-}(React.Component);
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var PartiesCard = function (_React$Component) {
-    _inherits(PartiesCard, _React$Component);
-
-    function PartiesCard() {
-        _classCallCheck(this, PartiesCard);
-
-        return _possibleConstructorReturn(this, (PartiesCard.__proto__ || Object.getPrototypeOf(PartiesCard)).apply(this, arguments));
-    }
-
-    _createClass(PartiesCard, [{
-        key: "render",
-        value: function render() {
-            try {
-                var action = null;
-                if (this.props.parties.length === 0) {
-                    action = React.createElement(
-                        "div",
-                        { className: "section" },
-                        "to start adding a party, press the button below"
-                    );
-                } else {
-                    action = React.createElement(
-                        "div",
-                        { className: "section" },
-                        "select a party from the list to see pc details"
-                    );
-                }
-
-                var content = React.createElement(
-                    "div",
-                    null,
-                    React.createElement(
-                        "div",
-                        { className: "section" },
-                        React.createElement(
-                            "div",
-                            null,
-                            "this page is where you can tell dojo all about your pcs"
-                        )
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "section" },
-                        React.createElement(
-                            "div",
-                            null,
-                            "you can add a party for each of your gaming groups"
-                        )
-                    ),
-                    React.createElement("div", { className: "divider" }),
-                    action
-                );
-
-                return React.createElement(InfoCard, { getContent: function getContent() {
-                        return content;
-                    } });
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    }]);
-
-    return PartiesCard;
 }(React.Component);
 "use strict";
 
@@ -2899,6 +3242,7 @@ var Navbar = function (_React$Component) {
                 var partiesStyle = this.props.view === "parties" ? "navigator-item selected" : "navigator-item";
                 var libraryStyle = this.props.view === "library" ? "navigator-item selected" : "navigator-item";
                 var encounterStyle = this.props.view === "encounter" ? "navigator-item selected" : "navigator-item";
+                var mapStyle = this.props.view === "maps" ? "navigator-item selected" : "navigator-item";
                 var combatStyle = this.props.view === "combat" ? "navigator-item selected" : "navigator-item";
 
                 var encountersEnabled = this.props.library.length !== 0;
@@ -2936,6 +3280,13 @@ var Navbar = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
+                        { className: mapStyle, onClick: function onClick() {
+                                return _this2.props.setView("maps");
+                            } },
+                        "map folios"
+                    ),
+                    React.createElement(
+                        "div",
                         { className: combatStyle, onClick: function onClick() {
                                 return combatEnabled ? _this2.props.setView("combat") : null;
                             } },
@@ -2949,6 +3300,127 @@ var Navbar = function (_React$Component) {
     }]);
 
     return Navbar;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/*
+<Radial
+    direction="out" "in" "both"
+    disabled=BOOLEAN
+    click={(dir, in|out => null}
+/>
+*/
+
+var Radial = function (_React$Component) {
+    _inherits(Radial, _React$Component);
+
+    function Radial() {
+        _classCallCheck(this, Radial);
+
+        return _possibleConstructorReturn(this, (Radial.__proto__ || Object.getPrototypeOf(Radial)).apply(this, arguments));
+    }
+
+    _createClass(Radial, [{
+        key: "click",
+        value: function click(e, dir, dir2) {
+            e.stopPropagation();
+            this.props.click(dir, dir2);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                var style = "radial " + (this.props.direction || "out");
+                if (this.props.disabled) {
+                    style += " disabled";
+                }
+
+                var showOut = this.props.direction === "out" | this.props.direction === "both";
+                var showIn = this.props.direction === "in" | this.props.direction === "both";
+
+                return React.createElement(
+                    "div",
+                    { className: style },
+                    React.createElement("div", { className: "empty" }),
+                    React.createElement(
+                        "div",
+                        { className: "btn" },
+                        React.createElement(
+                            "div",
+                            null,
+                            React.createElement("img", { src: "resources/images/down-arrow-black.svg", style: { display: showOut ? "inline-block" : "none", transform: "rotate(180deg)" }, onClick: function onClick(e) {
+                                    return _this2.click(e, "N", "out");
+                                } })
+                        ),
+                        React.createElement(
+                            "div",
+                            null,
+                            React.createElement("img", { src: "resources/images/down-arrow-black.svg", style: { display: showIn ? "inline-block" : "none" }, onClick: function onClick(e) {
+                                    return _this2.click(e, "N", "in");
+                                } })
+                        )
+                    ),
+                    React.createElement("div", { className: "empty" }),
+                    React.createElement(
+                        "div",
+                        { className: "btn", style: { padding: showIn && showOut ? "10px 0" : "0" } },
+                        React.createElement("img", { src: "resources/images/down-arrow-black.svg", style: { display: showOut ? "inline-block" : "none", transform: "rotate(90deg)" }, onClick: function onClick(e) {
+                                return _this2.click(e, "W", "out");
+                            } }),
+                        React.createElement("img", { src: "resources/images/down-arrow-black.svg", style: { display: showIn ? "inline-block" : "none", transform: "rotate(-90deg)" }, onClick: function onClick(e) {
+                                return _this2.click(e, "W", "in");
+                            } })
+                    ),
+                    React.createElement("div", { className: "empty" }),
+                    React.createElement(
+                        "div",
+                        { className: "btn", style: { padding: showIn && showOut ? "10px 0" : "0" } },
+                        React.createElement("img", { src: "resources/images/down-arrow-black.svg", style: { display: showIn ? "inline-block" : "none", transform: "rotate(90deg)" }, onClick: function onClick(e) {
+                                return _this2.click(e, "E", "in");
+                            } }),
+                        React.createElement("img", { src: "resources/images/down-arrow-black.svg", style: { display: showOut ? "inline-block" : "none", transform: "rotate(-90deg)" }, onClick: function onClick(e) {
+                                return _this2.click(e, "E", "out");
+                            } })
+                    ),
+                    React.createElement("div", { className: "empty" }),
+                    React.createElement(
+                        "div",
+                        { className: "btn" },
+                        React.createElement(
+                            "div",
+                            null,
+                            React.createElement("img", { src: "resources/images/down-arrow-black.svg", style: { display: showIn ? "inline-block" : "none", transform: "rotate(180deg)" }, onClick: function onClick(e) {
+                                    return _this2.click(e, "S", "in");
+                                } })
+                        ),
+                        React.createElement(
+                            "div",
+                            null,
+                            React.createElement("img", { src: "resources/images/down-arrow-black.svg", style: { display: showOut ? "inline-block" : "none" }, onClick: function onClick(e) {
+                                    return _this2.click(e, "S", "out");
+                                } })
+                        )
+                    ),
+                    React.createElement("div", { className: "empty" })
+                );
+            } catch (ex) {
+                console.error(ex);
+                return null;
+            }
+        }
+    }]);
+
+    return Radial;
 }(React.Component);
 "use strict";
 
@@ -3335,10 +3807,12 @@ var Dojo = function (_React$Component) {
             parties: [],
             library: [],
             encounters: [],
+            mapFolios: [],
             combats: [],
             selectedPartyID: null,
             selectedMonsterGroupID: null,
             selectedEncounterID: null,
+            selectedMapFolioID: null,
             selectedCombatID: null,
             modal: null
         };
@@ -3355,6 +3829,11 @@ var Dojo = function (_React$Component) {
             }
 
             if (data !== null) {
+                if (!data.mapFolios) {
+                    data.mapFolios = [];
+                    data.selectedMapFolioID = null;
+                }
+
                 data.encounters.forEach(function (enc) {
                     if (!enc.waves) {
                         enc.waves = [];
@@ -3376,10 +3855,12 @@ var Dojo = function (_React$Component) {
             _this.state.parties = [];
             _this.state.library = [];
             _this.state.encounters = [];
+            _this.state.mapFolios = [];
             _this.state.combats = [];
             _this.state.selectedPartyID = null;
             _this.state.selectedMonsterGroupID = null;
             _this.state.selectedEncounterID = null;
+            _this.state.selectedMapFolioID = null;
             _this.state.selectedCombatID = null;
         }
         return _this;
@@ -3407,11 +3888,8 @@ var Dojo = function (_React$Component) {
     }, {
         key: "addParty",
         value: function addParty(name) {
-            var party = {
-                id: guid(),
-                name: name,
-                pcs: []
-            };
+            var party = createParty();
+            party.name = name;
             var parties = [].concat(this.state.parties, [party]);
             sort(parties);
             this.setState({
@@ -3433,23 +3911,8 @@ var Dojo = function (_React$Component) {
     }, {
         key: "addPC",
         value: function addPC(name) {
-            var pc = {
-                id: guid(),
-                type: "pc",
-                active: true,
-                player: "",
-                name: name,
-                race: "",
-                classes: "",
-                background: "",
-                level: 1,
-                languages: "Common",
-                passiveInsight: 10,
-                passiveInvestigation: 10,
-                passivePerception: 10,
-                initiative: 10,
-                url: ""
-            };
+            var pc = createPC();
+            pc.name = name;
             var party = this.getParty(this.state.selectedPartyID);
             party.pcs.push(pc);
             this.setState({
@@ -3483,11 +3946,8 @@ var Dojo = function (_React$Component) {
     }, {
         key: "addMonsterGroup",
         value: function addMonsterGroup(name) {
-            var group = {
-                id: guid(),
-                name: name,
-                monsters: []
-            };
+            var group = createMonsterGroup();
+            group.name = name;
             var library = [].concat(this.state.library, [group]);
             sort(library);
             this.setState({
@@ -3509,52 +3969,13 @@ var Dojo = function (_React$Component) {
     }, {
         key: "addMonster",
         value: function addMonster(name) {
-            var monster = this.createMonster();
+            var monster = createMonster();
             monster.name = name;
             var group = this.getMonsterGroup(this.state.selectedMonsterGroupID);
             group.monsters.push(monster);
             this.setState({
                 library: this.state.library
             });
-        }
-    }, {
-        key: "createMonster",
-        value: function createMonster() {
-            return {
-                id: guid(),
-                type: "monster",
-                name: "",
-                size: "medium",
-                category: "humanoid",
-                tag: "",
-                alignment: "",
-                challenge: 1,
-                abilityScores: {
-                    str: 10,
-                    dex: 10,
-                    con: 10,
-                    int: 10,
-                    wis: 10,
-                    cha: 10
-                },
-                ac: 10,
-                hpMax: 4,
-                hpTemp: 0,
-                hitDice: 1,
-                damage: {
-                    resist: "",
-                    vulnerable: "",
-                    immune: ""
-                },
-                savingThrows: "",
-                speed: "",
-                skills: "",
-                senses: "",
-                languages: "",
-                equipment: "",
-                traits: [],
-                conditionImmunities: ""
-            };
         }
     }, {
         key: "removeMonster",
@@ -3911,12 +4332,8 @@ var Dojo = function (_React$Component) {
         // Encounter screen
 
         value: function addEncounter(name) {
-            var encounter = {
-                id: guid(),
-                name: name,
-                slots: [],
-                waves: []
-            };
+            var encounter = createEncounter();
+            encounter.name = name;
             var encounters = [].concat(this.state.encounters, [encounter]);
             sort(encounters);
 
@@ -3941,12 +4358,10 @@ var Dojo = function (_React$Component) {
         key: "addEncounterSlot",
         value: function addEncounterSlot(monster, waveID) {
             var group = this.findMonster(monster);
-            var slot = {
-                id: guid(),
-                monsterGroupName: group.name,
-                monsterName: monster.name,
-                count: 1
-            };
+
+            var slot = createEncounterSlot();
+            slot.monsterGroupName = group.name;
+            slot.monsterName = monster.name;
             var encounter = this.getEncounter(this.state.selectedEncounterID);
             if (waveID !== null) {
                 var wave = encounter.waves.find(function (w) {
@@ -3999,14 +4414,10 @@ var Dojo = function (_React$Component) {
         key: "addWaveToEncounter",
         value: function addWaveToEncounter() {
             var encounter = this.getEncounter(this.state.selectedEncounterID);
-            var waveNumber = encounter.waves.length + 2;
-            var waveName = "wave " + waveNumber;
 
-            encounter.waves.push({
-                id: guid(),
-                name: waveName,
-                slots: []
-            });
+            var wave = createEncounterWave();
+            wave.name = "wave " + (encounter.waves.length + 2);
+            encounter.waves.push(wave);
 
             this.setState({
                 encounters: this.state.encounters
@@ -4025,6 +4436,85 @@ var Dojo = function (_React$Component) {
         }
 
         /////////////////////////////////////////////////////////////////////////////
+        // Map screen
+
+    }, {
+        key: "addMapFolio",
+        value: function addMapFolio(name) {
+            var folio = createMapFolio();
+            folio.name = name;
+            var folios = [].concat(this.state.mapFolios, [folio]);
+            sort(folios);
+
+            this.setState({
+                mapFolios: folios,
+                selectedMapFolioID: folio.id
+            });
+        }
+    }, {
+        key: "removeMapFolio",
+        value: function removeMapFolio() {
+            var folio = this.getMapFolio(this.state.selectedMapFolioID);
+            var index = this.state.mapFolios.indexOf(folio);
+            this.state.mapFolios.splice(index, 1);
+
+            this.setState({
+                mapFolios: this.state.mapFolios,
+                selectedMapFolioID: null
+            });
+        }
+    }, {
+        key: "addMap",
+        value: function addMap(name) {
+            var map = createMap();
+            map.name = name;
+
+            var folio = this.getMapFolio(this.state.selectedMapFolioID);
+            folio.maps.push(map);
+
+            this.setState({
+                mapFolios: this.state.mapFolios
+            });
+        }
+    }, {
+        key: "editMap",
+        value: function editMap(map) {
+            var copy = JSON.parse(JSON.stringify(map));
+            this.setState({
+                modal: {
+                    type: "map",
+                    map: copy
+                }
+            });
+        }
+    }, {
+        key: "saveMap",
+        value: function saveMap() {
+            var _this4 = this;
+
+            var folio = this.getMapFolio(this.state.selectedMapFolioID);
+            var original = folio.maps.find(function (m) {
+                return m.id === _this4.state.modal.map.id;
+            });
+            var index = folio.maps.indexOf(original);
+            folio.maps[index] = this.state.modal.map;
+            this.setState({
+                mapFolios: this.state.mapFolios,
+                modal: null
+            });
+        }
+    }, {
+        key: "removeMap",
+        value: function removeMap(map) {
+            var folio = this.getMapFolio(this.state.selectedMapFolioID);
+            var index = folio.maps.indexOf(map);
+            folio.maps.splice(index, 1);
+            this.setState({
+                mapFolios: this.state.mapFolios
+            });
+        }
+
+        /////////////////////////////////////////////////////////////////////////////
         // Combat screen
 
     }, {
@@ -4039,8 +4529,11 @@ var Dojo = function (_React$Component) {
                     combat: {
                         partyID: party ? party.id : null,
                         encounterID: encounter ? encounter.id : null,
+                        folioID: null,
+                        mapID: null,
                         encounterInitMode: "group",
-                        monsterNames: getMonsterNames(encounter)
+                        monsterNames: getMonsterNames(encounter),
+                        map: null
                     }
                 }
             });
@@ -4048,7 +4541,7 @@ var Dojo = function (_React$Component) {
     }, {
         key: "startCombat",
         value: function startCombat() {
-            var _this4 = this;
+            var _this5 = this;
 
             var party = this.getParty(this.state.modal.combat.partyID);
             var partyName = party.name || "unnamed party";
@@ -4056,15 +4549,9 @@ var Dojo = function (_React$Component) {
             var encounter = this.getEncounter(this.state.modal.combat.encounterID);
             var encounterName = encounter.name || "unnamed encounter";
 
-            var combat = {
-                id: guid(),
-                encounterID: encounter.id,
-                name: partyName + " vs " + encounterName,
-                combatants: [],
-                round: 1,
-                notifications: [],
-                issues: []
-            };
+            var combat = createCombat();
+            combat.name = partyName + " vs " + encounterName;
+            combat.encounterID = encounter.id;
 
             // Add a copy of each PC to the encounter
             party.pcs.filter(function (pc) {
@@ -4081,8 +4568,8 @@ var Dojo = function (_React$Component) {
             });
 
             encounter.slots.forEach(function (slot) {
-                var group = _this4.getMonsterGroupByName(slot.monsterGroupName);
-                var monster = _this4.getMonster(slot.monsterName, group);
+                var group = _this5.getMonsterGroupByName(slot.monsterGroupName);
+                var monster = _this5.getMonster(slot.monsterName, group);
 
                 if (monster) {
                     var init = parseInt(modifier(monster.abilityScores.dex));
@@ -4095,8 +4582,8 @@ var Dojo = function (_React$Component) {
                         combatant.id = guid();
 
                         combatant.displayName = null;
-                        if (_this4.state.modal.combat.monsterNames) {
-                            var slotNames = _this4.state.modal.combat.monsterNames.find(function (names) {
+                        if (_this5.state.modal.combat.monsterNames) {
+                            var slotNames = _this5.state.modal.combat.monsterNames.find(function (names) {
                                 return names.id === slot.id;
                             });
                             if (slotNames) {
@@ -4104,7 +4591,7 @@ var Dojo = function (_React$Component) {
                             }
                         }
 
-                        switch (_this4.state.modal.combat.encounterInitMode) {
+                        switch (_this5.state.modal.combat.encounterInitMode) {
                             case "manual":
                                 combatant.initiative = 10;
                                 break;
@@ -4117,8 +4604,8 @@ var Dojo = function (_React$Component) {
                         }
 
                         combatant.current = false;
-                        combatant.pending = _this4.state.modal.combat.encounterInitMode === "manual";
-                        combatant.active = _this4.state.modal.combat.encounterInitMode !== "manual";
+                        combatant.pending = _this5.state.modal.combat.encounterInitMode === "manual";
+                        combatant.active = _this5.state.modal.combat.encounterInitMode !== "manual";
                         combatant.defeated = false;
 
                         combatant.hp = combatant.hpMax;
@@ -4131,6 +4618,14 @@ var Dojo = function (_React$Component) {
             });
 
             this.sortCombatants(combat);
+
+            if (this.state.modal.combat.folioID && this.state.modal.combat.mapID) {
+                var folio = this.getMapFolio(this.state.modal.combat.folioID);
+                var map = folio.maps.find(function (m) {
+                    return m.id === _this5.state.modal.combat.mapID;
+                });
+                combat.map = JSON.parse(JSON.stringify(map));
+            }
 
             this.setState({
                 combats: [].concat(this.state.combats, [combat]),
@@ -4291,17 +4786,17 @@ var Dojo = function (_React$Component) {
     }, {
         key: "addWaveToCombat",
         value: function addWaveToCombat() {
-            var _this5 = this;
+            var _this6 = this;
 
             var encounter = this.getEncounter(this.state.modal.combat.encounterID);
             var combat = this.getCombat(this.state.selectedCombatID);
             var wave = encounter.waves.find(function (w) {
-                return w.id === _this5.state.modal.combat.waveID;
+                return w.id === _this6.state.modal.combat.waveID;
             });
 
             wave.slots.forEach(function (slot) {
-                var group = _this5.getMonsterGroupByName(slot.monsterGroupName);
-                var monster = _this5.getMonster(slot.monsterName, group);
+                var group = _this6.getMonsterGroupByName(slot.monsterGroupName);
+                var monster = _this6.getMonster(slot.monsterName, group);
 
                 if (monster) {
                     var init = parseInt(modifier(monster.abilityScores.dex));
@@ -4314,8 +4809,8 @@ var Dojo = function (_React$Component) {
                         combatant.id = guid();
 
                         combatant.displayName = null;
-                        if (_this5.state.modal.combat.monsterNames) {
-                            var slotNames = _this5.state.modal.combat.monsterNames.find(function (names) {
+                        if (_this6.state.modal.combat.monsterNames) {
+                            var slotNames = _this6.state.modal.combat.monsterNames.find(function (names) {
                                 return names.id === slot.id;
                             });
                             if (slotNames) {
@@ -4323,7 +4818,7 @@ var Dojo = function (_React$Component) {
                             }
                         }
 
-                        switch (_this5.state.modal.combat.encounterInitMode) {
+                        switch (_this6.state.modal.combat.encounterInitMode) {
                             case "manual":
                                 combatant.initiative = 10;
                                 break;
@@ -4336,8 +4831,8 @@ var Dojo = function (_React$Component) {
                         }
 
                         combatant.current = false;
-                        combatant.pending = _this5.state.modal.combat.encounterInitMode === "manual";
-                        combatant.active = _this5.state.modal.combat.encounterInitMode !== "manual";
+                        combatant.pending = _this6.state.modal.combat.encounterInitMode === "manual";
+                        combatant.active = _this6.state.modal.combat.encounterInitMode !== "manual";
                         combatant.defeated = false;
 
                         combatant.hp = combatant.hpMax;
@@ -4373,7 +4868,9 @@ var Dojo = function (_React$Component) {
             var combat = this.getCombat(this.state.selectedCombatID);
 
             // Handle end-of-turn conditions
-            combat.combatants.forEach(function (actor) {
+            combat.combatants.filter(function (actor) {
+                return actor.conditions;
+            }).forEach(function (actor) {
                 actor.conditions.filter(function (c) {
                     return c.duration !== null;
                 }).forEach(function (c) {
@@ -4528,6 +5025,13 @@ var Dojo = function (_React$Component) {
             });
         }
     }, {
+        key: "selectMapFolio",
+        value: function selectMapFolio(mapFolio) {
+            this.setState({
+                selectedMapFolioID: mapFolio ? mapFolio.id : null
+            });
+        }
+    }, {
         key: "getParty",
         value: function getParty(id) {
             var result = null;
@@ -4556,6 +5060,17 @@ var Dojo = function (_React$Component) {
             this.state.encounters.forEach(function (encounter) {
                 if (encounter.id === id) {
                     result = encounter;
+                }
+            });
+            return result;
+        }
+    }, {
+        key: "getMapFolio",
+        value: function getMapFolio(id) {
+            var result = null;
+            this.state.mapFolios.forEach(function (folio) {
+                if (folio.id === id) {
+                    result = folio;
                 }
             });
             return result;
@@ -4620,6 +5135,8 @@ var Dojo = function (_React$Component) {
                 selectedMonsterGroupID: null,
                 encounters: [],
                 selectedEncounterID: null,
+                mapFolios: [],
+                selectedMapFolioID: null,
                 combats: [],
                 selectedCombatID: null
             });
@@ -4705,7 +5222,7 @@ var Dojo = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            var _this6 = this;
+            var _this7 = this;
 
             try {
                 var content = null;
@@ -4715,7 +5232,7 @@ var Dojo = function (_React$Component) {
                         content = React.createElement(HomeScreen, {
                             library: this.state.library,
                             addOpenGameContent: function addOpenGameContent() {
-                                return _this6.addOpenGameContent();
+                                return _this7.addOpenGameContent();
                             }
                         });
                         break;
@@ -4725,28 +5242,28 @@ var Dojo = function (_React$Component) {
                             selection: this.getParty(this.state.selectedPartyID),
                             showHelp: this.state.options.showHelp,
                             selectParty: function selectParty(party) {
-                                return _this6.selectParty(party);
+                                return _this7.selectParty(party);
                             },
                             addParty: function addParty(name) {
-                                return _this6.addParty(name);
+                                return _this7.addParty(name);
                             },
                             removeParty: function removeParty() {
-                                return _this6.removeParty();
+                                return _this7.removeParty();
                             },
                             addPC: function addPC(name) {
-                                return _this6.addPC(name);
+                                return _this7.addPC(name);
                             },
                             removePC: function removePC(pc) {
-                                return _this6.removePC(pc);
+                                return _this7.removePC(pc);
                             },
                             sortPCs: function sortPCs() {
-                                return _this6.sortPCs();
+                                return _this7.sortPCs();
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this6.changeValue(combatant, type, value);
+                                return _this7.changeValue(combatant, type, value);
                             },
                             nudgeValue: function nudgeValue(combatant, type, delta) {
-                                return _this6.nudgeValue(combatant, type, delta);
+                                return _this7.nudgeValue(combatant, type, delta);
                             }
                         });
                         break;
@@ -4757,40 +5274,40 @@ var Dojo = function (_React$Component) {
                             filter: this.state.libraryFilter,
                             showHelp: this.state.options.showHelp,
                             selectMonsterGroup: function selectMonsterGroup(group) {
-                                return _this6.selectMonsterGroup(group);
+                                return _this7.selectMonsterGroup(group);
                             },
                             addMonsterGroup: function addMonsterGroup(name) {
-                                return _this6.addMonsterGroup(name);
+                                return _this7.addMonsterGroup(name);
                             },
                             removeMonsterGroup: function removeMonsterGroup() {
-                                return _this6.removeMonsterGroup();
+                                return _this7.removeMonsterGroup();
                             },
                             addMonster: function addMonster(name) {
-                                return _this6.addMonster(name);
+                                return _this7.addMonster(name);
                             },
                             removeMonster: function removeMonster(monster) {
-                                return _this6.removeMonster(monster);
+                                return _this7.removeMonster(monster);
                             },
                             sortMonsters: function sortMonsters() {
-                                return _this6.sortMonsters();
+                                return _this7.sortMonsters();
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this6.changeValue(combatant, type, value);
+                                return _this7.changeValue(combatant, type, value);
                             },
                             nudgeValue: function nudgeValue(combatant, type, delta) {
-                                return _this6.nudgeValue(combatant, type, delta);
+                                return _this7.nudgeValue(combatant, type, delta);
                             },
                             editMonster: function editMonster(combatant) {
-                                return _this6.editMonster(combatant);
+                                return _this7.editMonster(combatant);
                             },
                             cloneMonster: function cloneMonster(combatant) {
-                                return _this6.cloneMonster(combatant);
+                                return _this7.cloneMonster(combatant);
                             },
                             moveToGroup: function moveToGroup(combatant, groupID) {
-                                return _this6.moveToGroup(combatant, groupID);
+                                return _this7.moveToGroup(combatant, groupID);
                             },
                             addOpenGameContent: function addOpenGameContent() {
-                                return _this6.addOpenGameContent();
+                                return _this7.addOpenGameContent();
                             }
                         });
                         var count = 0;
@@ -4805,7 +5322,7 @@ var Dojo = function (_React$Component) {
                                     "div",
                                     { className: "section" },
                                     React.createElement("input", { type: "text", placeholder: "filter", value: this.state.libraryFilter, onChange: function onChange(event) {
-                                            return _this6.changeValue(_this6.state, "libraryFilter", event.target.value);
+                                            return _this7.changeValue(_this7.state, "libraryFilter", event.target.value);
                                         } })
                                 ),
                                 React.createElement(
@@ -4814,7 +5331,7 @@ var Dojo = function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         { onClick: function onClick() {
-                                                return _this6.openDemographics();
+                                                return _this7.openDemographics();
                                             } },
                                         "demographics"
                                     )
@@ -4830,34 +5347,65 @@ var Dojo = function (_React$Component) {
                             library: this.state.library,
                             showHelp: this.state.options.showHelp,
                             selectEncounter: function selectEncounter(encounter) {
-                                return _this6.selectEncounter(encounter);
+                                return _this7.selectEncounter(encounter);
                             },
                             addEncounter: function addEncounter(name) {
-                                return _this6.addEncounter(name);
+                                return _this7.addEncounter(name);
                             },
                             removeEncounter: function removeEncounter(encounter) {
-                                return _this6.removeEncounter(encounter);
+                                return _this7.removeEncounter(encounter);
                             },
                             addWave: function addWave() {
-                                return _this6.addWaveToEncounter();
+                                return _this7.addWaveToEncounter();
                             },
                             removeWave: function removeWave(wave) {
-                                return _this6.removeWave(wave);
+                                return _this7.removeWave(wave);
                             },
                             getMonster: function getMonster(monsterName, monsterGroupName) {
-                                return _this6.getMonster(monsterName, _this6.getMonsterGroupByName(monsterGroupName));
+                                return _this7.getMonster(monsterName, _this7.getMonsterGroupByName(monsterGroupName));
                             },
                             addEncounterSlot: function addEncounterSlot(monster, waveID) {
-                                return _this6.addEncounterSlot(monster, waveID);
+                                return _this7.addEncounterSlot(monster, waveID);
                             },
                             removeEncounterSlot: function removeEncounterSlot(slot, waveID) {
-                                return _this6.removeEncounterSlot(slot, waveID);
+                                return _this7.removeEncounterSlot(slot, waveID);
                             },
                             nudgeValue: function nudgeValue(slot, type, delta) {
-                                return _this6.nudgeValue(slot, type, delta);
+                                return _this7.nudgeValue(slot, type, delta);
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this6.changeValue(combatant, type, value);
+                                return _this7.changeValue(combatant, type, value);
+                            }
+                        });
+                        break;
+                    case "maps":
+                        content = React.createElement(MapFoliosScreen, {
+                            mapFolios: this.state.mapFolios,
+                            selection: this.getMapFolio(this.state.selectedMapFolioID),
+                            showHelp: this.state.options.showHelp,
+                            selectMapFolio: function selectMapFolio(folio) {
+                                return _this7.selectMapFolio(folio);
+                            },
+                            addMapFolio: function addMapFolio(name) {
+                                return _this7.addMapFolio(name);
+                            },
+                            removeMapFolio: function removeMapFolio() {
+                                return _this7.removeMapFolio();
+                            },
+                            addMap: function addMap(name) {
+                                return _this7.addMap(name);
+                            },
+                            editMap: function editMap(map) {
+                                return _this7.editMap(map);
+                            },
+                            removeMap: function removeMap(map) {
+                                return _this7.removeMap(map);
+                            },
+                            nudgeValue: function nudgeValue(source, type, delta) {
+                                return _this7.nudgeValue(source, type, delta);
+                            },
+                            changeValue: function changeValue(source, type, value) {
+                                return _this7.changeValue(source, type, value);
                             }
                         });
                         break;
@@ -4870,40 +5418,40 @@ var Dojo = function (_React$Component) {
                             combat: combat,
                             showHelp: this.state.options.showHelp,
                             createCombat: function createCombat() {
-                                return _this6.createCombat();
+                                return _this7.createCombat();
                             },
                             resumeEncounter: function resumeEncounter(combat) {
-                                return _this6.resumeCombat(combat);
+                                return _this7.resumeCombat(combat);
                             },
                             nudgeValue: function nudgeValue(combatant, type, delta) {
-                                return _this6.nudgeValue(combatant, type, delta);
+                                return _this7.nudgeValue(combatant, type, delta);
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this6.changeValue(combatant, type, value);
+                                return _this7.changeValue(combatant, type, value);
                             },
                             makeCurrent: function makeCurrent(combatant) {
-                                return _this6.makeCurrent(combatant);
+                                return _this7.makeCurrent(combatant);
                             },
                             makeActive: function makeActive(combatant) {
-                                return _this6.makeActive(combatant);
+                                return _this7.makeActive(combatant);
                             },
                             makeDefeated: function makeDefeated(combatant) {
-                                return _this6.makeDefeated(combatant);
+                                return _this7.makeDefeated(combatant);
                             },
                             removeCombatant: function removeCombatant(combatant) {
-                                return _this6.removeCombatant(combatant);
+                                return _this7.removeCombatant(combatant);
                             },
                             addCondition: function addCondition(combatant, condition) {
-                                return _this6.addCondition(combatant, condition);
+                                return _this7.addCondition(combatant, condition);
                             },
                             removeCondition: function removeCondition(combatant, conditionID) {
-                                return _this6.removeCondition(combatant, conditionID);
+                                return _this7.removeCondition(combatant, conditionID);
                             },
                             endTurn: function endTurn(combatant) {
-                                return _this6.endTurn(combatant);
+                                return _this7.endTurn(combatant);
                             },
                             close: function close(notification, removeCondition) {
-                                return _this6.closeNotification(notification, removeCondition);
+                                return _this7.closeNotification(notification, removeCondition);
                             }
                         });
                         if (combat) {
@@ -4945,7 +5493,7 @@ var Dojo = function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         { onClick: function onClick() {
-                                                return _this6.openWaveModal();
+                                                return _this7.openWaveModal();
                                             } },
                                         "add wave"
                                     )
@@ -4956,7 +5504,7 @@ var Dojo = function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         { onClick: function onClick() {
-                                                return _this6.pauseCombat();
+                                                return _this7.pauseCombat();
                                             } },
                                         "pause encounter"
                                     )
@@ -4967,7 +5515,7 @@ var Dojo = function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         { onClick: function onClick() {
-                                                return _this6.endCombat();
+                                                return _this7.endCombat();
                                             } },
                                         "end encounter"
                                     )
@@ -4993,10 +5541,10 @@ var Dojo = function (_React$Component) {
                             modalContent = React.createElement(AboutModal, {
                                 options: this.state.options,
                                 resetAll: function resetAll() {
-                                    return _this6.resetAll();
+                                    return _this7.resetAll();
                                 },
                                 changeValue: function changeValue(source, type, value) {
-                                    return _this6.changeValue(source, type, value);
+                                    return _this7.changeValue(source, type, value);
                                 }
                             });
                             break;
@@ -5020,19 +5568,40 @@ var Dojo = function (_React$Component) {
                                 label: "similar monsters",
                                 checked: this.state.modal.showMonsters,
                                 changeValue: function changeValue() {
-                                    return _this6.toggleShowSimilarMonsters();
+                                    return _this7.toggleShowSimilarMonsters();
                                 }
                             })];
                             modalButtons.right = [React.createElement(
                                 "button",
                                 { key: "save", onClick: function onClick() {
-                                        return _this6.saveMonster();
+                                        return _this7.saveMonster();
                                     } },
                                 "save"
                             ), React.createElement(
                                 "button",
                                 { key: "cancel", onClick: function onClick() {
-                                        return _this6.closeModal();
+                                        return _this7.closeModal();
+                                    } },
+                                "cancel"
+                            )];
+                            break;
+                        case "map":
+                            modalTitle = "map editor";
+                            modalContent = React.createElement(MapEditorModal, {
+                                map: this.state.modal.map
+                            });
+                            modalAllowClose = false;
+                            modalAllowScroll = false;
+                            modalButtons.right = [React.createElement(
+                                "button",
+                                { key: "save", onClick: function onClick() {
+                                        return _this7.saveMap();
+                                    } },
+                                "save"
+                            ), React.createElement(
+                                "button",
+                                { key: "cancel", onClick: function onClick() {
+                                        return _this7.closeModal();
                                     } },
                                 "cancel"
                             )];
@@ -5043,11 +5612,12 @@ var Dojo = function (_React$Component) {
                                 combat: this.state.modal.combat,
                                 parties: this.state.parties,
                                 encounters: this.state.encounters,
+                                mapFolios: this.state.mapFolios,
                                 getMonster: function getMonster(monsterName, monsterGroupName) {
-                                    return _this6.getMonster(monsterName, _this6.getMonsterGroupByName(monsterGroupName));
+                                    return _this7.getMonster(monsterName, _this7.getMonsterGroupByName(monsterGroupName));
                                 },
                                 notify: function notify() {
-                                    return _this6.setState({ modal: _this6.state.modal });
+                                    return _this7.setState({ modal: _this7.state.modal });
                                 }
                             });
                             modalAllowClose = false;
@@ -5056,13 +5626,13 @@ var Dojo = function (_React$Component) {
                             modalButtons.right = [React.createElement(
                                 "button",
                                 { key: "start encounter", className: canClose ? "" : "disabled", onClick: function onClick() {
-                                        return _this6.startCombat();
+                                        return _this7.startCombat();
                                     } },
                                 "start encounter"
                             ), React.createElement(
                                 "button",
                                 { key: "cancel", onClick: function onClick() {
-                                        return _this6.closeModal();
+                                        return _this7.closeModal();
                                     } },
                                 "cancel"
                             )];
@@ -5073,10 +5643,10 @@ var Dojo = function (_React$Component) {
                                 combat: this.state.modal.combat,
                                 encounters: this.state.encounters,
                                 getMonster: function getMonster(monsterName, monsterGroupName) {
-                                    return _this6.getMonster(monsterName, _this6.getMonsterGroupByName(monsterGroupName));
+                                    return _this7.getMonster(monsterName, _this7.getMonsterGroupByName(monsterGroupName));
                                 },
                                 notify: function notify() {
-                                    return _this6.setState({ modal: _this6.state.modal });
+                                    return _this7.setState({ modal: _this7.state.modal });
                                 }
                             });
                             modalAllowClose = false;
@@ -5085,13 +5655,13 @@ var Dojo = function (_React$Component) {
                             modalButtons.right = [React.createElement(
                                 "button",
                                 { key: "add wave", className: canClose ? "" : "disabled", onClick: function onClick() {
-                                        return _this6.addWaveToCombat();
+                                        return _this7.addWaveToCombat();
                                     } },
                                 "add wave"
                             ), React.createElement(
                                 "button",
                                 { key: "cancel", onClick: function onClick() {
-                                        return _this6.closeModal();
+                                        return _this7.closeModal();
                                     } },
                                 "cancel"
                             )];
@@ -5113,7 +5683,7 @@ var Dojo = function (_React$Component) {
                                     modalTitle
                                 ),
                                 modalAllowClose ? React.createElement("img", { className: "image", src: "resources/images/close-black.svg", onClick: function onClick() {
-                                        return _this6.closeModal();
+                                        return _this7.closeModal();
                                     } }) : null
                             ),
                             React.createElement(
@@ -5146,10 +5716,10 @@ var Dojo = function (_React$Component) {
                         actions: actions,
                         blur: modal !== null,
                         openHome: function openHome() {
-                            return _this6.setView("home");
+                            return _this7.setView("home");
                         },
                         openAbout: function openAbout() {
-                            return _this6.openAbout();
+                            return _this7.openAbout();
                         }
                     }),
                     React.createElement(
@@ -5164,7 +5734,7 @@ var Dojo = function (_React$Component) {
                         encounters: this.state.encounters,
                         blur: modal !== null,
                         setView: function setView(view) {
-                            return _this6.setView(view);
+                            return _this7.setView(view);
                         }
                     }),
                     modal
@@ -5207,6 +5777,14 @@ var CombatListItem = function (_React$Component) {
                     combatName = "unnamed combat";
                 }
 
+                var map = null;
+                if (this.props.combat.map) {
+                    map = React.createElement(MapPanel, {
+                        map: this.props.combat.map,
+                        mode: "thumbnail"
+                    });
+                }
+
                 return React.createElement(
                     "div",
                     { className: this.props.selected ? "list-item selected" : "list-item", onClick: function onClick() {
@@ -5220,8 +5798,10 @@ var CombatListItem = function (_React$Component) {
                     React.createElement(
                         "div",
                         { className: "text" },
+                        "paused at ",
                         this.props.combat.timestamp
-                    )
+                    ),
+                    map
                 );
             } catch (e) {
                 console.error(e);
@@ -5325,6 +5905,69 @@ var EncounterListItem = function (_React$Component) {
     }]);
 
     return EncounterListItem;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var MapFolioListItem = function (_React$Component) {
+    _inherits(MapFolioListItem, _React$Component);
+
+    function MapFolioListItem() {
+        _classCallCheck(this, MapFolioListItem);
+
+        return _possibleConstructorReturn(this, (MapFolioListItem.__proto__ || Object.getPrototypeOf(MapFolioListItem)).apply(this, arguments));
+    }
+
+    _createClass(MapFolioListItem, [{
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                var maps = [];
+                for (var n = 0; n !== this.props.mapFolio.maps.length; ++n) {
+                    var map = this.props.mapFolio.maps[n];
+                    var name = map.name || "unnamed map";
+                    maps.push(React.createElement(
+                        "div",
+                        { key: map.id, className: "text" },
+                        name
+                    ));
+                }
+                if (maps.length === 0) {
+                    maps.push(React.createElement(
+                        "div",
+                        { key: "empty", className: "text" },
+                        "no maps"
+                    ));
+                }
+
+                return React.createElement(
+                    "div",
+                    { className: this.props.selected ? "list-item selected" : "list-item", onClick: function onClick() {
+                            return _this2.props.setSelection(_this2.props.mapFolio);
+                        } },
+                    React.createElement(
+                        "div",
+                        { className: "heading" },
+                        this.props.mapFolio.name || "unnamed folio"
+                    ),
+                    maps
+                );
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return MapFolioListItem;
 }(React.Component);
 "use strict";
 
@@ -5840,6 +6483,31 @@ var CombatStartModal = function (_React$Component) {
             });
         }
     }, {
+        key: "setFolioID",
+        value: function setFolioID(id) {
+            if (id) {
+                var folio = this.props.mapFolios.find(function (f) {
+                    return f.id === id;
+                });
+                this.state.combat.folioID = folio.id;
+                this.state.combat.mapID = folio.maps.length === 1 ? folio.maps[0].id : null;
+            } else {
+                this.state.combat.folioID = null;
+                this.state.combat.mapID = null;
+            }
+            this.setState({
+                combat: this.state.combat
+            });
+        }
+    }, {
+        key: "setMapID",
+        value: function setMapID(id) {
+            this.state.combat.mapID = id;
+            this.setState({
+                combat: this.state.combat
+            });
+        }
+    }, {
         key: "setWave",
         value: function setWave(waveID) {
             var _this4 = this;
@@ -6080,9 +6748,85 @@ var CombatStartModal = function (_React$Component) {
             );
         }
     }, {
+        key: "getMapSection",
+        value: function getMapSection() {
+            var _this7 = this;
+
+            var folios = this.props.mapFolios.filter(function (folio) {
+                return folio.maps.length > 0;
+            });
+            if (folios.length === 0) {
+                return null;
+            }
+
+            var folioOptions = folios.map(function (folio) {
+                return {
+                    id: folio.id,
+                    text: folio.name || "unnamed folio"
+                };
+            });
+            folioOptions = [{ id: null, text: "none" }].concat(folioOptions);
+
+            var selectMapSection = null;
+            var thumbnailSection = null;
+
+            if (this.state.combat.folioID) {
+                var folio = this.props.mapFolios.find(function (f) {
+                    return f.id === _this7.state.combat.folioID;
+                });
+                var mapOptions = folio.maps.map(function (m) {
+                    return {
+                        id: m.id,
+                        text: m.name || "unnamed map"
+                    };
+                });
+
+                if (mapOptions.length !== 1) {
+                    selectMapSection = React.createElement(Selector, {
+                        options: mapOptions,
+                        placeholder: "select map...",
+                        selectedID: this.state.combatmapID,
+                        select: function select(optionID) {
+                            return _this7.setMapID(optionID);
+                        }
+                    });
+                }
+
+                if (this.state.combat.mapID) {
+                    var map = folio.maps.find(function (m) {
+                        return m.id === _this7.state.combat.mapID;
+                    });
+                    thumbnailSection = React.createElement(MapPanel, {
+                        map: map,
+                        mode: "thumbnail"
+                    });
+                }
+            }
+
+            return React.createElement(
+                "div",
+                null,
+                React.createElement(
+                    "div",
+                    { className: "heading" },
+                    "map"
+                ),
+                React.createElement(Dropdown, {
+                    options: folioOptions,
+                    placeholder: "select map folio...",
+                    selectedID: this.state.combat.folioID,
+                    select: function select(optionID) {
+                        return _this7.setFolioID(optionID);
+                    }
+                }),
+                selectMapSection,
+                thumbnailSection
+            );
+        }
+    }, {
         key: "getWaveSection",
         value: function getWaveSection() {
-            var _this7 = this;
+            var _this8 = this;
 
             if (this.state.combat.encounterID === null) {
                 return React.createElement(
@@ -6093,7 +6837,7 @@ var CombatStartModal = function (_React$Component) {
             }
 
             var selectedEncounter = this.props.encounters.find(function (e) {
-                return e.id === _this7.state.combat.encounterID;
+                return e.id === _this8.state.combat.encounterID;
             });
             if (selectedEncounter.waves.length === 0) {
                 return React.createElement(
@@ -6113,7 +6857,7 @@ var CombatStartModal = function (_React$Component) {
             var waveContent = null;
             if (this.state.combat.waveID) {
                 var selectedWave = selectedEncounter.waves.find(function (w) {
-                    return w.id === _this7.state.combat.waveID;
+                    return w.id === _this8.state.combat.waveID;
                 });
 
                 var monsterSections = selectedWave.slots.map(function (slot) {
@@ -6165,7 +6909,7 @@ var CombatStartModal = function (_React$Component) {
                     placeholder: "select wave...",
                     selectedID: this.state.combat.waveID,
                     select: function select(optionID) {
-                        return _this7.setWave(optionID);
+                        return _this8.setWave(optionID);
                     }
                 }),
                 waveContent
@@ -6174,7 +6918,7 @@ var CombatStartModal = function (_React$Component) {
     }, {
         key: "getDifficultySection",
         value: function getDifficultySection() {
-            var _this8 = this;
+            var _this9 = this;
 
             if (!this.state.combat.partyID || !this.state.combat.encounterID) {
                 return React.createElement(
@@ -6207,7 +6951,7 @@ var CombatStartModal = function (_React$Component) {
                     parties: this.props.parties,
                     encounters: this.props.encounters,
                     getMonster: function getMonster(monsterName, monsterGroupName) {
-                        return _this8.props.getMonster(monsterName, monsterGroupName);
+                        return _this9.props.getMonster(monsterName, monsterGroupName);
                     }
                 })
             );
@@ -6215,7 +6959,7 @@ var CombatStartModal = function (_React$Component) {
     }, {
         key: "getMonsterSection",
         value: function getMonsterSection() {
-            var _this9 = this;
+            var _this10 = this;
 
             if (this.state.combat.encounterID === null) {
                 return React.createElement(
@@ -6252,11 +6996,11 @@ var CombatStartModal = function (_React$Component) {
             }
 
             var selectedEncounter = this.props.encounters.find(function (e) {
-                return e.id === _this9.state.combat.encounterID;
+                return e.id === _this10.state.combat.encounterID;
             });
             if (this.state.combat.waveID) {
                 selectedEncounter = selectedEncounter.waves.find(function (w) {
-                    return w.id === _this9.state.combat.waveID;
+                    return w.id === _this10.state.combat.waveID;
                 });
             }
 
@@ -6289,7 +7033,7 @@ var CombatStartModal = function (_React$Component) {
                             slotID: slot.id,
                             index: n,
                             changeName: function changeName(slotID, index, value) {
-                                return _this9.changeName(slotID, index, value);
+                                return _this10.changeName(slotID, index, value);
                             }
                         })
                     ));
@@ -6327,7 +7071,7 @@ var CombatStartModal = function (_React$Component) {
                     options: initOptions,
                     selectedID: this.state.combat.encounterInitMode,
                     select: function select(optionID) {
-                        return _this9.setEncounterInitMode(optionID);
+                        return _this10.setEncounterInitMode(optionID);
                     }
                 }),
                 React.createElement(
@@ -6357,7 +7101,8 @@ var CombatStartModal = function (_React$Component) {
                         "div",
                         null,
                         this.getPartySection(),
-                        this.getEncounterSection()
+                        this.getEncounterSection(),
+                        this.getMapSection()
                     );
 
                     rightSection = React.createElement(
@@ -6415,10 +7160,10 @@ var MonsterName = function (_React$Component2) {
     _createClass(MonsterName, [{
         key: "render",
         value: function render() {
-            var _this11 = this;
+            var _this12 = this;
 
             return React.createElement("input", { type: "text", value: this.props.value, onChange: function onChange(event) {
-                    return _this11.props.changeName(_this11.props.slotID, _this11.props.index, event.target.value);
+                    return _this12.props.changeName(_this12.props.slotID, _this12.props.index, event.target.value);
                 } });
         }
     }]);
@@ -6615,6 +7360,45 @@ var DemographicsModal = function (_React$Component) {
     }]);
 
     return DemographicsModal;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var MapEditorModal = function (_React$Component) {
+    _inherits(MapEditorModal, _React$Component);
+
+    function MapEditorModal() {
+        _classCallCheck(this, MapEditorModal);
+
+        return _possibleConstructorReturn(this, (MapEditorModal.__proto__ || Object.getPrototypeOf(MapEditorModal)).apply(this, arguments));
+    }
+
+    _createClass(MapEditorModal, [{
+        key: "render",
+        value: function render() {
+            try {
+                return React.createElement(
+                    "div",
+                    { className: "map-editor" },
+                    React.createElement(MapPanel, {
+                        map: this.props.map,
+                        mode: "edit"
+                    })
+                );
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return MapEditorModal;
 }(React.Component);
 "use strict";
 
@@ -6842,13 +7626,8 @@ var MonsterEditorModal = function (_React$Component) {
     }, {
         key: "addTrait",
         value: function addTrait(type) {
-            var trait = {
-                id: guid(),
-                name: "New " + this.getActionTypeName(type, false).toLowerCase(),
-                usage: "",
-                type: type,
-                text: ""
-            };
+            var trait = createTrait();
+            trait.name = "New " + this.getActionTypeName(type, false).toLowerCase();
             this.state.monster.traits.push(trait);
             this.setState({
                 monster: this.state.monster
@@ -8926,6 +9705,823 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var MapPanel = function (_React$Component) {
+    _inherits(MapPanel, _React$Component);
+
+    function MapPanel(props) {
+        _classCallCheck(this, MapPanel);
+
+        var _this = _possibleConstructorReturn(this, (MapPanel.__proto__ || Object.getPrototypeOf(MapPanel)).call(this));
+
+        _this.state = {
+            map: props.map,
+            selectedItemID: null,
+            drag: null
+        };
+        return _this;
+    }
+
+    _createClass(MapPanel, [{
+        key: "setSelectedItem",
+        value: function setSelectedItem(e, id) {
+            var _this2 = this;
+
+            e.stopPropagation();
+
+            if (id) {
+                var item = this.getMapItem(id);
+                var canSelect = false;
+                if (item) {
+                    switch (item.type) {
+                        case "tile":
+                            canSelect = this.props.mode === "edit";
+                            break;
+                        case "monster":
+                        case "pc":
+                            canSelect = this.props.mode === "combat";
+                            break;
+                    }
+                } else {
+                    // We selected an off-map token
+                    canSelect = true;
+                }
+                if (!canSelect) {
+                    id = null;
+                }
+            }
+
+            this.setState({
+                selectedItemID: id
+            }, function () {
+                if (_this2.props.selectionChanged) {
+                    _this2.props.selectionChanged(id);
+                }
+            });
+        }
+    }, {
+        key: "setDrag",
+        value: function setDrag(item) {
+            this.setState({
+                drag: item
+            });
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Map manipulation methods
+
+    }, {
+        key: "getMapItem",
+        value: function getMapItem(id) {
+            return this.state.map.items.find(function (i) {
+                return i.id === id;
+            });
+        }
+    }, {
+        key: "addMapTile",
+        value: function addMapTile(x, y) {
+            var item = createMapItem();
+            item.x = x;
+            item.y = y;
+            this.state.map.items.push(item);
+
+            this.setState({
+                map: this.state.map,
+                selectedItemID: item.id
+            });
+        }
+    }, {
+        key: "moveMapItem",
+        value: function moveMapItem(item, dir) {
+            switch (dir) {
+                case "N":
+                    item.y -= 1;
+                    break;
+                case "E":
+                    item.x += 1;
+                    break;
+                case "S":
+                    item.y += 1;
+                    break;
+                case "W":
+                    item.x -= 1;
+                    break;
+            }
+
+            this.setState({
+                map: this.state.map
+            });
+        }
+    }, {
+        key: "bigMapItem",
+        value: function bigMapItem(item, dir) {
+            switch (dir) {
+                case "N":
+                    item.y -= 1;
+                    item.height += 1;
+                    break;
+                case "E":
+                    item.width += 1;
+                    break;
+                case "S":
+                    item.height += 1;
+                    break;
+                case "W":
+                    item.x -= 1;
+                    item.width += 1;
+                    break;
+            }
+
+            this.setState({
+                map: this.state.map
+            });
+        }
+    }, {
+        key: "smallMapItem",
+        value: function smallMapItem(item, dir) {
+            switch (dir) {
+                case "N":
+                    if (item.height > 1) {
+                        item.y += 1;
+                        item.height -= 1;
+                    }
+                    break;
+                case "E":
+                    if (item.width > 1) {
+                        item.width -= 1;
+                    }
+                    break;
+                case "S":
+                    if (item.height > 1) {
+                        item.height -= 1;
+                    }
+                    break;
+                case "W":
+                    if (item.width > 1) {
+                        item.x += 1;
+                        item.width -= 1;
+                    }
+                    break;
+            }
+
+            this.setState({
+                map: this.state.map
+            });
+        }
+    }, {
+        key: "resizeMapItem",
+        value: function resizeMapItem(item, dir, dir2) {
+            switch (dir2) {
+                case "in":
+                    this.smallMapItem(item, dir);
+                    break;
+                case "out":
+                    this.bigMapItem(item, dir);
+                    break;
+            }
+        }
+    }, {
+        key: "cloneMapItem",
+        value: function cloneMapItem(item) {
+            var copy = JSON.parse(JSON.stringify(item));
+            copy.id = guid();
+            copy.x += 1;
+            copy.y += 1;
+            this.state.map.items.push(copy);
+
+            this.setState({
+                map: this.state.map,
+                selectedItemID: copy.id
+            });
+        }
+    }, {
+        key: "removeMapItem",
+        value: function removeMapItem(item) {
+            var index = this.state.map.items.indexOf(item);
+            this.state.map.items.splice(index, 1);
+
+            this.setState({
+                map: this.state.map,
+                selectedItemID: null
+            });
+        }
+    }, {
+        key: "dropItem",
+        value: function dropItem(x, y) {
+            var _this3 = this;
+
+            var item = this.state.drag;
+            item.x = x;
+            item.y = y;
+
+            this.state.map.items = this.state.map.items.filter(function (i) {
+                return i.id !== item.id;
+            });
+            this.state.map.items.push(item);
+
+            this.setState({
+                map: this.state.map,
+                selectedItemID: item.id,
+                drag: null
+            }, function () {
+                if (_this3.props.selectionChanged) {
+                    _this3.props.selectionChanged(item.id);
+                }
+            });
+        }
+    }, {
+        key: "offMapDragOver",
+        value: function offMapDragOver(e) {
+            var _this4 = this;
+
+            var onMap = this.state.map.items.find(function (i) {
+                return i.id === _this4.state.drag.id;
+            }) !== null;
+            if (onMap) {
+                e.preventDefault();
+            }
+        }
+    }, {
+        key: "offMapDrop",
+        value: function offMapDrop() {
+            var _this5 = this;
+
+            this.state.map.items = this.state.map.items.filter(function (i) {
+                return i.id !== _this5.state.drag.id;
+            });
+            this.setState({
+                map: this.state.map,
+                drag: null
+            });
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Rendering helper methods
+
+    }, {
+        key: "getMapDimensions",
+        value: function getMapDimensions() {
+            var _this6 = this;
+
+            var border = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+
+            var dimensions = null;
+
+            this.state.map.items.filter(function (i) {
+                if (_this6.props.mode === "edit") {
+                    return i.type === "tile";
+                }
+                return true;
+            }).forEach(function (i) {
+                if (!dimensions) {
+                    dimensions = {
+                        minX: i.x,
+                        maxX: i.x + i.width - 1,
+                        minY: i.y,
+                        maxY: i.y + i.height - 1
+                    };
+                } else {
+                    dimensions.minX = Math.min(dimensions.minX, i.x);
+                    dimensions.maxX = Math.max(dimensions.maxX, i.x + i.width - 1);
+                    dimensions.minY = Math.min(dimensions.minY, i.y);
+                    dimensions.maxY = Math.max(dimensions.maxY, i.y + i.height - 1);
+                }
+            });
+
+            if (!dimensions) {
+                // The map is blank
+                if (this.props.mode === 'thumbnail') {
+                    return null;
+                }
+
+                dimensions = {
+                    minX: 0,
+                    maxX: 0,
+                    minY: 0,
+                    maxY: 0
+                };
+            }
+
+            // Apply the border
+            dimensions.minX -= border;
+            dimensions.maxX += border;
+            dimensions.minY -= border;
+            dimensions.maxY += border;
+
+            dimensions.width = 1 + dimensions.maxX - dimensions.minX;
+            dimensions.height = 1 + dimensions.maxY - dimensions.minY;
+
+            return dimensions;
+        }
+    }, {
+        key: "getSideLength",
+        value: function getSideLength() {
+            switch (this.props.mode) {
+                case "thumbnail":
+                    return 5;
+                case "edit":
+                case "combat":
+                    return 25;
+            }
+
+            return 0;
+        }
+    }, {
+        key: "getPosition",
+        value: function getPosition(x, y, width, height, mapDimensions) {
+            var sideLength = this.getSideLength();
+
+            return {
+                left: "calc(" + sideLength + "px * " + (x - mapDimensions.minX) + ")",
+                top: "calc(" + sideLength + "px * " + (y - mapDimensions.minY) + ")",
+                width: "calc((" + sideLength + "px * " + width + ") + 1px)",
+                height: "calc((" + sideLength + "px * " + height + ") + 1px)"
+            };
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Rendering methods
+
+    }, {
+        key: "render",
+        value: function render() {
+            var _this7 = this;
+
+            try {
+                var border = this.props.mode === "edit" ? 2 : 0;
+                var mapDimensions = this.getMapDimensions(border);
+                if (!mapDimensions) {
+                    return React.createElement(
+                        "div",
+                        null,
+                        "(blank map)"
+                    );
+                }
+
+                // Draw the grid squares
+                var grid = [];
+                if (this.props.mode === "edit") {
+                    for (var y = mapDimensions.minY; y !== mapDimensions.maxY + 1; ++y) {
+                        for (var x = mapDimensions.minX; x !== mapDimensions.maxX + 1; ++x) {
+                            var pos = this.getPosition(x, y, 1, 1, mapDimensions);
+                            grid.push(React.createElement(GridSquare, {
+                                key: x + "," + y,
+                                x: x,
+                                y: y,
+                                position: pos,
+                                onClick: function onClick(e) {
+                                    return _this7.setSelectedItem(e, null);
+                                },
+                                onDoubleClick: function onDoubleClick(x, y) {
+                                    return _this7.addMapTile(x, y);
+                                }
+                            }));
+                        }
+                    }
+                }
+
+                // Draw the map tiles
+                var tiles = this.state.map.items.filter(function (i) {
+                    return i.type === "tile";
+                }).map(function (i) {
+                    var pos = _this7.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
+                    return React.createElement(MapTile, {
+                        key: i.id,
+                        tile: i,
+                        position: pos,
+                        selected: _this7.state.selectedItemID === i.id,
+                        select: function select(e, id) {
+                            return _this7.setSelectedItem(e, id);
+                        }
+                    });
+                });
+
+                // Draw the tokens
+                var tokens = [];
+                if (this.props.mode !== "edit") {
+                    tokens = this.state.map.items.filter(function (i) {
+                        return i.type === "monster" || i.type === "pc";
+                    }).map(function (i) {
+                        var pos = _this7.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
+                        return React.createElement(MapToken, {
+                            key: i.id,
+                            token: i,
+                            position: pos,
+                            combatant: _this7.props.combatants.find(function (c) {
+                                return c.id === i.id;
+                            }),
+                            selected: _this7.state.selectedItemID === i.id,
+                            select: function select(e, id) {
+                                return _this7.setSelectedItem(e, id);
+                            },
+                            dragToken: function dragToken(item) {
+                                return _this7.setDrag(item);
+                            }
+                        });
+                    });
+                }
+
+                // Drag overlay
+                var dragOverlay = [];
+                if (this.state.drag) {
+                    for (var y = mapDimensions.minY; y !== mapDimensions.maxY + 1; ++y) {
+                        for (var x = mapDimensions.minX; x !== mapDimensions.maxX + 1; ++x) {
+                            var pos = this.getPosition(x, y, 1, 1, mapDimensions);
+                            dragOverlay.push(React.createElement(GridSquare, {
+                                key: x + "," + y,
+                                x: x,
+                                y: y,
+                                position: pos,
+                                overlay: true,
+                                dropItem: function dropItem(x, y) {
+                                    return _this7.dropItem(x, y);
+                                }
+                            }));
+                        }
+                    }
+                }
+
+                // Draw tools
+                var leftTools = null;
+                var lowerTools = null;
+                switch (this.props.mode) {
+                    case "thumbnail":
+                        // No tools in thumbnail mode
+                        break;
+                    case "edit":
+                        if (this.state.selectedItemID) {
+                            var item = this.getMapItem(this.state.selectedItemID);
+                            leftTools = React.createElement(
+                                "div",
+                                { className: "tools" },
+                                React.createElement(MapTileCard, {
+                                    tile: item,
+                                    moveMapItem: function moveMapItem(item, dir) {
+                                        return _this7.moveMapItem(item, dir);
+                                    },
+                                    resizeMapItem: function resizeMapItem(item, dir, dir2) {
+                                        return _this7.resizeMapItem(item, dir, dir2);
+                                    },
+                                    cloneMapItem: function cloneMapItem(item) {
+                                        return _this7.cloneMapItem(item);
+                                    },
+                                    removeMapItem: function removeMapItem(item) {
+                                        return _this7.removeMapItem(item);
+                                    }
+                                })
+                            );
+                        } else {
+                            leftTools = React.createElement(
+                                "div",
+                                { className: "tools" },
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    "to add a new tile to the map, double-click on an empty grid square"
+                                ),
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    "to edit an existing tile, click on it once to select it"
+                                )
+                            );
+                        }
+                        break;
+                    case "combat":
+                        var tokenIDs = this.state.map.items.filter(function (item) {
+                            return item.type === "monster" || item.type === "pc";
+                        }).map(function (item) {
+                            return item.id;
+                        });
+                        var offmap = this.props.combatants.filter(function (c) {
+                            return !tokenIDs.includes(c.id);
+                        }).map(function (c) {
+                            return React.createElement(OffMapCombatant, {
+                                key: c.id,
+                                combatant: c,
+                                selected: c.id === _this7.state.selectedItemID,
+                                click: function click(e, id) {
+                                    return _this7.setSelectedItem(e, id);
+                                },
+                                dragToken: function dragToken(item) {
+                                    return _this7.setDrag(item);
+                                }
+                            });
+                        });
+                        if (offmap.length === 0) {
+                            offmap.push(React.createElement(
+                                "div",
+                                { key: "empty", className: "empty" },
+                                "drag tokens here to remove them from the map"
+                            ));
+                        }
+
+                        var style = "off-map-tokens";
+                        if (this.state.drag) {
+                            style += " drop-target";
+                        }
+                        lowerTools = React.createElement(
+                            "div",
+                            {
+                                className: style,
+                                onDragOver: function onDragOver(e) {
+                                    return _this7.offMapDragOver(e);
+                                },
+                                onDrop: function onDrop() {
+                                    return _this7.offMapDrop();
+                                }
+                            },
+                            offmap
+                        );
+                        break;
+                }
+
+                return React.createElement(
+                    "div",
+                    { className: "map-panel " + this.props.mode, onClick: function onClick(e) {
+                            return _this7.setSelectedItem(e, null);
+                        } },
+                    React.createElement(
+                        "div",
+                        null,
+                        leftTools,
+                        React.createElement(
+                            "div",
+                            { className: "grid", style: { height: this.getSideLength() * mapDimensions.height + 1 + "px" } },
+                            grid,
+                            tiles,
+                            dragOverlay,
+                            tokens
+                        )
+                    ),
+                    lowerTools
+                );
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return MapPanel;
+}(React.Component);
+
+var OffMapCombatant = function (_React$Component2) {
+    _inherits(OffMapCombatant, _React$Component2);
+
+    function OffMapCombatant(props) {
+        _classCallCheck(this, OffMapCombatant);
+
+        var _this8 = _possibleConstructorReturn(this, (OffMapCombatant.__proto__ || Object.getPrototypeOf(OffMapCombatant)).call(this));
+
+        var size = miniSize(props.combatant.size);
+
+        var token = createMapItem();
+        token.id = props.combatant.id;
+        token.type = props.combatant.type;
+        token.width = size;
+        token.height = size;
+
+        _this8.state = {
+            token: token
+        };
+        return _this8;
+    }
+
+    _createClass(OffMapCombatant, [{
+        key: "render",
+        value: function render() {
+            var _this9 = this;
+
+            var style = "off-map-token";
+            if (this.props.selected) {
+                style += " selected";
+            }
+
+            return React.createElement(
+                "div",
+                { className: style, title: this.props.combatant.name, onClick: function onClick(e) {
+                        return _this9.props.click(e, _this9.props.combatant.id);
+                    } },
+                React.createElement(MapToken, {
+                    token: this.state.token,
+                    combatant: this.props.combatant,
+                    selected: this.state.selectedItemID === this.state.token.id,
+                    select: function select(e, id) {
+                        return _this9.props.click(e, id);
+                    },
+                    dragToken: function dragToken(token) {
+                        return _this9.props.dragToken(token);
+                    }
+                }),
+                React.createElement(
+                    "div",
+                    { className: "name" },
+                    this.props.combatant.name
+                )
+            );
+        }
+    }]);
+
+    return OffMapCombatant;
+}(React.Component);
+
+var GridSquare = function (_React$Component3) {
+    _inherits(GridSquare, _React$Component3);
+
+    function GridSquare() {
+        _classCallCheck(this, GridSquare);
+
+        var _this10 = _possibleConstructorReturn(this, (GridSquare.__proto__ || Object.getPrototypeOf(GridSquare)).call(this));
+
+        _this10.state = {
+            dropTarget: false
+        };
+        return _this10;
+    }
+
+    _createClass(GridSquare, [{
+        key: "setDropTarget",
+        value: function setDropTarget(value) {
+            this.setState({
+                dropTarget: value
+            });
+        }
+    }, {
+        key: "dragOver",
+        value: function dragOver(e) {
+            e.preventDefault();
+            this.setDropTarget(true);
+        }
+    }, {
+        key: "dragLeave",
+        value: function dragLeave() {
+            this.setDropTarget(false);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this11 = this;
+
+            var style = "grid-square";
+            if (this.props.overlay) {
+                style += " grid-overlay";
+            }
+            if (this.state.dropTarget) {
+                style += "drop-target";
+            }
+
+            return React.createElement("div", {
+                className: style,
+                style: this.props.position,
+                onClick: function onClick(e) {
+                    return _this11.props.onClick(e);
+                },
+                onDoubleClick: function onDoubleClick() {
+                    return _this11.props.onDoubleClick(_this11.props.x, _this11.props.y);
+                },
+                onDragOver: function onDragOver(e) {
+                    return _this11.dragOver(e);
+                },
+                onDragLeave: function onDragLeave() {
+                    return _this11.dragLeave();
+                },
+                onDrop: function onDrop() {
+                    return _this11.props.dropItem(_this11.props.x, _this11.props.y);
+                }
+            });
+        }
+    }]);
+
+    return GridSquare;
+}(React.Component);
+
+var MapTile = function (_React$Component4) {
+    _inherits(MapTile, _React$Component4);
+
+    function MapTile() {
+        _classCallCheck(this, MapTile);
+
+        return _possibleConstructorReturn(this, (MapTile.__proto__ || Object.getPrototypeOf(MapTile)).apply(this, arguments));
+    }
+
+    _createClass(MapTile, [{
+        key: "render",
+        value: function render() {
+            var _this13 = this;
+
+            var style = "tile";
+            if (this.props.selected) {
+                style += " selected";
+            }
+
+            return React.createElement("div", {
+                className: style,
+                style: this.props.position,
+                onClick: function onClick(e) {
+                    return _this13.props.select(e, _this13.props.tile.id);
+                } });
+        }
+    }]);
+
+    return MapTile;
+}(React.Component);
+
+var MapToken = function (_React$Component5) {
+    _inherits(MapToken, _React$Component5);
+
+    function MapToken() {
+        _classCallCheck(this, MapToken);
+
+        return _possibleConstructorReturn(this, (MapToken.__proto__ || Object.getPrototypeOf(MapToken)).apply(this, arguments));
+    }
+
+    _createClass(MapToken, [{
+        key: "startDrag",
+        value: function startDrag() {
+            this.props.dragToken(this.props.token);
+        }
+    }, {
+        key: "stopDrag",
+        value: function stopDrag() {
+            this.props.dragToken(null);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this15 = this;
+
+            var style = "token " + this.props.token.type;
+            if (this.props.selected) {
+                style += " selected";
+            }
+            if (this.props.combatant.current) {
+                style += " current";
+            }
+
+            if (!this.props.position) {
+                this.props.position = {
+                    width: this.props.token.width * 25 + "px",
+                    height: this.props.token.height * 25 + "px"
+                };
+            }
+
+            var initials = this.props.combatant.name.split(' ').map(function (s) {
+                return s[0];
+            });
+
+            var hpGauge = null;
+            if (this.props.combatant.type === "monster") {
+                hpGauge = React.createElement(HitPointGauge, { combatant: this.props.combatant });
+            }
+
+            var conditionsBadge = null;
+            if (this.props.combatant.conditions && this.props.combatant.conditions.length > 0) {
+                conditionsBadge = React.createElement(
+                    "div",
+                    { className: "badge" },
+                    this.props.combatant.conditions.length
+                );
+            }
+
+            return React.createElement(
+                "div",
+                {
+                    title: this.props.combatant.name,
+                    className: style,
+                    style: this.props.position,
+                    onClick: function onClick(e) {
+                        return _this15.props.select(e, _this15.props.token.id);
+                    },
+                    draggable: "true",
+                    onDragStart: function onDragStart() {
+                        return _this15.startDrag();
+                    },
+                    onDragEnd: function onDragEnd() {
+                        return _this15.stopDrag();
+                    }
+                },
+                React.createElement(
+                    "div",
+                    { className: "initials" },
+                    initials
+                ),
+                hpGauge,
+                conditionsBadge
+            );
+        }
+    }]);
+
+    return MapToken;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 var TraitPanel = function (_React$Component) {
     _inherits(TraitPanel, _React$Component);
 
@@ -9282,10 +10878,30 @@ var CombatManagerScreen = function (_React$Component) {
     function CombatManagerScreen() {
         _classCallCheck(this, CombatManagerScreen);
 
-        return _possibleConstructorReturn(this, (CombatManagerScreen.__proto__ || Object.getPrototypeOf(CombatManagerScreen)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (CombatManagerScreen.__proto__ || Object.getPrototypeOf(CombatManagerScreen)).call(this));
+
+        _this.state = {
+            mode: "list",
+            mapSelectionID: null
+        };
+        return _this;
     }
 
     _createClass(CombatManagerScreen, [{
+        key: "setMode",
+        value: function setMode(mode) {
+            this.setState({
+                mode: mode
+            });
+        }
+    }, {
+        key: "setMapSelectionID",
+        value: function setMapSelectionID(id) {
+            this.setState({
+                mapSelectionID: id
+            });
+        }
+    }, {
         key: "createCard",
         value: function createCard(combatant, isPlaceholder) {
             var _this2 = this;
@@ -9445,9 +11061,28 @@ var CombatManagerScreen = function (_React$Component) {
                         }));
                     }
 
+                    var mapSwitch = null;
+                    if (this.props.combat.map) {
+                        var options = [{
+                            id: "list",
+                            text: "list"
+                        }, {
+                            id: "map",
+                            text: "map"
+                        }];
+                        mapSwitch = React.createElement(Selector, {
+                            options: options,
+                            selectedID: this.state.mode,
+                            select: function select(optionID) {
+                                return _this3.setMode(optionID);
+                            }
+                        });
+                    }
+
                     leftPaneContent = React.createElement(
                         "div",
                         null,
+                        mapSwitch,
                         current
                     );
 
@@ -9519,28 +11154,63 @@ var CombatManagerScreen = function (_React$Component) {
                         });
                     });
 
-                    rightPaneContent = React.createElement(
-                        "div",
-                        null,
-                        notifications,
-                        React.createElement(CardGroup, {
-                            heading: "waiting for intiative to be entered",
-                            content: pending,
-                            hidden: pending.length === 0,
-                            showToggle: true
-                        }),
-                        React.createElement(CardGroup, {
-                            heading: "active combatants",
-                            content: active,
-                            hidden: active.length === 0
-                        }),
-                        React.createElement(CardGroup, {
-                            heading: "defeated",
-                            content: defeated,
-                            hidden: defeated.length === 0,
-                            showToggle: true
-                        })
-                    );
+                    switch (this.state.mode) {
+                        case "list":
+                            rightPaneContent = React.createElement(
+                                "div",
+                                null,
+                                notifications,
+                                React.createElement(CardGroup, {
+                                    heading: "waiting for intiative to be entered",
+                                    content: pending,
+                                    hidden: pending.length === 0,
+                                    showToggle: true
+                                }),
+                                React.createElement(CardGroup, {
+                                    heading: "active combatants",
+                                    content: active,
+                                    hidden: active.length === 0
+                                }),
+                                React.createElement(CardGroup, {
+                                    heading: "defeated",
+                                    content: defeated,
+                                    hidden: defeated.length === 0,
+                                    showToggle: true
+                                })
+                            );
+                            break;
+                        case "map":
+                            var selection = null;
+                            if (this.state.mapSelectionID) {
+                                var combatant = this.props.combat.combatants.filter(function (c) {
+                                    return !c.current;
+                                }).find(function (c) {
+                                    return c.id === _this3.state.mapSelectionID;
+                                });
+                                if (combatant) {
+                                    selection = this.createCard(combatant);
+                                }
+                            }
+                            rightPaneContent = React.createElement(
+                                "div",
+                                null,
+                                notifications,
+                                React.createElement(MapPanel, {
+                                    map: this.props.combat.map,
+                                    mode: "combat",
+                                    combatants: this.props.combat.combatants,
+                                    selectionChanged: function selectionChanged(id) {
+                                        return _this3.setMapSelectionID(id);
+                                    }
+                                }),
+                                React.createElement(
+                                    "div",
+                                    { className: "combat-selection" },
+                                    selection
+                                )
+                            );
+                            break;
+                    }
                 } else {
                     var help = null;
                     if (this.props.showHelp) {
@@ -10173,6 +11843,11 @@ var HomeScreen = function (_React$Component) {
                                                 React.createElement(
                                                     "li",
                                                     null,
+                                                    "design intricate tactical maps"
+                                                ),
+                                                React.createElement(
+                                                    "li",
+                                                    null,
                                                     "run combat without the book-keeping"
                                                 )
                                             )
@@ -10201,6 +11876,147 @@ var HomeScreen = function (_React$Component) {
     }]);
 
     return HomeScreen;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var MapFoliosScreen = function (_React$Component) {
+    _inherits(MapFoliosScreen, _React$Component);
+
+    function MapFoliosScreen() {
+        _classCallCheck(this, MapFoliosScreen);
+
+        return _possibleConstructorReturn(this, (MapFoliosScreen.__proto__ || Object.getPrototypeOf(MapFoliosScreen)).apply(this, arguments));
+    }
+
+    _createClass(MapFoliosScreen, [{
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                var help = null;
+                if (this.props.showHelp) {
+                    help = React.createElement(MapFoliosCard, { mapFolios: this.props.mapFolios });
+                }
+
+                var folios = [];
+                for (var n = 0; n !== this.props.mapFolios.length; ++n) {
+                    var mapFolio = this.props.mapFolios[n];
+                    folios.push(React.createElement(MapFolioListItem, {
+                        key: mapFolio.id,
+                        mapFolio: mapFolio,
+                        selected: mapFolio === this.props.selection,
+                        setSelection: function setSelection(mapFolio) {
+                            return _this2.props.selectMapFolio(mapFolio);
+                        }
+                    }));
+                };
+
+                var folio = null;
+                if (this.props.selection) {
+                    var folioCards = [];
+
+                    folioCards.push(React.createElement(
+                        "div",
+                        { className: "column", key: "info" },
+                        React.createElement(MapFolioCard, {
+                            selection: this.props.selection,
+                            addMap: function addMap() {
+                                return _this2.props.addMap("new map");
+                            },
+                            removeMapFolio: function removeMapFolio() {
+                                return _this2.props.removeMapFolio();
+                            },
+                            changeValue: function changeValue(source, field, value) {
+                                return _this2.props.changeValue(source, field, value);
+                            }
+                        })
+                    ));
+
+                    this.props.selection.maps.forEach(function (map) {
+                        folioCards.push(React.createElement(
+                            "div",
+                            { className: "column", key: map.id },
+                            React.createElement(MapCard, {
+                                map: map,
+                                editMap: function editMap(map) {
+                                    return _this2.props.editMap(map);
+                                },
+                                removeMap: function removeMap(map) {
+                                    return _this2.props.removeMap(map);
+                                },
+                                changeValue: function changeValue(source, type, value) {
+                                    return _this2.props.changeValue(source, type, value);
+                                }
+                            })
+                        ));
+                    });
+
+                    if (this.props.selection.maps.length === 0) {
+                        folioCards.push(React.createElement(
+                            "div",
+                            { className: "column", key: "empty" },
+                            React.createElement(InfoCard, { getContent: function getContent() {
+                                    return React.createElement(
+                                        "div",
+                                        { className: "section" },
+                                        "no maps"
+                                    );
+                                } })
+                        ));
+                    }
+
+                    folio = React.createElement(
+                        "div",
+                        null,
+                        React.createElement(CardGroup, {
+                            content: folioCards,
+                            heading: this.props.selection.name || "unnamed folio",
+                            showClose: this.props.selection !== null,
+                            close: function close() {
+                                return _this2.props.selectMapFolio(null);
+                            }
+                        })
+                    );
+                }
+
+                return React.createElement(
+                    "div",
+                    { className: "map-builder row collapse" },
+                    React.createElement(
+                        "div",
+                        { className: "columns small-6 medium-4 large-3 scrollable list-column" },
+                        help,
+                        React.createElement(
+                            "button",
+                            { onClick: function onClick() {
+                                    return _this2.props.addMapFolio("new map folio");
+                                } },
+                            "add a new map folio"
+                        ),
+                        folios
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "columns small-6 medium-8 large-9 scrollable" },
+                        folio
+                    )
+                );
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }]);
+
+    return MapFoliosScreen;
 }(React.Component);
 "use strict";
 
@@ -10511,10 +12327,7 @@ var PartiesScreen = function (_React$Component) {
 
                 var name = null;
                 if (this.props.selection) {
-                    name = this.props.selection.name;
-                    if (!name) {
-                        name = "unnamed party";
-                    }
+                    name = this.props.selection.name || "unnamed party";
                 }
 
                 return React.createElement(
