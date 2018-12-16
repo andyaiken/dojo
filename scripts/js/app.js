@@ -6204,6 +6204,13 @@ var AboutModal = function (_React$Component) {
                                 return _this2.setSelected(!_this2.state.selected);
                             }
                         }),
+                        React.createElement(Checkbox, {
+                            label: "checkbox",
+                            checked: this.state.selected,
+                            changeValue: function changeValue(value) {
+                                return _this2.setSelected(value);
+                            }
+                        }),
                         React.createElement(Dropdown, {
                             options: devOptions,
                             selectedID: this.state.optionID,
@@ -6226,13 +6233,6 @@ var AboutModal = function (_React$Component) {
                             factors: [1, 10, 100],
                             nudgeValue: function nudgeValue(delta) {
                                 return _this2.setValue(_this2.state.value + delta);
-                            }
-                        }),
-                        React.createElement(Checkbox, {
-                            label: "checkbox",
-                            checked: this.state.selected,
-                            changeValue: function changeValue(value) {
-                                return _this2.setSelected(value);
                             }
                         }),
                         React.createElement(Selector, {

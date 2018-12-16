@@ -46,6 +46,11 @@ class AboutModal extends React.Component {
                             text="confirm"
                             callback={() => this.setSelected(!this.state.selected)}
                         />
+                        <Checkbox
+                            label="checkbox"
+                            checked={this.state.selected}
+                            changeValue={value => this.setSelected(value)}
+                        />
                         <Dropdown
                             options={devOptions}
                             selectedID={this.state.optionID}
@@ -61,11 +66,6 @@ class AboutModal extends React.Component {
                             label="value"
                             factors={[1, 10, 100]}
                             nudgeValue={delta => this.setValue(this.state.value + delta)}
-                        />
-                        <Checkbox
-                            label="checkbox"
-                            checked={this.state.selected}
-                            changeValue={value => this.setSelected(value)}
                         />
                         <Selector
                             tabs={true}

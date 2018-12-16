@@ -177,7 +177,7 @@
     .selector .option.selected {
       cursor: default; }
   .selector.tabs {
-    margin-top: 0;
+    margin: 15px 0;
     background-color: transparent; }
     .selector.tabs .option {
       line-height: 24px;
