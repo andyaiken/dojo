@@ -612,8 +612,7 @@ body,
   padding: 10px; }
 
 .map-panel .grid {
-  position: relative;
-  overflow: auto; }
+  position: relative; }
   .map-panel .grid .grid-square {
     position: absolute;
     border: 1px solid white;
@@ -709,16 +708,20 @@ body,
   .map-panel.thumbnail .grid {
     max-height: 200px; }
 
-.map-panel.edit .grid {
-  display: inline-block;
-  vertical-align: top;
-  max-height: 100%;
-  width: calc(100% - 250px); }
-
-.map-panel.edit .tile:hover {
-  border-color: #3c78dc; }
+.map-panel.edit {
+  height: 100%;
+  overflow: auto; }
+  .map-panel.edit .grid {
+    display: inline-block;
+    vertical-align: top;
+    width: calc(100% - 250px); }
+  .map-panel.edit .tile:hover {
+    border-color: #3c78dc; }
 
 .map-panel.combat {
   margin: 10px; }
-  .map-panel.combat .grid .token:hover {
-    border-color: #3c78dc; }
+  .map-panel.combat .grid {
+    overflow-x: auto;
+    overflow-y: hidden; }
+    .map-panel.combat .grid .token:hover {
+      border-color: #3c78dc; }

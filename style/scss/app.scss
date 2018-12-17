@@ -920,7 +920,6 @@ body,
 
     .grid {
         position: relative;
-        overflow: auto;
 
         .grid-square {
             position: absolute;
@@ -1058,22 +1057,31 @@ body,
         }
     }
 
-    &.edit .grid {
-        display: inline-block;
-        vertical-align: top;
-        max-height: 100%;
-        width: calc(100% - 250px);
-    }
+    &.edit {
+        height: 100%;
+        overflow: auto;
 
-    &.edit .tile:hover {
-        border-color: $highlight;
+        .grid {
+            display: inline-block;
+            vertical-align: top;
+            width: calc(100% - 250px);
+        }
+
+        .tile:hover {
+            border-color: $highlight;
+        }
     }
 
     &.combat {
         margin: 10px;
 
-        .grid .token:hover {
-            border-color: $highlight;
+        .grid {
+            overflow-x: auto;
+            overflow-y: hidden;
+
+            .token:hover {
+                border-color: $highlight;
+            }
         }
     }
 }
