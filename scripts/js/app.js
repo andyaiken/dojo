@@ -7374,22 +7374,214 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var MapEditorModal = function (_React$Component) {
     _inherits(MapEditorModal, _React$Component);
 
-    function MapEditorModal() {
+    function MapEditorModal(props) {
         _classCallCheck(this, MapEditorModal);
 
-        return _possibleConstructorReturn(this, (MapEditorModal.__proto__ || Object.getPrototypeOf(MapEditorModal)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (MapEditorModal.__proto__ || Object.getPrototypeOf(MapEditorModal)).call(this));
+
+        _this.state = {
+            map: props.map,
+            selectedTileID: null
+        };
+        return _this;
     }
 
     _createClass(MapEditorModal, [{
+        key: "setSelectedTileID",
+        value: function setSelectedTileID(id) {
+            this.setState({
+                selectedTileID: id
+            });
+        }
+    }, {
+        key: "addMapTile",
+        value: function addMapTile(x, y) {
+            var tile = createMapItem();
+            tile.x = x;
+            tile.y = y;
+            this.state.map.items.push(tile);
+
+            this.setState({
+                map: this.state.map,
+                selectedTileID: tile.id
+            });
+        }
+    }, {
+        key: "moveMapItem",
+        value: function moveMapItem(item, dir) {
+            switch (dir) {
+                case "N":
+                    item.y -= 1;
+                    break;
+                case "E":
+                    item.x += 1;
+                    break;
+                case "S":
+                    item.y += 1;
+                    break;
+                case "W":
+                    item.x -= 1;
+                    break;
+            }
+
+            this.setState({
+                map: this.state.map
+            });
+        }
+    }, {
+        key: "bigMapItem",
+        value: function bigMapItem(item, dir) {
+            switch (dir) {
+                case "N":
+                    item.y -= 1;
+                    item.height += 1;
+                    break;
+                case "E":
+                    item.width += 1;
+                    break;
+                case "S":
+                    item.height += 1;
+                    break;
+                case "W":
+                    item.x -= 1;
+                    item.width += 1;
+                    break;
+            }
+
+            this.setState({
+                map: this.state.map
+            });
+        }
+    }, {
+        key: "smallMapItem",
+        value: function smallMapItem(item, dir) {
+            switch (dir) {
+                case "N":
+                    if (item.height > 1) {
+                        item.y += 1;
+                        item.height -= 1;
+                    }
+                    break;
+                case "E":
+                    if (item.width > 1) {
+                        item.width -= 1;
+                    }
+                    break;
+                case "S":
+                    if (item.height > 1) {
+                        item.height -= 1;
+                    }
+                    break;
+                case "W":
+                    if (item.width > 1) {
+                        item.x += 1;
+                        item.width -= 1;
+                    }
+                    break;
+            }
+
+            this.setState({
+                map: this.state.map
+            });
+        }
+    }, {
+        key: "resizeMapItem",
+        value: function resizeMapItem(item, dir, dir2) {
+            switch (dir2) {
+                case "in":
+                    this.smallMapItem(item, dir);
+                    break;
+                case "out":
+                    this.bigMapItem(item, dir);
+                    break;
+            }
+        }
+    }, {
+        key: "cloneMapItem",
+        value: function cloneMapItem(item) {
+            var copy = JSON.parse(JSON.stringify(item));
+            copy.id = guid();
+            copy.x += 1;
+            copy.y += 1;
+            this.state.map.items.push(copy);
+
+            this.setState({
+                map: this.state.map,
+                selectedTileID: copy.id
+            });
+        }
+    }, {
+        key: "removeMapItem",
+        value: function removeMapItem(item) {
+            var index = this.state.map.items.indexOf(item);
+            this.state.map.items.splice(index, 1);
+
+            this.setState({
+                map: this.state.map,
+                selectedTileID: null
+            });
+        }
+    }, {
         key: "render",
         value: function render() {
+            var _this2 = this;
+
             try {
+                var tools = null;
+                if (this.state.selectedTileID) {
+                    var item = this.state.map.items.find(function (i) {
+                        return i.id === _this2.state.selectedTileID;
+                    });
+                    tools = React.createElement(
+                        "div",
+                        { className: "tools" },
+                        React.createElement(MapTileCard, {
+                            tile: item,
+                            moveMapItem: function moveMapItem(item, dir) {
+                                return _this2.moveMapItem(item, dir);
+                            },
+                            resizeMapItem: function resizeMapItem(item, dir, dir2) {
+                                return _this2.resizeMapItem(item, dir, dir2);
+                            },
+                            cloneMapItem: function cloneMapItem(item) {
+                                return _this2.cloneMapItem(item);
+                            },
+                            removeMapItem: function removeMapItem(item) {
+                                return _this2.removeMapItem(item);
+                            }
+                        })
+                    );
+                } else {
+                    tools = React.createElement(
+                        "div",
+                        { className: "tools" },
+                        React.createElement(
+                            "p",
+                            null,
+                            "to add a new tile to the map, double-click on an empty grid square"
+                        ),
+                        React.createElement(
+                            "p",
+                            null,
+                            "to edit an existing tile, click on it once to select it"
+                        )
+                    );
+                }
+
                 return React.createElement(
                     "div",
                     { className: "map-editor" },
+                    tools,
                     React.createElement(MapPanel, {
-                        map: this.props.map,
-                        mode: "edit"
+                        map: this.state.map,
+                        mode: "edit",
+                        selectedItemID: this.state.selectedTileID,
+                        setSelectedItemID: function setSelectedItemID(id) {
+                            return _this2.setSelectedTileID(id);
+                        },
+                        addMapTile: function addMapTile(x, y) {
+                            return _this2.addMapTile(x, y);
+                        }
                     })
                 );
             } catch (e) {
@@ -9708,266 +9900,23 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var MapPanel = function (_React$Component) {
     _inherits(MapPanel, _React$Component);
 
-    function MapPanel(props) {
+    function MapPanel() {
         _classCallCheck(this, MapPanel);
 
-        var _this = _possibleConstructorReturn(this, (MapPanel.__proto__ || Object.getPrototypeOf(MapPanel)).call(this));
-
-        _this.state = {
-            map: props.map,
-            selectedItemID: null,
-            drag: null
-        };
-        return _this;
+        return _possibleConstructorReturn(this, (MapPanel.__proto__ || Object.getPrototypeOf(MapPanel)).apply(this, arguments));
     }
 
     _createClass(MapPanel, [{
-        key: "setSelectedItem",
-        value: function setSelectedItem(e, id) {
-            var _this2 = this;
-
-            e.stopPropagation();
-
-            if (id) {
-                var item = this.getMapItem(id);
-                var canSelect = false;
-                if (item) {
-                    switch (item.type) {
-                        case "tile":
-                            canSelect = this.props.mode === "edit";
-                            break;
-                        case "monster":
-                        case "pc":
-                            canSelect = this.props.mode === "combat";
-                            break;
-                    }
-                } else {
-                    // We selected an off-map token
-                    canSelect = true;
-                }
-                if (!canSelect) {
-                    id = null;
-                }
-            }
-
-            this.setState({
-                selectedItemID: id
-            }, function () {
-                if (_this2.props.selectionChanged) {
-                    _this2.props.selectionChanged(id);
-                }
-            });
-        }
-    }, {
-        key: "setDrag",
-        value: function setDrag(item) {
-            this.setState({
-                drag: item
-            });
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Map manipulation methods
-
-    }, {
-        key: "getMapItem",
-        value: function getMapItem(id) {
-            return this.state.map.items.find(function (i) {
-                return i.id === id;
-            });
-        }
-    }, {
-        key: "addMapTile",
-        value: function addMapTile(x, y) {
-            var item = createMapItem();
-            item.x = x;
-            item.y = y;
-            this.state.map.items.push(item);
-
-            this.setState({
-                map: this.state.map,
-                selectedItemID: item.id
-            });
-        }
-    }, {
-        key: "moveMapItem",
-        value: function moveMapItem(item, dir) {
-            switch (dir) {
-                case "N":
-                    item.y -= 1;
-                    break;
-                case "E":
-                    item.x += 1;
-                    break;
-                case "S":
-                    item.y += 1;
-                    break;
-                case "W":
-                    item.x -= 1;
-                    break;
-            }
-
-            this.setState({
-                map: this.state.map
-            });
-        }
-    }, {
-        key: "bigMapItem",
-        value: function bigMapItem(item, dir) {
-            switch (dir) {
-                case "N":
-                    item.y -= 1;
-                    item.height += 1;
-                    break;
-                case "E":
-                    item.width += 1;
-                    break;
-                case "S":
-                    item.height += 1;
-                    break;
-                case "W":
-                    item.x -= 1;
-                    item.width += 1;
-                    break;
-            }
-
-            this.setState({
-                map: this.state.map
-            });
-        }
-    }, {
-        key: "smallMapItem",
-        value: function smallMapItem(item, dir) {
-            switch (dir) {
-                case "N":
-                    if (item.height > 1) {
-                        item.y += 1;
-                        item.height -= 1;
-                    }
-                    break;
-                case "E":
-                    if (item.width > 1) {
-                        item.width -= 1;
-                    }
-                    break;
-                case "S":
-                    if (item.height > 1) {
-                        item.height -= 1;
-                    }
-                    break;
-                case "W":
-                    if (item.width > 1) {
-                        item.x += 1;
-                        item.width -= 1;
-                    }
-                    break;
-            }
-
-            this.setState({
-                map: this.state.map
-            });
-        }
-    }, {
-        key: "resizeMapItem",
-        value: function resizeMapItem(item, dir, dir2) {
-            switch (dir2) {
-                case "in":
-                    this.smallMapItem(item, dir);
-                    break;
-                case "out":
-                    this.bigMapItem(item, dir);
-                    break;
-            }
-        }
-    }, {
-        key: "cloneMapItem",
-        value: function cloneMapItem(item) {
-            var copy = JSON.parse(JSON.stringify(item));
-            copy.id = guid();
-            copy.x += 1;
-            copy.y += 1;
-            this.state.map.items.push(copy);
-
-            this.setState({
-                map: this.state.map,
-                selectedItemID: copy.id
-            });
-        }
-    }, {
-        key: "removeMapItem",
-        value: function removeMapItem(item) {
-            var index = this.state.map.items.indexOf(item);
-            this.state.map.items.splice(index, 1);
-
-            this.setState({
-                map: this.state.map,
-                selectedItemID: null
-            });
-        }
-    }, {
-        key: "dropItem",
-        value: function dropItem(x, y) {
-            var _this3 = this;
-
-            var item = this.state.drag;
-            item.x = x;
-            item.y = y;
-
-            this.state.map.items = this.state.map.items.filter(function (i) {
-                return i.id !== item.id;
-            });
-            this.state.map.items.push(item);
-
-            this.setState({
-                map: this.state.map,
-                selectedItemID: item.id,
-                drag: null
-            }, function () {
-                if (_this3.props.selectionChanged) {
-                    _this3.props.selectionChanged(item.id);
-                }
-            });
-        }
-    }, {
-        key: "offMapDragOver",
-        value: function offMapDragOver(e) {
-            var _this4 = this;
-
-            var onMap = this.state.map.items.find(function (i) {
-                return i.id === _this4.state.drag.id;
-            }) !== null;
-            if (onMap) {
-                e.preventDefault();
-            }
-        }
-    }, {
-        key: "offMapDrop",
-        value: function offMapDrop() {
-            var _this5 = this;
-
-            this.state.map.items = this.state.map.items.filter(function (i) {
-                return i.id !== _this5.state.drag.id;
-            });
-            this.setState({
-                map: this.state.map,
-                drag: null
-            });
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Rendering helper methods
-
-    }, {
         key: "getMapDimensions",
         value: function getMapDimensions() {
-            var _this6 = this;
+            var _this2 = this;
 
             var border = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
             var dimensions = null;
 
-            this.state.map.items.filter(function (i) {
-                if (_this6.props.mode === "edit") {
+            this.props.map.items.filter(function (i) {
+                if (_this2.props.mode === "edit") {
                     return i.type === "tile";
                 }
                 return true;
@@ -10037,14 +9986,10 @@ var MapPanel = function (_React$Component) {
                 height: "calc((" + sideLength + "px * " + height + ") + 1px)"
             };
         }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Rendering methods
-
     }, {
         key: "render",
         value: function render() {
-            var _this7 = this;
+            var _this3 = this;
 
             try {
                 var border = this.props.mode === "edit" ? 2 : 0;
@@ -10068,11 +10013,11 @@ var MapPanel = function (_React$Component) {
                                 x: x,
                                 y: y,
                                 position: pos,
-                                onClick: function onClick(e) {
-                                    return _this7.setSelectedItem(e, null);
+                                onClick: function onClick() {
+                                    return _this3.props.setSelectedItemID(null);
                                 },
                                 onDoubleClick: function onDoubleClick(x, y) {
-                                    return _this7.addMapTile(x, y);
+                                    return _this3.props.addMapTile(x, y);
                                 }
                             }));
                         }
@@ -10080,17 +10025,17 @@ var MapPanel = function (_React$Component) {
                 }
 
                 // Draw the map tiles
-                var tiles = this.state.map.items.filter(function (i) {
+                var tiles = this.props.map.items.filter(function (i) {
                     return i.type === "tile";
                 }).map(function (i) {
-                    var pos = _this7.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
+                    var pos = _this3.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
                     return React.createElement(MapTile, {
                         key: i.id,
                         tile: i,
                         position: pos,
-                        selected: _this7.state.selectedItemID === i.id,
-                        select: function select(e, id) {
-                            return _this7.setSelectedItem(e, id);
+                        selected: _this3.props.selectedItemID === i.id,
+                        select: function select(id) {
+                            return _this3.props.mode === "edit" ? _this3.props.setSelectedItemID(id) : null;
                         }
                     });
                 });
@@ -10098,31 +10043,38 @@ var MapPanel = function (_React$Component) {
                 // Draw the tokens
                 var tokens = [];
                 if (this.props.mode !== "edit") {
-                    tokens = this.state.map.items.filter(function (i) {
+                    tokens = this.props.map.items.filter(function (i) {
                         return i.type === "monster" || i.type === "pc";
                     }).map(function (i) {
-                        var pos = _this7.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
+                        var pos = _this3.getPosition(i.x, i.y, i.width, i.height, mapDimensions);
+                        var combatant = _this3.props.combatants.find(function (c) {
+                            return c.id === i.id;
+                        });
                         return React.createElement(MapToken, {
                             key: i.id,
                             token: i,
                             position: pos,
-                            combatant: _this7.props.combatants.find(function (c) {
-                                return c.id === i.id;
-                            }),
-                            selected: _this7.state.selectedItemID === i.id,
-                            select: function select(e, id) {
-                                return _this7.setSelectedItem(e, id);
+                            combatant: combatant,
+                            selected: _this3.props.selectedItemID === i.id,
+                            select: function select(id) {
+                                return _this3.props.setSelectedItemID(id);
                             },
-                            dragToken: function dragToken(item) {
-                                return _this7.setDrag(item);
+                            startDrag: function startDrag(id) {
+                                return _this3.props.setDraggedTokenID(id);
+                            },
+                            setSelectedItemID: function setSelectedItemID(id) {
+                                return _this3.props.mode === "combat" ? _this3.props.setSelectedItemID(id) : null;
+                            },
+                            setDraggedTokenID: function setDraggedTokenID(item) {
+                                return _this3.props.setDraggedTokenID(item.id);
                             }
                         });
                     });
                 }
 
-                // Drag overlay
+                // Draw the drag overlay
                 var dragOverlay = [];
-                if (this.state.drag) {
+                if (this.props.draggedTokenID) {
                     for (var y = mapDimensions.minY; y !== mapDimensions.maxY + 1; ++y) {
                         for (var x = mapDimensions.minX; x !== mapDimensions.maxX + 1; ++x) {
                             var pos = this.getPosition(x, y, 1, 1, mapDimensions);
@@ -10133,127 +10085,27 @@ var MapPanel = function (_React$Component) {
                                 position: pos,
                                 overlay: true,
                                 dropItem: function dropItem(x, y) {
-                                    return _this7.dropItem(x, y);
+                                    return _this3.props.dropItem(x, y);
                                 }
                             }));
                         }
                     }
                 }
 
-                // Draw tools
-                var leftTools = null;
-                var lowerTools = null;
-                switch (this.props.mode) {
-                    case "thumbnail":
-                        // No tools in thumbnail mode
-                        break;
-                    case "edit":
-                        if (this.state.selectedItemID) {
-                            var item = this.getMapItem(this.state.selectedItemID);
-                            leftTools = React.createElement(
-                                "div",
-                                { className: "tools" },
-                                React.createElement(MapTileCard, {
-                                    tile: item,
-                                    moveMapItem: function moveMapItem(item, dir) {
-                                        return _this7.moveMapItem(item, dir);
-                                    },
-                                    resizeMapItem: function resizeMapItem(item, dir, dir2) {
-                                        return _this7.resizeMapItem(item, dir, dir2);
-                                    },
-                                    cloneMapItem: function cloneMapItem(item) {
-                                        return _this7.cloneMapItem(item);
-                                    },
-                                    removeMapItem: function removeMapItem(item) {
-                                        return _this7.removeMapItem(item);
-                                    }
-                                })
-                            );
-                        } else {
-                            leftTools = React.createElement(
-                                "div",
-                                { className: "tools" },
-                                React.createElement(
-                                    "p",
-                                    null,
-                                    "to add a new tile to the map, double-click on an empty grid square"
-                                ),
-                                React.createElement(
-                                    "p",
-                                    null,
-                                    "to edit an existing tile, click on it once to select it"
-                                )
-                            );
-                        }
-                        break;
-                    case "combat":
-                        var tokenIDs = this.state.map.items.filter(function (item) {
-                            return item.type === "monster" || item.type === "pc";
-                        }).map(function (item) {
-                            return item.id;
-                        });
-                        var offmap = this.props.combatants.filter(function (c) {
-                            return !tokenIDs.includes(c.id);
-                        }).map(function (c) {
-                            return React.createElement(OffMapCombatant, {
-                                key: c.id,
-                                combatant: c,
-                                selected: c.id === _this7.state.selectedItemID,
-                                click: function click(e, id) {
-                                    return _this7.setSelectedItem(e, id);
-                                },
-                                dragToken: function dragToken(item) {
-                                    return _this7.setDrag(item);
-                                }
-                            });
-                        });
-                        if (offmap.length === 0) {
-                            offmap.push(React.createElement(
-                                "div",
-                                { key: "empty", className: "empty" },
-                                "drag tokens here to remove them from the map"
-                            ));
-                        }
-
-                        var style = "off-map-tokens";
-                        if (this.state.drag) {
-                            style += " drop-target";
-                        }
-                        lowerTools = React.createElement(
-                            "div",
-                            {
-                                className: style,
-                                onDragOver: function onDragOver(e) {
-                                    return _this7.offMapDragOver(e);
-                                },
-                                onDrop: function onDrop() {
-                                    return _this7.offMapDrop();
-                                }
-                            },
-                            offmap
-                        );
-                        break;
-                }
-
+                var style = "map-panel " + this.props.mode;
                 return React.createElement(
                     "div",
-                    { className: "map-panel " + this.props.mode, onClick: function onClick(e) {
-                            return _this7.setSelectedItem(e, null);
+                    { className: style, onClick: function onClick() {
+                            return _this3.props.setSelectedItemID(null);
                         } },
                     React.createElement(
                         "div",
-                        null,
-                        leftTools,
-                        React.createElement(
-                            "div",
-                            { className: "grid", style: { height: this.getSideLength() * mapDimensions.height + 1 + "px" } },
-                            grid,
-                            tiles,
-                            dragOverlay,
-                            tokens
-                        )
-                    ),
-                    lowerTools
+                        { className: "grid", style: { height: this.getSideLength() * mapDimensions.height + 1 + "px" } },
+                        grid,
+                        tiles,
+                        dragOverlay,
+                        tokens
+                    )
                 );
             } catch (e) {
                 console.error(e);
@@ -10264,8 +10116,95 @@ var MapPanel = function (_React$Component) {
     return MapPanel;
 }(React.Component);
 
-var OffMapCombatant = function (_React$Component2) {
-    _inherits(OffMapCombatant, _React$Component2);
+var OffMapPanel = function (_React$Component2) {
+    _inherits(OffMapPanel, _React$Component2);
+
+    function OffMapPanel() {
+        _classCallCheck(this, OffMapPanel);
+
+        return _possibleConstructorReturn(this, (OffMapPanel.__proto__ || Object.getPrototypeOf(OffMapPanel)).apply(this, arguments));
+    }
+
+    _createClass(OffMapPanel, [{
+        key: "dragOver",
+        value: function dragOver(e) {
+            var _this5 = this;
+
+            // We only allow tokens to be dragged here if they are currently on the map
+            var onMap = this.props.tokens.find(function (i) {
+                return i.id === _this5.props.draggedTokenID;
+            }) !== null;
+            if (onMap) {
+                e.preventDefault();
+            }
+        }
+    }, {
+        key: "drop",
+        value: function drop() {
+            var _this6 = this;
+
+            // We are removing the dragged token from the map
+            var onMap = this.props.tokens.find(function (i) {
+                return i.id === _this6.props.draggedTokenID;
+            }) !== null;
+            if (onMap) {
+                // TODO: Inform the owner that we've removed the dragged token from the map
+                this.props.draggedOffMap(this.props.draggedTokenID);
+            }
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this7 = this;
+
+            var tokens = this.props.tokens.map(function (c) {
+                return React.createElement(OffMapCombatant, {
+                    key: c.id,
+                    combatant: c,
+                    selected: c.id === _this7.props.selectedItemID,
+                    setSelectedItemID: function setSelectedItemID(id) {
+                        return _this7.props.setSelectedItemID(id);
+                    },
+                    setDraggedTokenID: function setDraggedTokenID(id) {
+                        return _this7.props.setDraggedTokenID(id);
+                    }
+                });
+            });
+
+            if (tokens.length === 0) {
+                tokens.push(React.createElement(
+                    "div",
+                    { key: "empty", className: "empty" },
+                    "drag tokens here to remove them from the map"
+                ));
+            }
+
+            var style = "off-map-tokens";
+            if (this.props.draggedToken) {
+                style += " drop-target";
+            }
+
+            return React.createElement(
+                "div",
+                {
+                    className: style,
+                    onDragOver: function onDragOver(e) {
+                        return _this7.dragOver(e);
+                    },
+                    onDrop: function onDrop() {
+                        return _this7.drop();
+                    }
+                },
+                tokens
+            );
+        }
+    }]);
+
+    return OffMapPanel;
+}(React.Component);
+
+var OffMapCombatant = function (_React$Component3) {
+    _inherits(OffMapCombatant, _React$Component3);
 
     function OffMapCombatant(props) {
         _classCallCheck(this, OffMapCombatant);
@@ -10305,11 +10244,11 @@ var OffMapCombatant = function (_React$Component2) {
                     token: this.state.token,
                     combatant: this.props.combatant,
                     selected: this.state.selectedItemID === this.state.token.id,
-                    select: function select(e, id) {
-                        return _this9.props.click(e, id);
+                    select: function select(id) {
+                        return _this9.props.setSelectedTokenID(id);
                     },
-                    dragToken: function dragToken(token) {
-                        return _this9.props.dragToken(token);
+                    startDrag: function startDrag(id) {
+                        return _this9.props.setDraggedTokenID(id);
                     }
                 }),
                 React.createElement(
@@ -10324,8 +10263,8 @@ var OffMapCombatant = function (_React$Component2) {
     return OffMapCombatant;
 }(React.Component);
 
-var GridSquare = function (_React$Component3) {
-    _inherits(GridSquare, _React$Component3);
+var GridSquare = function (_React$Component4) {
+    _inherits(GridSquare, _React$Component4);
 
     function GridSquare() {
         _classCallCheck(this, GridSquare);
@@ -10394,8 +10333,8 @@ var GridSquare = function (_React$Component3) {
     return GridSquare;
 }(React.Component);
 
-var MapTile = function (_React$Component4) {
-    _inherits(MapTile, _React$Component4);
+var MapTile = function (_React$Component5) {
+    _inherits(MapTile, _React$Component5);
 
     function MapTile() {
         _classCallCheck(this, MapTile);
@@ -10404,6 +10343,12 @@ var MapTile = function (_React$Component4) {
     }
 
     _createClass(MapTile, [{
+        key: "select",
+        value: function select(e) {
+            e.stopPropagation();
+            this.props.select(this.props.tile.id);
+        }
+    }, {
         key: "render",
         value: function render() {
             var _this13 = this;
@@ -10417,7 +10362,7 @@ var MapTile = function (_React$Component4) {
                 className: style,
                 style: this.props.position,
                 onClick: function onClick(e) {
-                    return _this13.props.select(e, _this13.props.tile.id);
+                    return _this13.select(e);
                 } });
         }
     }]);
@@ -10425,8 +10370,8 @@ var MapTile = function (_React$Component4) {
     return MapTile;
 }(React.Component);
 
-var MapToken = function (_React$Component5) {
-    _inherits(MapToken, _React$Component5);
+var MapToken = function (_React$Component6) {
+    _inherits(MapToken, _React$Component6);
 
     function MapToken() {
         _classCallCheck(this, MapToken);
@@ -10435,14 +10380,15 @@ var MapToken = function (_React$Component5) {
     }
 
     _createClass(MapToken, [{
-        key: "startDrag",
-        value: function startDrag() {
-            this.props.dragToken(this.props.token);
+        key: "select",
+        value: function select(e) {
+            e.stopPropagation();
+            this.props.select(this.props.token.id);
         }
     }, {
-        key: "stopDrag",
-        value: function stopDrag() {
-            this.props.dragToken(null);
+        key: "startDrag",
+        value: function startDrag() {
+            this.props.startDrag(this.props.token.id);
         }
     }, {
         key: "render",
@@ -10489,14 +10435,11 @@ var MapToken = function (_React$Component5) {
                     className: style,
                     style: this.props.position,
                     onClick: function onClick(e) {
-                        return _this15.props.select(e, _this15.props.token.id);
+                        return _this15.select(e);
                     },
                     draggable: "true",
                     onDragStart: function onDragStart() {
                         return _this15.startDrag();
-                    },
-                    onDragEnd: function onDragEnd() {
-                        return _this15.stopDrag();
                     }
                 },
                 React.createElement(
@@ -10882,7 +10825,8 @@ var CombatManagerScreen = function (_React$Component) {
 
         _this.state = {
             mode: "list",
-            mapSelectionID: null
+            selectedTokenID: null,
+            draggedTokenID: null
         };
         return _this;
     }
@@ -10895,16 +10839,49 @@ var CombatManagerScreen = function (_React$Component) {
             });
         }
     }, {
-        key: "setMapSelectionID",
-        value: function setMapSelectionID(id) {
+        key: "setSelectedTokenID",
+        value: function setSelectedTokenID(id) {
             this.setState({
-                mapSelectionID: id
+                selectedTokenID: id
+            });
+        }
+    }, {
+        key: "setDraggedTokenID",
+        value: function setDraggedTokenID(id) {
+            this.setState({
+                draggedTokenID: id
+            });
+        }
+    }, {
+        key: "dropItem",
+        value: function dropItem(x, y) {
+            var _this2 = this;
+
+            var combatant = this.props.combat.combatants.find(function (c) {
+                return c.id === _this2.state.draggedTokenID;
+            });
+            var item = createMapItem();
+            item.id = combatant.id;
+            item.type = combatant.type;
+            item.x = x;
+            item.y = y;
+            item.width = miniSize(combatant.size);
+            item.height = miniSize(combatant.size);
+
+            this.props.combat.map.items = this.props.combat.map.items.filter(function (i) {
+                return i.id !== item.id;
+            });
+            this.props.combat.map.items.push(item);
+
+            this.setState({
+                selectedItemID: item.id,
+                draggedTokenID: null
             });
         }
     }, {
         key: "createCard",
         value: function createCard(combatant, isPlaceholder) {
-            var _this2 = this;
+            var _this3 = this;
 
             if (isPlaceholder && isPlaceholder(combatant)) {
                 return React.createElement(InfoCard, {
@@ -10932,25 +10909,25 @@ var CombatManagerScreen = function (_React$Component) {
                         combatant: combatant,
                         mode: "combat",
                         changeValue: function changeValue(combatant, type, value) {
-                            return _this2.props.changeValue(combatant, type, value);
+                            return _this3.props.changeValue(combatant, type, value);
                         },
                         nudgeValue: function nudgeValue(combatant, type, delta) {
-                            return _this2.props.nudgeValue(combatant, type, delta);
+                            return _this3.props.nudgeValue(combatant, type, delta);
                         },
                         makeCurrent: function makeCurrent(combatant) {
-                            return _this2.props.makeCurrent(combatant);
+                            return _this3.props.makeCurrent(combatant);
                         },
                         makeActive: function makeActive(combatant) {
-                            return _this2.props.makeActive(combatant);
+                            return _this3.props.makeActive(combatant);
                         },
                         makeDefeated: function makeDefeated(combatant) {
-                            return _this2.props.makeDefeated(combatant);
+                            return _this3.props.makeDefeated(combatant);
                         },
                         removeCombatant: function removeCombatant(combatant) {
-                            return _this2.props.removeCombatant(combatant);
+                            return _this3.props.removeCombatant(combatant);
                         },
                         endTurn: function endTurn(combatant) {
-                            return _this2.props.endTurn(combatant);
+                            return _this3.props.endTurn(combatant);
                         }
                     });
                 case "monster":
@@ -10959,37 +10936,37 @@ var CombatManagerScreen = function (_React$Component) {
                         mode: "combat",
                         combat: this.props.combat,
                         changeValue: function changeValue(combatant, type, value) {
-                            return _this2.props.changeValue(combatant, type, value);
+                            return _this3.props.changeValue(combatant, type, value);
                         },
                         nudgeValue: function nudgeValue(combatant, type, delta) {
-                            return _this2.props.nudgeValue(combatant, type, delta);
+                            return _this3.props.nudgeValue(combatant, type, delta);
                         },
                         makeCurrent: function makeCurrent(combatant) {
-                            return _this2.props.makeCurrent(combatant);
+                            return _this3.props.makeCurrent(combatant);
                         },
                         makeActive: function makeActive(combatant) {
-                            return _this2.props.makeActive(combatant);
+                            return _this3.props.makeActive(combatant);
                         },
                         makeDefeated: function makeDefeated(combatant) {
-                            return _this2.props.makeDefeated(combatant);
+                            return _this3.props.makeDefeated(combatant);
                         },
                         removeCombatant: function removeCombatant(combatant) {
-                            return _this2.props.removeCombatant(combatant);
+                            return _this3.props.removeCombatant(combatant);
                         },
                         addCondition: function addCondition(combatant, condition) {
-                            return _this2.props.addCondition(combatant, condition);
+                            return _this3.props.addCondition(combatant, condition);
                         },
                         removeCondition: function removeCondition(combatant, conditionID) {
-                            return _this2.props.removeCondition(combatant, conditionID);
+                            return _this3.props.removeCondition(combatant, conditionID);
                         },
                         nudgeConditionValue: function nudgeConditionValue(condition, type, delta) {
-                            return _this2.props.nudgeValue(condition, type, delta);
+                            return _this3.props.nudgeValue(condition, type, delta);
                         },
                         changeConditionValue: function changeConditionValue(condition, type, value) {
-                            return _this2.props.changeValue(condition, type, value);
+                            return _this3.props.changeValue(condition, type, value);
                         },
                         endTurn: function endTurn(combatant) {
-                            return _this2.props.endTurn(combatant);
+                            return _this3.props.endTurn(combatant);
                         }
                     });
                 default:
@@ -10999,7 +10976,7 @@ var CombatManagerScreen = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            var _this3 = this;
+            var _this4 = this;
 
             try {
                 var leftPaneContent = null;
@@ -11016,14 +10993,14 @@ var CombatManagerScreen = function (_React$Component) {
                             current.push(React.createElement(
                                 "div",
                                 { key: combatant.id },
-                                _this3.createCard(combatant)
+                                _this4.createCard(combatant)
                             ));
                         }
                         if (combatant.pending && !combatant.active && !combatant.defeated) {
                             pending.push(React.createElement(
                                 "div",
                                 { className: "column", key: combatant.id },
-                                _this3.createCard(combatant, function (combatant) {
+                                _this4.createCard(combatant, function (combatant) {
                                     return combatant.current;
                                 })
                             ));
@@ -11032,7 +11009,7 @@ var CombatManagerScreen = function (_React$Component) {
                             active.push(React.createElement(
                                 "div",
                                 { className: "column", key: combatant.id },
-                                _this3.createCard(combatant, function (combatant) {
+                                _this4.createCard(combatant, function (combatant) {
                                     return combatant.current;
                                 })
                             ));
@@ -11041,7 +11018,7 @@ var CombatManagerScreen = function (_React$Component) {
                             defeated.push(React.createElement(
                                 "div",
                                 { className: "column", key: combatant.id },
-                                _this3.createCard(combatant, function (combatant) {
+                                _this4.createCard(combatant, function (combatant) {
                                     return combatant.current;
                                 })
                             ));
@@ -11074,7 +11051,7 @@ var CombatManagerScreen = function (_React$Component) {
                             options: options,
                             selectedID: this.state.mode,
                             select: function select(optionID) {
-                                return _this3.setMode(optionID);
+                                return _this4.setMode(optionID);
                             }
                         });
                     }
@@ -11149,7 +11126,7 @@ var CombatManagerScreen = function (_React$Component) {
                             id: n.id,
                             notification: n,
                             close: function close(notification, removeCondition) {
-                                return _this3.props.close(notification, removeCondition);
+                                return _this4.props.close(notification, removeCondition);
                             }
                         });
                     });
@@ -11180,12 +11157,20 @@ var CombatManagerScreen = function (_React$Component) {
                             );
                             break;
                         case "map":
+                            var tokenIDs = this.props.combat.map.items.filter(function (item) {
+                                return item.type === "monster" || item.type === "pc";
+                            }).map(function (item) {
+                                return item.id;
+                            });
+                            var offmap = this.props.combat.combatants.filter(function (c) {
+                                return !tokenIDs.includes(c.id);
+                            });
                             var selection = null;
-                            if (this.state.mapSelectionID) {
+                            if (this.state.selectedTokenID) {
                                 var combatant = this.props.combat.combatants.filter(function (c) {
                                     return !c.current;
                                 }).find(function (c) {
-                                    return c.id === _this3.state.mapSelectionID;
+                                    return c.id === _this4.state.selectedTokenID;
                                 });
                                 if (combatant) {
                                     selection = this.createCard(combatant);
@@ -11199,8 +11184,31 @@ var CombatManagerScreen = function (_React$Component) {
                                     map: this.props.combat.map,
                                     mode: "combat",
                                     combatants: this.props.combat.combatants,
-                                    selectionChanged: function selectionChanged(id) {
-                                        return _this3.setMapSelectionID(id);
+                                    selectedItemID: this.state.selectedTokenID,
+                                    setSelectedItemID: function setSelectedItemID(id) {
+                                        return _this4.setSelectedTokenID(id);
+                                    },
+                                    draggedTokenID: this.state.draggedTokenID,
+                                    setDraggedTokenID: function setDraggedTokenID(id) {
+                                        return _this4.setDraggedTokenID(id);
+                                    },
+                                    dropItem: function dropItem(x, y) {
+                                        return _this4.dropItem(x, y);
+                                    }
+                                }),
+                                React.createElement(OffMapPanel, {
+                                    tokens: offmap,
+                                    combatants: this.props.combat.combatants,
+                                    draggedOffMap: function draggedOffMap(id) {
+                                        return _this4.draggedOffMap(id);
+                                    },
+                                    selectedItemID: this.state.selectedTokenID,
+                                    setSelectedItemID: function setSelectedItemID(id) {
+                                        return _this4.setSelectedTokenID(id);
+                                    },
+                                    draggedTokenID: this.state.draggedTokenID,
+                                    setDraggedTokenID: function setDraggedTokenID(id) {
+                                        return _this4.setDraggedTokenID(id);
                                     }
                                 }),
                                 React.createElement(
@@ -11223,7 +11231,7 @@ var CombatManagerScreen = function (_React$Component) {
                             key: combat.id,
                             combat: combat,
                             setSelection: function setSelection(combat) {
-                                return _this3.props.resumeEncounter(combat);
+                                return _this4.props.resumeEncounter(combat);
                             }
                         }));
                     });
@@ -11235,7 +11243,7 @@ var CombatManagerScreen = function (_React$Component) {
                         React.createElement(
                             "button",
                             { onClick: function onClick() {
-                                    return _this3.props.createCombat();
+                                    return _this4.props.createCombat();
                                 } },
                             "start a new combat"
                         ),
@@ -11297,7 +11305,7 @@ var Notification = function (_React$Component2) {
     }, {
         key: "render",
         value: function render() {
-            var _this5 = this;
+            var _this6 = this;
 
             var name = this.props.notification.combatant.displayName || this.props.notification.combatant.name || "unnamed monster";
             switch (this.props.notification.type) {
@@ -11320,14 +11328,14 @@ var Notification = function (_React$Component2) {
                             React.createElement(
                                 "button",
                                 { onClick: function onClick() {
-                                        return _this5.saveSuccess(_this5.props.notification);
+                                        return _this6.saveSuccess(_this6.props.notification);
                                     } },
                                 "success"
                             ),
                             React.createElement(
                                 "button",
                                 { onClick: function onClick() {
-                                        return _this5.close(_this5.props.notification);
+                                        return _this6.close(_this6.props.notification);
                                     } },
                                 "ok"
                             )
@@ -11350,7 +11358,7 @@ var Notification = function (_React$Component2) {
                             React.createElement(
                                 "button",
                                 { onClick: function onClick() {
-                                        return _this5.close(_this5.props.notification);
+                                        return _this6.close(_this6.props.notification);
                                     } },
                                 "ok"
                             )

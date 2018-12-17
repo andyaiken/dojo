@@ -4,7 +4,8 @@ class CombatManagerScreen extends React.Component {
 
         this.state = {
             mode: "list",
-            mapSelectionID: null
+            selectedTokenID: null,
+            draggedTokenID: null
         };
     }
 
@@ -14,9 +15,34 @@ class CombatManagerScreen extends React.Component {
         });
     }
 
-    setMapSelectionID(id) {
+    setSelectedTokenID(id) {
         this.setState({
-            mapSelectionID: id
+            selectedTokenID: id
+        });
+    }
+
+    setDraggedTokenID(id) {
+        this.setState({
+            draggedTokenID: id
+        });
+    }
+
+    dropItem(x, y) {
+        var combatant = this.props.combat.combatants.find(c => c.id === this.state.draggedTokenID);
+        var item = createMapItem();
+        item.id = combatant.id;
+        item.type = combatant.type;
+        item.x = x;
+        item.y = y;
+        item.width = miniSize(combatant.size);
+        item.height = miniSize(combatant.size);
+
+        this.props.combat.map.items = this.props.combat.map.items.filter(i => i.id !== item.id);
+        this.props.combat.map.items.push(item);
+
+        this.setState({
+            selectedItemID: item.id,
+            draggedTokenID: null
         });
     }
 
@@ -217,11 +243,16 @@ class CombatManagerScreen extends React.Component {
                         );
                         break;
                     case "map":
+                        var tokenIDs = this.props.combat.map.items
+                            .filter(item => (item.type === "monster") || (item.type === "pc"))
+                            .map(item => item.id);
+                        var offmap = this.props.combat.combatants
+                            .filter(c => !tokenIDs.includes(c.id));
                         var selection = null;
-                        if (this.state.mapSelectionID) {
+                        if (this.state.selectedTokenID) {
                             var combatant = this.props.combat.combatants
                                 .filter(c => !c.current)
-                                .find(c => c.id === this.state.mapSelectionID);
+                                .find(c => c.id === this.state.selectedTokenID);
                             if (combatant) {
                                 selection = this.createCard(combatant);
                             }
@@ -233,7 +264,20 @@ class CombatManagerScreen extends React.Component {
                                     map={this.props.combat.map}
                                     mode="combat"
                                     combatants={this.props.combat.combatants}
-                                    selectionChanged={id => this.setMapSelectionID(id)}
+                                    selectedItemID={this.state.selectedTokenID}
+                                    setSelectedItemID={id => this.setSelectedTokenID(id)}
+                                    draggedTokenID={this.state.draggedTokenID}
+                                    setDraggedTokenID={id => this.setDraggedTokenID(id)}
+                                    dropItem={(x, y) => this.dropItem(x, y)}
+                                />
+                                <OffMapPanel
+                                    tokens={offmap}
+                                    combatants={this.props.combat.combatants}
+                                    draggedOffMap={id => this.draggedOffMap(id)}
+                                    selectedItemID={this.state.selectedTokenID}
+                                    setSelectedItemID={id => this.setSelectedTokenID(id)}
+                                    draggedTokenID={this.state.draggedTokenID}
+                                    setDraggedTokenID={id => this.setDraggedTokenID(id)}
                                 />
                                 <div className="combat-selection">
                                     {selection}

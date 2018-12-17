@@ -555,7 +555,17 @@ body,
     .modal .modal-content .map-editor {
       height: 100%;
       margin: 0 -15px; }
+      .modal .modal-content .map-editor .tools {
+        display: inline-block;
+        vertical-align: top;
+        overflow-y: auto;
+        height: 100%;
+        width: 250px;
+        padding: 10px; }
       .modal .modal-content .map-editor .map-panel {
+        display: inline-block;
+        vertical-align: top;
+        width: calc(100% - 250px);
         height: 100%; }
   .modal .modal-footer {
     height: 42px;
@@ -603,80 +613,50 @@ body,
       display: inline-block;
       margin: 0 3px; }
 
-.map-panel .tools {
-  display: inline-block;
-  max-height: 100%;
-  vertical-align: top;
-  overflow-y: auto;
-  width: 250px;
-  padding: 10px; }
-
-.map-panel .grid {
-  position: relative; }
-  .map-panel .grid .grid-square {
-    position: absolute;
-    border: 1px solid white;
-    background-color: rgba(0, 60, 200, 0.2); }
-    .map-panel .grid .grid-square.grid-overlay {
-      opacity: 0.5; }
-    .map-panel .grid .grid-square.drop-target {
-      background-color: #3c78dc;
-      opacity: 1; }
-
-.map-panel .off-map-tokens {
-  min-height: 50px;
-  margin-top: 10px;
-  background-color: white;
-  border: 1px solid #c3c3c3;
-  border-left-width: 5px; }
-  .map-panel .off-map-tokens.drop-target {
-    border-color: #3c78dc;
-    background-color: rgba(60, 120, 220, 0.1); }
-  .map-panel .off-map-tokens .off-map-token {
-    display: inline-block;
-    vertical-align: top;
-    margin: 10px;
-    padding: 5px;
-    border: 1px solid #c3c3c3;
-    background-color: white; }
-    .map-panel .off-map-tokens .off-map-token .token {
-      position: relative;
-      height: 26px;
-      width: 26px;
-      margin: 22px;
-      cursor: pointer; }
-    .map-panel .off-map-tokens .off-map-token .name {
-      border-top: 1px solid #c3c3c3;
-      padding-top: 5px;
-      text-align: center; }
-    .map-panel .off-map-tokens .off-map-token:hover, .map-panel .off-map-tokens .off-map-token.selected {
+.map-panel {
+  overflow: auto; }
+  .map-panel .grid {
+    position: relative; }
+    .map-panel .grid .grid-square {
+      position: absolute;
+      border: 1px solid white;
+      background-color: rgba(0, 60, 200, 0.2); }
+      .map-panel .grid .grid-square.grid-overlay {
+        opacity: 0.5; }
+      .map-panel .grid .grid-square.drop-target {
+        background-color: #3c78dc;
+        opacity: 1; }
+  .map-panel.thumbnail {
+    pointer-events: none; }
+  .map-panel.edit .tile:hover {
+    border-color: #3c78dc; }
+  .map-panel.combat {
+    margin: 10px; }
+    .map-panel.combat .token:hover {
       border-color: #3c78dc; }
-  .map-panel .off-map-tokens .empty {
-    text-align: center;
-    line-height: 50px; }
 
-.map-panel .tile {
+.tile {
   position: absolute;
   border: 1px solid darkgrey;
   background-color: lightgrey; }
-  .map-panel .tile.selected {
+  .tile.selected {
     border-color: #3c78dc;
     border-width: 2px; }
 
-.map-panel .token {
+.token {
   position: absolute;
   border: 1px solid #c3c3c3;
   border-radius: 50%;
   box-shadow: inset 0 0 6px 3px rgba(0, 0, 0, 0.1); }
-  .map-panel .token.monster {
+  .token.monster {
     background-color: #650000; }
-  .map-panel .token.pc {
+  .token.pc {
     background-color: #006500; }
-  .map-panel .token.current {
+  .token.current {
     background-color: white; }
-  .map-panel .token.selected {
+  .token.selected {
     border-color: #3c78dc; }
-  .map-panel .token .initials {
+  .token .initials {
     font-size: 10px;
     text-transform: uppercase;
     color: white;
@@ -685,12 +665,12 @@ body,
     left: 50%;
     transform: translate(-50%, -50%);
     text-shadow: 0 0 2px #3c3c3c; }
-  .map-panel .token .hp-gauge {
+  .token .hp-gauge {
     position: absolute;
     left: 0;
     right: 0;
     bottom: -6px; }
-  .map-panel .token .badge {
+  .token .badge {
     background-color: white;
     border: 1px solid #c3c3c3;
     border-radius: 50%;
@@ -703,25 +683,32 @@ body,
     font-weight: 600;
     text-align: center; }
 
-.map-panel.thumbnail {
-  pointer-events: none; }
-  .map-panel.thumbnail .grid {
-    max-height: 200px; }
-
-.map-panel.edit {
-  height: 100%;
-  overflow: auto; }
-  .map-panel.edit .grid {
+.off-map-tokens {
+  min-height: 50px;
+  margin-top: 10px;
+  background-color: white;
+  border: 1px solid #c3c3c3;
+  border-left-width: 5px; }
+  .off-map-tokens.drop-target {
+    border-color: #3c78dc;
+    background-color: rgba(60, 120, 220, 0.1); }
+  .off-map-tokens .off-map-token {
     display: inline-block;
     vertical-align: top;
-    width: calc(100% - 250px); }
-  .map-panel.edit .tile:hover {
-    border-color: #3c78dc; }
-
-.map-panel.combat {
-  margin: 10px; }
-  .map-panel.combat .grid {
-    overflow-x: auto;
-    overflow-y: hidden; }
-    .map-panel.combat .grid .token:hover {
+    margin: 10px;
+    padding: 5px;
+    border: 1px solid #c3c3c3;
+    background-color: white; }
+    .off-map-tokens .off-map-token .token {
+      position: relative;
+      margin: 22px;
+      cursor: pointer; }
+    .off-map-tokens .off-map-token .name {
+      border-top: 1px solid #c3c3c3;
+      padding-top: 5px;
+      text-align: center; }
+    .off-map-tokens .off-map-token:hover, .off-map-tokens .off-map-token.selected {
       border-color: #3c78dc; }
+  .off-map-tokens .empty {
+    text-align: center;
+    line-height: 50px; }
