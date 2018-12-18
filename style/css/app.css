@@ -246,9 +246,6 @@ body,
   .welcome-panel .text {
     margin: 7px; }
 
-.combat-selection {
-  padding: 0 5px; }
-
 .card-group {
   margin-bottom: 20px;
   padding: 0 5px; }
@@ -631,7 +628,7 @@ body,
   .map-panel.edit .tile:hover {
     border-color: #3c78dc; }
   .map-panel.combat {
-    margin: 10px; }
+    height: 50%; }
     .map-panel.combat .token:hover {
       border-color: #3c78dc; }
 
@@ -685,7 +682,7 @@ body,
 
 .off-map-tokens {
   min-height: 50px;
-  margin-top: 10px;
+  margin: 5px;
   background-color: white;
   border: 1px solid #c3c3c3;
   border-left-width: 5px; }

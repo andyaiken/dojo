@@ -75,7 +75,7 @@ class MapPanel extends React.Component {
 
     render() {
         try {
-            var border = (this.props.mode === "edit") ? 2 : 0;
+            var border = (this.props.mode === "edit") ? 2 : 1;
             var mapDimensions = this.getMapDimensions(border);
             if (!mapDimensions) {
                 return (
@@ -113,6 +113,7 @@ class MapPanel extends React.Component {
                             key={i.id}
                             tile={i}
                             position={pos}
+                            selectable={this.props.mode === "edit"}
                             selected={this.props.selectedItemID === i.id}
                             select={id => this.props.mode === "edit" ? this.props.setSelectedItemID(id) : null}
                         />
@@ -133,6 +134,8 @@ class MapPanel extends React.Component {
                                 token={i}
                                 position={pos}
                                 combatant={combatant}
+                                selectable={this.props.mode === "combat"}
+                                simple={this.props.mode === "thumbnail"}
                                 selected={this.props.selectedItemID ===  i.id}
                                 select={id => this.props.setSelectedItemID(id)}
                                 startDrag={id => this.props.setDraggedTokenID(id)}
@@ -199,8 +202,9 @@ class OffMapPanel extends React.Component {
     }
 
     render() {
-        var tokens = this.props.tokens
-            .map(c => {
+        var tokens = [];
+        if (!this.props.draggedTokenID) {
+            tokens = this.props.tokens.map(c => {
                 return (
                     <OffMapCombatant
                         key={c.id}
@@ -211,6 +215,7 @@ class OffMapPanel extends React.Component {
                     />
                 );
             });
+        }
 
         if (tokens.length === 0) {
             tokens.push(
@@ -221,7 +226,7 @@ class OffMapPanel extends React.Component {
         }
 
         var style = "off-map-tokens";
-        if (this.props.draggedToken) {
+        if (this.props.draggedTokenID) {
             style += " drop-target";
         }
 
@@ -261,12 +266,13 @@ class OffMapCombatant extends React.Component {
         }
 
         return (
-            <div className={style} title={this.props.combatant.name} onClick={e => this.props.click(e, this.props.combatant.id)}>
+            <div className={style} title={this.props.combatant.name} onClick={() => this.props.setSelectedItemID(this.props.combatant.id)}>
                 <MapToken
                     token={this.state.token}
                     combatant={this.props.combatant}
+                    selectable={true}
                     selected={this.state.selectedItemID ===  this.state.token.id}
-                    select={id => this.props.setSelectedTokenID(id)}
+                    select={id => this.props.setSelectedItemID(id)}
                     startDrag={id => this.props.setDraggedTokenID(id)}
                 />
                 <div className="name">{this.props.combatant.name}</div>
@@ -325,8 +331,10 @@ class GridSquare extends React.Component {
 
 class MapTile extends React.Component {
     select(e) {
-        e.stopPropagation();
-        this.props.select(this.props.tile.id);
+        if (this.props.selectable) {
+            e.stopPropagation();
+            this.props.select(this.props.tile.id);
+        }
     }
 
     render() {
@@ -347,12 +355,20 @@ class MapTile extends React.Component {
 
 class MapToken extends React.Component {
     select(e) {
-        e.stopPropagation();
-        this.props.select(this.props.token.id);
+        if (this.props.selectable) {
+            e.stopPropagation();
+            this.props.select(this.props.token.id);
+        }
     }
 
     startDrag() {
-        this.props.startDrag(this.props.token.id);
+        if (this.props.selectable) {
+            this.props.startDrag(this.props.token.id);
+        }
+    }
+
+    endDrag() {
+        this.props.startDrag(null);
     }
 
     render() {
@@ -371,20 +387,25 @@ class MapToken extends React.Component {
             }
         }
 
-        var initials = this.props.combatant.name.split(' ').map(s => s[0]);
-
+        var initials = null;
         var hpGauge = null;
-        if (this.props.combatant.type === "monster") {
-            hpGauge = (
-                <HitPointGauge combatant={this.props.combatant} />
-            );
-        }
-
         var conditionsBadge = null;
-        if ((this.props.combatant.conditions) && (this.props.combatant.conditions.length > 0)) {
-            conditionsBadge = (
-                <div className="badge">{this.props.combatant.conditions.length}</div>
+        if (!this.props.simple) {
+            initials = (
+                <div className="initials">{this.props.combatant.name.split(' ').map(s => s[0])}</div>
             );
+
+            if (this.props.combatant.type === "monster") {
+                hpGauge = (
+                    <HitPointGauge combatant={this.props.combatant} />
+                );
+            }
+
+            if ((this.props.combatant.conditions) && (this.props.combatant.conditions.length > 0)) {
+                conditionsBadge = (
+                    <div className="badge">{this.props.combatant.conditions.length}</div>
+                );
+            }
         }
 
         return (
@@ -395,8 +416,9 @@ class MapToken extends React.Component {
                 onClick={e => this.select(e)}
                 draggable="true"
                 onDragStart={() => this.startDrag()}
+                onDragEnd={() => this.endDrag()}
             >
-                <div className="initials">{initials}</div>
+                {initials}
                 {hpGauge}
                 {conditionsBadge}
             </div>

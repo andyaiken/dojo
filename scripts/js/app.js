@@ -5781,7 +5781,8 @@ var CombatListItem = function (_React$Component) {
                 if (this.props.combat.map) {
                     map = React.createElement(MapPanel, {
                         map: this.props.combat.map,
-                        mode: "thumbnail"
+                        mode: "thumbnail",
+                        combatants: this.props.combat.combatants
                     });
                 }
 
@@ -9992,7 +9993,7 @@ var MapPanel = function (_React$Component) {
             var _this3 = this;
 
             try {
-                var border = this.props.mode === "edit" ? 2 : 0;
+                var border = this.props.mode === "edit" ? 2 : 1;
                 var mapDimensions = this.getMapDimensions(border);
                 if (!mapDimensions) {
                     return React.createElement(
@@ -10033,6 +10034,7 @@ var MapPanel = function (_React$Component) {
                         key: i.id,
                         tile: i,
                         position: pos,
+                        selectable: _this3.props.mode === "edit",
                         selected: _this3.props.selectedItemID === i.id,
                         select: function select(id) {
                             return _this3.props.mode === "edit" ? _this3.props.setSelectedItemID(id) : null;
@@ -10055,6 +10057,8 @@ var MapPanel = function (_React$Component) {
                             token: i,
                             position: pos,
                             combatant: combatant,
+                            selectable: _this3.props.mode === "combat",
+                            simple: _this3.props.mode === "thumbnail",
                             selected: _this3.props.selectedItemID === i.id,
                             select: function select(id) {
                                 return _this3.props.setSelectedItemID(id);
@@ -10157,19 +10161,22 @@ var OffMapPanel = function (_React$Component2) {
         value: function render() {
             var _this7 = this;
 
-            var tokens = this.props.tokens.map(function (c) {
-                return React.createElement(OffMapCombatant, {
-                    key: c.id,
-                    combatant: c,
-                    selected: c.id === _this7.props.selectedItemID,
-                    setSelectedItemID: function setSelectedItemID(id) {
-                        return _this7.props.setSelectedItemID(id);
-                    },
-                    setDraggedTokenID: function setDraggedTokenID(id) {
-                        return _this7.props.setDraggedTokenID(id);
-                    }
+            var tokens = [];
+            if (!this.props.draggedTokenID) {
+                tokens = this.props.tokens.map(function (c) {
+                    return React.createElement(OffMapCombatant, {
+                        key: c.id,
+                        combatant: c,
+                        selected: c.id === _this7.props.selectedItemID,
+                        setSelectedItemID: function setSelectedItemID(id) {
+                            return _this7.props.setSelectedItemID(id);
+                        },
+                        setDraggedTokenID: function setDraggedTokenID(id) {
+                            return _this7.props.setDraggedTokenID(id);
+                        }
+                    });
                 });
-            });
+            }
 
             if (tokens.length === 0) {
                 tokens.push(React.createElement(
@@ -10180,7 +10187,7 @@ var OffMapPanel = function (_React$Component2) {
             }
 
             var style = "off-map-tokens";
-            if (this.props.draggedToken) {
+            if (this.props.draggedTokenID) {
                 style += " drop-target";
             }
 
@@ -10237,15 +10244,16 @@ var OffMapCombatant = function (_React$Component3) {
 
             return React.createElement(
                 "div",
-                { className: style, title: this.props.combatant.name, onClick: function onClick(e) {
-                        return _this9.props.click(e, _this9.props.combatant.id);
+                { className: style, title: this.props.combatant.name, onClick: function onClick() {
+                        return _this9.props.setSelectedItemID(_this9.props.combatant.id);
                     } },
                 React.createElement(MapToken, {
                     token: this.state.token,
                     combatant: this.props.combatant,
+                    selectable: true,
                     selected: this.state.selectedItemID === this.state.token.id,
                     select: function select(id) {
-                        return _this9.props.setSelectedTokenID(id);
+                        return _this9.props.setSelectedItemID(id);
                     },
                     startDrag: function startDrag(id) {
                         return _this9.props.setDraggedTokenID(id);
@@ -10345,8 +10353,10 @@ var MapTile = function (_React$Component5) {
     _createClass(MapTile, [{
         key: "select",
         value: function select(e) {
-            e.stopPropagation();
-            this.props.select(this.props.tile.id);
+            if (this.props.selectable) {
+                e.stopPropagation();
+                this.props.select(this.props.tile.id);
+            }
         }
     }, {
         key: "render",
@@ -10382,13 +10392,22 @@ var MapToken = function (_React$Component6) {
     _createClass(MapToken, [{
         key: "select",
         value: function select(e) {
-            e.stopPropagation();
-            this.props.select(this.props.token.id);
+            if (this.props.selectable) {
+                e.stopPropagation();
+                this.props.select(this.props.token.id);
+            }
         }
     }, {
         key: "startDrag",
         value: function startDrag() {
-            this.props.startDrag(this.props.token.id);
+            if (this.props.selectable) {
+                this.props.startDrag(this.props.token.id);
+            }
+        }
+    }, {
+        key: "endDrag",
+        value: function endDrag() {
+            this.props.startDrag(null);
         }
     }, {
         key: "render",
@@ -10410,22 +10429,29 @@ var MapToken = function (_React$Component6) {
                 };
             }
 
-            var initials = this.props.combatant.name.split(' ').map(function (s) {
-                return s[0];
-            });
-
+            var initials = null;
             var hpGauge = null;
-            if (this.props.combatant.type === "monster") {
-                hpGauge = React.createElement(HitPointGauge, { combatant: this.props.combatant });
-            }
-
             var conditionsBadge = null;
-            if (this.props.combatant.conditions && this.props.combatant.conditions.length > 0) {
-                conditionsBadge = React.createElement(
+            if (!this.props.simple) {
+                initials = React.createElement(
                     "div",
-                    { className: "badge" },
-                    this.props.combatant.conditions.length
+                    { className: "initials" },
+                    this.props.combatant.name.split(' ').map(function (s) {
+                        return s[0];
+                    })
                 );
+
+                if (this.props.combatant.type === "monster") {
+                    hpGauge = React.createElement(HitPointGauge, { combatant: this.props.combatant });
+                }
+
+                if (this.props.combatant.conditions && this.props.combatant.conditions.length > 0) {
+                    conditionsBadge = React.createElement(
+                        "div",
+                        { className: "badge" },
+                        this.props.combatant.conditions.length
+                    );
+                }
             }
 
             return React.createElement(
@@ -10440,13 +10466,12 @@ var MapToken = function (_React$Component6) {
                     draggable: "true",
                     onDragStart: function onDragStart() {
                         return _this15.startDrag();
+                    },
+                    onDragEnd: function onDragEnd() {
+                        return _this15.endDrag();
                     }
                 },
-                React.createElement(
-                    "div",
-                    { className: "initials" },
-                    initials
-                ),
+                initials,
                 hpGauge,
                 conditionsBadge
             );
@@ -10853,8 +10878,8 @@ var CombatManagerScreen = function (_React$Component) {
             });
         }
     }, {
-        key: "dropItem",
-        value: function dropItem(x, y) {
+        key: "dropOnMap",
+        value: function dropOnMap(x, y) {
             var _this2 = this;
 
             var combatant = this.props.combat.combatants.find(function (c) {
@@ -10875,6 +10900,17 @@ var CombatManagerScreen = function (_React$Component) {
 
             this.setState({
                 selectedItemID: item.id,
+                draggedTokenID: null
+            });
+        }
+    }, {
+        key: "dragOffMap",
+        value: function dragOffMap(id) {
+            this.props.combat.map.items = this.props.combat.map.items.filter(function (i) {
+                return i.id !== id;
+            });
+            this.setState({
+                selectedItemID: id,
                 draggedTokenID: null
             });
         }
@@ -11178,7 +11214,7 @@ var CombatManagerScreen = function (_React$Component) {
                             }
                             rightPaneContent = React.createElement(
                                 "div",
-                                null,
+                                { style: { height: "100%" } },
                                 notifications,
                                 React.createElement(MapPanel, {
                                     map: this.props.combat.map,
@@ -11193,28 +11229,36 @@ var CombatManagerScreen = function (_React$Component) {
                                         return _this4.setDraggedTokenID(id);
                                     },
                                     dropItem: function dropItem(x, y) {
-                                        return _this4.dropItem(x, y);
-                                    }
-                                }),
-                                React.createElement(OffMapPanel, {
-                                    tokens: offmap,
-                                    combatants: this.props.combat.combatants,
-                                    draggedOffMap: function draggedOffMap(id) {
-                                        return _this4.draggedOffMap(id);
-                                    },
-                                    selectedItemID: this.state.selectedTokenID,
-                                    setSelectedItemID: function setSelectedItemID(id) {
-                                        return _this4.setSelectedTokenID(id);
-                                    },
-                                    draggedTokenID: this.state.draggedTokenID,
-                                    setDraggedTokenID: function setDraggedTokenID(id) {
-                                        return _this4.setDraggedTokenID(id);
+                                        return _this4.dropOnMap(x, y);
                                     }
                                 }),
                                 React.createElement(
                                     "div",
-                                    { className: "combat-selection" },
-                                    selection
+                                    { className: "row", style: { height: "50%" } },
+                                    React.createElement(
+                                        "div",
+                                        { className: "columns small-12 medium-6 large-6 scrollable" },
+                                        selection
+                                    ),
+                                    React.createElement(
+                                        "div",
+                                        { className: "columns small-12 medium-6 large-6 scrollable" },
+                                        React.createElement(OffMapPanel, {
+                                            tokens: offmap,
+                                            combatants: this.props.combat.combatants,
+                                            draggedOffMap: function draggedOffMap(id) {
+                                                return _this4.dragOffMap(id);
+                                            },
+                                            selectedItemID: this.state.selectedTokenID,
+                                            setSelectedItemID: function setSelectedItemID(id) {
+                                                return _this4.setSelectedTokenID(id);
+                                            },
+                                            draggedTokenID: this.state.draggedTokenID,
+                                            setDraggedTokenID: function setDraggedTokenID(id) {
+                                                return _this4.setDraggedTokenID(id);
+                                            }
+                                        })
+                                    )
                                 )
                             );
                             break;
@@ -11251,6 +11295,11 @@ var CombatManagerScreen = function (_React$Component) {
                     );
                 }
 
+                var rightStyle = "columns small-6 medium-8 large-9";
+                if (this.state.mode === "list") {
+                    rightStyle += " scrollable";
+                }
+
                 return React.createElement(
                     "div",
                     { className: "combat-manager row collapse" },
@@ -11261,7 +11310,7 @@ var CombatManagerScreen = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-8 large-9 scrollable" },
+                        { className: rightStyle, style: { height: "100%" } },
                         rightPaneContent
                     )
                 );

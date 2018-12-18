@@ -12,6 +12,7 @@ class CombatListItem extends React.Component {
                     <MapPanel
                         map={this.props.combat.map}
                         mode="thumbnail"
+                        combatants={this.props.combat.combatants}
                     />
                 );
             }

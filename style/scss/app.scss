@@ -336,10 +336,6 @@ body,
     }
 }
 
-.combat-selection {
-    padding: 0 5px;
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Card
 
@@ -952,7 +948,7 @@ body,
     }
 
     &.combat {
-        margin: 10px;
+        height: 50%;
 
         .token:hover {
             border-color: $highlight;
@@ -1028,7 +1024,7 @@ body,
 
 .off-map-tokens {
     min-height: 50px;
-    margin-top: 10px;
+    margin: 5px;
     background-color: $background;
     border: 1px solid $control-border;
     border-left-width: 5px;

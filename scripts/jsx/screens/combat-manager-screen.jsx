@@ -27,7 +27,7 @@ class CombatManagerScreen extends React.Component {
         });
     }
 
-    dropItem(x, y) {
+    dropOnMap(x, y) {
         var combatant = this.props.combat.combatants.find(c => c.id === this.state.draggedTokenID);
         var item = createMapItem();
         item.id = combatant.id;
@@ -42,6 +42,14 @@ class CombatManagerScreen extends React.Component {
 
         this.setState({
             selectedItemID: item.id,
+            draggedTokenID: null
+        });
+    }
+
+    dragOffMap(id) {
+        this.props.combat.map.items = this.props.combat.map.items.filter(i => i.id !== id);
+        this.setState({
+            selectedItemID: id,
             draggedTokenID: null
         });
     }
@@ -258,7 +266,7 @@ class CombatManagerScreen extends React.Component {
                             }
                         }
                         rightPaneContent = (
-                            <div>
+                            <div style={{ height: "100%" }}>
                                 {notifications}
                                 <MapPanel
                                     map={this.props.combat.map}
@@ -268,19 +276,23 @@ class CombatManagerScreen extends React.Component {
                                     setSelectedItemID={id => this.setSelectedTokenID(id)}
                                     draggedTokenID={this.state.draggedTokenID}
                                     setDraggedTokenID={id => this.setDraggedTokenID(id)}
-                                    dropItem={(x, y) => this.dropItem(x, y)}
+                                    dropItem={(x, y) => this.dropOnMap(x, y)}
                                 />
-                                <OffMapPanel
-                                    tokens={offmap}
-                                    combatants={this.props.combat.combatants}
-                                    draggedOffMap={id => this.draggedOffMap(id)}
-                                    selectedItemID={this.state.selectedTokenID}
-                                    setSelectedItemID={id => this.setSelectedTokenID(id)}
-                                    draggedTokenID={this.state.draggedTokenID}
-                                    setDraggedTokenID={id => this.setDraggedTokenID(id)}
-                                />
-                                <div className="combat-selection">
-                                    {selection}
+                                <div className="row" style={{ height: "50%" }}>
+                                    <div className="columns small-12 medium-6 large-6 scrollable">
+                                        {selection}
+                                    </div>
+                                    <div className="columns small-12 medium-6 large-6 scrollable">
+                                        <OffMapPanel
+                                            tokens={offmap}
+                                            combatants={this.props.combat.combatants}
+                                            draggedOffMap={id => this.dragOffMap(id)}
+                                            selectedItemID={this.state.selectedTokenID}
+                                            setSelectedItemID={id => this.setSelectedTokenID(id)}
+                                            draggedTokenID={this.state.draggedTokenID}
+                                            setDraggedTokenID={id => this.setDraggedTokenID(id)}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         );
@@ -314,12 +326,17 @@ class CombatManagerScreen extends React.Component {
                 );
             }
 
+            var rightStyle = "columns small-6 medium-8 large-9";
+            if (this.state.mode === "list") {
+                rightStyle += " scrollable";
+            }
+
             return (
                 <div className="combat-manager row collapse">
                     <div className="columns small-6 medium-4 large-3 scrollable list-column">
                         {leftPaneContent}
                     </div>
-                    <div className="columns small-6 medium-8 large-9 scrollable">
+                    <div className={rightStyle} style={{ height: "100%" }}>
                         {rightPaneContent}
                     </div>
                 </div>
