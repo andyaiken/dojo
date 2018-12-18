@@ -179,7 +179,7 @@ class CombatManagerScreen extends React.Component {
                 }
 
                 leftPaneContent = (
-                    <div>
+                    <div className="combat-left">
                         {mapSwitch}
                         {current}
                     </div>
@@ -228,7 +228,7 @@ class CombatManagerScreen extends React.Component {
                 switch (this.state.mode) {
                     case "list":
                         rightPaneContent = (
-                            <div>
+                            <div className="combat-right">
                                 {notifications}
                                 <CardGroup
                                     heading="waiting for intiative to be entered"
@@ -265,9 +265,15 @@ class CombatManagerScreen extends React.Component {
                                 selection = this.createCard(combatant);
                             }
                         }
+                        if (!selection) {
+                            selection = (
+                                <div className="info">
+                                    select a map token to see its details here
+                                </div>
+                            )
+                        }
                         rightPaneContent = (
-                            <div style={{ height: "100%" }}>
-                                {notifications}
+                            <div className="combat-right" style={{ height: "100%" }}>
                                 <MapPanel
                                     map={this.props.combat.map}
                                     mode="combat"
@@ -283,6 +289,7 @@ class CombatManagerScreen extends React.Component {
                                         {selection}
                                     </div>
                                     <div className="columns small-12 medium-6 large-6 scrollable">
+                                        {notifications}
                                         <OffMapPanel
                                             tokens={offmap}
                                             combatants={this.props.combat.combatants}
@@ -318,7 +325,7 @@ class CombatManagerScreen extends React.Component {
                 });
 
                 leftPaneContent = (
-                    <div>
+                    <div className="combat-left">
                         {help}
                         <button onClick={() => this.props.createCombat()}>start a new combat</button>
                         {combats}

@@ -10132,57 +10132,51 @@ var OffMapPanel = function (_React$Component2) {
     _createClass(OffMapPanel, [{
         key: "dragOver",
         value: function dragOver(e) {
-            var _this5 = this;
-
-            // We only allow tokens to be dragged here if they are currently on the map
-            var onMap = this.props.tokens.find(function (i) {
-                return i.id === _this5.props.draggedTokenID;
-            }) !== null;
-            if (onMap) {
-                e.preventDefault();
-            }
+            e.preventDefault();
         }
     }, {
         key: "drop",
         value: function drop() {
-            var _this6 = this;
+            var _this5 = this;
 
             // We are removing the dragged token from the map
             var onMap = this.props.tokens.find(function (i) {
-                return i.id === _this6.props.draggedTokenID;
+                return i.id === _this5.props.draggedTokenID;
             }) !== null;
             if (onMap) {
-                // TODO: Inform the owner that we've removed the dragged token from the map
                 this.props.draggedOffMap(this.props.draggedTokenID);
             }
         }
     }, {
         key: "render",
         value: function render() {
-            var _this7 = this;
+            var _this6 = this;
 
-            var tokens = [];
-            if (!this.props.draggedTokenID) {
-                tokens = this.props.tokens.map(function (c) {
-                    return React.createElement(OffMapCombatant, {
-                        key: c.id,
-                        combatant: c,
-                        selected: c.id === _this7.props.selectedItemID,
-                        setSelectedItemID: function setSelectedItemID(id) {
-                            return _this7.props.setSelectedItemID(id);
-                        },
-                        setDraggedTokenID: function setDraggedTokenID(id) {
-                            return _this7.props.setDraggedTokenID(id);
-                        }
-                    });
+            var tokens = this.props.tokens.map(function (c) {
+                return React.createElement(OffMapCombatant, {
+                    key: c.id,
+                    combatant: c,
+                    selected: c.id === _this6.props.selectedItemID,
+                    setSelectedItemID: function setSelectedItemID(id) {
+                        return _this6.props.setSelectedItemID(id);
+                    },
+                    setDraggedTokenID: function setDraggedTokenID(id) {
+                        return _this6.props.setDraggedTokenID(id);
+                    }
                 });
-            }
+            });
 
-            if (tokens.length === 0) {
+            if (this.props.draggedTokenID || tokens.length === 0) {
                 tokens.push(React.createElement(
                     "div",
-                    { key: "empty", className: "empty" },
-                    "drag tokens here to remove them from the map"
+                    { key: "empty", className: "text" },
+                    "drag map tokens onto this box to remove them from the map"
+                ));
+            } else {
+                tokens.push(React.createElement(
+                    "div",
+                    { key: "info", className: "text" },
+                    "you can drag these map tokens onto the map"
                 ));
             }
 
@@ -10196,10 +10190,10 @@ var OffMapPanel = function (_React$Component2) {
                 {
                     className: style,
                     onDragOver: function onDragOver(e) {
-                        return _this7.dragOver(e);
+                        return _this6.dragOver(e);
                     },
                     onDrop: function onDrop() {
-                        return _this7.drop();
+                        return _this6.drop();
                     }
                 },
                 tokens
@@ -10216,7 +10210,7 @@ var OffMapCombatant = function (_React$Component3) {
     function OffMapCombatant(props) {
         _classCallCheck(this, OffMapCombatant);
 
-        var _this8 = _possibleConstructorReturn(this, (OffMapCombatant.__proto__ || Object.getPrototypeOf(OffMapCombatant)).call(this));
+        var _this7 = _possibleConstructorReturn(this, (OffMapCombatant.__proto__ || Object.getPrototypeOf(OffMapCombatant)).call(this));
 
         var size = miniSize(props.combatant.size);
 
@@ -10226,16 +10220,16 @@ var OffMapCombatant = function (_React$Component3) {
         token.width = size;
         token.height = size;
 
-        _this8.state = {
+        _this7.state = {
             token: token
         };
-        return _this8;
+        return _this7;
     }
 
     _createClass(OffMapCombatant, [{
         key: "render",
         value: function render() {
-            var _this9 = this;
+            var _this8 = this;
 
             var style = "off-map-token";
             if (this.props.selected) {
@@ -10245,7 +10239,7 @@ var OffMapCombatant = function (_React$Component3) {
             return React.createElement(
                 "div",
                 { className: style, title: this.props.combatant.name, onClick: function onClick() {
-                        return _this9.props.setSelectedItemID(_this9.props.combatant.id);
+                        return _this8.props.setSelectedItemID(_this8.props.combatant.id);
                     } },
                 React.createElement(MapToken, {
                     token: this.state.token,
@@ -10253,10 +10247,10 @@ var OffMapCombatant = function (_React$Component3) {
                     selectable: true,
                     selected: this.state.selectedItemID === this.state.token.id,
                     select: function select(id) {
-                        return _this9.props.setSelectedItemID(id);
+                        return _this8.props.setSelectedItemID(id);
                     },
                     startDrag: function startDrag(id) {
-                        return _this9.props.setDraggedTokenID(id);
+                        return _this8.props.setDraggedTokenID(id);
                     }
                 }),
                 React.createElement(
@@ -10277,12 +10271,12 @@ var GridSquare = function (_React$Component4) {
     function GridSquare() {
         _classCallCheck(this, GridSquare);
 
-        var _this10 = _possibleConstructorReturn(this, (GridSquare.__proto__ || Object.getPrototypeOf(GridSquare)).call(this));
+        var _this9 = _possibleConstructorReturn(this, (GridSquare.__proto__ || Object.getPrototypeOf(GridSquare)).call(this));
 
-        _this10.state = {
+        _this9.state = {
             dropTarget: false
         };
-        return _this10;
+        return _this9;
     }
 
     _createClass(GridSquare, [{
@@ -10306,7 +10300,7 @@ var GridSquare = function (_React$Component4) {
     }, {
         key: "render",
         value: function render() {
-            var _this11 = this;
+            var _this10 = this;
 
             var style = "grid-square";
             if (this.props.overlay) {
@@ -10320,19 +10314,19 @@ var GridSquare = function (_React$Component4) {
                 className: style,
                 style: this.props.position,
                 onClick: function onClick(e) {
-                    return _this11.props.onClick(e);
+                    return _this10.props.onClick(e);
                 },
                 onDoubleClick: function onDoubleClick() {
-                    return _this11.props.onDoubleClick(_this11.props.x, _this11.props.y);
+                    return _this10.props.onDoubleClick(_this10.props.x, _this10.props.y);
                 },
                 onDragOver: function onDragOver(e) {
-                    return _this11.dragOver(e);
+                    return _this10.dragOver(e);
                 },
                 onDragLeave: function onDragLeave() {
-                    return _this11.dragLeave();
+                    return _this10.dragLeave();
                 },
                 onDrop: function onDrop() {
-                    return _this11.props.dropItem(_this11.props.x, _this11.props.y);
+                    return _this10.props.dropItem(_this10.props.x, _this10.props.y);
                 }
             });
         }
@@ -10361,7 +10355,7 @@ var MapTile = function (_React$Component5) {
     }, {
         key: "render",
         value: function render() {
-            var _this13 = this;
+            var _this12 = this;
 
             var style = "tile";
             if (this.props.selected) {
@@ -10372,7 +10366,7 @@ var MapTile = function (_React$Component5) {
                 className: style,
                 style: this.props.position,
                 onClick: function onClick(e) {
-                    return _this13.select(e);
+                    return _this12.select(e);
                 } });
         }
     }]);
@@ -10412,7 +10406,7 @@ var MapToken = function (_React$Component6) {
     }, {
         key: "render",
         value: function render() {
-            var _this15 = this;
+            var _this14 = this;
 
             var style = "token " + this.props.token.type;
             if (this.props.selected) {
@@ -10461,14 +10455,14 @@ var MapToken = function (_React$Component6) {
                     className: style,
                     style: this.props.position,
                     onClick: function onClick(e) {
-                        return _this15.select(e);
+                        return _this14.select(e);
                     },
                     draggable: "true",
                     onDragStart: function onDragStart() {
-                        return _this15.startDrag();
+                        return _this14.startDrag();
                     },
                     onDragEnd: function onDragEnd() {
-                        return _this15.endDrag();
+                        return _this14.endDrag();
                     }
                 },
                 initials,
@@ -11094,7 +11088,7 @@ var CombatManagerScreen = function (_React$Component) {
 
                     leftPaneContent = React.createElement(
                         "div",
-                        null,
+                        { className: "combat-left" },
                         mapSwitch,
                         current
                     );
@@ -11171,7 +11165,7 @@ var CombatManagerScreen = function (_React$Component) {
                         case "list":
                             rightPaneContent = React.createElement(
                                 "div",
-                                null,
+                                { className: "combat-right" },
                                 notifications,
                                 React.createElement(CardGroup, {
                                     heading: "waiting for intiative to be entered",
@@ -11212,10 +11206,16 @@ var CombatManagerScreen = function (_React$Component) {
                                     selection = this.createCard(combatant);
                                 }
                             }
+                            if (!selection) {
+                                selection = React.createElement(
+                                    "div",
+                                    { className: "info" },
+                                    "select a map token to see its details here"
+                                );
+                            }
                             rightPaneContent = React.createElement(
                                 "div",
-                                { style: { height: "100%" } },
-                                notifications,
+                                { className: "combat-right", style: { height: "100%" } },
                                 React.createElement(MapPanel, {
                                     map: this.props.combat.map,
                                     mode: "combat",
@@ -11243,6 +11243,7 @@ var CombatManagerScreen = function (_React$Component) {
                                     React.createElement(
                                         "div",
                                         { className: "columns small-12 medium-6 large-6 scrollable" },
+                                        notifications,
                                         React.createElement(OffMapPanel, {
                                             tokens: offmap,
                                             combatants: this.props.combat.combatants,
@@ -11282,7 +11283,7 @@ var CombatManagerScreen = function (_React$Component) {
 
                     leftPaneContent = React.createElement(
                         "div",
-                        null,
+                        { className: "combat-left" },
                         help,
                         React.createElement(
                             "button",

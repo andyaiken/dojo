@@ -185,44 +185,42 @@ class MapPanel extends React.Component {
 
 class OffMapPanel extends React.Component {
     dragOver(e) {
-        // We only allow tokens to be dragged here if they are currently on the map
-        var onMap = this.props.tokens.find(i => i.id === this.props.draggedTokenID) !== null;
-        if (onMap) {
-            e.preventDefault();
-        }
+        e.preventDefault();
     }
 
     drop() {
         // We are removing the dragged token from the map
         var onMap = this.props.tokens.find(i => i.id === this.props.draggedTokenID) !== null;
         if (onMap) {
-            // TODO: Inform the owner that we've removed the dragged token from the map
             this.props.draggedOffMap(this.props.draggedTokenID);
         }
     }
 
     render() {
-        var tokens = [];
-        if (!this.props.draggedTokenID) {
-            tokens = this.props.tokens.map(c => {
-                return (
-                    <OffMapCombatant
-                        key={c.id}
-                        combatant={c}
-                        selected={c.id === this.props.selectedItemID}
-                        setSelectedItemID={id => this.props.setSelectedItemID(id)}
-                        setDraggedTokenID={id => this.props.setDraggedTokenID(id)}
-                    />
-                );
-            });
-        }
+        var tokens = this.props.tokens.map(c => {
+            return (
+                <OffMapCombatant
+                    key={c.id}
+                    combatant={c}
+                    selected={c.id === this.props.selectedItemID}
+                    setSelectedItemID={id => this.props.setSelectedItemID(id)}
+                    setDraggedTokenID={id => this.props.setDraggedTokenID(id)}
+                />
+            );
+        });
 
-        if (tokens.length === 0) {
+        if ((this.props.draggedTokenID) || (tokens.length === 0)) {
             tokens.push(
-                <div key="empty" className="empty">
-                    drag tokens here to remove them from the map
+                <div key="empty" className="text">
+                    drag map tokens onto this box to remove them from the map
                 </div>
             );
+        } else {
+            tokens.push(
+                <div key="info" className="text">
+                    you can drag these map tokens onto the map
+                </div>
+            )
         }
 
         var style = "off-map-tokens";

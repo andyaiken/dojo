@@ -336,6 +336,15 @@ body,
     }
 }
 
+.combat-right {
+    .info {
+        min-height: 50px;
+        margin: 10px;
+        padding: 20px;
+        border: 1px solid $control-border;
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Card
 
@@ -1024,10 +1033,9 @@ body,
 
 .off-map-tokens {
     min-height: 50px;
-    margin: 5px;
+    margin: 10px;
     background-color: $background;
     border: 1px solid $control-border;
-    border-left-width: 5px;
 
     &.drop-target {
         border-color: $highlight;
@@ -1060,9 +1068,8 @@ body,
         }
     }
 
-    .empty {
-        text-align: center;
-        line-height: 50px;
+    .text {
+        margin: 20px;
     }
 }
 

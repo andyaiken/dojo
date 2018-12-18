@@ -246,6 +246,12 @@ body,
   .welcome-panel .text {
     margin: 7px; }
 
+.combat-right .info {
+  min-height: 50px;
+  margin: 10px;
+  padding: 20px;
+  border: 1px solid #c3c3c3; }
+
 .card-group {
   margin-bottom: 20px;
   padding: 0 5px; }
@@ -682,10 +688,9 @@ body,
 
 .off-map-tokens {
   min-height: 50px;
-  margin: 5px;
+  margin: 10px;
   background-color: white;
-  border: 1px solid #c3c3c3;
-  border-left-width: 5px; }
+  border: 1px solid #c3c3c3; }
   .off-map-tokens.drop-target {
     border-color: #3c78dc;
     background-color: rgba(60, 120, 220, 0.1); }
@@ -706,6 +711,5 @@ body,
       text-align: center; }
     .off-map-tokens .off-map-token:hover, .off-map-tokens .off-map-token.selected {
       border-color: #3c78dc; }
-  .off-map-tokens .empty {
-    text-align: center;
-    line-height: 50px; }
+  .off-map-tokens .text {
+    margin: 20px; }
