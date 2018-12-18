@@ -258,13 +258,8 @@ class OffMapCombatant extends React.Component {
     }
 
     render() {
-        var style = "off-map-token";
-        if (this.props.selected) {
-            style += " selected";
-        }
-
         return (
-            <div className={style} title={this.props.combatant.name} onClick={() => this.props.setSelectedItemID(this.props.combatant.id)}>
+            <div className="off-map-token">
                 <MapToken
                     token={this.state.token}
                     combatant={this.props.combatant}

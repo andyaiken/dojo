@@ -248,7 +248,7 @@ body,
 
 .combat-right .info {
   min-height: 50px;
-  margin: 10px;
+  margin: 5px;
   padding: 20px;
   border: 1px solid #c3c3c3; }
 
@@ -688,7 +688,7 @@ body,
 
 .off-map-tokens {
   min-height: 50px;
-  margin: 10px;
+  margin: 5px;
   background-color: white;
   border: 1px solid #c3c3c3; }
   .off-map-tokens.drop-target {
@@ -697,19 +697,13 @@ body,
   .off-map-tokens .off-map-token {
     display: inline-block;
     vertical-align: top;
-    margin: 10px;
-    padding: 5px;
-    border: 1px solid #c3c3c3;
-    background-color: white; }
+    margin: 10px; }
     .off-map-tokens .off-map-token .token {
       position: relative;
-      margin: 22px;
+      margin: 0 auto;
       cursor: pointer; }
     .off-map-tokens .off-map-token .name {
-      border-top: 1px solid #c3c3c3;
       padding-top: 5px;
       text-align: center; }
-    .off-map-tokens .off-map-token:hover, .off-map-tokens .off-map-token.selected {
-      border-color: #3c78dc; }
   .off-map-tokens .text {
     margin: 20px; }

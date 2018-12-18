@@ -284,7 +284,7 @@ class CombatManagerScreen extends React.Component {
                                     setDraggedTokenID={id => this.setDraggedTokenID(id)}
                                     dropItem={(x, y) => this.dropOnMap(x, y)}
                                 />
-                                <div className="row" style={{ height: "50%" }}>
+                                <div className="row collapse" style={{ height: "50%" }}>
                                     <div className="columns small-12 medium-6 large-6 scrollable">
                                         {selection}
                                     </div>

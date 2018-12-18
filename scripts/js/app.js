@@ -10231,16 +10231,9 @@ var OffMapCombatant = function (_React$Component3) {
         value: function render() {
             var _this8 = this;
 
-            var style = "off-map-token";
-            if (this.props.selected) {
-                style += " selected";
-            }
-
             return React.createElement(
                 "div",
-                { className: style, title: this.props.combatant.name, onClick: function onClick() {
-                        return _this8.props.setSelectedItemID(_this8.props.combatant.id);
-                    } },
+                { className: "off-map-token" },
                 React.createElement(MapToken, {
                     token: this.state.token,
                     combatant: this.props.combatant,
@@ -11234,7 +11227,7 @@ var CombatManagerScreen = function (_React$Component) {
                                 }),
                                 React.createElement(
                                     "div",
-                                    { className: "row", style: { height: "50%" } },
+                                    { className: "row collapse", style: { height: "50%" } },
                                     React.createElement(
                                         "div",
                                         { className: "columns small-12 medium-6 large-6 scrollable" },

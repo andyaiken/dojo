@@ -339,7 +339,7 @@ body,
 .combat-right {
     .info {
         min-height: 50px;
-        margin: 10px;
+        margin: 5px;
         padding: 20px;
         border: 1px solid $control-border;
     }
@@ -1033,7 +1033,7 @@ body,
 
 .off-map-tokens {
     min-height: 50px;
-    margin: 10px;
+    margin: 5px;
     background-color: $background;
     border: 1px solid $control-border;
 
@@ -1046,25 +1046,16 @@ body,
         display: inline-block;
         vertical-align: top;
         margin: 10px;
-        padding: 5px;
-        border: 1px solid $control-border;
-        background-color: $background;
 
         .token {
             position: relative;
-            margin: 22px;
+            margin: 0 auto;
             cursor: pointer;
         }
 
         .name {
-            border-top: 1px solid $control-border;
             padding-top: 5px;
             text-align: center;
-        }
-
-        &:hover,
-        &.selected {
-            border-color: $highlight;
         }
     }
 
