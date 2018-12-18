@@ -191,7 +191,7 @@
         background-color: rgba(60, 120, 220, 0.2);
         border-bottom-color: #3c78dc; }
   .selector.radio {
-    padding: 2px;
+    padding: 3px;
     background-color: white;
     border: 1px solid #c3c3c3; }
   .selector.no-border {
@@ -274,9 +274,15 @@
       display: inline-block;
       margin: 0 5px;
       color: #3c3c3c;
-      font-weight: 600; }
-      .titlebar .actions .section button {
+      font-weight: 600;
+      vertical-align: top; }
+      .titlebar .actions .section button,
+      .titlebar .actions .section .selector {
         min-width: 130px; }
+      .titlebar .actions .section .text {
+        margin: 5px;
+        height: 32px;
+        line-height: 32px; }
   .titlebar .settings-icon {
     position: absolute;
     right: 0;

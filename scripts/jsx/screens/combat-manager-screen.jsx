@@ -3,16 +3,9 @@ class CombatManagerScreen extends React.Component {
         super();
 
         this.state = {
-            mode: "list",
             selectedTokenID: null,
             draggedTokenID: null
         };
-    }
-
-    setMode(mode) {
-        this.setState({
-            mode: mode
-        });
     }
 
     setSelectedTokenID(id) {
@@ -111,8 +104,8 @@ class CombatManagerScreen extends React.Component {
 
             if (this.props.combat) {
                 var current = [];
-                var active = [];
                 var pending = [];
+                var active = [];
                 var defeated = [];
 
                 this.props.combat.combatants.forEach(combatant => {
@@ -157,30 +150,8 @@ class CombatManagerScreen extends React.Component {
                     );
                 }
 
-                var mapSwitch = null;
-                if (this.props.combat.map) {
-                    var options = [
-                        {
-                            id: "list",
-                            text: "list"
-                        },
-                        {
-                            id: "map",
-                            text: "map"
-                        }
-                    ];
-                    mapSwitch = (
-                        <Selector
-                            options={options}
-                            selectedID={this.state.mode}
-                            select={optionID => this.setMode(optionID)}
-                        />
-                    );
-                }
-
                 leftPaneContent = (
                     <div className="combat-left">
-                        {mapSwitch}
                         {current}
                     </div>
                 );
@@ -225,7 +196,7 @@ class CombatManagerScreen extends React.Component {
                     />
                 );
 
-                switch (this.state.mode) {
+                switch (this.props.combat.view) {
                     case "list":
                         rightPaneContent = (
                             <div className="combat-right">
@@ -267,7 +238,7 @@ class CombatManagerScreen extends React.Component {
                         }
                         if (!selection) {
                             selection = (
-                                <div className="info">
+                                <div className="combat-info">
                                     select a map token to see its details here
                                 </div>
                             )
@@ -334,7 +305,7 @@ class CombatManagerScreen extends React.Component {
             }
 
             var rightStyle = "columns small-6 medium-8 large-9";
-            if (this.state.mode === "list") {
+            if ((this.props.combat) && (this.props.combat.view === "list")) {
                 rightStyle += " scrollable";
             }
 

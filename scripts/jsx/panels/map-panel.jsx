@@ -197,8 +197,23 @@ class OffMapPanel extends React.Component {
     }
 
     render() {
-        var tokens = this.props.tokens.map(c => {
-            return (
+        var pending = [];
+        var active = [];
+        var defeated = [];
+
+        this.props.tokens.forEach(c => {
+            var shelf = null;
+            if (c.pending) {
+                shelf = pending;
+            }
+            if (c.active) {
+                shelf = active;
+            }
+            if (c.defeated) {
+                shelf = defeated;
+            }
+
+            shelf.push(
                 <OffMapCombatant
                     key={c.id}
                     combatant={c}
@@ -209,19 +224,13 @@ class OffMapPanel extends React.Component {
             );
         });
 
-        if ((this.props.draggedTokenID) || (tokens.length === 0)) {
-            tokens.push(
-                <div key="empty" className="text">
-                    drag map tokens onto this box to remove them from the map
-                </div>
-            );
-        } else {
-            tokens.push(
-                <div key="info" className="text">
-                    you can drag these map tokens onto the map
-                </div>
-            )
+        // TODO: For some reason this code cancels dragging as soon as it starts
+        var message = "you can drag these map tokens onto the map";
+        /*
+        if ((this.props.draggedTokenID) || (this.props.tokens.length === 0)) {
+            message = "drag map tokens onto this box to remove them from the map";
         }
+        */
 
         var style = "off-map-tokens";
         if (this.props.draggedTokenID) {
@@ -234,7 +243,21 @@ class OffMapPanel extends React.Component {
                 onDragOver={e => this.dragOver(e)}
                 onDrop={() => this.drop()}
             >
-                {tokens}
+                <div className="text">
+                    {message}
+                </div>
+                <div className="shelf" style={{ display: pending.length > 0 ? "block" : "none" }}>
+                    <div className="shelf-name">waiting for initiative to be entered</div>
+                    {pending}
+                </div>
+                <div className="shelf" style={{ display: active.length > 0 ? "block" : "none" }}>
+                    <div className="shelf-name">active combatants</div>
+                    {active}
+                </div>
+                <div className="shelf" style={{ display: defeated.length > 0 ? "block" : "none" }}>
+                    <div className="shelf-name">defeated</div>
+                    {defeated}
+                </div>
             </div>
         );
     }
@@ -264,6 +287,7 @@ class OffMapCombatant extends React.Component {
                     token={this.state.token}
                     combatant={this.props.combatant}
                     selectable={true}
+                    simple={true}
                     selected={this.state.selectedItemID ===  this.state.token.id}
                     select={id => this.props.setSelectedItemID(id)}
                     startDrag={id => this.props.setDraggedTokenID(id)}

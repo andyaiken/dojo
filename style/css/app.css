@@ -62,7 +62,8 @@ li {
 
 a {
   color: #3c78dc;
-  text-decoration: none; }
+  text-decoration: none;
+  font-weight: 600; }
   a:hover {
     background-color: rgba(60, 120, 220, 0.1); }
   a:visited {
@@ -246,7 +247,7 @@ body,
   .welcome-panel .text {
     margin: 7px; }
 
-.combat-right .info {
+.combat-right .combat-info {
   min-height: 50px;
   margin: 5px;
   padding: 20px;
@@ -694,16 +695,24 @@ body,
   .off-map-tokens.drop-target {
     border-color: #3c78dc;
     background-color: rgba(60, 120, 220, 0.1); }
+  .off-map-tokens .shelf {
+    margin: 5px;
+    padding-left: 5px;
+    border-left: 5px solid #3c3c3c; }
+    .off-map-tokens .shelf .shelf-name {
+      font-weight: 600;
+      font-size: 14px;
+      padding-left: 5px; }
   .off-map-tokens .off-map-token {
     display: inline-block;
     vertical-align: top;
-    margin: 10px; }
+    margin: 10px 5px; }
     .off-map-tokens .off-map-token .token {
       position: relative;
       margin: 0 auto;
       cursor: pointer; }
     .off-map-tokens .off-map-token .name {
-      padding-top: 5px;
+      padding-top: 10px;
       text-align: center; }
   .off-map-tokens .text {
     margin: 20px; }

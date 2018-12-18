@@ -838,7 +838,15 @@ class Dojo extends React.Component {
         this.setState({
             combats: this.state.combats,
             selectedCombatID: null
-        })
+        });
+    }
+
+    setCombatView(view) {
+        var combat = this.getCombat(this.state.selectedCombatID);
+        combat.view = view;
+        this.setState({
+            combats: this.state.combats
+        });
     }
 
     makeCurrent(combatant, newRound) {
@@ -1475,13 +1483,34 @@ class Dojo extends React.Component {
                         
                         var encounter = this.getEncounter(combat.encounterID);
 
+                        var mapViewSwitch = null;
+                        if (combat.map) {
+                            var combatViewOptions = [
+                                {
+                                    id: "list",
+                                    text: "list"
+                                },
+                                {
+                                    id: "map",
+                                    text: "map"
+                                }
+                            ];
+                            mapViewSwitch = (
+                                <Selector
+                                    options={combatViewOptions}
+                                    selectedID={combat.view}
+                                    select={optionID => this.setCombatView(optionID)}
+                                />
+                            );
+                        }        
+
                         actions = (
                             <div className="actions">
                                 <div className="section">
-                                    <div>round: {combat.round}</div>
+                                    <div className="text">round: {combat.round}</div>
                                 </div>
                                 <div className="section">
-                                    <div>xp: {xp}</div>
+                                    <div className="text">xp: {xp}</div>
                                 </div>
                                 <div className="section" style={{ display: encounter.waves.length === 0 ? "none" : ""}}>
                                     <button onClick={() => this.openWaveModal()}>add wave</button>
@@ -1491,6 +1520,9 @@ class Dojo extends React.Component {
                                 </div>
                                 <div className="section">
                                     <button onClick={() => this.endCombat()}>end encounter</button>
+                                </div>
+                                <div className="section">
+                                    {mapViewSwitch}
                                 </div>
                             </div>
                         );

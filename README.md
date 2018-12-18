@@ -38,10 +38,12 @@ To start the web server:
 
 - resources
   - data
+  - fonts
   - icons
   - images
 - scripts
   - js
+    - react
   - jsx
     - cards
     - controls

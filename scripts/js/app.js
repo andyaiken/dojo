@@ -4680,6 +4680,15 @@ var Dojo = function (_React$Component) {
             });
         }
     }, {
+        key: "setCombatView",
+        value: function setCombatView(view) {
+            var combat = this.getCombat(this.state.selectedCombatID);
+            combat.view = view;
+            this.setState({
+                combats: this.state.combats
+            });
+        }
+    }, {
         key: "makeCurrent",
         value: function makeCurrent(combatant, newRound) {
             var combat = this.getCombat(this.state.selectedCombatID);
@@ -5464,6 +5473,24 @@ var Dojo = function (_React$Component) {
 
                             var encounter = this.getEncounter(combat.encounterID);
 
+                            var mapViewSwitch = null;
+                            if (combat.map) {
+                                var combatViewOptions = [{
+                                    id: "list",
+                                    text: "list"
+                                }, {
+                                    id: "map",
+                                    text: "map"
+                                }];
+                                mapViewSwitch = React.createElement(Selector, {
+                                    options: combatViewOptions,
+                                    selectedID: combat.view,
+                                    select: function select(optionID) {
+                                        return _this7.setCombatView(optionID);
+                                    }
+                                });
+                            }
+
                             actions = React.createElement(
                                 "div",
                                 { className: "actions" },
@@ -5472,7 +5499,7 @@ var Dojo = function (_React$Component) {
                                     { className: "section" },
                                     React.createElement(
                                         "div",
-                                        null,
+                                        { className: "text" },
                                         "round: ",
                                         combat.round
                                     )
@@ -5482,7 +5509,7 @@ var Dojo = function (_React$Component) {
                                     { className: "section" },
                                     React.createElement(
                                         "div",
-                                        null,
+                                        { className: "text" },
                                         "xp: ",
                                         xp
                                     )
@@ -5519,6 +5546,11 @@ var Dojo = function (_React$Component) {
                                             } },
                                         "end encounter"
                                     )
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "section" },
+                                    mapViewSwitch
                                 )
                             );
                         }
@@ -10152,8 +10184,23 @@ var OffMapPanel = function (_React$Component2) {
         value: function render() {
             var _this6 = this;
 
-            var tokens = this.props.tokens.map(function (c) {
-                return React.createElement(OffMapCombatant, {
+            var pending = [];
+            var active = [];
+            var defeated = [];
+
+            this.props.tokens.forEach(function (c) {
+                var shelf = null;
+                if (c.pending) {
+                    shelf = pending;
+                }
+                if (c.active) {
+                    shelf = active;
+                }
+                if (c.defeated) {
+                    shelf = defeated;
+                }
+
+                shelf.push(React.createElement(OffMapCombatant, {
                     key: c.id,
                     combatant: c,
                     selected: c.id === _this6.props.selectedItemID,
@@ -10163,22 +10210,16 @@ var OffMapPanel = function (_React$Component2) {
                     setDraggedTokenID: function setDraggedTokenID(id) {
                         return _this6.props.setDraggedTokenID(id);
                     }
-                });
+                }));
             });
 
-            if (this.props.draggedTokenID || tokens.length === 0) {
-                tokens.push(React.createElement(
-                    "div",
-                    { key: "empty", className: "text" },
-                    "drag map tokens onto this box to remove them from the map"
-                ));
-            } else {
-                tokens.push(React.createElement(
-                    "div",
-                    { key: "info", className: "text" },
-                    "you can drag these map tokens onto the map"
-                ));
+            // TODO: For some reason this code cancels dragging as soon as it starts
+            var message = "you can drag these map tokens onto the map";
+            /*
+            if ((this.props.draggedTokenID) || (this.props.tokens.length === 0)) {
+                message = "drag map tokens onto this box to remove them from the map";
             }
+            */
 
             var style = "off-map-tokens";
             if (this.props.draggedTokenID) {
@@ -10196,7 +10237,41 @@ var OffMapPanel = function (_React$Component2) {
                         return _this6.drop();
                     }
                 },
-                tokens
+                React.createElement(
+                    "div",
+                    { className: "text" },
+                    message
+                ),
+                React.createElement(
+                    "div",
+                    { className: "shelf", style: { display: pending.length > 0 ? "block" : "none" } },
+                    React.createElement(
+                        "div",
+                        { className: "shelf-name" },
+                        "waiting for initiative to be entered"
+                    ),
+                    pending
+                ),
+                React.createElement(
+                    "div",
+                    { className: "shelf", style: { display: active.length > 0 ? "block" : "none" } },
+                    React.createElement(
+                        "div",
+                        { className: "shelf-name" },
+                        "active combatants"
+                    ),
+                    active
+                ),
+                React.createElement(
+                    "div",
+                    { className: "shelf", style: { display: defeated.length > 0 ? "block" : "none" } },
+                    React.createElement(
+                        "div",
+                        { className: "shelf-name" },
+                        "defeated"
+                    ),
+                    defeated
+                )
             );
         }
     }]);
@@ -10238,6 +10313,7 @@ var OffMapCombatant = function (_React$Component3) {
                     token: this.state.token,
                     combatant: this.props.combatant,
                     selectable: true,
+                    simple: true,
                     selected: this.state.selectedItemID === this.state.token.id,
                     select: function select(id) {
                         return _this8.props.setSelectedItemID(id);
@@ -10836,7 +10912,6 @@ var CombatManagerScreen = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (CombatManagerScreen.__proto__ || Object.getPrototypeOf(CombatManagerScreen)).call(this));
 
         _this.state = {
-            mode: "list",
             selectedTokenID: null,
             draggedTokenID: null
         };
@@ -10844,13 +10919,6 @@ var CombatManagerScreen = function (_React$Component) {
     }
 
     _createClass(CombatManagerScreen, [{
-        key: "setMode",
-        value: function setMode(mode) {
-            this.setState({
-                mode: mode
-            });
-        }
-    }, {
         key: "setSelectedTokenID",
         value: function setSelectedTokenID(id) {
             this.setState({
@@ -11007,8 +11075,8 @@ var CombatManagerScreen = function (_React$Component) {
 
                 if (this.props.combat) {
                     var current = [];
-                    var active = [];
                     var pending = [];
+                    var active = [];
                     var defeated = [];
 
                     this.props.combat.combatants.forEach(function (combatant) {
@@ -11061,28 +11129,9 @@ var CombatManagerScreen = function (_React$Component) {
                         }));
                     }
 
-                    var mapSwitch = null;
-                    if (this.props.combat.map) {
-                        var options = [{
-                            id: "list",
-                            text: "list"
-                        }, {
-                            id: "map",
-                            text: "map"
-                        }];
-                        mapSwitch = React.createElement(Selector, {
-                            options: options,
-                            selectedID: this.state.mode,
-                            select: function select(optionID) {
-                                return _this4.setMode(optionID);
-                            }
-                        });
-                    }
-
                     leftPaneContent = React.createElement(
                         "div",
                         { className: "combat-left" },
-                        mapSwitch,
                         current
                     );
 
@@ -11154,7 +11203,7 @@ var CombatManagerScreen = function (_React$Component) {
                         });
                     });
 
-                    switch (this.state.mode) {
+                    switch (this.props.combat.view) {
                         case "list":
                             rightPaneContent = React.createElement(
                                 "div",
@@ -11202,7 +11251,7 @@ var CombatManagerScreen = function (_React$Component) {
                             if (!selection) {
                                 selection = React.createElement(
                                     "div",
-                                    { className: "info" },
+                                    { className: "combat-info" },
                                     "select a map token to see its details here"
                                 );
                             }
@@ -11290,7 +11339,7 @@ var CombatManagerScreen = function (_React$Component) {
                 }
 
                 var rightStyle = "columns small-6 medium-8 large-9";
-                if (this.state.mode === "list") {
+                if (this.props.combat && this.props.combat.view === "list") {
                     rightStyle += " scrollable";
                 }
 

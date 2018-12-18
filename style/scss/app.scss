@@ -85,6 +85,7 @@ li {
 a {
     color: $highlight;
     text-decoration: none;
+    font-weight: 600;
 
     &:hover {
         background-color: $highlight01;
@@ -337,7 +338,7 @@ body,
 }
 
 .combat-right {
-    .info {
+    .combat-info {
         min-height: 50px;
         margin: 5px;
         padding: 20px;
@@ -1042,10 +1043,22 @@ body,
         background-color: $highlight01;
     }
 
+    .shelf {
+        margin: 5px;
+        padding-left: 5px;
+        border-left: 5px solid $foreground;
+
+        .shelf-name {
+            font-weight: 600;
+            font-size: 14px;
+            padding-left: 5px;
+        }
+    }
+
     .off-map-token {
         display: inline-block;
         vertical-align: top;
-        margin: 10px;
+        margin: 10px 5px;
 
         .token {
             position: relative;
@@ -1054,7 +1067,7 @@ body,
         }
 
         .name {
-            padding-top: 5px;
+            padding-top: 10px;
             text-align: center;
         }
     }

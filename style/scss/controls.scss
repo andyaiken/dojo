@@ -291,7 +291,7 @@
     }
 
     &.radio {
-        padding: 2px;
+        padding: 3px;
         background-color: $background;
         border: 1px solid $control-border;
     }
@@ -422,9 +422,17 @@
             margin: 0 5px;
             color: $header-foreground;
             font-weight: 600;
+            vertical-align: top;
 
-            button {
+            button,
+            .selector {
                 min-width: 130px;
+            }
+
+            .text {
+                margin: 5px;
+                height: 32px;
+                line-height: 32px;
             }
         }
     }
