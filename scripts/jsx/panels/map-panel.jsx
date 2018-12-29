@@ -115,6 +115,7 @@ class MapPanel extends React.Component {
                             position={pos}
                             selectable={this.props.mode === "edit"}
                             selected={this.props.selectedItemID === i.id}
+                            thumbnail={this.props.mode === "thumbnail"}
                             select={id => this.props.mode === "edit" ? this.props.setSelectedItemID(id) : null}
                         />
                     );
@@ -358,6 +359,9 @@ class MapTile extends React.Component {
         var style = "tile " + this.props.tile.terrain;
         if (this.props.selected) {
             style += " selected";
+        }
+        if (this.props.thumbnail) {
+            style += " thumbnail";
         }
 
         return (

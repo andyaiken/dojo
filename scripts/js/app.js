@@ -10098,6 +10098,7 @@ var MapPanel = function (_React$Component) {
                         position: pos,
                         selectable: _this3.props.mode === "edit",
                         selected: _this3.props.selectedItemID === i.id,
+                        thumbnail: _this3.props.mode === "thumbnail",
                         select: function select(id) {
                             return _this3.props.mode === "edit" ? _this3.props.setSelectedItemID(id) : null;
                         }
@@ -10459,6 +10460,9 @@ var MapTile = function (_React$Component5) {
             var style = "tile " + this.props.tile.terrain;
             if (this.props.selected) {
                 style += " selected";
+            }
+            if (this.props.thumbnail) {
+                style += " thumbnail";
             }
 
             return React.createElement("div", {

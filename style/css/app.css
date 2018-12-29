@@ -644,26 +644,37 @@ body,
   border: 1px solid darkgrey;
   background-color: lightgrey; }
   .tile.cavern {
-    background-image: url("/resources/map-tiles/cavern.jpg"); }
+    background-image: url("/resources/map-tiles/cavern.jpg");
+    background-size: 25px; }
   .tile.dirt {
-    background-image: url("/resources/map-tiles/dirt.jpg"); }
+    background-image: url("/resources/map-tiles/dirt.jpg");
+    background-size: 25px; }
   .tile.flagstone {
-    background-image: url("/resources/map-tiles/flagstone.jpg"); }
+    background-image: url("/resources/map-tiles/flagstone.jpg");
+    background-size: 25px; }
   .tile.floorboard {
-    background-image: url("/resources/map-tiles/floorboard.jpg"); }
+    background-image: url("/resources/map-tiles/floorboard.jpg");
+    background-size: 25px; }
   .tile.grassland {
-    background-image: url("/resources/map-tiles/grassland.jpg"); }
+    background-image: url("/resources/map-tiles/grassland.jpg");
+    background-size: 25px; }
   .tile.pit {
-    background-image: url("/resources/map-tiles/pit.jpg"); }
+    background-image: url("/resources/map-tiles/pit.jpg");
+    background-size: 25px; }
   .tile.sand {
-    background-image: url("/resources/map-tiles/sand.jpg"); }
+    background-image: url("/resources/map-tiles/sand.jpg");
+    background-size: 25px; }
   .tile.snow {
-    background-image: url("/resources/map-tiles/snow.jpg"); }
+    background-image: url("/resources/map-tiles/snow.jpg");
+    background-size: 25px; }
   .tile.water {
-    background-image: url("/resources/map-tiles/water.jpg"); }
+    background-image: url("/resources/map-tiles/water.jpg");
+    background-size: 25px; }
   .tile.selected {
     border-color: #3c78dc;
     border-width: 2px; }
+  .tile.thumbnail {
+    background-size: 5px; }
 
 .token {
   position: absolute;
