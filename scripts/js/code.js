@@ -1,13 +1,12 @@
 ﻿const TERRAIN_TYPES = [
     "cavern",
+    "dirt",
     "flagstone",
     "floorboard",
     "grassland",
-    "mud",
     "pit",
     "sand",
     "snow",
-    "street",
     "water"
 ];
 
