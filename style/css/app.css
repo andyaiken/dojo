@@ -671,8 +671,7 @@ body,
     background-image: url("/resources/map-tiles/water.jpg");
     background-size: 25px; }
   .tile.selected {
-    border-color: #3c78dc;
-    border-width: 2px; }
+    border-color: #3c78dc; }
   .tile.thumbnail {
     background-size: 5px; }
 
