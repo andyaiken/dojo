@@ -922,6 +922,10 @@ var MapTileCard = function (_React$Component) {
             var _this2 = this;
 
             try {
+                var terrainOptions = TERRAIN_TYPES.map(function (t) {
+                    return { id: t, text: t };
+                });
+
                 return React.createElement(
                     "div",
                     { className: "card map-tile" },
@@ -958,6 +962,20 @@ var MapTileCard = function (_React$Component) {
                             this.props.tile.height * 5,
                             " ft"
                         ),
+                        React.createElement("div", { className: "divider" }),
+                        React.createElement(
+                            "div",
+                            { className: "subheading" },
+                            "terrain"
+                        ),
+                        React.createElement(Dropdown, {
+                            options: terrainOptions,
+                            placeholder: "select terrain",
+                            selectedID: this.props.tile.terrain,
+                            select: function select(optionID) {
+                                return _this2.props.changeValue(_this2.props.tile, "terrain", optionID);
+                            }
+                        }),
                         React.createElement("div", { className: "divider" }),
                         React.createElement(
                             "div",
@@ -7555,6 +7573,15 @@ var MapEditorModal = function (_React$Component) {
             });
         }
     }, {
+        key: "changeValue",
+        value: function changeValue(source, field, value) {
+            source[field] = value;
+
+            this.setState({
+                map: this.state.map
+            });
+        }
+    }, {
         key: "render",
         value: function render() {
             var _this2 = this;
@@ -7581,6 +7608,9 @@ var MapEditorModal = function (_React$Component) {
                             },
                             removeMapItem: function removeMapItem(item) {
                                 return _this2.removeMapItem(item);
+                            },
+                            changeValue: function changeValue(source, field, value) {
+                                return _this2.changeValue(source, field, value);
                             }
                         })
                     );
@@ -10426,7 +10456,7 @@ var MapTile = function (_React$Component5) {
         value: function render() {
             var _this12 = this;
 
-            var style = "tile";
+            var style = "tile " + this.props.tile.terrain;
             if (this.props.selected) {
                 style += " selected";
             }

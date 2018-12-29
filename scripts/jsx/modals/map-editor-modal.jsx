@@ -135,6 +135,14 @@ class MapEditorModal extends React.Component {
         });
     }
 
+    changeValue(source, field, value) {
+        source[field] = value;
+        
+        this.setState({
+            map: this.state.map
+        });
+    }
+
     render() {
         try {
             var tools = null;
@@ -148,6 +156,7 @@ class MapEditorModal extends React.Component {
                             resizeMapItem={(item, dir, dir2) => this.resizeMapItem(item, dir, dir2)}
                             cloneMapItem={item => this.cloneMapItem(item)}
                             removeMapItem={item => this.removeMapItem(item)}
+                            changeValue={(source, field, value) => this.changeValue(source, field, value)}
                         />
                     </div>
                 );

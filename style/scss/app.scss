@@ -971,6 +971,46 @@ body,
     border: 1px solid darkgrey;
     background-color: lightgrey;
 
+    &.cavern {
+        background-color: slategrey;
+    }
+
+    &.flagstone {
+        background-color: lightgrey;
+    }
+
+    &.floorboard {
+        background-color: burlywood;
+    }
+
+    &.grassland {
+        background-color: green;
+    }
+
+    &.mud {
+        background-color: brown;
+    }
+
+    &.pit {
+        background-color: black;
+    }
+
+    &.sand {
+        background-color: sandybrown;
+    }
+
+    &.snow {
+        background-color: snow;
+    }
+
+    &.street {
+        background-color: darkgrey;
+    }
+
+    &.water {
+        background-color: skyblue;
+    }
+
     &.selected {
         border-color: $highlight;
         border-width: 2px;

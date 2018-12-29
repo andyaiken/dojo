@@ -1,6 +1,10 @@
 class MapTileCard extends React.Component {
     render() {
         try {
+            var terrainOptions = TERRAIN_TYPES.map(function (t) {
+                return { id: t, text: t };
+            });
+
             return (
                 <div className="card map-tile">
                     <div className="heading">
@@ -10,6 +14,14 @@ class MapTileCard extends React.Component {
                         <div className="subheading">size</div>
                         <div className="section">{this.props.tile.width} sq x {this.props.tile.height} sq</div>
                         <div className="section">{this.props.tile.width * 5} ft x {this.props.tile.height * 5} ft</div>
+                        <div className="divider"></div>
+                        <div className="subheading">terrain</div>
+                        <Dropdown
+                            options={terrainOptions}
+                            placeholder="select terrain"
+                            selectedID={this.props.tile.terrain}
+                            select={optionID => this.props.changeValue(this.props.tile, "terrain", optionID)}
+                        />
                         <div className="divider"></div>
                         <div className="subheading">move</div>
                         <div className="section centered">

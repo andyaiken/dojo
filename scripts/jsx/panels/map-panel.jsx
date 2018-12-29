@@ -355,7 +355,7 @@ class MapTile extends React.Component {
     }
 
     render() {
-        var style = "tile";
+        var style = "tile " + this.props.tile.terrain;
         if (this.props.selected) {
             style += " selected";
         }

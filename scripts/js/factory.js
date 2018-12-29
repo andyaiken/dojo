@@ -131,7 +131,8 @@ function createMapItem() {
         x: 0,
         y: 0,
         width: 4,
-        height: 4
+        height: 4,
+        terrain: "flagstone"
     };
 }
 

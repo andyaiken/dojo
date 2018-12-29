@@ -1,4 +1,17 @@
-﻿var monsterIdToGroup = {};
+﻿const TERRAIN_TYPES = [
+    "cavern",
+    "flagstone",
+    "floorboard",
+    "grassland",
+    "mud",
+    "pit",
+    "sand",
+    "snow",
+    "street",
+    "water"
+];
+
+var monsterIdToGroup = {};
 
 function getMonsterGroup(monster, library) {
     var group = monsterIdToGroup[monster.id];

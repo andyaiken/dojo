@@ -643,6 +643,26 @@ body,
   position: absolute;
   border: 1px solid darkgrey;
   background-color: lightgrey; }
+  .tile.cavern {
+    background-color: slategrey; }
+  .tile.flagstone {
+    background-color: lightgrey; }
+  .tile.floorboard {
+    background-color: burlywood; }
+  .tile.grassland {
+    background-color: green; }
+  .tile.mud {
+    background-color: brown; }
+  .tile.pit {
+    background-color: black; }
+  .tile.sand {
+    background-color: sandybrown; }
+  .tile.snow {
+    background-color: snow; }
+  .tile.street {
+    background-color: darkgrey; }
+  .tile.water {
+    background-color: skyblue; }
   .tile.selected {
     border-color: #3c78dc;
     border-width: 2px; }
