@@ -972,47 +972,38 @@ body,
     background-color: lightgrey;
 
     &.cavern {
-        background-color: slategrey;
         background-image: url("/resources/map-tiles/cavern.jpg");
     }
 
     &.dirt {
-        background-color: maroon;
         background-image: url("/resources/map-tiles/dirt.jpg");
     }
 
     &.flagstone {
-        background-color: lightgrey;
         background-image: url("/resources/map-tiles/flagstone.jpg");
     }
 
     &.floorboard {
-        background-color: burlywood;
         background-image: url("/resources/map-tiles/floorboard.jpg");
     }
 
     &.grassland {
-        background-color: green;
         background-image: url("/resources/map-tiles/grassland.jpg");
     }
 
     &.pit {
-        background-color: black;
         background-image: url("/resources/map-tiles/pit.jpg");
     }
 
     &.sand {
-        background-color: sandybrown;
         background-image: url("/resources/map-tiles/sand.jpg");
     }
 
     &.snow {
-        background-color: snow;
         background-image: url("/resources/map-tiles/snow.jpg");
     }
 
     &.water {
-        background-color: skyblue;
         background-image: url("/resources/map-tiles/water.jpg");
     }
 

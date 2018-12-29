@@ -644,31 +644,22 @@ body,
   border: 1px solid darkgrey;
   background-color: lightgrey; }
   .tile.cavern {
-    background-color: slategrey;
     background-image: url("/resources/map-tiles/cavern.jpg"); }
   .tile.dirt {
-    background-color: maroon;
     background-image: url("/resources/map-tiles/dirt.jpg"); }
   .tile.flagstone {
-    background-color: lightgrey;
     background-image: url("/resources/map-tiles/flagstone.jpg"); }
   .tile.floorboard {
-    background-color: burlywood;
     background-image: url("/resources/map-tiles/floorboard.jpg"); }
   .tile.grassland {
-    background-color: green;
     background-image: url("/resources/map-tiles/grassland.jpg"); }
   .tile.pit {
-    background-color: black;
     background-image: url("/resources/map-tiles/pit.jpg"); }
   .tile.sand {
-    background-color: sandybrown;
     background-image: url("/resources/map-tiles/sand.jpg"); }
   .tile.snow {
-    background-color: snow;
     background-image: url("/resources/map-tiles/snow.jpg"); }
   .tile.water {
-    background-color: skyblue;
     background-image: url("/resources/map-tiles/water.jpg"); }
   .tile.selected {
     border-color: #3c78dc;
