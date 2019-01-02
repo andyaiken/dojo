@@ -301,7 +301,7 @@ class Dojo extends React.Component {
                 monsters.forEach(data => {
                     try {
                         if (data.name) {
-                            var monster = this.createMonster();
+                            var monster = createMonster();
 
                             monster.type = "monster";
                             monster.name = data.name;

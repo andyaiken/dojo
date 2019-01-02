@@ -4168,7 +4168,7 @@ var Dojo = function (_React$Component) {
                     monsters.forEach(function (data) {
                         try {
                             if (data.name) {
-                                var monster = _this3.createMonster();
+                                var monster = createMonster();
 
                                 monster.type = "monster";
                                 monster.name = data.name;
