@@ -297,8 +297,9 @@ class MapToken extends React.Component {
         var hpGauge = null;
         var conditionsBadge = null;
         if (!this.props.simple) {
+            var name = this.props.combatant.displayName || this.props.combatant.name;
             initials = (
-                <div className="initials">{this.props.combatant.name.split(' ').map(s => s[0])}</div>
+                <div className="initials">{name.split(' ').map(s => s[0])}</div>
             );
 
             if (this.props.combatant.type === "monster") {
@@ -316,7 +317,7 @@ class MapToken extends React.Component {
 
         return (
             <div
-                title={this.props.combatant.name}
+                title={this.props.combatant.displayName || this.props.combatant.name}
                 className={style}
                 style={this.props.position}
                 onClick={e => this.select(e)}

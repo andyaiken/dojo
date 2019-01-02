@@ -10372,10 +10372,11 @@ var MapToken = function (_React$Component4) {
             var hpGauge = null;
             var conditionsBadge = null;
             if (!this.props.simple) {
+                var name = this.props.combatant.displayName || this.props.combatant.name;
                 initials = React.createElement(
                     "div",
                     { className: "initials" },
-                    this.props.combatant.name.split(' ').map(function (s) {
+                    name.split(' ').map(function (s) {
                         return s[0];
                     })
                 );
@@ -10396,7 +10397,7 @@ var MapToken = function (_React$Component4) {
             return React.createElement(
                 "div",
                 {
-                    title: this.props.combatant.name,
+                    title: this.props.combatant.displayName || this.props.combatant.name,
                     className: style,
                     style: this.props.position,
                     onClick: function onClick(e) {
@@ -10600,7 +10601,7 @@ var OffMapCombatant = function (_React$Component2) {
                 React.createElement(
                     "div",
                     { className: "name" },
-                    this.props.combatant.name
+                    this.props.combatant.displayName || this.props.combatant.name
                 )
             );
         }

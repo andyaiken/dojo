@@ -105,7 +105,7 @@ class OffMapCombatant extends React.Component {
                     select={id => this.props.setSelectedItemID(id)}
                     startDrag={id => this.props.setDraggedTokenID(id)}
                 />
-                <div className="name">{this.props.combatant.name}</div>
+                <div className="name">{this.props.combatant.displayName || this.props.combatant.name}</div>
             </div>
         );
     }

@@ -733,7 +733,8 @@ body,
   .off-map-tokens .off-map-token {
     display: inline-block;
     vertical-align: top;
-    margin: 10px 5px; }
+    margin: 10px 5px;
+    width: 80px; }
     .off-map-tokens .off-map-token .token {
       position: relative;
       margin: 0 auto;
