@@ -236,13 +236,13 @@ class Dojo extends React.Component {
         });
     }
 
-    cloneMonster(monster) {
+    cloneMonster(monster, name) {
         var group = this.findMonster(monster);
 
         var clone = {
             id: guid(),
             type: "monster",
-            name: monster.name + " copy",
+            name: name || monster.name + " copy",
             size: monster.size,
             category: monster.category,
             tag: monster.tag,
@@ -1391,7 +1391,7 @@ class Dojo extends React.Component {
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                             nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
                             editMonster={combatant => this.editMonster(combatant)}
-                            cloneMonster={combatant => this.cloneMonster(combatant)}
+                            cloneMonster={(combatant, name) => this.cloneMonster(combatant, name)}
                             moveToGroup={(combatant, groupID) => this.moveToGroup(combatant, groupID)}
                             addOpenGameContent={() => this.addOpenGameContent()}
                         />

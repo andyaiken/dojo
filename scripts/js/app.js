@@ -1044,12 +1044,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var MonsterCard = function (_React$Component) {
     _inherits(MonsterCard, _React$Component);
 
-    function MonsterCard() {
+    function MonsterCard(props) {
         _classCallCheck(this, MonsterCard);
 
         var _this = _possibleConstructorReturn(this, (MonsterCard.__proto__ || Object.getPrototypeOf(MonsterCard)).call(this));
 
         _this.state = {
+            cloneName: props.combatant.name + " copy",
             showInit: false,
             showHP: false,
             showDetails: false
@@ -1058,6 +1059,13 @@ var MonsterCard = function (_React$Component) {
     }
 
     _createClass(MonsterCard, [{
+        key: "setCloneName",
+        value: function setCloneName(cloneName) {
+            this.setState({
+                cloneName: cloneName
+            });
+        }
+    }, {
         key: "toggleInit",
         value: function toggleInit() {
             this.setState({
@@ -1127,13 +1135,25 @@ var MonsterCard = function (_React$Component) {
                                     } },
                                 "edit monster"
                             ));
-                            options.push(React.createElement(
-                                "button",
-                                { key: "clone", onClick: function onClick() {
-                                        return _this3.props.cloneMonster(_this3.props.combatant);
-                                    } },
-                                "create a copy"
-                            ));
+
+                            options.push(React.createElement(Expander, {
+                                key: "clone",
+                                text: "clone monster",
+                                content: React.createElement(
+                                    "div",
+                                    null,
+                                    React.createElement("input", { type: "text", placeholder: "monster name", value: this.state.cloneName, onChange: function onChange(event) {
+                                            return _this3.setCloneName(event.target.value);
+                                        } }),
+                                    React.createElement(
+                                        "button",
+                                        { onClick: function onClick() {
+                                                return _this3.props.cloneMonster(_this3.props.combatant, _this3.state.cloneName);
+                                            } },
+                                        "create copy"
+                                    )
+                                )
+                            }));
 
                             var groupOptions = [];
                             this.props.library.forEach(function (group) {
@@ -3024,6 +3044,10 @@ var Dropdown = function (_React$Component) {
             var _this2 = this;
 
             try {
+                if (this.props.options.length === 0) {
+                    return null;
+                }
+
                 var style = this.props.disabled ? "dropdown disabled" : "dropdown";
                 var content = [];
 
@@ -4076,13 +4100,13 @@ var Dojo = function (_React$Component) {
         }
     }, {
         key: "cloneMonster",
-        value: function cloneMonster(monster) {
+        value: function cloneMonster(monster, name) {
             var group = this.findMonster(monster);
 
             var clone = {
                 id: guid(),
                 type: "monster",
-                name: monster.name + " copy",
+                name: name || monster.name + " copy",
                 size: monster.size,
                 category: monster.category,
                 tag: monster.tag,
@@ -5327,8 +5351,8 @@ var Dojo = function (_React$Component) {
                             editMonster: function editMonster(combatant) {
                                 return _this7.editMonster(combatant);
                             },
-                            cloneMonster: function cloneMonster(combatant) {
-                                return _this7.cloneMonster(combatant);
+                            cloneMonster: function cloneMonster(combatant, name) {
+                                return _this7.cloneMonster(combatant, name);
                             },
                             moveToGroup: function moveToGroup(combatant, groupID) {
                                 return _this7.moveToGroup(combatant, groupID);
@@ -10183,200 +10207,18 @@ var MapPanel = function (_React$Component) {
     return MapPanel;
 }(React.Component);
 
-var OffMapPanel = function (_React$Component2) {
-    _inherits(OffMapPanel, _React$Component2);
-
-    function OffMapPanel() {
-        _classCallCheck(this, OffMapPanel);
-
-        return _possibleConstructorReturn(this, (OffMapPanel.__proto__ || Object.getPrototypeOf(OffMapPanel)).apply(this, arguments));
-    }
-
-    _createClass(OffMapPanel, [{
-        key: "dragOver",
-        value: function dragOver(e) {
-            e.preventDefault();
-        }
-    }, {
-        key: "drop",
-        value: function drop() {
-            var _this5 = this;
-
-            // We are removing the dragged token from the map
-            var onMap = this.props.tokens.find(function (i) {
-                return i.id === _this5.props.draggedTokenID;
-            }) !== null;
-            if (onMap) {
-                this.props.draggedOffMap(this.props.draggedTokenID);
-            }
-        }
-    }, {
-        key: "render",
-        value: function render() {
-            var _this6 = this;
-
-            var pending = [];
-            var active = [];
-            var defeated = [];
-
-            this.props.tokens.forEach(function (c) {
-                var shelf = null;
-                if (c.pending) {
-                    shelf = pending;
-                }
-                if (c.active) {
-                    shelf = active;
-                }
-                if (c.defeated) {
-                    shelf = defeated;
-                }
-
-                shelf.push(React.createElement(OffMapCombatant, {
-                    key: c.id,
-                    combatant: c,
-                    selected: c.id === _this6.props.selectedItemID,
-                    setSelectedItemID: function setSelectedItemID(id) {
-                        return _this6.props.setSelectedItemID(id);
-                    },
-                    setDraggedTokenID: function setDraggedTokenID(id) {
-                        return _this6.props.setDraggedTokenID(id);
-                    }
-                }));
-            });
-
-            // TODO: For some reason this code cancels dragging as soon as it starts
-            var message = "you can drag these map tokens onto the map";
-            /*
-            if ((this.props.draggedTokenID) || (this.props.tokens.length === 0)) {
-                message = "drag map tokens onto this box to remove them from the map";
-            }
-            */
-
-            var style = "off-map-tokens";
-            if (this.props.draggedTokenID) {
-                style += " drop-target";
-            }
-
-            return React.createElement(
-                "div",
-                {
-                    className: style,
-                    onDragOver: function onDragOver(e) {
-                        return _this6.dragOver(e);
-                    },
-                    onDrop: function onDrop() {
-                        return _this6.drop();
-                    }
-                },
-                React.createElement(
-                    "div",
-                    { className: "text" },
-                    message
-                ),
-                React.createElement(
-                    "div",
-                    { className: "shelf", style: { display: pending.length > 0 ? "block" : "none" } },
-                    React.createElement(
-                        "div",
-                        { className: "shelf-name" },
-                        "waiting for initiative to be entered"
-                    ),
-                    pending
-                ),
-                React.createElement(
-                    "div",
-                    { className: "shelf", style: { display: active.length > 0 ? "block" : "none" } },
-                    React.createElement(
-                        "div",
-                        { className: "shelf-name" },
-                        "active combatants"
-                    ),
-                    active
-                ),
-                React.createElement(
-                    "div",
-                    { className: "shelf", style: { display: defeated.length > 0 ? "block" : "none" } },
-                    React.createElement(
-                        "div",
-                        { className: "shelf-name" },
-                        "defeated"
-                    ),
-                    defeated
-                )
-            );
-        }
-    }]);
-
-    return OffMapPanel;
-}(React.Component);
-
-var OffMapCombatant = function (_React$Component3) {
-    _inherits(OffMapCombatant, _React$Component3);
-
-    function OffMapCombatant(props) {
-        _classCallCheck(this, OffMapCombatant);
-
-        var _this7 = _possibleConstructorReturn(this, (OffMapCombatant.__proto__ || Object.getPrototypeOf(OffMapCombatant)).call(this));
-
-        var size = miniSize(props.combatant.size);
-
-        var token = createMapItem();
-        token.id = props.combatant.id;
-        token.type = props.combatant.type;
-        token.width = size;
-        token.height = size;
-
-        _this7.state = {
-            token: token
-        };
-        return _this7;
-    }
-
-    _createClass(OffMapCombatant, [{
-        key: "render",
-        value: function render() {
-            var _this8 = this;
-
-            return React.createElement(
-                "div",
-                { className: "off-map-token" },
-                React.createElement(MapToken, {
-                    token: this.state.token,
-                    combatant: this.props.combatant,
-                    selectable: true,
-                    simple: true,
-                    selected: this.state.selectedItemID === this.state.token.id,
-                    select: function select(id) {
-                        return _this8.props.setSelectedItemID(id);
-                    },
-                    startDrag: function startDrag(id) {
-                        return _this8.props.setDraggedTokenID(id);
-                    }
-                }),
-                React.createElement(
-                    "div",
-                    { className: "name" },
-                    this.props.combatant.name
-                )
-            );
-        }
-    }]);
-
-    return OffMapCombatant;
-}(React.Component);
-
-var GridSquare = function (_React$Component4) {
-    _inherits(GridSquare, _React$Component4);
+var GridSquare = function (_React$Component2) {
+    _inherits(GridSquare, _React$Component2);
 
     function GridSquare() {
         _classCallCheck(this, GridSquare);
 
-        var _this9 = _possibleConstructorReturn(this, (GridSquare.__proto__ || Object.getPrototypeOf(GridSquare)).call(this));
+        var _this4 = _possibleConstructorReturn(this, (GridSquare.__proto__ || Object.getPrototypeOf(GridSquare)).call(this));
 
-        _this9.state = {
+        _this4.state = {
             dropTarget: false
         };
-        return _this9;
+        return _this4;
     }
 
     _createClass(GridSquare, [{
@@ -10400,7 +10242,7 @@ var GridSquare = function (_React$Component4) {
     }, {
         key: "render",
         value: function render() {
-            var _this10 = this;
+            var _this5 = this;
 
             var style = "grid-square";
             if (this.props.overlay) {
@@ -10414,19 +10256,19 @@ var GridSquare = function (_React$Component4) {
                 className: style,
                 style: this.props.position,
                 onClick: function onClick(e) {
-                    return _this10.props.onClick(e);
+                    return _this5.props.onClick(e);
                 },
                 onDoubleClick: function onDoubleClick() {
-                    return _this10.props.onDoubleClick(_this10.props.x, _this10.props.y);
+                    return _this5.props.onDoubleClick(_this5.props.x, _this5.props.y);
                 },
                 onDragOver: function onDragOver(e) {
-                    return _this10.dragOver(e);
+                    return _this5.dragOver(e);
                 },
                 onDragLeave: function onDragLeave() {
-                    return _this10.dragLeave();
+                    return _this5.dragLeave();
                 },
                 onDrop: function onDrop() {
-                    return _this10.props.dropItem(_this10.props.x, _this10.props.y);
+                    return _this5.props.dropItem(_this5.props.x, _this5.props.y);
                 }
             });
         }
@@ -10435,8 +10277,8 @@ var GridSquare = function (_React$Component4) {
     return GridSquare;
 }(React.Component);
 
-var MapTile = function (_React$Component5) {
-    _inherits(MapTile, _React$Component5);
+var MapTile = function (_React$Component3) {
+    _inherits(MapTile, _React$Component3);
 
     function MapTile() {
         _classCallCheck(this, MapTile);
@@ -10455,7 +10297,7 @@ var MapTile = function (_React$Component5) {
     }, {
         key: "render",
         value: function render() {
-            var _this12 = this;
+            var _this7 = this;
 
             var style = "tile " + this.props.tile.terrain;
             if (this.props.selected) {
@@ -10469,7 +10311,7 @@ var MapTile = function (_React$Component5) {
                 className: style,
                 style: this.props.position,
                 onClick: function onClick(e) {
-                    return _this12.select(e);
+                    return _this7.select(e);
                 } });
         }
     }]);
@@ -10477,8 +10319,8 @@ var MapTile = function (_React$Component5) {
     return MapTile;
 }(React.Component);
 
-var MapToken = function (_React$Component6) {
-    _inherits(MapToken, _React$Component6);
+var MapToken = function (_React$Component4) {
+    _inherits(MapToken, _React$Component4);
 
     function MapToken() {
         _classCallCheck(this, MapToken);
@@ -10509,7 +10351,7 @@ var MapToken = function (_React$Component6) {
     }, {
         key: "render",
         value: function render() {
-            var _this14 = this;
+            var _this9 = this;
 
             var style = "token " + this.props.token.type;
             if (this.props.selected) {
@@ -10558,14 +10400,14 @@ var MapToken = function (_React$Component6) {
                     className: style,
                     style: this.props.position,
                     onClick: function onClick(e) {
-                        return _this14.select(e);
+                        return _this9.select(e);
                     },
                     draggable: "true",
                     onDragStart: function onDragStart() {
-                        return _this14.startDrag();
+                        return _this9.startDrag();
                     },
                     onDragEnd: function onDragEnd() {
-                        return _this14.endDrag();
+                        return _this9.endDrag();
                     }
                 },
                 initials,
@@ -10576,6 +10418,197 @@ var MapToken = function (_React$Component6) {
     }]);
 
     return MapToken;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var OffMapPanel = function (_React$Component) {
+    _inherits(OffMapPanel, _React$Component);
+
+    function OffMapPanel() {
+        _classCallCheck(this, OffMapPanel);
+
+        return _possibleConstructorReturn(this, (OffMapPanel.__proto__ || Object.getPrototypeOf(OffMapPanel)).apply(this, arguments));
+    }
+
+    _createClass(OffMapPanel, [{
+        key: "dragOver",
+        value: function dragOver(e) {
+            e.preventDefault();
+        }
+    }, {
+        key: "drop",
+        value: function drop() {
+            var _this2 = this;
+
+            // We are removing the dragged token from the map
+            var onMap = this.props.tokens.find(function (i) {
+                return i.id === _this2.props.draggedTokenID;
+            }) !== null;
+            if (onMap) {
+                this.props.draggedOffMap(this.props.draggedTokenID);
+            }
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this3 = this;
+
+            var pending = [];
+            var active = [];
+            var defeated = [];
+
+            this.props.tokens.forEach(function (c) {
+                var shelf = null;
+                if (c.pending) {
+                    shelf = pending;
+                }
+                if (c.active) {
+                    shelf = active;
+                }
+                if (c.defeated) {
+                    shelf = defeated;
+                }
+
+                shelf.push(React.createElement(OffMapCombatant, {
+                    key: c.id,
+                    combatant: c,
+                    selected: c.id === _this3.props.selectedItemID,
+                    setSelectedItemID: function setSelectedItemID(id) {
+                        return _this3.props.setSelectedItemID(id);
+                    },
+                    setDraggedTokenID: function setDraggedTokenID(id) {
+                        return _this3.props.setDraggedTokenID(id);
+                    }
+                }));
+            });
+
+            // TODO: For some reason this code cancels dragging as soon as it starts
+            var message = "you can drag these map tokens onto the map";
+            /*
+            if ((this.props.draggedTokenID) || (this.props.tokens.length === 0)) {
+                message = "drag map tokens onto this box to remove them from the map";
+            }
+            */
+
+            var style = "off-map-tokens";
+            if (this.props.draggedTokenID) {
+                style += " drop-target";
+            }
+
+            return React.createElement(
+                "div",
+                {
+                    className: style,
+                    onDragOver: function onDragOver(e) {
+                        return _this3.dragOver(e);
+                    },
+                    onDrop: function onDrop() {
+                        return _this3.drop();
+                    }
+                },
+                React.createElement(
+                    "div",
+                    { className: "text" },
+                    message
+                ),
+                React.createElement(
+                    "div",
+                    { className: "shelf", style: { display: pending.length > 0 ? "block" : "none" } },
+                    React.createElement(
+                        "div",
+                        { className: "shelf-name" },
+                        "waiting for initiative to be entered"
+                    ),
+                    pending
+                ),
+                React.createElement(
+                    "div",
+                    { className: "shelf", style: { display: active.length > 0 ? "block" : "none" } },
+                    React.createElement(
+                        "div",
+                        { className: "shelf-name" },
+                        "active combatants"
+                    ),
+                    active
+                ),
+                React.createElement(
+                    "div",
+                    { className: "shelf", style: { display: defeated.length > 0 ? "block" : "none" } },
+                    React.createElement(
+                        "div",
+                        { className: "shelf-name" },
+                        "defeated"
+                    ),
+                    defeated
+                )
+            );
+        }
+    }]);
+
+    return OffMapPanel;
+}(React.Component);
+
+var OffMapCombatant = function (_React$Component2) {
+    _inherits(OffMapCombatant, _React$Component2);
+
+    function OffMapCombatant(props) {
+        _classCallCheck(this, OffMapCombatant);
+
+        var _this4 = _possibleConstructorReturn(this, (OffMapCombatant.__proto__ || Object.getPrototypeOf(OffMapCombatant)).call(this));
+
+        var size = miniSize(props.combatant.size);
+
+        var token = createMapItem();
+        token.id = props.combatant.id;
+        token.type = props.combatant.type;
+        token.width = size;
+        token.height = size;
+
+        _this4.state = {
+            token: token
+        };
+        return _this4;
+    }
+
+    _createClass(OffMapCombatant, [{
+        key: "render",
+        value: function render() {
+            var _this5 = this;
+
+            return React.createElement(
+                "div",
+                { className: "off-map-token" },
+                React.createElement(MapToken, {
+                    token: this.state.token,
+                    combatant: this.props.combatant,
+                    selectable: true,
+                    simple: true,
+                    selected: this.state.selectedItemID === this.state.token.id,
+                    select: function select(id) {
+                        return _this5.props.setSelectedItemID(id);
+                    },
+                    startDrag: function startDrag(id) {
+                        return _this5.props.setDraggedTokenID(id);
+                    }
+                }),
+                React.createElement(
+                    "div",
+                    { className: "name" },
+                    this.props.combatant.name
+                )
+            );
+        }
+    }]);
+
+    return OffMapCombatant;
 }(React.Component);
 "use strict";
 
@@ -12265,8 +12298,8 @@ var MonsterLibraryScreen = function (_React$Component) {
                                     editMonster: function editMonster(combatant) {
                                         return _this3.props.editMonster(combatant);
                                     },
-                                    cloneMonster: function cloneMonster(combatant) {
-                                        return _this3.props.cloneMonster(combatant);
+                                    cloneMonster: function cloneMonster(combatant, name) {
+                                        return _this3.props.cloneMonster(combatant, name);
                                     }
                                 })
                             ));

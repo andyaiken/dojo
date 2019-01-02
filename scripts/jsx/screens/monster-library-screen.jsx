@@ -69,7 +69,7 @@ class MonsterLibraryScreen extends React.Component {
                                     nudgeValue={(combatant, type, delta) => this.props.nudgeValue(combatant, type, delta)}
                                     removeCombatant={combatant => this.props.removeMonster(combatant)}
                                     editMonster={combatant => this.props.editMonster(combatant)}
-                                    cloneMonster={combatant => this.props.cloneMonster(combatant)}
+                                    cloneMonster={(combatant, name) => this.props.cloneMonster(combatant, name)}
                                 />
                             </div>
                         );

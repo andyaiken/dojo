@@ -51,6 +51,10 @@ class Dropdown extends React.Component {
 
     render() {
         try {
+            if (this.props.options.length === 0) {
+                return null;
+            }
+
             var style = this.props.disabled ? "dropdown disabled" : "dropdown";
             var content = [];
 

@@ -106,7 +106,7 @@
       border-radius: 50%; }
   .expander .expander-content {
     padding: 5px 10px; }
-  .expander:hover, .expander.expanded {
+  .expander:hover {
     border-color: #3c78dc; }
   .expander.expanded > .expander-header {
     background-color: rgba(60, 120, 220, 0.1); }

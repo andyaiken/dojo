@@ -1,11 +1,18 @@
 class MonsterCard extends React.Component {
-    constructor() {
+    constructor(props) {
         super();
         this.state = {
+            cloneName: props.combatant.name + " copy",
             showInit: false,
             showHP: false,
             showDetails: false
         };
+    }
+
+    setCloneName(cloneName) {
+        this.setState({
+            cloneName: cloneName
+        });
     }
 
     toggleInit() {
@@ -60,8 +67,22 @@ class MonsterCard extends React.Component {
             if (this.props.mode.indexOf("no-buttons") === -1) {
                 if (this.props.mode.indexOf("view") !== -1) {
                     if (this.props.mode.indexOf("editable") !== -1) {
-                        options.push(<button key="edit" onClick={() => this.props.editMonster(this.props.combatant)}>edit monster</button>);
-                        options.push(<button key="clone" onClick={() => this.props.cloneMonster(this.props.combatant)}>create a copy</button>);
+                        options.push(
+                            <button key="edit" onClick={() => this.props.editMonster(this.props.combatant)}>edit monster</button>
+                        );
+
+                        options.push(
+                            <Expander
+                                key="clone"
+                                text="clone monster"
+                                content={
+                                    <div>
+                                        <input type="text" placeholder="monster name" value={this.state.cloneName} onChange={event => this.setCloneName(event.target.value)} />
+                                        <button onClick={() => this.props.cloneMonster(this.props.combatant, this.state.cloneName)}>create copy</button>
+                                    </div>
+                                }
+                            />
+                        );
 
                         var groupOptions = [];
                         this.props.library.forEach(group => {

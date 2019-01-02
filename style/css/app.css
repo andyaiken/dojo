@@ -38,7 +38,7 @@ textarea {
   margin: 5px 0;
   padding: 5px 8px;
   border: 1px solid #c3c3c3;
-  width: calc(100% - 2px);
+  width: 100%;
   border-radius: 0;
   font-size: 12px;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
@@ -70,8 +70,7 @@ a {
     color: #3c78dc; }
 
 :focus {
-  outline: none;
-  border-color: #3c78dc !important; }
+  outline: none; }
 
 button {
   display: block;
@@ -88,9 +87,9 @@ button {
   margin: 5px 0;
   padding: 5px 9px 5px 10px;
   cursor: pointer; }
-  button:hover, button:focus {
+  button:hover {
     border-color: #3c78dc; }
-    button:hover .image, button:focus .image {
+    button:hover .image {
       opacity: 1; }
   button.disabled {
     background-color: white;
@@ -118,7 +117,7 @@ button {
   button .non-destructive:hover {
     border-color: #3c78dc; }
   button .title {
-    width: calc(100% - 21px);
+    width: calc(100% - 22px);
     display: inline-block;
     vertical-align: middle;
     min-height: 16px;
