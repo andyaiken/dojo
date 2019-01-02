@@ -39,13 +39,10 @@ class OffMapPanel extends React.Component {
             );
         });
 
-        // TODO: For some reason this code cancels dragging as soon as it starts
         var message = "you can drag these map tokens onto the map";
-        /*
         if ((this.props.draggedTokenID) || (this.props.tokens.length === 0)) {
             message = "drag map tokens onto this box to remove them from the map";
         }
-        */
 
         var style = "off-map-tokens";
         if (this.props.draggedTokenID) {
@@ -58,9 +55,6 @@ class OffMapPanel extends React.Component {
                 onDragOver={e => this.dragOver(e)}
                 onDrop={() => this.drop()}
             >
-                <div className="text">
-                    {message}
-                </div>
                 <div className="shelf" style={{ display: pending.length > 0 ? "block" : "none" }}>
                     <div className="shelf-name">waiting for initiative to be entered</div>
                     {pending}
@@ -72,6 +66,10 @@ class OffMapPanel extends React.Component {
                 <div className="shelf" style={{ display: defeated.length > 0 ? "block" : "none" }}>
                     <div className="shelf-name">defeated</div>
                     {defeated}
+                </div>
+                <div className="divider" style={{ display: this.props.tokens.length > 0 ? "block" : "none" }}></div>
+                <div className="text">
+                    {message}
                 </div>
             </div>
         );

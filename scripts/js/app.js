@@ -10490,13 +10490,10 @@ var OffMapPanel = function (_React$Component) {
                 }));
             });
 
-            // TODO: For some reason this code cancels dragging as soon as it starts
             var message = "you can drag these map tokens onto the map";
-            /*
-            if ((this.props.draggedTokenID) || (this.props.tokens.length === 0)) {
+            if (this.props.draggedTokenID || this.props.tokens.length === 0) {
                 message = "drag map tokens onto this box to remove them from the map";
             }
-            */
 
             var style = "off-map-tokens";
             if (this.props.draggedTokenID) {
@@ -10514,11 +10511,6 @@ var OffMapPanel = function (_React$Component) {
                         return _this3.drop();
                     }
                 },
-                React.createElement(
-                    "div",
-                    { className: "text" },
-                    message
-                ),
                 React.createElement(
                     "div",
                     { className: "shelf", style: { display: pending.length > 0 ? "block" : "none" } },
@@ -10548,6 +10540,12 @@ var OffMapPanel = function (_React$Component) {
                         "defeated"
                     ),
                     defeated
+                ),
+                React.createElement("div", { className: "divider", style: { display: this.props.tokens.length > 0 ? "block" : "none" } }),
+                React.createElement(
+                    "div",
+                    { className: "text" },
+                    message
                 )
             );
         }
