@@ -77,7 +77,7 @@ function createTrait() {
         id: guid(),
         name: "",
         usage: "",
-        type: type,
+        type: "action",
         text: ""
     };
 }

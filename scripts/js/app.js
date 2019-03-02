@@ -7906,6 +7906,7 @@ var MonsterEditorModal = function (_React$Component) {
         key: "addTrait",
         value: function addTrait(type) {
             var trait = createTrait();
+            trait.type = type;
             trait.name = "New " + this.getActionTypeName(type, false).toLowerCase();
             this.state.monster.traits.push(trait);
             this.setState({

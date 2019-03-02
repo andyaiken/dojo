@@ -199,6 +199,7 @@ class MonsterEditorModal extends React.Component {
 
     addTrait(type) {
         var trait = createTrait();
+        trait.type = type;
         trait.name = "New " + this.getActionTypeName(type, false).toLowerCase();
         this.state.monster.traits.push(trait);
         this.setState({
