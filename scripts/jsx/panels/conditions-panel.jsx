@@ -12,18 +12,20 @@ class ConditionsPanel extends React.Component {
     render() {
         try {
             var conditions = [];
-            for (var n = 0; n !== this.props.combatant.conditions.length; ++n) {
-                var condition = this.props.combatant.conditions[n];
-                conditions.push(
-                    <ConditionPanel
-                        key={n}
-                        condition={condition}
-                        combat={this.props.combat}
-                        nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
-                        changeConditionValue={(condition, type, value) => this.props.changeConditionValue(condition, type, value)}
-                        removeCondition={conditionID => this.props.removeCondition(conditionID)}
-                    />
-                );
+            if (this.props.combatant.conditions) {
+                for (var n = 0; n !== this.props.combatant.conditions.length; ++n) {
+                    var condition = this.props.combatant.conditions[n];
+                    conditions.push(
+                        <ConditionPanel
+                            key={n}
+                            condition={condition}
+                            combat={this.props.combat}
+                            nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
+                            changeConditionValue={(condition, type, value) => this.props.changeConditionValue(condition, type, value)}
+                            removeCondition={conditionID => this.props.removeCondition(conditionID)}
+                        />
+                    );
+                }
             }
 
             var conditionOptions = [

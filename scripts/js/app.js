@@ -9571,22 +9571,24 @@ var ConditionsPanel = function (_React$Component) {
 
             try {
                 var conditions = [];
-                for (var n = 0; n !== this.props.combatant.conditions.length; ++n) {
-                    var condition = this.props.combatant.conditions[n];
-                    conditions.push(React.createElement(ConditionPanel, {
-                        key: n,
-                        condition: condition,
-                        combat: this.props.combat,
-                        nudgeConditionValue: function nudgeConditionValue(condition, type, delta) {
-                            return _this2.props.nudgeConditionValue(condition, type, delta);
-                        },
-                        changeConditionValue: function changeConditionValue(condition, type, value) {
-                            return _this2.props.changeConditionValue(condition, type, value);
-                        },
-                        removeCondition: function removeCondition(conditionID) {
-                            return _this2.props.removeCondition(conditionID);
-                        }
-                    }));
+                if (this.props.combatant.conditions) {
+                    for (var n = 0; n !== this.props.combatant.conditions.length; ++n) {
+                        var condition = this.props.combatant.conditions[n];
+                        conditions.push(React.createElement(ConditionPanel, {
+                            key: n,
+                            condition: condition,
+                            combat: this.props.combat,
+                            nudgeConditionValue: function nudgeConditionValue(condition, type, delta) {
+                                return _this2.props.nudgeConditionValue(condition, type, delta);
+                            },
+                            changeConditionValue: function changeConditionValue(condition, type, value) {
+                                return _this2.props.changeConditionValue(condition, type, value);
+                            },
+                            removeCondition: function removeCondition(conditionID) {
+                                return _this2.props.removeCondition(conditionID);
+                            }
+                        }));
+                    }
                 }
 
                 var conditionOptions = [{
