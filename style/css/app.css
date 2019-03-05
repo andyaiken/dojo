@@ -483,7 +483,8 @@ body,
   left: 0;
   height: 100%;
   width: 100%;
-  z-index: 10; }
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.5); }
 
 .blur {
   -webkit-filter: blur(5px);
@@ -496,9 +497,7 @@ body,
 .modal {
   height: calc(100% - 160px);
   width: calc(100% - 100px);
-  margin: 80px 50px;
-  border-left: 5px solid #3c3c3c;
-  box-shadow: 0 0 50px 10px gainsboro; }
+  margin: 80px 50px; }
   .modal .modal-header {
     height: 40px;
     background-color: gainsboro;

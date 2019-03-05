@@ -730,6 +730,7 @@ body,
     height: 100%;
     width: 100%;
     z-index: 10;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .blur {
@@ -745,8 +746,6 @@ body,
     height: calc(100% - 160px);
     width: calc(100% - 100px);
     margin: 80px 50px;
-    border-left: 5px solid $foreground;
-    box-shadow: 0 0 50px 10px $header-background;
 
     .modal-header {
         height: 40px;
