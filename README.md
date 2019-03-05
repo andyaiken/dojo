@@ -11,10 +11,10 @@ Dojo is written in JS, using React and SCSS. If you would like to contribute to 
 ## Initial set up
 
 * Open a command line in the root folder
-* Run `npm install babel-cli`
+* Run `npm install -g babel-cli`
 * Run `npm install babel-preset-env babel-preset-react`
-* Run `npm install node-sass`
-* Run `npm install http-server`
+* Run `npm install -g node-sass`
+* Run `npm install -g http-server`
 
 ## Compiling and running the app
 
