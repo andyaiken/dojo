@@ -501,7 +501,7 @@ body,
     .content {
         padding: 0 10px;
 
-        button, .hp-gauge, .condition {
+        button, .hp-gauge, .condition, .note {
             margin-bottom: 10px;
         }
 
@@ -514,6 +514,10 @@ body,
                 font-size: 11px;
                 margin: 2px 0;
             }
+        }
+
+        .note {
+            font-weight: 600;
         }
     }
 

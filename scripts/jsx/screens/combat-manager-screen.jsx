@@ -458,7 +458,14 @@ class CombatantRow extends React.Component {
                         );
                     });
                 }
-                // TODO: Show condition text and duration
+                var notes = [];
+                if (this.props.combat.map) {
+                    if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
+                        notes.push(
+                            <div key="not-on-map" className="note">not on the map</div>
+                        );
+                    }
+                }
                 content = (
                     <div className="content">
                         <div className="section key-stats">
@@ -475,6 +482,7 @@ class CombatantRow extends React.Component {
                         {addBtn}
                         {gauge}
                         {conditions}
+                        {notes}
                     </div>
                 );
                 break;

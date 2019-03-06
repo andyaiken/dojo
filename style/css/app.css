@@ -344,13 +344,15 @@ body,
       float: right; }
   .combatant-row .content {
     padding: 0 10px; }
-    .combatant-row .content button, .combatant-row .content .hp-gauge, .combatant-row .content .condition {
+    .combatant-row .content button, .combatant-row .content .hp-gauge, .combatant-row .content .condition, .combatant-row .content .note {
       margin-bottom: 10px; }
     .combatant-row .content .condition .condition-name {
       font-weight: 600; }
     .combatant-row .content .condition .condition-text {
       font-size: 11px;
       margin: 2px 0; }
+    .combatant-row .content .note {
+      font-weight: 600; }
   .combatant-row.pc {
     border: 1px solid #006500; }
     .combatant-row.pc .name {
