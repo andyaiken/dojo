@@ -1009,6 +1009,7 @@ body,
     }
 
     &.combat {
+        padding: 20px;
 
         .token:hover {
             border-color: $highlight;

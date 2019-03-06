@@ -656,8 +656,10 @@ body,
     pointer-events: none; }
   .map-panel.edit .tile:hover {
     border-color: #3c78dc; }
-  .map-panel.combat .token:hover {
-    border-color: #3c78dc; }
+  .map-panel.combat {
+    padding: 20px; }
+    .map-panel.combat .token:hover {
+      border-color: #3c78dc; }
 
 .tile {
   position: absolute;
