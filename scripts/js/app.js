@@ -11836,7 +11836,7 @@ var EncounterBuilderScreen = function (_React$Component) {
                     { className: "encounter-builder row collapse" },
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-4 large-3 scrollable list-column" },
+                        { className: "columns small-4 medium-3 large-3 scrollable list-column" },
                         help,
                         React.createElement(
                             "button",
@@ -11849,7 +11849,7 @@ var EncounterBuilderScreen = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-8 large-9 scrollable" },
+                        { className: "columns small-8 medium-9 large-9 scrollable" },
                         React.createElement(CardGroup, {
                             content: encounterCards,
                             heading: encounterName,
@@ -12147,7 +12147,7 @@ var MapFoliosScreen = function (_React$Component) {
                     { className: "map-builder row collapse" },
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-4 large-3 scrollable list-column" },
+                        { className: "columns small-4 medium-3 large-3 scrollable list-column" },
                         help,
                         React.createElement(
                             "button",
@@ -12160,7 +12160,7 @@ var MapFoliosScreen = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-8 large-9 scrollable" },
+                        { className: "columns small-8 medium-9 large-9 scrollable" },
                         folio
                     )
                 );
@@ -12319,7 +12319,7 @@ var MonsterLibraryScreen = function (_React$Component) {
                     { className: "monster-library row collapse" },
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-4 large-3 scrollable list-column" },
+                        { className: "columns small-4 medium-3 large-3 scrollable list-column" },
                         help,
                         React.createElement(
                             "button",
@@ -12332,7 +12332,7 @@ var MonsterLibraryScreen = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-8 large-9 scrollable" },
+                        { className: "columns small-8 medium-9 large-9 scrollable" },
                         React.createElement(CardGroup, {
                             content: cards,
                             heading: name,
@@ -12489,7 +12489,7 @@ var PartiesScreen = function (_React$Component) {
                     { className: "parties row collapse" },
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-4 large-3 scrollable list-column" },
+                        { className: "columns small-4 medium-3 large-3 scrollable list-column" },
                         help,
                         React.createElement(
                             "button",
@@ -12502,7 +12502,7 @@ var PartiesScreen = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-8 large-9 scrollable" },
+                        { className: "columns small-8 medium-9 large-9 scrollable" },
                         React.createElement(CardGroup, {
                             content: activeCards,
                             heading: name,
