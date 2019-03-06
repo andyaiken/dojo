@@ -140,7 +140,6 @@ function createCombat() {
     return {
         id: guid(),
         name: "",
-        view: "list",
         encounterID: null,
         combatants: [],
         map: null,

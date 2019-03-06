@@ -3,7 +3,6 @@ class MonsterCard extends React.Component {
         super();
         this.state = {
             cloneName: props.combatant.name + " copy",
-            showInit: false,
             showHP: false,
             showDetails: false
         };
@@ -15,16 +14,9 @@ class MonsterCard extends React.Component {
         });
     }
 
-    toggleInit() {
-        this.setState({
-            showInit: !this.state.showInit,
-            showHP: false
-        })
-    }
 
     toggleHP() {
         this.setState({
-            showInit: false,
             showHP: !this.state.showHP
         })
     }
@@ -167,9 +159,26 @@ class MonsterCard extends React.Component {
                             )}
                         />
                     );
+                    if (this.props.mode.indexOf("tactical") !== -1) {
+                        options.push(<div key="tactical-div" className="divider"></div>);
+                        if (this.props.mode.indexOf("on-map") !== -1) {
+                            options.push(
+                                <div key="mapMove" className="section centered">
+                                    <Radial
+                                        direction="eight"
+                                        click={dir => this.props.mapMove(this.props.combatant, dir)}
+                                    />
+                                </div>
+                            );
+                            options.push(<button key="mapRemove" onClick={() => this.props.mapRemove(this.props.combatant)}>remove from map</button>);
+                        }
+                        if (this.props.mode.indexOf("off-map") !== -1) {
+                            options.push(<button key="mapAdd" onClick={() => this.props.mapAdd(this.props.combatant)}>add to map</button>);
+                        }
+                    }
                     options.push(<div key="div" className="divider"></div>);
                     if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
-                        options.push(<button key="makeAdd" onClick={() => this.props.makeActive(this.props.combatant)}>add to encounter</button>);
+                        options.push(<button key="makeActive" onClick={() => this.props.makeActive(this.props.combatant)}>add to encounter</button>);
                         options.push(<ConfirmButton key="remove" text="remove from encounter" callback={() => this.props.removeCombatant(this.props.combatant)} />);
                     }
                     if (!this.props.combatant.pending && this.props.combatant.active && !this.props.combatant.defeated) {
@@ -277,29 +286,11 @@ class MonsterCard extends React.Component {
 
                 stats = (
                     <div className="stats">
-                        {!this.props.combatant.pending ? <HitPointGauge combatant={this.props.combatant} /> : null}
                         <div className="section key-stats">
-                            <div className="key-stat editable" onClick={() => this.toggleInit()}>
-                                <div className="stat-heading">init</div>
-                                <div className="stat-value">{this.props.combatant.initiative}</div>
-                            </div>
-                            <div className="key-stat">
-                                <div className="stat-heading">ac</div>
-                                <div className="stat-value">{this.props.combatant.ac}</div>
-                            </div>
-                            <div className="key-stat editable" onClick={() => this.toggleHP()}>
+                            <div className="key-stat full editable" onClick={() => this.toggleHP()}>
                                 <div className="stat-heading">hp</div>
                                 <div className="stat-value">{hp}</div>
                             </div>
-                        </div>
-                        <div style={{ display: this.state.showInit ? "" : "none" }}>
-                            <Spin
-                                source={this.props.combatant}
-                                name="initiative"
-                                label="initiative"
-                                factors={[1, 5, 10]}
-                                nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "initiative", delta)}
-                            />
                         </div>
                         <div style={{ display: this.state.showHP ? "" : "none" }}>
                             <Spin
@@ -329,35 +320,36 @@ class MonsterCard extends React.Component {
                         <div className="section" style={{ display: this.props.combatant.conditionImmunities !== "" ? "" : "none" }}>
                             <b>condition immunities</b> {this.props.combatant.conditionImmunities}
                         </div>
-                        <div style={{ display: (this.state.showDetails || this.props.combatant.current) ? "" : "none" }}>
-                            <div className="divider"></div>
-                            <div className="section centered">
-                                <div><i>{this.description()}</i></div>
-                            </div>
-                            <div className="section">
-                                <AbilityScorePanel combatant={this.props.combatant} />
-                            </div>
-                            <div className="section" style={{ display: this.props.combatant.savingThrows !== "" ? "" : "none" }}>
-                                <b>saving throws</b> {this.props.combatant.savingThrows}
-                            </div>
-                            <div className="section" style={{ display: this.props.combatant.skills !== "" ? "" : "none" }}>
-                                <b>skills</b> {this.props.combatant.skills}
-                            </div>
-                            <div className="section" style={{ display: this.props.combatant.speed !== "" ? "" : "none" }}>
-                                <b>speed</b> {this.props.combatant.speed}
-                            </div>
-                            <div className="section" style={{ display: this.props.combatant.senses !== "" ? "" : "none" }}>
-                                <b>senses</b> {this.props.combatant.senses}
-                            </div>
-                            <div className="section" style={{ display: this.props.combatant.languages !== "" ? "" : "none" }}>
-                                <b>languages</b> {this.props.combatant.languages}
-                            </div>
-                            <div className="section" style={{ display: this.props.combatant.equipment !== "" ? "" : "none" }}>
-                                <b>equipment</b> {this.props.combatant.equipment}
-                            </div>
-                            <div className="divider"></div>
-                            <TraitsPanel combatant={this.props.combatant} />
+                        <div className="divider"></div>
+                        <div className="section centered">
+                            <div><i>{this.description()}</i></div>
                         </div>
+                        <div className="section">
+                            <AbilityScorePanel combatant={this.props.combatant} />
+                        </div>
+                        <div className="section" style={{ display: this.props.combatant.ac !== "" ? "" : "none" }}>
+                            <b>ac</b> {this.props.combatant.ac}
+                        </div>
+                        <div className="section" style={{ display: this.props.combatant.savingThrows !== "" ? "" : "none" }}>
+                            <b>saving throws</b> {this.props.combatant.savingThrows}
+                        </div>
+                        <div className="section" style={{ display: this.props.combatant.skills !== "" ? "" : "none" }}>
+                            <b>skills</b> {this.props.combatant.skills}
+                        </div>
+                        <div className="section" style={{ display: this.props.combatant.speed !== "" ? "" : "none" }}>
+                            <b>speed</b> {this.props.combatant.speed}
+                        </div>
+                        <div className="section" style={{ display: this.props.combatant.senses !== "" ? "" : "none" }}>
+                            <b>senses</b> {this.props.combatant.senses}
+                        </div>
+                        <div className="section" style={{ display: this.props.combatant.languages !== "" ? "" : "none" }}>
+                            <b>languages</b> {this.props.combatant.languages}
+                        </div>
+                        <div className="section" style={{ display: this.props.combatant.equipment !== "" ? "" : "none" }}>
+                            <b>equipment</b> {this.props.combatant.equipment}
+                        </div>
+                        <div className="divider"></div>
+                        <TraitsPanel combatant={this.props.combatant} />
                     </div>
                 );
             }
@@ -434,8 +426,8 @@ class MonsterCard extends React.Component {
             }
 
             var toggle = null;
-            if ((this.props.mode.indexOf("combat") !== -1) && this.props.combatant.current) {
-                // Don't show toggle button for current combatant
+            if (this.props.mode.indexOf("combat") !== -1) {
+                // Don't show toggle button for combatant
             } else if (this.props.mode.indexOf("template") !== -1) {
                 // Don't show toggle button for template
             } else {

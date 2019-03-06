@@ -335,15 +335,6 @@ body,
     }
 }
 
-.combat-right {
-    .combat-info {
-        min-height: 50px;
-        margin: 5px;
-        padding: 20px;
-        border: 1px solid $control-border;
-    }
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Card
 
@@ -372,7 +363,6 @@ body,
     background-color: #F5F5F5;
     border: 1px solid #656565;
     margin: 5px;
-    max-width: 350px;
 
     .heading {
         height: 35px;
@@ -482,6 +472,50 @@ body,
 
     .card-content {
         padding: 5px 10px;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Combatant row
+
+.combatant-row {
+    margin: 10px 0;
+    background-color: beige;
+    cursor: pointer;
+
+    &.highlight {
+        cursor: default;
+    }
+
+    .name {
+        color: $background;
+        font-size: 15px;
+        font-weight: 600;
+        padding: 5px 5px 7px 5px;
+
+        .info {
+            float: right;
+        }
+    }
+
+    .content {
+        padding: 0 10px 10px 10px;
+    }
+
+    &.pc {
+        border: 1px solid #006500;
+
+        .name {
+            background-color: #006500;
+        }
+    }
+
+    &.monster {
+        border: 1px solid #650000;
+
+        .name {
+            background-color: #650000;
+        }
     }
 }
 
@@ -673,38 +707,44 @@ body,
             }
     }
 
-    .key-stat {
-        display: inline-block;
-        border: 1px solid transparent;
-        width: calc((100% - 1px) / 3);
-        padding: 5px 0;
-        vertical-align: top;
+    &.key-stats {
 
-        &.wide {
-            width: calc(2 * (100% - 1px) / 3);
-        }
+        .key-stat {
+            display: inline-block;
+            border: 1px solid transparent;
+            width: calc((100% - 1px) / 3);
+            padding: 5px 0;
+            vertical-align: top;
 
-        &.editable {
-            cursor: pointer;
-            background-color: $background;
-            border-color: $control-border;
-            border-left-width: 5px;
-
-            &:hover {
-                border-color: $highlight;
+            &.wide {
+                width: calc((100% - 1px) / 2);
             }
-        }
 
-        .stat-heading {
-            text-align: center;
-            font-weight: 600;
-        }
+            &.full {
+                width: calc(100% - 1px);
+            }
 
-        .stat-value {
-            text-align: center;
-            font-weight: 600;
-            font-size: 20px;
-            padding-top: 5px;
+            &.editable {
+                cursor: pointer;
+                background-color: $background;
+                border-color: $control-border;
+                border-left-width: 5px;
+
+                &:hover {
+                    border-color: $highlight;
+                }
+            }
+
+            .stat-heading {
+                text-align: center;
+                font-weight: 600;
+            }
+
+            .stat-value {
+                text-align: center;
+                font-weight: 600;
+                font-size: 20px;
+            }
         }
     }
 
@@ -936,11 +976,6 @@ body,
             &.grid-overlay {
                 opacity: 0.5;
             }
-
-            &.drop-target {
-                background-color: $highlight;
-                opacity: 1;
-            }
         }
     }
 
@@ -955,7 +990,6 @@ body,
     }
 
     &.combat {
-        height: 50%;
 
         .token:hover {
             border-color: $highlight;
@@ -1074,52 +1108,6 @@ body,
         font-size: 8px;
         font-weight: 600;
         text-align: center;
-    }
-}
-
-.off-map-tokens {
-    min-height: 50px;
-    margin: 5px;
-    background-color: $background;
-    border: 1px solid $control-border;
-
-    &.drop-target {
-        border-color: $highlight;
-        background-color: $highlight01;
-    }
-
-    .shelf {
-        margin: 5px;
-        padding-left: 5px;
-        border-left: 5px solid $foreground;
-
-        .shelf-name {
-            font-weight: 600;
-            font-size: 14px;
-            padding-left: 5px;
-        }
-    }
-
-    .off-map-token {
-        display: inline-block;
-        vertical-align: top;
-        margin: 10px 5px;
-        width: 80px;
-
-        .token {
-            position: relative;
-            margin: 0 auto;
-            cursor: pointer;
-        }
-
-        .name {
-            padding-top: 10px;
-            text-align: center;
-        }
-    }
-
-    .text {
-        margin: 20px;
     }
 }
 

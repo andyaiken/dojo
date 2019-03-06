@@ -841,14 +841,6 @@ class Dojo extends React.Component {
         });
     }
 
-    setCombatView(view) {
-        var combat = this.getCombat(this.state.selectedCombatID);
-        combat.view = view;
-        this.setState({
-            combats: this.state.combats
-        });
-    }
-
     makeCurrent(combatant, newRound) {
         var combat = this.getCombat(this.state.selectedCombatID);
 
@@ -1012,6 +1004,77 @@ class Dojo extends React.Component {
         var combat = this.getCombat(this.state.selectedCombatID);
         var index = combat.combatants.indexOf(combatant);
         combat.combatants.splice(index, 1);
+
+        this.setState({
+            combats: this.state.combats
+        });
+    }
+
+    mapAdd(combatant, x, y) {
+        var item = createMapItem();
+        item.id = combatant.id;
+        item.type = combatant.type;
+        item.x = x;
+        item.y = y;
+        var size = 1;
+        if (combatant.type === 'monster') {
+            size = miniSize(combatant.size);
+        }
+        item.height = size;
+        item.width = size;
+
+        var combat = this.getCombat(this.state.selectedCombatID);
+        combat.map.items.push(item);
+
+        this.setState({
+            combats: this.state.combats
+        });
+    }
+
+    mapMove(combatant, dir) {
+        var combat = this.getCombat(this.state.selectedCombatID);
+        var item = combat.map.items.find(i => i.id === combatant.id);
+        switch (dir) {
+            case 'N':
+                item.y -= 1;
+                break;
+            case 'NE':
+                item.x += 1;
+                item.y -= 1;
+                break;
+            case 'E':
+                item.x += 1;
+                break;
+            case 'SE':
+                item.x += 1;
+                item.y += 1;
+                break;
+            case 'S':
+                item.y += 1;
+                break;
+            case 'SW':
+                item.x -= 1;
+                item.y += 1;
+                break;
+            case 'W':
+                item.x -= 1;
+                break;
+            case 'NW':
+                item.x -= 1;
+                item.y -= 1;
+                break;
+        }
+
+        this.setState({
+            combats: this.state.combats
+        });
+    }
+
+    mapRemove(combatant) {
+        var combat = this.getCombat(this.state.selectedCombatID);
+        var item = combat.map.items.find(i => i.id === combatant.id);
+        var index = combat.map.items.indexOf(item);
+        combat.map.items.splice(index, 1);
 
         this.setState({
             combats: this.state.combats
@@ -1470,6 +1533,9 @@ class Dojo extends React.Component {
                             removeCombatant={(combatant) => this.removeCombatant(combatant)}
                             addCondition={(combatant, condition) => this.addCondition(combatant, condition)}
                             removeCondition={(combatant, conditionID) => this.removeCondition(combatant, conditionID)}
+                            mapAdd={(combatant, x, y) => this.mapAdd(combatant, x, y)}
+                            mapMove={(combatant, dir) => this.mapMove(combatant, dir)}
+                            mapRemove={combatant => this.mapRemove(combatant)}
                             endTurn={(combatant) => this.endTurn(combatant)}
                             close={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
                         />
@@ -1482,27 +1548,6 @@ class Dojo extends React.Component {
                             });
                         
                         var encounter = this.getEncounter(combat.encounterID);
-
-                        var mapViewSwitch = null;
-                        if (combat.map) {
-                            var combatViewOptions = [
-                                {
-                                    id: "list",
-                                    text: "list"
-                                },
-                                {
-                                    id: "map",
-                                    text: "map"
-                                }
-                            ];
-                            mapViewSwitch = (
-                                <Selector
-                                    options={combatViewOptions}
-                                    selectedID={combat.view}
-                                    select={optionID => this.setCombatView(optionID)}
-                                />
-                            );
-                        }        
 
                         actions = (
                             <div className="actions">
@@ -1520,9 +1565,6 @@ class Dojo extends React.Component {
                                 </div>
                                 <div className="section">
                                     <button onClick={() => this.endCombat()}>end encounter</button>
-                                </div>
-                                <div className="section">
-                                    {mapViewSwitch}
                                 </div>
                             </div>
                         );

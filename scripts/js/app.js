@@ -1051,7 +1051,6 @@ var MonsterCard = function (_React$Component) {
 
         _this.state = {
             cloneName: props.combatant.name + " copy",
-            showInit: false,
             showHP: false,
             showDetails: false
         };
@@ -1066,18 +1065,9 @@ var MonsterCard = function (_React$Component) {
             });
         }
     }, {
-        key: "toggleInit",
-        value: function toggleInit() {
-            this.setState({
-                showInit: !this.state.showInit,
-                showHP: false
-            });
-        }
-    }, {
         key: "toggleHP",
         value: function toggleHP() {
             this.setState({
-                showInit: false,
                 showHP: !this.state.showHP
             });
         }
@@ -1271,11 +1261,42 @@ var MonsterCard = function (_React$Component) {
                                     } })
                             )
                         }));
+                        if (this.props.mode.indexOf("tactical") !== -1) {
+                            options.push(React.createElement("div", { key: "tactical-div", className: "divider" }));
+                            if (this.props.mode.indexOf("on-map") !== -1) {
+                                options.push(React.createElement(
+                                    "div",
+                                    { key: "mapMove", className: "section centered" },
+                                    React.createElement(Radial, {
+                                        direction: "eight",
+                                        click: function click(dir) {
+                                            return _this3.props.mapMove(_this3.props.combatant, dir);
+                                        }
+                                    })
+                                ));
+                                options.push(React.createElement(
+                                    "button",
+                                    { key: "mapRemove", onClick: function onClick() {
+                                            return _this3.props.mapRemove(_this3.props.combatant);
+                                        } },
+                                    "remove from map"
+                                ));
+                            }
+                            if (this.props.mode.indexOf("off-map") !== -1) {
+                                options.push(React.createElement(
+                                    "button",
+                                    { key: "mapAdd", onClick: function onClick() {
+                                            return _this3.props.mapAdd(_this3.props.combatant);
+                                        } },
+                                    "add to map"
+                                ));
+                            }
+                        }
                         options.push(React.createElement("div", { key: "div", className: "divider" }));
                         if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
                             options.push(React.createElement(
                                 "button",
-                                { key: "makeAdd", onClick: function onClick() {
+                                { key: "makeActive", onClick: function onClick() {
                                         return _this3.props.makeActive(_this3.props.combatant);
                                     } },
                                 "add to encounter"
@@ -1534,43 +1555,12 @@ var MonsterCard = function (_React$Component) {
                     stats = React.createElement(
                         "div",
                         { className: "stats" },
-                        !this.props.combatant.pending ? React.createElement(HitPointGauge, { combatant: this.props.combatant }) : null,
                         React.createElement(
                             "div",
                             { className: "section key-stats" },
                             React.createElement(
                                 "div",
-                                { className: "key-stat editable", onClick: function onClick() {
-                                        return _this3.toggleInit();
-                                    } },
-                                React.createElement(
-                                    "div",
-                                    { className: "stat-heading" },
-                                    "init"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "stat-value" },
-                                    this.props.combatant.initiative
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "key-stat" },
-                                React.createElement(
-                                    "div",
-                                    { className: "stat-heading" },
-                                    "ac"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "stat-value" },
-                                    this.props.combatant.ac
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "key-stat editable", onClick: function onClick() {
+                                { className: "key-stat full editable", onClick: function onClick() {
                                         return _this3.toggleHP();
                                     } },
                                 React.createElement(
@@ -1584,19 +1574,6 @@ var MonsterCard = function (_React$Component) {
                                     hp
                                 )
                             )
-                        ),
-                        React.createElement(
-                            "div",
-                            { style: { display: this.state.showInit ? "" : "none" } },
-                            React.createElement(Spin, {
-                                source: this.props.combatant,
-                                name: "initiative",
-                                label: "initiative",
-                                factors: [1, 5, 10],
-                                nudgeValue: function nudgeValue(delta) {
-                                    return _this3.props.nudgeValue(_this3.props.combatant, "initiative", delta);
-                                }
-                            })
                         ),
                         React.createElement(
                             "div",
@@ -1664,97 +1641,104 @@ var MonsterCard = function (_React$Component) {
                             " ",
                             this.props.combatant.conditionImmunities
                         ),
+                        React.createElement("div", { className: "divider" }),
                         React.createElement(
                             "div",
-                            { style: { display: this.state.showDetails || this.props.combatant.current ? "" : "none" } },
-                            React.createElement("div", { className: "divider" }),
+                            { className: "section centered" },
                             React.createElement(
                                 "div",
-                                { className: "section centered" },
+                                null,
                                 React.createElement(
-                                    "div",
+                                    "i",
                                     null,
-                                    React.createElement(
-                                        "i",
-                                        null,
-                                        this.description()
-                                    )
+                                    this.description()
                                 )
-                            ),
+                            )
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            React.createElement(AbilityScorePanel, { combatant: this.props.combatant })
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section", style: { display: this.props.combatant.ac !== "" ? "" : "none" } },
                             React.createElement(
-                                "div",
-                                { className: "section" },
-                                React.createElement(AbilityScorePanel, { combatant: this.props.combatant })
+                                "b",
+                                null,
+                                "ac"
                             ),
+                            " ",
+                            this.props.combatant.ac
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section", style: { display: this.props.combatant.savingThrows !== "" ? "" : "none" } },
                             React.createElement(
-                                "div",
-                                { className: "section", style: { display: this.props.combatant.savingThrows !== "" ? "" : "none" } },
-                                React.createElement(
-                                    "b",
-                                    null,
-                                    "saving throws"
-                                ),
-                                " ",
-                                this.props.combatant.savingThrows
+                                "b",
+                                null,
+                                "saving throws"
                             ),
+                            " ",
+                            this.props.combatant.savingThrows
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section", style: { display: this.props.combatant.skills !== "" ? "" : "none" } },
                             React.createElement(
-                                "div",
-                                { className: "section", style: { display: this.props.combatant.skills !== "" ? "" : "none" } },
-                                React.createElement(
-                                    "b",
-                                    null,
-                                    "skills"
-                                ),
-                                " ",
-                                this.props.combatant.skills
+                                "b",
+                                null,
+                                "skills"
                             ),
+                            " ",
+                            this.props.combatant.skills
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section", style: { display: this.props.combatant.speed !== "" ? "" : "none" } },
                             React.createElement(
-                                "div",
-                                { className: "section", style: { display: this.props.combatant.speed !== "" ? "" : "none" } },
-                                React.createElement(
-                                    "b",
-                                    null,
-                                    "speed"
-                                ),
-                                " ",
-                                this.props.combatant.speed
+                                "b",
+                                null,
+                                "speed"
                             ),
+                            " ",
+                            this.props.combatant.speed
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section", style: { display: this.props.combatant.senses !== "" ? "" : "none" } },
                             React.createElement(
-                                "div",
-                                { className: "section", style: { display: this.props.combatant.senses !== "" ? "" : "none" } },
-                                React.createElement(
-                                    "b",
-                                    null,
-                                    "senses"
-                                ),
-                                " ",
-                                this.props.combatant.senses
+                                "b",
+                                null,
+                                "senses"
                             ),
+                            " ",
+                            this.props.combatant.senses
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section", style: { display: this.props.combatant.languages !== "" ? "" : "none" } },
                             React.createElement(
-                                "div",
-                                { className: "section", style: { display: this.props.combatant.languages !== "" ? "" : "none" } },
-                                React.createElement(
-                                    "b",
-                                    null,
-                                    "languages"
-                                ),
-                                " ",
-                                this.props.combatant.languages
+                                "b",
+                                null,
+                                "languages"
                             ),
+                            " ",
+                            this.props.combatant.languages
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section", style: { display: this.props.combatant.equipment !== "" ? "" : "none" } },
                             React.createElement(
-                                "div",
-                                { className: "section", style: { display: this.props.combatant.equipment !== "" ? "" : "none" } },
-                                React.createElement(
-                                    "b",
-                                    null,
-                                    "equipment"
-                                ),
-                                " ",
-                                this.props.combatant.equipment
+                                "b",
+                                null,
+                                "equipment"
                             ),
-                            React.createElement("div", { className: "divider" }),
-                            React.createElement(TraitsPanel, { combatant: this.props.combatant })
-                        )
+                            " ",
+                            this.props.combatant.equipment
+                        ),
+                        React.createElement("div", { className: "divider" }),
+                        React.createElement(TraitsPanel, { combatant: this.props.combatant })
                     );
                 }
                 if (this.props.mode.indexOf("template") !== -1) {
@@ -1934,8 +1918,8 @@ var MonsterCard = function (_React$Component) {
                 }
 
                 var toggle = null;
-                if (this.props.mode.indexOf("combat") !== -1 && this.props.combatant.current) {
-                    // Don't show toggle button for current combatant
+                if (this.props.mode.indexOf("combat") !== -1) {
+                    // Don't show toggle button for combatant
                 } else if (this.props.mode.indexOf("template") !== -1) {
                     // Don't show toggle button for template
                 } else {
@@ -2262,20 +2246,12 @@ var PCCard = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (PCCard.__proto__ || Object.getPrototypeOf(PCCard)).call(this));
 
         _this.state = {
-            showInit: false,
             showDetails: false
         };
         return _this;
     }
 
     _createClass(PCCard, [{
-        key: "toggleInit",
-        value: function toggleInit() {
-            this.setState({
-                showInit: !this.state.showInit
-            });
-        }
-    }, {
         key: "toggleDetails",
         value: function toggleDetails() {
             this.setState({
@@ -2312,10 +2288,41 @@ var PCCard = function (_React$Component) {
                         } }));
                 }
                 if (this.props.mode.indexOf("combat") !== -1) {
+                    if (this.props.mode.indexOf("tactical") !== -1) {
+                        if (this.props.mode.indexOf("on-map") !== -1) {
+                            options.push(React.createElement(
+                                "div",
+                                { key: "mapMove", className: "section centered" },
+                                React.createElement(Radial, {
+                                    direction: "eight",
+                                    click: function click(dir) {
+                                        return _this2.props.mapMove(_this2.props.combatant, dir);
+                                    }
+                                })
+                            ));
+                            options.push(React.createElement(
+                                "button",
+                                { key: "mapRemove", onClick: function onClick() {
+                                        return _this2.props.mapRemove(_this2.props.combatant);
+                                    } },
+                                "remove from map"
+                            ));
+                        }
+                        if (this.props.mode.indexOf("off-map") !== -1) {
+                            options.push(React.createElement(
+                                "button",
+                                { key: "mapAdd", onClick: function onClick() {
+                                        return _this2.props.mapAdd(_this2.props.combatant);
+                                    } },
+                                "add to map"
+                            ));
+                        }
+                        options.push(React.createElement("div", { key: "tactical-div", className: "divider" }));
+                    }
                     if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
                         options.push(React.createElement(
                             "button",
-                            { key: "makeAdd", onClick: function onClick() {
+                            { key: "makeActive", onClick: function onClick() {
                                     return _this2.props.makeActive(_this2.props.combatant);
                                 } },
                             "add to encounter"
@@ -2533,54 +2540,6 @@ var PCCard = function (_React$Component) {
                         { className: "stats" },
                         React.createElement(
                             "div",
-                            { className: "section key-stats" },
-                            React.createElement(
-                                "div",
-                                { className: "key-stat editable", onClick: function onClick() {
-                                        return _this2.toggleInit();
-                                    } },
-                                React.createElement(
-                                    "div",
-                                    { className: "stat-heading" },
-                                    "init"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "stat-value" },
-                                    this.props.combatant.initiative
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "key-stat wide" },
-                                React.createElement(
-                                    "div",
-                                    { className: "stat-heading" },
-                                    "player"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "stat-value" },
-                                    this.props.combatant.player ? this.props.combatant.player : "-"
-                                )
-                            )
-                        ),
-                        React.createElement(
-                            "div",
-                            { style: { display: this.state.showInit ? "" : "none" } },
-                            React.createElement(Spin, {
-                                source: this.props.combatant,
-                                name: "initiative",
-                                label: "initiative",
-                                factors: [1, 5, 10],
-                                nudgeValue: function nudgeValue(delta) {
-                                    return _this2.props.nudgeValue(_this2.props.combatant, "initiative", delta);
-                                }
-                            })
-                        ),
-                        React.createElement("div", { className: "divider" }),
-                        React.createElement(
-                            "div",
                             { className: "section centered" },
                             React.createElement(
                                 "div",
@@ -2602,77 +2561,73 @@ var PCCard = function (_React$Component) {
                                 )
                             )
                         ),
+                        React.createElement("div", { className: "divider" }),
                         React.createElement(
                             "div",
-                            { style: { display: this.state.showDetails || this.props.combatant.current ? "" : "none" } },
-                            React.createElement("div", { className: "divider" }),
+                            { className: "section subheading" },
+                            "languages"
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            this.props.combatant.languages || "-"
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section subheading" },
+                            "passive skills"
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "table" },
                             React.createElement(
                                 "div",
-                                { className: "section subheading" },
-                                "languages"
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "section" },
-                                this.props.combatant.languages || "-"
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "section subheading" },
-                                "passive skills"
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "table" },
+                                null,
                                 React.createElement(
                                     "div",
-                                    null,
+                                    { className: "cell three" },
                                     React.createElement(
-                                        "div",
-                                        { className: "cell three" },
-                                        React.createElement(
-                                            "b",
-                                            null,
-                                            "insight"
-                                        )
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "cell three" },
-                                        React.createElement(
-                                            "b",
-                                            null,
-                                            "invest."
-                                        )
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "cell three" },
-                                        React.createElement(
-                                            "b",
-                                            null,
-                                            "percep."
-                                        )
+                                        "b",
+                                        null,
+                                        "insight"
                                     )
                                 ),
                                 React.createElement(
                                     "div",
-                                    null,
+                                    { className: "cell three" },
                                     React.createElement(
-                                        "div",
-                                        { className: "cell three" },
-                                        this.props.combatant.passiveInsight
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "cell three" },
-                                        this.props.combatant.passiveInvestigation
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "cell three" },
-                                        this.props.combatant.passivePerception
+                                        "b",
+                                        null,
+                                        "invest."
                                     )
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "cell three" },
+                                    React.createElement(
+                                        "b",
+                                        null,
+                                        "percep."
+                                    )
+                                )
+                            ),
+                            React.createElement(
+                                "div",
+                                null,
+                                React.createElement(
+                                    "div",
+                                    { className: "cell three" },
+                                    this.props.combatant.passiveInsight
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "cell three" },
+                                    this.props.combatant.passiveInvestigation
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "cell three" },
+                                    this.props.combatant.passivePerception
                                 )
                             )
                         )
@@ -2680,7 +2635,9 @@ var PCCard = function (_React$Component) {
                 }
 
                 var toggle = null;
-                if (!this.props.combatant.current) {
+                if (this.props.mode.indexOf("combat") !== -1) {
+                    // Don't show toggle button for combatant
+                } else {
                     var imageStyle = this.state.showDetails ? "image rotate" : "image";
                     toggle = React.createElement("img", { className: imageStyle, src: "resources/images/down-arrow.svg", onClick: function onClick() {
                             return _this2.toggleDetails();
@@ -3355,7 +3312,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /*
 <Radial
-    direction="out" "in" "both"
+    direction="out" "in" "both" "eight"
     disabled=BOOLEAN
     click={(dir, in|out => null}
 />
@@ -3387,13 +3344,21 @@ var Radial = function (_React$Component) {
                     style += " disabled";
                 }
 
-                var showOut = this.props.direction === "out" | this.props.direction === "both";
+                var showOut = this.props.direction === "out" | this.props.direction === "both" | this.props.direction === "eight";
                 var showIn = this.props.direction === "in" | this.props.direction === "both";
+                var showDiag = this.props.direction === "eight";
 
                 return React.createElement(
                     "div",
                     { className: style },
-                    React.createElement("div", { className: "empty" }),
+                    React.createElement("div", { className: "empty", style: { display: showDiag ? "none" : "inline-block" } }),
+                    React.createElement(
+                        "div",
+                        { className: "btn diag", style: { display: showDiag ? "inline-block" : "none" } },
+                        React.createElement("img", { src: "resources/images/down-arrow-black.svg", style: { display: showOut ? "inline-block" : "none", transform: "rotate(135deg)" }, onClick: function onClick(e) {
+                                return _this2.click(e, "NW");
+                            } })
+                    ),
                     React.createElement(
                         "div",
                         { className: "btn" },
@@ -3412,7 +3377,14 @@ var Radial = function (_React$Component) {
                                 } })
                         )
                     ),
-                    React.createElement("div", { className: "empty" }),
+                    React.createElement("div", { className: "empty", style: { display: showDiag ? "none" : "inline-block" } }),
+                    React.createElement(
+                        "div",
+                        { className: "btn diag", style: { display: showDiag ? "inline-block" : "none" } },
+                        React.createElement("img", { src: "resources/images/down-arrow-black.svg", style: { display: showOut ? "inline-block" : "none", transform: "rotate(-135deg)" }, onClick: function onClick(e) {
+                                return _this2.click(e, "NE");
+                            } })
+                    ),
                     React.createElement(
                         "div",
                         { className: "btn", style: { padding: showIn && showOut ? "10px 0" : "0" } },
@@ -3434,7 +3406,14 @@ var Radial = function (_React$Component) {
                                 return _this2.click(e, "E", "out");
                             } })
                     ),
-                    React.createElement("div", { className: "empty" }),
+                    React.createElement("div", { className: "empty", style: { display: showDiag ? "none" : "inline-block" } }),
+                    React.createElement(
+                        "div",
+                        { className: "btn diag", style: { display: showDiag ? "inline-block" : "none" } },
+                        React.createElement("img", { src: "resources/images/down-arrow-black.svg", style: { display: showOut ? "inline-block" : "none", transform: "rotate(45deg)" }, onClick: function onClick(e) {
+                                return _this2.click(e, "SW");
+                            } })
+                    ),
                     React.createElement(
                         "div",
                         { className: "btn" },
@@ -3453,7 +3432,14 @@ var Radial = function (_React$Component) {
                                 } })
                         )
                     ),
-                    React.createElement("div", { className: "empty" })
+                    React.createElement("div", { className: "empty", style: { display: showDiag ? "none" : "inline-block" } }),
+                    React.createElement(
+                        "div",
+                        { className: "btn diag", style: { display: showDiag ? "inline-block" : "none" } },
+                        React.createElement("img", { src: "resources/images/down-arrow-black.svg", style: { display: showOut ? "inline-block" : "none", transform: "rotate(-45deg)" }, onClick: function onClick(e) {
+                                return _this2.click(e, "SE");
+                            } })
+                    )
                 );
             } catch (ex) {
                 console.error(ex);
@@ -4722,15 +4708,6 @@ var Dojo = function (_React$Component) {
             });
         }
     }, {
-        key: "setCombatView",
-        value: function setCombatView(view) {
-            var combat = this.getCombat(this.state.selectedCombatID);
-            combat.view = view;
-            this.setState({
-                combats: this.state.combats
-            });
-        }
-    }, {
         key: "makeCurrent",
         value: function makeCurrent(combatant, newRound) {
             var combat = this.getCombat(this.state.selectedCombatID);
@@ -4908,6 +4885,84 @@ var Dojo = function (_React$Component) {
             var combat = this.getCombat(this.state.selectedCombatID);
             var index = combat.combatants.indexOf(combatant);
             combat.combatants.splice(index, 1);
+
+            this.setState({
+                combats: this.state.combats
+            });
+        }
+    }, {
+        key: "mapAdd",
+        value: function mapAdd(combatant, x, y) {
+            var item = createMapItem();
+            item.id = combatant.id;
+            item.type = combatant.type;
+            item.x = x;
+            item.y = y;
+            var size = 1;
+            if (combatant.type === 'monster') {
+                size = miniSize(combatant.size);
+            }
+            item.height = size;
+            item.width = size;
+
+            var combat = this.getCombat(this.state.selectedCombatID);
+            combat.map.items.push(item);
+
+            this.setState({
+                combats: this.state.combats
+            });
+        }
+    }, {
+        key: "mapMove",
+        value: function mapMove(combatant, dir) {
+            var combat = this.getCombat(this.state.selectedCombatID);
+            var item = combat.map.items.find(function (i) {
+                return i.id === combatant.id;
+            });
+            switch (dir) {
+                case 'N':
+                    item.y -= 1;
+                    break;
+                case 'NE':
+                    item.x += 1;
+                    item.y -= 1;
+                    break;
+                case 'E':
+                    item.x += 1;
+                    break;
+                case 'SE':
+                    item.x += 1;
+                    item.y += 1;
+                    break;
+                case 'S':
+                    item.y += 1;
+                    break;
+                case 'SW':
+                    item.x -= 1;
+                    item.y += 1;
+                    break;
+                case 'W':
+                    item.x -= 1;
+                    break;
+                case 'NW':
+                    item.x -= 1;
+                    item.y -= 1;
+                    break;
+            }
+
+            this.setState({
+                combats: this.state.combats
+            });
+        }
+    }, {
+        key: "mapRemove",
+        value: function mapRemove(combatant) {
+            var combat = this.getCombat(this.state.selectedCombatID);
+            var item = combat.map.items.find(function (i) {
+                return i.id === combatant.id;
+            });
+            var index = combat.map.items.indexOf(item);
+            combat.map.items.splice(index, 1);
 
             this.setState({
                 combats: this.state.combats
@@ -5498,6 +5553,15 @@ var Dojo = function (_React$Component) {
                             removeCondition: function removeCondition(combatant, conditionID) {
                                 return _this7.removeCondition(combatant, conditionID);
                             },
+                            mapAdd: function mapAdd(combatant, x, y) {
+                                return _this7.mapAdd(combatant, x, y);
+                            },
+                            mapMove: function mapMove(combatant, dir) {
+                                return _this7.mapMove(combatant, dir);
+                            },
+                            mapRemove: function mapRemove(combatant) {
+                                return _this7.mapRemove(combatant);
+                            },
                             endTurn: function endTurn(combatant) {
                                 return _this7.endTurn(combatant);
                             },
@@ -5514,24 +5578,6 @@ var Dojo = function (_React$Component) {
                             });
 
                             var encounter = this.getEncounter(combat.encounterID);
-
-                            var mapViewSwitch = null;
-                            if (combat.map) {
-                                var combatViewOptions = [{
-                                    id: "list",
-                                    text: "list"
-                                }, {
-                                    id: "map",
-                                    text: "map"
-                                }];
-                                mapViewSwitch = React.createElement(Selector, {
-                                    options: combatViewOptions,
-                                    selectedID: combat.view,
-                                    select: function select(optionID) {
-                                        return _this7.setCombatView(optionID);
-                                    }
-                                });
-                            }
 
                             actions = React.createElement(
                                 "div",
@@ -5588,11 +5634,6 @@ var Dojo = function (_React$Component) {
                                             } },
                                         "end encounter"
                                     )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "section" },
-                                    mapViewSwitch
                                 )
                             );
                         }
@@ -10082,7 +10123,7 @@ var MapPanel = function (_React$Component) {
             var _this3 = this;
 
             try {
-                var border = this.props.mode === "edit" ? 2 : 1;
+                var border = this.props.mode === "edit" ? 2 : 0;
                 var mapDimensions = this.getMapDimensions(border);
                 if (!mapDimensions) {
                     return React.createElement(
@@ -10152,15 +10193,6 @@ var MapPanel = function (_React$Component) {
                             selected: _this3.props.selectedItemID === i.id,
                             select: function select(id) {
                                 return _this3.props.setSelectedItemID(id);
-                            },
-                            startDrag: function startDrag(id) {
-                                return _this3.props.setDraggedTokenID(id);
-                            },
-                            setSelectedItemID: function setSelectedItemID(id) {
-                                return _this3.props.mode === "combat" ? _this3.props.setSelectedItemID(id) : null;
-                            },
-                            setDraggedTokenID: function setDraggedTokenID(item) {
-                                return _this3.props.setDraggedTokenID(item.id);
                             }
                         });
                     });
@@ -10168,7 +10200,7 @@ var MapPanel = function (_React$Component) {
 
                 // Draw the drag overlay
                 var dragOverlay = [];
-                if (this.props.draggedTokenID) {
+                if (this.props.showOverlay) {
                     for (var y = mapDimensions.minY; y !== mapDimensions.maxY + 1; ++y) {
                         for (var x = mapDimensions.minX; x !== mapDimensions.maxX + 1; ++x) {
                             var pos = this.getPosition(x, y, 1, 1, mapDimensions);
@@ -10178,8 +10210,8 @@ var MapPanel = function (_React$Component) {
                                 y: y,
                                 position: pos,
                                 overlay: true,
-                                dropItem: function dropItem(x, y) {
-                                    return _this3.props.dropItem(x, y);
+                                onClick: function onClick(x, y) {
+                                    return _this3.props.gridSquareClicked(x, y);
                                 }
                             }));
                         }
@@ -10197,8 +10229,8 @@ var MapPanel = function (_React$Component) {
                         { className: "grid", style: { height: this.getSideLength() * mapDimensions.height + 1 + "px" } },
                         grid,
                         tiles,
-                        dragOverlay,
-                        tokens
+                        tokens,
+                        dragOverlay
                     )
                 );
             } catch (e) {
@@ -10216,31 +10248,24 @@ var GridSquare = function (_React$Component2) {
     function GridSquare() {
         _classCallCheck(this, GridSquare);
 
-        var _this4 = _possibleConstructorReturn(this, (GridSquare.__proto__ || Object.getPrototypeOf(GridSquare)).call(this));
-
-        _this4.state = {
-            dropTarget: false
-        };
-        return _this4;
+        return _possibleConstructorReturn(this, (GridSquare.__proto__ || Object.getPrototypeOf(GridSquare)).apply(this, arguments));
     }
 
     _createClass(GridSquare, [{
-        key: "setDropTarget",
-        value: function setDropTarget(value) {
-            this.setState({
-                dropTarget: value
-            });
+        key: "click",
+        value: function click(e) {
+            e.stopPropagation();
+            if (this.props.onClick) {
+                this.props.onClick(this.props.x, this.props.y);
+            }
         }
     }, {
-        key: "dragOver",
-        value: function dragOver(e) {
-            e.preventDefault();
-            this.setDropTarget(true);
-        }
-    }, {
-        key: "dragLeave",
-        value: function dragLeave() {
-            this.setDropTarget(false);
+        key: "doubleClick",
+        value: function doubleClick(e) {
+            e.stopPropagation();
+            if (this.props.onDoubleClick) {
+                this.props.onDoubleClick(this.props.x, this.props.y);
+            }
         }
     }, {
         key: "render",
@@ -10251,27 +10276,15 @@ var GridSquare = function (_React$Component2) {
             if (this.props.overlay) {
                 style += " grid-overlay";
             }
-            if (this.state.dropTarget) {
-                style += "drop-target";
-            }
 
             return React.createElement("div", {
                 className: style,
                 style: this.props.position,
                 onClick: function onClick(e) {
-                    return _this5.props.onClick(e);
+                    return _this5.click(e);
                 },
-                onDoubleClick: function onDoubleClick() {
-                    return _this5.props.onDoubleClick(_this5.props.x, _this5.props.y);
-                },
-                onDragOver: function onDragOver(e) {
-                    return _this5.dragOver(e);
-                },
-                onDragLeave: function onDragLeave() {
-                    return _this5.dragLeave();
-                },
-                onDrop: function onDrop() {
-                    return _this5.props.dropItem(_this5.props.x, _this5.props.y);
+                onDoubleClick: function onDoubleClick(e) {
+                    return _this5.doubleClick(e);
                 }
             });
         }
@@ -10340,18 +10353,6 @@ var MapToken = function (_React$Component4) {
             }
         }
     }, {
-        key: "startDrag",
-        value: function startDrag() {
-            if (this.props.selectable) {
-                this.props.startDrag(this.props.token.id);
-            }
-        }
-    }, {
-        key: "endDrag",
-        value: function endDrag() {
-            this.props.startDrag(null);
-        }
-    }, {
         key: "render",
         value: function render() {
             var _this9 = this;
@@ -10405,13 +10406,6 @@ var MapToken = function (_React$Component4) {
                     style: this.props.position,
                     onClick: function onClick(e) {
                         return _this9.select(e);
-                    },
-                    draggable: "true",
-                    onDragStart: function onDragStart() {
-                        return _this9.startDrag();
-                    },
-                    onDragEnd: function onDragEnd() {
-                        return _this9.endDrag();
                     }
                 },
                 initials,
@@ -10422,195 +10416,6 @@ var MapToken = function (_React$Component4) {
     }]);
 
     return MapToken;
-}(React.Component);
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var OffMapPanel = function (_React$Component) {
-    _inherits(OffMapPanel, _React$Component);
-
-    function OffMapPanel() {
-        _classCallCheck(this, OffMapPanel);
-
-        return _possibleConstructorReturn(this, (OffMapPanel.__proto__ || Object.getPrototypeOf(OffMapPanel)).apply(this, arguments));
-    }
-
-    _createClass(OffMapPanel, [{
-        key: "dragOver",
-        value: function dragOver(e) {
-            e.preventDefault();
-        }
-    }, {
-        key: "drop",
-        value: function drop() {
-            var _this2 = this;
-
-            // We are removing the dragged token from the map
-            var onMap = this.props.tokens.find(function (i) {
-                return i.id === _this2.props.draggedTokenID;
-            }) !== null;
-            if (onMap) {
-                this.props.draggedOffMap(this.props.draggedTokenID);
-            }
-        }
-    }, {
-        key: "render",
-        value: function render() {
-            var _this3 = this;
-
-            var pending = [];
-            var active = [];
-            var defeated = [];
-
-            this.props.tokens.forEach(function (c) {
-                var shelf = null;
-                if (c.pending) {
-                    shelf = pending;
-                }
-                if (c.active) {
-                    shelf = active;
-                }
-                if (c.defeated) {
-                    shelf = defeated;
-                }
-
-                shelf.push(React.createElement(OffMapCombatant, {
-                    key: c.id,
-                    combatant: c,
-                    selected: c.id === _this3.props.selectedItemID,
-                    setSelectedItemID: function setSelectedItemID(id) {
-                        return _this3.props.setSelectedItemID(id);
-                    },
-                    setDraggedTokenID: function setDraggedTokenID(id) {
-                        return _this3.props.setDraggedTokenID(id);
-                    }
-                }));
-            });
-
-            var message = "you can drag these map tokens onto the map";
-            if (this.props.draggedTokenID || this.props.tokens.length === 0) {
-                message = "drag map tokens onto this box to remove them from the map";
-            }
-
-            var style = "off-map-tokens";
-            if (this.props.draggedTokenID) {
-                style += " drop-target";
-            }
-
-            return React.createElement(
-                "div",
-                {
-                    className: style,
-                    onDragOver: function onDragOver(e) {
-                        return _this3.dragOver(e);
-                    },
-                    onDrop: function onDrop() {
-                        return _this3.drop();
-                    }
-                },
-                React.createElement(
-                    "div",
-                    { className: "shelf", style: { display: pending.length > 0 ? "block" : "none" } },
-                    React.createElement(
-                        "div",
-                        { className: "shelf-name" },
-                        "waiting for initiative to be entered"
-                    ),
-                    pending
-                ),
-                React.createElement(
-                    "div",
-                    { className: "shelf", style: { display: active.length > 0 ? "block" : "none" } },
-                    React.createElement(
-                        "div",
-                        { className: "shelf-name" },
-                        "active combatants"
-                    ),
-                    active
-                ),
-                React.createElement(
-                    "div",
-                    { className: "shelf", style: { display: defeated.length > 0 ? "block" : "none" } },
-                    React.createElement(
-                        "div",
-                        { className: "shelf-name" },
-                        "defeated"
-                    ),
-                    defeated
-                ),
-                React.createElement("div", { className: "divider", style: { display: this.props.tokens.length > 0 ? "block" : "none" } }),
-                React.createElement(
-                    "div",
-                    { className: "text" },
-                    message
-                )
-            );
-        }
-    }]);
-
-    return OffMapPanel;
-}(React.Component);
-
-var OffMapCombatant = function (_React$Component2) {
-    _inherits(OffMapCombatant, _React$Component2);
-
-    function OffMapCombatant(props) {
-        _classCallCheck(this, OffMapCombatant);
-
-        var _this4 = _possibleConstructorReturn(this, (OffMapCombatant.__proto__ || Object.getPrototypeOf(OffMapCombatant)).call(this));
-
-        var size = miniSize(props.combatant.size);
-
-        var token = createMapItem();
-        token.id = props.combatant.id;
-        token.type = props.combatant.type;
-        token.width = size;
-        token.height = size;
-
-        _this4.state = {
-            token: token
-        };
-        return _this4;
-    }
-
-    _createClass(OffMapCombatant, [{
-        key: "render",
-        value: function render() {
-            var _this5 = this;
-
-            return React.createElement(
-                "div",
-                { className: "off-map-token" },
-                React.createElement(MapToken, {
-                    token: this.state.token,
-                    combatant: this.props.combatant,
-                    selectable: true,
-                    simple: true,
-                    selected: this.state.selectedItemID === this.state.token.id,
-                    select: function select(id) {
-                        return _this5.props.setSelectedItemID(id);
-                    },
-                    startDrag: function startDrag(id) {
-                        return _this5.props.setDraggedTokenID(id);
-                    }
-                }),
-                React.createElement(
-                    "div",
-                    { className: "name" },
-                    this.props.combatant.displayName || this.props.combatant.name
-                )
-            );
-        }
-    }]);
-
-    return OffMapCombatant;
 }(React.Component);
 "use strict";
 
@@ -10981,8 +10786,8 @@ var CombatManagerScreen = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (CombatManagerScreen.__proto__ || Object.getPrototypeOf(CombatManagerScreen)).call(this));
 
         _this.state = {
-            selectedTokenID: null,
-            draggedTokenID: null
+            selectedTokenID: null, // The ID of the combatant that's selected
+            addingToMapID: null // The ID of the combatant we're adding to the map
         };
         return _this;
     }
@@ -10995,55 +10800,18 @@ var CombatManagerScreen = function (_React$Component) {
             });
         }
     }, {
-        key: "setDraggedTokenID",
-        value: function setDraggedTokenID(id) {
+        key: "setAddingToMapID",
+        value: function setAddingToMapID(id) {
             this.setState({
-                draggedTokenID: id
-            });
-        }
-    }, {
-        key: "dropOnMap",
-        value: function dropOnMap(x, y) {
-            var _this2 = this;
-
-            var combatant = this.props.combat.combatants.find(function (c) {
-                return c.id === _this2.state.draggedTokenID;
-            });
-            var item = createMapItem();
-            item.id = combatant.id;
-            item.type = combatant.type;
-            item.x = x;
-            item.y = y;
-            item.width = miniSize(combatant.size);
-            item.height = miniSize(combatant.size);
-
-            this.props.combat.map.items = this.props.combat.map.items.filter(function (i) {
-                return i.id !== item.id;
-            });
-            this.props.combat.map.items.push(item);
-
-            this.setState({
-                selectedItemID: item.id,
-                draggedTokenID: null
-            });
-        }
-    }, {
-        key: "dragOffMap",
-        value: function dragOffMap(id) {
-            this.props.combat.map.items = this.props.combat.map.items.filter(function (i) {
-                return i.id !== id;
-            });
-            this.setState({
-                selectedItemID: id,
-                draggedTokenID: null
+                addingToMapID: id
             });
         }
     }, {
         key: "createCard",
-        value: function createCard(combatant, isPlaceholder) {
-            var _this3 = this;
+        value: function createCard(combatant, placeholder) {
+            var _this2 = this;
 
-            if (isPlaceholder && isPlaceholder(combatant)) {
+            if (placeholder) {
                 return React.createElement(InfoCard, {
                     key: combatant.id,
                     getHeading: function getHeading() {
@@ -11057,81 +10825,118 @@ var CombatManagerScreen = function (_React$Component) {
                         return React.createElement(
                             "div",
                             { className: "section" },
-                            "current turn"
+                            placeholder
                         );
                     }
                 });
             }
 
+            var mode = "combat";
+            if (this.props.combat.map) {
+                mode += " tactical";
+                var onMap = this.props.combat.map.items.find(function (i) {
+                    return i.id === combatant.id;
+                });
+                mode += onMap ? " on-map" : " off-map";
+            }
             switch (combatant.type) {
                 case "pc":
                     return React.createElement(PCCard, {
                         combatant: combatant,
-                        mode: "combat",
+                        mode: mode,
                         changeValue: function changeValue(combatant, type, value) {
-                            return _this3.props.changeValue(combatant, type, value);
+                            return _this2.props.changeValue(combatant, type, value);
                         },
                         nudgeValue: function nudgeValue(combatant, type, delta) {
-                            return _this3.props.nudgeValue(combatant, type, delta);
+                            return _this2.props.nudgeValue(combatant, type, delta);
                         },
                         makeCurrent: function makeCurrent(combatant) {
-                            return _this3.props.makeCurrent(combatant);
+                            return _this2.props.makeCurrent(combatant);
                         },
                         makeActive: function makeActive(combatant) {
-                            return _this3.props.makeActive(combatant);
+                            return _this2.props.makeActive(combatant);
                         },
                         makeDefeated: function makeDefeated(combatant) {
-                            return _this3.props.makeDefeated(combatant);
+                            return _this2.props.makeDefeated(combatant);
                         },
                         removeCombatant: function removeCombatant(combatant) {
-                            return _this3.props.removeCombatant(combatant);
+                            return _this2.props.removeCombatant(combatant);
+                        },
+                        mapAdd: function mapAdd(combatant) {
+                            return _this2.setAddingToMapID(combatant.id);
+                        },
+                        mapMove: function mapMove(combatant, dir) {
+                            return _this2.props.mapMove(combatant, dir);
+                        },
+                        mapRemove: function mapRemove(combatant) {
+                            return _this2.props.mapRemove(combatant);
                         },
                         endTurn: function endTurn(combatant) {
-                            return _this3.props.endTurn(combatant);
+                            return _this2.props.endTurn(combatant);
                         }
                     });
                 case "monster":
                     return React.createElement(MonsterCard, {
                         combatant: combatant,
-                        mode: "combat",
+                        mode: mode,
                         combat: this.props.combat,
                         changeValue: function changeValue(combatant, type, value) {
-                            return _this3.props.changeValue(combatant, type, value);
+                            return _this2.props.changeValue(combatant, type, value);
                         },
                         nudgeValue: function nudgeValue(combatant, type, delta) {
-                            return _this3.props.nudgeValue(combatant, type, delta);
+                            return _this2.props.nudgeValue(combatant, type, delta);
                         },
                         makeCurrent: function makeCurrent(combatant) {
-                            return _this3.props.makeCurrent(combatant);
+                            return _this2.props.makeCurrent(combatant);
                         },
                         makeActive: function makeActive(combatant) {
-                            return _this3.props.makeActive(combatant);
+                            return _this2.props.makeActive(combatant);
                         },
                         makeDefeated: function makeDefeated(combatant) {
-                            return _this3.props.makeDefeated(combatant);
+                            return _this2.props.makeDefeated(combatant);
                         },
                         removeCombatant: function removeCombatant(combatant) {
-                            return _this3.props.removeCombatant(combatant);
+                            return _this2.props.removeCombatant(combatant);
                         },
                         addCondition: function addCondition(combatant, condition) {
-                            return _this3.props.addCondition(combatant, condition);
+                            return _this2.props.addCondition(combatant, condition);
                         },
                         removeCondition: function removeCondition(combatant, conditionID) {
-                            return _this3.props.removeCondition(combatant, conditionID);
+                            return _this2.props.removeCondition(combatant, conditionID);
                         },
                         nudgeConditionValue: function nudgeConditionValue(condition, type, delta) {
-                            return _this3.props.nudgeValue(condition, type, delta);
+                            return _this2.props.nudgeValue(condition, type, delta);
                         },
                         changeConditionValue: function changeConditionValue(condition, type, value) {
-                            return _this3.props.changeValue(condition, type, value);
+                            return _this2.props.changeValue(condition, type, value);
+                        },
+                        mapAdd: function mapAdd(combatant) {
+                            return _this2.setAddingToMapID(combatant.id);
+                        },
+                        mapMove: function mapMove(combatant, dir) {
+                            return _this2.props.mapMove(combatant, dir);
+                        },
+                        mapRemove: function mapRemove(combatant) {
+                            return _this2.props.mapRemove(combatant);
                         },
                         endTurn: function endTurn(combatant) {
-                            return _this3.props.endTurn(combatant);
+                            return _this2.props.endTurn(combatant);
                         }
                     });
                 default:
                     return null;
             }
+        }
+    }, {
+        key: "addCombatantToMap",
+        value: function addCombatantToMap(x, y) {
+            var _this3 = this;
+
+            var combatant = this.props.combat.combatants.find(function (c) {
+                return c.id === _this3.state.addingToMapID;
+            });
+            this.props.mapAdd(combatant, x, y);
+            this.setAddingToMapID(null);
         }
     }, {
         key: "render",
@@ -11140,6 +10945,7 @@ var CombatManagerScreen = function (_React$Component) {
 
             try {
                 var leftPaneContent = null;
+                var centrePaneContent = null;
                 var rightPaneContent = null;
 
                 if (this.props.combat) {
@@ -11157,31 +10963,40 @@ var CombatManagerScreen = function (_React$Component) {
                             ));
                         }
                         if (combatant.pending && !combatant.active && !combatant.defeated) {
-                            pending.push(React.createElement(
-                                "div",
-                                { className: "column", key: combatant.id },
-                                _this4.createCard(combatant, function (combatant) {
-                                    return combatant.current;
-                                })
-                            ));
+                            pending.push(React.createElement(CombatantRow, {
+                                key: combatant.id,
+                                combatant: combatant,
+                                select: function select(combatant) {
+                                    return _this4.setSelectedTokenID(combatant.id);
+                                },
+                                selected: combatant.id === _this4.state.selectedTokenID,
+                                nudgeValue: function nudgeValue(combatant, type, delta) {
+                                    return _this4.props.nudgeValue(combatant, type, delta);
+                                },
+                                makeActive: function makeActive(combatant) {
+                                    return _this4.props.makeActive(combatant);
+                                }
+                            }));
                         }
                         if (!combatant.pending && combatant.active && !combatant.defeated) {
-                            active.push(React.createElement(
-                                "div",
-                                { className: "column", key: combatant.id },
-                                _this4.createCard(combatant, function (combatant) {
-                                    return combatant.current;
-                                })
-                            ));
+                            active.push(React.createElement(CombatantRow, {
+                                key: combatant.id,
+                                combatant: combatant,
+                                select: function select(combatant) {
+                                    return _this4.setSelectedTokenID(combatant.id);
+                                },
+                                selected: combatant.id === _this4.state.selectedTokenID
+                            }));
                         }
                         if (!combatant.pending && !combatant.active && combatant.defeated) {
-                            defeated.push(React.createElement(
-                                "div",
-                                { className: "column", key: combatant.id },
-                                _this4.createCard(combatant, function (combatant) {
-                                    return combatant.current;
-                                })
-                            ));
+                            defeated.push(React.createElement(CombatantRow, {
+                                key: combatant.id,
+                                combatant: combatant,
+                                select: function select(combatant) {
+                                    return _this4.setSelectedTokenID(combatant.id);
+                                },
+                                selected: combatant.id === _this4.state.selectedTokenID
+                            }));
                         }
                     });
 
@@ -11272,109 +11087,76 @@ var CombatManagerScreen = function (_React$Component) {
                         });
                     });
 
-                    switch (this.props.combat.view) {
-                        case "list":
-                            rightPaneContent = React.createElement(
-                                "div",
-                                { className: "combat-right" },
-                                notifications,
-                                React.createElement(CardGroup, {
-                                    heading: "waiting for intiative to be entered",
-                                    content: pending,
-                                    hidden: pending.length === 0,
-                                    showToggle: true
-                                }),
-                                React.createElement(CardGroup, {
-                                    heading: "active combatants",
-                                    content: active,
-                                    hidden: active.length === 0
-                                }),
-                                React.createElement(CardGroup, {
-                                    heading: "defeated",
-                                    content: defeated,
-                                    hidden: defeated.length === 0,
-                                    showToggle: true
-                                })
-                            );
-                            break;
-                        case "map":
-                            var tokenIDs = this.props.combat.map.items.filter(function (item) {
-                                return item.type === "monster" || item.type === "pc";
-                            }).map(function (item) {
-                                return item.id;
-                            });
-                            var offmap = this.props.combat.combatants.filter(function (c) {
-                                return !tokenIDs.includes(c.id);
-                            });
-                            var selection = null;
-                            if (this.state.selectedTokenID) {
-                                var combatant = this.props.combat.combatants.filter(function (c) {
-                                    return !c.current;
-                                }).find(function (c) {
-                                    return c.id === _this4.state.selectedTokenID;
-                                });
-                                if (combatant) {
-                                    selection = this.createCard(combatant);
+                    var mapSection = null;
+                    if (this.props.combat.map) {
+                        mapSection = React.createElement(MapPanel, {
+                            map: this.props.combat.map,
+                            mode: "combat",
+                            showOverlay: this.state.addingToMapID !== null,
+                            combatants: this.props.combat.combatants,
+                            selectedItemID: this.state.selectedTokenID,
+                            setSelectedItemID: function setSelectedItemID(id) {
+                                if (id) {
+                                    _this4.setSelectedTokenID(id);
                                 }
+                            },
+                            gridSquareClicked: function gridSquareClicked(x, y) {
+                                return _this4.addCombatantToMap(x, y);
                             }
-                            if (!selection) {
-                                selection = React.createElement(
+                        });
+                    }
+
+                    var selectedCombatant = null;
+                    if (this.state.selectedTokenID) {
+                        var combatant = this.props.combat.combatants.find(function (c) {
+                            return c.id === _this4.state.selectedTokenID;
+                        });
+                        if (combatant && !combatant.current) {
+                            selectedCombatant = this.createCard(combatant);
+                        }
+                    }
+                    if (!selectedCombatant) {
+                        selectedCombatant = React.createElement(InfoCard, {
+                            key: "selected",
+                            getContent: function getContent() {
+                                return React.createElement(
                                     "div",
-                                    { className: "combat-info" },
-                                    "select a map token to see its details here"
+                                    { className: "section" },
+                                    "select a pc or monster to see its details here"
                                 );
                             }
-                            rightPaneContent = React.createElement(
-                                "div",
-                                { className: "combat-right", style: { height: "100%" } },
-                                React.createElement(MapPanel, {
-                                    map: this.props.combat.map,
-                                    mode: "combat",
-                                    combatants: this.props.combat.combatants,
-                                    selectedItemID: this.state.selectedTokenID,
-                                    setSelectedItemID: function setSelectedItemID(id) {
-                                        return _this4.setSelectedTokenID(id);
-                                    },
-                                    draggedTokenID: this.state.draggedTokenID,
-                                    setDraggedTokenID: function setDraggedTokenID(id) {
-                                        return _this4.setDraggedTokenID(id);
-                                    },
-                                    dropItem: function dropItem(x, y) {
-                                        return _this4.dropOnMap(x, y);
-                                    }
-                                }),
-                                React.createElement(
-                                    "div",
-                                    { className: "row collapse", style: { height: "50%" } },
-                                    React.createElement(
-                                        "div",
-                                        { className: "columns small-12 medium-6 large-6 scrollable" },
-                                        selection
-                                    ),
-                                    React.createElement(
-                                        "div",
-                                        { className: "columns small-12 medium-6 large-6 scrollable" },
-                                        notifications,
-                                        React.createElement(OffMapPanel, {
-                                            tokens: offmap,
-                                            combatants: this.props.combat.combatants,
-                                            draggedOffMap: function draggedOffMap(id) {
-                                                return _this4.dragOffMap(id);
-                                            },
-                                            selectedItemID: this.state.selectedTokenID,
-                                            setSelectedItemID: function setSelectedItemID(id) {
-                                                return _this4.setSelectedTokenID(id);
-                                            },
-                                            draggedTokenID: this.state.draggedTokenID,
-                                            setDraggedTokenID: function setDraggedTokenID(id) {
-                                                return _this4.setDraggedTokenID(id);
-                                            }
-                                        })
-                                    )
-                                )
-                            );
-                            break;
+                        });
                     }
+
+                    centrePaneContent = React.createElement(
+                        "div",
+                        { className: "combat-centre" },
+                        notifications,
+                        React.createElement(CardGroup, {
+                            heading: "waiting for intiative to be entered",
+                            content: pending,
+                            hidden: pending.length === 0,
+                            showToggle: true
+                        }),
+                        mapSection,
+                        React.createElement(CardGroup, {
+                            heading: "active combatants",
+                            content: active,
+                            hidden: active.length === 0
+                        }),
+                        React.createElement(CardGroup, {
+                            heading: "defeated",
+                            content: defeated,
+                            hidden: defeated.length === 0,
+                            showToggle: true
+                        })
+                    );
+
+                    rightPaneContent = React.createElement(
+                        "div",
+                        { className: "combat-right" },
+                        selectedCombatant
+                    );
                 } else {
                     var help = null;
                     if (this.props.showHelp) {
@@ -11407,9 +11189,9 @@ var CombatManagerScreen = function (_React$Component) {
                     );
                 }
 
-                var rightStyle = "columns small-6 medium-8 large-9";
-                if (this.props.combat && this.props.combat.view === "list") {
-                    rightStyle += " scrollable";
+                var centreStyle = "columns small-4 medium-4 large-6";
+                if (this.props.combat) {
+                    centreStyle += " scrollable";
                 }
 
                 return React.createElement(
@@ -11417,12 +11199,17 @@ var CombatManagerScreen = function (_React$Component) {
                     { className: "combat-manager row collapse" },
                     React.createElement(
                         "div",
-                        { className: "columns small-6 medium-4 large-3 scrollable list-column" },
+                        { className: "columns small-4 medium-4 large-3 scrollable list-column" },
                         leftPaneContent
                     ),
                     React.createElement(
                         "div",
-                        { className: rightStyle, style: { height: "100%" } },
+                        { className: "columns small-4 medium-4 large-6 scrollable" },
+                        centrePaneContent
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "columns small-4 medium-4 large-3 scrollable list-column" },
                         rightPaneContent
                     )
                 );
@@ -11530,6 +11317,190 @@ var Notification = function (_React$Component2) {
     }]);
 
     return Notification;
+}(React.Component);
+
+var CombatantRow = function (_React$Component3) {
+    _inherits(CombatantRow, _React$Component3);
+
+    function CombatantRow() {
+        _classCallCheck(this, CombatantRow);
+
+        return _possibleConstructorReturn(this, (CombatantRow.__proto__ || Object.getPrototypeOf(CombatantRow)).apply(this, arguments));
+    }
+
+    _createClass(CombatantRow, [{
+        key: "getInformationText",
+        value: function getInformationText() {
+            if (this.props.combatant.current) {
+                return "current turn";
+            }
+
+            if (this.props.selected) {
+                return "selected";
+            }
+
+            return null;
+        }
+    }, {
+        key: "onClick",
+        value: function onClick(e) {
+            e.stopPropagation();
+            if (this.props.select) {
+                this.props.select(this.props.combatant);
+            }
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this8 = this;
+
+            var init = null;
+            var addBtn = null;
+            if (this.props.combatant.pending) {
+                init = React.createElement(
+                    "div",
+                    { className: "key-stat wide" },
+                    React.createElement(Spin, {
+                        source: this.props.combatant,
+                        name: "initiative",
+                        label: "initiative",
+                        factors: [1, 5, 10],
+                        nudgeValue: function nudgeValue(delta) {
+                            return _this8.props.nudgeValue(_this8.props.combatant, "initiative", delta);
+                        }
+                    })
+                );
+                addBtn = React.createElement(
+                    "button",
+                    { onClick: function onClick() {
+                            return _this8.props.makeActive(_this8.props.combatant);
+                        } },
+                    "add to encounter"
+                );
+            } else {
+                init = React.createElement(
+                    "div",
+                    { className: "key-stat" },
+                    React.createElement(
+                        "div",
+                        { className: "stat-heading" },
+                        "init"
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "stat-value" },
+                        this.props.combatant.initiative
+                    )
+                );
+            }
+
+            var content = null;
+
+            switch (this.props.combatant.type) {
+                case "pc":
+                    content = React.createElement(
+                        "div",
+                        { className: "content" },
+                        React.createElement(
+                            "div",
+                            { className: "section key-stats" },
+                            init,
+                            React.createElement(
+                                "div",
+                                { className: "key-stat wide" },
+                                React.createElement(
+                                    "div",
+                                    { className: "stat-heading" },
+                                    "player"
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "stat-value" },
+                                    this.props.combatant.player ? this.props.combatant.player : "-"
+                                )
+                            )
+                        ),
+                        addBtn
+                    );
+                    break;
+                case "monster":
+                    var hp = this.props.combatant.hp;
+                    if (this.props.combatant.hpTemp > 0) {
+                        hp += " + " + this.props.combatant.hpTemp;
+                    }
+                    var gauge = null;
+                    if (!this.props.combatant.pending) {
+                        gauge = React.createElement(HitPointGauge, { combatant: this.props.combatant });
+                    }
+                    // TODO: Show condition text and duration
+                    content = React.createElement(
+                        "div",
+                        { className: "content" },
+                        React.createElement(
+                            "div",
+                            { className: "section key-stats" },
+                            init,
+                            React.createElement(
+                                "div",
+                                { className: "key-stat" },
+                                React.createElement(
+                                    "div",
+                                    { className: "stat-heading" },
+                                    "ac"
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "stat-value" },
+                                    this.props.combatant.ac
+                                )
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "key-stat" },
+                                React.createElement(
+                                    "div",
+                                    { className: "stat-heading" },
+                                    "hp"
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "stat-value" },
+                                    hp
+                                )
+                            )
+                        ),
+                        addBtn,
+                        gauge
+                    );
+                    break;
+            }
+
+            var style = "combatant-row " + this.props.combatant.type;
+            if (this.props.combatant.current || this.props.selected) {
+                style += " highlight";
+            }
+
+            return React.createElement(
+                "div",
+                { className: style, onClick: function onClick(e) {
+                        return _this8.onClick(e);
+                    } },
+                React.createElement(
+                    "div",
+                    { className: "name" },
+                    this.props.combatant.displayName || this.props.combatant.name || "combatant",
+                    React.createElement(
+                        "span",
+                        { className: "info" },
+                        this.getInformationText()
+                    )
+                ),
+                content
+            );
+        }
+    }]);
+
+    return CombatantRow;
 }(React.Component);
 "use strict";
 

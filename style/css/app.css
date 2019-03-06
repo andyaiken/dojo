@@ -246,12 +246,6 @@ body,
   .welcome-panel .text {
     margin: 7px; }
 
-.combat-right .combat-info {
-  min-height: 50px;
-  margin: 5px;
-  padding: 20px;
-  border: 1px solid #c3c3c3; }
-
 .card-group {
   margin-bottom: 20px;
   padding: 0 5px; }
@@ -269,8 +263,7 @@ body,
 .card {
   background-color: #F5F5F5;
   border: 1px solid #656565;
-  margin: 5px;
-  max-width: 350px; }
+  margin: 5px; }
   .card .heading {
     height: 35px;
     font-size: 15px;
@@ -335,6 +328,30 @@ body,
     font-weight: 600; }
   .card .card-content {
     padding: 5px 10px; }
+
+.combatant-row {
+  margin: 10px 0;
+  background-color: beige;
+  cursor: pointer; }
+  .combatant-row.highlight {
+    cursor: default; }
+  .combatant-row .name {
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 5px 5px 7px 5px; }
+    .combatant-row .name .info {
+      float: right; }
+  .combatant-row .content {
+    padding: 0 10px 10px 10px; }
+  .combatant-row.pc {
+    border: 1px solid #006500; }
+    .combatant-row.pc .name {
+      background-color: #006500; }
+  .combatant-row.monster {
+    border: 1px solid #650000; }
+    .combatant-row.monster .name {
+      background-color: #650000; }
 
 .chart {
   height: 300px;
@@ -446,29 +463,30 @@ body,
     .section .ability-scores .ability-value {
       text-align: center;
       padding-top: 5px; }
-  .section .key-stat {
+  .section.key-stats .key-stat {
     display: inline-block;
     border: 1px solid transparent;
     width: calc((100% - 1px) / 3);
     padding: 5px 0;
     vertical-align: top; }
-    .section .key-stat.wide {
-      width: calc(2 * (100% - 1px) / 3); }
-    .section .key-stat.editable {
+    .section.key-stats .key-stat.wide {
+      width: calc((100% - 1px) / 2); }
+    .section.key-stats .key-stat.full {
+      width: calc(100% - 1px); }
+    .section.key-stats .key-stat.editable {
       cursor: pointer;
       background-color: white;
       border-color: #c3c3c3;
       border-left-width: 5px; }
-      .section .key-stat.editable:hover {
+      .section.key-stats .key-stat.editable:hover {
         border-color: #3c78dc; }
-    .section .key-stat .stat-heading {
+    .section.key-stats .key-stat .stat-heading {
       text-align: center;
       font-weight: 600; }
-    .section .key-stat .stat-value {
+    .section.key-stats .key-stat .stat-value {
       text-align: center;
       font-weight: 600;
-      font-size: 20px;
-      padding-top: 5px; }
+      font-size: 20px; }
   .section .input-label {
     padding-top: 5px;
     font-weight: 600; }
@@ -625,17 +643,12 @@ body,
       background-color: rgba(0, 60, 200, 0.2); }
       .map-panel .grid .grid-square.grid-overlay {
         opacity: 0.5; }
-      .map-panel .grid .grid-square.drop-target {
-        background-color: #3c78dc;
-        opacity: 1; }
   .map-panel.thumbnail {
     pointer-events: none; }
   .map-panel.edit .tile:hover {
     border-color: #3c78dc; }
-  .map-panel.combat {
-    height: 50%; }
-    .map-panel.combat .token:hover {
-      border-color: #3c78dc; }
+  .map-panel.combat .token:hover {
+    border-color: #3c78dc; }
 
 .tile {
   position: absolute;
@@ -712,34 +725,3 @@ body,
     font-size: 8px;
     font-weight: 600;
     text-align: center; }
-
-.off-map-tokens {
-  min-height: 50px;
-  margin: 5px;
-  background-color: white;
-  border: 1px solid #c3c3c3; }
-  .off-map-tokens.drop-target {
-    border-color: #3c78dc;
-    background-color: rgba(60, 120, 220, 0.1); }
-  .off-map-tokens .shelf {
-    margin: 5px;
-    padding-left: 5px;
-    border-left: 5px solid #3c3c3c; }
-    .off-map-tokens .shelf .shelf-name {
-      font-weight: 600;
-      font-size: 14px;
-      padding-left: 5px; }
-  .off-map-tokens .off-map-token {
-    display: inline-block;
-    vertical-align: top;
-    margin: 10px 5px;
-    width: 80px; }
-    .off-map-tokens .off-map-token .token {
-      position: relative;
-      margin: 0 auto;
-      cursor: pointer; }
-    .off-map-tokens .off-map-token .name {
-      padding-top: 10px;
-      text-align: center; }
-  .off-map-tokens .text {
-    margin: 20px; }

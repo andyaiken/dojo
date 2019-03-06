@@ -3,8 +3,8 @@ class CombatManagerScreen extends React.Component {
         super();
 
         this.state = {
-            selectedTokenID: null,
-            draggedTokenID: null
+            selectedTokenID: null,  // The ID of the combatant that's selected
+            addingToMapID: null     // The ID of the combatant we're adding to the map
         };
     }
 
@@ -14,62 +14,44 @@ class CombatManagerScreen extends React.Component {
         });
     }
 
-    setDraggedTokenID(id) {
+    setAddingToMapID(id) {
         this.setState({
-            draggedTokenID: id
+            addingToMapID: id
         });
     }
 
-    dropOnMap(x, y) {
-        var combatant = this.props.combat.combatants.find(c => c.id === this.state.draggedTokenID);
-        var item = createMapItem();
-        item.id = combatant.id;
-        item.type = combatant.type;
-        item.x = x;
-        item.y = y;
-        item.width = miniSize(combatant.size);
-        item.height = miniSize(combatant.size);
-
-        this.props.combat.map.items = this.props.combat.map.items.filter(i => i.id !== item.id);
-        this.props.combat.map.items.push(item);
-
-        this.setState({
-            selectedItemID: item.id,
-            draggedTokenID: null
-        });
-    }
-
-    dragOffMap(id) {
-        this.props.combat.map.items = this.props.combat.map.items.filter(i => i.id !== id);
-        this.setState({
-            selectedItemID: id,
-            draggedTokenID: null
-        });
-    }
-
-    createCard(combatant, isPlaceholder) {
-        if (isPlaceholder && isPlaceholder(combatant)) {
+    createCard(combatant, placeholder) {
+        if (placeholder) {
             return (
                 <InfoCard
                     key={combatant.id}
                     getHeading={() => <div className="heading">{combatant.displayName || combatant.name}</div>}
-                    getContent={() => <div className="section">current turn</div>}
+                    getContent={() => <div className="section">{placeholder}</div>}
                 />
             );
         }
 
+        var mode = "combat";
+        if (this.props.combat.map) {
+            mode += " tactical";
+            var onMap = this.props.combat.map.items.find(i => i.id === combatant.id);
+            mode += onMap ? " on-map" : " off-map";
+        }
         switch (combatant.type) {
             case "pc":
                 return (
                     <PCCard
                         combatant={combatant}
-                        mode={"combat"}
+                        mode={mode}
                         changeValue={(combatant, type, value) => this.props.changeValue(combatant, type, value)}
                         nudgeValue={(combatant, type, delta) => this.props.nudgeValue(combatant, type, delta)}
                         makeCurrent={combatant => this.props.makeCurrent(combatant)}
                         makeActive={combatant => this.props.makeActive(combatant)}
                         makeDefeated={combatant => this.props.makeDefeated(combatant)}
                         removeCombatant={combatant => this.props.removeCombatant(combatant)}
+                        mapAdd={combatant => this.setAddingToMapID(combatant.id)}
+                        mapMove={(combatant, dir) => this.props.mapMove(combatant, dir)}
+                        mapRemove={combatant => this.props.mapRemove(combatant)}
                         endTurn={combatant => this.props.endTurn(combatant)}
                     />
                 );
@@ -77,7 +59,7 @@ class CombatManagerScreen extends React.Component {
                 return (
                     <MonsterCard
                         combatant={combatant}
-                        mode={"combat"}
+                        mode={mode}
                         combat={this.props.combat}
                         changeValue={(combatant, type, value) => this.props.changeValue(combatant, type, value)}
                         nudgeValue={(combatant, type, delta) => this.props.nudgeValue(combatant, type, delta)}
@@ -89,6 +71,9 @@ class CombatManagerScreen extends React.Component {
                         removeCondition={(combatant, conditionID) => this.props.removeCondition(combatant, conditionID)}
                         nudgeConditionValue={(condition, type, delta) => this.props.nudgeValue(condition, type, delta)}
                         changeConditionValue={(condition, type, value) => this.props.changeValue(condition, type, value)}
+                        mapAdd={combatant => this.setAddingToMapID(combatant.id)}
+                        mapMove={(combatant, dir) => this.props.mapMove(combatant, dir)}
+                        mapRemove={combatant => this.props.mapRemove(combatant)}
                         endTurn={(combatant) => this.props.endTurn(combatant)}
                     />
                 );
@@ -97,9 +82,16 @@ class CombatManagerScreen extends React.Component {
         }
     }
 
+    addCombatantToMap(x, y) {
+        var combatant = this.props.combat.combatants.find(c => c.id === this.state.addingToMapID);
+        this.props.mapAdd(combatant, x, y);
+        this.setAddingToMapID(null);
+    }
+
     render() {
         try {
             var leftPaneContent = null;
+            var centrePaneContent = null;
             var rightPaneContent = null;
 
             if (this.props.combat) {
@@ -118,23 +110,34 @@ class CombatManagerScreen extends React.Component {
                     }
                     if (combatant.pending && !combatant.active && !combatant.defeated) {
                         pending.push(
-                            <div className="column" key={combatant.id}>
-                                {this.createCard(combatant, combatant => combatant.current)}
-                            </div>
+                            <CombatantRow
+                                key={combatant.id}
+                                combatant={combatant}
+                                select={combatant => this.setSelectedTokenID(combatant.id)}
+                                selected={combatant.id === this.state.selectedTokenID}
+                                nudgeValue={(combatant, type, delta) => this.props.nudgeValue(combatant, type, delta)}
+                                makeActive={combatant => this.props.makeActive(combatant)}
+                            />
                         );
                     }
                     if (!combatant.pending && combatant.active && !combatant.defeated) {
                         active.push(
-                            <div className="column" key={combatant.id}>
-                                {this.createCard(combatant, combatant => combatant.current)}
-                            </div>
+                            <CombatantRow
+                                key={combatant.id}
+                                combatant={combatant}
+                                select={combatant => this.setSelectedTokenID(combatant.id)}
+                                selected={combatant.id === this.state.selectedTokenID}
+                            />
                         );
                     }
                     if (!combatant.pending && !combatant.active && combatant.defeated) {
                         defeated.push(
-                            <div className="column" key={combatant.id}>
-                                {this.createCard(combatant, combatant => combatant.current)}
-                            </div>
+                            <CombatantRow
+                                key={combatant.id}
+                                combatant={combatant}
+                                select={combatant => this.setSelectedTokenID(combatant.id)}
+                                selected={combatant.id === this.state.selectedTokenID}
+                            />
                         );
                     }
                 });
@@ -196,86 +199,72 @@ class CombatManagerScreen extends React.Component {
                     />
                 );
 
-                switch (this.props.combat.view) {
-                    case "list":
-                        rightPaneContent = (
-                            <div className="combat-right">
-                                {notifications}
-                                <CardGroup
-                                    heading="waiting for intiative to be entered"
-                                    content={pending}
-                                    hidden={pending.length === 0}
-                                    showToggle={true}
-                                />
-                                <CardGroup
-                                    heading="active combatants"
-                                    content={active}
-                                    hidden={active.length === 0}
-                                />
-                                <CardGroup
-                                    heading="defeated"
-                                    content={defeated}
-                                    hidden={defeated.length === 0}
-                                    showToggle={true}
-                                />
-                            </div>
-                        );
-                        break;
-                    case "map":
-                        var tokenIDs = this.props.combat.map.items
-                            .filter(item => (item.type === "monster") || (item.type === "pc"))
-                            .map(item => item.id);
-                        var offmap = this.props.combat.combatants
-                            .filter(c => !tokenIDs.includes(c.id));
-                        var selection = null;
-                        if (this.state.selectedTokenID) {
-                            var combatant = this.props.combat.combatants
-                                .filter(c => !c.current)
-                                .find(c => c.id === this.state.selectedTokenID);
-                            if (combatant) {
-                                selection = this.createCard(combatant);
-                            }
-                        }
-                        if (!selection) {
-                            selection = (
-                                <div className="combat-info">
-                                    select a map token to see its details here
-                                </div>
-                            )
-                        }
-                        rightPaneContent = (
-                            <div className="combat-right" style={{ height: "100%" }}>
-                                <MapPanel
-                                    map={this.props.combat.map}
-                                    mode="combat"
-                                    combatants={this.props.combat.combatants}
-                                    selectedItemID={this.state.selectedTokenID}
-                                    setSelectedItemID={id => this.setSelectedTokenID(id)}
-                                    draggedTokenID={this.state.draggedTokenID}
-                                    setDraggedTokenID={id => this.setDraggedTokenID(id)}
-                                    dropItem={(x, y) => this.dropOnMap(x, y)}
-                                />
-                                <div className="row collapse" style={{ height: "50%" }}>
-                                    <div className="columns small-12 medium-6 large-6 scrollable">
-                                        {selection}
-                                    </div>
-                                    <div className="columns small-12 medium-6 large-6 scrollable">
-                                        {notifications}
-                                        <OffMapPanel
-                                            tokens={offmap}
-                                            combatants={this.props.combat.combatants}
-                                            draggedOffMap={id => this.dragOffMap(id)}
-                                            selectedItemID={this.state.selectedTokenID}
-                                            setSelectedItemID={id => this.setSelectedTokenID(id)}
-                                            draggedTokenID={this.state.draggedTokenID}
-                                            setDraggedTokenID={id => this.setDraggedTokenID(id)}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                        break;
+                var mapSection = null;
+                if (this.props.combat.map) {
+                    mapSection = (
+                        <MapPanel
+                            map={this.props.combat.map}
+                            mode="combat"
+                            showOverlay={this.state.addingToMapID !== null}
+                            combatants={this.props.combat.combatants}
+                            selectedItemID={this.state.selectedTokenID}
+                            setSelectedItemID={id => {
+                                if (id) {
+                                    this.setSelectedTokenID(id);
+                                }
+                            }}
+                            gridSquareClicked={(x, y) => this.addCombatantToMap(x, y)}
+                        />
+                    );
                 }
+
+                var selectedCombatant = null;
+                if (this.state.selectedTokenID) {
+                    var combatant = this.props.combat.combatants.find(c => c.id === this.state.selectedTokenID);
+                    if (combatant && !combatant.current) {
+                        selectedCombatant = this.createCard(combatant);
+                    }
+                }
+                if (!selectedCombatant) {
+                    selectedCombatant = (
+                        <InfoCard
+                            key="selected"
+                            getContent={() =>
+                                <div className="section">select a pc or monster to see its details here</div>
+                            }
+                        />
+                    );
+                }
+
+                centrePaneContent = (
+                    <div className="combat-centre">
+                        {notifications}
+                        <CardGroup
+                            heading="waiting for intiative to be entered"
+                            content={pending}
+                            hidden={pending.length === 0}
+                            showToggle={true}
+                        />
+                        {mapSection}
+                        <CardGroup
+                            heading="active combatants"
+                            content={active}
+                            hidden={active.length === 0}
+                        />
+                        <CardGroup
+                            heading="defeated"
+                            content={defeated}
+                            hidden={defeated.length === 0}
+                            showToggle={true}
+                        />
+                    </div>
+                );
+
+                rightPaneContent = (
+                    <div className="combat-right">
+                        {selectedCombatant}
+                    </div>
+                );
             } else {
                 var help = null;
                 if (this.props.showHelp) {
@@ -304,17 +293,20 @@ class CombatManagerScreen extends React.Component {
                 );
             }
 
-            var rightStyle = "columns small-6 medium-8 large-9";
-            if ((this.props.combat) && (this.props.combat.view === "list")) {
-                rightStyle += " scrollable";
+            var centreStyle = "columns small-4 medium-4 large-6";
+            if (this.props.combat) {
+                centreStyle += " scrollable";
             }
 
             return (
                 <div className="combat-manager row collapse">
-                    <div className="columns small-6 medium-4 large-3 scrollable list-column">
+                    <div className="columns small-4 medium-4 large-3 scrollable list-column">
                         {leftPaneContent}
                     </div>
-                    <div className={rightStyle} style={{ height: "100%" }}>
+                    <div className="columns small-4 medium-4 large-6 scrollable">
+                        {centrePaneContent}
+                    </div>
+                    <div className="columns small-4 medium-4 large-3 scrollable list-column">
                         {rightPaneContent}
                     </div>
                 </div>
@@ -368,5 +360,118 @@ class Notification extends React.Component {
                     </div>
                 );
         }
+    }
+}
+
+class CombatantRow extends React.Component {
+    getInformationText() {
+        if (this.props.combatant.current) {
+            return "current turn";
+        }
+
+        if (this.props.selected) {
+            return "selected";
+        }
+
+        return null;
+    }
+
+    onClick(e) {
+        e.stopPropagation();
+        if (this.props.select) {
+            this.props.select(this.props.combatant);
+        }
+    }
+
+    render() {
+        var init = null;
+        var addBtn = null;
+        if (this.props.combatant.pending) {
+            init = (
+                <div className="key-stat wide">
+                    <Spin
+                        source={this.props.combatant}
+                        name="initiative"
+                        label="initiative"
+                        factors={[1, 5, 10]}
+                        nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "initiative", delta)}
+                    />
+                </div>
+            );
+            addBtn = (
+                <button onClick={() => this.props.makeActive(this.props.combatant)}>add to encounter</button>
+            );
+        } else {
+            init = (
+                <div className="key-stat">
+                    <div className="stat-heading">init</div>
+                    <div className="stat-value">{this.props.combatant.initiative}</div>
+                </div>
+            );
+        }
+
+        var content = null;
+
+        switch (this.props.combatant.type) {
+            case "pc":
+                content = (
+                    <div className="content">
+                        <div className="section key-stats">
+                            {init}
+                            <div className="key-stat wide">
+                                <div className="stat-heading">player</div>
+                                <div className="stat-value">{this.props.combatant.player ? this.props.combatant.player : "-"}</div>
+                            </div>
+                        </div>
+                        {addBtn}
+                    </div>
+                );
+                break;
+            case "monster":
+                var hp = this.props.combatant.hp;
+                if (this.props.combatant.hpTemp > 0) {
+                    hp += " + " + this.props.combatant.hpTemp;
+                }
+                var gauge = null;
+                if (!this.props.combatant.pending) {
+                    gauge = (
+                        <HitPointGauge combatant={this.props.combatant} />
+                    );
+                }
+                // TODO: Show condition text and duration
+                content = (
+                    <div className="content">
+                        <div className="section key-stats">
+                            {init}
+                            <div className="key-stat">
+                                <div className="stat-heading">ac</div>
+                                <div className="stat-value">{this.props.combatant.ac}</div>
+                            </div>
+                            <div className="key-stat">
+                                <div className="stat-heading">hp</div>
+                                <div className="stat-value">{hp}</div>
+                            </div>
+                        </div>
+                        {addBtn}
+                        {gauge}
+                    </div>
+                );
+                break;
+        }
+
+        var style = "combatant-row " + this.props.combatant.type;
+        if (this.props.combatant.current || this.props.selected) {
+            style += " highlight";
+        }
+
+        return (
+            <div className={style} onClick={e => this.onClick(e)}>
+                <div className="name">
+                    {this.props.combatant.displayName || this.props.combatant.name || "combatant"}
+                    <span className="info">{this.getInformationText()}</span>
+                </div>
+                {content}
+            </div>
+        );
     }
 }

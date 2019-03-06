@@ -75,7 +75,7 @@ class MapPanel extends React.Component {
 
     render() {
         try {
-            var border = (this.props.mode === "edit") ? 2 : 1;
+            var border = (this.props.mode === "edit") ? 2 : 0;
             var mapDimensions = this.getMapDimensions(border);
             if (!mapDimensions) {
                 return (
@@ -139,9 +139,6 @@ class MapPanel extends React.Component {
                                 simple={this.props.mode === "thumbnail"}
                                 selected={this.props.selectedItemID ===  i.id}
                                 select={id => this.props.setSelectedItemID(id)}
-                                startDrag={id => this.props.setDraggedTokenID(id)}
-                                setSelectedItemID={id => this.props.mode === "combat" ? this.props.setSelectedItemID(id) : null}
-                                setDraggedTokenID={item => this.props.setDraggedTokenID(item.id)}
                             />
                         );
                     });
@@ -149,7 +146,7 @@ class MapPanel extends React.Component {
 
             // Draw the drag overlay
             var dragOverlay = [];
-            if (this.props.draggedTokenID) {
+            if (this.props.showOverlay) {
                 for (var y = mapDimensions.minY; y !== mapDimensions.maxY + 1; ++y) {
                     for (var x = mapDimensions.minX; x !== mapDimensions.maxX + 1; ++x) {
                         var pos = this.getPosition(x, y, 1, 1, mapDimensions);
@@ -160,7 +157,7 @@ class MapPanel extends React.Component {
                                 y={y}
                                 position={pos}
                                 overlay={true}
-                                dropItem={(x, y) => this.props.dropItem(x, y)}
+                                onClick={(x, y) => this.props.gridSquareClicked(x, y)}
                             />
                         );
                     }
@@ -173,8 +170,8 @@ class MapPanel extends React.Component {
                     <div className="grid" style={{ height: ((this.getSideLength() * mapDimensions.height) + 1) + "px" }}>
                         {grid}
                         {tiles}
-                        {dragOverlay}
                         {tokens}
+                        {dragOverlay}
                     </div>
                 </div>
             );
@@ -185,27 +182,18 @@ class MapPanel extends React.Component {
 }
 
 class GridSquare extends React.Component {
-    constructor() {
-        super();
-
-        this.state = {
-            dropTarget: false
-        };
+    click(e) {
+        e.stopPropagation();
+        if (this.props.onClick) {
+            this.props.onClick(this.props.x, this.props.y);
+        }
     }
 
-    setDropTarget(value) {
-        this.setState({
-            dropTarget: value
-        });
-    }
-
-    dragOver(e) {
-        e.preventDefault();
-        this.setDropTarget(true);
-    }
-
-    dragLeave() {
-        this.setDropTarget(false);
+    doubleClick(e) {
+        e.stopPropagation();
+        if (this.props.onDoubleClick) {
+            this.props.onDoubleClick(this.props.x, this.props.y);
+        }
     }
 
     render() {
@@ -213,19 +201,13 @@ class GridSquare extends React.Component {
         if (this.props.overlay) {
             style += " grid-overlay";
         }
-        if (this.state.dropTarget) {
-            style += "drop-target";
-        }
 
         return (
             <div
                 className={style}
                 style={this.props.position}
-                onClick={e => this.props.onClick(e)}
-                onDoubleClick={() => this.props.onDoubleClick(this.props.x, this.props.y)}
-                onDragOver={e => this.dragOver(e)}
-                onDragLeave={() => this.dragLeave()}
-                onDrop={() => this.props.dropItem(this.props.x, this.props.y)}
+                onClick={e => this.click(e)}
+                onDoubleClick={e => this.doubleClick(e)}
             >
             </div>
         );
@@ -265,16 +247,6 @@ class MapToken extends React.Component {
             e.stopPropagation();
             this.props.select(this.props.token.id);
         }
-    }
-
-    startDrag() {
-        if (this.props.selectable) {
-            this.props.startDrag(this.props.token.id);
-        }
-    }
-
-    endDrag() {
-        this.props.startDrag(null);
     }
 
     render() {
@@ -321,9 +293,6 @@ class MapToken extends React.Component {
                 className={style}
                 style={this.props.position}
                 onClick={e => this.select(e)}
-                draggable="true"
-                onDragStart={() => this.startDrag()}
-                onDragEnd={() => this.endDrag()}
             >
                 {initials}
                 {hpGauge}

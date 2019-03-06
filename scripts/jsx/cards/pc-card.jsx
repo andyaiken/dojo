@@ -2,15 +2,8 @@ class PCCard extends React.Component {
     constructor() {
         super();
         this.state = {
-            showInit: false,
             showDetails: false
         };
-    }
-
-    toggleInit() {
-        this.setState({
-            showInit: !this.state.showInit
-        })
     }
 
     toggleDetails() {
@@ -31,8 +24,25 @@ class PCCard extends React.Component {
                 options.push(<ConfirmButton key="remove" text="delete pc" callback={() => this.props.removeCombatant(this.props.combatant)} />);
             }
             if (this.props.mode.indexOf("combat") !== -1) {
+                if (this.props.mode.indexOf("tactical") !== -1) {
+                    if (this.props.mode.indexOf("on-map") !== -1) {
+                        options.push(
+                            <div key="mapMove" className="section centered">
+                                <Radial
+                                    direction="eight"
+                                    click={dir => this.props.mapMove(this.props.combatant, dir)}
+                                />
+                            </div>
+                        );
+                        options.push(<button key="mapRemove" onClick={() => this.props.mapRemove(this.props.combatant)}>remove from map</button>);
+                    }
+                    if (this.props.mode.indexOf("off-map") !== -1) {
+                        options.push(<button key="mapAdd" onClick={() => this.props.mapAdd(this.props.combatant)}>add to map</button>);
+                    }
+                    options.push(<div key="tactical-div" className="divider"></div>);
+                }
                 if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
-                    options.push(<button key="makeAdd" onClick={() => this.props.makeActive(this.props.combatant)}>add to encounter</button>);
+                    options.push(<button key="makeActive" onClick={() => this.props.makeActive(this.props.combatant)}>add to encounter</button>);
                     options.push(<ConfirmButton key="remove" text="remove from encounter" callback={() => this.props.removeCombatant(this.props.combatant)} />);
                 }
                 if (!this.props.combatant.pending && this.props.combatant.active && !this.props.combatant.defeated) {
@@ -124,50 +134,28 @@ class PCCard extends React.Component {
             if (this.props.mode.indexOf("combat") !== -1) {
                 stats = (
                     <div className="stats">
-                        <div className="section key-stats">
-                            <div className="key-stat editable" onClick={() => this.toggleInit()}>
-                                <div className="stat-heading">init</div>
-                                <div className="stat-value">{this.props.combatant.initiative}</div>
-                            </div>
-                            <div className="key-stat wide">
-                                <div className="stat-heading">player</div>
-                                <div className="stat-value">{this.props.combatant.player ? this.props.combatant.player : "-"}</div>
-                            </div>
-                        </div>
-                        <div style={{ display: this.state.showInit ? "" : "none" }}>
-                            <Spin
-                                source={this.props.combatant}
-                                name="initiative"
-                                label="initiative"
-                                factors={[1, 5, 10]}
-                                nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "initiative", delta)}
-                            />
-                        </div>
-                        <div className="divider"></div>
                         <div className="section centered">
                             <div className="lowercase">level {this.props.combatant.level} {this.props.combatant.race || 'race'} {this.props.combatant.classes || 'class'}</div>
                             <div style={{ display: this.props.combatant.url ? "" : "none" }}>
                                 <a href={this.props.combatant.url} target="_blank">d&d beyond sheet</a>
                             </div>
                         </div>
-                        <div style={{ display: (this.state.showDetails || this.props.combatant.current) ? "" : "none" }}>
-                            <div className="divider"></div>
-                            <div className="section subheading">languages</div>
-                            <div className="section">
-                                    {this.props.combatant.languages || "-"}
+                        <div className="divider"></div>
+                        <div className="section subheading">languages</div>
+                        <div className="section">
+                                {this.props.combatant.languages || "-"}
+                        </div>
+                        <div className="section subheading">passive skills</div>
+                        <div className="table">
+                            <div>
+                                <div className="cell three"><b>insight</b></div>
+                                <div className="cell three"><b>invest.</b></div>
+                                <div className="cell three"><b>percep.</b></div>
                             </div>
-                            <div className="section subheading">passive skills</div>
-                            <div className="table">
-                                <div>
-                                    <div className="cell three"><b>insight</b></div>
-                                    <div className="cell three"><b>invest.</b></div>
-                                    <div className="cell three"><b>percep.</b></div>
-                                </div>
-                                <div>
-                                    <div className="cell three">{this.props.combatant.passiveInsight}</div>
-                                    <div className="cell three">{this.props.combatant.passiveInvestigation}</div>
-                                    <div className="cell three">{this.props.combatant.passivePerception}</div>
-                                </div>
+                            <div>
+                                <div className="cell three">{this.props.combatant.passiveInsight}</div>
+                                <div className="cell three">{this.props.combatant.passiveInvestigation}</div>
+                                <div className="cell three">{this.props.combatant.passivePerception}</div>
                             </div>
                         </div>
                     </div>
@@ -175,7 +163,9 @@ class PCCard extends React.Component {
             }
 
             var toggle = null;
-            if (!this.props.combatant.current) {
+            if (this.props.mode.indexOf("combat") !== -1) {
+                // Don't show toggle button for combatant
+            } else {
                 var imageStyle = this.state.showDetails ? "image rotate" : "image";
                 toggle = <img className={imageStyle} src="resources/images/down-arrow.svg" onClick={() => this.toggleDetails()} />
             }

@@ -160,6 +160,8 @@
       .radial .btn img:hover,
       .radial .empty img:hover {
         background-color: rgba(60, 120, 220, 0.2); }
+  .radial .btn.diag img {
+    padding: 7px; }
   .radial.both .btn img {
     width: 20px;
     height: 20px; }
