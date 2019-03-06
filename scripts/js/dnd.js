@@ -519,6 +519,25 @@ function conditionText(condition) {
     }
 }
 
+function conditionDurationText(condition, combat) {
+    if (condition.duration !== null) {
+        switch (condition.duration.type) {
+            case "saves":
+                var saves = condition.duration.count > 1 ? "saves" : "save";
+                return "until you make " + condition.duration.count + " " + condition.duration.saveType + " " + saves + " at dc " + condition.duration.saveDC;
+            case "combatant":
+                var point = condition.duration.point;
+                var c = combat.combatants.find(c => c.id == condition.duration.combatantID);
+                var combatant = c ? (c.displayName || c.name || "unnamed monster") + "'s" : "someone's";
+                return "until the " + point + " of " + combatant + " next turn";
+            case "rounds":
+                return "for " + condition.duration.count + " round(s)";
+        }
+    }
+
+    return null;
+}
+
 function getMonsterNames(encounter) {
     var monsterNames = [];
     if (encounter) {

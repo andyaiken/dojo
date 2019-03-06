@@ -20,23 +20,14 @@ class CombatManagerScreen extends React.Component {
         });
     }
 
-    createCard(combatant, placeholder) {
-        if (placeholder) {
-            return (
-                <InfoCard
-                    key={combatant.id}
-                    getHeading={() => <div className="heading">{combatant.displayName || combatant.name}</div>}
-                    getContent={() => <div className="section">{placeholder}</div>}
-                />
-            );
-        }
-
+    createCard(combatant) {
         var mode = "combat";
         if (this.props.combat.map) {
             mode += " tactical";
             var onMap = this.props.combat.map.items.find(i => i.id === combatant.id);
             mode += onMap ? " on-map" : " off-map";
         }
+
         switch (combatant.type) {
             case "pc":
                 return (
@@ -113,6 +104,7 @@ class CombatManagerScreen extends React.Component {
                             <CombatantRow
                                 key={combatant.id}
                                 combatant={combatant}
+                                combat={this.props.combat}
                                 select={combatant => this.setSelectedTokenID(combatant.id)}
                                 selected={combatant.id === this.state.selectedTokenID}
                                 nudgeValue={(combatant, type, delta) => this.props.nudgeValue(combatant, type, delta)}
@@ -125,6 +117,7 @@ class CombatManagerScreen extends React.Component {
                             <CombatantRow
                                 key={combatant.id}
                                 combatant={combatant}
+                                combat={this.props.combat}
                                 select={combatant => this.setSelectedTokenID(combatant.id)}
                                 selected={combatant.id === this.state.selectedTokenID}
                             />
@@ -135,6 +128,7 @@ class CombatManagerScreen extends React.Component {
                             <CombatantRow
                                 key={combatant.id}
                                 combatant={combatant}
+                                combat={this.props.combat}
                                 select={combatant => this.setSelectedTokenID(combatant.id)}
                                 selected={combatant.id === this.state.selectedTokenID}
                             />
@@ -153,15 +147,9 @@ class CombatManagerScreen extends React.Component {
                     );
                 }
 
-                leftPaneContent = (
-                    <div className="combat-left">
-                        {current}
-                    </div>
-                );
-
                 if (this.props.showHelp && (pending.length !== 0)) {
                     var help = (
-                        <div className="column" key="help">
+                        <div key="help">
                             <InfoCard
                                 getContent={() =>
                                     <div>
@@ -177,7 +165,7 @@ class CombatManagerScreen extends React.Component {
 
                 if (this.props.showHelp && (current.length === 0)) {
                     var help = (
-                        <div className="column" key="help">
+                        <div key="help">
                             <InfoCard
                                 getContent={() =>
                                     <div>
@@ -236,6 +224,15 @@ class CombatManagerScreen extends React.Component {
                     );
                 }
 
+                leftPaneContent = (
+                    <div className="combat-left">
+                        <CardGroup
+                            heading="initiative holder"
+                            content={current}
+                        />
+                    </div>
+                );
+
                 centrePaneContent = (
                     <div className="combat-centre">
                         {notifications}
@@ -247,7 +244,7 @@ class CombatManagerScreen extends React.Component {
                         />
                         {mapSection}
                         <CardGroup
-                            heading="active combatants"
+                            heading="combatants in the encounter"
                             content={active}
                             hidden={active.length === 0}
                         />
@@ -262,7 +259,10 @@ class CombatManagerScreen extends React.Component {
 
                 rightPaneContent = (
                     <div className="combat-right">
-                        {selectedCombatant}
+                        <CardGroup
+                            heading="selected combatant"
+                            content={[selectedCombatant]}
+                        />
                     </div>
                 );
             } else {
@@ -293,20 +293,15 @@ class CombatManagerScreen extends React.Component {
                 );
             }
 
-            var centreStyle = "columns small-4 medium-4 large-6";
-            if (this.props.combat) {
-                centreStyle += " scrollable";
-            }
-
             return (
                 <div className="combat-manager row collapse">
-                    <div className="columns small-4 medium-4 large-3 scrollable list-column">
+                    <div className="columns small-4 medium-3 large-3 scrollable list-column">
                         {leftPaneContent}
                     </div>
-                    <div className="columns small-4 medium-4 large-6 scrollable">
+                    <div className="columns small-4 medium-6 large-6 scrollable list-column">
                         {centrePaneContent}
                     </div>
-                    <div className="columns small-4 medium-4 large-3 scrollable list-column">
+                    <div className="columns small-4 medium-3 large-3 scrollable list-column">
                         {rightPaneContent}
                     </div>
                 </div>
@@ -438,6 +433,31 @@ class CombatantRow extends React.Component {
                         <HitPointGauge combatant={this.props.combatant} />
                     );
                 }
+                var conditions = null;
+                if (this.props.combatant.conditions) {
+                    conditions = this.props.combatant.conditions.map(c => {
+                        var name = c.name;
+                        if (c.name === "exhausted") {
+                            name += " (" + c.level + ")";
+                        }
+                        if (c.duration) {
+                            name += " " + conditionDurationText(c, this.props.combat);
+                        }
+                        var description = [];
+                        if (c.type === "standard") {
+                            var text = conditionText(c);
+                            for (var n = 0; n !== text.length; ++n) {
+                                description.push(<div key={n} className="condition-text">{text[n]}</div>);
+                            }
+                        }
+                        return (
+                            <div key={c.id} className="condition">
+                                <div className="condition-name">{name}</div>
+                                {description}
+                            </div>
+                        );
+                    });
+                }
                 // TODO: Show condition text and duration
                 content = (
                     <div className="content">
@@ -454,6 +474,7 @@ class CombatantRow extends React.Component {
                         </div>
                         {addBtn}
                         {gauge}
+                        {conditions}
                     </div>
                 );
                 break;

@@ -9518,8 +9518,6 @@ var ConditionPanel = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            var _this5 = this;
-
             try {
                 var name = this.props.condition.name || "condition";
                 if (this.props.condition.type === "standard" && this.props.condition.name === "exhausted") {
@@ -9527,22 +9525,7 @@ var ConditionPanel = function (_React$Component) {
                 }
 
                 if (this.props.condition.duration !== null) {
-                    switch (this.props.condition.duration.type) {
-                        case "saves":
-                            name += " until you make " + this.props.condition.duration.count + " " + this.props.condition.duration.saveType + " save(s) at dc " + this.props.condition.duration.saveDC;
-                            break;
-                        case "combatant":
-                            var point = this.props.condition.duration.point;
-                            var c = this.props.combat.combatants.find(function (c) {
-                                return c.id == _this5.props.condition.duration.combatantID;
-                            });
-                            var combatant = c ? (c.displayName || c.name || "unnamed monster") + "'s" : "someone's";
-                            name += " until the " + point + " of " + combatant + " next turn";
-                            break;
-                        case "rounds":
-                            name += " for " + this.props.condition.duration.count + " round(s)";
-                            break;
-                    }
+                    name += " " + conditionDurationText(this.props.condition, this.props.combat);
                 }
 
                 var description = [];
@@ -10808,28 +10791,8 @@ var CombatManagerScreen = function (_React$Component) {
         }
     }, {
         key: "createCard",
-        value: function createCard(combatant, placeholder) {
+        value: function createCard(combatant) {
             var _this2 = this;
-
-            if (placeholder) {
-                return React.createElement(InfoCard, {
-                    key: combatant.id,
-                    getHeading: function getHeading() {
-                        return React.createElement(
-                            "div",
-                            { className: "heading" },
-                            combatant.displayName || combatant.name
-                        );
-                    },
-                    getContent: function getContent() {
-                        return React.createElement(
-                            "div",
-                            { className: "section" },
-                            placeholder
-                        );
-                    }
-                });
-            }
 
             var mode = "combat";
             if (this.props.combat.map) {
@@ -10839,6 +10802,7 @@ var CombatManagerScreen = function (_React$Component) {
                 });
                 mode += onMap ? " on-map" : " off-map";
             }
+
             switch (combatant.type) {
                 case "pc":
                     return React.createElement(PCCard, {
@@ -10966,6 +10930,7 @@ var CombatManagerScreen = function (_React$Component) {
                             pending.push(React.createElement(CombatantRow, {
                                 key: combatant.id,
                                 combatant: combatant,
+                                combat: _this4.props.combat,
                                 select: function select(combatant) {
                                     return _this4.setSelectedTokenID(combatant.id);
                                 },
@@ -10982,6 +10947,7 @@ var CombatManagerScreen = function (_React$Component) {
                             active.push(React.createElement(CombatantRow, {
                                 key: combatant.id,
                                 combatant: combatant,
+                                combat: _this4.props.combat,
                                 select: function select(combatant) {
                                     return _this4.setSelectedTokenID(combatant.id);
                                 },
@@ -10992,6 +10958,7 @@ var CombatManagerScreen = function (_React$Component) {
                             defeated.push(React.createElement(CombatantRow, {
                                 key: combatant.id,
                                 combatant: combatant,
+                                combat: _this4.props.combat,
                                 select: function select(combatant) {
                                     return _this4.setSelectedTokenID(combatant.id);
                                 },
@@ -11013,16 +10980,10 @@ var CombatManagerScreen = function (_React$Component) {
                         }));
                     }
 
-                    leftPaneContent = React.createElement(
-                        "div",
-                        { className: "combat-left" },
-                        current
-                    );
-
                     if (this.props.showHelp && pending.length !== 0) {
                         var help = React.createElement(
                             "div",
-                            { className: "column", key: "help" },
+                            { key: "help" },
                             React.createElement(InfoCard, {
                                 getContent: function getContent() {
                                     return React.createElement(
@@ -11048,7 +11009,7 @@ var CombatManagerScreen = function (_React$Component) {
                     if (this.props.showHelp && current.length === 0) {
                         var help = React.createElement(
                             "div",
-                            { className: "column", key: "help" },
+                            { key: "help" },
                             React.createElement(InfoCard, {
                                 getContent: function getContent() {
                                     return React.createElement(
@@ -11128,6 +11089,15 @@ var CombatManagerScreen = function (_React$Component) {
                         });
                     }
 
+                    leftPaneContent = React.createElement(
+                        "div",
+                        { className: "combat-left" },
+                        React.createElement(CardGroup, {
+                            heading: "initiative holder",
+                            content: current
+                        })
+                    );
+
                     centrePaneContent = React.createElement(
                         "div",
                         { className: "combat-centre" },
@@ -11140,7 +11110,7 @@ var CombatManagerScreen = function (_React$Component) {
                         }),
                         mapSection,
                         React.createElement(CardGroup, {
-                            heading: "active combatants",
+                            heading: "combatants in the encounter",
                             content: active,
                             hidden: active.length === 0
                         }),
@@ -11155,7 +11125,10 @@ var CombatManagerScreen = function (_React$Component) {
                     rightPaneContent = React.createElement(
                         "div",
                         { className: "combat-right" },
-                        selectedCombatant
+                        React.createElement(CardGroup, {
+                            heading: "selected combatant",
+                            content: [selectedCombatant]
+                        })
                     );
                 } else {
                     var help = null;
@@ -11189,27 +11162,22 @@ var CombatManagerScreen = function (_React$Component) {
                     );
                 }
 
-                var centreStyle = "columns small-4 medium-4 large-6";
-                if (this.props.combat) {
-                    centreStyle += " scrollable";
-                }
-
                 return React.createElement(
                     "div",
                     { className: "combat-manager row collapse" },
                     React.createElement(
                         "div",
-                        { className: "columns small-4 medium-4 large-3 scrollable list-column" },
+                        { className: "columns small-4 medium-3 large-3 scrollable list-column" },
                         leftPaneContent
                     ),
                     React.createElement(
                         "div",
-                        { className: "columns small-4 medium-4 large-6 scrollable" },
+                        { className: "columns small-4 medium-6 large-6 scrollable list-column" },
                         centrePaneContent
                     ),
                     React.createElement(
                         "div",
-                        { className: "columns small-4 medium-4 large-3 scrollable list-column" },
+                        { className: "columns small-4 medium-3 large-3 scrollable list-column" },
                         rightPaneContent
                     )
                 );
@@ -11432,6 +11400,39 @@ var CombatantRow = function (_React$Component3) {
                     if (!this.props.combatant.pending) {
                         gauge = React.createElement(HitPointGauge, { combatant: this.props.combatant });
                     }
+                    var conditions = null;
+                    if (this.props.combatant.conditions) {
+                        conditions = this.props.combatant.conditions.map(function (c) {
+                            var name = c.name;
+                            if (c.name === "exhausted") {
+                                name += " (" + c.level + ")";
+                            }
+                            if (c.duration) {
+                                name += " " + conditionDurationText(c, _this8.props.combat);
+                            }
+                            var description = [];
+                            if (c.type === "standard") {
+                                var text = conditionText(c);
+                                for (var n = 0; n !== text.length; ++n) {
+                                    description.push(React.createElement(
+                                        "div",
+                                        { key: n, className: "condition-text" },
+                                        text[n]
+                                    ));
+                                }
+                            }
+                            return React.createElement(
+                                "div",
+                                { key: c.id, className: "condition" },
+                                React.createElement(
+                                    "div",
+                                    { className: "condition-name" },
+                                    name
+                                ),
+                                description
+                            );
+                        });
+                    }
                     // TODO: Show condition text and duration
                     content = React.createElement(
                         "div",
@@ -11470,7 +11471,8 @@ var CombatantRow = function (_React$Component3) {
                             )
                         ),
                         addBtn,
-                        gauge
+                        gauge,
+                        conditions
                     );
                     break;
             }

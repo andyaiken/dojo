@@ -163,7 +163,7 @@ button {
   border-top: 1px solid #c3c3c3; }
 
 .list-column {
-  padding: 10px 5px !important; }
+  padding: 0 5px !important; }
 
 .lowercase {
   text-transform: lowercase; }
@@ -343,7 +343,14 @@ body,
     .combatant-row .name .info {
       float: right; }
   .combatant-row .content {
-    padding: 0 10px 10px 10px; }
+    padding: 0 10px; }
+    .combatant-row .content button, .combatant-row .content .hp-gauge, .combatant-row .content .condition {
+      margin-bottom: 10px; }
+    .combatant-row .content .condition .condition-name {
+      font-weight: 600; }
+    .combatant-row .content .condition .condition-text {
+      font-size: 11px;
+      margin: 2px 0; }
   .combatant-row.pc {
     border: 1px solid #006500; }
     .combatant-row.pc .name {

@@ -237,20 +237,7 @@ class ConditionPanel extends React.Component {
             }
 
             if (this.props.condition.duration !== null) {
-                switch (this.props.condition.duration.type) {
-                    case "saves":
-                        name += " until you make " + this.props.condition.duration.count + " " + this.props.condition.duration.saveType + " save(s) at dc " + this.props.condition.duration.saveDC;
-                        break;
-                    case "combatant":
-                        var point = this.props.condition.duration.point;
-                        var c = this.props.combat.combatants.find(c => c.id == this.props.condition.duration.combatantID);
-                        var combatant = c ? (c.displayName || c.name || "unnamed monster") + "'s" : "someone's";
-                        name += " until the " + point + " of " + combatant + " next turn";
-                        break;
-                    case "rounds":
-                        name += " for " + this.props.condition.duration.count + " round(s)";
-                        break;
-                }
+                name += " " + conditionDurationText(this.props.condition, this.props.combat);
             }
 
             var description = [];
