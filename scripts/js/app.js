@@ -2348,66 +2348,132 @@ var PCCard = function (_React$Component) {
                     }
                 }
 
-                var stats = null;
-                if (this.props.mode.indexOf("edit") !== -1) {
-                    stats = React.createElement(
+                var commonStatBlock = React.createElement(
+                    "div",
+                    { className: "stats" },
+                    React.createElement(
                         "div",
-                        { className: "stats" },
+                        { className: "section centered" },
                         React.createElement(
                             "div",
-                            { className: "section" },
+                            { className: "lowercase" },
                             React.createElement(
-                                "div",
-                                { className: "input-label", style: { display: this.state.showDetails ? "" : "none" } },
-                                "character name:"
-                            ),
-                            React.createElement("input", { type: "text", value: this.props.combatant.name, onChange: function onChange(event) {
-                                    return _this2.props.changeValue(_this2.props.combatant, "name", event.target.value);
-                                } }),
-                            React.createElement(
-                                "div",
-                                { className: "input-label", style: { display: this.state.showDetails ? "" : "none" } },
-                                "player name:"
-                            ),
-                            React.createElement("input", { type: "text", value: this.props.combatant.player, onChange: function onChange(event) {
-                                    return _this2.props.changeValue(_this2.props.combatant, "player", event.target.value);
-                                } })
+                                "i",
+                                null,
+                                this.props.combatant.race || 'race',
+                                " ",
+                                this.props.combatant.classes || 'class',
+                                ", level ",
+                                this.props.combatant.level
+                            )
                         ),
                         React.createElement(
                             "div",
-                            { style: { display: this.state.showDetails ? "none" : "" } },
-                            React.createElement("div", { className: "divider" }),
+                            { style: { display: this.props.combatant.url ? "" : "none" } },
+                            React.createElement(
+                                "a",
+                                { href: this.props.combatant.url, target: "_blank" },
+                                "d&d beyond sheet"
+                            )
+                        )
+                    ),
+                    React.createElement("div", { className: "divider" }),
+                    React.createElement(
+                        "div",
+                        { className: "section subheading" },
+                        "languages"
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "section" },
+                        this.props.combatant.languages || "-"
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "section subheading" },
+                        "passive skills"
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "table" },
+                        React.createElement(
+                            "div",
+                            null,
                             React.createElement(
                                 "div",
-                                { className: "section centered" },
+                                { className: "cell three" },
                                 React.createElement(
-                                    "div",
-                                    { className: "lowercase" },
-                                    "level ",
-                                    this.props.combatant.level,
-                                    " ",
-                                    this.props.combatant.race || 'race',
-                                    " ",
-                                    this.props.combatant.classes || 'class'
-                                ),
+                                    "b",
+                                    null,
+                                    "insight"
+                                )
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "cell three" },
                                 React.createElement(
-                                    "div",
-                                    { style: { display: this.props.combatant.url ? "" : "none" } },
-                                    React.createElement(
-                                        "a",
-                                        { href: this.props.combatant.url, target: "_blank" },
-                                        "d&d beyond sheet"
-                                    )
+                                    "b",
+                                    null,
+                                    "invest."
+                                )
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "cell three" },
+                                React.createElement(
+                                    "b",
+                                    null,
+                                    "percep."
                                 )
                             )
                         ),
                         React.createElement(
                             "div",
-                            { style: { display: this.state.showDetails ? "" : "none" } },
-                            React.createElement("div", { className: "divider" }),
+                            null,
+                            React.createElement(
+                                "div",
+                                { className: "cell three" },
+                                this.props.combatant.passiveInsight
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "cell three" },
+                                this.props.combatant.passiveInvestigation
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "cell three" },
+                                this.props.combatant.passivePerception
+                            )
+                        )
+                    )
+                );
+
+                var stats = null;
+                if (this.props.mode.indexOf("edit") !== -1) {
+                    if (this.state.showDetails) {
+                        stats = React.createElement(
+                            "div",
+                            { className: "edit" },
                             React.createElement(
                                 "div",
                                 { className: "section" },
+                                React.createElement(
+                                    "div",
+                                    { className: "input-label", style: { display: this.state.showDetails ? "" : "none" } },
+                                    "character name:"
+                                ),
+                                React.createElement("input", { type: "text", value: this.props.combatant.name, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "name", event.target.value);
+                                    } }),
+                                React.createElement(
+                                    "div",
+                                    { className: "input-label", style: { display: this.state.showDetails ? "" : "none" } },
+                                    "player name:"
+                                ),
+                                React.createElement("input", { type: "text", value: this.props.combatant.player, onChange: function onChange(event) {
+                                        return _this2.props.changeValue(_this2.props.combatant, "player", event.target.value);
+                                    } }),
                                 React.createElement(
                                     "div",
                                     { className: "input-label" },
@@ -2427,25 +2493,15 @@ var PCCard = function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     { className: "input-label" },
-                                    "background:"
+                                    "level:"
                                 ),
-                                React.createElement("input", { type: "text", value: this.props.combatant.background, onChange: function onChange(event) {
-                                        return _this2.props.changeValue(_this2.props.combatant, "background", event.target.value);
-                                    } })
-                            ),
-                            React.createElement("div", { className: "divider" }),
-                            React.createElement(Spin, {
-                                source: this.props.combatant,
-                                name: "level",
-                                label: "level",
-                                nudgeValue: function nudgeValue(delta) {
-                                    return _this2.props.nudgeValue(_this2.props.combatant, "level", delta);
-                                }
-                            }),
-                            React.createElement("div", { className: "divider" }),
-                            React.createElement(
-                                "div",
-                                { className: "section" },
+                                React.createElement(Spin, {
+                                    source: this.props.combatant,
+                                    name: "level",
+                                    nudgeValue: function nudgeValue(delta) {
+                                        return _this2.props.nudgeValue(_this2.props.combatant, "level", delta);
+                                    }
+                                }),
                                 React.createElement(
                                     "div",
                                     { className: "input-label" },
@@ -2453,12 +2509,7 @@ var PCCard = function (_React$Component) {
                                 ),
                                 React.createElement("input", { type: "text", value: this.props.combatant.languages, onChange: function onChange(event) {
                                         return _this2.props.changeValue(_this2.props.combatant, "languages", event.target.value);
-                                    } })
-                            ),
-                            React.createElement("div", { className: "divider" }),
-                            React.createElement(
-                                "div",
-                                { className: "section" },
+                                    } }),
                                 React.createElement(
                                     "div",
                                     { className: "input-label" },
@@ -2498,110 +2549,13 @@ var PCCard = function (_React$Component) {
                                     return _this2.props.nudgeValue(_this2.props.combatant, "passivePerception", delta);
                                 }
                             })
-                        )
-                    );
+                        );
+                    } else {
+                        stats = commonStatBlock;
+                    }
                 }
                 if (this.props.mode.indexOf("combat") !== -1) {
-                    stats = React.createElement(
-                        "div",
-                        { className: "stats" },
-                        React.createElement(
-                            "div",
-                            { className: "section centered" },
-                            React.createElement(
-                                "div",
-                                { className: "lowercase" },
-                                React.createElement(
-                                    "i",
-                                    null,
-                                    this.props.combatant.race || 'race',
-                                    " ",
-                                    this.props.combatant.classes || 'class',
-                                    ", level ",
-                                    this.props.combatant.level
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { style: { display: this.props.combatant.url ? "" : "none" } },
-                                React.createElement(
-                                    "a",
-                                    { href: this.props.combatant.url, target: "_blank" },
-                                    "d&d beyond sheet"
-                                )
-                            )
-                        ),
-                        React.createElement("div", { className: "divider" }),
-                        React.createElement(
-                            "div",
-                            { className: "section subheading" },
-                            "languages"
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "section" },
-                            this.props.combatant.languages || "-"
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "section subheading" },
-                            "passive skills"
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "table" },
-                            React.createElement(
-                                "div",
-                                null,
-                                React.createElement(
-                                    "div",
-                                    { className: "cell three" },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "insight"
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "cell three" },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "invest."
-                                    )
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "cell three" },
-                                    React.createElement(
-                                        "b",
-                                        null,
-                                        "percep."
-                                    )
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                null,
-                                React.createElement(
-                                    "div",
-                                    { className: "cell three" },
-                                    this.props.combatant.passiveInsight
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "cell three" },
-                                    this.props.combatant.passiveInvestigation
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "cell three" },
-                                    this.props.combatant.passivePerception
-                                )
-                            )
-                        )
-                    );
+                    stats = commonStatBlock;
                 }
 
                 var toggle = null;

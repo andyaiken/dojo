@@ -60,50 +60,58 @@ class PCCard extends React.Component {
                 }
             }
 
+            var commonStatBlock = (
+                <div className="stats">
+                    <div className="section centered">
+                        <div className="lowercase"><i>{this.props.combatant.race || 'race'} {this.props.combatant.classes || 'class'}, level {this.props.combatant.level}</i></div>
+                        <div style={{ display: this.props.combatant.url ? "" : "none" }}>
+                            <a href={this.props.combatant.url} target="_blank">d&d beyond sheet</a>
+                        </div>
+                    </div>
+                    <div className="divider"></div>
+                    <div className="section subheading">languages</div>
+                    <div className="section">
+                            {this.props.combatant.languages || "-"}
+                    </div>
+                    <div className="section subheading">passive skills</div>
+                    <div className="table">
+                        <div>
+                            <div className="cell three"><b>insight</b></div>
+                            <div className="cell three"><b>invest.</b></div>
+                            <div className="cell three"><b>percep.</b></div>
+                        </div>
+                        <div>
+                            <div className="cell three">{this.props.combatant.passiveInsight}</div>
+                            <div className="cell three">{this.props.combatant.passiveInvestigation}</div>
+                            <div className="cell three">{this.props.combatant.passivePerception}</div>
+                        </div>
+                    </div>
+                </div>
+            );
+
             var stats = null;
             if (this.props.mode.indexOf("edit") !== -1) {
-                stats = (
-                    <div className="stats">
-                        <div className="section">
-                            <div className="input-label" style={{ display: this.state.showDetails ? "" : "none" }}>character name:</div>
-                            <input type="text" value={this.props.combatant.name} onChange={event => this.props.changeValue(this.props.combatant, "name", event.target.value)} />
-                            <div className="input-label" style={{ display: this.state.showDetails ? "" : "none" }}>player name:</div>
-                            <input type="text" value={this.props.combatant.player} onChange={event => this.props.changeValue(this.props.combatant, "player", event.target.value)} />
-                        </div>
-                        <div style={{ display: this.state.showDetails ? "none" : "" }}>
-                            <div className="divider"></div>
-                            <div className="section centered">
-                                <div className="lowercase">level {this.props.combatant.level} {this.props.combatant.race || 'race'} {this.props.combatant.classes || 'class'}</div>
-                                <div style={{ display: this.props.combatant.url ? "" : "none" }}>
-                                    <a href={this.props.combatant.url} target="_blank">d&d beyond sheet</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div style={{ display: this.state.showDetails ? "" : "none" }}>
-                            <div className="divider"></div>
+                if (this.state.showDetails) {
+                    stats = (
+                        <div className="edit">
                             <div className="section">
+                                <div className="input-label" style={{ display: this.state.showDetails ? "" : "none" }}>character name:</div>
+                                <input type="text" value={this.props.combatant.name} onChange={event => this.props.changeValue(this.props.combatant, "name", event.target.value)} />
+                                <div className="input-label" style={{ display: this.state.showDetails ? "" : "none" }}>player name:</div>
+                                <input type="text" value={this.props.combatant.player} onChange={event => this.props.changeValue(this.props.combatant, "player", event.target.value)} />
                                 <div className="input-label">race:</div>
                                 <input type="text" value={this.props.combatant.race} onChange={event => this.props.changeValue(this.props.combatant, "race", event.target.value)} />
                                 <div className="input-label">class:</div>
                                 <input type="text" value={this.props.combatant.classes} onChange={event => this.props.changeValue(this.props.combatant, "classes", event.target.value)} />
-                                <div className="input-label">background:</div>
-                                <input type="text" value={this.props.combatant.background} onChange={event => this.props.changeValue(this.props.combatant, "background", event.target.value)} />
-                            </div>
-                            <div className="divider"></div>
-                            <Spin
-                                source={this.props.combatant}
-                                name="level"
-                                label="level"
-                                nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "level", delta)}
-                            />
-                            <div className="divider"></div>
-                            <div className="section">
+                                <div className="input-label">level:</div>
+                                <Spin
+                                    source={this.props.combatant}
+                                    name="level"
+                                    nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "level", delta)}
+                                />
                                 <div className="input-label">languages:</div>
                                 <input type="text" value={this.props.combatant.languages} onChange={event => this.props.changeValue(this.props.combatant, "languages", event.target.value)} />
-                            </div>
-                            <div className="divider"></div>
-                            <div className="section">
-                            <div className="input-label">d&d beyond link:</div>
+                                <div className="input-label">d&d beyond link:</div>
                                 <input type="text" value={this.props.combatant.url} onChange={event => this.props.changeValue(this.props.combatant, "url", event.target.value)} />
                             </div>
                             <div className="divider"></div>
@@ -127,38 +135,13 @@ class PCCard extends React.Component {
                                 nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "passivePerception", delta)}
                             />
                         </div>
-                    </div>
-                );
+                    );
+                } else {
+                    stats = commonStatBlock;
+                }
             }
             if (this.props.mode.indexOf("combat") !== -1) {
-                stats = (
-                    <div className="stats">
-                        <div className="section centered">
-                            <div className="lowercase"><i>{this.props.combatant.race || 'race'} {this.props.combatant.classes || 'class'}, level {this.props.combatant.level}</i></div>
-                            <div style={{ display: this.props.combatant.url ? "" : "none" }}>
-                                <a href={this.props.combatant.url} target="_blank">d&d beyond sheet</a>
-                            </div>
-                        </div>
-                        <div className="divider"></div>
-                        <div className="section subheading">languages</div>
-                        <div className="section">
-                                {this.props.combatant.languages || "-"}
-                        </div>
-                        <div className="section subheading">passive skills</div>
-                        <div className="table">
-                            <div>
-                                <div className="cell three"><b>insight</b></div>
-                                <div className="cell three"><b>invest.</b></div>
-                                <div className="cell three"><b>percep.</b></div>
-                            </div>
-                            <div>
-                                <div className="cell three">{this.props.combatant.passiveInsight}</div>
-                                <div className="cell three">{this.props.combatant.passiveInvestigation}</div>
-                                <div className="cell three">{this.props.combatant.passivePerception}</div>
-                            </div>
-                        </div>
-                    </div>
-                );
+                stats = commonStatBlock;
             }
 
             var toggle = null;
