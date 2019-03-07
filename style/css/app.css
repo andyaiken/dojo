@@ -478,26 +478,25 @@ body,
     display: inline-block;
     border: 1px solid transparent;
     width: calc((100% - 1px) / 3);
-    padding: 5px 0;
-    vertical-align: top; }
+    padding-bottom: 5px;
+    vertical-align: top;
+    text-align: center; }
     .section.key-stats .key-stat.wide {
       width: calc(2 * (100% - 1px) / 3); }
-    .section.key-stats .key-stat.full {
-      width: calc(100% - 1px); }
-    .section.key-stats .key-stat.editable {
-      cursor: pointer;
-      background-color: white;
-      border-color: #c3c3c3;
-      border-left-width: 5px; }
-      .section.key-stats .key-stat.editable:hover {
-        border-color: #3c78dc; }
-    .section.key-stats .key-stat .stat-heading {
-      text-align: center;
-      font-weight: 600; }
     .section.key-stats .key-stat .stat-value {
-      text-align: center;
+      display: inline-block;
+      vertical-align: top;
+      height: 30px;
+      line-height: 30px;
       font-weight: 600;
-      font-size: 20px; }
+      font-size: 25px; }
+    .section.key-stats .key-stat .stat-label {
+      display: inline-block;
+      vertical-align: top;
+      height: 30px;
+      line-height: 30px;
+      font-weight: 600;
+      padding-left: 5px; }
   .section .input-label {
     padding-top: 5px;
     font-weight: 600; }

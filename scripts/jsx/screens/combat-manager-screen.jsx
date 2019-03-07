@@ -295,13 +295,13 @@ class CombatManagerScreen extends React.Component {
 
             return (
                 <div className="combat-manager row collapse">
-                    <div className="columns small-4 medium-3 large-3 scrollable list-column">
+                    <div className="columns small-4 medium-4 large-3 scrollable list-column">
                         {leftPaneContent}
                     </div>
-                    <div className="columns small-4 medium-6 large-6 scrollable list-column">
+                    <div className="columns small-4 medium-4 large-6 scrollable list-column">
                         {centrePaneContent}
                     </div>
-                    <div className="columns small-4 medium-3 large-3 scrollable list-column">
+                    <div className="columns small-4 medium-4 large-3 scrollable list-column">
                         {rightPaneContent}
                     </div>
                 </div>
@@ -429,12 +429,12 @@ class CombatantRow extends React.Component {
                     <div className="content">
                         <div className="section key-stats">
                             <div className="key-stat">
-                                <div className="stat-heading">init</div>
                                 <div className="stat-value">{this.props.combatant.initiative}</div>
+                                <div className="stat-label">init</div>
                             </div>
                             <div className="key-stat wide">
-                                <div className="stat-heading">player</div>
                                 <div className="stat-value">{this.props.combatant.player ? this.props.combatant.player : "-"}</div>
+                                <div className="stat-label">player</div>
                             </div>
                         </div>
                     </div>
@@ -488,16 +488,16 @@ class CombatantRow extends React.Component {
                     <div className="content">
                         <div className="section key-stats">
                             <div className="key-stat">
-                                <div className="stat-heading">init</div>
                                 <div className="stat-value">{this.props.combatant.initiative}</div>
+                                <div className="stat-label">init</div>
                             </div>
                             <div className="key-stat">
-                                <div className="stat-heading">ac</div>
                                 <div className="stat-value">{this.props.combatant.ac}</div>
+                                <div className="stat-label">ac</div>
                             </div>
                             <div className="key-stat">
-                                <div className="stat-heading">hp</div>
                                 <div className="stat-value">{hp}</div>
+                                <div className="stat-label">hp</div>
                             </div>
                         </div>
                         {gauge}

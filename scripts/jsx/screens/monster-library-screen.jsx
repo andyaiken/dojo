@@ -93,12 +93,12 @@ class MonsterLibraryScreen extends React.Component {
 
             return (
                 <div className="monster-library row collapse">
-                    <div className="columns small-4 medium-3 large-3 scrollable list-column">
+                    <div className="columns small-4 medium-4 large-3 scrollable list-column">
                         {help}
                         <button onClick={() => this.props.addMonsterGroup("new group")}>add a new monster group</button>
                         {listItems}
                     </div>
-                    <div className="columns small-8 medium-9 large-9 scrollable">
+                    <div className="columns small-8 medium-8 large-9 scrollable">
                         <CardGroup
                             content={cards}
                             heading={name}

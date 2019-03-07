@@ -11092,17 +11092,17 @@ var CombatManagerScreen = function (_React$Component) {
                     { className: "combat-manager row collapse" },
                     React.createElement(
                         "div",
-                        { className: "columns small-4 medium-3 large-3 scrollable list-column" },
+                        { className: "columns small-4 medium-4 large-3 scrollable list-column" },
                         leftPaneContent
                     ),
                     React.createElement(
                         "div",
-                        { className: "columns small-4 medium-6 large-6 scrollable list-column" },
+                        { className: "columns small-4 medium-4 large-6 scrollable list-column" },
                         centrePaneContent
                     ),
                     React.createElement(
                         "div",
-                        { className: "columns small-4 medium-3 large-3 scrollable list-column" },
+                        { className: "columns small-4 medium-4 large-3 scrollable list-column" },
                         rightPaneContent
                     )
                 );
@@ -11339,13 +11339,13 @@ var CombatantRow = function (_React$Component4) {
                                 { className: "key-stat" },
                                 React.createElement(
                                     "div",
-                                    { className: "stat-heading" },
-                                    "init"
+                                    { className: "stat-value" },
+                                    this.props.combatant.initiative
                                 ),
                                 React.createElement(
                                     "div",
-                                    { className: "stat-value" },
-                                    this.props.combatant.initiative
+                                    { className: "stat-label" },
+                                    "init"
                                 )
                             ),
                             React.createElement(
@@ -11353,13 +11353,13 @@ var CombatantRow = function (_React$Component4) {
                                 { className: "key-stat wide" },
                                 React.createElement(
                                     "div",
-                                    { className: "stat-heading" },
-                                    "player"
+                                    { className: "stat-value" },
+                                    this.props.combatant.player ? this.props.combatant.player : "-"
                                 ),
                                 React.createElement(
                                     "div",
-                                    { className: "stat-value" },
-                                    this.props.combatant.player ? this.props.combatant.player : "-"
+                                    { className: "stat-label" },
+                                    "player"
                                 )
                             )
                         )
@@ -11430,27 +11430,27 @@ var CombatantRow = function (_React$Component4) {
                                 { className: "key-stat" },
                                 React.createElement(
                                     "div",
-                                    { className: "stat-heading" },
-                                    "init"
+                                    { className: "stat-value" },
+                                    this.props.combatant.initiative
                                 ),
                                 React.createElement(
                                     "div",
-                                    { className: "stat-value" },
-                                    this.props.combatant.initiative
+                                    { className: "stat-label" },
+                                    "init"
                                 )
                             ),
                             React.createElement(
                                 "div",
                                 { className: "key-stat" },
-                                React.createElement(
-                                    "div",
-                                    { className: "stat-heading" },
-                                    "ac"
-                                ),
                                 React.createElement(
                                     "div",
                                     { className: "stat-value" },
                                     this.props.combatant.ac
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "stat-label" },
+                                    "ac"
                                 )
                             ),
                             React.createElement(
@@ -11458,13 +11458,13 @@ var CombatantRow = function (_React$Component4) {
                                 { className: "key-stat" },
                                 React.createElement(
                                     "div",
-                                    { className: "stat-heading" },
-                                    "hp"
+                                    { className: "stat-value" },
+                                    hp
                                 ),
                                 React.createElement(
                                     "div",
-                                    { className: "stat-value" },
-                                    hp
+                                    { className: "stat-label" },
+                                    "hp"
                                 )
                             )
                         ),
@@ -11822,7 +11822,7 @@ var EncounterBuilderScreen = function (_React$Component) {
                     { className: "encounter-builder row collapse" },
                     React.createElement(
                         "div",
-                        { className: "columns small-4 medium-3 large-3 scrollable list-column" },
+                        { className: "columns small-4 medium-4 large-3 scrollable list-column" },
                         help,
                         React.createElement(
                             "button",
@@ -11835,7 +11835,7 @@ var EncounterBuilderScreen = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "columns small-8 medium-9 large-9 scrollable" },
+                        { className: "columns small-8 medium-8 large-9 scrollable" },
                         React.createElement(CardGroup, {
                             content: encounterCards,
                             heading: encounterName,
@@ -12133,7 +12133,7 @@ var MapFoliosScreen = function (_React$Component) {
                     { className: "map-builder row collapse" },
                     React.createElement(
                         "div",
-                        { className: "columns small-4 medium-3 large-3 scrollable list-column" },
+                        { className: "columns small-4 medium-4 large-3 scrollable list-column" },
                         help,
                         React.createElement(
                             "button",
@@ -12146,7 +12146,7 @@ var MapFoliosScreen = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "columns small-8 medium-9 large-9 scrollable" },
+                        { className: "columns small-8 medium-8 large-9 scrollable" },
                         folio
                     )
                 );
@@ -12305,7 +12305,7 @@ var MonsterLibraryScreen = function (_React$Component) {
                     { className: "monster-library row collapse" },
                     React.createElement(
                         "div",
-                        { className: "columns small-4 medium-3 large-3 scrollable list-column" },
+                        { className: "columns small-4 medium-4 large-3 scrollable list-column" },
                         help,
                         React.createElement(
                             "button",
@@ -12318,7 +12318,7 @@ var MonsterLibraryScreen = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "columns small-8 medium-9 large-9 scrollable" },
+                        { className: "columns small-8 medium-8 large-9 scrollable" },
                         React.createElement(CardGroup, {
                             content: cards,
                             heading: name,
@@ -12475,7 +12475,7 @@ var PartiesScreen = function (_React$Component) {
                     { className: "parties row collapse" },
                     React.createElement(
                         "div",
-                        { className: "columns small-4 medium-3 large-3 scrollable list-column" },
+                        { className: "columns small-4 medium-4 large-3 scrollable list-column" },
                         help,
                         React.createElement(
                             "button",
@@ -12488,7 +12488,7 @@ var PartiesScreen = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "columns small-8 medium-9 large-9 scrollable" },
+                        { className: "columns small-8 medium-8 large-9 scrollable" },
                         React.createElement(CardGroup, {
                             content: activeCards,
                             heading: name,

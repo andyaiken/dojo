@@ -736,37 +736,30 @@ body,
             display: inline-block;
             border: 1px solid transparent;
             width: calc((100% - 1px) / 3);
-            padding: 5px 0;
+            padding-bottom: 5px;
             vertical-align: top;
+            text-align: center;
 
             &.wide {
                 width: calc(2 * (100% - 1px) / 3);
             }
 
-            &.full {
-                width: calc(100% - 1px);
-            }
-
-            &.editable {
-                cursor: pointer;
-                background-color: $background;
-                border-color: $control-border;
-                border-left-width: 5px;
-
-                &:hover {
-                    border-color: $highlight;
-                }
-            }
-
-            .stat-heading {
-                text-align: center;
-                font-weight: 600;
-            }
-
             .stat-value {
-                text-align: center;
+                display: inline-block;
+                vertical-align: top;
+                height: 30px;
+                line-height: 30px;
                 font-weight: 600;
-                font-size: 20px;
+                font-size: 25px;
+            }
+
+            .stat-label {
+                display: inline-block;
+                vertical-align: top;
+                height: 30px;
+                line-height: 30px;
+                font-weight: 600;
+                padding-left: 5px;
             }
         }
     }
