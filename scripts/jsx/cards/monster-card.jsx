@@ -139,16 +139,6 @@ class MonsterCard extends React.Component {
                 }
                 if (this.props.mode.indexOf("combat") !== -1) {
                     options.push(
-                        <ConditionsPanel
-                            combatant={this.props.combatant}
-                            combat={this.props.combat}
-                            addCondition={condition => this.props.addCondition(this.props.combatant, condition)}
-                            removeCondition={conditionID => this.props.removeCondition(this.props.combatant, conditionID)}
-                            nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
-                            changeConditionValue={(condition, type, value) => this.props.changeConditionValue(condition, type, value)}
-                        />
-                    );
-                    options.push(
                         <Expander
                             key="rename"
                             text="change name"
@@ -160,7 +150,6 @@ class MonsterCard extends React.Component {
                         />
                     );
                     if (this.props.mode.indexOf("tactical") !== -1) {
-                        options.push(<div key="tactical-div" className="divider"></div>);
                         if (this.props.mode.indexOf("on-map") !== -1) {
                             options.push(
                                 <div key="mapMove" className="section centered">
@@ -176,9 +165,7 @@ class MonsterCard extends React.Component {
                             options.push(<button key="mapAdd" onClick={() => this.props.mapAdd(this.props.combatant)}>add to map</button>);
                         }
                     }
-                    options.push(<div key="div" className="divider"></div>);
                     if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
-                        options.push(<button key="makeActive" onClick={() => this.props.makeActive(this.props.combatant)}>add to encounter</button>);
                         options.push(<ConfirmButton key="remove" text="remove from encounter" callback={() => this.props.removeCombatant(this.props.combatant)} />);
                     }
                     if (!this.props.combatant.pending && this.props.combatant.active && !this.props.combatant.defeated) {
@@ -286,44 +273,34 @@ class MonsterCard extends React.Component {
 
                 stats = (
                     <div className="stats">
-                        <div className="section key-stats">
-                            <div className="key-stat full editable" onClick={() => this.toggleHP()}>
-                                <div className="stat-heading">hp</div>
-                                <div className="stat-value">{hp}</div>
-                            </div>
-                        </div>
-                        <div style={{ display: this.state.showHP ? "" : "none" }}>
-                            <Spin
-                                source={this.props.combatant}
-                                name="hp"
-                                label="hit points"
-                                factors={[1, 5, 10]}
-                                nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "hp", delta)}
-                            />
-                            <Spin
-                                source={this.props.combatant}
-                                name="hpTemp"
-                                label="temp hp"
-                                factors={[1, 5, 10]}
-                                nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "hpTemp", delta)}
-                            />
-                            <div className="section" style={{ display: this.props.combatant.damage.resist !== "" ? "" : "none" }}>
-                                <b>damage resistances</b> {this.props.combatant.damage.resist}
-                            </div>
-                            <div className="section" style={{ display: this.props.combatant.damage.vulnerable !== "" ? "" : "none" }}>
-                                <b>damage vulnerabilities</b> {this.props.combatant.damage.vulnerable}
-                            </div>
-                            <div className="section" style={{ display: this.props.combatant.damage.immune !== "" ? "" : "none" }}>
-                                <b>damage immunities</b> {this.props.combatant.damage.immune}
-                            </div>
-                        </div>
-                        <div className="section" style={{ display: this.props.combatant.conditionImmunities !== "" ? "" : "none" }}>
-                            <b>condition immunities</b> {this.props.combatant.conditionImmunities}
-                        </div>
-                        <div className="divider"></div>
                         <div className="section centered">
                             <div><i>{this.description()}</i></div>
                         </div>
+                        <div className="divider"></div>
+                        <Spin
+                            source={this.props.combatant}
+                            name="hp"
+                            label="hit points"
+                            factors={[1, 5, 10]}
+                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "hp", delta)}
+                        />
+                        <Spin
+                            source={this.props.combatant}
+                            name="hpTemp"
+                            label="temp hp"
+                            factors={[1, 5, 10]}
+                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "hpTemp", delta)}
+                        />
+                        <div className="section" style={{ display: this.props.combatant.damage.resist !== "" ? "" : "none" }}>
+                            <b>damage resistances</b> {this.props.combatant.damage.resist}
+                        </div>
+                        <div className="section" style={{ display: this.props.combatant.damage.vulnerable !== "" ? "" : "none" }}>
+                            <b>damage vulnerabilities</b> {this.props.combatant.damage.vulnerable}
+                        </div>
+                        <div className="section" style={{ display: this.props.combatant.damage.immune !== "" ? "" : "none" }}>
+                            <b>damage immunities</b> {this.props.combatant.damage.immune}
+                        </div>
+                        <div className="divider"></div>
                         <div className="section">
                             <AbilityScorePanel combatant={this.props.combatant} />
                         </div>
@@ -350,6 +327,21 @@ class MonsterCard extends React.Component {
                         </div>
                         <div className="divider"></div>
                         <TraitsPanel combatant={this.props.combatant} />
+                        <div className="divider"></div>
+                        <div className="section subheading">
+                            conditions
+                        </div>
+                        <div className="section" style={{ display: this.props.combatant.conditionImmunities !== "" ? "" : "none" }}>
+                            <b>condition immunities</b> {this.props.combatant.conditionImmunities}
+                        </div>
+                        <ConditionsPanel
+                            combatant={this.props.combatant}
+                            combat={this.props.combat}
+                            addCondition={condition => this.props.addCondition(this.props.combatant, condition)}
+                            removeCondition={conditionID => this.props.removeCondition(this.props.combatant, conditionID)}
+                            nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
+                            changeConditionValue={(condition, type, value) => this.props.changeConditionValue(condition, type, value)}
+                        />
                     </div>
                 );
             }

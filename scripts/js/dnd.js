@@ -36,7 +36,7 @@ const CONDITION_TYPES = [
     "blinded",
     "charmed",
     "deafened",
-    "exhausted",
+    "exhaustion",
     "frightened",
     "grappled",
     "incapacitated",
@@ -400,7 +400,7 @@ function conditionText(condition) {
         return [
             'a deafened creature can’t hear and automatically fails any ability check that requires hearing.'
         ];
-    case 'exhausted': {
+    case 'exhaustion': {
         switch (condition.level) {
         case 1:
             return [

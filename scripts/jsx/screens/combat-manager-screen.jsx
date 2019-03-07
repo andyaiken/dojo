@@ -101,7 +101,7 @@ class CombatManagerScreen extends React.Component {
                     }
                     if (combatant.pending && !combatant.active && !combatant.defeated) {
                         pending.push(
-                            <CombatantRow
+                            <PendingCombatantRow
                                 key={combatant.id}
                                 combatant={combatant}
                                 combat={this.props.combat}
@@ -136,20 +136,9 @@ class CombatManagerScreen extends React.Component {
                     }
                 });
 
-                if (current.length === 0) {
-                    current.push(
-                        <InfoCard
-                            key="current"
-                            getContent={() =>
-                                <div className="section">the current initiative holder will be displayed here</div>
-                            }
-                        />
-                    );
-                }
-
                 if (this.props.showHelp && (pending.length !== 0)) {
-                    var help = (
-                        <div key="help">
+                    var pendingHelp = (
+                        <div key="pending-help">
                             <InfoCard
                                 getContent={() =>
                                     <div>
@@ -160,23 +149,34 @@ class CombatManagerScreen extends React.Component {
                             />
                         </div>
                     );
-                    pending = [].concat(help, pending);
+                    pending = [].concat(pendingHelp, pending);
                 }
 
                 if (this.props.showHelp && (current.length === 0)) {
-                    var help = (
-                        <div key="help">
+                    var activeHelp = (
+                        <div key="active-help">
                             <InfoCard
                                 getContent={() =>
                                     <div>
-                                        <div className="section">to begin the encounter, press <b>start turn</b> on one of the stat blocks in this section</div>
-                                        <div className="section">that stat block will then be displayed on the left</div>
+                                        <div className="section">these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right)</div>
+                                        <div className="section">to begin the encounter, select the first combatant and press the <b>start turn</b> button on their stat block</div>
                                     </div>
                                 }
                             />
                         </div>
                     );
-                    active = [].concat(help, active);
+                    active = [].concat(activeHelp, active);
+                }
+
+                if (current.length === 0) {
+                    current.push(
+                        <InfoCard
+                            key="current"
+                            getContent={() =>
+                                <div className="section">the current initiative holder will be displayed here</div>
+                            }
+                        />
+                    );
                 }
 
                 var notifications = this.props.combat.notifications.map(n =>
@@ -358,6 +358,48 @@ class Notification extends React.Component {
     }
 }
 
+class PendingCombatantRow extends React.Component {
+    getInformationText() {
+        if (this.props.selected) {
+            return "selected";
+        }
+
+        return null;
+    }
+
+    onClick(e) {
+        e.stopPropagation();
+        if (this.props.select) {
+            this.props.select(this.props.combatant);
+        }
+    }
+
+    render() {
+        var style = "combatant-row " + this.props.combatant.type;
+        if (this.props.combatant.current || this.props.selected) {
+            style += " highlight";
+        }
+
+        return (
+            <div className={style} onClick={e => this.onClick(e)}>
+                <div className="name">
+                    {this.props.combatant.displayName || this.props.combatant.name || "combatant"}
+                    <span className="info">{this.getInformationText()}</span>
+                </div>
+                <div className="content">
+                    <Spin
+                        source={this.props.combatant}
+                        name="initiative"
+                        label="initiative"
+                        nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "initiative", delta)}
+                    />
+                    <button onClick={e => { e.stopPropagation(); this.props.makeActive(this.props.combatant); }}>add to encounter</button>
+                </div>
+            </div>
+        );
+    }
+}
+
 class CombatantRow extends React.Component {
     getInformationText() {
         if (this.props.combatant.current) {
@@ -379,32 +421,6 @@ class CombatantRow extends React.Component {
     }
 
     render() {
-        var init = null;
-        var addBtn = null;
-        if (this.props.combatant.pending) {
-            init = (
-                <div className="key-stat wide">
-                    <Spin
-                        source={this.props.combatant}
-                        name="initiative"
-                        label="initiative"
-                        factors={[1, 5, 10]}
-                        nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "initiative", delta)}
-                    />
-                </div>
-            );
-            addBtn = (
-                <button onClick={() => this.props.makeActive(this.props.combatant)}>add to encounter</button>
-            );
-        } else {
-            init = (
-                <div className="key-stat">
-                    <div className="stat-heading">init</div>
-                    <div className="stat-value">{this.props.combatant.initiative}</div>
-                </div>
-            );
-        }
-
         var content = null;
 
         switch (this.props.combatant.type) {
@@ -412,13 +428,15 @@ class CombatantRow extends React.Component {
                 content = (
                     <div className="content">
                         <div className="section key-stats">
-                            {init}
+                            <div className="key-stat">
+                                <div className="stat-heading">init</div>
+                                <div className="stat-value">{this.props.combatant.initiative}</div>
+                            </div>
                             <div className="key-stat wide">
                                 <div className="stat-heading">player</div>
                                 <div className="stat-value">{this.props.combatant.player ? this.props.combatant.player : "-"}</div>
                             </div>
                         </div>
-                        {addBtn}
                     </div>
                 );
                 break;
@@ -437,7 +455,7 @@ class CombatantRow extends React.Component {
                 if (this.props.combatant.conditions) {
                     conditions = this.props.combatant.conditions.map(c => {
                         var name = c.name;
-                        if (c.name === "exhausted") {
+                        if (c.name === "exhaustion") {
                             name += " (" + c.level + ")";
                         }
                         if (c.duration) {
@@ -469,7 +487,10 @@ class CombatantRow extends React.Component {
                 content = (
                     <div className="content">
                         <div className="section key-stats">
-                            {init}
+                            <div className="key-stat">
+                                <div className="stat-heading">init</div>
+                                <div className="stat-value">{this.props.combatant.initiative}</div>
+                            </div>
                             <div className="key-stat">
                                 <div className="stat-heading">ac</div>
                                 <div className="stat-value">{this.props.combatant.ac}</div>
@@ -479,7 +500,6 @@ class CombatantRow extends React.Component {
                                 <div className="stat-value">{hp}</div>
                             </div>
                         </div>
-                        {addBtn}
                         {gauge}
                         {conditions}
                         {notes}

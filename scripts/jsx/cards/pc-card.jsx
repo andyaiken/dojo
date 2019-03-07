@@ -42,7 +42,6 @@ class PCCard extends React.Component {
                     options.push(<div key="tactical-div" className="divider"></div>);
                 }
                 if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
-                    options.push(<button key="makeActive" onClick={() => this.props.makeActive(this.props.combatant)}>add to encounter</button>);
                     options.push(<ConfirmButton key="remove" text="remove from encounter" callback={() => this.props.removeCombatant(this.props.combatant)} />);
                 }
                 if (!this.props.combatant.pending && this.props.combatant.active && !this.props.combatant.defeated) {
@@ -135,7 +134,7 @@ class PCCard extends React.Component {
                 stats = (
                     <div className="stats">
                         <div className="section centered">
-                            <div className="lowercase">level {this.props.combatant.level} {this.props.combatant.race || 'race'} {this.props.combatant.classes || 'class'}</div>
+                            <div className="lowercase"><i>{this.props.combatant.race || 'race'} {this.props.combatant.classes || 'class'}, level {this.props.combatant.level}</i></div>
                             <div style={{ display: this.props.combatant.url ? "" : "none" }}>
                                 <a href={this.props.combatant.url} target="_blank">d&d beyond sheet</a>
                             </div>

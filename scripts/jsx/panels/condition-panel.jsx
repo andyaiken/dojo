@@ -205,7 +205,7 @@ class ConditionPanel extends React.Component {
         var details = [];
         
         if (this.props.condition.type === "standard") {
-            if (this.props.condition.name === "exhausted") {
+            if (this.props.condition.name === "exhaustion") {
                 details.push(
                     <div key="level" className="section">
                         <Spin
@@ -232,7 +232,7 @@ class ConditionPanel extends React.Component {
     render() {
         try {
             var name = this.props.condition.name || "condition";
-            if ((this.props.condition.type === "standard") && (this.props.condition.name === "exhausted")) {
+            if ((this.props.condition.type === "standard") && (this.props.condition.name === "exhaustion")) {
                 name += " (" + this.props.condition.level + ")";
             }
 

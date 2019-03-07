@@ -39,7 +39,8 @@ class ConditionsPanel extends React.Component {
                     disabled: true
                 }
             ].concat(CONDITION_TYPES.map(c => {
-                return { id: c, text: c};
+                var immune = this.props.combatant.conditionImmunities.indexOf(c) != -1;
+                return { id: c, text: c, disabled: immune };
             }));
 
             return (

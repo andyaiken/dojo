@@ -1234,22 +1234,6 @@ var MonsterCard = function (_React$Component) {
                         }
                     }
                     if (this.props.mode.indexOf("combat") !== -1) {
-                        options.push(React.createElement(ConditionsPanel, {
-                            combatant: this.props.combatant,
-                            combat: this.props.combat,
-                            addCondition: function addCondition(condition) {
-                                return _this3.props.addCondition(_this3.props.combatant, condition);
-                            },
-                            removeCondition: function removeCondition(conditionID) {
-                                return _this3.props.removeCondition(_this3.props.combatant, conditionID);
-                            },
-                            nudgeConditionValue: function nudgeConditionValue(condition, type, delta) {
-                                return _this3.props.nudgeConditionValue(condition, type, delta);
-                            },
-                            changeConditionValue: function changeConditionValue(condition, type, value) {
-                                return _this3.props.changeConditionValue(condition, type, value);
-                            }
-                        }));
                         options.push(React.createElement(Expander, {
                             key: "rename",
                             text: "change name",
@@ -1262,7 +1246,6 @@ var MonsterCard = function (_React$Component) {
                             )
                         }));
                         if (this.props.mode.indexOf("tactical") !== -1) {
-                            options.push(React.createElement("div", { key: "tactical-div", className: "divider" }));
                             if (this.props.mode.indexOf("on-map") !== -1) {
                                 options.push(React.createElement(
                                     "div",
@@ -1292,15 +1275,7 @@ var MonsterCard = function (_React$Component) {
                                 ));
                             }
                         }
-                        options.push(React.createElement("div", { key: "div", className: "divider" }));
                         if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
-                            options.push(React.createElement(
-                                "button",
-                                { key: "makeActive", onClick: function onClick() {
-                                        return _this3.props.makeActive(_this3.props.combatant);
-                                    } },
-                                "add to encounter"
-                            ));
                             options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
                                     return _this3.props.removeCombatant(_this3.props.combatant);
                                 } }));
@@ -1557,93 +1532,6 @@ var MonsterCard = function (_React$Component) {
                         { className: "stats" },
                         React.createElement(
                             "div",
-                            { className: "section key-stats" },
-                            React.createElement(
-                                "div",
-                                { className: "key-stat full editable", onClick: function onClick() {
-                                        return _this3.toggleHP();
-                                    } },
-                                React.createElement(
-                                    "div",
-                                    { className: "stat-heading" },
-                                    "hp"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "stat-value" },
-                                    hp
-                                )
-                            )
-                        ),
-                        React.createElement(
-                            "div",
-                            { style: { display: this.state.showHP ? "" : "none" } },
-                            React.createElement(Spin, {
-                                source: this.props.combatant,
-                                name: "hp",
-                                label: "hit points",
-                                factors: [1, 5, 10],
-                                nudgeValue: function nudgeValue(delta) {
-                                    return _this3.props.nudgeValue(_this3.props.combatant, "hp", delta);
-                                }
-                            }),
-                            React.createElement(Spin, {
-                                source: this.props.combatant,
-                                name: "hpTemp",
-                                label: "temp hp",
-                                factors: [1, 5, 10],
-                                nudgeValue: function nudgeValue(delta) {
-                                    return _this3.props.nudgeValue(_this3.props.combatant, "hpTemp", delta);
-                                }
-                            }),
-                            React.createElement(
-                                "div",
-                                { className: "section", style: { display: this.props.combatant.damage.resist !== "" ? "" : "none" } },
-                                React.createElement(
-                                    "b",
-                                    null,
-                                    "damage resistances"
-                                ),
-                                " ",
-                                this.props.combatant.damage.resist
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "section", style: { display: this.props.combatant.damage.vulnerable !== "" ? "" : "none" } },
-                                React.createElement(
-                                    "b",
-                                    null,
-                                    "damage vulnerabilities"
-                                ),
-                                " ",
-                                this.props.combatant.damage.vulnerable
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "section", style: { display: this.props.combatant.damage.immune !== "" ? "" : "none" } },
-                                React.createElement(
-                                    "b",
-                                    null,
-                                    "damage immunities"
-                                ),
-                                " ",
-                                this.props.combatant.damage.immune
-                            )
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "section", style: { display: this.props.combatant.conditionImmunities !== "" ? "" : "none" } },
-                            React.createElement(
-                                "b",
-                                null,
-                                "condition immunities"
-                            ),
-                            " ",
-                            this.props.combatant.conditionImmunities
-                        ),
-                        React.createElement("div", { className: "divider" }),
-                        React.createElement(
-                            "div",
                             { className: "section centered" },
                             React.createElement(
                                 "div",
@@ -1655,6 +1543,59 @@ var MonsterCard = function (_React$Component) {
                                 )
                             )
                         ),
+                        React.createElement("div", { className: "divider" }),
+                        React.createElement(Spin, {
+                            source: this.props.combatant,
+                            name: "hp",
+                            label: "hit points",
+                            factors: [1, 5, 10],
+                            nudgeValue: function nudgeValue(delta) {
+                                return _this3.props.nudgeValue(_this3.props.combatant, "hp", delta);
+                            }
+                        }),
+                        React.createElement(Spin, {
+                            source: this.props.combatant,
+                            name: "hpTemp",
+                            label: "temp hp",
+                            factors: [1, 5, 10],
+                            nudgeValue: function nudgeValue(delta) {
+                                return _this3.props.nudgeValue(_this3.props.combatant, "hpTemp", delta);
+                            }
+                        }),
+                        React.createElement(
+                            "div",
+                            { className: "section", style: { display: this.props.combatant.damage.resist !== "" ? "" : "none" } },
+                            React.createElement(
+                                "b",
+                                null,
+                                "damage resistances"
+                            ),
+                            " ",
+                            this.props.combatant.damage.resist
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section", style: { display: this.props.combatant.damage.vulnerable !== "" ? "" : "none" } },
+                            React.createElement(
+                                "b",
+                                null,
+                                "damage vulnerabilities"
+                            ),
+                            " ",
+                            this.props.combatant.damage.vulnerable
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section", style: { display: this.props.combatant.damage.immune !== "" ? "" : "none" } },
+                            React.createElement(
+                                "b",
+                                null,
+                                "damage immunities"
+                            ),
+                            " ",
+                            this.props.combatant.damage.immune
+                        ),
+                        React.createElement("div", { className: "divider" }),
                         React.createElement(
                             "div",
                             { className: "section" },
@@ -1738,7 +1679,40 @@ var MonsterCard = function (_React$Component) {
                             this.props.combatant.equipment
                         ),
                         React.createElement("div", { className: "divider" }),
-                        React.createElement(TraitsPanel, { combatant: this.props.combatant })
+                        React.createElement(TraitsPanel, { combatant: this.props.combatant }),
+                        React.createElement("div", { className: "divider" }),
+                        React.createElement(
+                            "div",
+                            { className: "section subheading" },
+                            "conditions"
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section", style: { display: this.props.combatant.conditionImmunities !== "" ? "" : "none" } },
+                            React.createElement(
+                                "b",
+                                null,
+                                "condition immunities"
+                            ),
+                            " ",
+                            this.props.combatant.conditionImmunities
+                        ),
+                        React.createElement(ConditionsPanel, {
+                            combatant: this.props.combatant,
+                            combat: this.props.combat,
+                            addCondition: function addCondition(condition) {
+                                return _this3.props.addCondition(_this3.props.combatant, condition);
+                            },
+                            removeCondition: function removeCondition(conditionID) {
+                                return _this3.props.removeCondition(_this3.props.combatant, conditionID);
+                            },
+                            nudgeConditionValue: function nudgeConditionValue(condition, type, delta) {
+                                return _this3.props.nudgeConditionValue(condition, type, delta);
+                            },
+                            changeConditionValue: function changeConditionValue(condition, type, value) {
+                                return _this3.props.changeConditionValue(condition, type, value);
+                            }
+                        })
                     );
                 }
                 if (this.props.mode.indexOf("template") !== -1) {
@@ -2320,13 +2294,6 @@ var PCCard = function (_React$Component) {
                         options.push(React.createElement("div", { key: "tactical-div", className: "divider" }));
                     }
                     if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
-                        options.push(React.createElement(
-                            "button",
-                            { key: "makeActive", onClick: function onClick() {
-                                    return _this2.props.makeActive(_this2.props.combatant);
-                                } },
-                            "add to encounter"
-                        ));
                         options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
                                 return _this2.props.removeCombatant(_this2.props.combatant);
                             } }));
@@ -2544,12 +2511,15 @@ var PCCard = function (_React$Component) {
                             React.createElement(
                                 "div",
                                 { className: "lowercase" },
-                                "level ",
-                                this.props.combatant.level,
-                                " ",
-                                this.props.combatant.race || 'race',
-                                " ",
-                                this.props.combatant.classes || 'class'
+                                React.createElement(
+                                    "i",
+                                    null,
+                                    this.props.combatant.race || 'race',
+                                    " ",
+                                    this.props.combatant.classes || 'class',
+                                    ", level ",
+                                    this.props.combatant.level
+                                )
                             ),
                             React.createElement(
                                 "div",
@@ -9488,7 +9458,7 @@ var ConditionPanel = function (_React$Component) {
             var details = [];
 
             if (this.props.condition.type === "standard") {
-                if (this.props.condition.name === "exhausted") {
+                if (this.props.condition.name === "exhaustion") {
                     details.push(React.createElement(
                         "div",
                         { key: "level", className: "section" },
@@ -9520,7 +9490,7 @@ var ConditionPanel = function (_React$Component) {
         value: function render() {
             try {
                 var name = this.props.condition.name || "condition";
-                if (this.props.condition.type === "standard" && this.props.condition.name === "exhausted") {
+                if (this.props.condition.type === "standard" && this.props.condition.name === "exhaustion") {
                     name += " (" + this.props.condition.level + ")";
                 }
 
@@ -9624,7 +9594,8 @@ var ConditionsPanel = function (_React$Component) {
                     text: null,
                     disabled: true
                 }].concat(CONDITION_TYPES.map(function (c) {
-                    return { id: c, text: c };
+                    var immune = _this2.props.combatant.conditionImmunities.indexOf(c) != -1;
+                    return { id: c, text: c, disabled: immune };
                 }));
 
                 return React.createElement(
@@ -10927,7 +10898,7 @@ var CombatManagerScreen = function (_React$Component) {
                             ));
                         }
                         if (combatant.pending && !combatant.active && !combatant.defeated) {
-                            pending.push(React.createElement(CombatantRow, {
+                            pending.push(React.createElement(PendingCombatantRow, {
                                 key: combatant.id,
                                 combatant: combatant,
                                 combat: _this4.props.combat,
@@ -10967,23 +10938,10 @@ var CombatManagerScreen = function (_React$Component) {
                         }
                     });
 
-                    if (current.length === 0) {
-                        current.push(React.createElement(InfoCard, {
-                            key: "current",
-                            getContent: function getContent() {
-                                return React.createElement(
-                                    "div",
-                                    { className: "section" },
-                                    "the current initiative holder will be displayed here"
-                                );
-                            }
-                        }));
-                    }
-
                     if (this.props.showHelp && pending.length !== 0) {
-                        var help = React.createElement(
+                        var pendingHelp = React.createElement(
                             "div",
-                            { key: "help" },
+                            { key: "pending-help" },
                             React.createElement(InfoCard, {
                                 getContent: function getContent() {
                                     return React.createElement(
@@ -11003,13 +10961,13 @@ var CombatManagerScreen = function (_React$Component) {
                                 }
                             })
                         );
-                        pending = [].concat(help, pending);
+                        pending = [].concat(pendingHelp, pending);
                     }
 
                     if (this.props.showHelp && current.length === 0) {
-                        var help = React.createElement(
+                        var activeHelp = React.createElement(
                             "div",
-                            { key: "help" },
+                            { key: "active-help" },
                             React.createElement(InfoCard, {
                                 getContent: function getContent() {
                                     return React.createElement(
@@ -11018,24 +10976,37 @@ var CombatManagerScreen = function (_React$Component) {
                                         React.createElement(
                                             "div",
                                             { className: "section" },
-                                            "to begin the encounter, press ",
+                                            "these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right)"
+                                        ),
+                                        React.createElement(
+                                            "div",
+                                            { className: "section" },
+                                            "to begin the encounter, select the first combatant and press the ",
                                             React.createElement(
                                                 "b",
                                                 null,
                                                 "start turn"
                                             ),
-                                            " on one of the stat blocks in this section"
-                                        ),
-                                        React.createElement(
-                                            "div",
-                                            { className: "section" },
-                                            "that stat block will then be displayed on the left"
+                                            " button on their stat block"
                                         )
                                     );
                                 }
                             })
                         );
-                        active = [].concat(help, active);
+                        active = [].concat(activeHelp, active);
+                    }
+
+                    if (current.length === 0) {
+                        current.push(React.createElement(InfoCard, {
+                            key: "current",
+                            getContent: function getContent() {
+                                return React.createElement(
+                                    "div",
+                                    { className: "section" },
+                                    "the current initiative holder will be displayed here"
+                                );
+                            }
+                        }));
                     }
 
                     var notifications = this.props.combat.notifications.map(function (n) {
@@ -11287,8 +11258,85 @@ var Notification = function (_React$Component2) {
     return Notification;
 }(React.Component);
 
-var CombatantRow = function (_React$Component3) {
-    _inherits(CombatantRow, _React$Component3);
+var PendingCombatantRow = function (_React$Component3) {
+    _inherits(PendingCombatantRow, _React$Component3);
+
+    function PendingCombatantRow() {
+        _classCallCheck(this, PendingCombatantRow);
+
+        return _possibleConstructorReturn(this, (PendingCombatantRow.__proto__ || Object.getPrototypeOf(PendingCombatantRow)).apply(this, arguments));
+    }
+
+    _createClass(PendingCombatantRow, [{
+        key: "getInformationText",
+        value: function getInformationText() {
+            if (this.props.selected) {
+                return "selected";
+            }
+
+            return null;
+        }
+    }, {
+        key: "onClick",
+        value: function onClick(e) {
+            e.stopPropagation();
+            if (this.props.select) {
+                this.props.select(this.props.combatant);
+            }
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this8 = this;
+
+            var style = "combatant-row " + this.props.combatant.type;
+            if (this.props.combatant.current || this.props.selected) {
+                style += " highlight";
+            }
+
+            return React.createElement(
+                "div",
+                { className: style, onClick: function onClick(e) {
+                        return _this8.onClick(e);
+                    } },
+                React.createElement(
+                    "div",
+                    { className: "name" },
+                    this.props.combatant.displayName || this.props.combatant.name || "combatant",
+                    React.createElement(
+                        "span",
+                        { className: "info" },
+                        this.getInformationText()
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "content" },
+                    React.createElement(Spin, {
+                        source: this.props.combatant,
+                        name: "initiative",
+                        label: "initiative",
+                        nudgeValue: function nudgeValue(delta) {
+                            return _this8.props.nudgeValue(_this8.props.combatant, "initiative", delta);
+                        }
+                    }),
+                    React.createElement(
+                        "button",
+                        { onClick: function onClick(e) {
+                                e.stopPropagation();_this8.props.makeActive(_this8.props.combatant);
+                            } },
+                        "add to encounter"
+                    )
+                )
+            );
+        }
+    }]);
+
+    return PendingCombatantRow;
+}(React.Component);
+
+var CombatantRow = function (_React$Component4) {
+    _inherits(CombatantRow, _React$Component4);
 
     function CombatantRow() {
         _classCallCheck(this, CombatantRow);
@@ -11320,47 +11368,7 @@ var CombatantRow = function (_React$Component3) {
     }, {
         key: "render",
         value: function render() {
-            var _this8 = this;
-
-            var init = null;
-            var addBtn = null;
-            if (this.props.combatant.pending) {
-                init = React.createElement(
-                    "div",
-                    { className: "key-stat wide" },
-                    React.createElement(Spin, {
-                        source: this.props.combatant,
-                        name: "initiative",
-                        label: "initiative",
-                        factors: [1, 5, 10],
-                        nudgeValue: function nudgeValue(delta) {
-                            return _this8.props.nudgeValue(_this8.props.combatant, "initiative", delta);
-                        }
-                    })
-                );
-                addBtn = React.createElement(
-                    "button",
-                    { onClick: function onClick() {
-                            return _this8.props.makeActive(_this8.props.combatant);
-                        } },
-                    "add to encounter"
-                );
-            } else {
-                init = React.createElement(
-                    "div",
-                    { className: "key-stat" },
-                    React.createElement(
-                        "div",
-                        { className: "stat-heading" },
-                        "init"
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "stat-value" },
-                        this.props.combatant.initiative
-                    )
-                );
-            }
+            var _this10 = this;
 
             var content = null;
 
@@ -11372,7 +11380,20 @@ var CombatantRow = function (_React$Component3) {
                         React.createElement(
                             "div",
                             { className: "section key-stats" },
-                            init,
+                            React.createElement(
+                                "div",
+                                { className: "key-stat" },
+                                React.createElement(
+                                    "div",
+                                    { className: "stat-heading" },
+                                    "init"
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "stat-value" },
+                                    this.props.combatant.initiative
+                                )
+                            ),
                             React.createElement(
                                 "div",
                                 { className: "key-stat wide" },
@@ -11387,8 +11408,7 @@ var CombatantRow = function (_React$Component3) {
                                     this.props.combatant.player ? this.props.combatant.player : "-"
                                 )
                             )
-                        ),
-                        addBtn
+                        )
                     );
                     break;
                 case "monster":
@@ -11404,11 +11424,11 @@ var CombatantRow = function (_React$Component3) {
                     if (this.props.combatant.conditions) {
                         conditions = this.props.combatant.conditions.map(function (c) {
                             var name = c.name;
-                            if (c.name === "exhausted") {
+                            if (c.name === "exhaustion") {
                                 name += " (" + c.level + ")";
                             }
                             if (c.duration) {
-                                name += " " + conditionDurationText(c, _this8.props.combat);
+                                name += " " + conditionDurationText(c, _this10.props.combat);
                             }
                             var description = [];
                             if (c.type === "standard") {
@@ -11436,7 +11456,7 @@ var CombatantRow = function (_React$Component3) {
                     var notes = [];
                     if (this.props.combat.map) {
                         if (!this.props.combatant.pending && !this.props.combat.map.items.find(function (i) {
-                            return i.id === _this8.props.combatant.id;
+                            return i.id === _this10.props.combatant.id;
                         })) {
                             notes.push(React.createElement(
                                 "div",
@@ -11451,7 +11471,20 @@ var CombatantRow = function (_React$Component3) {
                         React.createElement(
                             "div",
                             { className: "section key-stats" },
-                            init,
+                            React.createElement(
+                                "div",
+                                { className: "key-stat" },
+                                React.createElement(
+                                    "div",
+                                    { className: "stat-heading" },
+                                    "init"
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "stat-value" },
+                                    this.props.combatant.initiative
+                                )
+                            ),
                             React.createElement(
                                 "div",
                                 { className: "key-stat" },
@@ -11481,7 +11514,6 @@ var CombatantRow = function (_React$Component3) {
                                 )
                             )
                         ),
-                        addBtn,
                         gauge,
                         conditions,
                         notes
@@ -11497,7 +11529,7 @@ var CombatantRow = function (_React$Component3) {
             return React.createElement(
                 "div",
                 { className: style, onClick: function onClick(e) {
-                        return _this8.onClick(e);
+                        return _this10.onClick(e);
                     } },
                 React.createElement(
                     "div",
