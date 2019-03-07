@@ -204,7 +204,7 @@ button {
 .heading {
     padding: 5px 0;
     border-bottom: 1px solid $control-border;
-    margin: 10px 0;
+    margin-bottom: 10px;
     font-size: 16px;
     font-weight: 600;
 }
@@ -223,7 +223,7 @@ button {
 }
 
 .list-column {
-    padding: 0 5px !important
+    padding: 5px !important
 }
 
 .lowercase {
@@ -358,12 +358,15 @@ body,
             vertical-align: middle;
         }
     }
+
+    .card {
+        margin: 5px;
+    }
 }
 
 .card {
     background-color: #F5F5F5;
     border: 1px solid #656565;
-    margin: 5px;
 
     .heading {
         height: 35px;
