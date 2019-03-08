@@ -1052,7 +1052,8 @@ var MonsterCard = function (_React$Component) {
         _this.state = {
             cloneName: props.combatant.name + " copy",
             showHP: false,
-            showDetails: false
+            showDetails: false,
+            damage: 0
         };
         return _this;
     }
@@ -1079,6 +1080,62 @@ var MonsterCard = function (_React$Component) {
             });
         }
     }, {
+        key: "setDamage",
+        value: function setDamage(damage) {
+            this.setState({
+                damage: damage
+            });
+        }
+    }, {
+        key: "nudgeDamage",
+        value: function nudgeDamage(delta) {
+            var damage = this.state.damage + delta;
+            damage = Math.max(damage, 0);
+
+            this.setState({
+                damage: damage
+            });
+        }
+    }, {
+        key: "heal",
+        value: function heal() {
+            var _this2 = this;
+
+            var hp = this.props.combatant.hp + this.state.damage;
+            hp = Math.min(hp, this.props.combatant.hpMax);
+
+            this.setState({
+                damage: 0
+            }, function () {
+                _this2.props.changeHP(_this2.props.combatant, hp, _this2.props.combatant.hpTemp);
+            });
+        }
+    }, {
+        key: "damage",
+        value: function damage() {
+            var _this3 = this;
+
+            var hp = this.props.combatant.hp;
+            var temp = this.props.combatant.hpTemp;
+
+            var damage = this.state.damage;
+
+            // Take damage off temp HP first
+            var val = Math.min(damage, temp);
+            damage -= val;
+            temp -= val;
+
+            // Take the rest off HP
+            hp -= damage;
+            hp = Math.max(hp, 0);
+
+            this.setState({
+                damage: 0
+            }, function () {
+                _this3.props.changeHP(_this3.props.combatant, hp, temp);
+            });
+        }
+    }, {
         key: "description",
         value: function description() {
             var category = this.props.combatant.category;
@@ -1095,23 +1152,23 @@ var MonsterCard = function (_React$Component) {
     }, {
         key: "monsterIsInWave",
         value: function monsterIsInWave(wave) {
-            var _this2 = this;
+            var _this4 = this;
 
             return wave.slots.some(function (s) {
                 var group = null;
-                _this2.props.library.forEach(function (g) {
-                    if (g.monsters.indexOf(_this2.props.combatant) !== -1) {
+                _this4.props.library.forEach(function (g) {
+                    if (g.monsters.indexOf(_this4.props.combatant) !== -1) {
                         group = g;
                     }
                 });
 
-                return s.monsterGroupName === group.name && s.monsterName === _this2.props.combatant.name;
+                return s.monsterGroupName === group.name && s.monsterName === _this4.props.combatant.name;
             });
         }
     }, {
         key: "render",
         value: function render() {
-            var _this3 = this;
+            var _this5 = this;
 
             try {
                 var options = [];
@@ -1121,7 +1178,7 @@ var MonsterCard = function (_React$Component) {
                             options.push(React.createElement(
                                 "button",
                                 { key: "edit", onClick: function onClick() {
-                                        return _this3.props.editMonster(_this3.props.combatant);
+                                        return _this5.props.editMonster(_this5.props.combatant);
                                     } },
                                 "edit monster"
                             ));
@@ -1133,12 +1190,12 @@ var MonsterCard = function (_React$Component) {
                                     "div",
                                     null,
                                     React.createElement("input", { type: "text", placeholder: "monster name", value: this.state.cloneName, onChange: function onChange(event) {
-                                            return _this3.setCloneName(event.target.value);
+                                            return _this5.setCloneName(event.target.value);
                                         } }),
                                     React.createElement(
                                         "button",
                                         { onClick: function onClick() {
-                                                return _this3.props.cloneMonster(_this3.props.combatant, _this3.state.cloneName);
+                                                return _this5.props.cloneMonster(_this5.props.combatant, _this5.state.cloneName);
                                             } },
                                         "create copy"
                                     )
@@ -1147,7 +1204,7 @@ var MonsterCard = function (_React$Component) {
 
                             var groupOptions = [];
                             this.props.library.forEach(function (group) {
-                                if (group.monsters.indexOf(_this3.props.combatant) === -1) {
+                                if (group.monsters.indexOf(_this5.props.combatant) === -1) {
                                     groupOptions.push({
                                         id: group.id,
                                         text: group.name
@@ -1159,12 +1216,12 @@ var MonsterCard = function (_React$Component) {
                                 options: groupOptions,
                                 placeholder: "move to group...",
                                 select: function select(optionID) {
-                                    return _this3.props.moveToGroup(_this3.props.combatant, optionID);
+                                    return _this5.props.moveToGroup(_this5.props.combatant, optionID);
                                 }
                             }));
 
                             options.push(React.createElement(ConfirmButton, { key: "remove", text: "delete monster", callback: function callback() {
-                                    return _this3.props.removeCombatant(_this3.props.combatant);
+                                    return _this5.props.removeCombatant(_this5.props.combatant);
                                 } }));
                         }
                         if (this.props.mode.indexOf("encounter") !== -1) {
@@ -1173,7 +1230,7 @@ var MonsterCard = function (_React$Component) {
                                 options.push(React.createElement(
                                     "button",
                                     { key: "remove", onClick: function onClick() {
-                                            return _this3.props.removeEncounterSlot(_this3.props.slot);
+                                            return _this5.props.removeEncounterSlot(_this5.props.slot);
                                         } },
                                     "remove from encounter"
                                 ));
@@ -1184,18 +1241,18 @@ var MonsterCard = function (_React$Component) {
                                     options.push(React.createElement(
                                         "button",
                                         { key: "add encounter", onClick: function onClick() {
-                                                return _this3.props.addEncounterSlot(_this3.props.combatant, null);
+                                                return _this5.props.addEncounterSlot(_this5.props.combatant, null);
                                             } },
                                         "add to encounter"
                                     ));
                                     canAdd = true;
                                 }
                                 this.props.encounter.waves.forEach(function (wave) {
-                                    if (!_this3.monsterIsInWave(wave)) {
+                                    if (!_this5.monsterIsInWave(wave)) {
                                         options.push(React.createElement(
                                             "button",
                                             { key: "add " + wave.id, onClick: function onClick() {
-                                                    return _this3.props.addEncounterSlot(_this3.props.combatant, wave.id);
+                                                    return _this5.props.addEncounterSlot(_this5.props.combatant, wave.id);
                                                 } },
                                             "add to ",
                                             wave.name
@@ -1213,7 +1270,7 @@ var MonsterCard = function (_React$Component) {
                                                 React.createElement(
                                                     "div",
                                                     { className: "title" },
-                                                    _this3.props.combatant.name
+                                                    _this5.props.combatant.name
                                                 )
                                             );
                                         },
@@ -1241,7 +1298,7 @@ var MonsterCard = function (_React$Component) {
                                 "div",
                                 null,
                                 React.createElement("input", { type: "text", value: this.props.combatant.displayName, onChange: function onChange(event) {
-                                        return _this3.props.changeValue(_this3.props.combatant, "displayName", event.target.value);
+                                        return _this5.props.changeValue(_this5.props.combatant, "displayName", event.target.value);
                                     } })
                             )
                         }));
@@ -1253,14 +1310,14 @@ var MonsterCard = function (_React$Component) {
                                     React.createElement(Radial, {
                                         direction: "eight",
                                         click: function click(dir) {
-                                            return _this3.props.mapMove(_this3.props.combatant, dir);
+                                            return _this5.props.mapMove(_this5.props.combatant, dir);
                                         }
                                     })
                                 ));
                                 options.push(React.createElement(
                                     "button",
                                     { key: "mapRemove", onClick: function onClick() {
-                                            return _this3.props.mapRemove(_this3.props.combatant);
+                                            return _this5.props.mapRemove(_this5.props.combatant);
                                         } },
                                     "remove from map"
                                 ));
@@ -1269,7 +1326,7 @@ var MonsterCard = function (_React$Component) {
                                 options.push(React.createElement(
                                     "button",
                                     { key: "mapAdd", onClick: function onClick() {
-                                            return _this3.props.mapAdd(_this3.props.combatant);
+                                            return _this5.props.mapAdd(_this5.props.combatant);
                                         } },
                                     "add to map"
                                 ));
@@ -1277,7 +1334,7 @@ var MonsterCard = function (_React$Component) {
                         }
                         if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
                             options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
-                                    return _this3.props.removeCombatant(_this3.props.combatant);
+                                    return _this5.props.removeCombatant(_this5.props.combatant);
                                 } }));
                         }
                         if (!this.props.combatant.pending && this.props.combatant.active && !this.props.combatant.defeated) {
@@ -1285,14 +1342,14 @@ var MonsterCard = function (_React$Component) {
                                 options.push(React.createElement(
                                     "button",
                                     { key: "endTurn", onClick: function onClick() {
-                                            return _this3.props.endTurn(_this3.props.combatant);
+                                            return _this5.props.endTurn(_this5.props.combatant);
                                         } },
                                     "end turn"
                                 ));
                                 options.push(React.createElement(
                                     "button",
                                     { key: "makeDefeated", onClick: function onClick() {
-                                            return _this3.props.makeDefeated(_this3.props.combatant);
+                                            return _this5.props.makeDefeated(_this5.props.combatant);
                                         } },
                                     "mark as defeated and end turn"
                                 ));
@@ -1300,19 +1357,19 @@ var MonsterCard = function (_React$Component) {
                                 options.push(React.createElement(
                                     "button",
                                     { key: "makeCurrent", onClick: function onClick() {
-                                            return _this3.props.makeCurrent(_this3.props.combatant);
+                                            return _this5.props.makeCurrent(_this5.props.combatant);
                                         } },
                                     "start turn"
                                 ));
                                 options.push(React.createElement(
                                     "button",
                                     { key: "makeDefeated", onClick: function onClick() {
-                                            return _this3.props.makeDefeated(_this3.props.combatant);
+                                            return _this5.props.makeDefeated(_this5.props.combatant);
                                         } },
                                     "mark as defeated"
                                 ));
                                 options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
-                                        return _this3.props.removeCombatant(_this3.props.combatant);
+                                        return _this5.props.removeCombatant(_this5.props.combatant);
                                     } }));
                             }
                         }
@@ -1320,12 +1377,12 @@ var MonsterCard = function (_React$Component) {
                             options.push(React.createElement(
                                 "button",
                                 { key: "makeActive", onClick: function onClick() {
-                                        return _this3.props.makeActive(_this3.props.combatant);
+                                        return _this5.props.makeActive(_this5.props.combatant);
                                     } },
                                 "mark as active"
                             ));
                             options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
-                                    return _this3.props.removeCombatant(_this3.props.combatant);
+                                    return _this5.props.removeCombatant(_this5.props.combatant);
                                 } }));
                         }
                     }
@@ -1347,7 +1404,7 @@ var MonsterCard = function (_React$Component) {
                                 name: "count",
                                 label: "count",
                                 nudgeValue: function nudgeValue(delta) {
-                                    return _this3.props.nudgeValue(_this3.props.slot, "count", delta);
+                                    return _this5.props.nudgeValue(_this5.props.slot, "count", delta);
                                 }
                             })
                         );
@@ -1543,20 +1600,51 @@ var MonsterCard = function (_React$Component) {
                             source: this.props.combatant,
                             name: "hp",
                             label: "hit points",
-                            factors: [1, 5, 10],
                             nudgeValue: function nudgeValue(delta) {
-                                return _this3.props.nudgeValue(_this3.props.combatant, "hp", delta);
+                                return _this5.props.nudgeValue(_this5.props.combatant, "hp", delta);
                             }
                         }),
                         React.createElement(Spin, {
                             source: this.props.combatant,
                             name: "hpTemp",
                             label: "temp hp",
-                            factors: [1, 5, 10],
                             nudgeValue: function nudgeValue(delta) {
-                                return _this3.props.nudgeValue(_this3.props.combatant, "hpTemp", delta);
+                                return _this5.props.nudgeValue(_this5.props.combatant, "hpTemp", delta);
                             }
                         }),
+                        React.createElement("div", { className: "divider" }),
+                        React.createElement(Spin, {
+                            source: this.state,
+                            name: "damage",
+                            nudgeValue: function nudgeValue(delta) {
+                                return _this5.nudgeDamage(delta);
+                            }
+                        }),
+                        React.createElement(
+                            "div",
+                            { className: this.state.damage > 0 ? "" : "disabled" },
+                            React.createElement(
+                                "button",
+                                { className: "damage-btn", onClick: function onClick() {
+                                        return _this5.heal();
+                                    } },
+                                "heal"
+                            ),
+                            React.createElement(
+                                "button",
+                                { className: "damage-btn", onClick: function onClick() {
+                                        return _this5.setDamage(0);
+                                    } },
+                                "reset"
+                            ),
+                            React.createElement(
+                                "button",
+                                { className: "damage-btn", onClick: function onClick() {
+                                        return _this5.damage();
+                                    } },
+                                "damage"
+                            )
+                        ),
                         React.createElement(
                             "div",
                             { className: "section", style: { display: this.props.combatant.damage.resist !== "" ? "" : "none" } },
@@ -1696,16 +1784,16 @@ var MonsterCard = function (_React$Component) {
                             combatant: this.props.combatant,
                             combat: this.props.combat,
                             addCondition: function addCondition(condition) {
-                                return _this3.props.addCondition(_this3.props.combatant, condition);
+                                return _this5.props.addCondition(_this5.props.combatant, condition);
                             },
                             removeCondition: function removeCondition(conditionID) {
-                                return _this3.props.removeCondition(_this3.props.combatant, conditionID);
+                                return _this5.props.removeCondition(_this5.props.combatant, conditionID);
                             },
                             nudgeConditionValue: function nudgeConditionValue(condition, type, delta) {
-                                return _this3.props.nudgeConditionValue(condition, type, delta);
+                                return _this5.props.nudgeConditionValue(condition, type, delta);
                             },
                             changeConditionValue: function changeConditionValue(condition, type, value) {
-                                return _this3.props.changeConditionValue(condition, type, value);
+                                return _this5.props.changeConditionValue(condition, type, value);
                             }
                         })
                     );
@@ -1880,7 +1968,7 @@ var MonsterCard = function (_React$Component) {
                             combatant: this.props.combatant,
                             template: true,
                             copyTrait: function copyTrait(trait) {
-                                return _this3.props.copyTrait(trait);
+                                return _this5.props.copyTrait(trait);
                             }
                         });
                     }
@@ -1894,7 +1982,7 @@ var MonsterCard = function (_React$Component) {
                 } else {
                     var imageStyle = this.state.showDetails ? "image rotate" : "image";
                     toggle = React.createElement("img", { className: imageStyle, src: "resources/images/down-arrow.svg", onClick: function onClick() {
-                            return _this3.toggleDetails();
+                            return _this5.toggleDetails();
                         } });
                 }
 
@@ -4952,6 +5040,16 @@ var Dojo = function (_React$Component) {
             }
         }
     }, {
+        key: "changeHP",
+        value: function changeHP(combatant, hp, temp) {
+            combatant.hp = hp;
+            combatant.hpTemp = temp;
+
+            this.setState({
+                combats: this.state.combats
+            });
+        }
+    }, {
         key: "addCondition",
         value: function addCondition(combatant, condition) {
             combatant.conditions.push(condition);
@@ -5483,6 +5581,9 @@ var Dojo = function (_React$Component) {
                             },
                             endTurn: function endTurn(combatant) {
                                 return _this7.endTurn(combatant);
+                            },
+                            changeHP: function changeHP(combatant, hp, temp) {
+                                return _this7.changeHP(combatant, hp, temp);
                             },
                             close: function close(notification, removeCondition) {
                                 return _this7.closeNotification(notification, removeCondition);
@@ -10805,6 +10906,9 @@ var CombatManagerScreen = function (_React$Component) {
                         },
                         endTurn: function endTurn(combatant) {
                             return _this2.props.endTurn(combatant);
+                        },
+                        changeHP: function changeHP(combatant, hp, temp) {
+                            return _this2.props.changeHP(combatant, hp, temp);
                         }
                     });
                 default:

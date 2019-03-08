@@ -1141,6 +1141,15 @@ class Dojo extends React.Component {
         }
     }
 
+    changeHP(combatant, hp, temp) {
+        combatant.hp = hp;
+        combatant.hpTemp = temp;
+
+        this.setState({
+            combats: this.state.combats
+        });
+    }
+
     addCondition(combatant, condition) {
         combatant.conditions.push(condition);
 
@@ -1537,6 +1546,7 @@ class Dojo extends React.Component {
                             mapMove={(combatant, dir) => this.mapMove(combatant, dir)}
                             mapRemove={combatant => this.mapRemove(combatant)}
                             endTurn={(combatant) => this.endTurn(combatant)}
+                            changeHP={(combatant, hp, temp) => this.changeHP(combatant, hp, temp)}
                             close={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
                         />
                     );

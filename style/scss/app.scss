@@ -477,6 +477,17 @@ body,
     .card-content {
         padding: 5px 10px;
     }
+
+    .damage-btn {
+        vertical-align: top;
+        display: inline-block;
+        width: calc((100% - 5px) / 3);
+        margin: 0;
+    
+        &:not(:first-child):not(:last-child) {
+            margin: 0 2px;
+        }
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

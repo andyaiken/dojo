@@ -66,6 +66,7 @@ class CombatManagerScreen extends React.Component {
                         mapMove={(combatant, dir) => this.props.mapMove(combatant, dir)}
                         mapRemove={combatant => this.props.mapRemove(combatant)}
                         endTurn={(combatant) => this.props.endTurn(combatant)}
+                        changeHP={(combatant, hp, temp) => this.props.changeHP(combatant, hp, temp)}
                     />
                 );
             default:

@@ -4,7 +4,8 @@ class MonsterCard extends React.Component {
         this.state = {
             cloneName: props.combatant.name + " copy",
             showHP: false,
-            showDetails: false
+            showDetails: false,
+            damage: 0
         };
     }
 
@@ -25,6 +26,54 @@ class MonsterCard extends React.Component {
         this.setState({
             showDetails: !this.state.showDetails
         })
+    }
+
+    setDamage(damage) {
+        this.setState({
+            damage: damage
+        });
+    }
+
+    nudgeDamage(delta) {
+        var damage = this.state.damage + delta;
+        damage = Math.max(damage, 0);
+
+        this.setState({
+            damage: damage
+        });
+    }
+
+    heal() {
+        var hp = this.props.combatant.hp + this.state.damage;
+        hp = Math.min(hp, this.props.combatant.hpMax);
+
+        this.setState({
+            damage: 0
+        }, () => {
+            this.props.changeHP(this.props.combatant, hp, this.props.combatant.hpTemp);
+        });
+    }
+
+    damage() {
+        var hp = this.props.combatant.hp;
+        var temp = this.props.combatant.hpTemp;
+
+        var damage = this.state.damage;
+
+        // Take damage off temp HP first
+        var val = Math.min(damage, temp);
+        damage -= val;
+        temp -= val;
+
+        // Take the rest off HP
+        hp -= damage;
+        hp = Math.max(hp, 0);
+
+        this.setState({
+            damage: 0
+        }, () => {
+            this.props.changeHP(this.props.combatant, hp, temp);
+        });
     }
 
     description() {
@@ -276,16 +325,25 @@ class MonsterCard extends React.Component {
                             source={this.props.combatant}
                             name="hp"
                             label="hit points"
-                            factors={[1, 5, 10]}
                             nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "hp", delta)}
                         />
                         <Spin
                             source={this.props.combatant}
                             name="hpTemp"
                             label="temp hp"
-                            factors={[1, 5, 10]}
                             nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "hpTemp", delta)}
                         />
+                        <div className="divider"></div>
+                        <Spin
+                            source={this.state}
+                            name="damage"
+                            nudgeValue={delta => this.nudgeDamage(delta)}
+                        />
+                        <div className={this.state.damage > 0 ? "" : "disabled"}>
+                            <button className="damage-btn" onClick={() => this.heal()}>heal</button>
+                            <button className="damage-btn" onClick={() => this.setDamage(0)}>reset</button>
+                            <button className="damage-btn" onClick={() => this.damage()}>damage</button>
+                        </div>
                         <div className="section" style={{ display: this.props.combatant.damage.resist !== "" ? "" : "none" }}>
                             <b>damage resistances</b> {this.props.combatant.damage.resist}
                         </div>
