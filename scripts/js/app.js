@@ -1522,11 +1522,6 @@ var MonsterCard = function (_React$Component) {
                     );
                 }
                 if (this.props.mode.indexOf("combat") !== -1) {
-                    var hp = this.props.combatant.hp;
-                    if (this.props.combatant.hpTemp > 0) {
-                        hp += " + " + this.props.combatant.hpTemp;
-                    }
-
                     stats = React.createElement(
                         "div",
                         { className: "stats" },
@@ -11368,7 +11363,7 @@ var CombatantRow = function (_React$Component4) {
                 case "monster":
                     var hp = this.props.combatant.hp;
                     if (this.props.combatant.hpTemp > 0) {
-                        hp += " + " + this.props.combatant.hpTemp;
+                        hp += "+" + this.props.combatant.hpTemp;
                     }
                     var gauge = null;
                     if (!this.props.combatant.pending) {

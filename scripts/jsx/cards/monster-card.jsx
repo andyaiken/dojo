@@ -266,11 +266,6 @@ class MonsterCard extends React.Component {
                 );
             }
             if (this.props.mode.indexOf("combat") !== -1) {
-                var hp = this.props.combatant.hp;
-                if (this.props.combatant.hpTemp > 0) {
-                    hp += " + " + this.props.combatant.hpTemp;
-                }
-
                 stats = (
                     <div className="stats">
                         <div className="section centered">

@@ -495,7 +495,7 @@ body,
         color: $background;
         font-size: 15px;
         font-weight: 600;
-        padding: 5px 10px 7px 10px;
+        padding: 3px 5px 5px 5px;
 
         .info {
             float: right;
@@ -503,10 +503,10 @@ body,
     }
 
     .content {
-        padding: 0 10px;
+        padding: 0 5px;
 
         button, .hp-gauge, .condition, .note {
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .condition {
@@ -734,10 +734,7 @@ body,
 
         .key-stat {
             display: inline-block;
-            border: 1px solid transparent;
             width: calc((100% - 1px) / 3);
-            padding-bottom: 5px;
-            vertical-align: top;
             text-align: center;
 
             &.wide {

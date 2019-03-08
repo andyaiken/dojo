@@ -443,7 +443,7 @@ class CombatantRow extends React.Component {
             case "monster":
                 var hp = this.props.combatant.hp;
                 if (this.props.combatant.hpTemp > 0) {
-                    hp += " + " + this.props.combatant.hpTemp;
+                    hp += "+" + this.props.combatant.hpTemp;
                 }
                 var gauge = null;
                 if (!this.props.combatant.pending) {
