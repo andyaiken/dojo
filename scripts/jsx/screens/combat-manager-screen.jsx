@@ -422,6 +422,15 @@ class CombatantRow extends React.Component {
     }
 
     render() {
+        var notes = [];
+        if (this.props.combat.map) {
+            if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
+                notes.push(
+                    <div key="not-on-map" className="note">not on the map</div>
+                );
+            }
+        }
+
         var content = null;
 
         switch (this.props.combatant.type) {
@@ -438,6 +447,7 @@ class CombatantRow extends React.Component {
                                 <div className="stat-label">player</div>
                             </div>
                         </div>
+                        {notes}
                     </div>
                 );
                 break;
@@ -476,14 +486,6 @@ class CombatantRow extends React.Component {
                             </div>
                         );
                     });
-                }
-                var notes = [];
-                if (this.props.combat.map) {
-                    if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
-                        notes.push(
-                            <div key="not-on-map" className="note">not on the map</div>
-                        );
-                    }
                 }
                 content = (
                     <div className="content">

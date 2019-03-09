@@ -187,17 +187,6 @@ class MonsterCard extends React.Component {
                     }
                 }
                 if (this.props.mode.indexOf("combat") !== -1) {
-                    options.push(
-                        <Expander
-                            key="rename"
-                            text="change name"
-                            content={(
-                                <div>
-                                    <input type="text" value={this.props.combatant.displayName} onChange={event => this.props.changeValue(this.props.combatant, "displayName", event.target.value)} />
-                                </div>
-                            )}
-                        />
-                    );
                     if (this.props.mode.indexOf("tactical") !== -1) {
                         if (this.props.mode.indexOf("on-map") !== -1) {
                             options.push(
@@ -208,11 +197,29 @@ class MonsterCard extends React.Component {
                                     />
                                 </div>
                             );
+                            var altitudeText = "altitude";
+                            if (this.props.combatant.altitude !== 0) {
+                                altitudeText += " " + this.props.combatant.altitude + " ft.";
+                            }
+                            options.push(
+                                <Expander
+                                    key="altitude"
+                                    text={altitudeText}
+                                    content={(
+                                        <Spin
+                                            source={this.props.combatant}
+                                            name="altitude"
+                                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "altitude", delta * 5)}
+                                        />
+                                    )}
+                                />
+                            );
                             options.push(<button key="mapRemove" onClick={() => this.props.mapRemove(this.props.combatant)}>remove from map</button>);
                         }
                         if (this.props.mode.indexOf("off-map") !== -1) {
                             options.push(<button key="mapAdd" onClick={() => this.props.mapAdd(this.props.combatant)}>add to map</button>);
                         }
+                        options.push(<div key="tactical-div" className="divider"></div>);
                     }
                     if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
                         options.push(<ConfirmButton key="remove" text="remove from encounter" callback={() => this.props.removeCombatant(this.props.combatant)} />);
@@ -231,6 +238,17 @@ class MonsterCard extends React.Component {
                         options.push(<button key="makeActive" onClick={() => this.props.makeActive(this.props.combatant)}>mark as active</button>);
                         options.push(<ConfirmButton key="remove" text="remove from encounter" callback={() => this.props.removeCombatant(this.props.combatant)} />);
                     }
+                    options.push(
+                        <Expander
+                            key="rename"
+                            text="change name"
+                            content={(
+                                <div>
+                                    <input type="text" value={this.props.combatant.displayName} onChange={event => this.props.changeValue(this.props.combatant, "displayName", event.target.value)} />
+                                </div>
+                            )}
+                        />
+                    );
                 }
                 if (this.props.mode.indexOf("template") !== -1) {
                     // None

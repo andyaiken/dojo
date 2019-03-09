@@ -34,6 +34,23 @@ class PCCard extends React.Component {
                                 />
                             </div>
                         );
+                        var altitudeText = "altitude";
+                        if (this.props.combatant.altitude !== 0) {
+                            altitudeText += " " + this.props.combatant.altitude + " ft.";
+                        }
+                        options.push(
+                            <Expander
+                                key="altitude"
+                                text={altitudeText}
+                                content={(
+                                    <Spin
+                                        source={this.props.combatant}
+                                        name="altitude"
+                                        nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "altitude", delta * 5)}
+                                    />
+                                )}
+                            />
+                        );
                         options.push(<button key="mapRemove" onClick={() => this.props.mapRemove(this.props.combatant)}>remove from map</button>);
                     }
                     if (this.props.mode.indexOf("off-map") !== -1) {

@@ -1291,17 +1291,6 @@ var MonsterCard = function (_React$Component) {
                         }
                     }
                     if (this.props.mode.indexOf("combat") !== -1) {
-                        options.push(React.createElement(Expander, {
-                            key: "rename",
-                            text: "change name",
-                            content: React.createElement(
-                                "div",
-                                null,
-                                React.createElement("input", { type: "text", value: this.props.combatant.displayName, onChange: function onChange(event) {
-                                        return _this5.props.changeValue(_this5.props.combatant, "displayName", event.target.value);
-                                    } })
-                            )
-                        }));
                         if (this.props.mode.indexOf("tactical") !== -1) {
                             if (this.props.mode.indexOf("on-map") !== -1) {
                                 options.push(React.createElement(
@@ -1314,6 +1303,21 @@ var MonsterCard = function (_React$Component) {
                                         }
                                     })
                                 ));
+                                var altitudeText = "altitude";
+                                if (this.props.combatant.altitude !== 0) {
+                                    altitudeText += " " + this.props.combatant.altitude + " ft.";
+                                }
+                                options.push(React.createElement(Expander, {
+                                    key: "altitude",
+                                    text: altitudeText,
+                                    content: React.createElement(Spin, {
+                                        source: this.props.combatant,
+                                        name: "altitude",
+                                        nudgeValue: function nudgeValue(delta) {
+                                            return _this5.props.nudgeValue(_this5.props.combatant, "altitude", delta * 5);
+                                        }
+                                    })
+                                }));
                                 options.push(React.createElement(
                                     "button",
                                     { key: "mapRemove", onClick: function onClick() {
@@ -1331,6 +1335,7 @@ var MonsterCard = function (_React$Component) {
                                     "add to map"
                                 ));
                             }
+                            options.push(React.createElement("div", { key: "tactical-div", className: "divider" }));
                         }
                         if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
                             options.push(React.createElement(ConfirmButton, { key: "remove", text: "remove from encounter", callback: function callback() {
@@ -1385,6 +1390,17 @@ var MonsterCard = function (_React$Component) {
                                     return _this5.props.removeCombatant(_this5.props.combatant);
                                 } }));
                         }
+                        options.push(React.createElement(Expander, {
+                            key: "rename",
+                            text: "change name",
+                            content: React.createElement(
+                                "div",
+                                null,
+                                React.createElement("input", { type: "text", value: this.props.combatant.displayName, onChange: function onChange(event) {
+                                        return _this5.props.changeValue(_this5.props.combatant, "displayName", event.target.value);
+                                    } })
+                            )
+                        }));
                     }
                     if (this.props.mode.indexOf("template") !== -1) {
                         // None
@@ -2357,6 +2373,21 @@ var PCCard = function (_React$Component) {
                                     }
                                 })
                             ));
+                            var altitudeText = "altitude";
+                            if (this.props.combatant.altitude !== 0) {
+                                altitudeText += " " + this.props.combatant.altitude + " ft.";
+                            }
+                            options.push(React.createElement(Expander, {
+                                key: "altitude",
+                                text: altitudeText,
+                                content: React.createElement(Spin, {
+                                    source: this.props.combatant,
+                                    name: "altitude",
+                                    nudgeValue: function nudgeValue(delta) {
+                                        return _this2.props.nudgeValue(_this2.props.combatant, "altitude", delta * 5);
+                                    }
+                                })
+                            }));
                             options.push(React.createElement(
                                 "button",
                                 { key: "mapRemove", onClick: function onClick() {
@@ -3879,6 +3910,11 @@ var Dojo = function (_React$Component) {
                     if (!c.notifications) {
                         c.notifications = [];
                     }
+                    c.combatants.forEach(function (c) {
+                        if (c.altitude === undefined) {
+                            c.altitude = 0;
+                        }
+                    });
                 });
 
                 _this.state = data;
@@ -4650,6 +4686,10 @@ var Dojo = function (_React$Component) {
                 } else {
                     combat.issues.push("unknown monster: " + slot.monsterName + " in group " + slot.monsterGroupName);
                 }
+            });
+
+            combat.combatants.forEach(function (c) {
+                return c.altitude = 0;
             });
 
             this.sortCombatants(combat);
@@ -10378,6 +10418,7 @@ var MapToken = function (_React$Component4) {
 
             var initials = null;
             var hpGauge = null;
+            var altitudeBadge = null;
             var conditionsBadge = null;
             if (!this.props.simple) {
                 var name = this.props.combatant.displayName || this.props.combatant.name;
@@ -10393,11 +10434,27 @@ var MapToken = function (_React$Component4) {
                     hpGauge = React.createElement(HitPointGauge, { combatant: this.props.combatant });
                 }
 
+                if (this.props.combatant.altitude > 0) {
+                    altitudeBadge = React.createElement(
+                        "div",
+                        { className: "badge altitude" },
+                        "\u23F6"
+                    );
+                }
+
+                if (this.props.combatant.altitude < 0) {
+                    altitudeBadge = React.createElement(
+                        "div",
+                        { className: "badge altitude" },
+                        "\u23F7"
+                    );
+                }
+
                 if (this.props.combatant.conditions && this.props.combatant.conditions.length > 0) {
                     conditionsBadge = React.createElement(
                         "div",
                         { className: "badge" },
-                        this.props.combatant.conditions.length
+                        "\u25C6"
                     );
                 }
             }
@@ -10414,6 +10471,7 @@ var MapToken = function (_React$Component4) {
                 },
                 initials,
                 hpGauge,
+                altitudeBadge,
                 conditionsBadge
             );
         }
@@ -11423,6 +11481,19 @@ var CombatantRow = function (_React$Component4) {
         value: function render() {
             var _this10 = this;
 
+            var notes = [];
+            if (this.props.combat.map) {
+                if (!this.props.combatant.pending && !this.props.combat.map.items.find(function (i) {
+                    return i.id === _this10.props.combatant.id;
+                })) {
+                    notes.push(React.createElement(
+                        "div",
+                        { key: "not-on-map", className: "note" },
+                        "not on the map"
+                    ));
+                }
+            }
+
             var content = null;
 
             switch (this.props.combatant.type) {
@@ -11461,7 +11532,8 @@ var CombatantRow = function (_React$Component4) {
                                     "player"
                                 )
                             )
-                        )
+                        ),
+                        notes
                     );
                     break;
                 case "monster":
@@ -11505,18 +11577,6 @@ var CombatantRow = function (_React$Component4) {
                                 description
                             );
                         });
-                    }
-                    var notes = [];
-                    if (this.props.combat.map) {
-                        if (!this.props.combatant.pending && !this.props.combat.map.items.find(function (i) {
-                            return i.id === _this10.props.combatant.id;
-                        })) {
-                            notes.push(React.createElement(
-                                "div",
-                                { key: "not-on-map", className: "note" },
-                                "not on the map"
-                            ));
-                        }
                     }
                     content = React.createElement(
                         "div",

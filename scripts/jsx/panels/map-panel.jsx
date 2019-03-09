@@ -267,6 +267,7 @@ class MapToken extends React.Component {
 
         var initials = null;
         var hpGauge = null;
+        var altitudeBadge = null;
         var conditionsBadge = null;
         if (!this.props.simple) {
             var name = this.props.combatant.displayName || this.props.combatant.name;
@@ -280,9 +281,21 @@ class MapToken extends React.Component {
                 );
             }
 
+            if (this.props.combatant.altitude > 0) {
+                altitudeBadge = (
+                    <div className="badge altitude">&#9206;</div>
+                );
+            }
+
+            if (this.props.combatant.altitude < 0) {
+                altitudeBadge = (
+                    <div className="badge altitude">&#9207;</div>
+                );
+            }
+
             if ((this.props.combatant.conditions) && (this.props.combatant.conditions.length > 0)) {
                 conditionsBadge = (
-                    <div className="badge">{this.props.combatant.conditions.length}</div>
+                    <div className="badge">&#9670;</div>
                 );
             }
         }
@@ -296,6 +309,7 @@ class MapToken extends React.Component {
             >
                 {initials}
                 {hpGauge}
+                {altitudeBadge}
                 {conditionsBadge}
             </div>
         );

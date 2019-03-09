@@ -1123,16 +1123,22 @@ body,
 
     .badge {
         background-color: white;
-        border: 1px solid $control-border;
         border-radius: 50%;
         height: 14px;
         width: 14px;
         position: absolute;
         top: -4px;
         right: -4px;
-        font-size: 8px;
-        font-weight: 600;
         text-align: center;
+        font-size: 15px;
+        line-height: 13px;
+        text-shadow: 0 0 2px black;
+
+        &.altitude {
+            top: -4px;
+            left: -4px;
+            line-height: 11px;
+        }
     }
 }
 

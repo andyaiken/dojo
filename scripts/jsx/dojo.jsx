@@ -47,6 +47,11 @@ class Dojo extends React.Component {
                     if (!c.notifications) {
                         c.notifications = [];
                     }
+                    c.combatants.forEach(c => {
+                        if (c.altitude === undefined) {
+                            c.altitude = 0;
+                        }
+                    });
                 });
 
                 this.state = data;
@@ -783,6 +788,8 @@ class Dojo extends React.Component {
                 combat.issues.push("unknown monster: " + slot.monsterName + " in group " + slot.monsterGroupName);
             }
         });
+
+        combat.combatants.forEach(c => c.altitude = 0);
 
         this.sortCombatants(combat);
 
