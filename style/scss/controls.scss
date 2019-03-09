@@ -333,6 +333,8 @@
         border-color: $highlight;
     }
 
+    .minus,
+    .plus,
     .spin-button,
     .info {
         display: inline-block;
@@ -349,13 +351,21 @@
         margin: 0 5px;
         border-radius: 50%;
 
+        &.factor {
+            border: 2px solid $control-border;
+            margin: 5px;
+            font-size: 10px;
+            line-height: 16px;
+            text-align: center;
+        }
+
         &:hover {
             background-color: $highlight01;
+            border-color: $highlight02;
         }
     }
 
     .info {
-        width: calc(100% - 80px);
         margin: 2px 0;
 
         .info-label {

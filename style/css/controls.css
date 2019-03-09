@@ -214,6 +214,8 @@
   background-color: white; }
   .spin:hover {
     border-color: #3c78dc; }
+  .spin .minus,
+  .spin .plus,
   .spin .spin-button,
   .spin .info {
     display: inline-block;
@@ -227,10 +229,16 @@
     padding: 5px;
     margin: 0 5px;
     border-radius: 50%; }
+    .spin .spin-button.factor {
+      border: 2px solid #c3c3c3;
+      margin: 5px;
+      font-size: 10px;
+      line-height: 16px;
+      text-align: center; }
     .spin .spin-button:hover {
-      background-color: rgba(60, 120, 220, 0.1); }
+      background-color: rgba(60, 120, 220, 0.1);
+      border-color: rgba(60, 120, 220, 0.2); }
   .spin .info {
-    width: calc(100% - 80px);
     margin: 2px 0; }
     .spin .info .info-label {
       font-size: 11px; }

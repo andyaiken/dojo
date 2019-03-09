@@ -1307,16 +1307,17 @@ var MonsterCard = function (_React$Component) {
                                 if (this.props.combatant.altitude !== 0) {
                                     altitudeText += " " + this.props.combatant.altitude + " ft.";
                                 }
-                                options.push(React.createElement(Expander, {
+                                options.push(React.createElement(Spin, {
                                     key: "altitude",
-                                    text: altitudeText,
-                                    content: React.createElement(Spin, {
-                                        source: this.props.combatant,
-                                        name: "altitude",
-                                        nudgeValue: function nudgeValue(delta) {
-                                            return _this5.props.nudgeValue(_this5.props.combatant, "altitude", delta * 5);
-                                        }
-                                    })
+                                    source: this.props.combatant,
+                                    name: "altitude",
+                                    label: "altitude",
+                                    display: function display(value) {
+                                        return value + " ft.";
+                                    },
+                                    nudgeValue: function nudgeValue(delta) {
+                                        return _this5.props.nudgeValue(_this5.props.combatant, "altitude", delta * 5);
+                                    }
                                 }));
                                 options.push(React.createElement(
                                     "button",
@@ -1616,6 +1617,7 @@ var MonsterCard = function (_React$Component) {
                             source: this.props.combatant,
                             name: "hp",
                             label: "hit points",
+                            factors: [1, 10],
                             nudgeValue: function nudgeValue(delta) {
                                 return _this5.props.nudgeValue(_this5.props.combatant, "hp", delta);
                             }
@@ -1624,6 +1626,7 @@ var MonsterCard = function (_React$Component) {
                             source: this.props.combatant,
                             name: "hpTemp",
                             label: "temp hp",
+                            factors: [1, 10],
                             nudgeValue: function nudgeValue(delta) {
                                 return _this5.props.nudgeValue(_this5.props.combatant, "hpTemp", delta);
                             }
@@ -1632,6 +1635,7 @@ var MonsterCard = function (_React$Component) {
                         React.createElement(Spin, {
                             source: this.state,
                             name: "damage",
+                            factors: [1, 10],
                             nudgeValue: function nudgeValue(delta) {
                                 return _this5.nudgeDamage(delta);
                             }
@@ -2377,16 +2381,17 @@ var PCCard = function (_React$Component) {
                             if (this.props.combatant.altitude !== 0) {
                                 altitudeText += " " + this.props.combatant.altitude + " ft.";
                             }
-                            options.push(React.createElement(Expander, {
+                            options.push(React.createElement(Spin, {
                                 key: "altitude",
-                                text: altitudeText,
-                                content: React.createElement(Spin, {
-                                    source: this.props.combatant,
-                                    name: "altitude",
-                                    nudgeValue: function nudgeValue(delta) {
-                                        return _this2.props.nudgeValue(_this2.props.combatant, "altitude", delta * 5);
-                                    }
-                                })
+                                source: this.props.combatant,
+                                name: "altitude",
+                                label: "altitude",
+                                display: function display(value) {
+                                    return value + " ft.";
+                                },
+                                nudgeValue: function nudgeValue(delta) {
+                                    return _this2.props.nudgeValue(_this2.props.combatant, "altitude", delta * 5);
+                                }
                             }));
                             options.push(React.createElement(
                                 "button",
@@ -3708,40 +3713,6 @@ var Spin = function (_React$Component) {
             var _this2 = this;
 
             try {
-                var expander = null;
-                if (this.props.factors) {
-                    expander = React.createElement(
-                        "div",
-                        { className: "spin-expander", onClick: function onClick() {
-                                return _this2.toggleExpanded();
-                            } },
-                        "\u2022 \u2022 \u2022"
-                    );
-                }
-
-                var factorSelector = null;
-                if (this.props.factors && this.state.expanded) {
-                    var options = this.props.factors.map(function (factor) {
-                        return {
-                            id: factor,
-                            text: factor
-                        };
-                    });
-
-                    factorSelector = React.createElement(
-                        "div",
-                        { className: "factor-selector" },
-                        React.createElement(Selector, {
-                            options: options,
-                            noBorder: true,
-                            selectedID: this.state.factor,
-                            select: function select(optionID) {
-                                return _this2.setState({ factor: optionID });
-                            }
-                        })
-                    );
-                }
-
                 var style = "info-value";
                 var value = this.props.source[this.props.name];
                 if (value === 0) {
@@ -3752,21 +3723,68 @@ var Spin = function (_React$Component) {
                     value = this.props.display(value);
                 }
 
-                return React.createElement(
-                    "div",
-                    { className: this.props.disabled ? "spin disabled" : "spin" },
-                    React.createElement(
+                var minus = [];
+                var plus = [];
+
+                if (this.props.factors) {
+                    this.props.factors.forEach(function (factor) {
+                        minus.push(React.createElement(
+                            "div",
+                            { key: "minus" + factor, className: "spin-button factor", onTouchEnd: function onTouchEnd(e) {
+                                    return _this2.touchEnd(e, -1);
+                                }, onClick: function onClick(e) {
+                                    return _this2.click(e, -1 * factor);
+                                } },
+                            "-" + factor
+                        ));
+
+                        plus.push(React.createElement(
+                            "div",
+                            { key: "plus" + factor, className: "spin-button factor", onTouchEnd: function onTouchEnd(e) {
+                                    return _this2.touchEnd(e, +1);
+                                }, onClick: function onClick(e) {
+                                    return _this2.click(e, +1 * factor);
+                                } },
+                            "+" + factor
+                        ));
+                    });
+
+                    minus.reverse();
+                } else {
+                    minus.push(React.createElement(
                         "div",
-                        { className: "spin-button", onTouchEnd: function onTouchEnd(e) {
+                        { key: "minus1", className: "spin-button", onTouchEnd: function onTouchEnd(e) {
                                 return _this2.touchEnd(e, -1);
                             }, onClick: function onClick(e) {
                                 return _this2.click(e, -1);
                             } },
                         React.createElement("img", { className: "image", src: "resources/images/minus.svg" })
+                    ));
+
+                    plus.push(React.createElement(
+                        "div",
+                        { key: "plus1", className: "spin-button", onTouchEnd: function onTouchEnd(e) {
+                                return _this2.touchEnd(e, +1);
+                            }, onClick: function onClick(e) {
+                                return _this2.click(e, +1);
+                            } },
+                        React.createElement("img", { className: "image", src: "resources/images/plus.svg" })
+                    ));
+                }
+
+                var infoWidth = 80 * (this.props.factors ? this.props.factors.length : 1);
+
+                return React.createElement(
+                    "div",
+                    { className: this.props.disabled ? "spin disabled" : "spin" },
+                    React.createElement(
+                        "div",
+                        { className: "minus" },
+                        minus
                     ),
                     React.createElement(
                         "div",
-                        { className: "info" },
+                        { className: "info", style: { width: "calc(100% - " + infoWidth + "px)" } },
                         React.createElement(
                             "div",
                             { className: "info-label" },
@@ -3780,15 +3798,9 @@ var Spin = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "spin-button", onTouchEnd: function onTouchEnd(e) {
-                                return _this2.touchEnd(e, +1);
-                            }, onClick: function onClick(e) {
-                                return _this2.click(e, +1);
-                            } },
-                        React.createElement("img", { className: "image", src: "resources/images/plus.svg" })
-                    ),
-                    expander,
-                    factorSelector
+                        { className: "plus" },
+                        plus
+                    )
                 );
             } catch (ex) {
                 console.error(ex);

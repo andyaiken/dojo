@@ -202,16 +202,13 @@ class MonsterCard extends React.Component {
                                 altitudeText += " " + this.props.combatant.altitude + " ft.";
                             }
                             options.push(
-                                <Expander
+                                <Spin
                                     key="altitude"
-                                    text={altitudeText}
-                                    content={(
-                                        <Spin
-                                            source={this.props.combatant}
-                                            name="altitude"
-                                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "altitude", delta * 5)}
-                                        />
-                                    )}
+                                    source={this.props.combatant}
+                                    name="altitude"
+                                    label="altitude"
+                                    display={value => value + " ft."}
+                                    nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "altitude", delta * 5)}
                                 />
                             );
                             options.push(<button key="mapRemove" onClick={() => this.props.mapRemove(this.props.combatant)}>remove from map</button>);
@@ -343,18 +340,21 @@ class MonsterCard extends React.Component {
                             source={this.props.combatant}
                             name="hp"
                             label="hit points"
+                            factors={[1, 10]}
                             nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "hp", delta)}
                         />
                         <Spin
                             source={this.props.combatant}
                             name="hpTemp"
                             label="temp hp"
+                            factors={[1, 10]}
                             nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "hpTemp", delta)}
                         />
                         <div className="divider"></div>
                         <Spin
                             source={this.state}
                             name="damage"
+                            factors={[1, 10]}
                             nudgeValue={delta => this.nudgeDamage(delta)}
                         />
                         <div className={this.state.damage > 0 ? "" : "disabled"}>
