@@ -730,18 +730,16 @@ body,
     right: 0;
     bottom: -6px; }
   .token .badge {
-    background-color: white;
-    border-radius: 50%;
-    height: 14px;
+    color: white;
     width: 14px;
     position: absolute;
     top: -4px;
     right: -4px;
     text-align: center;
     font-size: 15px;
-    line-height: 13px;
-    text-shadow: 0 0 2px black; }
+    line-height: 12px;
+    text-shadow: 0 0 5px black; }
     .token .badge.altitude {
       top: -4px;
       left: -4px;
-      line-height: 11px; }
+      line-height: 10px; }
