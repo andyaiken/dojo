@@ -334,9 +334,20 @@ body,
     vertical-align: top;
     display: inline-block;
     width: calc((100% - 5px) / 3);
-    margin: 0; }
-    .card .damage-btn:not(:first-child):not(:last-child) {
-      margin: 0 2px; }
+    margin: 0 1px; }
+    .card .damage-btn:first-child {
+      margin-left: 0; }
+    .card .damage-btn:last-child {
+      margin-right: 0; }
+  .card .half-btn {
+    vertical-align: top;
+    display: inline-block;
+    width: calc((100% - 5px) / 2);
+    margin: 0 1px; }
+    .card .half-btn:first-child {
+      margin-left: 0; }
+    .card .half-btn:last-child {
+      margin-right: 0; }
 
 .combatant-row {
   margin: 10px 0;

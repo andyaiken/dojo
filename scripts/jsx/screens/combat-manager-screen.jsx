@@ -59,6 +59,7 @@ class CombatManagerScreen extends React.Component {
                         makeDefeated={combatant => this.props.makeDefeated(combatant)}
                         removeCombatant={combatant => this.props.removeCombatant(combatant)}
                         addCondition={(combatant, condition) => this.props.addCondition(combatant, condition)}
+                        editCondition={(combatant, condition) => this.props.editCondition(combatant, condition)}
                         removeCondition={(combatant, conditionID) => this.props.removeCondition(combatant, conditionID)}
                         nudgeConditionValue={(condition, type, delta) => this.props.nudgeValue(condition, type, delta)}
                         changeConditionValue={(condition, type, value) => this.props.changeValue(condition, type, value)}

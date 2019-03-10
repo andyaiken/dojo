@@ -202,11 +202,10 @@ class ConditionPanel extends React.Component {
     }
 
     getDetails() {
-        var details = [];
-        
+        var description = [];
         if (this.props.condition.type === "standard") {
             if (this.props.condition.name === "exhaustion") {
-                details.push(
+                description.push(
                     <div key="level" className="section">
                         <Spin
                             source={this.props.condition}
@@ -218,13 +217,22 @@ class ConditionPanel extends React.Component {
                 );
             }
         }
+        if (this.props.condition.type === "standard") {
+            var text = conditionText(this.props.condition);
+            for (var n = 0; n !== text.length; ++n) {
+                description.push(<div key={n} className="section small-text">{text[n]}</div>);
+            }
+        }
 
         return (
             <div>
-                {details}
+                {description}
                 <Expander text="edit condition" content={this.getConditionContent()} />
                 <Expander text="edit duration" content={this.getDurationContent()} />
-                <ConfirmButton key="remove" text="remove condition" callback={() => this.props.removeCondition(this.props.condition.id)} />
+                <div>
+                    <button className="half-btn" onClick={() => this.props.editCondition(this.props.condition)}>edit</button>
+                    <button className="half-btn" onClick={() => this.props.removeCondition(this.props.condition.id)}>remove</button>
+                </div>
             </div>
         );
     }
@@ -240,24 +248,9 @@ class ConditionPanel extends React.Component {
                 name += " " + conditionDurationText(this.props.condition, this.props.combat);
             }
 
-            var description = [];
-            if (this.props.condition.type === "standard") {
-                var text = conditionText(this.props.condition);
-                for (var n = 0; n !== text.length; ++n) {
-                    description.push(<div key={n} className="section small-text">{text[n]}</div>);
-                }
-            }
-
-            var header = (
-                <div>
-                    {name}
-                    {description}
-                </div>
-            );
-
             return (
                 <Expander
-                    text={header}
+                    text={name}
                     content={this.getDetails()}
                 />
             );

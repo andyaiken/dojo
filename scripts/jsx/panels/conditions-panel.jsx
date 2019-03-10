@@ -22,6 +22,7 @@ class ConditionsPanel extends React.Component {
                             combat={this.props.combat}
                             nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
                             changeConditionValue={(condition, type, value) => this.props.changeConditionValue(condition, type, value)}
+                            editCondition={condition => this.props.editCondition(condition)}
                             removeCondition={conditionID => this.props.removeCondition(conditionID)}
                         />
                     );

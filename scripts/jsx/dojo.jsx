@@ -1165,6 +1165,19 @@ class Dojo extends React.Component {
         });
     }
 
+    editCondition(combatant, condition) {
+        var combat = this.getCombat(this.state.selectedCombatID);
+
+        this.setState({
+            modal: {
+                type: "condition-edit",
+                condition: condition,
+                combatant: combatant,
+                combat: combat
+            }
+        });
+    }
+
     removeCondition(combatant, conditionID) {
         var condition = combatant.conditions.find(c => c.id === conditionID);
         var index = combatant.conditions.indexOf(condition);
@@ -1548,6 +1561,7 @@ class Dojo extends React.Component {
                             makeDefeated={(combatant) => this.makeDefeated(combatant)}
                             removeCombatant={(combatant) => this.removeCombatant(combatant)}
                             addCondition={(combatant, condition) => this.addCondition(combatant, condition)}
+                            editCondition={(combatant, condition) => this.editCondition(combatant, condition)}
                             removeCondition={(combatant, conditionID) => this.removeCondition(combatant, conditionID)}
                             mapAdd={(combatant, x, y) => this.mapAdd(combatant, x, y)}
                             mapMove={(combatant, dir) => this.mapMove(combatant, dir)}
@@ -1691,6 +1705,21 @@ class Dojo extends React.Component {
                         var canClose = this.state.modal.combat.waveID !== null;
                         modalButtons.right = [
                             <button key="add wave" className={canClose ? "" : "disabled"} onClick={() => this.addWaveToCombat()}>add wave</button>,
+                            <button key="cancel" onClick={() => this.closeModal()}>cancel</button>
+                        ];
+                        break;
+                    case "condition-edit":
+                        modalTitle = "condition";
+                        modalContent = (
+                            <ConditionModal
+                                condition={this.state.modal.condition}
+                                combatant={this.state.modal.combatant}
+                            />
+                        );
+                        modalAllowClose = false;
+                        var canClose = false;
+                        modalButtons.right = [
+                            <button key="save" className={canClose ? "" : "disabled"} onClick={() => null}>save</button>,
                             <button key="cancel" onClick={() => this.closeModal()}>cancel</button>
                         ];
                         break;
