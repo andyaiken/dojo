@@ -166,6 +166,25 @@
     width: 20px;
     height: 20px; }
 
+.radio-group .radio-item {
+  margin: 5px 0;
+  background-color: white;
+  border: 1px solid #c3c3c3;
+  border-left-width: 5px;
+  cursor: pointer; }
+  .radio-group .radio-item:hover {
+    border-color: #3c78dc; }
+  .radio-group .radio-item.selected {
+    border-color: #3c78dc;
+    background-color: rgba(60, 120, 220, 0.1);
+    cursor: default; }
+  .radio-group .radio-item .radio-item-text {
+    padding: 8px 6px 8px 10px;
+    color: #3c3c3c;
+    font-weight: 600; }
+  .radio-group .radio-item .radio-item-details {
+    padding: 0 6px 8px 10px; }
+
 .selector {
   margin: 5px 0; }
   .selector .option {

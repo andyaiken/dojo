@@ -58,7 +58,7 @@ class CombatManagerScreen extends React.Component {
                         makeActive={combatant => this.props.makeActive(combatant)}
                         makeDefeated={combatant => this.props.makeDefeated(combatant)}
                         removeCombatant={combatant => this.props.removeCombatant(combatant)}
-                        addCondition={(combatant, condition) => this.props.addCondition(combatant, condition)}
+                        addCondition={(combatant) => this.props.addCondition(combatant)}
                         editCondition={(combatant, condition) => this.props.editCondition(combatant, condition)}
                         removeCondition={(combatant, conditionID) => this.props.removeCondition(combatant, conditionID)}
                         nudgeConditionValue={(condition, type, delta) => this.props.nudgeValue(condition, type, delta)}
@@ -477,13 +477,15 @@ class CombatantRow extends React.Component {
                         if (c.type === "standard") {
                             var text = conditionText(c);
                             for (var n = 0; n !== text.length; ++n) {
-                                description.push(<div key={n} className="condition-text">{text[n]}</div>);
+                                description.push(<li key={n} className="condition-text">{text[n]}</li>);
                             }
                         }
                         return (
                             <div key={c.id} className="condition">
                                 <div className="condition-name">{name}</div>
-                                {description}
+                                <ul>
+                                    {description}
+                                </ul>
                             </div>
                         );
                     });

@@ -1803,8 +1803,8 @@ var MonsterCard = function (_React$Component) {
                         React.createElement(ConditionsPanel, {
                             combatant: this.props.combatant,
                             combat: this.props.combat,
-                            addCondition: function addCondition(condition) {
-                                return _this5.props.addCondition(_this5.props.combatant, condition);
+                            addCondition: function addCondition() {
+                                return _this5.props.addCondition(_this5.props.combatant);
                             },
                             editCondition: function editCondition(condition) {
                                 return _this5.props.editCondition(_this5.props.combatant, condition);
@@ -3507,6 +3507,114 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /*
+<RadioGroup
+    items={[{id, text, details}]}
+    selectedItemID="0"
+    select={itemID => null}
+/>
+*/
+
+var RadioGroup = function (_React$Component) {
+    _inherits(RadioGroup, _React$Component);
+
+    function RadioGroup() {
+        _classCallCheck(this, RadioGroup);
+
+        return _possibleConstructorReturn(this, (RadioGroup.__proto__ || Object.getPrototypeOf(RadioGroup)).apply(this, arguments));
+    }
+
+    _createClass(RadioGroup, [{
+        key: "render",
+        value: function render() {
+            var _this2 = this;
+
+            try {
+                var content = this.props.items.map(function (item) {
+                    return React.createElement(RadioGroupItem, {
+                        item: item,
+                        selected: _this2.props.selectedItemID === item.id,
+                        select: function select(itemID) {
+                            return _this2.props.select(itemID);
+                        }
+                    });
+                });
+
+                return React.createElement(
+                    "div",
+                    { className: "radio-group" },
+                    content
+                );
+            } catch (ex) {
+                console.error(ex);
+                return null;
+            }
+        }
+    }]);
+
+    return RadioGroup;
+}(React.Component);
+
+var RadioGroupItem = function (_React$Component2) {
+    _inherits(RadioGroupItem, _React$Component2);
+
+    function RadioGroupItem() {
+        _classCallCheck(this, RadioGroupItem);
+
+        return _possibleConstructorReturn(this, (RadioGroupItem.__proto__ || Object.getPrototypeOf(RadioGroupItem)).apply(this, arguments));
+    }
+
+    _createClass(RadioGroupItem, [{
+        key: "select",
+        value: function select() {
+            if (this.props.select) {
+                this.props.select(this.props.item.id);
+            }
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this4 = this;
+
+            var style = "radio-item";
+            var details = null;
+
+            if (this.props.selected) {
+                style += " selected";
+                details = React.createElement(
+                    "div",
+                    { className: "radio-item-details" },
+                    this.props.item.details
+                );
+            }
+
+            return React.createElement(
+                "div",
+                { className: style, onClick: function onClick() {
+                        return _this4.select();
+                    } },
+                React.createElement(
+                    "div",
+                    { className: "radio-item-text" },
+                    this.props.item.text
+                ),
+                details
+            );
+        }
+    }]);
+
+    return RadioGroupItem;
+}(React.Component);
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/*
 var options = [
     {
         id: "one",
@@ -5106,11 +5214,34 @@ var Dojo = function (_React$Component) {
         }
     }, {
         key: "addCondition",
-        value: function addCondition(combatant, condition) {
-            combatant.conditions.push(condition);
+        value: function addCondition(combatant) {
+            var condition = {
+                id: guid(),
+                type: "standard",
+                name: "blinded",
+                level: 1,
+                duration: null
+            };
+
+            var combat = this.getCombat(this.state.selectedCombatID);
 
             this.setState({
-                combats: this.state.combats
+                modal: {
+                    type: "condition-add",
+                    condition: condition,
+                    combatant: combatant,
+                    combat: combat
+                }
+            });
+        }
+    }, {
+        key: "addConditionFromModal",
+        value: function addConditionFromModal() {
+            this.state.modal.combatant.conditions.push(this.state.modal.condition);
+
+            this.setState({
+                combats: this.state.combats,
+                modal: null
             });
         }
     }, {
@@ -5125,6 +5256,22 @@ var Dojo = function (_React$Component) {
                     combatant: combatant,
                     combat: combat
                 }
+            });
+        }
+    }, {
+        key: "editConditionFromModal",
+        value: function editConditionFromModal() {
+            var _this7 = this;
+
+            var original = this.state.modal.combatant.conditions.find(function (c) {
+                return c.id === _this7.state.modal.condition.id;
+            });
+            var index = this.state.modal.combatant.conditions.indexOf(original);
+            this.state.modal.combatant.conditions[index] = this.state.modal.condition;
+
+            this.setState({
+                combats: this.state.combats,
+                modal: null
             });
         }
     }, {
@@ -5414,7 +5561,7 @@ var Dojo = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            var _this7 = this;
+            var _this8 = this;
 
             try {
                 var content = null;
@@ -5424,7 +5571,7 @@ var Dojo = function (_React$Component) {
                         content = React.createElement(HomeScreen, {
                             library: this.state.library,
                             addOpenGameContent: function addOpenGameContent() {
-                                return _this7.addOpenGameContent();
+                                return _this8.addOpenGameContent();
                             }
                         });
                         break;
@@ -5434,28 +5581,28 @@ var Dojo = function (_React$Component) {
                             selection: this.getParty(this.state.selectedPartyID),
                             showHelp: this.state.options.showHelp,
                             selectParty: function selectParty(party) {
-                                return _this7.selectParty(party);
+                                return _this8.selectParty(party);
                             },
                             addParty: function addParty(name) {
-                                return _this7.addParty(name);
+                                return _this8.addParty(name);
                             },
                             removeParty: function removeParty() {
-                                return _this7.removeParty();
+                                return _this8.removeParty();
                             },
                             addPC: function addPC(name) {
-                                return _this7.addPC(name);
+                                return _this8.addPC(name);
                             },
                             removePC: function removePC(pc) {
-                                return _this7.removePC(pc);
+                                return _this8.removePC(pc);
                             },
                             sortPCs: function sortPCs() {
-                                return _this7.sortPCs();
+                                return _this8.sortPCs();
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this7.changeValue(combatant, type, value);
+                                return _this8.changeValue(combatant, type, value);
                             },
                             nudgeValue: function nudgeValue(combatant, type, delta) {
-                                return _this7.nudgeValue(combatant, type, delta);
+                                return _this8.nudgeValue(combatant, type, delta);
                             }
                         });
                         break;
@@ -5466,40 +5613,40 @@ var Dojo = function (_React$Component) {
                             filter: this.state.libraryFilter,
                             showHelp: this.state.options.showHelp,
                             selectMonsterGroup: function selectMonsterGroup(group) {
-                                return _this7.selectMonsterGroup(group);
+                                return _this8.selectMonsterGroup(group);
                             },
                             addMonsterGroup: function addMonsterGroup(name) {
-                                return _this7.addMonsterGroup(name);
+                                return _this8.addMonsterGroup(name);
                             },
                             removeMonsterGroup: function removeMonsterGroup() {
-                                return _this7.removeMonsterGroup();
+                                return _this8.removeMonsterGroup();
                             },
                             addMonster: function addMonster(name) {
-                                return _this7.addMonster(name);
+                                return _this8.addMonster(name);
                             },
                             removeMonster: function removeMonster(monster) {
-                                return _this7.removeMonster(monster);
+                                return _this8.removeMonster(monster);
                             },
                             sortMonsters: function sortMonsters() {
-                                return _this7.sortMonsters();
+                                return _this8.sortMonsters();
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this7.changeValue(combatant, type, value);
+                                return _this8.changeValue(combatant, type, value);
                             },
                             nudgeValue: function nudgeValue(combatant, type, delta) {
-                                return _this7.nudgeValue(combatant, type, delta);
+                                return _this8.nudgeValue(combatant, type, delta);
                             },
                             editMonster: function editMonster(combatant) {
-                                return _this7.editMonster(combatant);
+                                return _this8.editMonster(combatant);
                             },
                             cloneMonster: function cloneMonster(combatant, name) {
-                                return _this7.cloneMonster(combatant, name);
+                                return _this8.cloneMonster(combatant, name);
                             },
                             moveToGroup: function moveToGroup(combatant, groupID) {
-                                return _this7.moveToGroup(combatant, groupID);
+                                return _this8.moveToGroup(combatant, groupID);
                             },
                             addOpenGameContent: function addOpenGameContent() {
-                                return _this7.addOpenGameContent();
+                                return _this8.addOpenGameContent();
                             }
                         });
                         var count = 0;
@@ -5514,7 +5661,7 @@ var Dojo = function (_React$Component) {
                                     "div",
                                     { className: "section" },
                                     React.createElement("input", { type: "text", placeholder: "filter", value: this.state.libraryFilter, onChange: function onChange(event) {
-                                            return _this7.changeValue(_this7.state, "libraryFilter", event.target.value);
+                                            return _this8.changeValue(_this8.state, "libraryFilter", event.target.value);
                                         } })
                                 ),
                                 React.createElement(
@@ -5523,7 +5670,7 @@ var Dojo = function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         { onClick: function onClick() {
-                                                return _this7.openDemographics();
+                                                return _this8.openDemographics();
                                             } },
                                         "demographics"
                                     )
@@ -5539,34 +5686,34 @@ var Dojo = function (_React$Component) {
                             library: this.state.library,
                             showHelp: this.state.options.showHelp,
                             selectEncounter: function selectEncounter(encounter) {
-                                return _this7.selectEncounter(encounter);
+                                return _this8.selectEncounter(encounter);
                             },
                             addEncounter: function addEncounter(name) {
-                                return _this7.addEncounter(name);
+                                return _this8.addEncounter(name);
                             },
                             removeEncounter: function removeEncounter(encounter) {
-                                return _this7.removeEncounter(encounter);
+                                return _this8.removeEncounter(encounter);
                             },
                             addWave: function addWave() {
-                                return _this7.addWaveToEncounter();
+                                return _this8.addWaveToEncounter();
                             },
                             removeWave: function removeWave(wave) {
-                                return _this7.removeWave(wave);
+                                return _this8.removeWave(wave);
                             },
                             getMonster: function getMonster(monsterName, monsterGroupName) {
-                                return _this7.getMonster(monsterName, _this7.getMonsterGroupByName(monsterGroupName));
+                                return _this8.getMonster(monsterName, _this8.getMonsterGroupByName(monsterGroupName));
                             },
                             addEncounterSlot: function addEncounterSlot(monster, waveID) {
-                                return _this7.addEncounterSlot(monster, waveID);
+                                return _this8.addEncounterSlot(monster, waveID);
                             },
                             removeEncounterSlot: function removeEncounterSlot(slot, waveID) {
-                                return _this7.removeEncounterSlot(slot, waveID);
+                                return _this8.removeEncounterSlot(slot, waveID);
                             },
                             nudgeValue: function nudgeValue(slot, type, delta) {
-                                return _this7.nudgeValue(slot, type, delta);
+                                return _this8.nudgeValue(slot, type, delta);
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this7.changeValue(combatant, type, value);
+                                return _this8.changeValue(combatant, type, value);
                             }
                         });
                         break;
@@ -5576,28 +5723,28 @@ var Dojo = function (_React$Component) {
                             selection: this.getMapFolio(this.state.selectedMapFolioID),
                             showHelp: this.state.options.showHelp,
                             selectMapFolio: function selectMapFolio(folio) {
-                                return _this7.selectMapFolio(folio);
+                                return _this8.selectMapFolio(folio);
                             },
                             addMapFolio: function addMapFolio(name) {
-                                return _this7.addMapFolio(name);
+                                return _this8.addMapFolio(name);
                             },
                             removeMapFolio: function removeMapFolio() {
-                                return _this7.removeMapFolio();
+                                return _this8.removeMapFolio();
                             },
                             addMap: function addMap(name) {
-                                return _this7.addMap(name);
+                                return _this8.addMap(name);
                             },
                             editMap: function editMap(map) {
-                                return _this7.editMap(map);
+                                return _this8.editMap(map);
                             },
                             removeMap: function removeMap(map) {
-                                return _this7.removeMap(map);
+                                return _this8.removeMap(map);
                             },
                             nudgeValue: function nudgeValue(source, type, delta) {
-                                return _this7.nudgeValue(source, type, delta);
+                                return _this8.nudgeValue(source, type, delta);
                             },
                             changeValue: function changeValue(source, type, value) {
-                                return _this7.changeValue(source, type, value);
+                                return _this8.changeValue(source, type, value);
                             }
                         });
                         break;
@@ -5610,55 +5757,55 @@ var Dojo = function (_React$Component) {
                             combat: combat,
                             showHelp: this.state.options.showHelp,
                             createCombat: function createCombat() {
-                                return _this7.createCombat();
+                                return _this8.createCombat();
                             },
                             resumeEncounter: function resumeEncounter(combat) {
-                                return _this7.resumeCombat(combat);
+                                return _this8.resumeCombat(combat);
                             },
                             nudgeValue: function nudgeValue(combatant, type, delta) {
-                                return _this7.nudgeValue(combatant, type, delta);
+                                return _this8.nudgeValue(combatant, type, delta);
                             },
                             changeValue: function changeValue(combatant, type, value) {
-                                return _this7.changeValue(combatant, type, value);
+                                return _this8.changeValue(combatant, type, value);
                             },
                             makeCurrent: function makeCurrent(combatant) {
-                                return _this7.makeCurrent(combatant);
+                                return _this8.makeCurrent(combatant);
                             },
                             makeActive: function makeActive(combatant) {
-                                return _this7.makeActive(combatant);
+                                return _this8.makeActive(combatant);
                             },
                             makeDefeated: function makeDefeated(combatant) {
-                                return _this7.makeDefeated(combatant);
+                                return _this8.makeDefeated(combatant);
                             },
                             removeCombatant: function removeCombatant(combatant) {
-                                return _this7.removeCombatant(combatant);
+                                return _this8.removeCombatant(combatant);
                             },
-                            addCondition: function addCondition(combatant, condition) {
-                                return _this7.addCondition(combatant, condition);
+                            addCondition: function addCondition(combatant) {
+                                return _this8.addCondition(combatant);
                             },
                             editCondition: function editCondition(combatant, condition) {
-                                return _this7.editCondition(combatant, condition);
+                                return _this8.editCondition(combatant, condition);
                             },
                             removeCondition: function removeCondition(combatant, conditionID) {
-                                return _this7.removeCondition(combatant, conditionID);
+                                return _this8.removeCondition(combatant, conditionID);
                             },
                             mapAdd: function mapAdd(combatant, x, y) {
-                                return _this7.mapAdd(combatant, x, y);
+                                return _this8.mapAdd(combatant, x, y);
                             },
                             mapMove: function mapMove(combatant, dir) {
-                                return _this7.mapMove(combatant, dir);
+                                return _this8.mapMove(combatant, dir);
                             },
                             mapRemove: function mapRemove(combatant) {
-                                return _this7.mapRemove(combatant);
+                                return _this8.mapRemove(combatant);
                             },
                             endTurn: function endTurn(combatant) {
-                                return _this7.endTurn(combatant);
+                                return _this8.endTurn(combatant);
                             },
                             changeHP: function changeHP(combatant, hp, temp) {
-                                return _this7.changeHP(combatant, hp, temp);
+                                return _this8.changeHP(combatant, hp, temp);
                             },
                             close: function close(notification, removeCondition) {
-                                return _this7.closeNotification(notification, removeCondition);
+                                return _this8.closeNotification(notification, removeCondition);
                             }
                         });
                         if (combat) {
@@ -5700,7 +5847,7 @@ var Dojo = function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         { onClick: function onClick() {
-                                                return _this7.openWaveModal();
+                                                return _this8.openWaveModal();
                                             } },
                                         "add wave"
                                     )
@@ -5711,7 +5858,7 @@ var Dojo = function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         { onClick: function onClick() {
-                                                return _this7.pauseCombat();
+                                                return _this8.pauseCombat();
                                             } },
                                         "pause encounter"
                                     )
@@ -5722,7 +5869,7 @@ var Dojo = function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         { onClick: function onClick() {
-                                                return _this7.endCombat();
+                                                return _this8.endCombat();
                                             } },
                                         "end encounter"
                                     )
@@ -5748,10 +5895,10 @@ var Dojo = function (_React$Component) {
                             modalContent = React.createElement(AboutModal, {
                                 options: this.state.options,
                                 resetAll: function resetAll() {
-                                    return _this7.resetAll();
+                                    return _this8.resetAll();
                                 },
                                 changeValue: function changeValue(source, type, value) {
-                                    return _this7.changeValue(source, type, value);
+                                    return _this8.changeValue(source, type, value);
                                 }
                             });
                             break;
@@ -5775,19 +5922,19 @@ var Dojo = function (_React$Component) {
                                 label: "similar monsters",
                                 checked: this.state.modal.showMonsters,
                                 changeValue: function changeValue() {
-                                    return _this7.toggleShowSimilarMonsters();
+                                    return _this8.toggleShowSimilarMonsters();
                                 }
                             })];
                             modalButtons.right = [React.createElement(
                                 "button",
                                 { key: "save", onClick: function onClick() {
-                                        return _this7.saveMonster();
+                                        return _this8.saveMonster();
                                     } },
                                 "save"
                             ), React.createElement(
                                 "button",
                                 { key: "cancel", onClick: function onClick() {
-                                        return _this7.closeModal();
+                                        return _this8.closeModal();
                                     } },
                                 "cancel"
                             )];
@@ -5802,13 +5949,13 @@ var Dojo = function (_React$Component) {
                             modalButtons.right = [React.createElement(
                                 "button",
                                 { key: "save", onClick: function onClick() {
-                                        return _this7.saveMap();
+                                        return _this8.saveMap();
                                     } },
                                 "save"
                             ), React.createElement(
                                 "button",
                                 { key: "cancel", onClick: function onClick() {
-                                        return _this7.closeModal();
+                                        return _this8.closeModal();
                                     } },
                                 "cancel"
                             )];
@@ -5821,10 +5968,10 @@ var Dojo = function (_React$Component) {
                                 encounters: this.state.encounters,
                                 mapFolios: this.state.mapFolios,
                                 getMonster: function getMonster(monsterName, monsterGroupName) {
-                                    return _this7.getMonster(monsterName, _this7.getMonsterGroupByName(monsterGroupName));
+                                    return _this8.getMonster(monsterName, _this8.getMonsterGroupByName(monsterGroupName));
                                 },
                                 notify: function notify() {
-                                    return _this7.setState({ modal: _this7.state.modal });
+                                    return _this8.setState({ modal: _this8.state.modal });
                                 }
                             });
                             modalAllowClose = false;
@@ -5833,13 +5980,13 @@ var Dojo = function (_React$Component) {
                             modalButtons.right = [React.createElement(
                                 "button",
                                 { key: "start encounter", className: canClose ? "" : "disabled", onClick: function onClick() {
-                                        return _this7.startCombat();
+                                        return _this8.startCombat();
                                     } },
                                 "start encounter"
                             ), React.createElement(
                                 "button",
                                 { key: "cancel", onClick: function onClick() {
-                                        return _this7.closeModal();
+                                        return _this8.closeModal();
                                     } },
                                 "cancel"
                             )];
@@ -5850,10 +5997,10 @@ var Dojo = function (_React$Component) {
                                 combat: this.state.modal.combat,
                                 encounters: this.state.encounters,
                                 getMonster: function getMonster(monsterName, monsterGroupName) {
-                                    return _this7.getMonster(monsterName, _this7.getMonsterGroupByName(monsterGroupName));
+                                    return _this8.getMonster(monsterName, _this8.getMonsterGroupByName(monsterGroupName));
                                 },
                                 notify: function notify() {
-                                    return _this7.setState({ modal: _this7.state.modal });
+                                    return _this8.setState({ modal: _this8.state.modal });
                                 }
                             });
                             modalAllowClose = false;
@@ -5862,35 +6009,57 @@ var Dojo = function (_React$Component) {
                             modalButtons.right = [React.createElement(
                                 "button",
                                 { key: "add wave", className: canClose ? "" : "disabled", onClick: function onClick() {
-                                        return _this7.addWaveToCombat();
+                                        return _this8.addWaveToCombat();
                                     } },
                                 "add wave"
                             ), React.createElement(
                                 "button",
                                 { key: "cancel", onClick: function onClick() {
-                                        return _this7.closeModal();
+                                        return _this8.closeModal();
+                                    } },
+                                "cancel"
+                            )];
+                            break;
+                        case "condition-add":
+                            modalTitle = "add a condition";
+                            modalContent = React.createElement(ConditionModal, {
+                                condition: this.state.modal.condition,
+                                combatant: this.state.modal.combatant,
+                                combat: this.state.modal.combat
+                            });
+                            modalAllowClose = false;
+                            modalButtons.right = [React.createElement(
+                                "button",
+                                { key: "add", onClick: function onClick() {
+                                        return _this8.addConditionFromModal();
+                                    } },
+                                "add"
+                            ), React.createElement(
+                                "button",
+                                { key: "cancel", onClick: function onClick() {
+                                        return _this8.closeModal();
                                     } },
                                 "cancel"
                             )];
                             break;
                         case "condition-edit":
-                            modalTitle = "condition";
+                            modalTitle = "edit condition";
                             modalContent = React.createElement(ConditionModal, {
                                 condition: this.state.modal.condition,
-                                combatant: this.state.modal.combatant
+                                combatant: this.state.modal.combatant,
+                                combat: this.state.modal.combat
                             });
                             modalAllowClose = false;
-                            var canClose = false;
                             modalButtons.right = [React.createElement(
                                 "button",
-                                { key: "save", className: canClose ? "" : "disabled", onClick: function onClick() {
-                                        return null;
+                                { key: "save", onClick: function onClick() {
+                                        return _this8.editConditionFromModal();
                                     } },
                                 "save"
                             ), React.createElement(
                                 "button",
                                 { key: "cancel", onClick: function onClick() {
-                                        return _this7.closeModal();
+                                        return _this8.closeModal();
                                     } },
                                 "cancel"
                             )];
@@ -5912,7 +6081,7 @@ var Dojo = function (_React$Component) {
                                     modalTitle
                                 ),
                                 modalAllowClose ? React.createElement("img", { className: "image", src: "resources/images/close-black.svg", onClick: function onClick() {
-                                        return _this7.closeModal();
+                                        return _this8.closeModal();
                                     } }) : null
                             ),
                             React.createElement(
@@ -5945,10 +6114,10 @@ var Dojo = function (_React$Component) {
                         actions: actions,
                         blur: modal !== null,
                         openHome: function openHome() {
-                            return _this7.setView("home");
+                            return _this8.setView("home");
                         },
                         openAbout: function openAbout() {
-                            return _this7.openAbout();
+                            return _this8.openAbout();
                         }
                     }),
                     React.createElement(
@@ -5963,7 +6132,7 @@ var Dojo = function (_React$Component) {
                         encounters: this.state.encounters,
                         blur: modal !== null,
                         setView: function setView(view) {
-                            return _this7.setView(view);
+                            return _this8.setView(view);
                         }
                     }),
                     modal
@@ -7425,53 +7594,282 @@ var ConditionModal = function (_React$Component) {
     }
 
     _createClass(ConditionModal, [{
+        key: "setCondition",
+        value: function setCondition(conditionType) {
+            this.state.condition.type = "standard";
+            this.state.condition.name = conditionType;
+            this.state.condition.level = 1;
+
+            this.setState({
+                condition: this.state.condition
+            });
+        }
+    }, {
+        key: "setDuration",
+        value: function setDuration(durationType) {
+            var duration = null;
+
+            switch (durationType) {
+                case "saves":
+                    duration = {
+                        type: "saves",
+                        count: 1,
+                        saveType: "str",
+                        saveDC: 10,
+                        point: "start"
+                    };
+                    break;
+                case "combatant":
+                    duration = {
+                        type: "combatant",
+                        point: "start",
+                        combatantID: null
+                    };
+                    break;
+                case "rounds":
+                    duration = {
+                        type: "rounds",
+                        count: 1
+                    };
+                    break;
+            }
+
+            this.state.condition.duration = duration;
+            this.setState({
+                condition: this.state.condition
+            });
+        }
+    }, {
+        key: "changeValue",
+        value: function changeValue(object, field, value) {
+            object[field] = value;
+
+            this.setState({
+                condition: this.state.condition
+            });
+        }
+    }, {
+        key: "nudgeValue",
+        value: function nudgeValue(object, field, delta) {
+            var value = object[field] + delta;
+            if (field === "level") {
+                value = Math.max(value, 1);
+                value = Math.min(value, 6);
+            }
+            if (field === "count") {
+                value = Math.max(value, 1);
+            }
+            if (field === "saveDC") {
+                value = Math.max(value, 0);
+            }
+            object[field] = value;
+
+            this.setState({
+                condition: this.state.condition
+            });
+        }
+    }, {
         key: "render",
         value: function render() {
             var _this2 = this;
 
             try {
                 var conditions = CONDITION_TYPES.map(function (condition) {
+                    var controls = [];
                     var description = [];
                     if (condition === _this2.state.condition.name) {
-                        // TODO: Add spin for exhaustion
+                        if (condition === "exhaustion") {
+                            controls.push(React.createElement(Spin, {
+                                source: _this2.props.condition,
+                                name: "level",
+                                label: "exhaustion",
+                                nudgeValue: function nudgeValue(delta) {
+                                    return _this2.nudgeValue(_this2.props.condition, "level", delta);
+                                }
+                            }));
+                        }
                         var text = conditionText(_this2.state.condition);
                         for (var n = 0; n !== text.length; ++n) {
                             description.push(React.createElement(
-                                "div",
-                                { key: n },
+                                "li",
+                                { key: n, className: "section" },
                                 text[n]
                             ));
                         }
                     }
-                    return React.createElement(
-                        "div",
-                        { key: condition },
-                        React.createElement(
+
+                    return {
+                        id: condition,
+                        text: condition,
+                        details: React.createElement(
                             "div",
-                            { className: "section subheading" },
-                            condition
-                        ),
-                        description
-                    );
+                            { key: condition },
+                            controls,
+                            React.createElement(
+                                "ul",
+                                null,
+                                description
+                            )
+                        )
+                    };
                 });
 
-                var selectedDuration = this.state.condition.duration ? this.state.condition.duration.type : "none";
-                var durations = ["none", "saves", "combatant", "rounds"].map(function (duration) {
-                    var description = [];
-                    if (duration === selectedDuration) {
-                        // TODO
-                    }
-                    return React.createElement(
+                var saveOptions = ["str", "dex", "con", "int", "wis", "cha", "death"].map(function (c) {
+                    return { id: c, text: c };
+                });
+                var pointOptions = ["start", "end"].map(function (c) {
+                    return { id: c, text: c };
+                });
+                var combatantOptions = this.props.combat.combatants.map(function (c) {
+                    return { id: c.id, text: c.displayName || c.name || "unnamed monster" };
+                });
+
+                var durations = [{
+                    id: "none",
+                    text: "until removed (default)",
+                    details: React.createElement(
                         "div",
-                        { key: duration },
+                        { className: "section" },
                         React.createElement(
                             "div",
-                            { className: "section subheading" },
-                            conditionDurationText(_this2.state.condition)
+                            null,
+                            "the condition persists until it is manually removed"
+                        )
+                    )
+                }, {
+                    id: "saves",
+                    text: "until a successful save",
+                    details: React.createElement(
+                        "div",
+                        null,
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            React.createElement(
+                                "div",
+                                { className: "subheading" },
+                                "number of saves required"
+                            ),
+                            React.createElement(Spin, {
+                                source: this.props.condition.duration,
+                                name: "count",
+                                nudgeValue: function nudgeValue(delta) {
+                                    return _this2.nudgeValue(_this2.props.condition.duration, "count", delta);
+                                }
+                            })
                         ),
-                        description
-                    );
-                });
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            React.createElement(
+                                "div",
+                                { className: "subheading" },
+                                "save dc"
+                            ),
+                            React.createElement(Spin, {
+                                source: this.props.condition.duration,
+                                name: "saveDC",
+                                nudgeValue: function nudgeValue(delta) {
+                                    return _this2.nudgeValue(_this2.props.condition.duration, "saveDC", delta);
+                                }
+                            })
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            React.createElement(
+                                "div",
+                                { className: "subheading" },
+                                "type of save"
+                            ),
+                            React.createElement(Dropdown, {
+                                options: saveOptions,
+                                selectedID: this.props.condition.duration ? this.props.condition.duration.saveType : null,
+                                select: function select(optionID) {
+                                    return _this2.changeValue(_this2.props.condition.duration, "saveType", optionID);
+                                }
+                            })
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            React.createElement(
+                                "div",
+                                { className: "subheading" },
+                                "make the save at the start or end of the turn"
+                            ),
+                            React.createElement(Selector, {
+                                options: pointOptions,
+                                selectedID: this.props.condition.duration ? this.props.condition.duration.point : null,
+                                select: function select(optionID) {
+                                    return _this2.changeValue(_this2.props.condition.duration, "point", optionID);
+                                }
+                            })
+                        )
+                    )
+                }, {
+                    id: "combatant",
+                    text: "until someone's next turn",
+                    details: React.createElement(
+                        "div",
+                        null,
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            React.createElement(
+                                "div",
+                                { className: "subheading" },
+                                "combatant"
+                            ),
+                            React.createElement(Dropdown, {
+                                options: combatantOptions,
+                                selectedID: this.props.condition.duration ? this.props.condition.duration.combatantID : null,
+                                select: function select(optionID) {
+                                    return _this2.changeValue(_this2.props.condition.duration, "combatantID", optionID);
+                                }
+                            })
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            React.createElement(
+                                "div",
+                                { className: "subheading" },
+                                "start or end of the turn"
+                            ),
+                            React.createElement(Selector, {
+                                options: pointOptions,
+                                selectedID: this.props.condition.duration ? this.props.condition.duration.point : null,
+                                select: function select(optionID) {
+                                    return _this2.changeValue(_this2.props.condition.duration, "point", optionID);
+                                }
+                            })
+                        )
+                    )
+                }, {
+                    id: "rounds",
+                    text: "for a number of rounds",
+                    details: React.createElement(
+                        "div",
+                        null,
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            React.createElement(
+                                "div",
+                                { className: "subheading" },
+                                "number of rounds"
+                            ),
+                            React.createElement(Spin, {
+                                source: this.props.condition.duration,
+                                name: "count",
+                                nudgeValue: function nudgeValue(delta) {
+                                    return _this2.nudgeValue(_this2.props.condition.duration, "count", delta);
+                                }
+                            })
+                        )
+                    )
+                }];
 
                 return React.createElement(
                     "div",
@@ -7487,7 +7885,13 @@ var ConditionModal = function (_React$Component) {
                                 { className: "heading" },
                                 "condition"
                             ),
-                            conditions
+                            React.createElement(RadioGroup, {
+                                items: conditions,
+                                selectedItemID: this.state.condition.name,
+                                select: function select(itemID) {
+                                    return _this2.setCondition(itemID);
+                                }
+                            })
                         ),
                         React.createElement(
                             "div",
@@ -7497,7 +7901,13 @@ var ConditionModal = function (_React$Component) {
                                 { className: "heading" },
                                 "duration"
                             ),
-                            durations
+                            React.createElement(RadioGroup, {
+                                items: durations,
+                                selectedItemID: this.state.condition.duration ? this.state.condition.duration.type : "none",
+                                select: function select(itemID) {
+                                    return _this2.setDuration(itemID);
+                                }
+                            })
                         )
                     )
                 );
@@ -9447,79 +9857,9 @@ var ConditionPanel = function (_React$Component) {
             this.props.changeConditionValue(this.props.condition, "duration", duration);
         }
     }, {
-        key: "getConditionContent",
-        value: function getConditionContent() {
-            var _this2 = this;
-
-            var content = [];
-
-            var typeOptions = [{
-                id: "standard",
-                text: "standard"
-            }, {
-                id: "custom",
-                text: "custom"
-            }];
-            content.push(React.createElement(
-                "div",
-                { key: "type", className: "section" },
-                React.createElement(
-                    "div",
-                    { className: "subheading" },
-                    "condition type"
-                ),
-                React.createElement(Selector, {
-                    options: typeOptions,
-                    selectedID: this.props.condition.type,
-                    select: function select(optionID) {
-                        return _this2.props.changeConditionValue(_this2.props.condition, "type", optionID);
-                    }
-                })
-            ));
-
-            if (this.props.condition.type === "standard") {
-                var options = CONDITION_TYPES.map(function (c) {
-                    return { id: c, text: c };
-                });
-                content.push(React.createElement(
-                    "div",
-                    { key: "standard", className: "section" },
-                    React.createElement(
-                        "div",
-                        { className: "subheading" },
-                        "standard conditions"
-                    ),
-                    React.createElement(Dropdown, {
-                        options: options,
-                        selectedID: this.props.condition.name,
-                        select: function select(optionID) {
-                            return _this2.props.changeConditionValue(_this2.props.condition, "name", optionID);
-                        }
-                    })
-                ));
-            }
-
-            if (this.props.condition.type === "custom") {
-                content.push(React.createElement(
-                    "div",
-                    { key: "name", className: "section" },
-                    React.createElement(
-                        "div",
-                        { className: "subheading" },
-                        "custom condition text"
-                    ),
-                    React.createElement("input", { type: "text", placeholder: "name", value: this.props.condition.name, onChange: function onChange(event) {
-                            return _this2.props.changeConditionValue(_this2.props.condition, "name", event.target.value);
-                        } })
-                ));
-            }
-
-            return content;
-        }
-    }, {
         key: "getDurationContent",
         value: function getDurationContent() {
-            var _this3 = this;
+            var _this2 = this;
 
             var content = [];
 
@@ -9561,7 +9901,7 @@ var ConditionPanel = function (_React$Component) {
                                     source: this.props.condition.duration,
                                     name: "count",
                                     nudgeValue: function nudgeValue(delta) {
-                                        return _this3.props.nudgeConditionValue(_this3.props.condition.duration, "count", delta);
+                                        return _this2.props.nudgeConditionValue(_this2.props.condition.duration, "count", delta);
                                     }
                                 })
                             ),
@@ -9577,7 +9917,7 @@ var ConditionPanel = function (_React$Component) {
                                     options: saveOptions,
                                     selectedID: this.props.condition.duration.saveType,
                                     select: function select(optionID) {
-                                        return _this3.props.changeConditionValue(_this3.props.condition.duration, "saveType", optionID);
+                                        return _this2.props.changeConditionValue(_this2.props.condition.duration, "saveType", optionID);
                                     }
                                 })
                             ),
@@ -9593,7 +9933,7 @@ var ConditionPanel = function (_React$Component) {
                                     source: this.props.condition.duration,
                                     name: "saveDC",
                                     nudgeValue: function nudgeValue(delta) {
-                                        return _this3.props.nudgeConditionValue(_this3.props.condition.duration, "saveDC", delta);
+                                        return _this2.props.nudgeConditionValue(_this2.props.condition.duration, "saveDC", delta);
                                     }
                                 })
                             ),
@@ -9609,7 +9949,7 @@ var ConditionPanel = function (_React$Component) {
                                     options: pointOptions,
                                     selectedID: this.props.condition.duration.point,
                                     select: function select(optionID) {
-                                        return _this3.props.changeConditionValue(_this3.props.condition.duration, "point", optionID);
+                                        return _this2.props.changeConditionValue(_this2.props.condition.duration, "point", optionID);
                                     }
                                 })
                             )
@@ -9637,7 +9977,7 @@ var ConditionPanel = function (_React$Component) {
                                     options: pointOptions,
                                     selectedID: this.props.condition.duration.point,
                                     select: function select(optionID) {
-                                        return _this3.props.changeConditionValue(_this3.props.condition.duration, "point", optionID);
+                                        return _this2.props.changeConditionValue(_this2.props.condition.duration, "point", optionID);
                                     }
                                 })
                             ),
@@ -9653,7 +9993,7 @@ var ConditionPanel = function (_React$Component) {
                                     options: combatantOptions,
                                     selectedID: this.props.condition.duration.combatantID,
                                     select: function select(optionID) {
-                                        return _this3.props.changeConditionValue(_this3.props.condition.duration, "combatantID", optionID);
+                                        return _this2.props.changeConditionValue(_this2.props.condition.duration, "combatantID", optionID);
                                     }
                                 })
                             )
@@ -9675,7 +10015,7 @@ var ConditionPanel = function (_React$Component) {
                                     source: this.props.condition.duration,
                                     name: "count",
                                     nudgeValue: function nudgeValue(delta) {
-                                        return _this3.props.nudgeConditionValue(_this3.props.condition.duration, "count", delta);
+                                        return _this2.props.nudgeConditionValue(_this2.props.condition.duration, "count", delta);
                                     }
                                 })
                             )
@@ -9695,7 +10035,7 @@ var ConditionPanel = function (_React$Component) {
                     options: options,
                     selectedID: this.props.condition.duration ? this.props.condition.duration.type : "none",
                     select: function select(optionID) {
-                        return _this3.setDurationType(optionID);
+                        return _this2.setDurationType(optionID);
                     }
                 }),
                 duration
@@ -9706,7 +10046,7 @@ var ConditionPanel = function (_React$Component) {
     }, {
         key: "getDetails",
         value: function getDetails() {
-            var _this4 = this;
+            var _this3 = this;
 
             var description = [];
             if (this.props.condition.type === "standard") {
@@ -9719,7 +10059,7 @@ var ConditionPanel = function (_React$Component) {
                             name: "level",
                             label: "level",
                             nudgeValue: function nudgeValue(delta) {
-                                return _this4.props.nudgeConditionValue(_this4.props.condition, "level", delta);
+                                return _this3.props.nudgeConditionValue(_this3.props.condition, "level", delta);
                             }
                         })
                     ));
@@ -9730,7 +10070,7 @@ var ConditionPanel = function (_React$Component) {
                 for (var n = 0; n !== text.length; ++n) {
                     description.push(React.createElement(
                         "div",
-                        { key: n, className: "section small-text" },
+                        { key: n, className: "section" },
                         text[n]
                     ));
                 }
@@ -9740,25 +10080,20 @@ var ConditionPanel = function (_React$Component) {
                 "div",
                 null,
                 description,
-                React.createElement(Expander, { text: "edit condition", content: this.getConditionContent() }),
-                React.createElement(Expander, { text: "edit duration", content: this.getDurationContent() }),
+                React.createElement("div", { className: "divider" }),
                 React.createElement(
-                    "div",
-                    null,
-                    React.createElement(
-                        "button",
-                        { className: "half-btn", onClick: function onClick() {
-                                return _this4.props.editCondition(_this4.props.condition);
-                            } },
-                        "edit"
-                    ),
-                    React.createElement(
-                        "button",
-                        { className: "half-btn", onClick: function onClick() {
-                                return _this4.props.removeCondition(_this4.props.condition.id);
-                            } },
-                        "remove"
-                    )
+                    "button",
+                    { onClick: function onClick() {
+                            return _this3.props.editCondition(_this3.props.condition);
+                        } },
+                    "edit"
+                ),
+                React.createElement(
+                    "button",
+                    { onClick: function onClick() {
+                            return _this3.props.removeCondition(_this3.props.condition.id);
+                        } },
+                    "remove"
                 )
             );
         }
@@ -9807,17 +10142,6 @@ var ConditionsPanel = function (_React$Component) {
     }
 
     _createClass(ConditionsPanel, [{
-        key: "addCondition",
-        value: function addCondition(condition) {
-            this.props.addCondition({
-                id: guid(),
-                type: condition ? "standard" : "custom",
-                name: condition || "custom condition",
-                level: 1,
-                duration: null
-            });
-        }
-    }, {
         key: "render",
         value: function render() {
             var _this2 = this;
@@ -9847,29 +10171,17 @@ var ConditionsPanel = function (_React$Component) {
                     }
                 }
 
-                var conditionOptions = [{
-                    id: null,
-                    text: "custom condition"
-                }, {
-                    id: "div",
-                    text: null,
-                    disabled: true
-                }].concat(CONDITION_TYPES.map(function (c) {
-                    var immune = _this2.props.combatant.conditionImmunities.indexOf(c) != -1;
-                    return { id: c, text: c, disabled: immune };
-                }));
-
                 return React.createElement(
                     "div",
                     { className: "section" },
                     conditions,
-                    React.createElement(Dropdown, {
-                        options: conditionOptions,
-                        placeholder: "add a condition",
-                        select: function select(optionID) {
-                            return _this2.addCondition(optionID);
-                        }
-                    })
+                    React.createElement(
+                        "button",
+                        { onClick: function onClick() {
+                                return _this2.props.addCondition();
+                            } },
+                        "add a condition"
+                    )
                 );
             } catch (e) {
                 console.error(e);
@@ -11112,8 +11424,8 @@ var CombatManagerScreen = function (_React$Component) {
                         removeCombatant: function removeCombatant(combatant) {
                             return _this2.props.removeCombatant(combatant);
                         },
-                        addCondition: function addCondition(combatant, condition) {
-                            return _this2.props.addCondition(combatant, condition);
+                        addCondition: function addCondition(combatant) {
+                            return _this2.props.addCondition(combatant);
                         },
                         editCondition: function editCondition(combatant, condition) {
                             return _this2.props.editCondition(combatant, condition);
@@ -11734,7 +12046,7 @@ var CombatantRow = function (_React$Component4) {
                                 var text = conditionText(c);
                                 for (var n = 0; n !== text.length; ++n) {
                                     description.push(React.createElement(
-                                        "div",
+                                        "li",
                                         { key: n, className: "condition-text" },
                                         text[n]
                                     ));
@@ -11748,7 +12060,11 @@ var CombatantRow = function (_React$Component4) {
                                     { className: "condition-name" },
                                     name
                                 ),
-                                description
+                                React.createElement(
+                                    "ul",
+                                    null,
+                                    description
+                                )
                             );
                         });
                     }

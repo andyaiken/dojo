@@ -32,56 +32,6 @@ class ConditionPanel extends React.Component {
         this.props.changeConditionValue(this.props.condition, "duration", duration);
     }
 
-    getConditionContent() {
-        var content = [];
-
-        var typeOptions = [
-            {
-                id: "standard",
-                text: "standard"
-            },
-            {
-                id: "custom",
-                text: "custom"
-            }
-        ];
-        content.push(
-            <div key="type" className="section">
-                <div className="subheading">condition type</div>
-                <Selector
-                    options={typeOptions}
-                    selectedID={this.props.condition.type}
-                    select={optionID => this.props.changeConditionValue(this.props.condition, "type", optionID)}
-                />
-            </div>
-        );
-
-        if (this.props.condition.type === "standard") {
-            var options = CONDITION_TYPES.map(c => { return { id: c, text: c }; });
-            content.push(
-                <div key="standard" className="section">
-                    <div className="subheading">standard conditions</div>
-                    <Dropdown
-                        options={options}
-                        selectedID={this.props.condition.name}
-                        select={optionID => this.props.changeConditionValue(this.props.condition, "name", optionID)}
-                    />
-                </div>
-            );
-        }
-
-        if (this.props.condition.type === "custom") {
-            content.push(
-                <div key="name" className="section">
-                    <div className="subheading">custom condition text</div>
-                    <input type="text" placeholder="name" value={this.props.condition.name} onChange={event => this.props.changeConditionValue(this.props.condition, "name", event.target.value)} />
-                </div>
-            );
-        }
-
-        return content;
-    }
-
     getDurationContent() {
         var content = [];
 
@@ -220,19 +170,16 @@ class ConditionPanel extends React.Component {
         if (this.props.condition.type === "standard") {
             var text = conditionText(this.props.condition);
             for (var n = 0; n !== text.length; ++n) {
-                description.push(<div key={n} className="section small-text">{text[n]}</div>);
+                description.push(<div key={n} className="section">{text[n]}</div>);
             }
         }
 
         return (
             <div>
                 {description}
-                <Expander text="edit condition" content={this.getConditionContent()} />
-                <Expander text="edit duration" content={this.getDurationContent()} />
-                <div>
-                    <button className="half-btn" onClick={() => this.props.editCondition(this.props.condition)}>edit</button>
-                    <button className="half-btn" onClick={() => this.props.removeCondition(this.props.condition.id)}>remove</button>
-                </div>
+                <div className="divider"></div>
+                <button onClick={() => this.props.editCondition(this.props.condition)}>edit</button>
+                <button onClick={() => this.props.removeCondition(this.props.condition.id)}>remove</button>
             </div>
         );
     }
