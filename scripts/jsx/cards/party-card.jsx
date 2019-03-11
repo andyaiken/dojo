@@ -5,7 +5,9 @@ class PartyCard extends React.Component {
             var content = null;
 
             if (this.props.selection) {
-                var languages = this.props.selection.pcs
+                var activePCs = this.props.pcs.filter(pc => pc.active);
+
+                var languages = activePCs
                     .map(pc => pc.languages)
                     .join(", ")
                     .split(/[ ,;]+/)
@@ -30,12 +32,12 @@ class PartyCard extends React.Component {
                 var investigationSummary = "-";
                 var perceptionSummary = "-";
 
-                if (this.props.selection.pcs.length !== 0) {
+                if (activePCs.length !== 0) {
                     var insight = { min: null, max: null };
                     var investigation = { min: null, max: null };
                     var perception = { min: null, max: null };
 
-                    this.props.selection.pcs.forEach(pc => {
+                    activePCs.forEach(pc => {
                         insight.min = insight.min === null ? pc.passiveInsight : Math.min(insight.min, pc.passiveInsight);
                         insight.max = insight.max === null ? pc.passiveInsight : Math.max(insight.max, pc.passiveInsight);
                         investigation.min = investigation.min === null ? pc.passiveInvestigation : Math.min(investigation.min, pc.passiveInvestigation);
