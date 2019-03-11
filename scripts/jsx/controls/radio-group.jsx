@@ -1,6 +1,6 @@
 /*
 <RadioGroup
-    items={[{id, text, details}]}
+    items={[{id, text, details, disabled}]}
     selectedItemID="0"
     select={itemID => null}
 />
@@ -32,12 +32,6 @@ class RadioGroup extends React.Component {
 }
 
 class RadioGroupItem extends React.Component {
-    select() {
-        if (this.props.select) {
-            this.props.select(this.props.item.id);
-        }
-    }
-
     render() {
         var style = "radio-item";
         var details = null;
@@ -51,8 +45,12 @@ class RadioGroupItem extends React.Component {
             );
         }
 
+        if (this.props.item.disabled) {
+            style += " disabled";
+        }
+
         return (
-            <div className={style} onClick={() => this.select()}>
+            <div className={style} onClick={() => this.props.select(this.props.item.id)}>
                 <div className="radio-item-text">{this.props.item.text}</div>
                 {details}
             </div>

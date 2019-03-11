@@ -470,15 +470,16 @@ class CombatantRow extends React.Component {
                         if (c.name === "exhaustion") {
                             name += " (" + c.level + ")";
                         }
+                        if (c.name === "custom") {
+                            name = c.text;
+                        }
                         if (c.duration) {
                             name += " " + conditionDurationText(c, this.props.combat);
                         }
                         var description = [];
-                        if (c.type === "standard") {
-                            var text = conditionText(c);
-                            for (var n = 0; n !== text.length; ++n) {
-                                description.push(<li key={n} className="condition-text">{text[n]}</li>);
-                            }
+                        var text = conditionText(c);
+                        for (var n = 0; n !== text.length; ++n) {
+                            description.push(<li key={n} className="condition-text">{text[n]}</li>);
                         }
                         return (
                             <div key={c.id} className="condition">

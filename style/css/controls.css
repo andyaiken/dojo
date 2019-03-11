@@ -178,6 +178,9 @@
     border-color: #3c78dc;
     background-color: rgba(60, 120, 220, 0.1);
     cursor: default; }
+  .radio-group .radio-item.disabled {
+    opacity: 0.5;
+    pointer-events: none; }
   .radio-group .radio-item .radio-item-text {
     padding: 8px 6px 8px 10px;
     color: #3c3c3c;

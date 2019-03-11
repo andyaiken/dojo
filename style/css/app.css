@@ -604,6 +604,9 @@ body,
         vertical-align: top;
         width: calc(100% - 250px);
         height: 100%; }
+    .modal .modal-content .condition-modal {
+      height: 100%;
+      margin: 0 -15px; }
   .modal .modal-footer {
     height: 42px;
     background-color: gainsboro;

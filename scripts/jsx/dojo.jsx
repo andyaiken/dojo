@@ -1160,9 +1160,9 @@ class Dojo extends React.Component {
     addCondition(combatant) {
         var condition = {
             id: guid(),
-            type: "standard",
             name: "blinded",
             level: 1,
+            text: null,
             duration: null
         }
 
@@ -1751,6 +1751,7 @@ class Dojo extends React.Component {
                             />
                         );
                         modalAllowClose = false;
+                        modalAllowScroll = false;
                         modalButtons.right = [
                             <button key="add" onClick={() => this.addConditionFromModal()}>add</button>,
                             <button key="cancel" onClick={() => this.closeModal()}>cancel</button>

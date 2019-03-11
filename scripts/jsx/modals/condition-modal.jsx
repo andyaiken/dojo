@@ -6,10 +6,10 @@ class ConditionModal extends React.Component {
         };
     }
 
-    setCondition(conditionType) {
-        this.state.condition.type = "standard";
-        this.state.condition.name = conditionType;
+    setCondition(conditionName) {
+        this.state.condition.name = conditionName;
         this.state.condition.level = 1;
+        this.state.condition.text = conditionName === "custom" ? "custom condition" : null;
 
         this.setState({
             condition: this.state.condition
@@ -83,6 +83,11 @@ class ConditionModal extends React.Component {
                 var controls = [];
                 var description = [];
                 if (condition === this.state.condition.name) {
+                    if (condition === "custom") {
+                        controls.push(
+                            <input type="text" placeholder="custom condition" value={this.state.condition.text} onChange={event => this.changeValue(this.state.condition, "text", event.target.value)} />
+                        );
+                    }
                     if (condition === "exhaustion") {
                         controls.push(
                             <Spin
@@ -109,12 +114,22 @@ class ConditionModal extends React.Component {
                                 {description}
                             </ul>
                         </div>
-                    )
+                    ),
+                    disabled: this.props.combatant.conditionImmunities ? this.props.combatant.conditionImmunities.indexOf(condition) !== -1 : false
                 };
             });
 
             var saveOptions = ["str", "dex", "con", "int", "wis", "cha", "death"].map(c => { return { id: c, text: c }; });
-            var pointOptions = ["start", "end"].map(c => { return { id: c, text: c }; });
+            var pointOptions = [
+                {
+                    id: "start",
+                    text: "start of turn"
+                },
+                {
+                    id: "end",
+                    text: "end of turn"
+                }
+            ]
             var combatantOptions = this.props.combat.combatants.map(c => { return { id: c.id, text: (c.displayName || c.name || "unnamed monster") }; });
 
             var durations = [
@@ -150,7 +165,7 @@ class ConditionModal extends React.Component {
                             </div>
                             <div className="section">
                                 <div className="subheading">type of save</div>
-                                <Dropdown
+                                <Selector
                                     options={saveOptions}
                                     selectedID={this.props.condition.duration ? this.props.condition.duration.saveType : null}
                                     select={optionID => this.changeValue(this.props.condition.duration, "saveType", optionID)}
@@ -210,9 +225,9 @@ class ConditionModal extends React.Component {
             ];
 
             return (
-                <div>
-                    <div className="row">
-                        <div className="columns small-6 medium-6 large-6 list-column">
+                <div className="condition-modal">
+                    <div className="row" style={{ height: "100%" }}>
+                        <div className="columns small-6 medium-6 large-6 scrollable">
                             <div className="heading">condition</div>
                             <RadioGroup
                                 items={conditions}
@@ -220,7 +235,7 @@ class ConditionModal extends React.Component {
                                 select={itemID => this.setCondition(itemID)}
                             />
                         </div>
-                        <div className="columns small-6 medium-6 large-6 list-column">
+                        <div className="columns small-6 medium-6 large-6 scrollable">
                             <div className="heading">duration</div>
                             <RadioGroup
                                 items={durations}
