@@ -408,7 +408,8 @@ class MonsterCard extends React.Component {
                         <ConditionsPanel
                             combatant={this.props.combatant}
                             combat={this.props.combat}
-                            addCondition={condition => this.props.addCondition(this.props.combatant, condition)}
+                            addCondition={() => this.props.addCondition(this.props.combatant)}
+                            editCondition={condition => this.props.editCondition(this.props.combatant, condition)}
                             removeCondition={conditionID => this.props.removeCondition(this.props.combatant, conditionID)}
                             nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
                             changeConditionValue={(condition, type, value) => this.props.changeConditionValue(condition, type, value)}

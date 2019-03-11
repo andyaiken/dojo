@@ -74,8 +74,9 @@ textarea {
     resize: vertical;
 }
 
-ul {
+ul, ol {
     padding-left: 20px;
+    margin: 5px 0;
 }
 
 li {
@@ -481,11 +482,15 @@ body,
     .damage-btn {
         vertical-align: top;
         display: inline-block;
-        width: calc((100% - 5px) / 3);
-        margin: 0;
+        width: calc((100% - 8px) / 3);
+        margin: 0 2px;
     
-        &:not(:first-child):not(:last-child) {
-            margin: 0 2px;
+        &:first-child {
+            margin-left: 0;
+        }
+
+        &:last-child {
+            margin-right: 0;
         }
     }
 }
@@ -494,7 +499,7 @@ body,
 // Combatant row
 
 .combatant-row {
-    margin: 10px 0;
+    margin: 5px 0;
     background-color: beige;
     cursor: pointer;
 
@@ -514,7 +519,7 @@ body,
     }
 
     .content {
-        padding: 0 5px;
+        padding: 0 5px 2px 5px;
 
         button, .hp-gauge, .condition, .note {
             margin-bottom: 5px;
@@ -913,6 +918,11 @@ body,
                 width: calc(100% - 250px);
                 height: 100%;
             }
+        }
+
+        .condition-modal {
+            height: 100%;
+            margin: 0 -15px;
         }
     }
     

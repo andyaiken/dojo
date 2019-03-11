@@ -47,7 +47,8 @@ const CONDITION_TYPES = [
     "prone",
     "restrained",
     "stunned",
-    "unconscious"
+    "unconscious",
+    "custom"
 ];
 
 function modifier(score) {
@@ -514,6 +515,8 @@ function conditionText(condition) {
             'attack rolls against the creature have advantage',
             'any attack that hits the creature is a critical hit if the attacker is within 5 feet of the creature'
         ];
+    case "custom":
+        return [];
     default:
         return [];
     }
@@ -523,8 +526,12 @@ function conditionDurationText(condition, combat) {
     if (condition.duration !== null) {
         switch (condition.duration.type) {
             case "saves":
+                var saveType = condition.duration.saveType;
+                if (saveType !== "death") {
+                    saveType = saveType.toUpperCase();
+                }
                 var saves = condition.duration.count > 1 ? "saves" : "save";
-                return "until you make " + condition.duration.count + " " + condition.duration.saveType + " " + saves + " at dc " + condition.duration.saveDC;
+                return "until you make " + condition.duration.count + " " + saveType + " " + saves + " at dc " + condition.duration.saveDC;
             case "combatant":
                 var point = condition.duration.point;
                 var c = combat.combatants.find(c => c.id == condition.duration.combatantID);

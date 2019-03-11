@@ -252,6 +252,44 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Radio group
+
+.radio-group {
+    .radio-item {
+        margin: 5px 0;
+        background-color: $background;
+        border: 1px solid $control-border;
+        border-left-width: 5px;
+        cursor: pointer;
+
+        &:hover {
+            border-color: $highlight;
+        }
+
+        &.selected {
+            border-color: $highlight;
+            background-color: $highlight01;
+            cursor: default;
+        }
+
+        &.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .radio-item-text {
+            padding: 8px 6px 8px 10px;
+            color: #3c3c3c;
+            font-weight: 600;
+        }
+
+        .radio-item-details {
+            padding: 0 6px 8px 10px;
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Selector
 
 .selector {
