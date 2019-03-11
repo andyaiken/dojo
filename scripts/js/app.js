@@ -2162,6 +2162,23 @@ var PartyCard = function (_React$Component) {
                 var content = null;
 
                 if (this.props.selection) {
+                    var languages = this.props.selection.pcs.map(function (pc) {
+                        return pc.languages;
+                    }).join(", ").split(/[ ,;]+/).reduce(function (array, value) {
+                        if (array.indexOf(value) === -1) {
+                            array.push(value);
+                        }
+                        return array;
+                    }, []).sort(function (a, b) {
+                        if (a === "Common") {
+                            return -1;
+                        }
+                        if (b === "Common") {
+                            return 1;
+                        }
+                        return a.localeCompare(b);
+                    }).join(", ");
+
                     var insightSummary = "-";
                     var investigationSummary = "-";
                     var perceptionSummary = "-";
@@ -2206,6 +2223,20 @@ var PartyCard = function (_React$Component) {
                                 } })
                         ),
                         React.createElement("div", { className: "divider" }),
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            React.createElement(
+                                "div",
+                                { className: "subheading" },
+                                "languages"
+                            )
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "section" },
+                            languages
+                        ),
                         React.createElement(
                             "div",
                             { className: "section" },

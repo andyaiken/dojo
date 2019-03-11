@@ -85,7 +85,7 @@ class PCCard extends React.Component {
                     <div className="divider"></div>
                     <div className="section subheading">languages</div>
                     <div className="section">
-                            {this.props.combatant.languages || "-"}
+                        {this.props.combatant.languages || "-"}
                     </div>
                     <div className="section subheading">passive skills</div>
                     <div className="table">

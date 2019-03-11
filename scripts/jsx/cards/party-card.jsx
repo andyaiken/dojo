@@ -5,6 +5,27 @@ class PartyCard extends React.Component {
             var content = null;
 
             if (this.props.selection) {
+                var languages = this.props.selection.pcs
+                    .map(pc => pc.languages)
+                    .join(", ")
+                    .split(/[ ,;]+/)
+                    .reduce((array, value) => {
+                        if (array.indexOf(value) === -1) {
+                            array.push(value);
+                        }
+                        return array;
+                    }, [])
+                    .sort((a, b) => {
+                        if (a === "Common") {
+                            return -1;
+                        }
+                        if (b === "Common") {
+                            return 1;
+                        }
+                        return a.localeCompare(b);
+                    })
+                    .join(", ");
+
                 var insightSummary = "-";
                 var investigationSummary = "-";
                 var perceptionSummary = "-";
@@ -40,6 +61,12 @@ class PartyCard extends React.Component {
                             <input type="text" placeholder="party name" value={this.props.selection.name} onChange={event => this.props.changeValue("name", event.target.value)} />
                         </div>
                         <div className="divider"></div>
+                        <div className="section">
+                            <div className="subheading">languages</div>
+                        </div>
+                        <div className="section">
+                            {languages}
+                        </div>
                         <div className="section">
                             <div className="subheading">passive skills</div>
                         </div>
