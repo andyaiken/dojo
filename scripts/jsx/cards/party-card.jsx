@@ -5,7 +5,7 @@ class PartyCard extends React.Component {
             var content = null;
 
             if (this.props.selection) {
-                var activePCs = this.props.pcs.filter(pc => pc.active);
+                var activePCs = this.props.party.pcs.filter(pc => pc.active);
 
                 var languages = activePCs
                     .map(pc => pc.languages)

@@ -2162,7 +2162,7 @@ var PartyCard = function (_React$Component) {
                 var content = null;
 
                 if (this.props.selection) {
-                    var activePCs = this.props.pcs.filter(function (pc) {
+                    var activePCs = this.props.party.pcs.filter(function (pc) {
                         return pc.active;
                     });
 
