@@ -538,7 +538,8 @@ function conditionDurationText(condition, combat) {
                 var combatant = c ? (c.displayName || c.name || "unnamed monster") + "'s" : "someone's";
                 return "until the " + point + " of " + combatant + " next turn";
             case "rounds":
-                return "for " + condition.duration.count + " round(s)";
+                var rounds = condition.duration.count > 1 ? "rounds" : "round";
+                return "for " + condition.duration.count + " " + rounds;
         }
     }
 
