@@ -334,7 +334,7 @@ body,
   .card .damage-btn {
     vertical-align: top;
     display: inline-block;
-    width: calc((100% - 8px) / 3);
+    width: calc(((100% - 1px) - 8px) / 3);
     margin: 0 2px; }
     .card .damage-btn:first-child {
       margin-left: 0; }

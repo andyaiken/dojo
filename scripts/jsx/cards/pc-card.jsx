@@ -77,7 +77,12 @@ class PCCard extends React.Component {
             var commonStatBlock = (
                 <div className="stats">
                     <div className="section centered">
-                        <div className="lowercase"><i>{this.props.combatant.race || 'race'} {this.props.combatant.classes || 'class'}, level {this.props.combatant.level}</i></div>
+                        <div className="lowercase">
+                            <i>
+                                <span>{this.props.combatant.race || 'race'} {this.props.combatant.classes || 'class'}</span>,
+                                <span>level {this.props.combatant.level}</span>
+                            </i>
+                        </div>
                         <div style={{ display: this.props.combatant.url ? "" : "none" }}>
                             <a href={this.props.combatant.url} target="_blank">d&d beyond sheet</a>
                         </div>

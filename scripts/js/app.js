@@ -1138,16 +1138,20 @@ var MonsterCard = function (_React$Component) {
     }, {
         key: "description",
         value: function description() {
-            var category = this.props.combatant.category;
+            var sizeAndType = (this.props.combatant.size + " " + this.props.combatant.category).toLowerCase();
             if (this.props.combatant.tag) {
-                category += " (" + this.props.combatant.tag + ")";
+                sizeAndType += " (" + this.props.combatant.tag.toLowerCase() + ")";
             }
-            var description = this.props.combatant.size + " " + category;
+            sizeAndType += ", ";
+
+            var align = "";
             if (this.props.combatant.alignment) {
-                description += ", " + this.props.combatant.alignment;
+                align = this.props.combatant.alignment.toLowerCase() + ", ";
             }
-            description += ", cr " + challenge(this.props.combatant.challenge);
-            return description.toLowerCase();
+
+            var cr = "cr " + challenge(this.props.combatant.challenge);
+
+            return sizeAndType + align + cr;
         }
     }, {
         key: "monsterIsInWave",
@@ -1582,13 +1586,9 @@ var MonsterCard = function (_React$Component) {
                             "div",
                             { className: "section centered" },
                             React.createElement(
-                                "div",
+                                "i",
                                 null,
-                                React.createElement(
-                                    "i",
-                                    null,
-                                    this.description()
-                                )
+                                this.description()
                             )
                         ),
                         slotSection,
@@ -1603,13 +1603,9 @@ var MonsterCard = function (_React$Component) {
                             "div",
                             { className: "section centered" },
                             React.createElement(
-                                "div",
+                                "i",
                                 null,
-                                React.createElement(
-                                    "i",
-                                    null,
-                                    this.description()
-                                )
+                                this.description()
                             )
                         ),
                         React.createElement("div", { className: "divider" }),
@@ -1828,13 +1824,14 @@ var MonsterCard = function (_React$Component) {
                             null,
                             React.createElement(
                                 "div",
-                                { className: "section" },
+                                { className: "section centered" },
                                 React.createElement(
-                                    "div",
+                                    "i",
                                     null,
                                     this.description()
                                 )
                             ),
+                            React.createElement("div", { className: "divider" }),
                             React.createElement(
                                 "div",
                                 { className: "section" },
@@ -2517,11 +2514,20 @@ var PCCard = function (_React$Component) {
                             React.createElement(
                                 "i",
                                 null,
-                                this.props.combatant.race || 'race',
-                                " ",
-                                this.props.combatant.classes || 'class',
-                                ", level ",
-                                this.props.combatant.level
+                                React.createElement(
+                                    "span",
+                                    null,
+                                    this.props.combatant.race || 'race',
+                                    " ",
+                                    this.props.combatant.classes || 'class'
+                                ),
+                                ",",
+                                React.createElement(
+                                    "span",
+                                    null,
+                                    "level ",
+                                    this.props.combatant.level
+                                )
                             )
                         ),
                         React.createElement(
@@ -8631,41 +8637,6 @@ var MonsterEditorModal = function (_React$Component) {
             });
         }
     }, {
-        key: "sortTraits",
-        value: function sortTraits(type) {
-            var _this4 = this;
-
-            // Take out traits of this type
-            var traits = this.state.monster.traits.filter(function (t) {
-                return t.type === type;
-            });
-            traits.forEach(function (t) {
-                var index = _this4.state.monster.traits.indexOf(t);
-                _this4.state.monster.traits.splice(index, 1);
-            });
-
-            // Re-add multiattack
-            var multi = traits.find(function (t) {
-                var options = ["multiattack", "multi-attack", "multi attack"];
-                return options.indexOf(t.name.toLowerCase()) !== -1;
-            });
-            if (multi) {
-                var index = traits.indexOf(multi);
-                traits.splice(index, 1);
-                this.state.monster.traits.push(multi);
-            }
-
-            // Sort the rest and re-add them
-            traits = sort(traits);
-            traits.forEach(function (t) {
-                return _this4.state.monster.traits.push(t);
-            });
-
-            this.setState({
-                monster: this.state.monster
-            });
-        }
-    }, {
         key: "addRandomTrait",
         value: function addRandomTrait(type, monsters) {
             var traits = [];
@@ -8744,7 +8715,7 @@ var MonsterEditorModal = function (_React$Component) {
     }, {
         key: "changeValue",
         value: function changeValue(field, value) {
-            var _this5 = this;
+            var _this4 = this;
 
             var notify = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
@@ -8755,16 +8726,16 @@ var MonsterEditorModal = function (_React$Component) {
                     source[token] = value;
 
                     if (field === "abilityScores.con" || field === "size" || field === "hitDice") {
-                        var sides = hitDieType(_this5.state.monster.size);
-                        var conMod = Math.floor((_this5.state.monster.abilityScores.con - 10) / 2);
+                        var sides = hitDieType(_this4.state.monster.size);
+                        var conMod = Math.floor((_this4.state.monster.abilityScores.con - 10) / 2);
                         var hpPerDie = (sides + 1) / 2 + conMod;
-                        var hp = Math.floor(_this5.state.monster.hitDice * hpPerDie);
-                        _this5.state.monster.hpMax = hp;
+                        var hp = Math.floor(_this4.state.monster.hitDice * hpPerDie);
+                        _this4.state.monster.hpMax = hp;
                     }
 
                     if (notify) {
-                        _this5.setState({
-                            monster: _this5.state.monster
+                        _this4.setState({
+                            monster: _this4.state.monster
                         });
                     }
                 } else {
@@ -8825,7 +8796,7 @@ var MonsterEditorModal = function (_React$Component) {
     }, {
         key: "getValueSection",
         value: function getValueSection(field, dataType, monsters) {
-            var _this6 = this;
+            var _this5 = this;
 
             var values = monsters.map(function (m) {
                 var tokens = field.split(".");
@@ -8929,7 +8900,7 @@ var MonsterEditorModal = function (_React$Component) {
                         React.createElement(
                             "button",
                             { onClick: function onClick() {
-                                    return _this6.changeValue(field, d.value);
+                                    return _this5.changeValue(field, d.value);
                                 } },
                             "use this value"
                         )
@@ -8944,7 +8915,7 @@ var MonsterEditorModal = function (_React$Component) {
                 React.createElement(
                     "button",
                     { onClick: function onClick() {
-                            return _this6.setRandomValue(field, monsters, true);
+                            return _this5.setRandomValue(field, monsters, true);
                         } },
                     "select random value"
                 )
@@ -8953,7 +8924,7 @@ var MonsterEditorModal = function (_React$Component) {
     }, {
         key: "getActionsSection",
         value: function getActionsSection(monsters) {
-            var _this7 = this;
+            var _this6 = this;
 
             var rows = [];
             rows.push(React.createElement(
@@ -9027,7 +8998,7 @@ var MonsterEditorModal = function (_React$Component) {
                         React.createElement(
                             "div",
                             { className: count === 0 ? "text-container disabled" : "text-container" },
-                            _this7.getActionTypeName(type, true)
+                            _this6.getActionTypeName(type, true)
                         )
                     ),
                     React.createElement(
@@ -9056,7 +9027,7 @@ var MonsterEditorModal = function (_React$Component) {
                         React.createElement(
                             "button",
                             { className: count === 0 ? "disabled" : "", onClick: function onClick() {
-                                    return _this7.addRandomTrait(type, monsters);
+                                    return _this6.addRandomTrait(type, monsters);
                                 } },
                             "add random"
                         )
@@ -9073,7 +9044,7 @@ var MonsterEditorModal = function (_React$Component) {
     }, {
         key: "getFilterCard",
         value: function getFilterCard(monsters) {
-            var _this8 = this;
+            var _this7 = this;
 
             var similar = React.createElement(
                 "div",
@@ -9091,14 +9062,14 @@ var MonsterEditorModal = function (_React$Component) {
                         label: "size " + this.state.monster.size,
                         checked: this.state.filter.size,
                         changeValue: function changeValue(value) {
-                            return _this8.toggleMatch("size");
+                            return _this7.toggleMatch("size");
                         }
                     }),
                     React.createElement(Checkbox, {
                         label: "type " + this.state.monster.category,
                         checked: this.state.filter.type,
                         changeValue: function changeValue(value) {
-                            return _this8.toggleMatch("type");
+                            return _this7.toggleMatch("type");
                         }
                     }),
                     React.createElement(Checkbox, {
@@ -9106,7 +9077,7 @@ var MonsterEditorModal = function (_React$Component) {
                         checked: this.state.filter.subtype,
                         disabled: !this.state.monster.tag,
                         changeValue: function changeValue(value) {
-                            return _this8.toggleMatch("subtype");
+                            return _this7.toggleMatch("subtype");
                         }
                     }),
                     React.createElement(Checkbox, {
@@ -9114,21 +9085,21 @@ var MonsterEditorModal = function (_React$Component) {
                         checked: this.state.filter.alignment,
                         disabled: !this.state.monster.alignment,
                         changeValue: function changeValue(value) {
-                            return _this8.toggleMatch("alignment");
+                            return _this7.toggleMatch("alignment");
                         }
                     }),
                     React.createElement(Checkbox, {
                         label: "challenge rating " + challenge(this.state.monster.challenge),
                         checked: this.state.filter.challenge,
                         changeValue: function changeValue(value) {
-                            return _this8.toggleMatch("challenge");
+                            return _this7.toggleMatch("challenge");
                         }
                     }),
                     React.createElement("div", { className: "divider" }),
                     React.createElement(
                         "button",
                         { className: monsters.length < 2 ? "disabled" : "", onClick: function onClick() {
-                                return _this8.geneSplice(monsters);
+                                return _this7.geneSplice(monsters);
                             } },
                         "build random monster"
                     ),
@@ -9158,7 +9129,7 @@ var MonsterEditorModal = function (_React$Component) {
                             "similar monsters"
                         ),
                         React.createElement("img", { className: this.state.showFilter ? "image rotate" : "image", src: "resources/images/down-arrow.svg", onClick: function onClick() {
-                                return _this8.toggleFilter();
+                                return _this7.toggleFilter();
                             } })
                     ),
                     React.createElement(
@@ -9172,7 +9143,7 @@ var MonsterEditorModal = function (_React$Component) {
     }, {
         key: "getMonsterCards",
         value: function getMonsterCards(monsters) {
-            var _this9 = this;
+            var _this8 = this;
 
             var monsters = sort(monsters);
             var monsterCards = monsters.map(function (m) {
@@ -9181,9 +9152,9 @@ var MonsterEditorModal = function (_React$Component) {
                     { className: "section", key: m.id },
                     React.createElement(MonsterCard, {
                         combatant: m,
-                        mode: "template " + _this9.state.page,
+                        mode: "template " + _this8.state.page,
                         copyTrait: function copyTrait(trait) {
-                            return _this9.copyTrait(trait);
+                            return _this8.copyTrait(trait);
                         }
                     })
                 );
@@ -9197,7 +9168,7 @@ var MonsterEditorModal = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            var _this10 = this;
+            var _this9 = this;
 
             try {
                 var pages = [{
@@ -9242,7 +9213,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     "name"
                                 ),
                                 React.createElement("input", { type: "text", value: this.state.monster.name, onChange: function onChange(event) {
-                                        return _this10.changeValue("name", event.target.value);
+                                        return _this9.changeValue("name", event.target.value);
                                     } }),
                                 React.createElement(
                                     "div",
@@ -9253,7 +9224,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     options: sizeOptions,
                                     selectedID: this.state.monster.size,
                                     select: function select(optionID) {
-                                        return _this10.changeValue("size", optionID);
+                                        return _this9.changeValue("size", optionID);
                                     }
                                 }),
                                 React.createElement(
@@ -9265,7 +9236,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     options: catOptions,
                                     selectedID: this.state.monster.category,
                                     select: function select(optionID) {
-                                        return _this10.changeValue("category", optionID);
+                                        return _this9.changeValue("category", optionID);
                                     }
                                 }),
                                 React.createElement(
@@ -9274,7 +9245,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     "subtype"
                                 ),
                                 React.createElement("input", { type: "text", value: this.state.monster.tag, onChange: function onChange(event) {
-                                        return _this10.changeValue("tag", event.target.value);
+                                        return _this9.changeValue("tag", event.target.value);
                                     } }),
                                 React.createElement(
                                     "div",
@@ -9282,7 +9253,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     "alignment"
                                 ),
                                 React.createElement("input", { type: "text", value: this.state.monster.alignment, onChange: function onChange(event) {
-                                        return _this10.changeValue("alignment", event.target.value);
+                                        return _this9.changeValue("alignment", event.target.value);
                                     } })
                             ),
                             React.createElement(
@@ -9300,7 +9271,7 @@ var MonsterEditorModal = function (_React$Component) {
                                         return challenge(value);
                                     },
                                     nudgeValue: function nudgeValue(delta) {
-                                        return _this10.nudgeValue("challenge", delta);
+                                        return _this9.nudgeValue("challenge", delta);
                                     }
                                 }),
                                 React.createElement(
@@ -9309,7 +9280,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     "speed"
                                 ),
                                 React.createElement("input", { type: "text", value: this.state.monster.speed, onChange: function onChange(event) {
-                                        return _this10.changeValue("speed", event.target.value);
+                                        return _this9.changeValue("speed", event.target.value);
                                     } }),
                                 React.createElement(
                                     "div",
@@ -9317,7 +9288,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     "senses"
                                 ),
                                 React.createElement("input", { type: "text", value: this.state.monster.senses, onChange: function onChange(event) {
-                                        return _this10.changeValue("senses", event.target.value);
+                                        return _this9.changeValue("senses", event.target.value);
                                     } }),
                                 React.createElement(
                                     "div",
@@ -9325,7 +9296,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     "languages"
                                 ),
                                 React.createElement("input", { type: "text", value: this.state.monster.languages, onChange: function onChange(event) {
-                                        return _this10.changeValue("languages", event.target.value);
+                                        return _this9.changeValue("languages", event.target.value);
                                     } }),
                                 React.createElement(
                                     "div",
@@ -9333,7 +9304,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     "equipment"
                                 ),
                                 React.createElement("input", { type: "text", value: this.state.monster.equipment, onChange: function onChange(event) {
-                                        return _this10.changeValue("equipment", event.target.value);
+                                        return _this9.changeValue("equipment", event.target.value);
                                     } })
                             )
                         );
@@ -9354,7 +9325,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     edit: true,
                                     combatant: this.state.monster,
                                     nudgeValue: function nudgeValue(source, type, delta) {
-                                        return _this10.nudgeValue(type, delta);
+                                        return _this9.nudgeValue(type, delta);
                                     }
                                 })
                             ),
@@ -9367,7 +9338,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     "saving throws"
                                 ),
                                 React.createElement("input", { type: "text", value: this.state.monster.savingThrows, onChange: function onChange(event) {
-                                        return _this10.changeValue("savingThrows", event.target.value);
+                                        return _this9.changeValue("savingThrows", event.target.value);
                                     } }),
                                 React.createElement(
                                     "div",
@@ -9375,7 +9346,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     "skills"
                                 ),
                                 React.createElement("input", { type: "text", value: this.state.monster.skills, onChange: function onChange(event) {
-                                        return _this10.changeValue("skills", event.target.value);
+                                        return _this9.changeValue("skills", event.target.value);
                                     } })
                             )
                         );
@@ -9396,7 +9367,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     source: this.state.monster,
                                     name: "ac",
                                     nudgeValue: function nudgeValue(delta) {
-                                        return _this10.nudgeValue("ac", delta);
+                                        return _this9.nudgeValue("ac", delta);
                                     }
                                 }),
                                 React.createElement(
@@ -9408,10 +9379,10 @@ var MonsterEditorModal = function (_React$Component) {
                                     source: this.state.monster,
                                     name: "hitDice",
                                     display: function display(value) {
-                                        return value + "d" + hitDieType(_this10.state.monster.size);
+                                        return value + "d" + hitDieType(_this9.state.monster.size);
                                     },
                                     nudgeValue: function nudgeValue(delta) {
-                                        return _this10.nudgeValue("hitDice", delta);
+                                        return _this9.nudgeValue("hitDice", delta);
                                     }
                                 }),
                                 React.createElement(
@@ -9435,7 +9406,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     "damage resistances"
                                 ),
                                 React.createElement("input", { type: "text", value: this.state.monster.damage.resist, onChange: function onChange(event) {
-                                        return _this10.changeValue("damage.resist", event.target.value);
+                                        return _this9.changeValue("damage.resist", event.target.value);
                                     } }),
                                 React.createElement(
                                     "div",
@@ -9443,7 +9414,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     "damage vulnerabilities"
                                 ),
                                 React.createElement("input", { type: "text", value: this.state.monster.damage.vulnerable, onChange: function onChange(event) {
-                                        return _this10.changeValue("damage.vulnerable", event.target.value);
+                                        return _this9.changeValue("damage.vulnerable", event.target.value);
                                     } }),
                                 React.createElement(
                                     "div",
@@ -9451,7 +9422,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     "damage immunities"
                                 ),
                                 React.createElement("input", { type: "text", value: this.state.monster.damage.immune, onChange: function onChange(event) {
-                                        return _this10.changeValue("damage.immune", event.target.value);
+                                        return _this9.changeValue("damage.immune", event.target.value);
                                     } }),
                                 React.createElement(
                                     "div",
@@ -9459,7 +9430,7 @@ var MonsterEditorModal = function (_React$Component) {
                                     "condition immunities"
                                 ),
                                 React.createElement("input", { type: "text", value: this.state.monster.conditionImmunities, onChange: function onChange(event) {
-                                        return _this10.changeValue("conditionImmunities", event.target.value);
+                                        return _this9.changeValue("conditionImmunities", event.target.value);
                                     } })
                             )
                         );
@@ -9469,16 +9440,13 @@ var MonsterEditorModal = function (_React$Component) {
                             combatant: this.state.monster,
                             edit: true,
                             addTrait: function addTrait(type) {
-                                return _this10.addTrait(type);
-                            },
-                            sortTraits: function sortTraits(type) {
-                                return _this10.sortTraits(type);
+                                return _this9.addTrait(type);
                             },
                             removeTrait: function removeTrait(trait) {
-                                return _this10.removeTrait(trait);
+                                return _this9.removeTrait(trait);
                             },
                             changeTrait: function changeTrait(trait, type, value) {
-                                return _this10.changeTrait(trait, type, value);
+                                return _this9.changeTrait(trait, type, value);
                             }
                         });
                         break;
@@ -9499,7 +9467,7 @@ var MonsterEditorModal = function (_React$Component) {
                             options: options,
                             selectedID: this.state.helpSection,
                             select: function select(optionID) {
-                                return _this10.setHelpSection(optionID);
+                                return _this9.setHelpSection(optionID);
                             }
                         });
                     }
@@ -9541,7 +9509,7 @@ var MonsterEditorModal = function (_React$Component) {
                                 options: pages,
                                 selectedID: this.state.page,
                                 select: function select(optionID) {
-                                    return _this10.setPage(optionID);
+                                    return _this9.setPage(optionID);
                                 }
                             }),
                             content,
@@ -10976,64 +10944,22 @@ var TraitsPanel = function (_React$Component) {
                         "add a new regional effect"
                     ));
 
-                    if (traits.length > 2) {
-                        traits.push(React.createElement(
-                            "button",
-                            { key: "sort", onClick: function onClick() {
-                                    return _this2.props.sortTraits("trait");
-                                } },
-                            "sort traits"
-                        ));
-                    }
-                    if (actions.length > 2) {
-                        actions.push(React.createElement(
-                            "button",
-                            { key: "sort", onClick: function onClick() {
-                                    return _this2.props.sortTraits("action");
-                                } },
-                            "sort actions"
-                        ));
-                    }
-                    if (legendaryActions.length > 2) {
-                        legendaryActions.push(React.createElement(
-                            "button",
-                            { key: "sort", onClick: function onClick() {
-                                    return _this2.props.sortTraits("legendary");
-                                } },
-                            "sort legendary actions"
-                        ));
-                    }
-                    if (lairActions.length > 2) {
-                        lairActions.push(React.createElement(
-                            "button",
-                            { key: "sort", onClick: function onClick() {
-                                    return _this2.props.sortTraits("lair");
-                                } },
-                            "sort lair actions"
-                        ));
-                    }
-                    if (regionalEffects.length > 2) {
-                        regionalEffects.push(React.createElement(
-                            "button",
-                            { key: "sort", onClick: function onClick() {
-                                    return _this2.props.sortTraits("regional");
-                                } },
-                            "sort regional effects"
-                        ));
-                    }
-
                     return React.createElement(
                         "div",
-                        { className: "row" },
+                        { className: "row collapse" },
                         React.createElement(
                             "div",
-                            { className: "columns small-6 medium-6 large-6" },
+                            { className: "columns small-4 medium-4 large-4 list-column" },
                             React.createElement(
                                 "div",
                                 { className: "section subheading" },
                                 "traits"
                             ),
-                            traits,
+                            traits
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "columns small-4 medium-4 large-4 list-column" },
                             React.createElement(
                                 "div",
                                 { className: "section subheading" },
@@ -11043,7 +10969,7 @@ var TraitsPanel = function (_React$Component) {
                         ),
                         React.createElement(
                             "div",
-                            { className: "columns small-6 medium-6 large-6" },
+                            { className: "columns small-4 medium-4 large-4 list-column" },
                             React.createElement(
                                 "div",
                                 { className: "section subheading" },

@@ -207,34 +207,6 @@ class MonsterEditorModal extends React.Component {
         });
     }
 
-    sortTraits(type) {
-        // Take out traits of this type
-        var traits = this.state.monster.traits.filter(t => t.type === type);
-        traits.forEach(t => {
-            var index = this.state.monster.traits.indexOf(t);
-            this.state.monster.traits.splice(index, 1);
-        });
-
-        // Re-add multiattack
-        var multi = traits.find(t => {
-            var options = ["multiattack", "multi-attack", "multi attack"];
-            return options.indexOf(t.name.toLowerCase()) !== -1;
-        });
-        if (multi) {
-            var index = traits.indexOf(multi);
-            traits.splice(index, 1);
-            this.state.monster.traits.push(multi);
-        }
-
-        // Sort the rest and re-add them
-        traits = sort(traits);
-        traits.forEach(t => this.state.monster.traits.push(t));
-
-        this.setState({
-            monster: this.state.monster
-        });
-    }
-
     addRandomTrait(type, monsters) {
         var traits = [];
         monsters.forEach(m => {
@@ -763,7 +735,6 @@ class MonsterEditorModal extends React.Component {
                             combatant={this.state.monster}
                             edit={true}
                             addTrait={type => this.addTrait(type)}
-                            sortTraits={type => this.sortTraits(type)}
                             removeTrait={trait => this.removeTrait(trait)}
                             changeTrait={(trait, type, value) => this.changeTrait(trait, type, value)}
                         />

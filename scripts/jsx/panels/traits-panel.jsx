@@ -57,41 +57,17 @@ class TraitsPanel extends React.Component {
                     <button key="add" onClick={() => this.props.addTrait("regional")}>add a new regional effect</button>
                 );
 
-                if (traits.length > 2) {
-                    traits.push(
-                        <button key="sort" onClick={() => this.props.sortTraits("trait")}>sort traits</button>
-                    );
-                }
-                if (actions.length > 2) {
-                    actions.push(
-                        <button key="sort" onClick={() => this.props.sortTraits("action")}>sort actions</button>
-                    );
-                }
-                if (legendaryActions.length > 2) {
-                    legendaryActions.push(
-                        <button key="sort" onClick={() => this.props.sortTraits("legendary")}>sort legendary actions</button>
-                    );
-                }
-                if (lairActions.length > 2) {
-                    lairActions.push(
-                        <button key="sort" onClick={() => this.props.sortTraits("lair")}>sort lair actions</button>
-                    );
-                }
-                if (regionalEffects.length > 2) {
-                    regionalEffects.push(
-                        <button key="sort" onClick={() => this.props.sortTraits("regional")}>sort regional effects</button>
-                    );
-                }
-
                 return (
-                    <div className="row">
-                        <div className="columns small-6 medium-6 large-6">
+                    <div className="row collapse">
+                        <div className="columns small-4 medium-4 large-4 list-column">
                             <div className="section subheading">traits</div>
                             {traits}
+                        </div>
+                        <div className="columns small-4 medium-4 large-4 list-column">
                             <div className="section subheading">actions</div>
                             {actions}
                         </div>
-                        <div className="columns small-6 medium-6 large-6">
+                        <div className="columns small-4 medium-4 large-4 list-column">
                             <div className="section subheading">legendary actions</div>
                             {legendaryActions}
                             <div className="section subheading">lair actions</div>

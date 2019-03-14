@@ -15,7 +15,6 @@ class MonsterCard extends React.Component {
         });
     }
 
-
     toggleHP() {
         this.setState({
             showHP: !this.state.showHP
@@ -77,16 +76,20 @@ class MonsterCard extends React.Component {
     }
 
     description() {
-        var category = this.props.combatant.category;
+        var sizeAndType = (this.props.combatant.size + " " + this.props.combatant.category).toLowerCase();
         if (this.props.combatant.tag) {
-            category += " (" + this.props.combatant.tag + ")";
+            sizeAndType += " (" + this.props.combatant.tag.toLowerCase() + ")";
         }
-        var description = this.props.combatant.size + " " + category;
+        sizeAndType += ", ";
+
+        var align = "";
         if (this.props.combatant.alignment) {
-            description += ", " + this.props.combatant.alignment;
+            align = this.props.combatant.alignment.toLowerCase() + ", ";
         }
-        description += ", cr " + challenge(this.props.combatant.challenge);
-        return description.toLowerCase();
+
+        var cr = "cr " + challenge(this.props.combatant.challenge);
+
+        return sizeAndType + align + cr;
     }
 
     monsterIsInWave(wave) {
@@ -322,7 +325,7 @@ class MonsterCard extends React.Component {
                 stats = (
                     <div className="stats">
                         <div className="section centered">
-                            <div><i>{this.description()}</i></div>
+                            <i>{this.description()}</i>
                         </div>
                         {slotSection}
                         {details}
@@ -333,7 +336,7 @@ class MonsterCard extends React.Component {
                 stats = (
                     <div className="stats">
                         <div className="section centered">
-                            <div><i>{this.description()}</i></div>
+                            <i>{this.description()}</i>
                         </div>
                         <div className="divider"></div>
                         <Spin
@@ -421,9 +424,10 @@ class MonsterCard extends React.Component {
                 if (this.props.mode.indexOf("overview") !== -1) {
                     stats = (
                         <div>
-                            <div className="section">
-                                <div>{this.description()}</div>
+                            <div className="section centered">
+                                <i>{this.description()}</i>
                             </div>
+                            <div className="divider"></div>
                             <div className="section">
                                 <b>speed</b> {this.props.combatant.speed || "-"}
                             </div>
