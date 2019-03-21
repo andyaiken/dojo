@@ -8,7 +8,7 @@ interface Props {
     group: MonsterGroup;
     selected: boolean;
     filter: string;
-    setSelection: (group: MonsterGroup) => {};
+    setSelection: (group: MonsterGroup) => void;
 }
 
 export default class MonsterGroupListItem extends React.Component<Props> {

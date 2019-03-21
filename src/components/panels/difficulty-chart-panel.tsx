@@ -2,24 +2,37 @@ import React from 'react';
 
 import * as utils from '../../utils';
 
-export default class DifficultyChartPanel extends React.Component {
+import { Party, Monster, Encounter, EncounterSlot } from '../../models/models';
+
+interface Props {
+    encounterID: string;
+    partyID: string;
+    encounters: Encounter[];
+    parties: Party[];
+    getMonster: (monsterName: string, groupName: string) => Monster
+}
+
+export default class DifficultyChartPanel extends React.Component<Props> {
     render() {
         var encounter = this.props.encounters.find(e => e.id === this.props.encounterID);
         var party = this.props.parties.find(p => p.id === this.props.partyID);
 
         var monsterCount = 0;
         var monsterXp = 0;
-        var slots = [].concat(encounter.slots);
-        encounter.waves.forEach(wave => {
-            slots = slots.concat(wave.slots);
-        })
-        slots.forEach(slot => {
-            monsterCount += slot.count;
-            var monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
-            if (monster) {
-                monsterXp += utils.experience(monster.challenge) * slot.count;
-            }
-        });
+        if (encounter) {
+            var slots: EncounterSlot[] = [];
+            slots = slots.concat(encounter.slots);
+            encounter.waves.forEach(wave => {
+                slots = slots.concat(wave.slots);
+            })
+            slots.forEach(slot => {
+                monsterCount += slot.count;
+                var monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
+                if (monster) {
+                    monsterXp += utils.experience(monster.challenge) * slot.count;
+                }
+            });
+        }
 
         var adjustedXp = monsterXp * utils.experienceFactor(monsterCount);
 
@@ -99,12 +112,12 @@ export default class DifficultyChartPanel extends React.Component {
                 </div>
             );
 
-            var getLeft = (xp) => {
+            var getLeft = (xp: number) => {
                 var max = Math.max(adjustedXp, (xpDeadly * 1.2));
                 return (100 * xp) / max;
             };
 
-            var getRight = (xp) => {
+            var getRight = (xp: number) => {
                 return 100 - getLeft(xp);
             };
 

@@ -3,10 +3,21 @@ import React from 'react';
 import * as utils from '../../utils';
 
 import Spin from '../controls/spin';
+import { Monster } from '../../models/models';
 
-export default class AbilityScorePanel extends React.Component {
-    constructor() {
-        super();
+interface Props {
+    combatant: Monster;
+    edit: boolean;
+    nudgeValue: (combatant: Monster, field: string, delta: number) => void;
+}
+
+interface State {
+    showAbilityScores: boolean;
+}
+
+export default class AbilityScorePanel extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
         this.state = {
             showAbilityScores: false
         };
@@ -15,7 +26,7 @@ export default class AbilityScorePanel extends React.Component {
     toggleAbilityScores() {
         this.setState({
             showAbilityScores: !this.state.showAbilityScores
-        })
+        });
     }
 
     render() {
@@ -29,37 +40,37 @@ export default class AbilityScorePanel extends React.Component {
                             source={this.props.combatant.abilityScores}
                             name="str"
                             label="strength"
-                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "abilityScores.str", delta)}
+                            nudgeValue={(delta: number) => this.props.nudgeValue(this.props.combatant, "abilityScores.str", delta)}
                         />
                         <Spin
                             source={this.props.combatant.abilityScores}
                             name="dex"
                             label="dexterity"
-                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "abilityScores.dex", delta)}
+                            nudgeValue={(delta: number) => this.props.nudgeValue(this.props.combatant, "abilityScores.dex", delta)}
                         />
                         <Spin
                             source={this.props.combatant.abilityScores}
                             name="con"
                             label="constitution"
-                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "abilityScores.con", delta)}
+                            nudgeValue={(delta: number) => this.props.nudgeValue(this.props.combatant, "abilityScores.con", delta)}
                         />
                         <Spin
                             source={this.props.combatant.abilityScores}
                             name="int"
                             label="intelligence"
-                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "abilityScores.int", delta)}
+                            nudgeValue={(delta: number) => this.props.nudgeValue(this.props.combatant, "abilityScores.int", delta)}
                         />
                         <Spin
                             source={this.props.combatant.abilityScores}
                             name="wis"
                             label="wisdom"
-                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "abilityScores.wis", delta)}
+                            nudgeValue={(delta: number) => this.props.nudgeValue(this.props.combatant, "abilityScores.wis", delta)}
                         />
                         <Spin
                             source={this.props.combatant.abilityScores}
                             name="cha"
                             label="charisma"
-                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "abilityScores.cha", delta)}
+                            nudgeValue={(delta: number) => this.props.nudgeValue(this.props.combatant, "abilityScores.cha", delta)}
                         />
                     </div>
                 );

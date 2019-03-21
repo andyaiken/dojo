@@ -5,7 +5,7 @@ import { Party } from '../../models/models';
 interface Props {
     party: Party;
     selected: boolean;
-    setSelection: (party: Party) => {};
+    setSelection: (party: Party) => void;
 }
 
 export default class PartyListItem extends React.Component<Props> {

@@ -3,9 +3,22 @@ import React from 'react';
 import arrow from "../../resources/images/down-arrow-black.svg";
 import close from "../../resources/images/close-black.svg";
 
-export default class CardGroup extends React.Component {
-    constructor() {
-        super();
+interface Props {
+    hidden: boolean;
+    heading: string | null;
+    content: any[] | null;
+    showClose: boolean;
+    showToggle: boolean;
+    close: () => void;
+}
+
+interface State {
+    showCards: boolean;
+}
+
+export default class CardGroup extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
 
         this.state = {
             showCards: true

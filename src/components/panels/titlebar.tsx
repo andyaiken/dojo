@@ -5,8 +5,8 @@ import cog from '../../resources/images/settings.svg';
 interface Props {
     actions: JSX.Element | JSX.Element[];
     blur: boolean;
-    openHome: () => {}
-    openAbout: () => {}
+    openHome: () => void;
+    openAbout: () => void;
 }
 
 export default class Titlebar extends React.Component<Props> {

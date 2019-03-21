@@ -7,7 +7,7 @@ interface Props {
     library: MonsterGroup[];
     parties: Party[];
     encounters: Encounter[];
-    setView: (view: string) => {}
+    setView: (view: string) => void;
 }
 
 export default class Navbar extends React.Component<Props> {

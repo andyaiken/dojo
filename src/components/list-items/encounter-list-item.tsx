@@ -5,7 +5,7 @@ import { Encounter } from '../../models/models';
 interface Props {
     encounter: Encounter;
     selected: boolean;
-    setSelection: (encounter: Encounter) => {};
+    setSelection: (encounter: Encounter) => void;
 }
 
 export default class EncounterListItem extends React.Component<Props> {

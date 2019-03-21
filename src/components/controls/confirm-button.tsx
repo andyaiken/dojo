@@ -6,7 +6,7 @@ interface Props {
     text: string;
     details: string;
     disabled: boolean;
-    callback: () => {};
+    callback: () => void;
 }
 
 interface State {

@@ -7,7 +7,7 @@ interface Props {
     label: string;
     checked: boolean;
     disabled: boolean;
-    changeValue: (value: boolean) => {};
+    changeValue: (value: boolean) => void;
 }
 
 export default class Checkbox extends React.Component<Props> {

@@ -7,7 +7,7 @@ import MapPanel from '../panels/map-panel';
 interface Props {
     combat: Combat;
     selected: boolean;
-    setSelection: (combat: Combat) => {};
+    setSelection: (combat: Combat) => void;
 }
 
 export default class CombatListItem extends React.Component<Props> {

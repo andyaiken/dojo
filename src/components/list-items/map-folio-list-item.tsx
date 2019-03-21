@@ -5,7 +5,7 @@ import { MapFolio } from '../../models/models';
 interface Props {
     mapFolio: MapFolio;
     selected: boolean;
-    setSelection: (mapFolio: MapFolio) => {};
+    setSelection: (mapFolio: MapFolio) => void;
 }
 
 export default class MapFolioListItem extends React.Component<Props> {
