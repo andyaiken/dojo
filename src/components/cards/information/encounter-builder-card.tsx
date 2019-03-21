@@ -1,11 +1,17 @@
 import React from 'react';
 
+import { Encounter } from '../../../models/models';
+
 import InfoCard from '../info-card';
 
-export default class EncounterBuilderCard extends React.Component {
+interface Props {
+    encounters: Encounter[];
+}
+
+export default class EncounterBuilderCard extends React.Component<Props> {
     render() {
         try {
-            var action = null;
+            var action: JSX.Element | null = null;
             if (this.props.encounters.length === 0) {
                 action = (
                     <div className="section">to start building an encounter, press the button below</div>

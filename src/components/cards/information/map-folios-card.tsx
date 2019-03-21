@@ -1,11 +1,17 @@
 import React from 'react';
 
+import { MapFolio } from '../../../models/models';
+
 import InfoCard from '../info-card';
 
-export default class MapFoliosCard extends React.Component {
+interface Props {
+    mapFolios: MapFolio[];
+}
+
+export default class MapFoliosCard extends React.Component<Props> {
     render() {
         try {
-            var action = null;
+            var action: JSX.Element | null = null;
             if (this.props.mapFolios.length === 0) {
                 action = (
                     <div className="section">to start a new folio, press the button below</div>
