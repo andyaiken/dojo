@@ -16,21 +16,21 @@ export default class PartiesCard extends React.Component {
                 );
             }
 
-            var content = (
-                <div>
-                    <div className="section">
-                        <div>this page is where you can tell dojo all about your pcs</div>
-                    </div>
-                    <div className="section">
-                        <div>you can add a party for each of your gaming groups</div>
-                    </div>
-                    <div className="divider"></div>
-                    {action}
-                </div>
-            );
-
             return (
-                <InfoCard getContent={() => content} />
+                <InfoCard
+                    getContent={() => (
+                        <div>
+                            <div className="section">
+                                <div>this page is where you can tell dojo all about your pcs</div>
+                            </div>
+                            <div className="section">
+                                <div>you can add a party for each of your gaming groups</div>
+                            </div>
+                            <div className="divider"></div>
+                            {action}
+                        </div>
+                    )}
+                />
             );
         } catch (e) {
             console.error(e);

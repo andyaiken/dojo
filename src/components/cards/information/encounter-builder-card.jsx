@@ -16,17 +16,17 @@ export default class EncounterBuilderCard extends React.Component {
                 );
             }
 
-            var content = (
-                <div>
-                    <div className="section">on this page you can set up encounters</div>
-                    <div className="section">when you have created an encounter you can add monsters to it, then gauge its difficulty for a party of pcs</div>
-                    <div className="divider"></div>
-                    {action}
-                </div>
-            );
-
             return (
-                <InfoCard getContent={() => content} />
+                <InfoCard
+                    getContent={() => (
+                        <div>
+                            <div className="section">on this page you can set up encounters</div>
+                            <div className="section">when you have created an encounter you can add monsters to it, then gauge its difficulty for a party of pcs</div>
+                            <div className="divider"></div>
+                            {action}
+                        </div>
+                    )}
+                />
             );
         } catch (e) {
             console.error(e);

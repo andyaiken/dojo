@@ -16,17 +16,17 @@ export default class MapFoliosCard extends React.Component {
                 );
             }
 
-            var content = (
-                <div>
-                    <div className="section">on this page you can set up folios containing tactical maps</div>
-                    <div className="section">when you have created a map you can use it in encounters</div>
-                    <div className="divider"></div>
-                    {action}
-                </div>
-            );
-
             return (
-                <InfoCard getContent={() => content} />
+                <InfoCard
+                    getContent={() => (
+                        <div>
+                            <div className="section">on this page you can set up folios containing tactical maps</div>
+                            <div className="section">when you have created a map you can use it in encounters</div>
+                            <div className="divider"></div>
+                            {action}
+                        </div>
+                    )}
+                />
             );
         } catch (e) {
             console.error(e);
