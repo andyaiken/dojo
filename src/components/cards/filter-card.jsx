@@ -1,7 +1,7 @@
 import React from 'react';
 
 import * as utils from '../../utils';
-import * as factory from '../../models/factory';
+import { CATEGORY_TYPES, SIZE_TYPES } from '../../models/models';
 
 import Spin from '../controls/spin';
 import Dropdown from '../controls/dropdown';
@@ -24,10 +24,10 @@ export default class FilterCard extends React.Component {
 
     render() {
         try {
-            var sizes = ["all sizes"].concat(factory.SIZE_TYPES);
+            var sizes = ["all sizes"].concat(SIZE_TYPES);
             var sizeOptions = sizes.map(size => { return { id: size, text: size }; });
             
-            var categories = ["all types"].concat(factory.CATEGORY_TYPES);
+            var categories = ["all types"].concat(CATEGORY_TYPES);
             var catOptions = categories.map(cat => { return { id: cat, text: cat }; });
 
             var content = null;

@@ -2,6 +2,7 @@ import React from 'react';
 
 import * as utils from '../../utils';
 import * as factory from '../../models/factory';
+import { TRAIT_TYPES, CATEGORY_TYPES, SIZE_TYPES } from '../../models/models';
 
 import Checkbox from '../controls/checkbox';
 import Dropdown from '../controls/dropdown';
@@ -158,7 +159,7 @@ export default class MonsterEditorModal extends React.Component {
             this.setRandomValue(field, monsters, false);
         });
 
-        factory.TRAIT_TYPES.forEach(type => {
+        TRAIT_TYPES.forEach(type => {
             // Clear current traits of this type
             var current = this.state.monster.traits.filter(t => t.type === type);
             current.forEach(c => {
@@ -492,7 +493,7 @@ export default class MonsterEditorModal extends React.Component {
             </div>
         );
 
-        factory.TRAIT_TYPES.forEach(type => {
+        TRAIT_TYPES.forEach(type => {
             var min = null, max = null, count = null;
             monsters.forEach(m => {
                 var n = m.traits.filter(t => t.type === type).length;
@@ -650,8 +651,8 @@ export default class MonsterEditorModal extends React.Component {
             var content = null;
             switch (this.state.page) {
                 case 'overview':
-                    var catOptions = factory.CATEGORY_TYPES.map(cat => { return { id: cat, text: cat }; });
-                    var sizeOptions = factory.SIZE_TYPES.map(size => { return { id: size, text: size }; });
+                    var catOptions = CATEGORY_TYPES.map(cat => { return { id: cat, text: cat }; });
+                    var sizeOptions = SIZE_TYPES.map(size => { return { id: size, text: size }; });
 
                     content = (
                         <div className="row">

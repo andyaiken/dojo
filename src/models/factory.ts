@@ -1,6 +1,8 @@
 import * as utils from '../utils';
 
-export function createParty() {
+import { Party, PC, MonsterGroup, Monster, Trait, Encounter, EncounterSlot, EncounterWave, MapFolio, Map, MapItem, Combat, Notification, Condition } from './models';
+
+export function createParty(): Party {
     return {
         id: utils.guid(),
         name: "",
@@ -8,7 +10,7 @@ export function createParty() {
     };
 }
 
-export function createPC() {
+export function createPC(): PC {
     return {
         id: utils.guid(),
         type: "pc",
@@ -28,7 +30,7 @@ export function createPC() {
     };
 }
 
-export function createMonsterGroup() {
+export function createMonsterGroup(): MonsterGroup {
     return {
         id: utils.guid(),
         name: "",
@@ -36,7 +38,7 @@ export function createMonsterGroup() {
     };
 }
 
-export function createMonster() {
+export function createMonster(): Monster {
     return {
         id: utils.guid(),
         type: "monster",
@@ -74,7 +76,7 @@ export function createMonster() {
     };
 }
 
-export function createTrait() {
+export function createTrait(): Trait {
     return {
         id: utils.guid(),
         name: "",
@@ -84,7 +86,7 @@ export function createTrait() {
     };
 }
 
-export function createEncounter() {
+export function createEncounter(): Encounter {
     return {
         id: utils.guid(),
         name: "",
@@ -93,7 +95,7 @@ export function createEncounter() {
     };
 }
 
-export function createEncounterSlot() {
+export function createEncounterSlot(): EncounterSlot {
     return {
         id: utils.guid(),
         monsterGroupName: "",
@@ -102,7 +104,7 @@ export function createEncounterSlot() {
     };
 }
 
-export function createEncounterWave() {
+export function createEncounterWave(): EncounterWave {
     return {
         id: utils.guid(),
         name: "",
@@ -110,7 +112,7 @@ export function createEncounterWave() {
     };
 }
 
-export function createMapFolio() {
+export function createMapFolio(): MapFolio {
     return {
         id: utils.guid(),
         name: "",
@@ -118,7 +120,7 @@ export function createMapFolio() {
     };
 }
 
-export function createMap() {
+export function createMap(): Map {
     return {
         id: utils.guid(),
         name: "",
@@ -126,7 +128,7 @@ export function createMap() {
     };
 }
 
-export function createMapItem() {
+export function createMapItem(): MapItem {
     return {
         id: utils.guid(),
         type: "tile",
@@ -134,11 +136,11 @@ export function createMapItem() {
         y: 0,
         width: 4,
         height: 4,
-        terrain: "flagstone"
+        terrain: null
     };
 }
 
-export function createCombat() {
+export function createCombat(): Combat {
     return {
         id: utils.guid(),
         name: "",
@@ -151,67 +153,21 @@ export function createCombat() {
     };
 }
 
-export const SIZE_TYPES = [
-    "tiny",
-    "small",
-    "medium",
-    "large",
-    "huge",
-    "gargantuan"
-];
+export function createNotification(): Notification {
+    return {
+        id: utils.guid(),
+        type: "",
+        condition: null,
+        combatant: null
+    };
+}
 
-export const CATEGORY_TYPES = [
-    "aberration",
-    "beast",
-    "celestial",
-    "construct",
-    "dragon",
-    "elemental",
-    "fey",
-    "fiend",
-    "giant",
-    "humanoid",
-    "monstrosity",
-    "ooze",
-    "plant",
-    "undead"
-];
-
-export const TRAIT_TYPES = [
-    "trait",
-    "action",
-    "legendary",
-    "lair",
-    "regional"
-];
-
-export const CONDITION_TYPES = [
-    "blinded",
-    "charmed",
-    "deafened",
-    "exhaustion",
-    "frightened",
-    "grappled",
-    "incapacitated",
-    "invisible",
-    "paralyzed",
-    "petrified",
-    "poisoned",
-    "prone",
-    "restrained",
-    "stunned",
-    "unconscious",
-    "custom"
-];
-
-export const TERRAIN_TYPES = [
-    "cavern",
-    "dirt",
-    "flagstone",
-    "floorboard",
-    "grassland",
-    "pit",
-    "sand",
-    "snow",
-    "water"
-];
+export function createCondition(): Condition {
+    return {
+        id: utils.guid(),
+        name: "",
+        level: 1,
+        text: null,
+        duration: null
+    }
+}

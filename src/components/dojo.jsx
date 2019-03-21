@@ -1129,12 +1129,11 @@ export default class Dojo extends React.Component {
                         case "saves":
                             // If it's my condition, and point is END, notify the user
                             if ((actor.id === combatant.id) && (c.duration.point === "end")) {
-                                combat.notifications.push({
-                                    id: utils.guid(),
-                                    type: "condition-save",
-                                    condition: c,
-                                    combatant: combatant
-                                });
+                                var saveNotification = factory.createNotification();
+                                saveNotification.type = "condition-save";
+                                saveNotification.condition = c;
+                                saveNotification.combatant = combatant;
+                                combat.notifications.push(saveNotification);
                             }
                             break;
                         case "combatant":
@@ -1143,12 +1142,11 @@ export default class Dojo extends React.Component {
                                 var index = actor.conditions.indexOf(c);
                                 actor.conditions.splice(index, 1);
                                 // Notify the user
-                                combat.notifications.push({
-                                    id: utils.guid(),
-                                    type: "condition-end",
-                                    condition: c,
-                                    combatant: combatant
-                                });
+                                var endNotification = factory.createNotification();
+                                endNotification.type = "condition-end";
+                                endNotification.condition = c;
+                                endNotification.combatant = combatant;
+                                combat.notifications.push(endNotification);
                             }
                             break;
                         case "rounds":
@@ -1191,13 +1189,8 @@ export default class Dojo extends React.Component {
     }
 
     addCondition(combatant) {
-        var condition = {
-            id: utils.guid(),
-            name: "blinded",
-            level: 1,
-            text: null,
-            duration: null
-        }
+        var condition = factory.createCondition();
+        condition.name = "blinded";
 
         var combat = this.getCombat(this.state.selectedCombatID);
 

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import * as utils from '../../utils';
-import * as factory from '../../models/factory';
+import { CATEGORY_TYPES, SIZE_TYPES } from '../../models/models';
 
 import Selector from '../controls/selector';
 
@@ -51,7 +51,7 @@ export default class DemographicsModal extends React.Component {
                         });
                         break;
                     case "size":
-                        factory.SIZE_TYPES.forEach(size => {
+                        SIZE_TYPES.forEach(size => {
                             buckets.push({
                                 value: size,
                                 title: size
@@ -69,7 +69,7 @@ export default class DemographicsModal extends React.Component {
                         });
                         break;
                     case "type":
-                        factory.CATEGORY_TYPES.forEach(type => {
+                        CATEGORY_TYPES.forEach(type => {
                             buckets.push({
                                 value: type,
                                 title: type

@@ -17,8 +17,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "preserve",
-    "noImplicitAny": false // TODO: Remove this
+    "jsx": "preserve"
   },
   "include": [
     "src"

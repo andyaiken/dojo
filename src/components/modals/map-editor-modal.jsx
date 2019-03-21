@@ -26,6 +26,7 @@ export default class MapEditorModal extends React.Component {
         var tile = factory.createMapItem();
         tile.x = x;
         tile.y = y;
+        tile.terrain = "flagstone";
         this.state.map.items.push(tile);
 
         this.setState({

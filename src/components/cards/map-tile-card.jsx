@@ -1,6 +1,6 @@
 import React from 'react';
 
-import * as factory from '../../models/factory';
+import { TERRAIN_TYPES } from '../../models/models';
 
 import Dropdown from '../controls/dropdown';
 import Radial from '../controls/radial';
@@ -8,7 +8,7 @@ import Radial from '../controls/radial';
 export default class MapTileCard extends React.Component {
     render() {
         try {
-            var terrainOptions = factory.TERRAIN_TYPES.map(function (t) {
+            var terrainOptions = TERRAIN_TYPES.map(function (t) {
                 return { id: t, text: t };
             });
 

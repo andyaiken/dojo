@@ -1,7 +1,7 @@
 import React from 'react';
 
 import * as utils from '../../utils';
-import * as factory from '../../models/factory';
+import { CONDITION_TYPES } from '../../models/models';
 
 import Spin from '../controls/spin';
 import Selector from '../controls/selector';
@@ -96,7 +96,7 @@ export default class ConditionModal extends React.Component {
 
     render() {
         try {
-            var conditions = factory.CONDITION_TYPES.map(condition => {
+            var conditions = CONDITION_TYPES.map(condition => {
                 var controls = [];
                 var description = [];
                 if (condition === this.state.condition.name) {

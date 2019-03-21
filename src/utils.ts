@@ -1,23 +1,23 @@
-﻿var monsterIdToGroup = {};
+﻿import { Monster, MonsterGroup, Combat, Encounter, Condition } from "./models/models";
 
-export function getMonsterGroup(monster, library) {
+// This is an internal dictionary to speed up lookup
+var monsterIdToGroup: { [ id:string ]: MonsterGroup; } = {}
+
+export function getMonsterGroup(monster: Monster, library: MonsterGroup[]): MonsterGroup {
     var group = monsterIdToGroup[monster.id];
 
     if (!group) {
-        library.forEach(g => {
-            if (!group) {
-                if (g.monsters.indexOf(monster) !== -1) {
-                    group = g;
-                }
-            }
-        });
-        monsterIdToGroup[monster.id] = group;
+        var g = library.find(g => g.monsters.includes(monster));
+        if (g) {
+            group = g;
+            monsterIdToGroup[monster.id] = group;
+        }
     }
 
     return group;
 }
 
-export function match(filter, text) {
+export function match(filter: string, text: string): boolean {
     if (!filter) {
         return true;
     }
@@ -38,14 +38,14 @@ export function match(filter, text) {
     return result;
 }
 
-export function guid() {
-    function s4() {
+export function guid(): string {
+    var s4 = () => {
         return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-    }
+    };
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 }
 
-export function sort(collection) {
+export function sort(collection: any[]): any[] {
     collection.sort((a, b) => {
         var aName = a.name.toLowerCase();
         var bName = b.name.toLowerCase();
@@ -56,7 +56,7 @@ export function sort(collection) {
     return collection;
 }
 
-export function sortByValue(collection) {
+export function sortByValue(collection: any[]): any[] {
     collection.sort((a, b) => {
         if (a.value < b.value) return -1;
         if (a.value > b.value) return 1;
@@ -65,7 +65,7 @@ export function sortByValue(collection) {
     return collection;
 }
 
-export function sortByCount(collection) {
+export function sortByCount(collection: any[]): any[] {
     collection.sort((a, b) => {
         if (a.count < b.count) return 1;
         if (a.count > b.count) return -1;
@@ -80,7 +80,7 @@ export function sortByCount(collection) {
     return collection;
 }
 
-export function modifier(score: number) {
+export function modifier(score: number): string {
     var mod = Math.floor((score - 10) / 2);
     var str = mod.toString();
     if (mod >= 0) {
@@ -89,11 +89,11 @@ export function modifier(score: number) {
     return str;
 }
 
-export function dieRoll() {
+export function dieRoll(): number {
     return Math.floor(Math.random() * 20) + 1;
 }
 
-export function miniSize(size) {
+export function miniSize(size: string): number {
     switch (size) {
         case 'tiny': return 1;
         case 'small': return 1;
@@ -105,7 +105,7 @@ export function miniSize(size) {
     }
 }
 
-export function hitDieType(size) {
+export function hitDieType(size: string) {
     switch (size) {
         case 'tiny': return 4;
         case 'small': return 6;
@@ -117,16 +117,16 @@ export function hitDieType(size) {
     }
 }
 
-export function challenge(cr) {
+export function challenge(cr: number): string {
     switch (cr) {
         case 0.125: return '1/8';
         case 0.25: return '1/4';
         case 0.5: return '1/2';
-        default: return cr;
+        default: return cr.toString();
     }
 }
 
-export function parseChallenge(cr) {
+export function parseChallenge(cr: string): number {
     switch (cr) {
         case '1/8': return 0.125;
         case '1/4': return 0.25;
@@ -135,7 +135,7 @@ export function parseChallenge(cr) {
     }
 }
 
-export function challengeDetails() {
+export function challengeDetails(): any[] {
     var result: any[] = [];
 
     result.push({ cr: 0,        ac: 13,       hpMin: 1, hpMax: 6,       attack: 3,  dmgMin: 0,   dmgMax: 1,   save: 13 });
@@ -176,7 +176,7 @@ export function challengeDetails() {
     return result;
 }
 
-export function experience(cr) {
+export function experience(cr: number): number {
     switch (cr) {
         case 0: return 10;
         case 0.125: return 25;
@@ -211,7 +211,7 @@ export function experience(cr) {
     }
 }
 
-export function experienceFactor(count) {
+export function experienceFactor(count: number): number {
     switch (count) {
         case 0:
             return 0;
@@ -239,10 +239,10 @@ export function experienceFactor(count) {
     }
 }
 
-export function pcExperience(level, difficulty) {
+export function pcExperience(level: number, difficulty: string): number {
     switch (difficulty) {
-        case 'easy': {
-                switch (level) {
+        case 'easy':
+            switch (level) {
                 case 1: return 25;
                 case 2: return 50;
                 case 3: return 75;
@@ -263,11 +263,10 @@ export function pcExperience(level, difficulty) {
                 case 18: return 2100;
                 case 19: return 2400;
                 case 20: return 2800;
-                }
+                default: return 0;
             }
-            break;
-        case 'medium': {
-                switch (level) {
+        case 'medium':
+            switch (level) {
                 case 1: return 50;
                 case 2: return 100;
                 case 3: return 150;
@@ -288,10 +287,9 @@ export function pcExperience(level, difficulty) {
                 case 18: return 4200;
                 case 19: return 4900;
                 case 20: return 5700;
-                }
+                default: return 0;
             }
-            break;
-        case 'hard': {
+        case 'hard':
             switch (level) {
                 case 1: return 75;
                 case 2: return 150;
@@ -313,10 +311,9 @@ export function pcExperience(level, difficulty) {
                 case 18: return 6300;
                 case 19: return 7300;
                 case 20: return 8500;
-                }
+                default: return 0;
             }
-            break;
-        case 'deadly': {
+        case 'deadly':
             switch (level) {
                 case 1: return 100;
                 case 2: return 200;
@@ -338,15 +335,14 @@ export function pcExperience(level, difficulty) {
                 case 18: return 9500;
                 case 19: return 10900;
                 case 20: return 12700;
-                }
+                default: return 0;
             }
-            break;
+        default:
+            return 0;
     }
-
-    return 0;
 }
 
-export function traitType(type) {
+export function traitType(type: string): string {
     switch (type) {
         case 'trait':
             return 'trait';
@@ -363,8 +359,8 @@ export function traitType(type) {
     }
 }
 
-export function nudgeChallenge(value, delta) {
-    var result: number = 0;
+export function nudgeChallenge(value: number, delta: number): number {
+    var result = 0;
 
     switch (value) {
         case 0:
@@ -415,7 +411,7 @@ export function nudgeChallenge(value, delta) {
     return result;
 }
 
-export function conditionText(condition) {
+export function conditionText(condition: Condition): string[] {
     switch (condition.name) {
         case 'blinded':
             return [
@@ -552,7 +548,7 @@ export function conditionText(condition) {
     }
 }
 
-export function conditionDurationText(condition, combat) {
+export function conditionDurationText(condition: Condition, combat: Combat) {
     if (condition.duration !== null) {
         switch (condition.duration.type) {
             case "saves":
@@ -570,13 +566,15 @@ export function conditionDurationText(condition, combat) {
             case "rounds":
                 var rounds = condition.duration.count > 1 ? "rounds" : "round";
                 return "for " + condition.duration.count + " " + rounds;
+            default:
+                return null;
         }
     }
 
     return null;
 }
 
-export function getMonsterNames(encounter) {
+export function getMonsterNames(encounter: Encounter): any[] {
     var monsterNames: any[] = [];
     if (encounter) {
         encounter.slots.forEach(slot => {
