@@ -757,6 +757,11 @@ export default class Dojo extends React.Component {
             combatant.active = false;
             combatant.defeated = false;
 
+            combatant.displayName = pc.name;
+            combatant.initiative = null;
+            combatant.hp = null;
+            combatant.conditions = [];
+
             combat.combatants.push(combatant);
         });
 

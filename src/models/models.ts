@@ -126,6 +126,18 @@ export interface Combat {
     timestamp: string | null;
 }
 
+export interface Combatant {
+    id: string;
+    displayName: string;
+    current: boolean;
+    pending: boolean;
+    active: boolean;
+    defeated: boolean;
+    initiative: number | null;
+    hp: number | null;
+    conditions: Condition[];
+}
+
 export interface Notification {
     id: string;
     type: string;

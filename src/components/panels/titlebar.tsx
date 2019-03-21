@@ -2,7 +2,14 @@ import React from 'react';
 
 import cog from '../../resources/images/settings.svg';
 
-export default class Titlebar extends React.Component {
+interface Props {
+    actions: JSX.Element | JSX.Element[];
+    blur: boolean;
+    openHome: () => {}
+    openAbout: () => {}
+}
+
+export default class Titlebar extends React.Component<Props> {
     render() {
         try {
             return (

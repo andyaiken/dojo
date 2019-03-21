@@ -1,16 +1,23 @@
 import React from 'react';
 
-export default class HitPointGauge extends React.Component {
+import { Combatant, Monster } from '../../models/models';
+
+interface Props {
+    combatant: Combatant & Monster;
+}
+
+export default class HitPointGauge extends React.Component<Props> {
     render() {
         try {
+            var hpCurrent = this.props.combatant.hp || 0;
             var hpMax = this.props.combatant.hpMax + this.props.combatant.hpTemp;
             var hpBloodied = this.props.combatant.hpMax / 2;
-            var hpWidth = 100 * Math.max(this.props.combatant.hp, 0) / hpMax;
+            var hpWidth = 100 * Math.max(hpCurrent, 0) / hpMax;
 
             var style = "";
-            if (this.props.combatant.hp >= this.props.combatant.hpMax) {
+            if (hpCurrent >= this.props.combatant.hpMax) {
                 style = "bar unhurt";
-            } else if (this.props.combatant.hp <= hpBloodied) {
+            } else if (hpCurrent <= hpBloodied) {
                 style = "bar bloodied";
             } else {
                 style = "bar injured";

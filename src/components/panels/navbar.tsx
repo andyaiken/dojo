@@ -1,6 +1,16 @@
 import React from 'react';
+import { Party, MonsterGroup, Encounter } from '../../models/models';
 
-export default class Navbar extends React.Component {
+interface Props {
+    view: string;
+    blur: boolean;
+    library: MonsterGroup[];
+    parties: Party[];
+    encounters: Encounter[];
+    setView: (view: string) => {}
+}
+
+export default class Navbar extends React.Component<Props> {
     render() {
         try {
             var partiesStyle = this.props.view === "parties" ? "navigator-item selected" : "navigator-item";
