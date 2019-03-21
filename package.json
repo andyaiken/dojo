@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "homepage": "https://andyaiken.github.io/dojo/",
     "dependencies": {
+        "@types/react": "^16.8.8",
         "gh-pages": "^2.0.1",
         "node-sass": "^4.11.0",
         "react": "^16.8.4",
@@ -29,6 +30,6 @@
         "not op_mini all"
     ],
     "devDependencies": {
-      "gh-pages": "^2.0.1"
+        "gh-pages": "^2.0.1"
     }
 }
