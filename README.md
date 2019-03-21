@@ -1,56 +1,54 @@
 # dojo
 
-## Introduction
-
 Dojo is a web app for D&D (5E) dungeon masters.
 
 It can be used to design monsters and to plan and run combat encounters.
 
-Dojo is written in JS, using React and SCSS. If you would like to contribute to this project, you are welcome to do so; the instructions are below.
+Dojo is written in TypeScript / JavaScript, using React and SCSS. If you would like to contribute to this project, you are welcome to do so; the instructions are below.
 
 ## Initial set up
 
-* Open a command line in the root folder
-* Run `npm install -g babel-cli`
-* Run `npm install babel-preset-env babel-preset-react`
-* Run `npm install -g node-sass`
-* Run `npm install -g http-server`
+* Open a terminal in the root folder
+* Run `npm install`
 
 ## Compiling and running the app
 
 To compile JSX to JS as changes are made:
 
-* Open a command line in the root folder
-* Run `babel --presets env,react --watch scripts/jsx --out-file scripts/js/app.js`
+* Open a terminal in the root folder
+* Run `npm start`
+* Your default browser should open; if it does not, open it and navigate to [http://localhost:3000](http://localhost:3000)
 
-To compile SCSS to CSS as changes are made:
-
-* Open a command line in the root folder
-* Run `node-sass -w style/scss --output style/css`
-
-To start the web server:
-
-* Open a command line in the root folder
-* Run `http-server`
-* Open a web browser to `http://localhost:8080`
+The page should automatically reload if you make edits. If there are errors, you will see them in the terminal and the browser debug console.
 
 ## Code structure
 
-- resources
-  - data
-  - fonts
-  - icons
-  - images
-- scripts
-  - js
-    - react
-  - jsx
+- public
+- src
+  - components
     - cards
     - controls
     - list-items
     - modals
     - panels
     - screens
-- style
-  - css
-  - scss
+  - models
+  - resources
+    - data
+    - images
+      - maptiles
+  - style
+    - css
+    - scss
+
+## Learn More
+
+[Code splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+
+[Bundle size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+
+[PWA](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+
+[Advanced config](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+
+[Deployment](https://facebook.github.io/create-react-app/docs/deployment)

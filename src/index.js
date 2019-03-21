@@ -5,6 +5,6 @@ import './style/css/foundation.css';
 import './style/scss/app.scss';
 import './style/scss/controls.scss';
 
-import Dojo from './react/dojo';
+import Dojo from './components/dojo';
 
 ReactDOM.render(<Dojo />, document.getElementById('root'));

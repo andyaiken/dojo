@@ -1,16 +1,4 @@
-﻿export const TERRAIN_TYPES = [
-    "cavern",
-    "dirt",
-    "flagstone",
-    "floorboard",
-    "grassland",
-    "pit",
-    "sand",
-    "snow",
-    "water"
-];
-
-export var monsterIdToGroup = {};
+﻿var monsterIdToGroup = {};
 
 export function getMonsterGroup(monster, library) {
     var group = monsterIdToGroup[monster.id];
@@ -92,210 +80,6 @@ export function sortByCount(collection) {
     return collection;
 }
 
-export function createParty() {
-    return {
-        id: guid(),
-        name: "",
-        pcs: []
-    };
-}
-
-export function createPC() {
-    return {
-        id: guid(),
-        type: "pc",
-        active: true,
-        player: "",
-        name: "",
-        race: "",
-        classes: "",
-        background: "",
-        level: 1,
-        languages: "Common",
-        passiveInsight: 10,
-        passiveInvestigation: 10,
-        passivePerception: 10,
-        initiative: 10,
-        url: ""
-    };
-}
-
-export function createMonsterGroup() {
-    return {
-        id: guid(),
-        name: "",
-        monsters: []
-    };
-}
-
-export function createMonster() {
-    return {
-        id: guid(),
-        type: "monster",
-        name: "",
-        size: "medium",
-        category: "humanoid",
-        tag: "",
-        alignment: "",
-        challenge: 1,
-        abilityScores: {
-            str: 10,
-            dex: 10,
-            con: 10,
-            int: 10,
-            wis: 10,
-            cha: 10
-        },
-        ac: 10,
-        hpMax: 4,
-        hpTemp: 0,
-        hitDice: 1,
-        damage: {
-            resist: "",
-            vulnerable: "",
-            immune: ""
-        },
-        savingThrows: "",
-        speed: "",
-        skills: "",
-        senses: "",
-        languages: "",
-        equipment: "",
-        traits: [],
-        conditionImmunities: ""
-    };
-}
-
-export function createTrait() {
-    return {
-        id: guid(),
-        name: "",
-        usage: "",
-        type: "action",
-        text: ""
-    };
-}
-
-export function createEncounter() {
-    return {
-        id: guid(),
-        name: "",
-        slots: [],
-        waves: []
-    };
-}
-
-export function createEncounterSlot() {
-    return {
-        id: guid(),
-        monsterGroupName: "",
-        monsterName: "",
-        count: 1
-    };
-}
-
-export function createEncounterWave() {
-    return {
-        id: guid(),
-        name: "",
-        slots: []
-    };
-}
-
-export function createMapFolio() {
-    return {
-        id: guid(),
-        name: "",
-        maps: []
-    };
-}
-
-export function createMap() {
-    return {
-        id: guid(),
-        name: "",
-        items: []
-    };
-}
-
-export function createMapItem() {
-    return {
-        id: guid(),
-        type: "tile",
-        x: 0,
-        y: 0,
-        width: 4,
-        height: 4,
-        terrain: "flagstone"
-    };
-}
-
-export function createCombat() {
-    return {
-        id: guid(),
-        name: "",
-        encounterID: null,
-        combatants: [],
-        map: null,
-        round: 1,
-        notifications: [],
-        issues: []
-    };
-}
-
-export const SIZE_TYPES = [
-    "tiny",
-    "small",
-    "medium",
-    "large",
-    "huge",
-    "gargantuan"
-];
-
-export const CATEGORY_TYPES = [
-    "aberration",
-    "beast",
-    "celestial",
-    "construct",
-    "dragon",
-    "elemental",
-    "fey",
-    "fiend",
-    "giant",
-    "humanoid",
-    "monstrosity",
-    "ooze",
-    "plant",
-    "undead"
-];
-
-export const TRAIT_TYPES = [
-    "trait",
-    "action",
-    "legendary",
-    "lair",
-    "regional"
-];
-
-export const CONDITION_TYPES = [
-    "blinded",
-    "charmed",
-    "deafened",
-    "exhaustion",
-    "frightened",
-    "grappled",
-    "incapacitated",
-    "invisible",
-    "paralyzed",
-    "petrified",
-    "poisoned",
-    "prone",
-    "restrained",
-    "stunned",
-    "unconscious",
-    "custom"
-];
-
 export function modifier(score: number) {
     var mod = Math.floor((score - 10) / 2);
     var str = mod.toString();
@@ -311,43 +95,43 @@ export function dieRoll() {
 
 export function miniSize(size) {
     switch (size) {
-    case 'tiny': return 1;
-    case 'small': return 1;
-    case 'medium': return 1;
-    case 'large': return 2;
-    case 'huge': return 3;
-    case 'gargantuan': return 4;
-    default: return 1;
+        case 'tiny': return 1;
+        case 'small': return 1;
+        case 'medium': return 1;
+        case 'large': return 2;
+        case 'huge': return 3;
+        case 'gargantuan': return 4;
+        default: return 1;
     }
 }
 
 export function hitDieType(size) {
     switch (size) {
-    case 'tiny': return 4;
-    case 'small': return 6;
-    case 'medium': return 8;
-    case 'large': return 10;
-    case 'huge': return 12;
-    case 'gargantuan': return 20;
-    default: return 8;
+        case 'tiny': return 4;
+        case 'small': return 6;
+        case 'medium': return 8;
+        case 'large': return 10;
+        case 'huge': return 12;
+        case 'gargantuan': return 20;
+        default: return 8;
     }
 }
 
 export function challenge(cr) {
     switch (cr) {
-    case 0.125: return '1/8';
-    case 0.25: return '1/4';
-    case 0.5: return '1/2';
-    default: return cr;
+        case 0.125: return '1/8';
+        case 0.25: return '1/4';
+        case 0.5: return '1/2';
+        default: return cr;
     }
 }
 
 export function parseChallenge(cr) {
     switch (cr) {
-    case '1/8': return 0.125;
-    case '1/4': return 0.25;
-    case '1/2': return 0.5;
-    default: return parseInt(cr);
+        case '1/8': return 0.125;
+        case '1/4': return 0.25;
+        case '1/2': return 0.5;
+        default: return parseInt(cr);
     }
 }
 
@@ -394,169 +178,169 @@ export function challengeDetails() {
 
 export function experience(cr) {
     switch (cr) {
-    case 0: return 10;
-    case 0.125: return 25;
-    case 0.25: return 50;
-    case 0.5: return 100;
-    case 1: return 200;
-    case 2: return 450;
-    case 3: return 700;
-    case 4: return 1100;
-    case 5: return 1800;
-    case 6: return 2300;
-    case 7: return 2900;
-    case 8: return 3900;
-    case 9: return 5000;
-    case 10: return 5900;
-    case 11: return 7200;
-    case 12: return 8400;
-    case 13: return 10000;
-    case 14: return 11500;
-    case 15: return 13000;
-    case 16: return 15000;
-    case 17: return 18000;
-    case 18: return 20000;
-    case 19: return 22000;
-    case 20: return 25000;
-    case 21: return 33000;
-    case 22: return 41000;
-    case 23: return 50000;
-    case 24: return 62000;
-    case 30: return 155000;
-    default: return 0;
+        case 0: return 10;
+        case 0.125: return 25;
+        case 0.25: return 50;
+        case 0.5: return 100;
+        case 1: return 200;
+        case 2: return 450;
+        case 3: return 700;
+        case 4: return 1100;
+        case 5: return 1800;
+        case 6: return 2300;
+        case 7: return 2900;
+        case 8: return 3900;
+        case 9: return 5000;
+        case 10: return 5900;
+        case 11: return 7200;
+        case 12: return 8400;
+        case 13: return 10000;
+        case 14: return 11500;
+        case 15: return 13000;
+        case 16: return 15000;
+        case 17: return 18000;
+        case 18: return 20000;
+        case 19: return 22000;
+        case 20: return 25000;
+        case 21: return 33000;
+        case 22: return 41000;
+        case 23: return 50000;
+        case 24: return 62000;
+        case 30: return 155000;
+        default: return 0;
     }
 }
 
 export function experienceFactor(count) {
     switch (count) {
-    case 0:
-        return 0;
-    case 1:
-        return 1;
-    case 2:
-        return 1.5;
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-        return 2;
-    case 7:
-    case 8:
-    case 9:
-    case 10:
-        return 2.5;
-    case 11:
-    case 12:
-    case 13:
-    case 14:
-        return 3;
-    default:
-        return 4;
+        case 0:
+            return 0;
+        case 1:
+            return 1;
+        case 2:
+            return 1.5;
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+            return 2;
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+            return 2.5;
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+            return 3;
+        default:
+            return 4;
     }
 }
 
 export function pcExperience(level, difficulty) {
     switch (difficulty) {
-    case 'easy': {
-        switch (level) {
-        case 1: return 25;
-        case 2: return 50;
-        case 3: return 75;
-        case 4: return 125;
-        case 5: return 250;
-        case 6: return 300;
-        case 7: return 350;
-        case 8: return 450;
-        case 9: return 550;
-        case 10: return 600;
-        case 11: return 800;
-        case 12: return 1000;
-        case 13: return 1100;
-        case 14: return 1250;
-        case 15: return 1400;
-        case 16: return 1600;
-        case 17: return 2000;
-        case 18: return 2100;
-        case 19: return 2400;
-        case 20: return 2800;
-        }
-    }
-        break;
-    case 'medium': {
-        switch (level) {
-        case 1: return 50;
-        case 2: return 100;
-        case 3: return 150;
-        case 4: return 250;
-        case 5: return 500;
-        case 6: return 600;
-        case 7: return 750;
-        case 8: return 900;
-        case 9: return 1100;
-        case 10: return 1200;
-        case 11: return 1600;
-        case 12: return 2000;
-        case 13: return 2200;
-        case 14: return 2500;
-        case 15: return 2800;
-        case 16: return 3200;
-        case 17: return 3900;
-        case 18: return 4200;
-        case 19: return 4900;
-        case 20: return 5700;
-        }
-    }
-        break;
-    case 'hard': {
-        switch (level) {
-        case 1: return 75;
-        case 2: return 150;
-        case 3: return 225;
-        case 4: return 375;
-        case 5: return 750;
-        case 6: return 900;
-        case 7: return 1100;
-        case 8: return 1400;
-        case 9: return 1600;
-        case 10: return 1900;
-        case 11: return 2400;
-        case 12: return 3000;
-        case 13: return 3400;
-        case 14: return 3800;
-        case 15: return 4300;
-        case 16: return 4800;
-        case 17: return 5900;
-        case 18: return 6300;
-        case 19: return 7300;
-        case 20: return 8500;
-        }
-    }
-        break;
-    case 'deadly': {
-        switch (level) {
-        case 1: return 100;
-        case 2: return 200;
-        case 3: return 400;
-        case 4: return 500;
-        case 5: return 1100;
-        case 6: return 1400;
-        case 7: return 1700;
-        case 8: return 2100;
-        case 9: return 2400;
-        case 10: return 2800;
-        case 11: return 3600;
-        case 12: return 4500;
-        case 13: return 5100;
-        case 14: return 5700;
-        case 15: return 6400;
-        case 16: return 7200;
-        case 17: return 8800;
-        case 18: return 9500;
-        case 19: return 10900;
-        case 20: return 12700;
-        }
-    }
-        break;
+        case 'easy': {
+                switch (level) {
+                case 1: return 25;
+                case 2: return 50;
+                case 3: return 75;
+                case 4: return 125;
+                case 5: return 250;
+                case 6: return 300;
+                case 7: return 350;
+                case 8: return 450;
+                case 9: return 550;
+                case 10: return 600;
+                case 11: return 800;
+                case 12: return 1000;
+                case 13: return 1100;
+                case 14: return 1250;
+                case 15: return 1400;
+                case 16: return 1600;
+                case 17: return 2000;
+                case 18: return 2100;
+                case 19: return 2400;
+                case 20: return 2800;
+                }
+            }
+            break;
+        case 'medium': {
+                switch (level) {
+                case 1: return 50;
+                case 2: return 100;
+                case 3: return 150;
+                case 4: return 250;
+                case 5: return 500;
+                case 6: return 600;
+                case 7: return 750;
+                case 8: return 900;
+                case 9: return 1100;
+                case 10: return 1200;
+                case 11: return 1600;
+                case 12: return 2000;
+                case 13: return 2200;
+                case 14: return 2500;
+                case 15: return 2800;
+                case 16: return 3200;
+                case 17: return 3900;
+                case 18: return 4200;
+                case 19: return 4900;
+                case 20: return 5700;
+                }
+            }
+            break;
+        case 'hard': {
+            switch (level) {
+                case 1: return 75;
+                case 2: return 150;
+                case 3: return 225;
+                case 4: return 375;
+                case 5: return 750;
+                case 6: return 900;
+                case 7: return 1100;
+                case 8: return 1400;
+                case 9: return 1600;
+                case 10: return 1900;
+                case 11: return 2400;
+                case 12: return 3000;
+                case 13: return 3400;
+                case 14: return 3800;
+                case 15: return 4300;
+                case 16: return 4800;
+                case 17: return 5900;
+                case 18: return 6300;
+                case 19: return 7300;
+                case 20: return 8500;
+                }
+            }
+            break;
+        case 'deadly': {
+            switch (level) {
+                case 1: return 100;
+                case 2: return 200;
+                case 3: return 400;
+                case 4: return 500;
+                case 5: return 1100;
+                case 6: return 1400;
+                case 7: return 1700;
+                case 8: return 2100;
+                case 9: return 2400;
+                case 10: return 2800;
+                case 11: return 3600;
+                case 12: return 4500;
+                case 13: return 5100;
+                case 14: return 5700;
+                case 15: return 6400;
+                case 16: return 7200;
+                case 17: return 8800;
+                case 18: return 9500;
+                case 19: return 10900;
+                case 20: return 12700;
+                }
+            }
+            break;
     }
 
     return 0;
@@ -583,49 +367,49 @@ export function nudgeChallenge(value, delta) {
     var result: number = 0;
 
     switch (value) {
-    case 0:
-        if (delta === -1) {
-            result = 0;
-        }
-        if (delta === +1) {
-            result = 0.125;
-        }
-        break;
-    case 0.125:
-        if (delta === -1) {
-            result = 0;
-        }
-        if (delta === +1) {
-            result = 0.25;
-        }
-        break;
-    case 0.25:
-        if (delta === -1) {
-            result = 0.125;
-        }
-        if (delta === +1) {
-            result = 0.5;
-        }
-        break;
-    case 0.5:
-        if (delta === -1) {
-            result = 0.25;
-        }
-        if (delta === +1) {
-            result = 1;
-        }
-        break;
-    case 1:
-        if (delta === -1) {
-            result = 0.5;
-        }
-        if (delta === +1) {
-            result = 2;
-        }
-        break;
-    default:
-        result = value + delta;
-        break;
+        case 0:
+            if (delta === -1) {
+                result = 0;
+            }
+            if (delta === +1) {
+                result = 0.125;
+            }
+            break;
+        case 0.125:
+            if (delta === -1) {
+                result = 0;
+            }
+            if (delta === +1) {
+                result = 0.25;
+            }
+            break;
+        case 0.25:
+            if (delta === -1) {
+                result = 0.125;
+            }
+            if (delta === +1) {
+                result = 0.5;
+            }
+            break;
+        case 0.5:
+            if (delta === -1) {
+                result = 0.25;
+            }
+            if (delta === +1) {
+                result = 1;
+            }
+            break;
+        case 1:
+            if (delta === -1) {
+                result = 0.5;
+            }
+            if (delta === +1) {
+                result = 2;
+            }
+            break;
+        default:
+            result = value + delta;
+            break;
     }
 
     return result;
@@ -633,138 +417,138 @@ export function nudgeChallenge(value, delta) {
 
 export function conditionText(condition) {
     switch (condition.name) {
-    case 'blinded':
-        return [
-            'a blinded creature can’t see and automatically fails any ability check that requires sight',
-            'attack rolls against the creature have advantage, and the creature’s attack rolls have disadvantage'
-        ];
-    case 'charmed':
-        return [
-            'a charmed creature can’t attack the charmer or target the charmer with harmful abilities or magical effects',
-            'the charmer has advantage on any ability check to interact socially with the creature'
-        ];
-    case 'deafened':
-        return [
-            'a deafened creature can’t hear and automatically fails any ability check that requires hearing.'
-        ];
-    case 'exhaustion': {
-        switch (condition.level) {
-        case 1:
+        case 'blinded':
             return [
-                'disadvantage on ability checks'
+                'a blinded creature can’t see and automatically fails any ability check that requires sight',
+                'attack rolls against the creature have advantage, and the creature’s attack rolls have disadvantage'
             ];
-        case 2:
+        case 'charmed':
             return [
-                'disadvantage on ability checks',
-                'speed halved'
+                'a charmed creature can’t attack the charmer or target the charmer with harmful abilities or magical effects',
+                'the charmer has advantage on any ability check to interact socially with the creature'
             ];
-        case 3:
+        case 'deafened':
             return [
-                'disadvantage on ability checks',
-                'speed halved',
-                'disadvantage on attack rolls and saving throws'
+                'a deafened creature can’t hear and automatically fails any ability check that requires hearing.'
             ];
-        case 4:
+        case 'exhaustion': {
+            switch (condition.level) {
+            case 1:
+                return [
+                    'disadvantage on ability checks'
+                ];
+            case 2:
+                return [
+                    'disadvantage on ability checks',
+                    'speed halved'
+                ];
+            case 3:
+                return [
+                    'disadvantage on ability checks',
+                    'speed halved',
+                    'disadvantage on attack rolls and saving throws'
+                ];
+            case 4:
+                return [
+                    'disadvantage on ability checks',
+                    'speed halved',
+                    'disadvantage on attack rolls and saving throws',
+                    'hit point maximum halved'
+                ];
+            case 5:
+                return [
+                    'disadvantage on ability checks',
+                    'speed halved',
+                    'disadvantage on attack rolls and saving throws',
+                    'hit point maximum halved',
+                    'speed reduced to 0'
+                ];
+            case 6:
+                return [
+                    'disadvantage on ability checks',
+                    'speed halved',
+                    'disadvantage on attack rolls and saving throws',
+                    'hit point maximum halved',
+                    'speed reduced to 0',
+                    'death'
+                ];
+            default:
+                return [];
+            }
+        }
+        case 'frightened':
             return [
-                'disadvantage on ability checks',
-                'speed halved',
-                'disadvantage on attack rolls and saving throws',
-                'hit point maximum halved'
+                'a frightened creature has disadvantage on ability checks and attack rolls while the source of its fear is within line of sight',
+                'the creature can’t willingly move closer to the source of its fear'
             ];
-        case 5:
+        case 'grappled':
             return [
-                'disadvantage on ability checks',
-                'speed halved',
-                'disadvantage on attack rolls and saving throws',
-                'hit point maximum halved',
-                'speed reduced to 0'
+                'a grappled creature’s speed becomes 0, and it can’t benefit from any bonus to its speed',
+                'the condition ends if the grappler is incapacitated',
+                'the condition also ends if an effect removes the grappled creature from the reach of the grappler or grappling effect'
             ];
-        case 6:
+        case 'incapacitated':
             return [
-                'disadvantage on ability checks',
-                'speed halved',
-                'disadvantage on attack rolls and saving throws',
-                'hit point maximum halved',
-                'speed reduced to 0',
-                'death'
+                'an incapacitated creature can’t take actions or reactions'
             ];
+        case 'invisible':
+            return [
+                'an invisible creature is impossible to see without the aid of magic or a special sense',
+                'for the purpose of hiding, the creature is heavily obscured',
+                'the creature’s location can be detected by any noise it makes or any tracks it leaves',
+                'attack rolls against the creature have disadvantage, and the creature’s attack rolls have advantage'
+            ];
+        case 'paralyzed':
+            return [
+                'a paralyzed creature is incapacitated (can’t take actions or reactions) and can’t move or speak',
+                'the creature automatically fails strength and dexterity saving throws',
+                'attack rolls against the creature have advantage',
+                'any attack that hits the creature is a critical hit if the attacker is within 5 feet of the creature'
+            ];
+        case 'petrified':
+            return [
+                'a petrified creature is transformed, along with any nonmagical object it is wearing or carrying, into a solid inanimate substance (usually stone)',
+                'its weight increases by a factor of ten, and it ceases aging',
+                'the creature is incapacitated (can’t take actions or reactions), can’t move or speak, and is unaware of its surroundings',
+                'attack rolls against the creature have advantage',
+                'the creature automatically fails strength and dexterity saving throws',
+                'the creature has resistance to all damage',
+                'the creature is immune to poison and disease, although a poison or disease already in its system is suspended, not neutralized'
+            ];
+        case 'poisoned':
+            return [
+                'a poisoned creature has disadvantage on attack rolls and ability checks'
+            ];
+        case 'prone':
+            return [
+                'a prone creature’s only movement option is to crawl, unless it stands up and thereby ends the condition',
+                'the creature has disadvantage on attack rolls',
+                'an attack roll against the creature has advantage if the attacker is Within 5 feet of the creature; otherwise, the attack roll has disadvantage'
+            ];
+        case 'restrained':
+            return [
+                'a restrained creature’s speed becomes 0, and it can’t benefit from any bonus to its speed',
+                'attack rolls against the creature have advantage, and the creature’s attack rolls have disadvantage',
+                'the creature has disadvantage on dexterity saving throws'
+            ];
+        case 'stunned':
+            return [
+                'a stunned creature is incapacitated (can’t take actions or reactions), can’t move, and can speak only falteringly',
+                'the creature automatically fails strength and dexterity saving throws',
+                'attack rolls against the creature have advantage'
+            ];
+        case 'unconscious':
+            return [
+                'an unconscious creature is incapacitated (can’t take actions or reactions), can’t move or speak, and is unaware of its surroundings',
+                'the creature drops whatever its holding and falls prone',
+                'the creature automatically fails strength and dexterity saving throws',
+                'attack rolls against the creature have advantage',
+                'any attack that hits the creature is a critical hit if the attacker is within 5 feet of the creature'
+            ];
+        case "custom":
+            return [];
         default:
             return [];
-        }
-    }
-    case 'frightened':
-        return [
-            'a frightened creature has disadvantage on ability checks and attack rolls while the source of its fear is within line of sight',
-            'the creature can’t willingly move closer to the source of its fear'
-        ];
-    case 'grappled':
-        return [
-            'a grappled creature’s speed becomes 0, and it can’t benefit from any bonus to its speed',
-            'the condition ends if the grappler is incapacitated',
-            'the condition also ends if an effect removes the grappled creature from the reach of the grappler or grappling effect'
-        ];
-    case 'incapacitated':
-        return [
-            'an incapacitated creature can’t take actions or reactions'
-        ];
-    case 'invisible':
-        return [
-            'an invisible creature is impossible to see without the aid of magic or a special sense',
-            'for the purpose of hiding, the creature is heavily obscured',
-            'the creature’s location can be detected by any noise it makes or any tracks it leaves',
-            'attack rolls against the creature have disadvantage, and the creature’s attack rolls have advantage'
-        ];
-    case 'paralyzed':
-        return [
-            'a paralyzed creature is incapacitated (can’t take actions or reactions) and can’t move or speak',
-            'the creature automatically fails strength and dexterity saving throws',
-            'attack rolls against the creature have advantage',
-            'any attack that hits the creature is a critical hit if the attacker is within 5 feet of the creature'
-        ];
-    case 'petrified':
-        return [
-            'a petrified creature is transformed, along with any nonmagical object it is wearing or carrying, into a solid inanimate substance (usually stone)',
-            'its weight increases by a factor of ten, and it ceases aging',
-            'the creature is incapacitated (can’t take actions or reactions), can’t move or speak, and is unaware of its surroundings',
-            'attack rolls against the creature have advantage',
-            'the creature automatically fails strength and dexterity saving throws',
-            'the creature has resistance to all damage',
-            'the creature is immune to poison and disease, although a poison or disease already in its system is suspended, not neutralized'
-        ];
-    case 'poisoned':
-        return [
-            'a poisoned creature has disadvantage on attack rolls and ability checks'
-        ];
-    case 'prone':
-        return [
-            'a prone creature’s only movement option is to crawl, unless it stands up and thereby ends the condition',
-            'the creature has disadvantage on attack rolls',
-            'an attack roll against the creature has advantage if the attacker is Within 5 feet of the creature; otherwise, the attack roll has disadvantage'
-        ];
-    case 'restrained':
-        return [
-            'a restrained creature’s speed becomes 0, and it can’t benefit from any bonus to its speed',
-            'attack rolls against the creature have advantage, and the creature’s attack rolls have disadvantage',
-            'the creature has disadvantage on dexterity saving throws'
-        ];
-    case 'stunned':
-        return [
-            'a stunned creature is incapacitated (can’t take actions or reactions), can’t move, and can speak only falteringly',
-            'the creature automatically fails strength and dexterity saving throws',
-            'attack rolls against the creature have advantage'
-        ];
-    case 'unconscious':
-        return [
-            'an unconscious creature is incapacitated (can’t take actions or reactions), can’t move or speak, and is unaware of its surroundings',
-            'the creature drops whatever its holding and falls prone',
-            'the creature automatically fails strength and dexterity saving throws',
-            'attack rolls against the creature have advantage',
-            'any attack that hits the creature is a critical hit if the attacker is within 5 feet of the creature'
-        ];
-    case "custom":
-        return [];
-    default:
-        return [];
     }
 }
 
