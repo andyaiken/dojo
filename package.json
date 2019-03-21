@@ -1,7 +1,6 @@
 {
   "name": "dojo",
   "version": "1.0.0",
-  "private": true,
   "homepage": "https://andyaiken.github.io/dojo",
   "dependencies": {
     "node-sass": "^4.11.0",
@@ -12,8 +11,7 @@
   },
   "scripts": {
     "start": "react-scripts start --display-error-details",
-    "build": "react-scripts build",
-    "predeploy": "npm run build",
+    "predeploy": "react-scripts build",
     "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
