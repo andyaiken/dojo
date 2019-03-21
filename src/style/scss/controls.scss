@@ -171,42 +171,6 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Navbar
-
-.navbar {
-    height: 50px;
-    padding: 0 5px;
-    text-align: center;
-    background-color: $header-background;
-
-    .navigator-item {
-        display: inline-block;
-        vertical-align: middle;
-        padding: 5px;
-        cursor: pointer;
-        height: 50px;
-        line-height: 35px;
-        width: calc((100% - 1px) / 5);
-        font-size: 14px;
-        color: $header-foreground;
-        border-top: 1px solid $control-border;
-
-        &.selected {
-            background-color: $background;
-            border-top: 1px solid transparent;
-            border-left: 1px solid $control-border;
-            border-right: 1px solid $control-border;
-            cursor: default;
-        }
-
-        &.selected,
-        &:hover {
-            font-weight: 600;
-        }
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Radial
 
 .radial {
@@ -433,74 +397,6 @@
 
     .factor-selector {
         margin: 0 5px;
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Title bar
-
-.titlebar {
-    height: 50px;
-    padding: 10px 5px;
-    background-color: $header-background;
-    border-bottom: 1px solid $control-border;
-
-    .app-name {
-        display: inline-block;
-        padding: 4px 6px 8px 6px;
-        margin: 0 5px;
-        height: 30px;
-        line-height: 20px;
-        font-size: 20px;
-        font-weight: 600;
-        color: $header-foreground;
-        border-left: 3px solid $header-foreground;
-        cursor: pointer;
-
-        &:hover {
-            background-color: $header-foreground-03;
-        }
-    }
-
-    .actions {
-        position: absolute;
-        right: 50px;
-        top: 4px;
-        vertical-align: middle;
-
-        .section {
-            display: inline-block;
-            margin: 0 5px;
-            color: $header-foreground;
-            vertical-align: top;
-
-            button,
-            .selector {
-                min-width: 130px;
-            }
-
-            .text {
-                margin: 5px;
-                height: 32px;
-                line-height: 32px;
-            }
-        }
-    }
-
-    .settings-icon {
-        position: absolute;
-        right: 0;
-        top: 0;
-        height: 40px;
-        width: 40px;
-        padding: 5px;
-        margin: 5px;
-        border-radius: 50%;
-        cursor: pointer;
-
-        &:hover {
-            background-color: $highlight02;
-        }
     }
 }
 

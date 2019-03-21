@@ -17,9 +17,10 @@ import MapEditorModal from './modals/map-editor-modal';
 import CombatStartModal from './modals/combat-start-modal';
 import ConditionModal from './modals/condition-modal';
 
+import Titlebar from './panels/titlebar';
+import Navbar from './panels/navbar';
+
 import Checkbox from './controls/checkbox';
-import Titlebar from './controls/titlebar';
-import Navbar from './controls/navbar';
 
 import close from "../resources/images/close-black.svg";
 import monsters from '../resources/data/monsters.json';
