@@ -1,4 +1,5 @@
 import React from 'react';
+
 import PartiesCard from '../cards/information/parties-card';
 import PartyListItem from '../list-items/party-list-item';
 import PartyCard from '../cards/party-card';

@@ -2,14 +2,18 @@ import React from 'react';
 
 import * as utils from '../../utils';
 
-export default class MonsterGroupListItem extends React.Component {
+import { MonsterGroup } from '../../models/models';
+
+interface Props {
+    group: MonsterGroup;
+    selected: boolean;
+    filter: string;
+    setSelection: (group: MonsterGroup) => {};
+}
+
+export default class MonsterGroupListItem extends React.Component<Props> {
     render() {
         try {
-            var groupName = this.props.group.name;
-            if (!groupName) {
-                groupName = "unnamed group";
-            }
-
             var matchGroup = utils.match(this.props.filter, this.props.group.name);
 
             var monsters = [];
@@ -30,7 +34,7 @@ export default class MonsterGroupListItem extends React.Component {
 
             return (
                 <div className={this.props.selected ? "list-item selected" : "list-item"} onClick={() => this.props.setSelection(this.props.group)}>
-                    <div className="heading">{groupName}</div>
+                    <div className="heading">{this.props.group.name || "unnamed group"}</div>
                     {monsters}
                 </div>
             );

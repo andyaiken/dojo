@@ -1,14 +1,18 @@
 import React from 'react';
 
-export default class EncounterListItem extends React.Component {
+import { Encounter } from '../../models/models';
+
+interface Props {
+    encounter: Encounter;
+    selected: boolean;
+    setSelection: (encounter: Encounter) => {};
+}
+
+export default class EncounterListItem extends React.Component<Props> {
     render() {
         try {
-            var encounterName = this.props.encounter.name;
-            if (!encounterName) {
-                encounterName = "unnamed encounter";
-            }
-
             var slots = [];
+
             this.props.encounter.slots.forEach(slot => {
                 var text = slot.monsterName || "unnamed monster";
                 if (slot.count > 1) {
@@ -16,9 +20,11 @@ export default class EncounterListItem extends React.Component {
                 }
                 slots.push(<div key={slot.id} className="text">{text}</div>);
             });
+
             if (slots.length === 0) {
                 slots.push(<div key="empty" className="text">no monsters</div>);
             }
+
             this.props.encounter.waves.forEach(wave => {
                 slots.push(<div key={"name " + wave.id} className="text subheading">{wave.name || "unnamed wave"}</div>);
                 wave.slots.forEach(slot => {
@@ -35,7 +41,7 @@ export default class EncounterListItem extends React.Component {
 
             return (
                 <div className={this.props.selected ? "list-item selected" : "list-item"} onClick={() => this.props.setSelection(this.props.encounter)}>
-                    <div className="heading">{encounterName}</div>
+                    <div className="heading">{this.props.encounter.name || "unnamed encounter"}</div>
                     {slots}
                 </div>
             );

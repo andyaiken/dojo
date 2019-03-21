@@ -1,15 +1,18 @@
 import React from 'react';
 
+import { Combat } from '../../models/models';
+
 import MapPanel from '../panels/map-panel';
 
-export default class CombatListItem extends React.Component {
+interface Props {
+    combat: Combat;
+    selected: boolean;
+    setSelection: (combat: Combat) => {};
+}
+
+export default class CombatListItem extends React.Component<Props> {
     render() {
         try {
-            var combatName = this.props.combat.name;
-            if (!combatName) {
-                combatName = "unnamed combat";
-            }
-
             var map = null;
             if (this.props.combat.map) {
                 map = (
@@ -23,7 +26,7 @@ export default class CombatListItem extends React.Component {
 
             return (
                 <div className={this.props.selected ? "list-item selected" : "list-item"} onClick={() => this.props.setSelection(this.props.combat)}>
-                    <div className="heading">{combatName}</div>
+                    <div className="heading">{this.props.combat.name || "unnamed combat"}</div>
                     <div className="text">paused at {this.props.combat.timestamp}</div>
                     {map}
                 </div>

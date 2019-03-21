@@ -149,7 +149,8 @@ export function createCombat(): Combat {
         map: null,
         round: 1,
         notifications: [],
-        issues: []
+        issues: [],
+        timestamp: null
     };
 }
 

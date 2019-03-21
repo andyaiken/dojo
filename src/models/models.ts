@@ -123,6 +123,7 @@ export interface Combat {
     round: number;
     notifications: Notification[];
     issues: string[];
+    timestamp: string | null;
 }
 
 export interface Notification {

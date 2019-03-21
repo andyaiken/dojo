@@ -1,6 +1,14 @@
 import React from 'react';
 
-export default class MapFolioListItem extends React.Component {
+import { MapFolio } from '../../models/models';
+
+interface Props {
+    mapFolio: MapFolio;
+    selected: boolean;
+    setSelection: (mapFolio: MapFolio) => {};
+}
+
+export default class MapFolioListItem extends React.Component<Props> {
     render() {
         try {
             var maps = [];

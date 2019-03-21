@@ -1,13 +1,16 @@
 import React from 'react';
 
-export default class PartyListItem extends React.Component {
+import { Party } from '../../models/models';
+
+interface Props {
+    party: Party;
+    selected: boolean;
+    setSelection: (party: Party) => {};
+}
+
+export default class PartyListItem extends React.Component<Props> {
     render() {
         try {
-            var partyName = this.props.party.name;
-            if (!partyName) {
-                partyName = "unnamed party";
-            }
-
             var pcs = [];
             for (var n = 0; n !== this.props.party.pcs.length; ++n) {
                 var pc = this.props.party.pcs[n];
@@ -26,7 +29,7 @@ export default class PartyListItem extends React.Component {
 
             return (
                 <div className={this.props.selected ? "list-item selected" : "list-item"} onClick={() => this.props.setSelection(this.props.party)}>
-                    <div className="heading">{partyName}</div>
+                    <div className="heading">{this.props.party.name || "unnamed party"}</div>
                     {pcs}
                 </div>
             );

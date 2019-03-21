@@ -1,5 +1,7 @@
 import React from 'react';
+
 import * as utils from '../../utils';
+
 import PCCard from '../cards/pc-card';
 import MonsterCard from '../cards/monster-card';
 import InfoCard from '../cards/info-card';
@@ -44,6 +46,7 @@ export default class CombatManagerScreen extends React.Component {
             case "pc":
                 return (
                     <PCCard
+                        key="selected"
                         combatant={combatant}
                         mode={mode}
                         changeValue={(combatant, type, value) => this.props.changeValue(combatant, type, value)}
@@ -61,6 +64,7 @@ export default class CombatManagerScreen extends React.Component {
             case "monster":
                 return (
                     <MonsterCard
+                        key="selected"
                         combatant={combatant}
                         mode={mode}
                         combat={this.props.combat}
