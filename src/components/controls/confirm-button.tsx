@@ -2,18 +2,20 @@ import React from 'react';
 
 import warning from "../../resources/images/warning.svg";
 
-/*
-<ConfirmButton
-    text="TEXT"
-    details="TEXT"
-    disabled={BOOLEAN}
-    callback={() => CALLBACK_FUNCTION}
-/>
-*/
+interface Props {
+    text: string;
+    details: string;
+    disabled: boolean;
+    callback: () => {};
+}
 
-export default class ConfirmButton extends React.Component {
-    constructor() {
-        super();
+interface State {
+    pressed: boolean;
+}
+
+export default class ConfirmButton extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
         this.state = {
             pressed: false
         };

@@ -3,17 +3,15 @@ import React from 'react';
 import checked from "../../resources/images/checked.svg";
 import unchecked from "../../resources/images/unchecked.svg";
 
-/*
-<Checkbox
-    label="LABEL"
-    checked={BOOLEAN}
-    disabled={BOOLEAN}
-    changeValue={value => this.changeValue(SOURCEOBJECT, FIELDNAME, value)}
-/>
-*/
+interface Props {
+    label: string;
+    checked: boolean;
+    disabled: boolean;
+    changeValue: (value: boolean) => {};
+}
 
-export default class Checkbox extends React.Component {
-    click(e) {
+export default class Checkbox extends React.Component<Props> {
+    click(e: React.MouseEvent) {
         e.stopPropagation();
         this.props.changeValue(!this.props.checked);
     }
