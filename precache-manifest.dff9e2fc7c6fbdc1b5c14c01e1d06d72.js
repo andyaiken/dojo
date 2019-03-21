@@ -56,7 +56,7 @@ self.__precacheManifest = [
     "url": "/dojo/static/media/settings.042bb1c2.svg"
   },
   {
-    "revision": "8471e068fb5431895f2dfd7e08a2fbf6",
+    "revision": "d0c114bba37da25bf4f3bd0fbc5c4732",
     "url": "/dojo/index.html"
   }
 ];
