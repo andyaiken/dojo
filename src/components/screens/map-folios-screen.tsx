@@ -11,7 +11,7 @@ import CardGroup from '../panels/card-group';
 
 interface Props {
     mapFolios: MapFolio[];
-    selection: MapFolio;
+    selection: MapFolio | null;
     showHelp: boolean;
     selectMapFolio: (mapFolio: MapFolio | null) => void;
     addMapFolio: (name: string) => void;

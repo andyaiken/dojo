@@ -13,7 +13,7 @@ import CardGroup from '../panels/card-group';
 
 interface Props {
     library: MonsterGroup[];
-    selection: MonsterGroup;
+    selection: MonsterGroup | null;
     showHelp: boolean;
     filter: string;
     selectMonsterGroup: (group: MonsterGroup | null) => void;
@@ -25,8 +25,8 @@ interface Props {
     cloneMonster: (monster: Monster, name: string) => void;
     sortMonsters: () => void;
     moveToGroup: (monster: Monster, groupID: string) => void;
-    changeValue: (source: {}, field: string, value: any) => void;
-    nudgeValue: (source: {}, field: string, value: number) => void;
+    changeValue: (source: any, field: string, value: any) => void;
+    nudgeValue: (source: any, field: string, value: number) => void;
 }
 
 export default class MonsterLibraryScreen extends React.Component<Props> {

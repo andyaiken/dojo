@@ -11,7 +11,7 @@ import CardGroup from '../panels/card-group';
 
 interface Props {
     parties: Party[];
-    selection: Party;
+    selection: Party | null;
     showHelp: boolean;
     selectParty: (party: Party | null) => void;
     addParty: (name: string) => void;
@@ -19,8 +19,8 @@ interface Props {
     addPC: (name: string) => void;
     removePC: (pc: PC) => void;
     sortPCs: () => void;
-    changeValue: (source: {}, field: string, value: any) => void;
-    nudgeValue: (source: {}, field: string, value: number) => void;
+    changeValue: (source: any, field: string, value: any) => void;
+    nudgeValue: (source: any, field: string, value: number) => void;
 }
 
 export default class PartiesScreen extends React.Component<Props> {

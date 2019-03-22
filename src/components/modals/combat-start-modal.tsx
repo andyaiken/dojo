@@ -14,7 +14,7 @@ interface Props {
     parties: Party[];
     encounters: Encounter[];
     mapFolios: MapFolio[];
-    getMonster: (monsterName: string, groupName: string) => Monster;
+    getMonster: (monsterName: string, groupName: string) => Monster | null;
     notify: () => void;
 }
 
@@ -23,6 +23,11 @@ interface State {
 }
 
 export default class CombatStartModal extends React.Component<Props, State> {
+    public static defaultProps = {
+        parties: null,
+        mapFolios: null
+    };
+
     constructor(props: Props) {
         super(props);
 

@@ -16,7 +16,7 @@ import HitPointGauge from '../panels/hit-point-gauge';
 
 interface Props {
     combats: Combat[];
-    combat: Combat;
+    combat: Combat | null;
     showHelp: boolean;
     createCombat: () => void;
     resumeEncounter: (combat: Combat) => void;
@@ -67,7 +67,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
 
     createCard(combatant: (Combatant & PC) | (Combatant & Monster)) {
         var mode = "combat";
-        if (this.props.combat.map) {
+        if (this.props.combat && this.props.combat.map) {
             mode += " tactical";
             var onMap = this.props.combat.map.items.find(i => i.id === combatant.id);
             mode += onMap ? " on-map" : " off-map";
@@ -98,7 +98,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                         key="selected"
                         combatant={combatant as Combatant & Monster}
                         mode={mode}
-                        combat={this.props.combat}
+                        combat={this.props.combat as Combat}
                         changeValue={(combatant, type, value) => this.props.changeValue(combatant, type, value)}
                         nudgeValue={(combatant, type, delta) => this.props.nudgeValue(combatant, type, delta)}
                         makeCurrent={combatant => this.props.makeCurrent(combatant as Combatant & Monster)}
@@ -122,11 +122,13 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
     }
 
     addCombatantToMap(x: number, y: number) {
-        var combatant = this.props.combat.combatants.find(c => c.id === this.state.addingToMapID);
-        if (combatant) {
-            this.props.mapAdd(combatant, x, y);
+        if (this.props.combat) {
+            var combatant = this.props.combat.combatants.find(c => c.id === this.state.addingToMapID);
+            if (combatant) {
+                this.props.mapAdd(combatant, x, y);
+            }
+            this.setAddingToMapID(null);
         }
-        this.setAddingToMapID(null);
     }
 
     render() {
@@ -166,7 +168,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                             <CombatantRow
                                 key={combatant.id}
                                 combatant={combatant}
-                                combat={this.props.combat}
+                                combat={this.props.combat as Combat}
                                 select={combatant => this.setSelectedTokenID(combatant.id)}
                                 selected={combatant.id === this.state.selectedTokenID}
                             />
@@ -177,7 +179,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                             <CombatantRow
                                 key={combatant.id}
                                 combatant={combatant}
-                                combat={this.props.combat}
+                                combat={this.props.combat as Combat}
                                 select={combatant => this.setSelectedTokenID(combatant.id)}
                                 selected={combatant.id === this.state.selectedTokenID}
                             />

@@ -16,7 +16,7 @@ import EncounterListItem from '../list-items/encounter-list-item';
 
 interface Props {
     encounters: Encounter[];
-    selection: Encounter;
+    selection: Encounter | null;
     parties: Party[];
     library: MonsterGroup[];
     showHelp: boolean;
@@ -27,9 +27,9 @@ interface Props {
     removeEncounterSlot: (encounterSlot: EncounterSlot, waveID: string | null) => void;
     addWave: () => void;
     removeWave: (wave: EncounterWave) => void;
-    changeValue: (source: {}, field: string, value: any) => void;
-    nudgeValue: (source: {}, field: string, value: number) => void;
-    getMonster: (monsterName: string, groupName: string) => Monster;
+    changeValue: (source: any, field: string, value: any) => void;
+    nudgeValue: (source: any, field: string, value: number) => void;
+    getMonster: (monsterName: string, groupName: string) => Monster | null;
 }
 
 interface State {
@@ -59,13 +59,15 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
     inEncounter(monster: Monster) {
         var result = false;
 
-        var group = utils.getMonsterGroup(monster, this.props.library);
+        if (this.props.selection) {
+            var group = utils.getMonsterGroup(monster, this.props.library);
 
-        this.props.selection.slots.forEach(slot => {
-            if ((slot.monsterGroupName === group.name) && (slot.monsterName === monster.name)) {
-                result = true;
-            }
-        });
+            this.props.selection.slots.forEach(slot => {
+                if ((slot.monsterGroupName === group.name) && (slot.monsterName === monster.name)) {
+                    result = true;
+                }
+            });
+        }
 
         return result;
     }
@@ -136,7 +138,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                         <MonsterCard
                             combatant={monster}
                             slot={slot}
-                            encounter={this.props.selection}
+                            encounter={this.props.selection as Encounter}
                             mode={"view encounter"}
                             nudgeValue={(slot, type, delta) => this.props.nudgeValue(slot, type, delta)}
                             removeEncounterSlot={slot => this.props.removeEncounterSlot(slot, waveID)}
@@ -205,7 +207,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                     <MonsterCard
                         key={monster.id}
                         combatant={monster}
-                        encounter={this.props.selection}
+                        encounter={this.props.selection as Encounter}
                         library={this.props.library}
                         mode={"view encounter"}
                         addEncounterSlot={(combatant, waveID) => this.props.addEncounterSlot(combatant, waveID)}
