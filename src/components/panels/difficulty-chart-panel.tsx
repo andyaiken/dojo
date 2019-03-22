@@ -7,7 +7,7 @@ import { Party, Monster, Encounter, EncounterSlot } from '../../models/models';
 interface Props {
     encounter: Encounter;
     party: Party | null;
-    getMonster: (monsterName: string, groupName: string) => Monster
+    getMonster: (monsterName: string, groupName: string) => Monster | null
 }
 
 export default class DifficultyChartPanel extends React.Component<Props> {

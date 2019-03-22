@@ -3,7 +3,7 @@ import React from 'react';
 import cog from '../../resources/images/settings.svg';
 
 interface Props {
-    actions: JSX.Element | JSX.Element[];
+    actions: JSX.Element | null;
     blur: boolean;
     openHome: () => void;
     openAbout: () => void;

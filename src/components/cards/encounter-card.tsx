@@ -15,7 +15,7 @@ interface Props {
     changeValue: (field: string, value: string) => void;
     addWave: () => void;
     removeEncounter: () => void;
-    getMonster: (monsterName: string, groupName: string) => Monster;
+    getMonster: (monsterName: string, groupName: string) => Monster | null;
 }
 
 interface State {

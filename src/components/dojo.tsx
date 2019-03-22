@@ -3,6 +3,14 @@ import React from 'react';
 import * as utils from '../utils';
 import * as factory from '../models/factory';
 
+import {
+    Party, PC,
+    MonsterGroup, Monster, Trait,
+    Encounter, EncounterSlot, EncounterWave,
+    MapFolio, Map,
+    CombatSetup, Combat, Combatant, Notification, Condition
+} from '../models/models';
+
 import HomeScreen from './screens/home-screen';
 import PartiesScreen from './screens/parties-screen';
 import MonsterLibraryScreen from './screens/monster-library-screen';
@@ -25,9 +33,36 @@ import Checkbox from './controls/checkbox';
 import close from "../resources/images/close-black.svg";
 import monsters from '../resources/data/monsters.json';
 
-export default class Dojo extends React.Component {
-    constructor() {
-        super();
+interface Props {
+    // No props; this is the root component
+}
+
+interface State {
+    view: string;
+    options: {
+        showHelp: boolean;
+    };
+
+    parties: Party[];
+    library: MonsterGroup[];
+    encounters: Encounter[];
+    mapFolios: MapFolio[];
+    combats: Combat[];
+
+    selectedPartyID: string | null;
+    selectedMonsterGroupID: string | null;
+    selectedEncounterID: string | null;
+    selectedMapFolioID: string | null;
+    selectedCombatID: string | null;
+
+    modal: any;
+
+    libraryFilter: string;
+}
+
+export default class Dojo extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
 
         this.state = {
             view: "home",
@@ -44,15 +79,18 @@ export default class Dojo extends React.Component {
             selectedEncounterID: null,
             selectedMapFolioID: null,
             selectedCombatID: null,
-            modal: null
+            modal: null,
+            libraryFilter: ''
         };
 
         try {
-            var data = null;
+            var data: State | null = null;
 
             try {
                 var json = window.localStorage.getItem('data');
-                data = JSON.parse(json);
+                if (json) {
+                    data = JSON.parse(json);
+                }
             } catch (ex) {
                 console.error("Could not parse JSON: ", ex);
                 data = null;
@@ -81,12 +119,15 @@ export default class Dojo extends React.Component {
                     });
                 });
 
+                data.view = 'home';
+                data.modal = null;
+                data.libraryFilter = '';
+
                 this.state = data;
-                this.state.view = "home";
-                this.state.modal = null;
             }
         } catch (ex) {
             console.error(ex);
+            /*
             this.state.parties = [];
             this.state.library = [];
             this.state.encounters = [];
@@ -97,6 +138,7 @@ export default class Dojo extends React.Component {
             this.state.selectedEncounterID = null;
             this.state.selectedMapFolioID = null;
             this.state.selectedCombatID = null;
+            */
         }
     }
 
@@ -117,10 +159,10 @@ export default class Dojo extends React.Component {
     /////////////////////////////////////////////////////////////////////////////
     // Party screen
 
-    addParty(name) {
+    addParty(name: string) {
         var party = factory.createParty();
         party.name = name;
-        var parties = [].concat(this.state.parties, [party]);
+        var parties: Party[] = ([] as Party[]).concat(this.state.parties, [party]);
         utils.sort(parties);
         this.setState({
             parties: parties,
@@ -130,49 +172,56 @@ export default class Dojo extends React.Component {
 
     removeParty() {
         var party = this.getParty(this.state.selectedPartyID);
-        var index = this.state.parties.indexOf(party);
-        this.state.parties.splice(index, 1);
-        this.setState({
-            parties: this.state.parties,
-            selectedPartyID: null
-        });
+        if (party) {
+            var index = this.state.parties.indexOf(party);
+            this.state.parties.splice(index, 1);
+            this.setState({
+                parties: this.state.parties,
+                selectedPartyID: null
+            });
+        }
     }
 
-    addPC(name) {
-        var pc = factory.createPC();
-        pc.name = name;
+    addPC(name: string) {
         var party = this.getParty(this.state.selectedPartyID);
-        party.pcs.push(pc);
-        this.setState({
-            parties: this.state.parties
-        });
-        return pc;
+        if (party) {
+            var pc = factory.createPC();
+            pc.name = name;
+            party.pcs.push(pc);
+            this.setState({
+                parties: this.state.parties
+            });
+        }
     }
 
-    removePC(pc) {
+    removePC(pc: PC) {
         var party = this.getParty(this.state.selectedPartyID);
-        var index = party.pcs.indexOf(pc);
-        party.pcs.splice(index, 1);
-        this.setState({
-            parties: this.state.parties
-        });
+        if (party) {
+            var index = party.pcs.indexOf(pc);
+            party.pcs.splice(index, 1);
+            this.setState({
+                parties: this.state.parties
+            });
+        }
     }
 
     sortPCs() {
         var party = this.getParty(this.state.selectedPartyID);
-        utils.sort(party.pcs);
-        this.setState({
-            parties: this.state.parties
-        });
+        if (party) {
+            utils.sort(party.pcs);
+            this.setState({
+                parties: this.state.parties
+            });
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////
     // Library screen
 
-    addMonsterGroup(name) {
+    addMonsterGroup(name: string) {
         var group = factory.createMonsterGroup();
         group.name = name;
-        var library = [].concat(this.state.library, [group]);
+        var library = ([] as MonsterGroup[]).concat(this.state.library, [group]);
         utils.sort(library);
         this.setState({
             library: library,
@@ -182,56 +231,68 @@ export default class Dojo extends React.Component {
 
     removeMonsterGroup() {
         var group = this.getMonsterGroup(this.state.selectedMonsterGroupID);
-        var index = this.state.library.indexOf(group);
-        this.state.library.splice(index, 1);
-        this.setState({
-            library: this.state.library,
-            selectedMonsterGroupID: null
-        });
+        if (group) {
+            var index = this.state.library.indexOf(group);
+            this.state.library.splice(index, 1);
+            this.setState({
+                library: this.state.library,
+                selectedMonsterGroupID: null
+            });
+        }
     }
 
-    addMonster(name) {
+    addMonster(name: string) {
         var monster = factory.createMonster();
         monster.name = name;
         var group = this.getMonsterGroup(this.state.selectedMonsterGroupID);
-        group.monsters.push(monster);
-        this.setState({
-            library: this.state.library
-        });
+        if (group) {
+            group.monsters.push(monster);
+            this.setState({
+                library: this.state.library
+            });
+        }
     }
 
-    removeMonster(monster) {
+    removeMonster(monster: Monster) {
         var group = this.getMonsterGroup(this.state.selectedMonsterGroupID);
-        var index = group.monsters.indexOf(monster);
-        group.monsters.splice(index, 1);
-        this.setState({
-            library: this.state.library
-        });
+        if (group) {
+            var index = group.monsters.indexOf(monster);
+            group.monsters.splice(index, 1);
+            this.setState({
+                library: this.state.library
+            });
+        }
     }
 
     sortMonsters() {
         var group = this.getMonsterGroup(this.state.selectedMonsterGroupID);
-        utils.sort(group.monsters);
-        this.setState({
-            library: this.state.library
-        });
+        if (group) {
+            utils.sort(group.monsters);
+            this.setState({
+                library: this.state.library
+            });
+        }
     }
 
-    moveToGroup(monster, groupID) {
+    moveToGroup(monster: Monster, groupID: string) {
         var sourceGroup = this.findMonster(monster);
-        var index = sourceGroup.monsters.indexOf(monster);
+        if (sourceGroup) {
+            var index = sourceGroup.monsters.indexOf(monster);
 
-        sourceGroup.monsters.splice(index, 1);
-        var group = this.getMonsterGroup(groupID);
-        group.monsters.push(monster);
-        utils.sort(group.monsters);
+            sourceGroup.monsters.splice(index, 1);
+            var group = this.getMonsterGroup(groupID);
+            if (group) {
+                group.monsters.push(monster);
+                utils.sort(group.monsters);
 
-        this.setState({
-            library: this.state.library
-        });
+                this.setState({
+                    library: this.state.library
+                });
+            }
+        }
     }
 
-    editMonster(monster) {
+    editMonster(monster: Monster) {
         var copy = JSON.parse(JSON.stringify(monster));
         this.setState({
             modal: {
@@ -244,13 +305,17 @@ export default class Dojo extends React.Component {
 
     saveMonster() {
         var group = this.getMonsterGroup(this.state.selectedMonsterGroupID);
-        var original = group.monsters.find(m => m.id === this.state.modal.monster.id);
-        var index = group.monsters.indexOf(original);
-        group.monsters[index] = this.state.modal.monster;
-        this.setState({
-            library: this.state.library,
-            modal: null
-        });
+        if (group) {
+            var original = group.monsters.find(m => m.id === this.state.modal.monster.id);
+            if (original) {
+                var index = group.monsters.indexOf(original);
+                group.monsters[index] = this.state.modal.monster;
+                this.setState({
+                    library: this.state.library,
+                    modal: null
+                });
+            }
+        }
     }
 
     toggleShowSimilarMonsters() {
@@ -269,63 +334,64 @@ export default class Dojo extends React.Component {
         });
     }
 
-    cloneMonster(monster, name) {
+    cloneMonster(monster: Monster, name: string) {
         var group = this.findMonster(monster);
+        if (group) {
+            var clone = {
+                id: utils.guid(),
+                type: "monster",
+                name: name || monster.name + " copy",
+                size: monster.size,
+                category: monster.category,
+                tag: monster.tag,
+                alignment: monster.alignment,
+                challenge: monster.challenge,
+                abilityScores: {
+                    str: monster.abilityScores.str,
+                    dex: monster.abilityScores.dex,
+                    con: monster.abilityScores.con,
+                    int: monster.abilityScores.int,
+                    wis: monster.abilityScores.wis,
+                    cha: monster.abilityScores.cha
+                },
+                ac: monster.ac,
+                hpMax: monster.hpMax,
+                hpTemp: monster.hpTemp,
+                hitDice: monster.hitDice,
+                damage: {
+                    resist: monster.damage.resist,
+                    vulnerable: monster.damage.vulnerable,
+                    immune: monster.damage.immune
+                },
+                savingThrows: monster.savingThrows,
+                speed: monster.speed,
+                skills: monster.skills,
+                senses: monster.senses,
+                languages: monster.languages,
+                equipment: monster.equipment,
+                traits: monster.traits.map(trait => {
+                    return {
+                        id: utils.guid(),
+                        name: trait.name,
+                        usage: trait.usage,
+                        type: trait.type,
+                        text: trait.text
+                    };
+                }),
+                conditionImmunities: monster.conditionImmunities
+            };
 
-        var clone = {
-            id: utils.guid(),
-            type: "monster",
-            name: name || monster.name + " copy",
-            size: monster.size,
-            category: monster.category,
-            tag: monster.tag,
-            alignment: monster.alignment,
-            challenge: monster.challenge,
-            abilityScores: {
-                str: monster.abilityScores.str,
-                dex: monster.abilityScores.dex,
-                con: monster.abilityScores.con,
-                int: monster.abilityScores.int,
-                wis: monster.abilityScores.wis,
-                cha: monster.abilityScores.cha
-            },
-            ac: monster.ac,
-            hpMax: monster.hpMax,
-            hpTemp: monster.hpTemp,
-            hitDice: monster.hitDice,
-            damage: {
-                resist: monster.damage.resist,
-                vulnerable: monster.damage.vulnerable,
-                immune: monster.damage.immune
-            },
-            savingThrows: monster.savingThrows,
-            speed: monster.speed,
-            skills: monster.skills,
-            senses: monster.senses,
-            languages: monster.languages,
-            equipment: monster.equipment,
-            traits: monster.traits.map(trait => {
-                return {
-                    id: utils.guid(),
-                    name: trait.name,
-                    usage: trait.usage,
-                    type: trait.type,
-                    text: trait.text
-                };
-            }),
-            conditionImmunities: monster.conditionImmunities
-        };
+            group.monsters.push(clone);
+            utils.sort(group.monsters);
 
-        group.monsters.push(clone);
-        utils.sort(group.monsters);
-
-        this.setState({
-            library: this.state.library
-        });
+            this.setState({
+                library: this.state.library
+            });
+        }
     }
 
     addOpenGameContent() {
-        monsters.forEach(data => {
+        monsters.forEach((data: any) => {
             try {
                 if (data.name) {
                     var monster = factory.createMonster();
@@ -338,7 +404,6 @@ export default class Dojo extends React.Component {
                     monster.alignment = data.alignment;
                     monster.challenge = utils.parseChallenge(data.challenge_rating);
                     monster.ac = data.armor_class;
-                    monster.hp = data.hit_points;
                     monster.hpMax = data.hit_points;
                     monster.speed = data.speed;
                     monster.senses = data.senses;
@@ -474,19 +539,19 @@ export default class Dojo extends React.Component {
                     });
 
                     if (data.special_abilities) {
-                        data.special_abilities.forEach(rawTrait => {
+                        data.special_abilities.forEach((rawTrait: any) => {
                             var trait = this.buildTrait(rawTrait, "trait");
                             monster.traits.push(trait);
                         });
                     }
                     if (data.actions) {
-                        data.actions.forEach(rawTrait => {
+                        data.actions.forEach((rawTrait: any) => {
                             var trait = this.buildTrait(rawTrait, "action");
                             monster.traits.push(trait);
                         });
                     }
                     if (data.legendary_actions) {
-                        data.legendary_actions.forEach(rawTrait => {
+                        data.legendary_actions.forEach((rawTrait: any) => {
                             var trait = this.buildTrait(rawTrait, "legendary");
                             monster.traits.push(trait);
                         });
@@ -527,7 +592,7 @@ export default class Dojo extends React.Component {
         });
     }
 
-    buildTrait(rawTrait, type) {
+    buildTrait(rawTrait: any, type: string): Trait {
         var name = "";
         var usage = "";
 
@@ -552,10 +617,10 @@ export default class Dojo extends React.Component {
     /////////////////////////////////////////////////////////////////////////////
     // Encounter screen
 
-    addEncounter(name) {
+    addEncounter(name: string) {
         var encounter = factory.createEncounter();
         encounter.name = name;
-        var encounters = [].concat(this.state.encounters, [encounter]);
+        var encounters = ([] as Encounter[]).concat(this.state.encounters, [encounter]);
         utils.sort(encounters);
 
         this.setState({
@@ -566,56 +631,65 @@ export default class Dojo extends React.Component {
 
     removeEncounter() {
         var encounter = this.getEncounter(this.state.selectedEncounterID);
-        var index = this.state.encounters.indexOf(encounter);
-        this.state.encounters.splice(index, 1);
+        if (encounter) {
+            var index = this.state.encounters.indexOf(encounter);
+            this.state.encounters.splice(index, 1);
 
-        this.setState({
-            encounters: this.state.encounters,
-            selectedEncounterID: null
-        });
+            this.setState({
+                encounters: this.state.encounters,
+                selectedEncounterID: null
+            });
+        }
     }
 
-    addEncounterSlot(monster, waveID) {
+    addEncounterSlot(monster: Monster, waveID: string | null) {
         var group = this.findMonster(monster);
+        if (group) {
+            var slot = factory.createEncounterSlot();
+            slot.monsterGroupName = group.name;
+            slot.monsterName = monster.name;
+            var encounter = this.getEncounter(this.state.selectedEncounterID);
+            if (encounter) {
+                if (waveID !== null) {
+                    var wave = encounter.waves.find(w => w.id === waveID);
+                    if (wave) {
+                        wave.slots.push(slot);
+                        this.sortEncounterSlots(wave);
+                    }
+                } else {
+                    encounter.slots.push(slot);
+                    this.sortEncounterSlots(encounter);
+                }
 
-        var slot = factory.createEncounterSlot();
-        slot.monsterGroupName = group.name;
-        slot.monsterName = monster.name;
-        var encounter = this.getEncounter(this.state.selectedEncounterID);
-        if (waveID !== null) {
-            var wave = encounter.waves.find(w => w.id === waveID);
-            wave.slots.push(slot);
-            this.sortEncounterSlots(wave);
-        } else {
-            encounter.slots.push(slot);
-            this.sortEncounterSlots(encounter);
+                this.setState({
+                    encounters: this.state.encounters
+                });
+            }
         }
-
-        this.setState({
-            encounters: this.state.encounters
-        });
-
-        return slot;
     }
 
-    removeEncounterSlot(slot, waveID) {
+    removeEncounterSlot(slot: EncounterSlot, waveID: string | null) {
         var encounter = this.getEncounter(this.state.selectedEncounterID);
-        if (waveID) {
-            var wave = encounter.waves.find(w => w.id === waveID);
-            var index = wave.slots.indexOf(slot);
-            wave.slots.splice(index, 1);
-        } else {
-            var n = encounter.slots.indexOf(slot);
-            encounter.slots.splice(n, 1);
-        }
+        if (encounter) {
+            if (waveID) {
+                var wave = encounter.waves.find(w => w.id === waveID);
+                if (wave) {
+                    var index = wave.slots.indexOf(slot);
+                    wave.slots.splice(index, 1);
+                }
+            } else {
+                var n = encounter.slots.indexOf(slot);
+                encounter.slots.splice(n, 1);
+            }
 
-        this.setState({
-            encounters: this.state.encounters
-        });
+            this.setState({
+                encounters: this.state.encounters
+            });
+        }
     }
 
-    sortEncounterSlots(slotContaimer) {
-        slotContaimer.slots.sort((a, b) => {
+    sortEncounterSlots(slotContainer: { slots: EncounterSlot[] }) {
+        slotContainer.slots.sort((a, b) => {
             var aName = a.monsterName.toLowerCase();
             var bName = b.monsterName.toLowerCase();
             if (aName < bName) return -1;
@@ -626,33 +700,36 @@ export default class Dojo extends React.Component {
 
     addWaveToEncounter() {
         var encounter = this.getEncounter(this.state.selectedEncounterID);
+        if (encounter) {
+            var wave = factory.createEncounterWave();
+            wave.name = "wave " + (encounter.waves.length + 2);
+            encounter.waves.push(wave);
 
-        var wave = factory.createEncounterWave();
-        wave.name = "wave " + (encounter.waves.length + 2);
-        encounter.waves.push(wave);
-
-        this.setState({
-            encounters: this.state.encounters
-        });
+            this.setState({
+                encounters: this.state.encounters
+            });
+        }
     }
 
-    removeWave(wave) {
+    removeWave(wave: EncounterWave) {
         var encounter = this.getEncounter(this.state.selectedEncounterID);
-        var index = encounter.waves.indexOf(wave);
-        encounter.waves.splice(index, 1);
+        if (encounter) {
+            var index = encounter.waves.indexOf(wave);
+            encounter.waves.splice(index, 1);
 
-        this.setState({
-            encounters: this.state.encounters
-        });
+            this.setState({
+                encounters: this.state.encounters
+            });
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////
     // Map screen
 
-    addMapFolio(name) {
+    addMapFolio(name: string) {
         var folio = factory.createMapFolio();
         folio.name = name;
-        var folios = [].concat(this.state.mapFolios, [folio]);
+        var folios = ([] as MapFolio[]).concat(this.state.mapFolios, [folio]);
         utils.sort(folios);
 
         this.setState({
@@ -663,28 +740,31 @@ export default class Dojo extends React.Component {
 
     removeMapFolio() {
         var folio = this.getMapFolio(this.state.selectedMapFolioID);
-        var index = this.state.mapFolios.indexOf(folio);
-        this.state.mapFolios.splice(index, 1);
+        if (folio) {
+            var index = this.state.mapFolios.indexOf(folio);
+            this.state.mapFolios.splice(index, 1);
 
-        this.setState({
-            mapFolios: this.state.mapFolios,
-            selectedMapFolioID: null
-        });
+            this.setState({
+                mapFolios: this.state.mapFolios,
+                selectedMapFolioID: null
+            });
+        }
     }
 
-    addMap(name) {
-        var map = factory.createMap();
-        map.name = name;
-
+    addMap(name: string) {
         var folio = this.getMapFolio(this.state.selectedMapFolioID);
-        folio.maps.push(map);
+        if (folio) {
+            var map = factory.createMap();
+            map.name = name;
+            folio.maps.push(map);
 
-        this.setState({
-            mapFolios: this.state.mapFolios
-        });
+            this.setState({
+                mapFolios: this.state.mapFolios
+            });
+        }
     }
 
-    editMap(map) {
+    editMap(map: Map) {
         var copy = JSON.parse(JSON.stringify(map));
         this.setState({
             modal: {
@@ -696,22 +776,28 @@ export default class Dojo extends React.Component {
 
     saveMap() {
         var folio = this.getMapFolio(this.state.selectedMapFolioID);
-        var original = folio.maps.find(m => m.id === this.state.modal.map.id);
-        var index = folio.maps.indexOf(original);
-        folio.maps[index] = this.state.modal.map;
-        this.setState({
-            mapFolios: this.state.mapFolios,
-            modal: null
-        });
+        if (folio) {
+            var original = folio.maps.find(m => m.id === this.state.modal.map.id);
+            if (original) {
+                var index = folio.maps.indexOf(original);
+                folio.maps[index] = this.state.modal.map;
+                this.setState({
+                    mapFolios: this.state.mapFolios,
+                    modal: null
+                });
+            }
+        }
     }
 
-    removeMap(map) {
+    removeMap(map: Map) {
         var folio = this.getMapFolio(this.state.selectedMapFolioID);
-        var index = folio.maps.indexOf(map);
-        folio.maps.splice(index, 1);
-        this.setState({
-            mapFolios: this.state.mapFolios
-        });
+        if (folio) {
+            var index = folio.maps.indexOf(map);
+            folio.maps.splice(index, 1);
+            this.setState({
+                mapFolios: this.state.mapFolios
+            });
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////
@@ -724,7 +810,9 @@ export default class Dojo extends React.Component {
         var setup = factory.createCombatSetup();
         setup.partyID = party ? party.id : null;
         setup.encounterID = encounter ? encounter.id : null;
-        setup.monsterNames = utils.getMonsterNames(encounter);
+        if (encounter) {
+            setup.monsterNames = utils.getMonsterNames(encounter);
+        }
 
         this.setState({
             modal: {
@@ -735,130 +823,139 @@ export default class Dojo extends React.Component {
     }
 
     startCombat() {
-        var party = this.getParty(this.state.modal.combat.partyID);
-        var partyName = party.name || "unnamed party";
+        var combatSetup: CombatSetup = this.state.modal.combatSetup;
+        var party = this.getParty(combatSetup.partyID);
+        var encounter = this.getEncounter(combatSetup.encounterID);
+        if (party && encounter) {
+            var partyName = party.name || "unnamed party";
+            var encounterName = encounter.name || "unnamed encounter";
 
-        var encounter = this.getEncounter(this.state.modal.combat.encounterID);
-        var encounterName = encounter.name || "unnamed encounter";
+            var combat = factory.createCombat();
+            combat.name = partyName + " vs " + encounterName;
+            combat.encounterID = encounter.id;
 
-        var combat = factory.createCombat();
-        combat.name = partyName + " vs " + encounterName;
-        combat.encounterID = encounter.id;
+            // Add a copy of each PC to the encounter
+            party.pcs.filter(pc => pc.active).forEach(pc => {
+                var combatant = JSON.parse(JSON.stringify(pc));
 
-        // Add a copy of each PC to the encounter
-        party.pcs.filter(pc => pc.active).forEach(pc => {
-            var combatant = JSON.parse(JSON.stringify(pc));
+                combatant.current = false;
+                combatant.pending = true;
+                combatant.active = false;
+                combatant.defeated = false;
 
-            combatant.current = false;
-            combatant.pending = true;
-            combatant.active = false;
-            combatant.defeated = false;
+                combatant.displayName = pc.name;
+                combatant.initiative = null;
+                combatant.hp = null;
+                combatant.conditions = [];
+                combatant.altitude = 0;
 
-            combatant.displayName = pc.name;
-            combatant.initiative = null;
-            combatant.hp = null;
-            combatant.conditions = [];
-            combatant.altitude = 0;
+                combat.combatants.push(combatant);
+            });
 
-            combat.combatants.push(combatant);
-        });
+            encounter.slots.forEach(slot => {
+                var monster = this.getMonster(slot.monsterName, slot.monsterGroupName);
+                if (monster) {
+                    var init = parseInt(utils.modifier(monster.abilityScores.dex));
+                    var groupRoll = utils.dieRoll();
 
-        encounter.slots.forEach(slot => {
-            var group = this.getMonsterGroupByName(slot.monsterGroupName);
-            var monster = this.getMonster(slot.monsterName, group);
+                    for (var n = 0; n !== slot.count; ++n) {
+                        var singleRoll = utils.dieRoll();
 
-            if (monster) {
-                var init = parseInt(utils.modifier(monster.abilityScores.dex));
-                var groupRoll = utils.dieRoll();
+                        var combatant = JSON.parse(JSON.stringify(monster));
+                        combatant.id = utils.guid();
 
-                for (var n = 0; n !== slot.count; ++n) {
-                    var singleRoll = utils.dieRoll();
-
-                    var combatant = JSON.parse(JSON.stringify(monster));
-                    combatant.id = utils.guid();
-
-                    combatant.displayName = null;
-                    if (this.state.modal.combat.monsterNames) {
-                        var slotNames = this.state.modal.combat.monsterNames.find(names => names.id === slot.id);
-                        if (slotNames) {
-                            combatant.displayName = slotNames.names[n];
+                        combatant.displayName = null;
+                        if (combatSetup.monsterNames) {
+                            var slotNames = combatSetup.monsterNames.find(names => names.id === slot.id);
+                            if (slotNames) {
+                                combatant.displayName = slotNames.names[n];
+                            }
                         }
+
+                        switch (combatSetup.encounterInitMode) {
+                            case "manual":
+                                combatant.initiative = 10;
+                                break;
+                            case "group":
+                                combatant.initiative = init + groupRoll;
+                                break;
+                            case "individual":
+                                combatant.initiative = init + singleRoll;
+                                break;
+                            default:
+                                // Do nothing
+                                break;
+                        }
+
+                        combatant.current = false;
+                        combatant.pending = (combatSetup.encounterInitMode === "manual");
+                        combatant.active = (combatSetup.encounterInitMode !== "manual");
+                        combatant.defeated = false;
+            
+                        combatant.hp = combatant.hpMax;
+                        combatant.conditions = [];
+                        combatant.altitude = 0;
+
+                        combat.combatants.push(combatant);
                     }
-
-                    switch (this.state.modal.combat.encounterInitMode) {
-                        case "manual":
-                            combatant.initiative = 10;
-                            break;
-                        case "group":
-                            combatant.initiative = init + groupRoll;
-                            break;
-                        case "individual":
-                            combatant.initiative = init + singleRoll;
-                            break;
-                        default:
-                            // Do nothing
-                            break;
-                    }
-
-                    combatant.current = false;
-                    combatant.pending = (this.state.modal.combat.encounterInitMode === "manual");
-                    combatant.active = (this.state.modal.combat.encounterInitMode !== "manual");
-                    combatant.defeated = false;
-        
-                    combatant.hp = combatant.hpMax;
-                    combatant.conditions = [];
-                    combatant.altitude = 0;
-
-                    combat.combatants.push(combatant);
+                } else {
+                    combat.issues.push("unknown monster: " + slot.monsterName + " in group " + slot.monsterGroupName);
                 }
-            } else {
-                combat.issues.push("unknown monster: " + slot.monsterName + " in group " + slot.monsterGroupName);
+            });
+
+            combat.combatants.forEach(c => c.altitude = 0);
+
+            this.sortCombatants(combat);
+
+            if (combatSetup.folioID && combatSetup.mapID) {
+                var folio = this.getMapFolio(combatSetup.folioID);
+                if (folio) {
+                    var map = folio.maps.find(m => m.id === combatSetup.mapID);
+                    if (map) {
+                        combat.map = JSON.parse(JSON.stringify(map));
+                    }
+                }
             }
-        });
 
-        combat.combatants.forEach(c => c.altitude = 0);
-
-        this.sortCombatants(combat);
-
-        if (this.state.modal.combat.folioID && this.state.modal.combat.mapID) {
-            var folio = this.getMapFolio(this.state.modal.combat.folioID);
-            var map = folio.maps.find(m => m.id === this.state.modal.combat.mapID);
-            combat.map = JSON.parse(JSON.stringify(map));
+            this.setState({
+                combats: ([] as Combat[]).concat(this.state.combats, [combat]),
+                selectedCombatID: combat.id,
+                modal: null
+            });
         }
-
-        this.setState({
-            combats: [].concat(this.state.combats, [combat]),
-            selectedCombatID: combat.id,
-            modal: null
-        });
     }
 
     openWaveModal() {
         var combat = this.getCombat(this.state.selectedCombatID);
-        var encounter = this.getEncounter(combat.encounterID);
+        if (combat) {
+            var encounter = this.getEncounter(combat.encounterID);
+            if (encounter) {
+                var setup = factory.createCombatSetup();
+                setup.encounterID = combat.encounterID;
+                setup.monsterNames = utils.getMonsterNames(encounter);
 
-        var setup = factory.createCombatSetup();
-        setup.encounterID = combat.encounterID;
-        setup.monsterNames = utils.getMonsterNames(encounter);
-
-        this.setState({
-            modal: {
-                type: "combat-wave",
-                combatSetup: setup
+                this.setState({
+                    modal: {
+                        type: "combat-wave",
+                        combatSetup: setup
+                    }
+                });
             }
-        });
+        }
     }
 
     pauseCombat() {
         var combat = this.getCombat(this.state.selectedCombatID);
-        combat.timestamp = new Date().toLocaleString();
-        this.setState({
-            combats: this.state.combats,
-            selectedCombatID: null
-        });
+        if (combat) {
+            combat.timestamp = new Date().toLocaleString();
+            this.setState({
+                combats: this.state.combats,
+                selectedCombatID: null
+            });
+        }
     }
 
-    resumeCombat(combat) {
+    resumeCombat(combat: Combat) {
         this.setState({
             selectedCombatID: combat.id
         });
@@ -866,36 +963,37 @@ export default class Dojo extends React.Component {
 
     endCombat() {
         var combat = this.getCombat(this.state.selectedCombatID);
-        var index = this.state.combats.indexOf(combat);
-        this.state.combats.splice(index, 1);
-        this.setState({
-            combats: this.state.combats,
-            selectedCombatID: null
-        });
+        if (combat) {
+            var index = this.state.combats.indexOf(combat);
+            this.state.combats.splice(index, 1);
+            this.setState({
+                combats: this.state.combats,
+                selectedCombatID: null
+            });
+        }
     }
 
-    makeCurrent(combatant, newRound) {
+    makeCurrent(combatant: (Combatant & PC) | (Combatant & Monster) | null, newRound: boolean) {
         var combat = this.getCombat(this.state.selectedCombatID);
-
-        // Handle start-of-turn conditions
-        combat.combatants.filter(actor => actor.conditions).forEach(actor => {
-            actor.conditions.filter(c => c.duration !== null)
-                .forEach(c => {
+        if (combat) {
+            // Handle start-of-turn conditions
+            combat.combatants.filter(actor => actor.conditions).forEach(actor => {
+                actor.conditions.filter(c => c.duration !== null).forEach(c => {
                     switch (c.duration.type) {
                         case "saves":
                             // If it's my condition, and point is START, notify the user
-                            if ((actor.id === combatant.id) && (c.duration.point === "start")) {
+                            if (combat && combatant && (actor.id === combatant.id) && (c.duration.point === "start")) {
                                 combat.notifications.push({
                                     id: utils.guid(),
                                     type: "condition-save",
                                     condition: c,
-                                    combatant: combatant
+                                    combatant: combatant as Combatant & Monster
                                 });
                             }
                             break;
                         case "combatant":
                             // If this refers to me, and point is START, remove it
-                            if ((c.duration.combatantID === combatant.id) && (c.duration.point === "start")) {
+                            if (combat && combatant && (c.duration.combatantID === combatant.id) && (c.duration.point === "start")) {
                                 var index = actor.conditions.indexOf(c);
                                 actor.conditions.splice(index, 1);
                                 // Notify the user
@@ -903,26 +1001,28 @@ export default class Dojo extends React.Component {
                                     id: utils.guid(),
                                     type: "condition-end",
                                     condition: c,
-                                    combatant: combatant
+                                    combatant: combatant as Combatant & Monster
                                 });
                             }
                             break;
                         case "rounds":
                             // If it's my condition, decrement the condition
-                            if (actor.id === combatant.id) {
+                            if (combatant && (actor.id === combatant.id)) {
                                 c.duration.count -= 1;
                             }
                             // If it's now at 0, remove it
                             if (c.duration.count === 0) {
                                 var n = actor.conditions.indexOf(c);
                                 actor.conditions.splice(n, 1);
-                                // Notify the user
-                                combat.notifications.push({
-                                    id: utils.guid(),
-                                    type: "condition-end",
-                                    condition: c,
-                                    combatant: combatant
-                                });
+                                if (combat) {
+                                    // Notify the user
+                                    combat.notifications.push({
+                                        id: utils.guid(),
+                                        type: "condition-end",
+                                        condition: c,
+                                        combatant: combatant as Combatant & Monster
+                                    });
+                                }
                             }
                             break;
                         default:
@@ -930,38 +1030,41 @@ export default class Dojo extends React.Component {
                             break;
                     }
                 });
-        });
+            });
 
-        combat.combatants.forEach(combatant => {
-            combatant.current = false;
-        });
-        if (combatant) {
-            combatant.current = true;
+            combat.combatants.forEach(combatant => {
+                combatant.current = false;
+            });
+            if (combatant) {
+                combatant.current = true;
+            }
+
+            if (newRound) {
+                combat.round += 1;
+            }
+
+            this.setState({
+                combats: this.state.combats
+            });
         }
-
-        if (newRound) {
-            combat.round += 1;
-        }
-
-        this.setState({
-            combats: this.state.combats
-        });
     }
 
-    makeActive(combatant) {
-        combatant.pending = false;
-        combatant.active = true;
-        combatant.defeated = false;
-
+    makeActive(combatant: (Combatant & PC) | (Combatant & Monster)) {
         var combat = this.getCombat(this.state.selectedCombatID);
-        this.sortCombatants(combat);
+        if (combat) {
+            combatant.pending = false;
+            combatant.active = true;
+            combatant.defeated = false;
 
-        this.setState({
-            combats: this.state.combats
-        });
+            this.sortCombatants(combat);
+
+            this.setState({
+                combats: this.state.combats
+            });
+        }
     }
 
-    makeDefeated(combatant) {
+    makeDefeated(combatant: (Combatant & PC) | (Combatant & Monster)) {
         combatant.pending = false;
         combatant.active = false;
         combatant.defeated = true;
@@ -976,215 +1079,236 @@ export default class Dojo extends React.Component {
     }
 
     addWaveToCombat() {
-        var encounter = this.getEncounter(this.state.modal.combat.encounterID);
+        var combatSetup: CombatSetup = this.state.modal.combat;
+        var encounter = this.getEncounter(combatSetup.encounterID);
         var combat = this.getCombat(this.state.selectedCombatID);
-        var wave = encounter.waves.find(w => w.id === this.state.modal.combat.waveID);
+        if (combatSetup && encounter && combat) {
+            var wave = encounter.waves.find(w => w.id === combatSetup.waveID);
+            if (wave) {
+                wave.slots.forEach(slot => {
+                    var monster = this.getMonster(slot.monsterName, slot.monsterGroupName);
+                    if (monster) {
+                        var init = parseInt(utils.modifier(monster.abilityScores.dex));
+                        var groupRoll = utils.dieRoll();
 
-        wave.slots.forEach(slot => {
-            var group = this.getMonsterGroupByName(slot.monsterGroupName);
-            var monster = this.getMonster(slot.monsterName, group);
+                        for (var n = 0; n !== slot.count; ++n) {
+                            var singleRoll = utils.dieRoll();
 
-            if (monster) {
-                var init = parseInt(utils.modifier(monster.abilityScores.dex));
-                var groupRoll = utils.dieRoll();
+                            var combatant = JSON.parse(JSON.stringify(monster));
+                            combatant.id = utils.guid();
 
-                for (var n = 0; n !== slot.count; ++n) {
-                    var singleRoll = utils.dieRoll();
+                            combatant.displayName = null;
+                            if (combatSetup.monsterNames) {
+                                var slotNames = combatSetup.monsterNames.find(names => names.id === slot.id);
+                                if (slotNames) {
+                                    combatant.displayName = slotNames.names[n];
+                                }
+                            }
 
-                    var combatant = JSON.parse(JSON.stringify(monster));
-                    combatant.id = utils.guid();
+                            switch (combatSetup.encounterInitMode) {
+                                case "manual":
+                                    combatant.initiative = 10;
+                                    break;
+                                case "group":
+                                    combatant.initiative = init + groupRoll;
+                                    break;
+                                case "individual":
+                                    combatant.initiative = init + singleRoll;
+                                    break;
+                                default:
+                                    // Do nothing
+                                    break;
+                            }
 
-                    combatant.displayName = null;
-                    if (this.state.modal.combat.monsterNames) {
-                        var slotNames = this.state.modal.combat.monsterNames.find(names => names.id === slot.id);
-                        if (slotNames) {
-                            combatant.displayName = slotNames.names[n];
+                            combatant.current = false;
+                            combatant.pending = (this.state.modal.combat.encounterInitMode === "manual");
+                            combatant.active = (this.state.modal.combat.encounterInitMode !== "manual");
+                            combatant.defeated = false;
+                
+                            combatant.hp = combatant.hpMax;
+                            combatant.conditions = [];
+
+                            if (combat) {
+                                combat.combatants.push(combatant);
+                            }
+                        }
+                    } else {
+                        if (combat) {
+                            var issue = "unknown monster: " + slot.monsterName + " in group " + slot.monsterGroupName;
+                            combat.issues.push(issue);
                         }
                     }
+                });
 
-                    switch (this.state.modal.combat.encounterInitMode) {
-                        case "manual":
-                            combatant.initiative = 10;
-                            break;
-                        case "group":
-                            combatant.initiative = init + groupRoll;
-                            break;
-                        case "individual":
-                            combatant.initiative = init + singleRoll;
-                            break;
-                        default:
-                            // Do nothing
-                            break;
-                    }
+                this.sortCombatants(combat);
 
-                    combatant.current = false;
-                    combatant.pending = (this.state.modal.combat.encounterInitMode === "manual");
-                    combatant.active = (this.state.modal.combat.encounterInitMode !== "manual");
-                    combatant.defeated = false;
-        
-                    combatant.hp = combatant.hpMax;
-                    combatant.conditions = [];
-                    combat.combatants.push(combatant);
-                }
-            } else {
-                combat.issues.push("unknown monster: " + slot.monsterName + " in group " + slot.monsterGroupName);
+                this.setState({
+                    combats: this.state.combats,
+                    modal: null
+                });
             }
-        });
-
-        this.sortCombatants(combat);
-
-        this.setState({
-            combats: this.state.combats,
-            modal: null
-        });
+        }
     }
 
-    removeCombatant(combatant) {
+    removeCombatant(combatant: (Combatant & PC) | (Combatant & Monster)) {
         var combat = this.getCombat(this.state.selectedCombatID);
-        var index = combat.combatants.indexOf(combatant);
-        combat.combatants.splice(index, 1);
+        if (combat) {
+            var index = combat.combatants.indexOf(combatant);
+            combat.combatants.splice(index, 1);
 
-        this.setState({
-            combats: this.state.combats
-        });
+            this.setState({
+                combats: this.state.combats
+            });
+        }
     }
 
-    mapAdd(combatant, x, y) {
+    mapAdd(combatant: ((Combatant & PC) | (Combatant & Monster)), x: number, y: number) {
         var item = factory.createMapItem();
         item.id = combatant.id;
-        item.type = combatant.type;
+        item.type = combatant.type as 'pc' | 'monster';
         item.x = x;
         item.y = y;
         var size = 1;
         if (combatant.type === 'monster') {
-            size = utils.miniSize(combatant.size);
+            size = utils.miniSize((combatant as Monster).size);
         }
         item.height = size;
         item.width = size;
 
         var combat = this.getCombat(this.state.selectedCombatID);
-        combat.map.items.push(item);
+        if (combat && combat.map) {
+            combat.map.items.push(item);
 
-        this.setState({
-            combats: this.state.combats
-        });
-    }
-
-    mapMove(combatant, dir) {
-        var combat = this.getCombat(this.state.selectedCombatID);
-        var item = combat.map.items.find(i => i.id === combatant.id);
-        switch (dir) {
-            case 'N':
-                item.y -= 1;
-                break;
-            case 'NE':
-                item.x += 1;
-                item.y -= 1;
-                break;
-            case 'E':
-                item.x += 1;
-                break;
-            case 'SE':
-                item.x += 1;
-                item.y += 1;
-                break;
-            case 'S':
-                item.y += 1;
-                break;
-            case 'SW':
-                item.x -= 1;
-                item.y += 1;
-                break;
-            case 'W':
-                item.x -= 1;
-                break;
-            case 'NW':
-                item.x -= 1;
-                item.y -= 1;
-                break;
-            default:
-                // Do nothing
-                break;
+            this.setState({
+                combats: this.state.combats
+            });
         }
-
-        this.setState({
-            combats: this.state.combats
-        });
     }
 
-    mapRemove(combatant) {
+    mapMove(combatant: (Combatant & PC) | (Combatant & Monster), dir: string) {
         var combat = this.getCombat(this.state.selectedCombatID);
-        var item = combat.map.items.find(i => i.id === combatant.id);
-        var index = combat.map.items.indexOf(item);
-        combat.map.items.splice(index, 1);
+        if (combat && combat.map) {
+            var item = combat.map.items.find(i => i.id === combatant.id);
+            if (item) {
+                switch (dir) {
+                    case 'N':
+                        item.y -= 1;
+                        break;
+                    case 'NE':
+                        item.x += 1;
+                        item.y -= 1;
+                        break;
+                    case 'E':
+                        item.x += 1;
+                        break;
+                    case 'SE':
+                        item.x += 1;
+                        item.y += 1;
+                        break;
+                    case 'S':
+                        item.y += 1;
+                        break;
+                    case 'SW':
+                        item.x -= 1;
+                        item.y += 1;
+                        break;
+                    case 'W':
+                        item.x -= 1;
+                        break;
+                    case 'NW':
+                        item.x -= 1;
+                        item.y -= 1;
+                        break;
+                    default:
+                        // Do nothing
+                        break;
+                }
 
-        this.setState({
-            combats: this.state.combats
-        });
-    }
-
-    endTurn(combatant) {
-        var combat = this.getCombat(this.state.selectedCombatID);
-
-        // Handle end-of-turn conditions
-        combat.combatants.filter(actor => actor.conditions).forEach(actor => {
-            actor.conditions.filter(c => c.duration !== null)
-                .forEach(c => {
-                    switch (c.duration.type) {
-                        case "saves":
-                            // If it's my condition, and point is END, notify the user
-                            if ((actor.id === combatant.id) && (c.duration.point === "end")) {
-                                var saveNotification = factory.createNotification();
-                                saveNotification.type = "condition-save";
-                                saveNotification.condition = c;
-                                saveNotification.combatant = combatant;
-                                combat.notifications.push(saveNotification);
-                            }
-                            break;
-                        case "combatant":
-                            // If this refers to me, and point is END, remove it
-                            if ((c.duration.combatantID === combatant.id) && (c.duration.point === "end")) {
-                                var index = actor.conditions.indexOf(c);
-                                actor.conditions.splice(index, 1);
-                                // Notify the user
-                                var endNotification = factory.createNotification();
-                                endNotification.type = "condition-end";
-                                endNotification.condition = c;
-                                endNotification.combatant = combatant;
-                                combat.notifications.push(endNotification);
-                            }
-                            break;
-                        case "rounds":
-                            // We check this at the beginning of each turn, not at the end
-                            break;
-                        default:
-                            // Do nothing
-                            break;
-                    }
+                this.setState({
+                    combats: this.state.combats
                 });
-        });
-
-        var active = combat.combatants.filter(combatant => {
-            return combatant.current || (!combatant.pending && combatant.active && !combatant.defeated);
-        });
-        if (active.length === 0) {
-            // There's no-one left in the fight
-            this.makeCurrent(null, false);
-        } else if ((active.length === 1) && (active[0].defeated)) {
-            // The only person in the fight is me, and I'm defeated
-            this.makeCurrent(null, false);
-        } else {
-            var index = active.indexOf(combatant) + 1;
-            var newRound = false;
-            if (index >= active.length) {
-                index = 0;
-                newRound = true;
             }
-            this.makeCurrent(active[index], newRound);
         }
     }
 
-    changeHP(combatant, hp, temp) {
+    mapRemove(combatant: (Combatant & PC) | (Combatant & Monster)) {
+        var combat = this.getCombat(this.state.selectedCombatID);
+        if (combat && combat.map) {
+            var item = combat.map.items.find(i => i.id === combatant.id);
+            if (item) {
+                var index = combat.map.items.indexOf(item);
+                combat.map.items.splice(index, 1);
+
+                this.setState({
+                    combats: this.state.combats
+                });
+            }
+        }
+    }
+
+    endTurn(combatant: (Combatant & PC) | (Combatant & Monster)) {
+        var combat = this.getCombat(this.state.selectedCombatID);
+        if (combat) {
+            // Handle end-of-turn conditions
+            combat.combatants.filter(actor => actor.conditions).forEach(actor => {
+                actor.conditions.filter(c => c.duration !== null)
+                    .forEach(c => {
+                        switch (c.duration.type) {
+                            case "saves":
+                                // If it's my condition, and point is END, notify the user
+                                if (combat && (actor.id === combatant.id) && (c.duration.point === "end")) {
+                                    var saveNotification = factory.createNotification();
+                                    saveNotification.type = "condition-save";
+                                    saveNotification.condition = c;
+                                    saveNotification.combatant = combatant as Combatant & Monster;
+                                    combat.notifications.push(saveNotification);
+                                }
+                                break;
+                            case "combatant":
+                                // If this refers to me, and point is END, remove it
+                                if (combat && (c.duration.combatantID === combatant.id) && (c.duration.point === "end")) {
+                                    var index = actor.conditions.indexOf(c);
+                                    actor.conditions.splice(index, 1);
+                                    // Notify the user
+                                    var endNotification = factory.createNotification();
+                                    endNotification.type = "condition-end";
+                                    endNotification.condition = c;
+                                    endNotification.combatant = combatant as Combatant & Monster;
+                                    combat.notifications.push(endNotification);
+                                }
+                                break;
+                            case "rounds":
+                                // We check this at the beginning of each turn, not at the end
+                                break;
+                            default:
+                                // Do nothing
+                                break;
+                        }
+                    });
+            });
+
+            var active = combat.combatants.filter(combatant => {
+                return combatant.current || (!combatant.pending && combatant.active && !combatant.defeated);
+            });
+            if (active.length === 0) {
+                // There's no-one left in the fight
+                this.makeCurrent(null, false);
+            } else if ((active.length === 1) && (active[0].defeated)) {
+                // The only person in the fight is me, and I'm defeated
+                this.makeCurrent(null, false);
+            } else {
+                var index = active.indexOf(combatant) + 1;
+                var newRound = false;
+                if (index >= active.length) {
+                    index = 0;
+                    newRound = true;
+                }
+                this.makeCurrent(active[index], newRound);
+            }
+        }
+    }
+
+    changeHP(combatant: Combatant & Monster, hp: number, temp: number) {
         combatant.hp = hp;
         combatant.hpTemp = temp;
 
@@ -1193,20 +1317,21 @@ export default class Dojo extends React.Component {
         });
     }
 
-    addCondition(combatant) {
-        var condition = factory.createCondition();
-        condition.name = "blinded";
-
+    addCondition(combatant: Combatant & Monster) {
         var combat = this.getCombat(this.state.selectedCombatID);
+        if (combat) {
+            var condition = factory.createCondition();
+            condition.name = "blinded";
 
-        this.setState({
-            modal: {
-                type: "condition-add",
-                condition: condition,
-                combatant: combatant,
-                combat: combat
-            }
-        });
+            this.setState({
+                modal: {
+                    type: "condition-add",
+                    condition: condition,
+                    combatant: combatant,
+                    combat: combat
+                }
+            });
+        }
     }
 
     addConditionFromModal() {
@@ -1218,46 +1343,52 @@ export default class Dojo extends React.Component {
         });
     }
 
-    editCondition(combatant, condition) {
+    editCondition(combatant: Combatant & Monster, condition: Condition) {
         var combat = this.getCombat(this.state.selectedCombatID);
-
-        this.setState({
-            modal: {
-                type: "condition-edit",
-                condition: condition,
-                combatant: combatant,
-                combat: combat
-            }
-        });
+        if (combat) {
+            this.setState({
+                modal: {
+                    type: "condition-edit",
+                    condition: condition,
+                    combatant: combatant,
+                    combat: combat
+                }
+            });
+        }
     }
 
     editConditionFromModal() {
-        var original = this.state.modal.combatant.conditions.find(c => c.id === this.state.modal.condition.id);
-        var index = this.state.modal.combatant.conditions.indexOf(original);
-        // eslint-disable-next-line
-        this.state.modal.combatant.conditions[index] = this.state.modal.condition;
+        var conditions: Condition[] = this.state.modal.combatant.conditions;
+        var original = conditions.find(c => c.id === this.state.modal.condition.id);
+        if (original) {
+            var index = conditions.indexOf(original);
+            // eslint-disable-next-line
+            conditions[index] = this.state.modal.condition;
 
-        this.setState({
-            combats: this.state.combats,
-            modal: null
-        });
+            this.setState({
+                combats: this.state.combats,
+                modal: null
+            });
+        }
     }
 
-    removeCondition(combatant, conditionID) {
+    removeCondition(combatant: Combatant & Monster, conditionID: string) {
         var condition = combatant.conditions.find(c => c.id === conditionID);
-        var index = combatant.conditions.indexOf(condition);
-        combatant.conditions.splice(index, 1);
+        if (condition) {
+            var index = combatant.conditions.indexOf(condition);
+            combatant.conditions.splice(index, 1);
 
-        this.setState({
-            combats: this.state.combats
-        });
+            this.setState({
+                combats: this.state.combats
+            });
+        }
     }
 
-    sortCombatants(combat) {
+    sortCombatants(combat: Combat) {
         combat.combatants.sort((a, b) => {
             // First sort by initiative, descending
-            if (a.initiative < b.initiative) return 1;
-            if (a.initiative > b.initiative) return -1;
+            if (a.initiative && b.initiative && (a.initiative < b.initiative)) return 1;
+            if (a.initiative && b.initiative && (a.initiative > b.initiative)) return -1;
             // Then sort by name, ascending
             if (a.name < b.name) return -1;
             if (a.name > b.name) return 1;
@@ -1265,24 +1396,26 @@ export default class Dojo extends React.Component {
         });
     }
 
-    closeNotification(notification, removeCondition) {
+    closeNotification(notification: Notification, removeCondition: boolean) {
         var combat = this.getCombat(this.state.selectedCombatID);
-        var index = combat.notifications.indexOf(notification);
-        combat.notifications.splice(index, 1);
+        if (combat) {
+            var index = combat.notifications.indexOf(notification);
+            combat.notifications.splice(index, 1);
 
-        if (removeCondition) {
-            var conditionIndex = notification.combatant.conditions.indexOf(notification.condition);
-            notification.combatant.conditions.splice(conditionIndex, 1);
+            if (removeCondition && notification.combatant && notification.condition) {
+                var conditionIndex = notification.combatant.conditions.indexOf(notification.condition);
+                notification.combatant.conditions.splice(conditionIndex, 1);
+            }
+
+            this.setState({
+                combats: this.state.combats
+            });
         }
-
-        this.setState({
-            combats: this.state.combats
-        });
     }
 
     /////////////////////////////////////////////////////////////////////////////
 
-    setView(view) {
+    setView(view: string) {
         this.setState({
             view: view
         });
@@ -1302,114 +1435,71 @@ export default class Dojo extends React.Component {
         });
     }
 
-    selectParty(party) {
+    selectParty(party: Party | null) {
         this.setState({
             selectedPartyID: party ? party.id : null
         });
     }
 
-    selectMonsterGroup(group) {
+    selectMonsterGroup(group: MonsterGroup | null) {
         this.setState({
             selectedMonsterGroupID: group ? group.id : null
         });
     }
 
-    selectEncounter(encounter) {
+    selectEncounter(encounter: Encounter | null) {
         this.setState({
             selectedEncounterID: encounter ? encounter.id : null
         });
     }
 
-    selectMapFolio(mapFolio) {
+    selectMapFolio(mapFolio: MapFolio | null) {
         this.setState({
             selectedMapFolioID: mapFolio ? mapFolio.id : null
         });
     }
 
-    getParty(id) {
-        var result = null;
-        this.state.parties.forEach(party => {
-            if (party.id === id) {
-                result = party;
-            }
-        });
-        return result;
+    getParty(id: string | null) {
+        return this.state.parties.find(p => p.id === id);
     }
 
-    getMonsterGroup(id) {
-        var result = null;
-        this.state.library.forEach(group => {
-            if (group.id === id) {
-                result = group;
-            }
-        });
-        return result;
+    getMonsterGroup(id: string | null) {
+        return this.state.library.find(g => g.id === id);
     }
 
-    getEncounter(id) {
-        var result = null;
-        this.state.encounters.forEach(encounter => {
-            if (encounter.id === id) {
-                result = encounter;
-            }
-        });
-        return result;
+    getEncounter(id: string | null) {
+        return this.state.encounters.find(e => e.id === id);
     }
 
-    getMapFolio(id) {
-        var result = null;
-        this.state.mapFolios.forEach(folio => {
-            if (folio.id === id) {
-                result = folio;
-            }
-        });
-        return result;
+    getMapFolio(id: string | null) {
+        return this.state.mapFolios.find(f => f.id === id);
     }
 
-    getCombat(id) {
-        var result = null;
-        this.state.combats.forEach(combat => {
-            if (combat.id === id) {
-                result = combat;
-            }
-        });
-        return result;
+    getCombat(id: string | null) {
+        return this.state.combats.find(c => c.id === id);
     }
 
-    getMonsterGroupByName(groupName) {
-        var result = null;
-
-        this.state.library.forEach(group => {
-            if (group.name === groupName) {
-                result = group;
-            }
-        });
-
-        return result;
-    }
-
-    getMonster(monsterName, monsterGroup) {
-        var result = null;
-
-        if (monsterGroup && monsterGroup.monsters) {
-            monsterGroup.monsters.forEach(monster => {
-                if (monster.name === monsterName) {
-                    result = monster;
-                }
-            });
+    getMonster(monsterName: string, groupName: string) {
+        var group = this.getMonsterGroupByName(groupName);
+        if (group) {
+            return group.monsters.find(monster => monster.name === monsterName);
         }
 
-        return result;
+        return undefined;
     }
 
-    findMonster(monster) {
-        var result = null;
-        this.state.library.forEach(group => {
-            if (group.monsters.indexOf(monster) !== -1) {
-                result = group;
-            }
-        });
-        return result;
+    getMonsterGroupByName(groupName: string) {
+        return this.state.library.find(p => p.name === groupName);
+    }
+
+    /*
+    getMonster(monsterName: string, monsterGroup: MonsterGroup): Monster | undefined {
+        return monsterGroup.monsters.find(monster => monster.name === monsterName);
+    }
+    */
+
+    findMonster(monster: Monster) {
+        return this.state.library.find(group => group.monsters.includes(monster));
     }
 
     resetAll() {
@@ -1427,7 +1517,7 @@ export default class Dojo extends React.Component {
         });
     }
 
-    changeValue(combatant, type, value) {
+    changeValue(combatant: any, type: string, value: any) {
         switch (type) {
             case "hp":
                 value = Math.min(value, combatant.hpMax);
@@ -1484,7 +1574,7 @@ export default class Dojo extends React.Component {
         });
     }
 
-    nudgeValue(combatant, type, delta) {
+    nudgeValue(combatant: any, type: string, delta: number) {
         var tokens = type.split(".");
         var obj = combatant;
         for (var n = 0; n !== tokens.length; ++n) {
@@ -1507,8 +1597,8 @@ export default class Dojo extends React.Component {
 
     render() {
         try {
-            var content = null;
-            var actions = null;
+            var content: JSX.Element | null = null;
+            var actions: JSX.Element | null = null;
             switch (this.state.view) {
                 case "home":
                     content = (
@@ -1522,7 +1612,7 @@ export default class Dojo extends React.Component {
                     content = (
                         <PartiesScreen
                             parties={this.state.parties}
-                            selection={this.getParty(this.state.selectedPartyID)}
+                            selection={this.getParty(this.state.selectedPartyID) || null}
                             showHelp={this.state.options.showHelp}
                             selectParty={party => this.selectParty(party)}
                             addParty={name => this.addParty(name)}
@@ -1539,7 +1629,7 @@ export default class Dojo extends React.Component {
                     content = (
                         <MonsterLibraryScreen
                             library={this.state.library}
-                            selection={this.getMonsterGroup(this.state.selectedMonsterGroupID)}
+                            selection={this.getMonsterGroup(this.state.selectedMonsterGroupID) || null}
                             filter={this.state.libraryFilter}
                             showHelp={this.state.options.showHelp}
                             selectMonsterGroup={group => this.selectMonsterGroup(group)}
@@ -1553,7 +1643,6 @@ export default class Dojo extends React.Component {
                             editMonster={combatant => this.editMonster(combatant)}
                             cloneMonster={(combatant, name) => this.cloneMonster(combatant, name)}
                             moveToGroup={(combatant, groupID) => this.moveToGroup(combatant, groupID)}
-                            addOpenGameContent={() => this.addOpenGameContent()}
                         />
                     );
                     var count = 0;
@@ -1577,16 +1666,16 @@ export default class Dojo extends React.Component {
                     content = (
                         <EncounterBuilderScreen
                             encounters={this.state.encounters}
-                            selection={this.getEncounter(this.state.selectedEncounterID)}
+                            selection={this.getEncounter(this.state.selectedEncounterID) || null}
                             parties={this.state.parties}
                             library={this.state.library}
                             showHelp={this.state.options.showHelp}
                             selectEncounter={encounter => this.selectEncounter(encounter)}
                             addEncounter={name => this.addEncounter(name)}
-                            removeEncounter={encounter => this.removeEncounter(encounter)}
+                            removeEncounter={() => this.removeEncounter()}
                             addWave={() => this.addWaveToEncounter()}
                             removeWave={wave => this.removeWave(wave)}
-                            getMonster={(monsterName, monsterGroupName) => this.getMonster(monsterName, this.getMonsterGroupByName(monsterGroupName))}
+                            getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName) || null}
                             addEncounterSlot={(monster, waveID) => this.addEncounterSlot(monster, waveID)}
                             removeEncounterSlot={(slot, waveID) => this.removeEncounterSlot(slot, waveID)}
                             nudgeValue={(slot, type, delta) => this.nudgeValue(slot, type, delta)}
@@ -1598,7 +1687,7 @@ export default class Dojo extends React.Component {
                     content = (
                         <MapFoliosScreen
                             mapFolios={this.state.mapFolios}
-                            selection={this.getMapFolio(this.state.selectedMapFolioID)}
+                            selection={this.getMapFolio(this.state.selectedMapFolioID) || null}
                             showHelp={this.state.options.showHelp}
                             selectMapFolio={folio => this.selectMapFolio(folio)}
                             addMapFolio={name => this.addMapFolio(name)}
@@ -1606,7 +1695,6 @@ export default class Dojo extends React.Component {
                             addMap={name => this.addMap(name)}
                             editMap={map => this.editMap(map)}
                             removeMap={map => this.removeMap(map)}
-                            nudgeValue={(source, type, delta) => this.nudgeValue(source, type, delta)}
                             changeValue={(source, type, value) => this.changeValue(source, type, value)}
                         />
                     );
@@ -1615,16 +1703,14 @@ export default class Dojo extends React.Component {
                     var combat = this.getCombat(this.state.selectedCombatID);
                     content = (
                         <CombatManagerScreen
-                            parties={this.state.parties}
-                            encounters={this.state.encounters}
                             combats={this.state.combats}
-                            combat={combat}
+                            combat={combat || null}
                             showHelp={this.state.options.showHelp}
                             createCombat={() => this.createCombat()}
                             resumeEncounter={combat => this.resumeCombat(combat)}
                             nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
-                            makeCurrent={(combatant) => this.makeCurrent(combatant)}
+                            makeCurrent={(combatant) => this.makeCurrent(combatant, false)}
                             makeActive={(combatant) => this.makeActive(combatant)}
                             makeDefeated={(combatant) => this.makeDefeated(combatant)}
                             removeCombatant={(combatant) => this.removeCombatant(combatant)}
@@ -1640,33 +1726,34 @@ export default class Dojo extends React.Component {
                         />
                     );
                     if (combat) {
-                        var xp = 0;
-                        combat.combatants.filter(c => c.type === "monster")
-                            .forEach(combatant => {
-                                xp += utils.experience(combatant.challenge);
-                            });
-                        
                         var encounter = this.getEncounter(combat.encounterID);
+                        if (encounter) {
+                            var xp = 0;
+                            combat.combatants.filter(c => c.type === "monster")
+                                .forEach(combatant => {
+                                    xp += utils.experience((combatant as Combatant & Monster).challenge);
+                                });
 
-                        actions = (
-                            <div className="actions">
-                                <div className="section">
-                                    <div className="text">round: {combat.round}</div>
+                            actions = (
+                                <div className="actions">
+                                    <div className="section">
+                                        <div className="text">round: {combat.round}</div>
+                                    </div>
+                                    <div className="section">
+                                        <div className="text">xp: {xp}</div>
+                                    </div>
+                                    <div className="section" style={{ display: encounter.waves.length === 0 ? "none" : ""}}>
+                                        <button onClick={() => this.openWaveModal()}>add wave</button>
+                                    </div>
+                                    <div className="section">
+                                        <button onClick={() => this.pauseCombat()}>pause encounter</button>
+                                    </div>
+                                    <div className="section">
+                                        <button onClick={() => this.endCombat()}>end encounter</button>
+                                    </div>
                                 </div>
-                                <div className="section">
-                                    <div className="text">xp: {xp}</div>
-                                </div>
-                                <div className="section" style={{ display: encounter.waves.length === 0 ? "none" : ""}}>
-                                    <button onClick={() => this.openWaveModal()}>add wave</button>
-                                </div>
-                                <div className="section">
-                                    <button onClick={() => this.pauseCombat()}>pause encounter</button>
-                                </div>
-                                <div className="section">
-                                    <button onClick={() => this.endCombat()}>end encounter</button>
-                                </div>
-                            </div>
-                        );
+                            );
+                        }
                     }
                     break;
                 default:
@@ -1681,8 +1768,8 @@ export default class Dojo extends React.Component {
                 var modalAllowClose = true;
                 var modalAllowScroll = true;
                 var modalButtons = {
-                    left: [],
-                    right: []
+                    left: [] as JSX.Element[],
+                    right: [] as JSX.Element[]
                 };
 
                 switch (this.state.modal.type) {
@@ -1749,7 +1836,7 @@ export default class Dojo extends React.Component {
                                 parties={this.state.parties}
                                 encounters={this.state.encounters}
                                 mapFolios={this.state.mapFolios}
-                                getMonster={(monsterName, monsterGroupName) => this.getMonster(monsterName, this.getMonsterGroupByName(monsterGroupName))}
+                                getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName) || null}
                                 notify={() => this.setState({modal: this.state.modal})}
                             />
                         );
@@ -1766,7 +1853,7 @@ export default class Dojo extends React.Component {
                             <CombatStartModal
                                 combatSetup={this.state.modal.combatSetup}
                                 encounters={this.state.encounters}
-                                getMonster={(monsterName, monsterGroupName) => this.getMonster(monsterName, this.getMonsterGroupByName(monsterGroupName))}
+                                getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName) || null}
                                 notify={() => this.setState({modal: this.state.modal})}
                             />
                         );
