@@ -29,7 +29,6 @@ interface Props {
     addCondition: (combatant: Combatant & Monster) => void;
     editCondition: (combatant: Combatant & Monster, condition: Condition) => void;
     removeCondition: (combatant: Combatant & Monster, conditionID: string) => void;
-    nudgeConditionValue: (condition: Condition, type: string, delta: number) => void;
     mapMove: (combatant: (Combatant & PC) | (Combatant & Monster), dir: string) => void;
     mapRemove: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
     endTurn: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;

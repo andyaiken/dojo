@@ -823,7 +823,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     startCombat() {
-        var combatSetup: CombatSetup = this.state.modal.combat;
+        var combatSetup: CombatSetup = this.state.modal.combatSetup;
         var party = this.getParty(combatSetup.partyID);
         var encounter = this.getEncounter(combatSetup.encounterID);
         if (party && encounter) {
@@ -1703,8 +1703,6 @@ export default class Dojo extends React.Component<Props, State> {
                     var combat = this.getCombat(this.state.selectedCombatID);
                     content = (
                         <CombatManagerScreen
-                            //parties={this.state.parties}
-                            //encounters={this.state.encounters}
                             combats={this.state.combats}
                             combat={combat || null}
                             showHelp={this.state.options.showHelp}
@@ -1719,7 +1717,6 @@ export default class Dojo extends React.Component<Props, State> {
                             addCondition={(combatant) => this.addCondition(combatant)}
                             editCondition={(combatant, condition) => this.editCondition(combatant, condition)}
                             removeCondition={(combatant, conditionID) => this.removeCondition(combatant, conditionID)}
-                            nudgeConditionValue={(condition: Condition, field: string, delta: number) => null} // TODO
                             mapAdd={(combatant, x, y) => this.mapAdd(combatant, x, y)}
                             mapMove={(combatant, dir) => this.mapMove(combatant, dir)}
                             mapRemove={combatant => this.mapRemove(combatant)}
