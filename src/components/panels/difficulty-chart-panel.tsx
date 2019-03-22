@@ -5,46 +5,39 @@ import * as utils from '../../utils';
 import { Party, Monster, Encounter, EncounterSlot } from '../../models/models';
 
 interface Props {
-    encounterID: string;
-    partyID: string;
-    encounters: Encounter[];
-    parties: Party[];
+    encounter: Encounter;
+    party: Party | null;
     getMonster: (monsterName: string, groupName: string) => Monster
 }
 
 export default class DifficultyChartPanel extends React.Component<Props> {
     render() {
-        var encounter = this.props.encounters.find(e => e.id === this.props.encounterID);
-        var party = this.props.parties.find(p => p.id === this.props.partyID);
-
         var monsterCount = 0;
         var monsterXp = 0;
-        if (encounter) {
-            var slots: EncounterSlot[] = [];
-            slots = slots.concat(encounter.slots);
-            encounter.waves.forEach(wave => {
-                slots = slots.concat(wave.slots);
-            })
-            slots.forEach(slot => {
-                monsterCount += slot.count;
-                var monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
-                if (monster) {
-                    monsterXp += utils.experience(monster.challenge) * slot.count;
-                }
-            });
-        }
+        var slots: EncounterSlot[] = [];
+        slots = slots.concat(this.props.encounter.slots);
+        this.props.encounter.waves.forEach(wave => {
+            slots = slots.concat(wave.slots);
+        })
+        slots.forEach(slot => {
+            monsterCount += slot.count;
+            var monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
+            if (monster) {
+                monsterXp += utils.experience(monster.challenge) * slot.count;
+            }
+        });
 
         var adjustedXp = monsterXp * utils.experienceFactor(monsterCount);
 
         var xpThresholds;
         var diffSection;
-        if (party) {
+        if (this.props.party) {
             var xpEasy = 0;
             var xpMedium = 0;
             var xpHard = 0;
             var xpDeadly = 0;
     
-            var pcs = party.pcs.filter(pc => pc.active);
+            var pcs = this.props.party.pcs.filter(pc => pc.active);
             pcs.forEach(pc => {
                 xpEasy += utils.pcExperience(pc.level, "easy");
                 xpMedium += utils.pcExperience(pc.level, "medium");

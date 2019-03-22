@@ -4,9 +4,9 @@ import warning from "../../resources/images/warning.svg";
 
 interface Props {
     text: string;
+    callback: () => void;
     details: string;
     disabled: boolean;
-    callback: () => void;
 }
 
 interface State {
@@ -14,6 +14,11 @@ interface State {
 }
 
 export default class ConfirmButton extends React.Component<Props, State> {
+    public static defaultProps = {
+        details: null,
+        disabled: false
+    };
+
     constructor(props: Props) {
         super(props);
         this.state = {

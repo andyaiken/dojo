@@ -721,18 +721,15 @@ export default class Dojo extends React.Component {
         var party = this.state.parties.length === 1 ? this.state.parties[0] : null;
         var encounter = this.state.encounters.length === 1 ? this.state.encounters[0] : null;
 
+        var setup = factory.createCombatSetup();
+        setup.partyID = party ? party.id : null;
+        setup.encounterID = encounter ? encounter.id : null;
+        setup.monsterNames = utils.getMonsterNames(encounter);
+
         this.setState({
             modal: {
                 type: "combat-start",
-                combat: {
-                    partyID: party ? party.id : null,
-                    encounterID: encounter ? encounter.id : null,
-                    folioID: null,
-                    mapID: null,
-                    encounterInitMode: "group",
-                    monsterNames: utils.getMonsterNames(encounter),
-                    map: null
-                }
+                combatSetup: setup
             }
         });
     }
@@ -761,6 +758,7 @@ export default class Dojo extends React.Component {
             combatant.initiative = null;
             combatant.hp = null;
             combatant.conditions = [];
+            combatant.altitude = 0;
 
             combat.combatants.push(combatant);
         });
@@ -809,6 +807,8 @@ export default class Dojo extends React.Component {
         
                     combatant.hp = combatant.hpMax;
                     combatant.conditions = [];
+                    combatant.altitude = 0;
+
                     combat.combatants.push(combatant);
                 }
             } else {
@@ -837,15 +837,14 @@ export default class Dojo extends React.Component {
         var combat = this.getCombat(this.state.selectedCombatID);
         var encounter = this.getEncounter(combat.encounterID);
 
+        var setup = factory.createCombatSetup();
+        setup.encounterID = combat.encounterID;
+        setup.monsterNames = utils.getMonsterNames(encounter);
+
         this.setState({
             modal: {
                 type: "combat-wave",
-                combat: {
-                    encounterID: combat.encounterID,
-                    encounterInitMode: "group",
-                    waveID: null,
-                    monsterNames: utils.getMonsterNames(encounter)
-                }
+                combatSetup: setup
             }
         });
     }
@@ -1746,7 +1745,7 @@ export default class Dojo extends React.Component {
                         modalTitle = "start a new encounter";
                         modalContent = (
                             <CombatStartModal
-                                combat={this.state.modal.combat}
+                                combatSetup={this.state.modal.combatSetup}
                                 parties={this.state.parties}
                                 encounters={this.state.encounters}
                                 mapFolios={this.state.mapFolios}
@@ -1757,7 +1756,7 @@ export default class Dojo extends React.Component {
                         modalAllowClose = false;
                         modalAllowScroll = false;
                         modalButtons.right = [
-                            <button key="start encounter" className={this.state.modal.combat.partyID && this.state.modal.combat.encounterID ? "" : "disabled"} onClick={() => this.startCombat()}>start encounter</button>,
+                            <button key="start encounter" className={this.state.modal.combatSetup.partyID && this.state.modal.combatSetup.encounterID ? "" : "disabled"} onClick={() => this.startCombat()}>start encounter</button>,
                             <button key="cancel" onClick={() => this.closeModal()}>cancel</button>
                         ];
                         break;
@@ -1765,7 +1764,7 @@ export default class Dojo extends React.Component {
                         modalTitle = "encounter waves";
                         modalContent = (
                             <CombatStartModal
-                                combat={this.state.modal.combat}
+                                combatSetup={this.state.modal.combatSetup}
                                 encounters={this.state.encounters}
                                 getMonster={(monsterName, monsterGroupName) => this.getMonster(monsterName, this.getMonsterGroupByName(monsterGroupName))}
                                 notify={() => this.setState({modal: this.state.modal})}
@@ -1774,7 +1773,7 @@ export default class Dojo extends React.Component {
                         modalAllowClose = false;
                         modalAllowScroll = false;
                         modalButtons.right = [
-                            <button key="add wave" className={this.state.modal.combat.waveID !== null ? "" : "disabled"} onClick={() => this.addWaveToCombat()}>add wave</button>,
+                            <button key="add wave" className={this.state.modal.combatSetup.waveID !== null ? "" : "disabled"} onClick={() => this.addWaveToCombat()}>add wave</button>,
                             <button key="cancel" onClick={() => this.closeModal()}>cancel</button>
                         ];
                         break;

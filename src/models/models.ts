@@ -68,7 +68,7 @@ export interface Trait {
     id: string;
     name: string;
     usage: string;
-    type: string;
+    type: string; // TODO: Enumerate
     text: string;
 }
 
@@ -114,11 +114,21 @@ export interface MapItem {
     terrain: string | null;
 }
 
+export interface CombatSetup {
+    partyID: string | null;
+    encounterID: string | null;
+    waveID: string | null;
+    folioID: string | null;
+    mapID: string | null;
+    monsterNames: { id: string, names: string[] }[];
+    encounterInitMode: 'manual' | 'individual' | 'group';
+}
+
 export interface Combat {
     id: string;
     name: string;
     encounterID: string | null;
-    combatants: any[]; // TODO
+    combatants: ((Combatant & PC) | (Combatant & Monster))[];
     map: Map | null;
     round: number;
     notifications: Notification[];
@@ -136,13 +146,14 @@ export interface Combatant {
     initiative: number | null;
     hp: number | null;
     conditions: Condition[];
+    altitude: number;
 }
 
 export interface Notification {
     id: string;
-    type: string;
+    type: 'condition-save' | 'condition-end';
     condition: Condition | null;
-    combatant: any | null; // TODO
+    combatant: (Combatant & Monster) | null;
 }
 
 export interface Condition {

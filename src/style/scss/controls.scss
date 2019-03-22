@@ -301,10 +301,6 @@
         border: 1px solid $control-border;
     }
 
-        &.no-border {
-            border: none;
-        }
-
         &:hover {
             border-color: $highlight;
         }

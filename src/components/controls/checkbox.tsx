@@ -6,11 +6,15 @@ import unchecked from "../../resources/images/unchecked.svg";
 interface Props {
     label: string;
     checked: boolean;
-    disabled: boolean;
     changeValue: (value: boolean) => void;
+    disabled: boolean;
 }
 
 export default class Checkbox extends React.Component<Props> {
+    public static defaultProps = {
+        disabled: false
+    };
+
     click(e: React.MouseEvent) {
         e.stopPropagation();
         this.props.changeValue(!this.props.checked);

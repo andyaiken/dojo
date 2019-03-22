@@ -1,7 +1,7 @@
-﻿import { Monster, MonsterGroup, Combat, Encounter, Condition } from "./models/models";
+﻿import { Monster, MonsterGroup, Combat, Encounter, Condition, EncounterWave } from "./models/models";
 
 // This is an internal dictionary to speed up lookup
-var monsterIdToGroup: { [ id:string ]: MonsterGroup; } = {}
+var monsterIdToGroup: { [id: string]: MonsterGroup } = {}
 
 export function getMonsterGroup(monster: Monster, library: MonsterGroup[]): MonsterGroup {
     var group = monsterIdToGroup[monster.id];
@@ -574,7 +574,7 @@ export function conditionDurationText(condition: Condition, combat: Combat) {
     return null;
 }
 
-export function getMonsterNames(encounter: Encounter): any[] {
+export function getMonsterNames(encounter: Encounter | EncounterWave): { id: string, names: string[] }[] {
     var monsterNames: any[] = [];
     if (encounter) {
         encounter.slots.forEach(slot => {

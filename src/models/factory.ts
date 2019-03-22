@@ -1,6 +1,6 @@
 import * as utils from '../utils';
 
-import { Party, PC, MonsterGroup, Monster, Trait, Encounter, EncounterSlot, EncounterWave, MapFolio, Map, MapItem, Combat, Notification, Condition } from './models';
+import { Party, PC, MonsterGroup, Monster, Trait, Encounter, EncounterSlot, EncounterWave, MapFolio, Map, MapItem, CombatSetup, Combat, Notification, Condition } from './models';
 
 export function createParty(): Party {
     return {
@@ -140,6 +140,18 @@ export function createMapItem(): MapItem {
     };
 }
 
+export function createCombatSetup(): CombatSetup {
+    return {
+        partyID: null,
+        encounterID: null,
+        waveID: null,
+        folioID: null,
+        mapID: null,
+        monsterNames: [],
+        encounterInitMode: 'group'
+    };
+}
+
 export function createCombat(): Combat {
     return {
         id: utils.guid(),
@@ -157,7 +169,7 @@ export function createCombat(): Combat {
 export function createNotification(): Notification {
     return {
         id: utils.guid(),
-        type: "",
+        type: 'condition-save',
         condition: null,
         combatant: null
     };

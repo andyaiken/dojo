@@ -16,6 +16,11 @@ interface State {
 }
 
 export default class AbilityScorePanel extends React.Component<Props, State> {
+    public static defaultProps = {
+        edit: null,
+        nudgeValue: null
+    };
+
     constructor(props: Props) {
         super(props);
         this.state = {
