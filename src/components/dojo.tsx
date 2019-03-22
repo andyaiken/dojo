@@ -3,6 +3,8 @@ import React from 'react';
 import * as utils from '../utils';
 import * as factory from '../models/factory';
 
+import { Party, MonsterGroup, Encounter, MapFolio, Combat, Trait, EncounterSlot, Monster, Notification, PC, EncounterWave, Map } from '../models/models';
+
 import HomeScreen from './screens/home-screen';
 import PartiesScreen from './screens/parties-screen';
 import MonsterLibraryScreen from './screens/monster-library-screen';
@@ -25,9 +27,34 @@ import Checkbox from './controls/checkbox';
 import close from "../resources/images/close-black.svg";
 import monsters from '../resources/data/monsters.json';
 
-export default class Dojo extends React.Component {
-    constructor() {
-        super();
+interface Props {
+    // No props; this is the root component
+}
+
+interface State {
+    view: string;
+    options: {
+        showHelp: boolean;
+    };
+
+    parties: Party[];
+    library: MonsterGroup[];
+    encounters: Encounter[];
+    mapFolios: MapFolio[];
+    combats: Combat[];
+
+    selectedPartyID: string | null;
+    selectedMonsterGroupID: string | null;
+    selectedEncounterID: string | null;
+    selectedMapFolioID: string | null;
+    selectedCombatID: string | null;
+
+    modal: any;
+}
+
+export default class Dojo extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
 
         this.state = {
             view: "home",
@@ -48,11 +75,13 @@ export default class Dojo extends React.Component {
         };
 
         try {
-            var data = null;
+            var data: State | null = null;
 
             try {
                 var json = window.localStorage.getItem('data');
-                data = JSON.parse(json);
+                if (json) {
+                    data = JSON.parse(json);
+                }
             } catch (ex) {
                 console.error("Could not parse JSON: ", ex);
                 data = null;
@@ -81,12 +110,14 @@ export default class Dojo extends React.Component {
                     });
                 });
 
+                data.view = 'home';
+                data.modal = null;
+
                 this.state = data;
-                this.state.view = "home";
-                this.state.modal = null;
             }
         } catch (ex) {
             console.error(ex);
+            /*
             this.state.parties = [];
             this.state.library = [];
             this.state.encounters = [];
@@ -97,6 +128,7 @@ export default class Dojo extends React.Component {
             this.state.selectedEncounterID = null;
             this.state.selectedMapFolioID = null;
             this.state.selectedCombatID = null;
+            */
         }
     }
 
@@ -117,10 +149,10 @@ export default class Dojo extends React.Component {
     /////////////////////////////////////////////////////////////////////////////
     // Party screen
 
-    addParty(name) {
+    addParty(name: string) {
         var party = factory.createParty();
         party.name = name;
-        var parties = [].concat(this.state.parties, [party]);
+        var parties: Party[] = ([] as Party[]).concat(this.state.parties, [party]);
         utils.sort(parties);
         this.setState({
             parties: parties,
@@ -130,49 +162,56 @@ export default class Dojo extends React.Component {
 
     removeParty() {
         var party = this.getParty(this.state.selectedPartyID);
-        var index = this.state.parties.indexOf(party);
-        this.state.parties.splice(index, 1);
-        this.setState({
-            parties: this.state.parties,
-            selectedPartyID: null
-        });
+        if (party) {
+            var index = this.state.parties.indexOf(party);
+            this.state.parties.splice(index, 1);
+            this.setState({
+                parties: this.state.parties,
+                selectedPartyID: null
+            });
+        }
     }
 
-    addPC(name) {
-        var pc = factory.createPC();
-        pc.name = name;
+    addPC(name: string) {
         var party = this.getParty(this.state.selectedPartyID);
-        party.pcs.push(pc);
-        this.setState({
-            parties: this.state.parties
-        });
-        return pc;
+        if (party) {
+            var pc = factory.createPC();
+            pc.name = name;
+            party.pcs.push(pc);
+            this.setState({
+                parties: this.state.parties
+            });
+        }
     }
 
-    removePC(pc) {
+    removePC(pc: PC) {
         var party = this.getParty(this.state.selectedPartyID);
-        var index = party.pcs.indexOf(pc);
-        party.pcs.splice(index, 1);
-        this.setState({
-            parties: this.state.parties
-        });
+        if (party) {
+            var index = party.pcs.indexOf(pc);
+            party.pcs.splice(index, 1);
+            this.setState({
+                parties: this.state.parties
+            });
+        }
     }
 
     sortPCs() {
         var party = this.getParty(this.state.selectedPartyID);
-        utils.sort(party.pcs);
-        this.setState({
-            parties: this.state.parties
-        });
+        if (party) {
+            utils.sort(party.pcs);
+            this.setState({
+                parties: this.state.parties
+            });
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////
     // Library screen
 
-    addMonsterGroup(name) {
+    addMonsterGroup(name: string) {
         var group = factory.createMonsterGroup();
         group.name = name;
-        var library = [].concat(this.state.library, [group]);
+        var library = ([] as MonsterGroup[]).concat(this.state.library, [group]);
         utils.sort(library);
         this.setState({
             library: library,
@@ -182,56 +221,68 @@ export default class Dojo extends React.Component {
 
     removeMonsterGroup() {
         var group = this.getMonsterGroup(this.state.selectedMonsterGroupID);
-        var index = this.state.library.indexOf(group);
-        this.state.library.splice(index, 1);
-        this.setState({
-            library: this.state.library,
-            selectedMonsterGroupID: null
-        });
+        if (group) {
+            var index = this.state.library.indexOf(group);
+            this.state.library.splice(index, 1);
+            this.setState({
+                library: this.state.library,
+                selectedMonsterGroupID: null
+            });
+        }
     }
 
-    addMonster(name) {
+    addMonster(name: string) {
         var monster = factory.createMonster();
         monster.name = name;
         var group = this.getMonsterGroup(this.state.selectedMonsterGroupID);
-        group.monsters.push(monster);
-        this.setState({
-            library: this.state.library
-        });
+        if (group) {
+            group.monsters.push(monster);
+            this.setState({
+                library: this.state.library
+            });
+        }
     }
 
-    removeMonster(monster) {
+    removeMonster(monster: Monster) {
         var group = this.getMonsterGroup(this.state.selectedMonsterGroupID);
-        var index = group.monsters.indexOf(monster);
-        group.monsters.splice(index, 1);
-        this.setState({
-            library: this.state.library
-        });
+        if (group) {
+            var index = group.monsters.indexOf(monster);
+            group.monsters.splice(index, 1);
+            this.setState({
+                library: this.state.library
+            });
+        }
     }
 
     sortMonsters() {
         var group = this.getMonsterGroup(this.state.selectedMonsterGroupID);
-        utils.sort(group.monsters);
-        this.setState({
-            library: this.state.library
-        });
+        if (group) {
+            utils.sort(group.monsters);
+            this.setState({
+                library: this.state.library
+            });
+        }
     }
 
-    moveToGroup(monster, groupID) {
+    moveToGroup(monster: Monster, groupID: string) {
         var sourceGroup = this.findMonster(monster);
-        var index = sourceGroup.monsters.indexOf(monster);
+        if (sourceGroup) {
+            var index = sourceGroup.monsters.indexOf(monster);
 
-        sourceGroup.monsters.splice(index, 1);
-        var group = this.getMonsterGroup(groupID);
-        group.monsters.push(monster);
-        utils.sort(group.monsters);
+            sourceGroup.monsters.splice(index, 1);
+            var group = this.getMonsterGroup(groupID);
+            if (group) {
+                group.monsters.push(monster);
+                utils.sort(group.monsters);
 
-        this.setState({
-            library: this.state.library
-        });
+                this.setState({
+                    library: this.state.library
+                });
+            }
+        }
     }
 
-    editMonster(monster) {
+    editMonster(monster: Monster) {
         var copy = JSON.parse(JSON.stringify(monster));
         this.setState({
             modal: {
@@ -244,13 +295,17 @@ export default class Dojo extends React.Component {
 
     saveMonster() {
         var group = this.getMonsterGroup(this.state.selectedMonsterGroupID);
-        var original = group.monsters.find(m => m.id === this.state.modal.monster.id);
-        var index = group.monsters.indexOf(original);
-        group.monsters[index] = this.state.modal.monster;
-        this.setState({
-            library: this.state.library,
-            modal: null
-        });
+        if (group) {
+            var original = group.monsters.find(m => m.id === this.state.modal.monster.id);
+            if (original) {
+                var index = group.monsters.indexOf(original);
+                group.monsters[index] = this.state.modal.monster;
+                this.setState({
+                    library: this.state.library,
+                    modal: null
+                });
+            }
+        }
     }
 
     toggleShowSimilarMonsters() {
@@ -269,63 +324,64 @@ export default class Dojo extends React.Component {
         });
     }
 
-    cloneMonster(monster, name) {
+    cloneMonster(monster: Monster, name: string) {
         var group = this.findMonster(monster);
+        if (group) {
+            var clone = {
+                id: utils.guid(),
+                type: "monster",
+                name: name || monster.name + " copy",
+                size: monster.size,
+                category: monster.category,
+                tag: monster.tag,
+                alignment: monster.alignment,
+                challenge: monster.challenge,
+                abilityScores: {
+                    str: monster.abilityScores.str,
+                    dex: monster.abilityScores.dex,
+                    con: monster.abilityScores.con,
+                    int: monster.abilityScores.int,
+                    wis: monster.abilityScores.wis,
+                    cha: monster.abilityScores.cha
+                },
+                ac: monster.ac,
+                hpMax: monster.hpMax,
+                hpTemp: monster.hpTemp,
+                hitDice: monster.hitDice,
+                damage: {
+                    resist: monster.damage.resist,
+                    vulnerable: monster.damage.vulnerable,
+                    immune: monster.damage.immune
+                },
+                savingThrows: monster.savingThrows,
+                speed: monster.speed,
+                skills: monster.skills,
+                senses: monster.senses,
+                languages: monster.languages,
+                equipment: monster.equipment,
+                traits: monster.traits.map(trait => {
+                    return {
+                        id: utils.guid(),
+                        name: trait.name,
+                        usage: trait.usage,
+                        type: trait.type,
+                        text: trait.text
+                    };
+                }),
+                conditionImmunities: monster.conditionImmunities
+            };
 
-        var clone = {
-            id: utils.guid(),
-            type: "monster",
-            name: name || monster.name + " copy",
-            size: monster.size,
-            category: monster.category,
-            tag: monster.tag,
-            alignment: monster.alignment,
-            challenge: monster.challenge,
-            abilityScores: {
-                str: monster.abilityScores.str,
-                dex: monster.abilityScores.dex,
-                con: monster.abilityScores.con,
-                int: monster.abilityScores.int,
-                wis: monster.abilityScores.wis,
-                cha: monster.abilityScores.cha
-            },
-            ac: monster.ac,
-            hpMax: monster.hpMax,
-            hpTemp: monster.hpTemp,
-            hitDice: monster.hitDice,
-            damage: {
-                resist: monster.damage.resist,
-                vulnerable: monster.damage.vulnerable,
-                immune: monster.damage.immune
-            },
-            savingThrows: monster.savingThrows,
-            speed: monster.speed,
-            skills: monster.skills,
-            senses: monster.senses,
-            languages: monster.languages,
-            equipment: monster.equipment,
-            traits: monster.traits.map(trait => {
-                return {
-                    id: utils.guid(),
-                    name: trait.name,
-                    usage: trait.usage,
-                    type: trait.type,
-                    text: trait.text
-                };
-            }),
-            conditionImmunities: monster.conditionImmunities
-        };
+            group.monsters.push(clone);
+            utils.sort(group.monsters);
 
-        group.monsters.push(clone);
-        utils.sort(group.monsters);
-
-        this.setState({
-            library: this.state.library
-        });
+            this.setState({
+                library: this.state.library
+            });
+        }
     }
 
     addOpenGameContent() {
-        monsters.forEach(data => {
+        monsters.forEach((data: any) => {
             try {
                 if (data.name) {
                     var monster = factory.createMonster();
@@ -338,7 +394,6 @@ export default class Dojo extends React.Component {
                     monster.alignment = data.alignment;
                     monster.challenge = utils.parseChallenge(data.challenge_rating);
                     monster.ac = data.armor_class;
-                    monster.hp = data.hit_points;
                     monster.hpMax = data.hit_points;
                     monster.speed = data.speed;
                     monster.senses = data.senses;
@@ -474,19 +529,19 @@ export default class Dojo extends React.Component {
                     });
 
                     if (data.special_abilities) {
-                        data.special_abilities.forEach(rawTrait => {
+                        data.special_abilities.forEach((rawTrait: any) => {
                             var trait = this.buildTrait(rawTrait, "trait");
                             monster.traits.push(trait);
                         });
                     }
                     if (data.actions) {
-                        data.actions.forEach(rawTrait => {
+                        data.actions.forEach((rawTrait: any) => {
                             var trait = this.buildTrait(rawTrait, "action");
                             monster.traits.push(trait);
                         });
                     }
                     if (data.legendary_actions) {
-                        data.legendary_actions.forEach(rawTrait => {
+                        data.legendary_actions.forEach((rawTrait: any) => {
                             var trait = this.buildTrait(rawTrait, "legendary");
                             monster.traits.push(trait);
                         });
@@ -527,7 +582,7 @@ export default class Dojo extends React.Component {
         });
     }
 
-    buildTrait(rawTrait, type) {
+    buildTrait(rawTrait: any, type: string): Trait {
         var name = "";
         var usage = "";
 
@@ -552,10 +607,10 @@ export default class Dojo extends React.Component {
     /////////////////////////////////////////////////////////////////////////////
     // Encounter screen
 
-    addEncounter(name) {
+    addEncounter(name: string) {
         var encounter = factory.createEncounter();
         encounter.name = name;
-        var encounters = [].concat(this.state.encounters, [encounter]);
+        var encounters = ([] as Encounter[]).concat(this.state.encounters, [encounter]);
         utils.sort(encounters);
 
         this.setState({
@@ -566,56 +621,65 @@ export default class Dojo extends React.Component {
 
     removeEncounter() {
         var encounter = this.getEncounter(this.state.selectedEncounterID);
-        var index = this.state.encounters.indexOf(encounter);
-        this.state.encounters.splice(index, 1);
+        if (encounter) {
+            var index = this.state.encounters.indexOf(encounter);
+            this.state.encounters.splice(index, 1);
 
-        this.setState({
-            encounters: this.state.encounters,
-            selectedEncounterID: null
-        });
+            this.setState({
+                encounters: this.state.encounters,
+                selectedEncounterID: null
+            });
+        }
     }
 
-    addEncounterSlot(monster, waveID) {
+    addEncounterSlot(monster: Monster, waveID: string | null) {
         var group = this.findMonster(monster);
+        if (group) {
+            var slot = factory.createEncounterSlot();
+            slot.monsterGroupName = group.name;
+            slot.monsterName = monster.name;
+            var encounter = this.getEncounter(this.state.selectedEncounterID);
+            if (encounter) {
+                if (waveID !== null) {
+                    var wave = encounter.waves.find(w => w.id === waveID);
+                    if (wave) {
+                        wave.slots.push(slot);
+                        this.sortEncounterSlots(wave);
+                    }
+                } else {
+                    encounter.slots.push(slot);
+                    this.sortEncounterSlots(encounter);
+                }
 
-        var slot = factory.createEncounterSlot();
-        slot.monsterGroupName = group.name;
-        slot.monsterName = monster.name;
-        var encounter = this.getEncounter(this.state.selectedEncounterID);
-        if (waveID !== null) {
-            var wave = encounter.waves.find(w => w.id === waveID);
-            wave.slots.push(slot);
-            this.sortEncounterSlots(wave);
-        } else {
-            encounter.slots.push(slot);
-            this.sortEncounterSlots(encounter);
+                this.setState({
+                    encounters: this.state.encounters
+                });
+            }
         }
-
-        this.setState({
-            encounters: this.state.encounters
-        });
-
-        return slot;
     }
 
-    removeEncounterSlot(slot, waveID) {
+    removeEncounterSlot(slot: EncounterSlot, waveID: string | null) {
         var encounter = this.getEncounter(this.state.selectedEncounterID);
-        if (waveID) {
-            var wave = encounter.waves.find(w => w.id === waveID);
-            var index = wave.slots.indexOf(slot);
-            wave.slots.splice(index, 1);
-        } else {
-            var n = encounter.slots.indexOf(slot);
-            encounter.slots.splice(n, 1);
-        }
+        if (encounter) {
+            if (waveID) {
+                var wave = encounter.waves.find(w => w.id === waveID);
+                if (wave) {
+                    var index = wave.slots.indexOf(slot);
+                    wave.slots.splice(index, 1);
+                }
+            } else {
+                var n = encounter.slots.indexOf(slot);
+                encounter.slots.splice(n, 1);
+            }
 
-        this.setState({
-            encounters: this.state.encounters
-        });
+            this.setState({
+                encounters: this.state.encounters
+            });
+        }
     }
 
-    sortEncounterSlots(slotContaimer) {
-        slotContaimer.slots.sort((a, b) => {
+    sortEncounterSlots(slotContainer: { slots: EncounterSlot[] }) {
+        slotContainer.slots.sort((a, b) => {
             var aName = a.monsterName.toLowerCase();
             var bName = b.monsterName.toLowerCase();
             if (aName < bName) return -1;
@@ -626,33 +690,36 @@ export default class Dojo extends React.Component {
 
     addWaveToEncounter() {
         var encounter = this.getEncounter(this.state.selectedEncounterID);
+        if (encounter) {
+            var wave = factory.createEncounterWave();
+            wave.name = "wave " + (encounter.waves.length + 2);
+            encounter.waves.push(wave);
 
-        var wave = factory.createEncounterWave();
-        wave.name = "wave " + (encounter.waves.length + 2);
-        encounter.waves.push(wave);
-
-        this.setState({
-            encounters: this.state.encounters
-        });
+            this.setState({
+                encounters: this.state.encounters
+            });
+        }
     }
 
-    removeWave(wave) {
+    removeWave(wave: EncounterWave) {
         var encounter = this.getEncounter(this.state.selectedEncounterID);
-        var index = encounter.waves.indexOf(wave);
-        encounter.waves.splice(index, 1);
+        if (encounter) {
+            var index = encounter.waves.indexOf(wave);
+            encounter.waves.splice(index, 1);
 
-        this.setState({
-            encounters: this.state.encounters
-        });
+            this.setState({
+                encounters: this.state.encounters
+            });
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////
     // Map screen
 
-    addMapFolio(name) {
+    addMapFolio(name: string) {
         var folio = factory.createMapFolio();
         folio.name = name;
-        var folios = [].concat(this.state.mapFolios, [folio]);
+        var folios = ([] as MapFolio[]).concat(this.state.mapFolios, [folio]);
         utils.sort(folios);
 
         this.setState({
@@ -663,28 +730,31 @@ export default class Dojo extends React.Component {
 
     removeMapFolio() {
         var folio = this.getMapFolio(this.state.selectedMapFolioID);
-        var index = this.state.mapFolios.indexOf(folio);
-        this.state.mapFolios.splice(index, 1);
+        if (folio) {
+            var index = this.state.mapFolios.indexOf(folio);
+            this.state.mapFolios.splice(index, 1);
 
-        this.setState({
-            mapFolios: this.state.mapFolios,
-            selectedMapFolioID: null
-        });
+            this.setState({
+                mapFolios: this.state.mapFolios,
+                selectedMapFolioID: null
+            });
+        }
     }
 
-    addMap(name) {
-        var map = factory.createMap();
-        map.name = name;
-
+    addMap(name: string) {
         var folio = this.getMapFolio(this.state.selectedMapFolioID);
-        folio.maps.push(map);
+        if (folio) {
+            var map = factory.createMap();
+            map.name = name;
+            folio.maps.push(map);
 
-        this.setState({
-            mapFolios: this.state.mapFolios
-        });
+            this.setState({
+                mapFolios: this.state.mapFolios
+            });
+        }
     }
 
-    editMap(map) {
+    editMap(map: Map) {
         var copy = JSON.parse(JSON.stringify(map));
         this.setState({
             modal: {
@@ -696,22 +766,28 @@ export default class Dojo extends React.Component {
 
     saveMap() {
         var folio = this.getMapFolio(this.state.selectedMapFolioID);
-        var original = folio.maps.find(m => m.id === this.state.modal.map.id);
-        var index = folio.maps.indexOf(original);
-        folio.maps[index] = this.state.modal.map;
-        this.setState({
-            mapFolios: this.state.mapFolios,
-            modal: null
-        });
+        if (folio) {
+            var original = folio.maps.find(m => m.id === this.state.modal.map.id);
+            if (original) {
+                var index = folio.maps.indexOf(original);
+                folio.maps[index] = this.state.modal.map;
+                this.setState({
+                    mapFolios: this.state.mapFolios,
+                    modal: null
+                });
+            }
+        }
     }
 
-    removeMap(map) {
+    removeMap(map: Map) {
         var folio = this.getMapFolio(this.state.selectedMapFolioID);
-        var index = folio.maps.indexOf(map);
-        folio.maps.splice(index, 1);
-        this.setState({
-            mapFolios: this.state.mapFolios
-        });
+        if (folio) {
+            var index = folio.maps.indexOf(map);
+            folio.maps.splice(index, 1);
+            this.setState({
+                mapFolios: this.state.mapFolios
+            });
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////
@@ -1253,7 +1329,7 @@ export default class Dojo extends React.Component {
         });
     }
 
-    sortCombatants(combat) {
+    sortCombatants(combat: Combat) {
         combat.combatants.sort((a, b) => {
             // First sort by initiative, descending
             if (a.initiative < b.initiative) return 1;
@@ -1265,7 +1341,7 @@ export default class Dojo extends React.Component {
         });
     }
 
-    closeNotification(notification, removeCondition) {
+    closeNotification(notification: Notification, removeCondition: boolean) {
         var combat = this.getCombat(this.state.selectedCombatID);
         var index = combat.notifications.indexOf(notification);
         combat.notifications.splice(index, 1);
@@ -1282,7 +1358,7 @@ export default class Dojo extends React.Component {
 
     /////////////////////////////////////////////////////////////////////////////
 
-    setView(view) {
+    setView(view: string) {
         this.setState({
             view: view
         });
@@ -1302,94 +1378,56 @@ export default class Dojo extends React.Component {
         });
     }
 
-    selectParty(party) {
+    selectParty(party: Party) {
         this.setState({
             selectedPartyID: party ? party.id : null
         });
     }
 
-    selectMonsterGroup(group) {
+    selectMonsterGroup(group: MonsterGroup) {
         this.setState({
             selectedMonsterGroupID: group ? group.id : null
         });
     }
 
-    selectEncounter(encounter) {
+    selectEncounter(encounter: Encounter) {
         this.setState({
             selectedEncounterID: encounter ? encounter.id : null
         });
     }
 
-    selectMapFolio(mapFolio) {
+    selectMapFolio(mapFolio: MapFolio) {
         this.setState({
             selectedMapFolioID: mapFolio ? mapFolio.id : null
         });
     }
 
-    getParty(id) {
-        var result = null;
-        this.state.parties.forEach(party => {
-            if (party.id === id) {
-                result = party;
-            }
-        });
-        return result;
+    getParty(id: string | null) {
+        return this.state.parties.find(p => p.id === id);
     }
 
-    getMonsterGroup(id) {
-        var result = null;
-        this.state.library.forEach(group => {
-            if (group.id === id) {
-                result = group;
-            }
-        });
-        return result;
+    getMonsterGroup(id: string | null) {
+        return this.state.library.find(g => g.id === id);
     }
 
-    getEncounter(id) {
-        var result = null;
-        this.state.encounters.forEach(encounter => {
-            if (encounter.id === id) {
-                result = encounter;
-            }
-        });
-        return result;
+    getEncounter(id: string | null) {
+        return this.state.encounters.find(e => e.id === id);
     }
 
-    getMapFolio(id) {
-        var result = null;
-        this.state.mapFolios.forEach(folio => {
-            if (folio.id === id) {
-                result = folio;
-            }
-        });
-        return result;
+    getMapFolio(id: string | null) {
+        return this.state.mapFolios.find(f => f.id === id);
     }
 
-    getCombat(id) {
-        var result = null;
-        this.state.combats.forEach(combat => {
-            if (combat.id === id) {
-                result = combat;
-            }
-        });
-        return result;
+    getCombat(id: string | null): Combat | undefined {
+        return this.state.combats.find(c => c.id === id);
     }
 
-    getMonsterGroupByName(groupName) {
-        var result = null;
-
-        this.state.library.forEach(group => {
-            if (group.name === groupName) {
-                result = group;
-            }
-        });
-
-        return result;
+    getMonsterGroupByName(groupName: string) {
+        return this.state.library.find(p => p.name === groupName);
     }
 
-    getMonster(monsterName, monsterGroup) {
-        var result = null;
+    getMonster(monsterName: string, monsterGroup: MonsterGroup): Monster | undefined {
+        var result = undefined;
 
         if (monsterGroup && monsterGroup.monsters) {
             monsterGroup.monsters.forEach(monster => {
@@ -1402,14 +1440,8 @@ export default class Dojo extends React.Component {
         return result;
     }
 
-    findMonster(monster) {
-        var result = null;
-        this.state.library.forEach(group => {
-            if (group.monsters.indexOf(monster) !== -1) {
-                result = group;
-            }
-        });
-        return result;
+    findMonster(monster: Monster) {
+        return this.state.library.find(group => group.monsters.includes(monster));
     }
 
     resetAll() {
@@ -1427,7 +1459,7 @@ export default class Dojo extends React.Component {
         });
     }
 
-    changeValue(combatant, type, value) {
+    changeValue(combatant: any, type: string, value: any) {
         switch (type) {
             case "hp":
                 value = Math.min(value, combatant.hpMax);
@@ -1484,7 +1516,7 @@ export default class Dojo extends React.Component {
         });
     }
 
-    nudgeValue(combatant, type, delta) {
+    nudgeValue(combatant: any, type: string, delta: number) {
         var tokens = type.split(".");
         var obj = combatant;
         for (var n = 0; n !== tokens.length; ++n) {
