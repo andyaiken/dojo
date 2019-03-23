@@ -8,7 +8,7 @@ import InfoCard from './info-card';
 interface Props {
     selection: Party;
     changeValue: (field: string, value: string) => void;
-    addPC: (name: string) => void;
+    addPC: () => void;
     sortPCs: () => void;
     removeParty: () => void;
 }
@@ -97,7 +97,7 @@ export default class PartyCard extends React.Component<Props> {
                     </div>
                     <div className="divider"></div>
                     <div className="section">
-                    <button onClick={() => this.props.addPC("new pc")}>add a new pc</button>
+                    <button onClick={() => this.props.addPC()}>add a new pc</button>
                         <button onClick={() => this.props.sortPCs()}>sort pcs</button>
                         <ConfirmButton text="delete party" callback={() => this.props.removeParty()} />
                     </div>

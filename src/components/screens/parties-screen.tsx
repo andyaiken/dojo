@@ -14,9 +14,9 @@ interface Props {
     selection: Party | null;
     showHelp: boolean;
     selectParty: (party: Party | null) => void;
-    addParty: (name: string) => void;
+    addParty: () => void;
     removeParty: () => void;
-    addPC: (name: string) => void;
+    addPC: () => void;
     removePC: (pc: PC) => void;
     sortPCs: () => void;
     changeValue: (source: any, field: string, value: any) => void;
@@ -54,7 +54,7 @@ export default class PartiesScreen extends React.Component<Props> {
                     <div className="column" key="info">
                         <PartyCard
                             selection={this.props.selection}
-                            addPC={name => this.props.addPC(name)}
+                            addPC={() => this.props.addPC()}
                             sortPCs={() => this.props.sortPCs()}
                             changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
                             removeParty={() => this.props.removeParty()}
@@ -110,7 +110,7 @@ export default class PartiesScreen extends React.Component<Props> {
                 <div className="parties row collapse">
                     <div className="columns small-4 medium-4 large-3 scrollable list-column">
                         {help}
-                        <button onClick={() => this.props.addParty("new party")}>add a new party</button>
+                        <button onClick={() => this.props.addParty()}>add a new party</button>
                         {parties}
                     </div>
                     <div className="columns small-8 medium-8 large-9 scrollable">

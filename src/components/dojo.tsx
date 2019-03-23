@@ -159,9 +159,9 @@ export default class Dojo extends React.Component<Props, State> {
     /////////////////////////////////////////////////////////////////////////////
     // Party screen
 
-    addParty(name: string) {
+    addParty() {
         var party = factory.createParty();
-        party.name = name;
+        party.name = 'new party';
         var parties: Party[] = ([] as Party[]).concat(this.state.parties, [party]);
         utils.sort(parties);
         this.setState({
@@ -182,11 +182,11 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
-    addPC(name: string) {
+    addPC() {
         var party = this.getParty(this.state.selectedPartyID);
         if (party) {
             var pc = factory.createPC();
-            pc.name = name;
+            pc.name = 'new pc';
             party.pcs.push(pc);
             this.setState({
                 parties: this.state.parties
@@ -218,9 +218,9 @@ export default class Dojo extends React.Component<Props, State> {
     /////////////////////////////////////////////////////////////////////////////
     // Library screen
 
-    addMonsterGroup(name: string) {
+    addMonsterGroup() {
         var group = factory.createMonsterGroup();
-        group.name = name;
+        group.name = 'new group';
         var library = ([] as MonsterGroup[]).concat(this.state.library, [group]);
         utils.sort(library);
         this.setState({
@@ -241,9 +241,9 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
-    addMonster(name: string) {
+    addMonster() {
         var monster = factory.createMonster();
-        monster.name = name;
+        monster.name = 'new monster';
         var group = this.getMonsterGroup(this.state.selectedMonsterGroupID);
         if (group) {
             group.monsters.push(monster);
@@ -617,9 +617,9 @@ export default class Dojo extends React.Component<Props, State> {
     /////////////////////////////////////////////////////////////////////////////
     // Encounter screen
 
-    addEncounter(name: string) {
+    addEncounter() {
         var encounter = factory.createEncounter();
-        encounter.name = name;
+        encounter.name = 'new encounter';
         var encounters = ([] as Encounter[]).concat(this.state.encounters, [encounter]);
         utils.sort(encounters);
 
@@ -726,9 +726,9 @@ export default class Dojo extends React.Component<Props, State> {
     /////////////////////////////////////////////////////////////////////////////
     // Map screen
 
-    addMapFolio(name: string) {
+    addMapFolio() {
         var folio = factory.createMapFolio();
-        folio.name = name;
+        folio.name = 'new folio';
         var folios = ([] as MapFolio[]).concat(this.state.mapFolios, [folio]);
         utils.sort(folios);
 
@@ -751,11 +751,11 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
-    addMap(name: string) {
+    addMap() {
         var folio = this.getMapFolio(this.state.selectedMapFolioID);
         if (folio) {
             var map = factory.createMap();
-            map.name = name;
+            map.name = 'new map';
             folio.maps.push(map);
 
             this.setState({
@@ -1615,9 +1615,9 @@ export default class Dojo extends React.Component<Props, State> {
                             selection={this.getParty(this.state.selectedPartyID) || null}
                             showHelp={this.state.options.showHelp}
                             selectParty={party => this.selectParty(party)}
-                            addParty={name => this.addParty(name)}
+                            addParty={() => this.addParty()}
                             removeParty={() => this.removeParty()}
-                            addPC={name => this.addPC(name)}
+                            addPC={() => this.addPC()}
                             removePC={pc => this.removePC(pc)}
                             sortPCs={() => this.sortPCs()}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
@@ -1633,9 +1633,9 @@ export default class Dojo extends React.Component<Props, State> {
                             filter={this.state.libraryFilter}
                             showHelp={this.state.options.showHelp}
                             selectMonsterGroup={group => this.selectMonsterGroup(group)}
-                            addMonsterGroup={name => this.addMonsterGroup(name)}
+                            addMonsterGroup={() => this.addMonsterGroup()}
                             removeMonsterGroup={() => this.removeMonsterGroup()}
-                            addMonster={name => this.addMonster(name)}
+                            addMonster={() => this.addMonster()}
                             removeMonster={monster => this.removeMonster(monster)}
                             sortMonsters={() => this.sortMonsters()}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
@@ -1671,7 +1671,7 @@ export default class Dojo extends React.Component<Props, State> {
                             library={this.state.library}
                             showHelp={this.state.options.showHelp}
                             selectEncounter={encounter => this.selectEncounter(encounter)}
-                            addEncounter={name => this.addEncounter(name)}
+                            addEncounter={() => this.addEncounter()}
                             removeEncounter={() => this.removeEncounter()}
                             addWave={() => this.addWaveToEncounter()}
                             removeWave={wave => this.removeWave(wave)}
@@ -1690,9 +1690,9 @@ export default class Dojo extends React.Component<Props, State> {
                             selection={this.getMapFolio(this.state.selectedMapFolioID) || null}
                             showHelp={this.state.options.showHelp}
                             selectMapFolio={folio => this.selectMapFolio(folio)}
-                            addMapFolio={name => this.addMapFolio(name)}
+                            addMapFolio={() => this.addMapFolio()}
                             removeMapFolio={() => this.removeMapFolio()}
-                            addMap={name => this.addMap(name)}
+                            addMap={() => this.addMap()}
                             editMap={map => this.editMap(map)}
                             removeMap={map => this.removeMap(map)}
                             changeValue={(source, type, value) => this.changeValue(source, type, value)}

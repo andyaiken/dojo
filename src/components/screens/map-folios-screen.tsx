@@ -14,9 +14,9 @@ interface Props {
     selection: MapFolio | null;
     showHelp: boolean;
     selectMapFolio: (mapFolio: MapFolio | null) => void;
-    addMapFolio: (name: string) => void;
+    addMapFolio: () => void;
     removeMapFolio: () => void;
-    addMap: (name: string) => void;
+    addMap: () => void;
     editMap: (map: Map) => void;
     removeMap: (map: Map) => void;
     changeValue: (source: {}, field: string, value: any) => void;
@@ -53,7 +53,7 @@ export default class MapFoliosScreen extends React.Component<Props> {
                     <div className="column" key="info">
                         <MapFolioCard
                             selection={this.props.selection}
-                            addMap={() => this.props.addMap("new map")}
+                            addMap={() => this.props.addMap()}
                             removeMapFolio={() => this.props.removeMapFolio()}
                             changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
                         />
@@ -97,7 +97,7 @@ export default class MapFoliosScreen extends React.Component<Props> {
                 <div className="map-builder row collapse">
                     <div className="columns small-4 medium-4 large-3 scrollable list-column">
                         {help}
-                        <button onClick={() => this.props.addMapFolio("new map folio")}>add a new map folio</button>
+                        <button onClick={() => this.props.addMapFolio()}>add a new map folio</button>
                         {folios}
                     </div>
                     <div className="columns small-8 medium-8 large-9 scrollable">

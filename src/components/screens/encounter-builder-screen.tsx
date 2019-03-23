@@ -21,7 +21,7 @@ interface Props {
     library: MonsterGroup[];
     showHelp: boolean;
     selectEncounter: (encounter: Encounter | null) => void;
-    addEncounter: (name: string) => void;
+    addEncounter: () => void;
     removeEncounter: () => void;
     addEncounterSlot: (monster: Monster, waveID: string | null) => void;
     removeEncounterSlot: (encounterSlot: EncounterSlot, waveID: string | null) => void;
@@ -300,7 +300,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                 <div className="encounter-builder row collapse">
                     <div className="columns small-4 medium-4 large-3 scrollable list-column">
                         {help}
-                        <button onClick={() => this.props.addEncounter("new encounter")}>add a new encounter</button>
+                        <button onClick={() => this.props.addEncounter()}>add a new encounter</button>
                         {encounters}
                     </div>
                     <div className="columns small-8 medium-8 large-9 scrollable">

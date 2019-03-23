@@ -17,9 +17,9 @@ interface Props {
     showHelp: boolean;
     filter: string;
     selectMonsterGroup: (group: MonsterGroup | null) => void;
-    addMonsterGroup: (name: string) => void;
+    addMonsterGroup: () => void;
     removeMonsterGroup: () => void;
-    addMonster: (name: string) => void;
+    addMonster: () => void;
     removeMonster: (monster: Monster) => void;
     editMonster: (monster: Monster) => void;
     cloneMonster: (monster: Monster, name: string) => void;
@@ -75,7 +75,7 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                         <MonsterGroupCard
                             selection={this.props.selection}
                             filter={this.props.filter}
-                            addMonster={name => this.props.addMonster(name)}
+                            addMonster={() => this.props.addMonster()}
                             sortMonsters={() => this.props.sortMonsters()}
                             changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
                             removeMonsterGroup={() => this.props.removeMonsterGroup()}
@@ -126,7 +126,7 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                 <div className="monster-library row collapse">
                     <div className="columns small-4 medium-4 large-3 scrollable list-column">
                         {help}
-                        <button onClick={() => this.props.addMonsterGroup("new group")}>add a new monster group</button>
+                        <button onClick={() => this.props.addMonsterGroup()}>add a new monster group</button>
                         {listItems}
                     </div>
                     <div className="columns small-8 medium-8 large-9 scrollable">
