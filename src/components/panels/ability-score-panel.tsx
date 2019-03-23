@@ -2,7 +2,7 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { Monster } from '../../models/models';
+import { Monster } from '../../models/monster-group';
 
 import Spin from '../controls/spin';
 

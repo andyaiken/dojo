@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { PC, Combatant } from '../../models/models';
+import { PC } from '../../models/party';
+import { Combatant } from '../../models/combat';
 
 import ConfirmButton from '../controls/confirm-button';
 import Radial from '../controls/radial';

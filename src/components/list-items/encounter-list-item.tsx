@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Encounter } from '../../models/models';
+import { Encounter } from '../../models/encounter';
 
 interface Props {
     encounter: Encounter;

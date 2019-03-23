@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { MapFolio, Map } from '../../models/models';
+import { MapFolio, Map } from '../../models/map-folio';
 
 import MapFoliosCard from '../cards/information/map-folios-card';
 import MapFolioListItem from '../list-items/map-folio-list-item';

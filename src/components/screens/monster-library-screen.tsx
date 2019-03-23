@@ -2,7 +2,7 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { MonsterGroup, Monster } from '../../models/models';
+import { MonsterGroup, Monster } from '../../models/monster-group';
 
 import MonsterLibraryCard from '../cards/information/monster-library-card';
 import MonsterGroupListItem from '../list-items/monster-group-list-item';

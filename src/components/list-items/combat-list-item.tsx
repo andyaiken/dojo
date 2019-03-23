@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Combat } from '../../models/models';
+import { Combat } from '../../models/combat';
 
 import MapPanel from '../panels/map-panel';
 

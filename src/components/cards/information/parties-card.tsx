@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Party } from '../../../models/models';
+import { Party } from '../../../models/party';
 
 import InfoCard from '../info-card';
 

@@ -2,7 +2,7 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { MonsterGroup } from '../../models/models';
+import { MonsterGroup } from '../../models/monster-group';
 
 interface Props {
     group: MonsterGroup;

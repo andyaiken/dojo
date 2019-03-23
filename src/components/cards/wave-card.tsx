@@ -1,8 +1,9 @@
 import React from 'react';
 
+import { EncounterWave } from '../../models/encounter';
+
 import ConfirmButton from '../controls/confirm-button';
 import InfoCard from './info-card';
-import { EncounterWave } from '../../models/models';
 
 interface Props {
     wave: EncounterWave;

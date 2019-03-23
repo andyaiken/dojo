@@ -2,7 +2,11 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { CombatSetup, Encounter, Party, MapFolio, Monster, EncounterWave, EncounterSlot } from '../../models/models';
+import { CombatSetup } from '../../models/combat';
+import { Encounter, EncounterSlot } from '../../models/encounter';
+import { Party } from '../../models/party';
+import { Monster } from '../../models/monster-group';
+import { MapFolio } from '../../models/map-folio';
 
 import Dropdown from '../controls/dropdown';
 import Selector from '../controls/selector';

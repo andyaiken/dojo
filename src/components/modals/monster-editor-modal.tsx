@@ -3,7 +3,7 @@ import React from 'react';
 import Utils from '../../utils/utils';
 import Factory from '../../utils/factory';
 
-import { TRAIT_TYPES, CATEGORY_TYPES, SIZE_TYPES, Monster, MonsterGroup, Trait } from '../../models/models';
+import { TRAIT_TYPES, CATEGORY_TYPES, SIZE_TYPES, Monster, MonsterGroup, Trait } from '../../models/monster-group';
 
 import Checkbox from '../controls/checkbox';
 import Dropdown from '../controls/dropdown';

@@ -2,7 +2,9 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { Encounter, EncounterSlot, MonsterGroup, Monster, Party, EncounterWave } from '../../models/models';
+import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
+import { Party } from '../../models/party';
+import { MonsterGroup, Monster } from '../../models/monster-group';
 
 import MonsterCard from '../cards/monster-card';
 import ErrorCard from '../cards/error-card';

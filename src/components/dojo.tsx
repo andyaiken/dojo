@@ -3,13 +3,12 @@ import React from 'react';
 import Utils from '../utils/utils';
 import Factory from '../utils/factory';
 
-import {
-    Party, PC,
-    MonsterGroup, Monster, Trait,
-    Encounter, EncounterSlot, EncounterWave,
-    MapFolio, Map,
-    CombatSetup, Combat, Combatant, Notification, Condition
-} from '../models/models';
+import { Party, PC } from '../models/party';
+import { MonsterGroup, Monster, Trait } from '../models/monster-group';
+import { Encounter, EncounterSlot, EncounterWave } from '../models/encounter';
+import { MapFolio, Map } from '../models/map-folio';
+import { CombatSetup, Combat, Combatant, Notification } from '../models/combat';
+import { Condition } from '../models/condition';
 
 import HomeScreen from './screens/home-screen';
 import PartiesScreen from './screens/parties-screen';

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { MonsterGroup } from '../../models/models';
+import { MonsterGroup } from '../../models/monster-group';
 
 interface Props {
     library: MonsterGroup[];

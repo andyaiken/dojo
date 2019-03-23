@@ -1,6 +1,8 @@
 import React from 'react';
 
-import { Encounter, Party, Monster } from '../../models/models';
+import { Encounter } from '../../models/encounter';
+import { Party } from '../../models/party';
+import { Monster } from '../../models/monster-group';
 
 import Dropdown from '../controls/dropdown';
 import DifficultyChartPanel from '../panels/difficulty-chart-panel';

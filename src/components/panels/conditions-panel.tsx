@@ -2,7 +2,8 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { Combatant, Condition, Combat } from '../../models/models';
+import { Combatant, Combat } from '../../models/combat';
+import { Condition } from '../../models/condition';
 
 import Spin from '../controls/spin';
 import Expander from '../controls/expander';

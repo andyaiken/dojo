@@ -2,7 +2,10 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { Combat, Combatant, Monster, PC, Notification, Condition, ConditionDurationSaves } from '../../models/models';
+import { Combat, Combatant, Notification } from '../../models/combat';
+import { Condition, ConditionDurationSaves } from '../../models/condition';
+import { PC } from '../../models/party';
+import { Monster } from '../../models/monster-group';
 
 import PCCard from '../cards/pc-card';
 import MonsterCard from '../cards/monster-card';

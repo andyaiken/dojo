@@ -1,7 +1,11 @@
 import React from 'react';
 
+import { MapItem, Map } from '../../models/map-folio';
+import { PC } from '../../models/party';
+import { Monster } from '../../models/monster-group';
+import { Combatant } from '../../models/combat';
+
 import HitPointGauge from './hit-point-gauge';
-import { Combatant, MapItem, PC, Monster, Map } from '../../models/models';
 
 interface Props {
     map: Map;

@@ -1,11 +1,7 @@
-﻿import {
-    MonsterGroup, Monster,
-    Encounter, EncounterWave,
-    Combat,
-    Condition, ConditionDurationSaves, ConditionDurationCombatant, ConditionDurationRounds
-} from "../models/models";
-
-// TODO: Separate this into Utils and DnD code
+﻿import { MonsterGroup, Monster } from "../models/monster-group";
+import { Encounter, EncounterWave } from "../models/encounter";
+import { Combat } from "../models/combat";
+import { Condition, ConditionDurationSaves, ConditionDurationCombatant, ConditionDurationRounds } from "../models/condition";
 
 export default class Utils {
 

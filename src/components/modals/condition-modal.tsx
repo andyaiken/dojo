@@ -3,7 +3,9 @@ import React from 'react';
 import Utils from '../../utils/utils';
 import Factory from '../../utils/factory';
 
-import { CONDITION_TYPES, Condition, Monster, Combatant, Combat, ConditionDurationSaves, ConditionDurationCombatant } from '../../models/models';
+import { CONDITION_TYPES, Condition, ConditionDurationSaves, ConditionDurationCombatant } from '../../models/condition';
+import { Monster } from '../../models/monster-group';
+import { Combatant, Combat } from '../../models/combat';
 
 import Spin from '../controls/spin';
 import Selector from '../controls/selector';

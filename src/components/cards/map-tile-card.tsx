@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { TERRAIN_TYPES, MapItem } from '../../models/models';
+import { TERRAIN_TYPES, MapItem } from '../../models/map-folio';
 
 import Dropdown from '../controls/dropdown';
 import Radial from '../controls/radial';

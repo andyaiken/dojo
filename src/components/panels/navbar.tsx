@@ -1,5 +1,8 @@
 import React from 'react';
-import { Party, MonsterGroup, Encounter } from '../../models/models';
+
+import { Party } from '../../models/party';
+import { MonsterGroup } from '../../models/monster-group';
+import { Encounter } from '../../models/encounter';
 
 interface Props {
     view: string;

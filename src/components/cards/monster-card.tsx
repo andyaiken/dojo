@@ -2,7 +2,10 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { Monster, Combatant, EncounterSlot, Combat, Trait, EncounterWave, MonsterGroup, Condition, Encounter } from '../../models/models';
+import { Monster, Trait, MonsterGroup } from '../../models/monster-group';
+import { EncounterSlot, EncounterWave, Encounter } from '../../models/encounter';
+import { Combatant, Combat } from '../../models/combat';
+import { Condition } from '../../models/condition';
 
 import Expander from '../controls/expander';
 import Dropdown from '../controls/dropdown';

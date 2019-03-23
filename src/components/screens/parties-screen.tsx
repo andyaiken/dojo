@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Party, PC } from '../../models/models';
+import { Party, PC } from '../../models/party';
 
 import PartiesCard from '../cards/information/parties-card';
 import PartyListItem from '../list-items/party-list-item';

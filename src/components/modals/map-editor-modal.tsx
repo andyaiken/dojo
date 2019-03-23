@@ -3,7 +3,7 @@ import React from 'react';
 import Utils from '../../utils/utils';
 import Factory from '../../utils/factory';
 
-import { Map, MapItem } from '../../models/models';
+import { Map, MapItem } from '../../models/map-folio';
 
 import MapTileCard from '../cards/map-tile-card';
 import MapPanel from '../panels/map-panel';

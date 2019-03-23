@@ -2,7 +2,7 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { Trait, Monster } from '../../models/models';
+import { Trait, Monster } from '../../models/monster-group';
 
 import ConfirmButton from '../controls/confirm-button';
 import Expander from '../controls/expander';

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { MapFolio } from '../../models/models';
+import { MapFolio } from '../../models/map-folio';
 
 interface Props {
     mapFolio: MapFolio;

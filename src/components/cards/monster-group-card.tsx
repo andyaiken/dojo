@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { MonsterGroup } from '../../models/models';
+import { MonsterGroup } from '../../models/monster-group';
 
 import ConfirmButton from '../controls/confirm-button';
 import InfoCard from './info-card';

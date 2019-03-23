@@ -2,7 +2,7 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { CATEGORY_TYPES, SIZE_TYPES } from '../../models/models';
+import { CATEGORY_TYPES, SIZE_TYPES } from '../../models/monster-group';
 
 import Spin from '../controls/spin';
 import Dropdown from '../controls/dropdown';
