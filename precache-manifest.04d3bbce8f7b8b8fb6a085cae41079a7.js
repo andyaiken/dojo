@@ -4,8 +4,8 @@ self.__precacheManifest = [
     "url": "/dojo/static/media/warning.67a11a95.svg"
   },
   {
-    "revision": "9b1e63d43ee9af71b621",
-    "url": "/dojo/static/css/main.543b3726.chunk.css"
+    "revision": "60657823a59bb7e9af6f",
+    "url": "/dojo/static/css/main.34ccf48b.chunk.css"
   },
   {
     "revision": "f28ee3be83f814eb9c51",
@@ -28,8 +28,8 @@ self.__precacheManifest = [
     "url": "/dojo/static/media/close-black.7645a5b9.svg"
   },
   {
-    "revision": "9b1e63d43ee9af71b621",
-    "url": "/dojo/static/js/main.5dce20ba.chunk.js"
+    "revision": "60657823a59bb7e9af6f",
+    "url": "/dojo/static/js/main.a4d80cfe.chunk.js"
   },
   {
     "revision": "b60accffdc3555f5fdb4f1d2b30dab58",
@@ -56,7 +56,7 @@ self.__precacheManifest = [
     "url": "/dojo/static/media/settings.042bb1c2.svg"
   },
   {
-    "revision": "2450a37ab6b98ac6202bac1f2da4b564",
+    "revision": "f91143af5e1215358e5de4f61957d352",
     "url": "/dojo/index.html"
   }
 ];
