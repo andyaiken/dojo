@@ -8,12 +8,11 @@
         "node-sass": "^4.11.0",
         "react": "^16.8.4",
         "react-dom": "^16.8.4",
-        "react-scripts": "2.1.8",
-        "typescript": "^3.3.4000"
+        "react-scripts": "2.1.8"
     },
     "scripts": {
         "start": "react-scripts start --display-error-details",
-        "build": "react-scripts build",
+        "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}'",
         "predeploy": "react-scripts build",
         "deploy": "gh-pages -d build"
     },
@@ -30,6 +29,9 @@
         "not op_mini all"
     ],
     "devDependencies": {
-        "gh-pages": "^2.0.1"
+        "gh-pages": "^2.0.1",
+        "tslint": "^5.14.0",
+        "tslint-react": "^3.6.0",
+        "typescript": "^3.3.4000"
     }
 }
