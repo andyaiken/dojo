@@ -16,6 +16,7 @@ export default class RadioGroup extends React.Component<Props> {
             var content = this.props.items.map(item => {
                 return (
                     <RadioGroupItem
+                        key={item.id}
                         item={item}
                         selected={this.props.selectedItemID === item.id}
                         select={(itemID: string) => this.props.select(itemID)}
