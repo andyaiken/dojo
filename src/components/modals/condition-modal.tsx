@@ -1,7 +1,7 @@
 import React from 'react';
 
 import * as utils from '../../utils';
-import * as factory from '../../models/factory';
+import Factory from '../../models/factory';
 
 import { CONDITION_TYPES, Condition, Monster, Combatant, Combat, ConditionDurationSaves, ConditionDurationCombatant } from '../../models/models';
 
@@ -46,13 +46,13 @@ export default class ConditionModal extends React.Component<Props, State> {
 
         switch (durationType) {
             case "saves":
-                duration = factory.createConditionDurationSaves();
+                duration = Factory.createConditionDurationSaves();
                 break;
             case "combatant":
-                duration = factory.createConditionDurationCombatant();
+                duration = Factory.createConditionDurationCombatant();
                 break;
             case "rounds":
-                duration = factory.createConditionDurationRounds();
+                duration = Factory.createConditionDurationRounds();
                 break;
             default:
                 // Do nothing

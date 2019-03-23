@@ -1,7 +1,7 @@
 import React from 'react';
 
 import * as utils from '../../utils';
-import * as factory from '../../models/factory';
+import Factory from '../../models/factory';
 
 import { Map, MapItem } from '../../models/models';
 
@@ -34,7 +34,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
     }
 
     addMapTile(x: number, y: number) {
-        var tile = factory.createMapItem();
+        var tile = Factory.createMapItem();
         tile.x = x;
         tile.y = y;
         tile.terrain = "flagstone";

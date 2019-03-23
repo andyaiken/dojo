@@ -1,7 +1,7 @@
 import React from 'react';
 
 import * as utils from '../utils';
-import * as factory from '../models/factory';
+import Factory from '../models/factory';
 
 import {
     Party, PC,
@@ -160,7 +160,7 @@ export default class Dojo extends React.Component<Props, State> {
     // Party screen
 
     addParty() {
-        var party = factory.createParty();
+        var party = Factory.createParty();
         party.name = 'new party';
         var parties: Party[] = ([] as Party[]).concat(this.state.parties, [party]);
         utils.sort(parties);
@@ -185,7 +185,7 @@ export default class Dojo extends React.Component<Props, State> {
     addPC() {
         var party = this.getParty(this.state.selectedPartyID);
         if (party) {
-            var pc = factory.createPC();
+            var pc = Factory.createPC();
             pc.name = 'new pc';
             party.pcs.push(pc);
             this.setState({
@@ -219,7 +219,7 @@ export default class Dojo extends React.Component<Props, State> {
     // Library screen
 
     addMonsterGroup() {
-        var group = factory.createMonsterGroup();
+        var group = Factory.createMonsterGroup();
         group.name = 'new group';
         var library = ([] as MonsterGroup[]).concat(this.state.library, [group]);
         utils.sort(library);
@@ -242,7 +242,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     addMonster() {
-        var monster = factory.createMonster();
+        var monster = Factory.createMonster();
         monster.name = 'new monster';
         var group = this.getMonsterGroup(this.state.selectedMonsterGroupID);
         if (group) {
@@ -394,7 +394,7 @@ export default class Dojo extends React.Component<Props, State> {
         monsters.forEach((data: any) => {
             try {
                 if (data.name) {
-                    var monster = factory.createMonster();
+                    var monster = Factory.createMonster();
 
                     monster.type = "monster";
                     monster.name = data.name;
@@ -618,7 +618,7 @@ export default class Dojo extends React.Component<Props, State> {
     // Encounter screen
 
     addEncounter() {
-        var encounter = factory.createEncounter();
+        var encounter = Factory.createEncounter();
         encounter.name = 'new encounter';
         var encounters = ([] as Encounter[]).concat(this.state.encounters, [encounter]);
         utils.sort(encounters);
@@ -645,7 +645,7 @@ export default class Dojo extends React.Component<Props, State> {
     addEncounterSlot(monster: Monster, waveID: string | null) {
         var group = this.findMonster(monster);
         if (group) {
-            var slot = factory.createEncounterSlot();
+            var slot = Factory.createEncounterSlot();
             slot.monsterGroupName = group.name;
             slot.monsterName = monster.name;
             var encounter = this.getEncounter(this.state.selectedEncounterID);
@@ -701,7 +701,7 @@ export default class Dojo extends React.Component<Props, State> {
     addWaveToEncounter() {
         var encounter = this.getEncounter(this.state.selectedEncounterID);
         if (encounter) {
-            var wave = factory.createEncounterWave();
+            var wave = Factory.createEncounterWave();
             wave.name = "wave " + (encounter.waves.length + 2);
             encounter.waves.push(wave);
 
@@ -727,7 +727,7 @@ export default class Dojo extends React.Component<Props, State> {
     // Map screen
 
     addMapFolio() {
-        var folio = factory.createMapFolio();
+        var folio = Factory.createMapFolio();
         folio.name = 'new folio';
         var folios = ([] as MapFolio[]).concat(this.state.mapFolios, [folio]);
         utils.sort(folios);
@@ -754,7 +754,7 @@ export default class Dojo extends React.Component<Props, State> {
     addMap() {
         var folio = this.getMapFolio(this.state.selectedMapFolioID);
         if (folio) {
-            var map = factory.createMap();
+            var map = Factory.createMap();
             map.name = 'new map';
             folio.maps.push(map);
 
@@ -807,7 +807,7 @@ export default class Dojo extends React.Component<Props, State> {
         var party = this.state.parties.length === 1 ? this.state.parties[0] : null;
         var encounter = this.state.encounters.length === 1 ? this.state.encounters[0] : null;
 
-        var setup = factory.createCombatSetup();
+        var setup = Factory.createCombatSetup();
         setup.partyID = party ? party.id : null;
         setup.encounterID = encounter ? encounter.id : null;
         if (encounter) {
@@ -830,7 +830,7 @@ export default class Dojo extends React.Component<Props, State> {
             var partyName = party.name || "unnamed party";
             var encounterName = encounter.name || "unnamed encounter";
 
-            var combat = factory.createCombat();
+            var combat = Factory.createCombat();
             combat.name = partyName + " vs " + encounterName;
             combat.encounterID = encounter.id;
 
@@ -930,7 +930,7 @@ export default class Dojo extends React.Component<Props, State> {
         if (combat) {
             var encounter = this.getEncounter(combat.encounterID);
             if (encounter) {
-                var setup = factory.createCombatSetup();
+                var setup = Factory.createCombatSetup();
                 setup.encounterID = combat.encounterID;
                 setup.monsterNames = utils.getMonsterNames(encounter);
 
@@ -1165,7 +1165,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     mapAdd(combatant: ((Combatant & PC) | (Combatant & Monster)), x: number, y: number) {
-        var item = factory.createMapItem();
+        var item = Factory.createMapItem();
         item.id = combatant.id;
         item.type = combatant.type as 'pc' | 'monster';
         item.x = x;
@@ -1259,7 +1259,7 @@ export default class Dojo extends React.Component<Props, State> {
                             case "saves":
                                 // If it's my condition, and point is END, notify the user
                                 if (combat && (actor.id === combatant.id) && (c.duration.point === "end")) {
-                                    var saveNotification = factory.createNotification();
+                                    var saveNotification = Factory.createNotification();
                                     saveNotification.type = "condition-save";
                                     saveNotification.condition = c;
                                     saveNotification.combatant = combatant as Combatant & Monster;
@@ -1272,7 +1272,7 @@ export default class Dojo extends React.Component<Props, State> {
                                     var index = actor.conditions.indexOf(c);
                                     actor.conditions.splice(index, 1);
                                     // Notify the user
-                                    var endNotification = factory.createNotification();
+                                    var endNotification = Factory.createNotification();
                                     endNotification.type = "condition-end";
                                     endNotification.condition = c;
                                     endNotification.combatant = combatant as Combatant & Monster;
@@ -1323,7 +1323,7 @@ export default class Dojo extends React.Component<Props, State> {
     addCondition(combatant: Combatant & Monster) {
         var combat = this.getCombat(this.state.selectedCombatID);
         if (combat) {
-            var condition = factory.createCondition();
+            var condition = Factory.createCondition();
             condition.name = "blinded";
 
             this.setState({

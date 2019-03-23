@@ -1,7 +1,7 @@
 import React from 'react';
 
 import * as utils from '../../utils';
-import * as factory from '../../models/factory';
+import Factory from '../../models/factory';
 
 import { TRAIT_TYPES, CATEGORY_TYPES, SIZE_TYPES, Monster, MonsterGroup, Trait } from '../../models/models';
 
@@ -236,7 +236,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     }
 
     addTrait(type: 'trait' | 'action' | 'legendary' | 'lair' | 'regional') {
-        var trait = factory.createTrait();
+        var trait = Factory.createTrait();
         trait.type = type;
         trait.name = "New " + this.getActionTypeName(type, false).toLowerCase();
         this.state.monster.traits.push(trait);
