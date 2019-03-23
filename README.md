@@ -22,6 +22,7 @@ The page should automatically reload if you make edits. If there are errors, you
 ## Publishing the app
 
 * Open a terminal in the root folder
+* Check that your changes don't break the project's style rules by running `npm run lint`
 * Run `npm run deploy`
 
 This will build the app in the `build` folder and attempt to deploy it. You need to have git installed.
@@ -45,3 +46,4 @@ This will build the app in the `build` folder and attempt to deploy it. You need
   - style
     - css
     - scss
+  - utils

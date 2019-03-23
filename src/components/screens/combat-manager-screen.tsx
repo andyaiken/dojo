@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Utils from '../../utils';
+import Utils from '../../utils/utils';
 
 import { Combat, Combatant, Monster, PC, Notification, Condition, ConditionDurationSaves } from '../../models/models';
 

@@ -5,8 +5,9 @@ import {
     MonsterGroup, Monster, Trait,
     Encounter, EncounterSlot, EncounterWave,
     MapFolio, Map, MapItem,
-    CombatSetup, Combat, Notification, Condition, ConditionDurationSaves, ConditionDurationCombatant, ConditionDurationRounds
-} from './models/models';
+    CombatSetup, Combat, Notification,
+    Condition, ConditionDurationSaves, ConditionDurationCombatant, ConditionDurationRounds
+} from '../models/models';
 
 export default class Factory {
 

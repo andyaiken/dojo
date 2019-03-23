@@ -1,7 +1,7 @@
 import React from 'react';
 
-import Utils from '../../utils';
-import Factory from '../../factory';
+import Utils from '../../utils/utils';
+import Factory from '../../utils/factory';
 
 import { Map, MapItem } from '../../models/models';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Utils from '../../utils';
+import Utils from '../../utils/utils';
 
 import { CATEGORY_TYPES, SIZE_TYPES } from '../../models/models';
 

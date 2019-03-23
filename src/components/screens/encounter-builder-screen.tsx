@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Utils from '../../utils';
+import Utils from '../../utils/utils';
 
 import { Encounter, EncounterSlot, MonsterGroup, Monster, Party, EncounterWave } from '../../models/models';
 

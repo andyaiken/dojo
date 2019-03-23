@@ -1,7 +1,7 @@
 import React from 'react';
 
-import Utils from '../../utils';
-import Factory from '../../factory';
+import Utils from '../../utils/utils';
+import Factory from '../../utils/factory';
 
 import { CONDITION_TYPES, Condition, Monster, Combatant, Combat, ConditionDurationSaves, ConditionDurationCombatant } from '../../models/models';
 

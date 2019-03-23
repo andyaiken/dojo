@@ -1,3 +1,5 @@
+// TODO: Separate this into files
+
 export interface Party {
     id: string;
     name: string;

@@ -3,7 +3,9 @@
     Encounter, EncounterWave,
     Combat,
     Condition, ConditionDurationSaves, ConditionDurationCombatant, ConditionDurationRounds
-} from "./models/models";
+} from "../models/models";
+
+// TODO: Separate this into Utils and DnD code
 
 export default class Utils {
 
