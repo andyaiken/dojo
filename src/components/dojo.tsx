@@ -1,7 +1,7 @@
 import React from 'react';
 
-import * as utils from '../utils';
-import Factory from '../models/factory';
+import Utils from '../utils';
+import Factory from '../factory';
 
 import {
     Party, PC,
@@ -163,7 +163,7 @@ export default class Dojo extends React.Component<Props, State> {
         var party = Factory.createParty();
         party.name = 'new party';
         var parties: Party[] = ([] as Party[]).concat(this.state.parties, [party]);
-        utils.sort(parties);
+        Utils.sort(parties);
         this.setState({
             parties: parties,
             selectedPartyID: party.id
@@ -208,7 +208,7 @@ export default class Dojo extends React.Component<Props, State> {
     sortPCs() {
         var party = this.getParty(this.state.selectedPartyID);
         if (party) {
-            utils.sort(party.pcs);
+            Utils.sort(party.pcs);
             this.setState({
                 parties: this.state.parties
             });
@@ -222,7 +222,7 @@ export default class Dojo extends React.Component<Props, State> {
         var group = Factory.createMonsterGroup();
         group.name = 'new group';
         var library = ([] as MonsterGroup[]).concat(this.state.library, [group]);
-        utils.sort(library);
+        Utils.sort(library);
         this.setState({
             library: library,
             selectedMonsterGroupID: group.id
@@ -267,7 +267,7 @@ export default class Dojo extends React.Component<Props, State> {
     sortMonsters() {
         var group = this.getMonsterGroup(this.state.selectedMonsterGroupID);
         if (group) {
-            utils.sort(group.monsters);
+            Utils.sort(group.monsters);
             this.setState({
                 library: this.state.library
             });
@@ -283,7 +283,7 @@ export default class Dojo extends React.Component<Props, State> {
             var group = this.getMonsterGroup(groupID);
             if (group) {
                 group.monsters.push(monster);
-                utils.sort(group.monsters);
+                Utils.sort(group.monsters);
 
                 this.setState({
                     library: this.state.library
@@ -338,7 +338,7 @@ export default class Dojo extends React.Component<Props, State> {
         var group = this.findMonster(monster);
         if (group) {
             var clone = {
-                id: utils.guid(),
+                id: Utils.guid(),
                 type: "monster",
                 name: name || monster.name + " copy",
                 size: monster.size,
@@ -371,7 +371,7 @@ export default class Dojo extends React.Component<Props, State> {
                 equipment: monster.equipment,
                 traits: monster.traits.map(trait => {
                     return {
-                        id: utils.guid(),
+                        id: Utils.guid(),
                         name: trait.name,
                         usage: trait.usage,
                         type: trait.type,
@@ -382,7 +382,7 @@ export default class Dojo extends React.Component<Props, State> {
             };
 
             group.monsters.push(clone);
-            utils.sort(group.monsters);
+            Utils.sort(group.monsters);
 
             this.setState({
                 library: this.state.library
@@ -402,7 +402,7 @@ export default class Dojo extends React.Component<Props, State> {
                     monster.category = data.type;
                     monster.tag = data.subtype;
                     monster.alignment = data.alignment;
-                    monster.challenge = utils.parseChallenge(data.challenge_rating);
+                    monster.challenge = Utils.parseChallenge(data.challenge_rating);
                     monster.ac = data.armor_class;
                     monster.hpMax = data.hit_points;
                     monster.speed = data.speed;
@@ -571,7 +571,7 @@ export default class Dojo extends React.Component<Props, State> {
                     var group = this.getMonsterGroupByName(groupName);
                     if (!group) {
                         group = {
-                            id: utils.guid(),
+                            id: Utils.guid(),
                             name: groupName,
                             monsters: []
                         };
@@ -584,7 +584,7 @@ export default class Dojo extends React.Component<Props, State> {
             }
         });
 
-        utils.sort(this.state.library);
+        Utils.sort(this.state.library);
 
         this.setState({
             view: "library",
@@ -606,7 +606,7 @@ export default class Dojo extends React.Component<Props, State> {
         }
 
         return {
-            id: utils.guid(),
+            id: Utils.guid(),
             type: type,
             name: name,
             usage: usage,
@@ -621,7 +621,7 @@ export default class Dojo extends React.Component<Props, State> {
         var encounter = Factory.createEncounter();
         encounter.name = 'new encounter';
         var encounters = ([] as Encounter[]).concat(this.state.encounters, [encounter]);
-        utils.sort(encounters);
+        Utils.sort(encounters);
 
         this.setState({
             encounters: encounters,
@@ -730,7 +730,7 @@ export default class Dojo extends React.Component<Props, State> {
         var folio = Factory.createMapFolio();
         folio.name = 'new folio';
         var folios = ([] as MapFolio[]).concat(this.state.mapFolios, [folio]);
-        utils.sort(folios);
+        Utils.sort(folios);
 
         this.setState({
             mapFolios: folios,
@@ -811,7 +811,7 @@ export default class Dojo extends React.Component<Props, State> {
         setup.partyID = party ? party.id : null;
         setup.encounterID = encounter ? encounter.id : null;
         if (encounter) {
-            setup.monsterNames = utils.getMonsterNames(encounter);
+            setup.monsterNames = Utils.getMonsterNames(encounter);
         }
 
         this.setState({
@@ -855,14 +855,14 @@ export default class Dojo extends React.Component<Props, State> {
             encounter.slots.forEach(slot => {
                 var monster = this.getMonster(slot.monsterName, slot.monsterGroupName);
                 if (monster) {
-                    var init = parseInt(utils.modifier(monster.abilityScores.dex));
-                    var groupRoll = utils.dieRoll();
+                    var init = parseInt(Utils.modifier(monster.abilityScores.dex));
+                    var groupRoll = Utils.dieRoll();
 
                     for (var n = 0; n !== slot.count; ++n) {
-                        var singleRoll = utils.dieRoll();
+                        var singleRoll = Utils.dieRoll();
 
                         var combatant = JSON.parse(JSON.stringify(monster));
-                        combatant.id = utils.guid();
+                        combatant.id = Utils.guid();
 
                         combatant.displayName = null;
                         if (combatSetup.monsterNames) {
@@ -932,7 +932,7 @@ export default class Dojo extends React.Component<Props, State> {
             if (encounter) {
                 var setup = Factory.createCombatSetup();
                 setup.encounterID = combat.encounterID;
-                setup.monsterNames = utils.getMonsterNames(encounter);
+                setup.monsterNames = Utils.getMonsterNames(encounter);
 
                 this.setState({
                     modal: {
@@ -985,7 +985,7 @@ export default class Dojo extends React.Component<Props, State> {
                                 // If it's my condition, and point is START, notify the user
                                 if (combat && combatant && (actor.id === combatant.id) && (c.duration.point === "start")) {
                                     combat.notifications.push({
-                                        id: utils.guid(),
+                                        id: Utils.guid(),
                                         type: "condition-save",
                                         condition: c,
                                         combatant: combatant as Combatant & Monster
@@ -999,7 +999,7 @@ export default class Dojo extends React.Component<Props, State> {
                                     actor.conditions.splice(index, 1);
                                     // Notify the user
                                     combat.notifications.push({
-                                        id: utils.guid(),
+                                        id: Utils.guid(),
                                         type: "condition-end",
                                         condition: c,
                                         combatant: combatant as Combatant & Monster
@@ -1018,7 +1018,7 @@ export default class Dojo extends React.Component<Props, State> {
                                     if (combat) {
                                         // Notify the user
                                         combat.notifications.push({
-                                            id: utils.guid(),
+                                            id: Utils.guid(),
                                             type: "condition-end",
                                             condition: c,
                                             combatant: combatant as Combatant & Monster
@@ -1090,14 +1090,14 @@ export default class Dojo extends React.Component<Props, State> {
                 wave.slots.forEach(slot => {
                     var monster = this.getMonster(slot.monsterName, slot.monsterGroupName);
                     if (monster) {
-                        var init = parseInt(utils.modifier(monster.abilityScores.dex));
-                        var groupRoll = utils.dieRoll();
+                        var init = parseInt(Utils.modifier(monster.abilityScores.dex));
+                        var groupRoll = Utils.dieRoll();
 
                         for (var n = 0; n !== slot.count; ++n) {
-                            var singleRoll = utils.dieRoll();
+                            var singleRoll = Utils.dieRoll();
 
                             var combatant = JSON.parse(JSON.stringify(monster));
-                            combatant.id = utils.guid();
+                            combatant.id = Utils.guid();
 
                             combatant.displayName = null;
                             if (combatSetup.monsterNames) {
@@ -1172,7 +1172,7 @@ export default class Dojo extends React.Component<Props, State> {
         item.y = y;
         var size = 1;
         if (combatant.type === 'monster') {
-            size = utils.miniSize((combatant as Monster).size);
+            size = Utils.miniSize((combatant as Monster).size);
         }
         item.height = size;
         item.width = size;
@@ -1559,9 +1559,9 @@ export default class Dojo extends React.Component<Props, State> {
             }
         }
 
-        utils.sort(this.state.parties);
-        utils.sort(this.state.library);
-        utils.sort(this.state.encounters);
+        Utils.sort(this.state.parties);
+        Utils.sort(this.state.library);
+        Utils.sort(this.state.encounters);
 
         this.setState({
             parties: this.state.parties,
@@ -1585,7 +1585,7 @@ export default class Dojo extends React.Component<Props, State> {
             if (n === tokens.length - 1) {
                 var value = null;
                 if (token === "challenge") {
-                    value = utils.nudgeChallenge(obj.challenge, delta);
+                    value = Utils.nudgeChallenge(obj.challenge, delta);
                 } else {
                     value = obj[token] + delta;
                 }
@@ -1734,7 +1734,7 @@ export default class Dojo extends React.Component<Props, State> {
                             var xp = 0;
                             combat.combatants.filter(c => c.type === "monster")
                                 .forEach(combatant => {
-                                    xp += utils.experience((combatant as Combatant & Monster).challenge);
+                                    xp += Utils.experience((combatant as Combatant & Monster).challenge);
                                 });
 
                             actions = (

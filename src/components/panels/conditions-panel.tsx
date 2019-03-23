@@ -1,6 +1,6 @@
 import React from 'react';
 
-import * as utils from '../../utils';
+import Utils from '../../utils';
 
 import { Combatant, Condition, Combat } from '../../models/models';
 
@@ -68,7 +68,7 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
             }
 
             if (this.props.condition.duration !== null) {
-                name += " " + utils.conditionDurationText(this.props.condition, this.props.combat);
+                name += " " + Utils.conditionDurationText(this.props.condition, this.props.combat);
             }
 
             var description = [];
@@ -84,7 +84,7 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
                     </div>
                 );
             }
-            var text = utils.conditionText(this.props.condition);
+            var text = Utils.conditionText(this.props.condition);
             for (var n = 0; n !== text.length; ++n) {
                 description.push(<div key={n} className="section">{text[n]}</div>);
             }

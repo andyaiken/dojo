@@ -1,6 +1,6 @@
 import React from 'react';
 
-import * as utils from '../../utils';
+import Utils from '../../utils';
 
 import { CombatSetup, Encounter, Party, MapFolio, Monster, EncounterWave, EncounterSlot } from '../../models/models';
 
@@ -50,7 +50,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
         var enc = this.props.encounters.find(enc => enc.id === encounterID);
         if (enc) {
             // eslint-disable-next-line
-            this.state.combatSetup.monsterNames = utils.getMonsterNames(enc);
+            this.state.combatSetup.monsterNames = Utils.getMonsterNames(enc);
         }
         this.setState({
             combatSetup: this.state.combatSetup
@@ -93,7 +93,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
             var wave = enc.waves.find(w => w.id === waveID);
             if (wave) {
                 // eslint-disable-next-line
-                this.state.combatSetup.monsterNames = utils.getMonsterNames(wave);
+                this.state.combatSetup.monsterNames = Utils.getMonsterNames(wave);
             }
         }
         this.setState({

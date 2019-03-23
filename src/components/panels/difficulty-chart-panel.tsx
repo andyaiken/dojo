@@ -1,6 +1,6 @@
 import React from 'react';
 
-import * as utils from '../../utils';
+import Utils from '../../utils';
 
 import { Party, Monster, Encounter, EncounterSlot } from '../../models/models';
 
@@ -23,11 +23,11 @@ export default class DifficultyChartPanel extends React.Component<Props> {
             monsterCount += slot.count;
             var monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
             if (monster) {
-                monsterXp += utils.experience(monster.challenge) * slot.count;
+                monsterXp += Utils.experience(monster.challenge) * slot.count;
             }
         });
 
-        var adjustedXp = monsterXp * utils.experienceFactor(monsterCount);
+        var adjustedXp = monsterXp * Utils.experienceFactor(monsterCount);
 
         var xpThresholds;
         var diffSection;
@@ -39,10 +39,10 @@ export default class DifficultyChartPanel extends React.Component<Props> {
     
             var pcs = this.props.party.pcs.filter(pc => pc.active);
             pcs.forEach(pc => {
-                xpEasy += utils.pcExperience(pc.level, "easy");
-                xpMedium += utils.pcExperience(pc.level, "medium");
-                xpHard += utils.pcExperience(pc.level, "hard");
-                xpDeadly += utils.pcExperience(pc.level, "deadly");
+                xpEasy += Utils.pcExperience(pc.level, "easy");
+                xpMedium += Utils.pcExperience(pc.level, "medium");
+                xpHard += Utils.pcExperience(pc.level, "hard");
+                xpDeadly += Utils.pcExperience(pc.level, "deadly");
             });
         
             var difficulty = null;

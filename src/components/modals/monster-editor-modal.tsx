@@ -1,7 +1,7 @@
 import React from 'react';
 
-import * as utils from '../../utils';
-import Factory from '../../models/factory';
+import Utils from '../../utils';
+import Factory from '../../factory';
 
 import { TRAIT_TYPES, CATEGORY_TYPES, SIZE_TYPES, Monster, MonsterGroup, Trait } from '../../models/models';
 
@@ -269,7 +269,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     }
 
     getActionTypeName(type: string, plural: boolean) {
-        var name = utils.traitType(type);
+        var name = Utils.traitType(type);
         if (plural) {
             name += "s";
         }
@@ -278,7 +278,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
     copyTrait(trait: Trait) {
         var copy = JSON.parse(JSON.stringify(trait));
-        copy.id = utils.guid();
+        copy.id = Utils.guid();
         this.state.monster.traits.push(copy);
         this.setState({
             monster: this.state.monster
@@ -306,7 +306,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
         var newValue = null;
         if (field === "challenge") {
-            newValue = utils.nudgeChallenge(value, delta);
+            newValue = Utils.nudgeChallenge(value, delta);
         } else {
             newValue = (value ? value : 0) + delta;
         }
@@ -322,7 +322,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 source[token] = value;
 
                 if ((field === "abilityScores.con") || (field === "size") || (field === "hitDice")) {
-                    var sides = utils.hitDieType(this.state.monster.size);
+                    var sides = Utils.hitDieType(this.state.monster.size);
                     var conMod = Math.floor((this.state.monster.abilityScores.con - 10) / 2)
                     var hpPerDie = ((sides + 1) / 2) + conMod;
                     var hp = Math.floor(this.state.monster.hitDice * hpPerDie);
@@ -444,10 +444,10 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
         switch (dataType) {
             case "number":
-                utils.sortByValue(distinct);
+                Utils.sortByValue(distinct);
                 break;
             case "text":
-                utils.sortByCount(distinct);
+                Utils.sortByCount(distinct);
                 break;
             default:
                 // Do nothing
@@ -596,7 +596,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         changeValue={value => this.toggleMatch("alignment")}
                     />
                     <Checkbox
-                        label={"challenge rating " + utils.challenge(this.state.monster.challenge)}
+                        label={"challenge rating " + Utils.challenge(this.state.monster.challenge)}
                         checked={this.state.filter.challenge}
                         changeValue={value => this.toggleMatch("challenge")}
                     />
@@ -630,7 +630,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     }
 
     getMonsterCards(monsters: Monster[]) {
-        var sorted = utils.sort(monsters);
+        var sorted = Utils.sort(monsters);
         var monsterCards = sorted.map(m => (
             <div className="section" key={m.id}>
                 <MonsterCard
@@ -705,7 +705,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                 <Spin
                                     source={this.state.monster}
                                     name="challenge"
-                                    display={value => utils.challenge(value)}
+                                    display={value => Utils.challenge(value)}
                                     nudgeValue={delta => this.nudgeValue("challenge", delta)}
                                 />
                                 <div className="subheading">speed</div>
@@ -754,7 +754,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                 <Spin
                                     source={this.state.monster}
                                     name="hitDice"
-                                    display={value => value + "d" + utils.hitDieType(this.state.monster.size)}
+                                    display={value => value + "d" + Utils.hitDieType(this.state.monster.size)}
                                     nudgeValue={delta => this.nudgeValue("hitDice", delta)}
                                 />
                                 <div className="subheading">hit points</div>

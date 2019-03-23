@@ -1,6 +1,7 @@
 import React from 'react';
 
-import * as utils from '../../utils';
+import Utils from '../../utils';
+
 import { CATEGORY_TYPES, SIZE_TYPES, MonsterGroup, Monster } from '../../models/models';
 
 import Selector from '../controls/selector';
@@ -44,7 +45,7 @@ export default class DemographicsModal extends React.Component<Props, State> {
                         challenges.forEach(cr => {
                             buckets.push({
                                 value: cr,
-                                title: "challenge " + utils.challenge(cr)
+                                title: "challenge " + Utils.challenge(cr)
                             })
                         });
 

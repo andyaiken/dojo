@@ -1,6 +1,6 @@
 import React from 'react';
 
-import * as utils from '../../utils';
+import Utils from '../../utils';
 
 import { Monster, Combatant, EncounterSlot, Combat, Trait, EncounterWave, MonsterGroup, Condition, Encounter } from '../../models/models';
 
@@ -168,7 +168,7 @@ export default class MonsterCard extends React.Component<Props, State> {
             align = this.props.combatant.alignment.toLowerCase() + ", ";
         }
 
-        var cr = "cr " + utils.challenge(this.props.combatant.challenge);
+        var cr = "cr " + Utils.challenge(this.props.combatant.challenge);
 
         return sizeAndType + align + cr;
     }
@@ -354,7 +354,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                                 <b>ac</b> {this.props.combatant.ac}
                             </div>
                             <div className="section" style={{ display: this.props.combatant.hpMax !== 0 ? "" : "none" }}>
-                                <b>hp</b> {this.props.combatant.hitDice !== 0 ? this.props.combatant.hpMax + " (" + this.props.combatant.hitDice + "d" + utils.hitDieType(this.props.combatant.size) + ")" : this.props.combatant.hpMax}
+                                <b>hp</b> {this.props.combatant.hitDice !== 0 ? this.props.combatant.hpMax + " (" + this.props.combatant.hitDice + "d" + Utils.hitDieType(this.props.combatant.size) + ")" : this.props.combatant.hpMax}
                             </div>
                             <div className="section" style={{ display: this.props.combatant.speed !== "" ? "" : "none" }}>
                                 <b>speed</b> {this.props.combatant.speed}
@@ -537,7 +537,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                                 <b>ac</b> {this.props.combatant.ac}
                             </div>
                             <div className="section">
-                                <b>hp</b> {this.props.combatant.hitDice !== 0 ? this.props.combatant.hpMax + " (" + this.props.combatant.hitDice + "d" + utils.hitDieType(this.props.combatant.size) + ")" : this.props.combatant.hpMax}
+                                <b>hp</b> {this.props.combatant.hitDice !== 0 ? this.props.combatant.hpMax + " (" + this.props.combatant.hitDice + "d" + Utils.hitDieType(this.props.combatant.size) + ")" : this.props.combatant.hpMax}
                             </div>
                             <div className="section">
                                 <b>damage immunity</b> {this.props.combatant.damage.immune || "-"}

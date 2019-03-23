@@ -1,6 +1,6 @@
 import React from 'react';
 
-import * as utils from '../../utils';
+import Utils from '../../utils';
 
 import { Encounter, EncounterSlot, MonsterGroup, Monster, Party, EncounterWave } from '../../models/models';
 
@@ -60,7 +60,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
         var result = false;
 
         if (this.props.selection) {
-            var group = utils.getMonsterGroup(monster, this.props.library);
+            var group = Utils.getMonsterGroup(monster, this.props.library);
 
             this.props.selection.slots.forEach(slot => {
                 if ((slot.monsterGroupName === group.name) && (slot.monsterName === monster.name)) {
@@ -82,7 +82,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
         }
 
         if (this.state.filter.name !== "") {
-            if (!utils.match(this.state.filter.name, monster.name)) {
+            if (!Utils.match(this.state.filter.name, monster.name)) {
                 return false;
             }
         }
@@ -111,7 +111,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
     }
 
     nudgeFilterValue(type: 'challengeMin' | 'challengeMax', delta: number) {
-        var value = utils.nudgeChallenge(this.state.filter[type], delta);
+        var value = Utils.nudgeChallenge(this.state.filter[type], delta);
         this.changeFilterValue(type, value);
     }
 

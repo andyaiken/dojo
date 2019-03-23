@@ -1,6 +1,6 @@
 import React from 'react';
 
-import * as utils from '../../utils';
+import Utils from '../../utils';
 
 import { Combat, Combatant, Monster, PC, Notification, Condition, ConditionDurationSaves } from '../../models/models';
 
@@ -542,10 +542,10 @@ class CombatantRow extends React.Component<CombatantRowProps> {
                     name = c.text;
                 }
                 if (c.duration) {
-                    name += " " + utils.conditionDurationText(c, this.props.combat);
+                    name += " " + Utils.conditionDurationText(c, this.props.combat);
                 }
                 var description = [];
-                var text = utils.conditionText(c);
+                var text = Utils.conditionText(c);
                 for (var n = 0; n !== text.length; ++n) {
                     description.push(<li key={n} className="condition-text">{text[n]}</li>);
                 }

@@ -1,7 +1,7 @@
 import React from 'react';
 
-import * as utils from '../../utils';
-import Factory from '../../models/factory';
+import Utils from '../../utils';
+import Factory from '../../factory';
 
 import { Map, MapItem } from '../../models/models';
 
@@ -146,7 +146,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
 
     cloneMapItem(item: MapItem) {
         var copy = JSON.parse(JSON.stringify(item));
-        copy.id = utils.guid();
+        copy.id = Utils.guid();
         copy.x += 1;
         copy.y += 1;
         this.state.map.items.push(copy);

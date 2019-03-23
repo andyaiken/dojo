@@ -1,6 +1,7 @@
 import React from 'react';
 
-import * as utils from '../../utils';
+import Utils from '../../utils';
+
 import { CATEGORY_TYPES, SIZE_TYPES } from '../../models/models';
 
 import Spin from '../controls/spin';
@@ -58,14 +59,14 @@ export default class FilterCard extends React.Component<Props, State> {
                             source={this.props.filter}
                             name="challengeMin"
                             label="min cr"
-                            display={value => utils.challenge(value)}
+                            display={value => Utils.challenge(value)}
                             nudgeValue={delta => this.props.nudgeValue("challengeMin", delta)}
                         />
                         <Spin
                             source={this.props.filter}
                             name="challengeMax"
                             label="max cr"
-                            display={value => utils.challenge(value)}
+                            display={value => Utils.challenge(value)}
                             nudgeValue={delta => this.props.nudgeValue("challengeMax", delta)}
                         />
                         <Dropdown
@@ -94,7 +95,7 @@ export default class FilterCard extends React.Component<Props, State> {
                 if (this.props.filter.category !== "all types") {
                     summary += summary ? " " + this.props.filter.category : this.props.filter.category;
                 }
-                summary += " monsters of cr " + utils.challenge(this.props.filter.challengeMin) + " to " + utils.challenge(this.props.filter.challengeMax);
+                summary += " monsters of cr " + Utils.challenge(this.props.filter.challengeMin) + " to " + Utils.challenge(this.props.filter.challengeMax);
 
                 content = (
                     <div>

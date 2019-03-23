@@ -1,6 +1,6 @@
 import React from 'react';
 
-import * as utils from '../../utils';
+import Utils from '../../utils';
 
 import { Trait, Monster } from '../../models/models';
 
@@ -148,7 +148,7 @@ interface TraitPanelProps {
 class TraitPanel extends React.Component<TraitPanelProps> {
     render() {
         try {
-            var heading = this.props.trait.name || "unnamed " + utils.traitType(this.props.trait.type);
+            var heading = this.props.trait.name || "unnamed " + Utils.traitType(this.props.trait.type);
             if (this.props.trait.usage) {
                 heading += " (" + this.props.trait.usage + ")";
             }
@@ -173,7 +173,7 @@ class TraitPanel extends React.Component<TraitPanelProps> {
         
                     return (
                         <Expander
-                            text={this.props.trait.name || "unnamed " + utils.traitType(this.props.trait.type)}
+                            text={this.props.trait.name || "unnamed " + Utils.traitType(this.props.trait.type)}
                             content={details}
                         />
                     );

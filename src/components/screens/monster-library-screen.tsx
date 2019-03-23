@@ -1,6 +1,6 @@
 import React from 'react';
 
-import * as utils from '../../utils';
+import Utils from '../../utils';
 
 import { MonsterGroup, Monster } from '../../models/models';
 
@@ -31,11 +31,11 @@ interface Props {
 
 export default class MonsterLibraryScreen extends React.Component<Props> {
     showMonsterGroup(group: MonsterGroup) {
-        var result = utils.match(this.props.filter, group.name);
+        var result = Utils.match(this.props.filter, group.name);
 
         if (!result) {
             group.monsters.forEach(monster => {
-                result = utils.match(this.props.filter, monster.name) || result;
+                result = Utils.match(this.props.filter, monster.name) || result;
             });
         }
 
@@ -84,7 +84,7 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                 );
 
                 var monsters = this.props.selection.monsters.filter(monster => {
-                    return utils.match(this.props.filter, monster.name);
+                    return Utils.match(this.props.filter, monster.name);
                 });
 
                 if (monsters.length !== 0) {

@@ -24,7 +24,7 @@ The page should automatically reload if you make edits. If there are errors, you
 * Open a terminal in the root folder
 * Run `npm run deploy`
 
-This will build the app in the `build` folder and attempt to deploy it.
+This will build the app in the `build` folder and attempt to deploy it. You need to have git installed.
 
 ## Code structure
 

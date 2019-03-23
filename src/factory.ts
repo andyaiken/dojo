@@ -1,4 +1,4 @@
-import * as utils from '../utils';
+import Utils from './utils';
 
 import {
     Party, PC,
@@ -6,13 +6,13 @@ import {
     Encounter, EncounterSlot, EncounterWave,
     MapFolio, Map, MapItem,
     CombatSetup, Combat, Notification, Condition, ConditionDurationSaves, ConditionDurationCombatant, ConditionDurationRounds
-} from './models';
+} from './models/models';
 
 export default class Factory {
 
     public static createParty(): Party {
         return {
-            id: utils.guid(),
+            id: Utils.guid(),
             name: "",
             pcs: []
         };
@@ -20,7 +20,7 @@ export default class Factory {
 
     public static createPC(): PC {
         return {
-            id: utils.guid(),
+            id: Utils.guid(),
             type: "pc",
             active: true,
             player: "",
@@ -40,7 +40,7 @@ export default class Factory {
 
     public static createMonsterGroup(): MonsterGroup {
         return {
-            id: utils.guid(),
+            id: Utils.guid(),
             name: "",
             monsters: []
         };
@@ -48,7 +48,7 @@ export default class Factory {
 
     public static createMonster(): Monster {
         return {
-            id: utils.guid(),
+            id: Utils.guid(),
             type: "monster",
             name: "",
             size: "medium",
@@ -86,7 +86,7 @@ export default class Factory {
 
     public static createTrait(): Trait {
         return {
-            id: utils.guid(),
+            id: Utils.guid(),
             name: "",
             usage: "",
             type: "action",
@@ -96,7 +96,7 @@ export default class Factory {
 
     public static createEncounter(): Encounter {
         return {
-            id: utils.guid(),
+            id: Utils.guid(),
             name: "",
             slots: [],
             waves: []
@@ -105,7 +105,7 @@ export default class Factory {
 
     public static createEncounterSlot(): EncounterSlot {
         return {
-            id: utils.guid(),
+            id: Utils.guid(),
             monsterGroupName: "",
             monsterName: "",
             count: 1
@@ -114,7 +114,7 @@ export default class Factory {
 
     public static createEncounterWave(): EncounterWave {
         return {
-            id: utils.guid(),
+            id: Utils.guid(),
             name: "",
             slots: []
         };
@@ -122,7 +122,7 @@ export default class Factory {
 
     public static createMapFolio(): MapFolio {
         return {
-            id: utils.guid(),
+            id: Utils.guid(),
             name: "",
             maps: []
         };
@@ -130,7 +130,7 @@ export default class Factory {
 
     public static createMap(): Map {
         return {
-            id: utils.guid(),
+            id: Utils.guid(),
             name: "",
             items: []
         };
@@ -138,7 +138,7 @@ export default class Factory {
 
     public static createMapItem(): MapItem {
         return {
-            id: utils.guid(),
+            id: Utils.guid(),
             type: "tile",
             x: 0,
             y: 0,
@@ -162,7 +162,7 @@ export default class Factory {
 
     public static createCombat(): Combat {
         return {
-            id: utils.guid(),
+            id: Utils.guid(),
             name: "",
             encounterID: null,
             combatants: [],
@@ -176,7 +176,7 @@ export default class Factory {
 
     public static createNotification(): Notification {
         return {
-            id: utils.guid(),
+            id: Utils.guid(),
             type: 'condition-save',
             condition: null,
             combatant: null
@@ -185,7 +185,7 @@ export default class Factory {
 
     public static createCondition(): Condition {
         return {
-            id: utils.guid(),
+            id: Utils.guid(),
             name: "",
             level: 1,
             text: null,

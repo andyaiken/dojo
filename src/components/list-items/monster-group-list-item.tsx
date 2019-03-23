@@ -1,6 +1,6 @@
 import React from 'react';
 
-import * as utils from '../../utils';
+import Utils from '../../utils';
 
 import { MonsterGroup } from '../../models/models';
 
@@ -14,12 +14,12 @@ interface Props {
 export default class MonsterGroupListItem extends React.Component<Props> {
     render() {
         try {
-            var matchGroup = utils.match(this.props.filter, this.props.group.name);
+            var matchGroup = Utils.match(this.props.filter, this.props.group.name);
 
             var monsters = [];
             for (var n = 0; n !== this.props.group.monsters.length; ++n) {
                 var monster = this.props.group.monsters[n];
-                var matchMonster = utils.match(this.props.filter, monster.name);
+                var matchMonster = Utils.match(this.props.filter, monster.name);
                 if (matchGroup || matchMonster) {
                     var name = monster.name;
                     if (!name) {

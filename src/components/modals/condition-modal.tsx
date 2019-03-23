@@ -1,7 +1,7 @@
 import React from 'react';
 
-import * as utils from '../../utils';
-import Factory from '../../models/factory';
+import Utils from '../../utils';
+import Factory from '../../factory';
 
 import { CONDITION_TYPES, Condition, Monster, Combatant, Combat, ConditionDurationSaves, ConditionDurationCombatant } from '../../models/models';
 
@@ -115,7 +115,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                             />
                         );
                     }
-                    var text = utils.conditionText(this.state.condition);
+                    var text = Utils.conditionText(this.state.condition);
                     for (var n = 0; n !== text.length; ++n) {
                         description.push(<li key={n} className="section">{text[n]}</li>);
                     }
