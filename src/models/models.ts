@@ -161,7 +161,26 @@ export interface Condition {
     name: string;
     level: number;
     text: string | null;
-    duration: any | null; // TODO
+    duration: ConditionDurationSaves | ConditionDurationCombatant | ConditionDurationRounds | null;
+}
+
+export interface ConditionDurationSaves {
+    type: 'saves';
+    count: number;
+    saveType: string; // TODO
+    saveDC: number;
+    point: 'start' | 'end';
+}
+
+export interface ConditionDurationCombatant {
+    type: 'combatant';
+    point: 'start' | 'end';
+    combatantID: string | null;
+}
+
+export interface ConditionDurationRounds {
+    type: 'rounds';
+    count: number;
 }
 
 export const SIZE_TYPES = [

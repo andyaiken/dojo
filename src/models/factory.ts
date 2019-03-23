@@ -1,6 +1,12 @@
 import * as utils from '../utils';
 
-import { Party, PC, MonsterGroup, Monster, Trait, Encounter, EncounterSlot, EncounterWave, MapFolio, Map, MapItem, CombatSetup, Combat, Notification, Condition } from './models';
+import {
+    Party, PC,
+    MonsterGroup, Monster, Trait,
+    Encounter, EncounterSlot, EncounterWave,
+    MapFolio, Map, MapItem,
+    CombatSetup, Combat, Notification, Condition, ConditionDurationSaves, ConditionDurationCombatant, ConditionDurationRounds
+} from './models';
 
 export function createParty(): Party {
     return {
@@ -182,5 +188,30 @@ export function createCondition(): Condition {
         level: 1,
         text: null,
         duration: null
-    }
+    };
+}
+
+export function createConditionDurationSaves(): ConditionDurationSaves {
+    return {
+        type: 'saves',
+        count: 1,
+        saveType: 'str',
+        saveDC: 10,
+        point: 'start'
+    };
+}
+
+export function createConditionDurationCombatant(): ConditionDurationCombatant {
+    return {
+        type: 'combatant',
+        point: 'start',
+        combatantID: null
+    };
+}
+
+export function createConditionDurationRounds(): ConditionDurationRounds {
+    return {
+        type: 'rounds',
+        count: 1
+    };
 }

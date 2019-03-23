@@ -1,4 +1,4 @@
-﻿import { Monster, MonsterGroup, Combat, Encounter, Condition, EncounterWave } from "./models/models";
+﻿import { Monster, MonsterGroup, Combat, Encounter, Condition, EncounterWave, ConditionDurationSaves, ConditionDurationCombatant, ConditionDurationRounds } from "./models/models";
 
 // This is an internal dictionary to speed up lookup
 var monsterIdToGroup: { [id: string]: MonsterGroup } = {}
@@ -552,20 +552,23 @@ export function conditionDurationText(condition: Condition, combat: Combat) {
     if (condition.duration !== null) {
         switch (condition.duration.type) {
             case "saves":
-                var saveType = condition.duration.saveType;
+                var saveDuration = condition.duration as ConditionDurationSaves;
+                var saveType = saveDuration.saveType;
                 if (saveType !== "death") {
                     saveType = saveType.toUpperCase();
                 }
-                var saves = condition.duration.count > 1 ? "saves" : "save";
-                return "until you make " + condition.duration.count + " " + saveType + " " + saves + " at dc " + condition.duration.saveDC;
+                var saves = saveDuration.count > 1 ? "saves" : "save";
+                return "until you make " + saveDuration.count + " " + saveType + " " + saves + " at dc " + saveDuration.saveDC;
             case "combatant":
-                var point = condition.duration.point;
-                var c = combat.combatants.find(c => c.id == condition.duration.combatantID);
+                var combatantDuration = condition.duration as ConditionDurationCombatant;
+                var point = combatantDuration.point;
+                var c = combat.combatants.find(c => c.id == combatantDuration.combatantID);
                 var combatant = c ? (c.displayName || c.name || "unnamed monster") + "'s" : "someone's";
                 return "until the " + point + " of " + combatant + " next turn";
             case "rounds":
-                var rounds = condition.duration.count > 1 ? "rounds" : "round";
-                return "for " + condition.duration.count + " " + rounds;
+                var roundsDuration = condition.duration as ConditionDurationRounds;
+                var rounds = roundsDuration.count > 1 ? "rounds" : "round";
+                return "for " + roundsDuration.count + " " + rounds;
             default:
                 return null;
         }

@@ -978,43 +978,25 @@ export default class Dojo extends React.Component<Props, State> {
         if (combat) {
             // Handle start-of-turn conditions
             combat.combatants.filter(actor => actor.conditions).forEach(actor => {
-                actor.conditions.filter(c => c.duration !== null).forEach(c => {
-                    switch (c.duration.type) {
-                        case "saves":
-                            // If it's my condition, and point is START, notify the user
-                            if (combat && combatant && (actor.id === combatant.id) && (c.duration.point === "start")) {
-                                combat.notifications.push({
-                                    id: utils.guid(),
-                                    type: "condition-save",
-                                    condition: c,
-                                    combatant: combatant as Combatant & Monster
-                                });
-                            }
-                            break;
-                        case "combatant":
-                            // If this refers to me, and point is START, remove it
-                            if (combat && combatant && (c.duration.combatantID === combatant.id) && (c.duration.point === "start")) {
-                                var index = actor.conditions.indexOf(c);
-                                actor.conditions.splice(index, 1);
-                                // Notify the user
-                                combat.notifications.push({
-                                    id: utils.guid(),
-                                    type: "condition-end",
-                                    condition: c,
-                                    combatant: combatant as Combatant & Monster
-                                });
-                            }
-                            break;
-                        case "rounds":
-                            // If it's my condition, decrement the condition
-                            if (combatant && (actor.id === combatant.id)) {
-                                c.duration.count -= 1;
-                            }
-                            // If it's now at 0, remove it
-                            if (c.duration.count === 0) {
-                                var n = actor.conditions.indexOf(c);
-                                actor.conditions.splice(n, 1);
-                                if (combat) {
+                actor.conditions.forEach(c => {
+                    if (c.duration) {
+                        switch (c.duration.type) {
+                            case "saves":
+                                // If it's my condition, and point is START, notify the user
+                                if (combat && combatant && (actor.id === combatant.id) && (c.duration.point === "start")) {
+                                    combat.notifications.push({
+                                        id: utils.guid(),
+                                        type: "condition-save",
+                                        condition: c,
+                                        combatant: combatant as Combatant & Monster
+                                    });
+                                }
+                                break;
+                            case "combatant":
+                                // If this refers to me, and point is START, remove it
+                                if (combat && combatant && (c.duration.combatantID === combatant.id) && (c.duration.point === "start")) {
+                                    var index = actor.conditions.indexOf(c);
+                                    actor.conditions.splice(index, 1);
                                     // Notify the user
                                     combat.notifications.push({
                                         id: utils.guid(),
@@ -1023,11 +1005,31 @@ export default class Dojo extends React.Component<Props, State> {
                                         combatant: combatant as Combatant & Monster
                                     });
                                 }
-                            }
-                            break;
-                        default:
-                            // Do nothing
-                            break;
+                                break;
+                            case "rounds":
+                                // If it's my condition, decrement the condition
+                                if (combatant && (actor.id === combatant.id)) {
+                                    c.duration.count -= 1;
+                                }
+                                // If it's now at 0, remove it
+                                if (c.duration.count === 0) {
+                                    var n = actor.conditions.indexOf(c);
+                                    actor.conditions.splice(n, 1);
+                                    if (combat) {
+                                        // Notify the user
+                                        combat.notifications.push({
+                                            id: utils.guid(),
+                                            type: "condition-end",
+                                            condition: c,
+                                            combatant: combatant as Combatant & Monster
+                                        });
+                                    }
+                                }
+                                break;
+                            default:
+                                // Do nothing
+                                break;
+                        }
                     }
                 });
             });
@@ -1251,8 +1253,8 @@ export default class Dojo extends React.Component<Props, State> {
         if (combat) {
             // Handle end-of-turn conditions
             combat.combatants.filter(actor => actor.conditions).forEach(actor => {
-                actor.conditions.filter(c => c.duration !== null)
-                    .forEach(c => {
+                actor.conditions.forEach(c => {
+                    if (c.duration) {
                         switch (c.duration.type) {
                             case "saves":
                                 // If it's my condition, and point is END, notify the user
@@ -1284,7 +1286,8 @@ export default class Dojo extends React.Component<Props, State> {
                                 // Do nothing
                                 break;
                         }
-                    });
+                    }
+                });
             });
 
             var active = combat.combatants.filter(combatant => {

@@ -2,7 +2,7 @@ import React from 'react';
 
 import * as utils from '../../utils';
 
-import { Combat, Combatant, Monster, PC, Notification, Condition } from '../../models/models';
+import { Combat, Combatant, Monster, PC, Notification, Condition, ConditionDurationSaves } from '../../models/models';
 
 import PCCard from '../cards/pc-card';
 import MonsterCard from '../cards/monster-card';
@@ -372,12 +372,16 @@ class NotificationPanel extends React.Component<NotificationProps> {
     saveSuccess(notification: Notification) {
         // Reduce save by 1
         var condition = this.props.notification.condition as Condition;
-        condition.duration.count -= 1;
-        if (condition.duration.count === 0) {
-            // Remove the condition
-            this.close(notification, true);
-        } else {
-            this.close(notification);
+        if (condition && condition.duration) {
+            if ((condition.duration.type === 'saves') || (condition.duration.type === 'rounds')) {
+                condition.duration.count -= 1;
+                if (condition.duration.count === 0) {
+                    // Remove the condition
+                    this.close(notification, true);
+                } else {
+                    this.close(notification);
+                }
+            }
         }
     }
 
@@ -392,10 +396,11 @@ class NotificationPanel extends React.Component<NotificationProps> {
         var name = combatant.displayName || combatant.name || "unnamed monster";
         switch (this.props.notification.type) {
             case "condition-save":
+                var duration = condition.duration as ConditionDurationSaves;
                 return (
                     <div key={this.props.notification.id} className="notification">
                         <div className="text">
-                            {name} must make a {condition.duration.saveType} save against dc {condition.duration.saveDC}
+                            {name} must make a {duration.saveType} save against dc {duration.saveDC}
                         </div>
                         <div className="buttons">
                             <button onClick={() => this.saveSuccess(this.props.notification)}>success</button>

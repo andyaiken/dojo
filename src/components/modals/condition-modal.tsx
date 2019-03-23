@@ -1,7 +1,9 @@
 import React from 'react';
 
 import * as utils from '../../utils';
-import { CONDITION_TYPES, Condition, Monster, Combatant, Combat } from '../../models/models';
+import * as factory from '../../models/factory';
+
+import { CONDITION_TYPES, Condition, Monster, Combatant, Combat, ConditionDurationSaves, ConditionDurationCombatant } from '../../models/models';
 
 import Spin from '../controls/spin';
 import Selector from '../controls/selector';
@@ -44,26 +46,13 @@ export default class ConditionModal extends React.Component<Props, State> {
 
         switch (durationType) {
             case "saves":
-                duration = {
-                    type: "saves",
-                    count: 1,
-                    saveType: "str",
-                    saveDC: 10,
-                    point: "start"
-                };
+                duration = factory.createConditionDurationSaves();
                 break;
             case "combatant":
-                duration = {
-                    type: "combatant",
-                    point: "start",
-                    combatantID: null
-                };
+                duration = factory.createConditionDurationCombatant();
                 break;
             case "rounds":
-                duration = {
-                    type: "rounds",
-                    count: 1
-                };
+                duration = factory.createConditionDurationRounds();
                 break;
             default:
                 // Do nothing
@@ -194,7 +183,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                                 <div className="subheading">type of save</div>
                                 <Selector
                                     options={saveOptions}
-                                    selectedID={this.props.condition.duration ? this.props.condition.duration.saveType : null}
+                                    selectedID={(this.props.condition.duration as ConditionDurationSaves).saveType}
                                     select={optionID => this.changeValue(this.props.condition.duration, "saveType", optionID)}
                                 />
                             </div>
@@ -202,7 +191,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                                 <div className="subheading">make the save at the start or end of the turn</div>
                                 <Selector
                                     options={pointOptions}
-                                    selectedID={this.props.condition.duration ? this.props.condition.duration.point : null}
+                                    selectedID={(this.props.condition.duration as ConditionDurationSaves).point}
                                     select={optionID => this.changeValue(this.props.condition.duration, "point", optionID)}
                                 />
                             </div>
@@ -218,7 +207,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                                 <div className="subheading">combatant</div>
                                 <Dropdown
                                     options={combatantOptions}
-                                    selectedID={this.props.condition.duration ? this.props.condition.duration.combatantID : null}
+                                    selectedID={(this.props.condition.duration as ConditionDurationCombatant).combatantID || undefined}
                                     select={optionID => this.changeValue(this.props.condition.duration, "combatantID", optionID)}
                                 />
                             </div>
@@ -226,7 +215,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                                 <div className="subheading">start or end of the turn</div>
                                 <Selector
                                     options={pointOptions}
-                                    selectedID={this.props.condition.duration ? this.props.condition.duration.point : null}
+                                    selectedID={(this.props.condition.duration as ConditionDurationCombatant).point}
                                     select={optionID => this.changeValue(this.props.condition.duration, "point", optionID)}
                                 />
                             </div>
