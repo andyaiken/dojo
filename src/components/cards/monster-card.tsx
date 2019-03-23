@@ -558,7 +558,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                     stats = (
                         <TraitsPanel
                             combatant={this.props.combatant}
-                            template={true}
+                            mode='template'
                             copyTrait={trait => this.props.copyTrait(trait)}
                         />
                     );

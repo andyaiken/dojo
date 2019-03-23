@@ -235,7 +235,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         });
     }
 
-    addTrait(type: string) {
+    addTrait(type: 'trait' | 'action' | 'legendary' | 'lair' | 'regional') {
         var trait = factory.createTrait();
         trait.type = type;
         trait.name = "New " + this.getActionTypeName(type, false).toLowerCase();
@@ -777,7 +777,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                     content = (
                         <TraitsPanel
                             combatant={this.state.monster}
-                            edit={true}
+                            mode='edit'
                             addTrait={type => this.addTrait(type)}
                             removeTrait={trait => this.removeTrait(trait)}
                             changeTrait={(trait, type, value) => this.changeTrait(trait, type, value)}

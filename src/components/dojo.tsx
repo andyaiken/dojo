@@ -592,7 +592,7 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
-    buildTrait(rawTrait: any, type: string): Trait {
+    buildTrait(rawTrait: any, type: 'trait' | 'action' | 'legendary' | 'lair' | 'regional'): Trait {
         var name = "";
         var usage = "";
 

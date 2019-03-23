@@ -9,9 +9,8 @@ import Expander from '../controls/expander';
 
 interface Props {
     combatant: Monster;
-    edit: boolean;
-    template: boolean; // TODO: Replace edit and template with mode 'normal' / 'edit' / 'template'
-    addTrait: (traitType: string) => void;
+    mode: 'view' | 'edit' | 'template';
+    addTrait: (traitType: 'trait' | 'action' | 'legendary' | 'lair' | 'regional') => void;
     copyTrait: (trait: Trait) => void;
     removeTrait: (trait: Trait) => void;
     changeTrait: (trait: Trait, field: 'name' | 'usage' | 'text', value: string) => void;
@@ -19,8 +18,7 @@ interface Props {
 
 export default class TraitsPanel extends React.Component<Props> {
     public static defaultProps = {
-        edit: false,
-        template: false,
+        mode: 'view',
         addTrait: null,
         copyTrait: null,
         removeTrait: null,
@@ -41,8 +39,7 @@ export default class TraitsPanel extends React.Component<Props> {
                     <TraitPanel
                         key={action.id}
                         trait={action}
-                        edit={this.props.edit}
-                        template={this.props.template}
+                        mode={this.props.mode}
                         changeTrait={(action, type, value) => this.props.changeTrait(action, type, value)}
                         removeTrait={action => this.props.removeTrait(action)}
                         copyTrait={action => this.props.copyTrait(action)}
@@ -71,7 +68,7 @@ export default class TraitsPanel extends React.Component<Props> {
                 }
             }
 
-            if (this.props.edit) {
+            if (this.props.mode === 'edit') {
                 traits.push(
                     <button key="add" onClick={() => this.props.addTrait("trait")}>add a new trait</button>
                 );
@@ -142,8 +139,7 @@ export default class TraitsPanel extends React.Component<Props> {
 
 interface TraitPanelProps {
     trait: Trait;
-    edit: boolean;
-    template: boolean;
+    mode: 'view' | 'edit' | 'template';
     changeTrait: (trait: Trait, field: 'name' | 'usage' | 'text', value: string) => void;
     copyTrait: (trait: Trait) => void;
     removeTrait: (trait: Trait) => void;
@@ -157,36 +153,37 @@ class TraitPanel extends React.Component<TraitPanelProps> {
                 heading += " (" + this.props.trait.usage + ")";
             }
 
-            if (this.props.edit) {
-                var details = (
-                    <div className="section">
-                        <input type="text" placeholder="name" value={this.props.trait.name} onChange={event => this.props.changeTrait(this.props.trait, "name", event.target.value)} />
-                        <input type="text" placeholder="usage" value={this.props.trait.usage} onChange={event => this.props.changeTrait(this.props.trait, "usage", event.target.value)} />
-                        <textarea placeholder="details" value={this.props.trait.text} onChange={event => this.props.changeTrait(this.props.trait, "text", event.target.value)} />
-                        <div className="divider"></div>
-                        <ConfirmButton text="delete" callback={() => this.props.removeTrait(this.props.trait)} />
-                    </div>
-                );
-    
-                return (
-                    <Expander
-                        text={this.props.trait.name || "unnamed " + utils.traitType(this.props.trait.type)}
-                        content={details}
-                    />
-                );
-            } else if (this.props.template) {
-                return (
-                    <div key={this.props.trait.id} className="section trait">
-                        <b>{heading}</b> {this.props.trait.text}
-                        <button onClick={() => this.props.copyTrait(this.props.trait)}>copy</button>
-                    </div>
-                );
-            } else {
-                return (
-                    <div key={this.props.trait.id} className="section trait">
-                        <b>{heading}</b> {this.props.trait.text}
-                    </div>
-                );
+            switch (this.props.mode) {
+                case 'view':
+                    return (
+                        <div key={this.props.trait.id} className="section trait">
+                            <b>{heading}</b> {this.props.trait.text}
+                        </div>
+                    );
+                case 'edit':
+                    var details = (
+                        <div className="section">
+                            <input type="text" placeholder="name" value={this.props.trait.name} onChange={event => this.props.changeTrait(this.props.trait, "name", event.target.value)} />
+                            <input type="text" placeholder="usage" value={this.props.trait.usage} onChange={event => this.props.changeTrait(this.props.trait, "usage", event.target.value)} />
+                            <textarea placeholder="details" value={this.props.trait.text} onChange={event => this.props.changeTrait(this.props.trait, "text", event.target.value)} />
+                            <div className="divider"></div>
+                            <ConfirmButton text="delete" callback={() => this.props.removeTrait(this.props.trait)} />
+                        </div>
+                    );
+        
+                    return (
+                        <Expander
+                            text={this.props.trait.name || "unnamed " + utils.traitType(this.props.trait.type)}
+                            content={details}
+                        />
+                    );
+                case 'template':
+                    return (
+                        <div key={this.props.trait.id} className="section trait">
+                            <b>{heading}</b> {this.props.trait.text}
+                            <button onClick={() => this.props.copyTrait(this.props.trait)}>copy</button>
+                        </div>
+                    );
             }
         } catch (e) {
             console.error(e);

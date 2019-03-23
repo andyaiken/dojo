@@ -68,7 +68,7 @@ export interface Trait {
     id: string;
     name: string;
     usage: string;
-    type: string; // TODO: Enumerate
+    type: 'trait' | 'action' | 'legendary' | 'lair' | 'regional';
     text: string;
 }
 
