@@ -33,12 +33,12 @@ export default class Expander extends React.Component<Props, State> {
 
     public render() {
         try {
-            var style = this.props.disabled ? 'expander disabled' : 'expander';
+            let style = this.props.disabled ? 'expander disabled' : 'expander';
             if (this.state.expanded) {
                 style += ' expanded';
             }
 
-            var content = null;
+            let content = null;
             if (this.state.expanded) {
                 content = (
                     <div className='expander-content'>

@@ -18,7 +18,7 @@ export default class Selector extends React.Component<Props> {
 
     public render() {
         try {
-            var style = this.props.tabs ? 'selector tabs' : 'selector radio';
+            let style = this.props.tabs ? 'selector tabs' : 'selector radio';
             if (this.props.disabled) {
                 style += ' disabled';
             }
@@ -26,7 +26,7 @@ export default class Selector extends React.Component<Props> {
             const itemsPerRow = this.props.itemsPerRow ? this.props.itemsPerRow : this.props.options.length;
             const rowCount = Math.ceil(this.props.options.length / itemsPerRow);
             const rowContents: JSX.Element[][] = [];
-            for (var n = 0; n !== rowCount; ++n) {
+            for (let n = 0; n !== rowCount; ++n) {
                 rowContents.push([]);
             }
 
@@ -81,7 +81,7 @@ class SelectorOption extends React.Component<SelectorOptionInterface> {
         try {
             const width = 'calc(((100% - 1px) / ' + this.props.count + ') - 2px )';
 
-            var style = 'option';
+            let style = 'option';
             if (this.props.selected) {
                 style += ' selected';
             }

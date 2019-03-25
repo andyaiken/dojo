@@ -15,7 +15,7 @@ export default class HitPointGauge extends React.Component<Props> {
             const hpBloodied = this.props.combatant.hpMax / 2;
             const hpWidth = 100 * Math.max(hpCurrent, 0) / hpMax;
 
-            var style = '';
+            let style = '';
             if (hpCurrent >= this.props.combatant.hpMax) {
                 style = 'bar unhurt';
             } else if (hpCurrent <= hpBloodied) {
@@ -24,7 +24,7 @@ export default class HitPointGauge extends React.Component<Props> {
                 style = 'bar injured';
             }
 
-            var hpTempBar = null;
+            let hpTempBar = null;
             if (this.props.combatant.hpTemp > 0) {
                 const hpTempWidth = 100 * Math.max(this.props.combatant.hpTemp, 0) / hpMax;
                 hpTempBar = <div className='bar temp' style={{ width: hpTempWidth + '%' }} />;

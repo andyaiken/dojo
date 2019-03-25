@@ -125,7 +125,7 @@ export default class MonsterCard extends React.Component<Props, State> {
     private heal() {
         const combatant = this.props.combatant as Combatant;
 
-        var hp = (combatant.hp ? combatant.hp : 0) + this.state.damageOrHealing;
+        let hp = (combatant.hp ? combatant.hp : 0) + this.state.damageOrHealing;
         hp = Math.min(hp, this.props.combatant.hpMax);
 
         this.setState({
@@ -138,10 +138,10 @@ export default class MonsterCard extends React.Component<Props, State> {
     private damage() {
         const combatant = this.props.combatant as Combatant;
 
-        var hp = (combatant.hp ? combatant.hp : 0);
-        var temp = this.props.combatant.hpTemp;
+        let hp = (combatant.hp ? combatant.hp : 0);
+        let temp = this.props.combatant.hpTemp;
 
-        var damage = this.state.damageOrHealing;
+        let damage = this.state.damageOrHealing;
 
         // Take damage off temp HP first
         const val = Math.min(damage, temp);
@@ -160,13 +160,13 @@ export default class MonsterCard extends React.Component<Props, State> {
     }
 
     private description() {
-        var sizeAndType = (this.props.combatant.size + ' ' + this.props.combatant.category).toLowerCase();
+        let sizeAndType = (this.props.combatant.size + ' ' + this.props.combatant.category).toLowerCase();
         if (this.props.combatant.tag) {
             sizeAndType += ' (' + this.props.combatant.tag.toLowerCase() + ')';
         }
         sizeAndType += ', ';
 
-        var align = '';
+        let align = '';
         if (this.props.combatant.alignment) {
             align = this.props.combatant.alignment.toLowerCase() + ', ';
         }
@@ -231,7 +231,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                             // This card is in an encounter or a wave
                             options.push(<button key='remove' onClick={() => this.props.removeEncounterSlot(this.props.slot)}>remove from encounter</button>);
                         } else {
-                            var canAdd = false;
+                            let canAdd = false;
                             // This card is in the library list
                             if (!this.monsterIsInWave(this.props.encounter)) {
                                 options.push(<button key='add encounter' onClick={() => this.props.addEncounterSlot(this.props.combatant, null)}>add to encounter</button>);
@@ -331,9 +331,9 @@ export default class MonsterCard extends React.Component<Props, State> {
                 }
             }
 
-            var stats = null;
+            let stats = null;
             if (this.props.mode.indexOf('view') !== -1) {
-                var slotSection = null;
+                let slotSection = null;
                 if (this.props.slot) {
                     slotSection = (
                         <div>
@@ -348,7 +348,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                     );
                 }
 
-                var details = null;
+                let details = null;
                 if (this.state.showDetails) {
                     details = (
                         <div>
@@ -568,7 +568,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                 }
             }
 
-            var toggle = null;
+            let toggle = null;
             if (this.props.mode.indexOf('combat') !== -1) {
                 // Don't show toggle button for combatant
             } else if (this.props.mode.indexOf('template') !== -1) {

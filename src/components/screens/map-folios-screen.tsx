@@ -25,7 +25,7 @@ interface Props {
 export default class MapFoliosScreen extends React.Component<Props> {
     public render() {
         try {
-            var help = null;
+            let help = null;
             if (this.props.showHelp) {
                 help = (
                     <MapFoliosCard mapFolios={this.props.mapFolios} />
@@ -33,7 +33,7 @@ export default class MapFoliosScreen extends React.Component<Props> {
             }
 
             const folios = [];
-            for (var n = 0; n !== this.props.mapFolios.length; ++n) {
+            for (let n = 0; n !== this.props.mapFolios.length; ++n) {
                 const mapFolio = this.props.mapFolios[n];
                 folios.push(
                     <MapFolioListItem
@@ -45,7 +45,7 @@ export default class MapFoliosScreen extends React.Component<Props> {
                 );
             }
 
-            var folio = null;
+            let folio = null;
             if (this.props.selection) {
                 const folioCards = [];
 

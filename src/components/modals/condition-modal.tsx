@@ -44,7 +44,7 @@ export default class ConditionModal extends React.Component<Props, State> {
     }
 
     private setDuration(durationType: 'saves' | 'combatant' | 'rounds') {
-        var duration = null;
+        let duration = null;
 
         switch (durationType) {
             case 'saves':
@@ -77,7 +77,7 @@ export default class ConditionModal extends React.Component<Props, State> {
     }
 
     private nudgeValue(object: any, field: string, delta: number) {
-        var value = object[field] + delta;
+        let value = object[field] + delta;
         if (field === 'level') {
             value = Math.max(value, 1);
             value = Math.min(value, 6);
@@ -118,7 +118,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                         );
                     }
                     const text = Utils.conditionText(this.state.condition);
-                    for (var n = 0; n !== text.length; ++n) {
+                    for (let n = 0; n !== text.length; ++n) {
                         description.push(<li key={n} className='section'>{text[n]}</li>);
                     }
                 }

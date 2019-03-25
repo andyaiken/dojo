@@ -13,7 +13,7 @@ interface Props {
 export default class CombatListItem extends React.Component<Props> {
     public render() {
         try {
-            var map = null;
+            let map = null;
             if (this.props.combat.map) {
                 map = (
                     <MapPanel

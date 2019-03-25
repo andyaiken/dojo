@@ -13,12 +13,12 @@ export default class InfoCard extends React.Component<Props> {
 
     public render() {
         try {
-            var heading = null;
+            let heading = null;
             if (this.props.getHeading) {
                 heading = this.props.getHeading();
             }
 
-            var content = null;
+            let content = null;
             if (this.props.getContent) {
                 content = this.props.getContent();
             }

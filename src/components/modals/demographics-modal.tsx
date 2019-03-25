@@ -30,13 +30,13 @@ export default class DemographicsModal extends React.Component<Props, State> {
 
     public render() {
         try {
-            var demographics = null;
+            let demographics = null;
 
             const allMonsters: Monster[] = [];
             this.props.library.forEach(group => group.monsters.forEach(monster => allMonsters.push(monster)));
             if (allMonsters.length !== 0) {
                 const buckets: { value: any, title: string }[] = [];
-                var maxBucketSize = 0;
+                let maxBucketSize = 0;
                 const monsters: { [key: string]: Monster[] } = {};
 
                 switch (this.state.chart) {
@@ -101,7 +101,7 @@ export default class DemographicsModal extends React.Component<Props, State> {
                 }
 
                 const bars = [];
-                for (var index = 0; index !== buckets.length; ++index) {
+                for (let index = 0; index !== buckets.length; ++index) {
                     const bucket = buckets[index];
                     const set = monsters[bucket.value];
                     const count = set ? set.length : 0;

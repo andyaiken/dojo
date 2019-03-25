@@ -44,8 +44,8 @@ interface RadioGroupItemProps {
 
 class RadioGroupItem extends React.Component<RadioGroupItemProps> {
     public render() {
-        var style = 'radio-item';
-        var details = null;
+        let style = 'radio-item';
+        let details = null;
 
         if (this.props.selected) {
             style += ' selected';

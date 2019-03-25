@@ -51,7 +51,7 @@ export default class EncounterCard extends React.Component<Props, State> {
         try {
             const partyOptions = [];
             if (this.props.parties) {
-                for (var n = 0; n !== this.props.parties.length; ++n) {
+                for (let n = 0; n !== this.props.parties.length; ++n) {
                     const party = this.props.parties[n];
                     partyOptions.push({
                         id: party.id,

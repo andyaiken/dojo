@@ -38,7 +38,7 @@ export default class MapPanel extends React.Component<Props> {
     };
 
     private getMapDimensions(border: number): MapDimensions | null {
-        var dimensions: MapDimensions | null = null;
+        let dimensions: MapDimensions | null = null;
 
         this.props.map.items.filter(i => {
             if (this.props.mode === 'edit') {
@@ -128,8 +128,8 @@ export default class MapPanel extends React.Component<Props> {
             // Draw the grid squares
             const grid = [];
             if (this.props.mode === 'edit') {
-                for (var y = mapDimensions.minY; y !== mapDimensions.maxY + 1; ++y) {
-                    for (var x = mapDimensions.minX; x !== mapDimensions.maxX + 1; ++x) {
+                for (let y = mapDimensions.minY; y !== mapDimensions.maxY + 1; ++y) {
+                    for (let x = mapDimensions.minX; x !== mapDimensions.maxX + 1; ++x) {
                         const pos = this.getPosition(x, y, 1, 1, mapDimensions);
                         grid.push(
                             <GridSquare
@@ -164,7 +164,7 @@ export default class MapPanel extends React.Component<Props> {
                 });
 
             // Draw the tokens
-            const tokens: JSX.Element[] = [];
+            let tokens: JSX.Element[] = [];
             if (this.props.mode !== 'edit') {
                 tokens = this.props.map.items
                     .filter(i => (i.type === 'monster') || (i.type === 'pc'))
@@ -194,8 +194,8 @@ export default class MapPanel extends React.Component<Props> {
             // Draw the drag overlay
             const dragOverlay = [];
             if (this.props.showOverlay) {
-                for (var yOver = mapDimensions.minY; yOver !== mapDimensions.maxY + 1; ++yOver) {
-                    for (var xOver = mapDimensions.minX; xOver !== mapDimensions.maxX + 1; ++xOver) {
+                for (let yOver = mapDimensions.minY; yOver !== mapDimensions.maxY + 1; ++yOver) {
+                    for (let xOver = mapDimensions.minX; xOver !== mapDimensions.maxX + 1; ++xOver) {
                         const posOver = this.getPosition(xOver, yOver, 1, 1, mapDimensions);
                         dragOverlay.push(
                             <GridSquare
@@ -258,7 +258,7 @@ class GridSquare extends React.Component<GridSquareProps> {
     }
 
     public render() {
-        var style = 'grid-square';
+        let style = 'grid-square';
         if (this.props.overlay) {
             style += ' grid-overlay';
         }
@@ -292,7 +292,7 @@ class MapTile extends React.Component<MapTileProps> {
     }
 
     public render() {
-        var style = 'tile ' + this.props.tile.terrain;
+        let style = 'tile ' + this.props.tile.terrain;
         if (this.props.selected) {
             style += ' selected';
         }
@@ -329,7 +329,7 @@ class MapToken extends React.Component<MapTokenProps> {
     }
 
     public render() {
-        var style = 'token ' + this.props.token.type;
+        let style = 'token ' + this.props.token.type;
         if (this.props.selected) {
             style += ' selected';
         }
@@ -337,10 +337,10 @@ class MapToken extends React.Component<MapTokenProps> {
             style += ' current';
         }
 
-        var initials = null;
-        var hpGauge = null;
-        var altitudeBadge = null;
-        var conditionsBadge = null;
+        let initials = null;
+        let hpGauge = null;
+        let altitudeBadge = null;
+        let conditionsBadge = null;
         if (!this.props.simple) {
             const name = this.props.combatant.displayName || this.props.combatant.name;
             initials = (

@@ -48,7 +48,7 @@ export default class FilterCard extends React.Component<Props, State> {
             const categories = ['all types'].concat(CATEGORY_TYPES);
             const catOptions = categories.map(cat => ({ id: cat, text: cat }));
 
-            var content = null;
+            let content = null;
             if (this.state.showAll) {
                 content = (
                     <div>
@@ -88,7 +88,7 @@ export default class FilterCard extends React.Component<Props, State> {
                     </div>
                 );
             } else {
-                var summary = '';
+                let summary = '';
                 if (this.props.filter.size !== 'all sizes') {
                     summary += summary ? ' ' + this.props.filter.size : this.props.filter.size;
                 }

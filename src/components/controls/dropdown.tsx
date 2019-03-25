@@ -49,10 +49,10 @@ export default class Dropdown extends React.Component<Props, State> {
                 return null;
             }
 
-            var style = this.props.disabled ? 'dropdown disabled' : 'dropdown';
+            let style = this.props.disabled ? 'dropdown disabled' : 'dropdown';
             const content = [];
 
-            var selectedText;
+            let selectedText;
             if (this.props.selectedID) {
                 const option: { id: string; text: string; disabled?: boolean } | undefined = this.props.options.find(o => o.id === this.props.selectedID);
                 if (option) {
@@ -122,7 +122,7 @@ class DropdownOption extends React.Component<DropdownOptionProps> {
 
     public render() {
         try {
-            var style = 'dropdown-option';
+            let style = 'dropdown-option';
             if (this.props.selected) {
                 style += ' selected';
             }

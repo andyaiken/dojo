@@ -26,7 +26,7 @@ interface Props {
 export default class PartiesScreen extends React.Component<Props> {
     public render() {
         try {
-            var help = null;
+            let help = null;
             if (this.props.showHelp) {
                 help = (
                     <PartiesCard parties={this.props.parties}/>
@@ -34,7 +34,7 @@ export default class PartiesScreen extends React.Component<Props> {
             }
 
             const parties = [];
-            for (var n = 0; n !== this.props.parties.length; ++n) {
+            for (let n = 0; n !== this.props.parties.length; ++n) {
                 const p = this.props.parties[n];
                 parties.push(
                     <PartyListItem
@@ -101,7 +101,7 @@ export default class PartiesScreen extends React.Component<Props> {
                 }
             }
 
-            var name;
+            let name;
             if (this.props.selection) {
                 name = this.props.selection.name || 'unnamed party';
             }

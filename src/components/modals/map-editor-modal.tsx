@@ -177,7 +177,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
 
     public render() {
         try {
-            var tools = null;
+            let tools = null;
             if (this.state.selectedTileID) {
                 const item = this.state.map.items.find(i => i.id === this.state.selectedTileID);
                 if (item) {

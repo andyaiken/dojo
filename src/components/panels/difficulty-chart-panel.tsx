@@ -14,9 +14,9 @@ interface Props {
 
 export default class DifficultyChartPanel extends React.Component<Props> {
     public render() {
-        var monsterCount = 0;
-        var monsterXp = 0;
-        var slots: EncounterSlot[] = [];
+        let monsterCount = 0;
+        let monsterXp = 0;
+        let slots: EncounterSlot[] = [];
         slots = slots.concat(this.props.encounter.slots);
         this.props.encounter.waves.forEach(wave => {
             slots = slots.concat(wave.slots);
@@ -31,13 +31,13 @@ export default class DifficultyChartPanel extends React.Component<Props> {
 
         const adjustedXp = monsterXp * Utils.experienceFactor(monsterCount);
 
-        var xpThresholds;
-        var diffSection;
+        let xpThresholds;
+        let diffSection;
         if (this.props.party) {
-            var xpEasy = 0;
-            var xpMedium = 0;
-            var xpHard = 0;
-            var xpDeadly = 0;
+            let xpEasy = 0;
+            let xpMedium = 0;
+            let xpHard = 0;
+            let xpDeadly = 0;
 
             const pcs = this.props.party.pcs.filter(pc => pc.active);
             pcs.forEach(pc => {
@@ -47,8 +47,8 @@ export default class DifficultyChartPanel extends React.Component<Props> {
                 xpDeadly += Utils.pcExperience(pc.level, 'deadly');
             });
 
-            var difficulty = null;
-            var adjustedDifficulty = null;
+            let difficulty = null;
+            let adjustedDifficulty = null;
             if (adjustedXp > 0) {
                 difficulty = 'trivial';
                 if (adjustedXp >= xpEasy) {

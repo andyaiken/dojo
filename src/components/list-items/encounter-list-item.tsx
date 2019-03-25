@@ -14,7 +14,7 @@ export default class EncounterListItem extends React.Component<Props> {
             const slots = [];
 
             this.props.encounter.slots.forEach(slot => {
-                var text = slot.monsterName || 'unnamed monster';
+                let text = slot.monsterName || 'unnamed monster';
                 if (slot.count > 1) {
                     text += ' x' + slot.count;
                 }
@@ -28,7 +28,7 @@ export default class EncounterListItem extends React.Component<Props> {
             this.props.encounter.waves.forEach(wave => {
                 slots.push(<div key={'name ' + wave.id} className='text subheading'>{wave.name || 'unnamed wave'}</div>);
                 wave.slots.forEach(slot => {
-                    var text = slot.monsterName || 'unnamed monster';
+                    let text = slot.monsterName || 'unnamed monster';
                     if (slot.count > 1) {
                         text += ' x' + slot.count;
                     }

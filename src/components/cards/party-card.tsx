@@ -39,9 +39,9 @@ export default class PartyCard extends React.Component<Props> {
                 })
                 .join(', ');
 
-            var insightSummary = '-';
-            var investigationSummary = '-';
-            var perceptionSummary = '-';
+            let insightSummary = '-';
+            let investigationSummary = '-';
+            let perceptionSummary = '-';
 
             if (activePCs.length !== 0) {
                 const insight: { min: number | null, max: number | null } = { min: null, max: null };

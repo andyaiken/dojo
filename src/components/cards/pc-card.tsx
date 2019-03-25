@@ -150,7 +150,7 @@ export default class PCCard extends React.Component<Props, State> {
                 </div>
             );
 
-            var stats = null;
+            let stats = null;
             if (this.props.mode.indexOf('edit') !== -1) {
                 if (this.state.showDetails) {
                     stats = (
@@ -205,7 +205,7 @@ export default class PCCard extends React.Component<Props, State> {
                 stats = commonStatBlock;
             }
 
-            var toggle = null;
+            let toggle = null;
             if (this.props.mode.indexOf('combat') !== -1) {
                 // Don't show toggle button for combatant
             } else {

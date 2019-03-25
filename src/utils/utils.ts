@@ -9,7 +9,7 @@ export default class Utils {
     private static monsterIdToGroup: { [id: string]: MonsterGroup } = {};
 
     public static getMonsterGroup(monster: Monster, library: MonsterGroup[]): MonsterGroup {
-        var group = this.monsterIdToGroup[monster.id];
+        let group = this.monsterIdToGroup[monster.id];
 
         if (!group) {
             const grp = library.find(g => g.monsters.includes(monster));
@@ -27,7 +27,7 @@ export default class Utils {
             return true;
         }
 
-        var result = true;
+        let result = true;
 
         const tokens = filter.toLowerCase().split(' ');
         tokens.forEach(token => {
@@ -81,7 +81,7 @@ export default class Utils {
 
     public static modifier(score: number): string {
         const mod = Math.floor((score - 10) / 2);
-        var str = mod.toString();
+        let str = mod.toString();
         if (mod >= 0) {
             str = '+' + str;
         }
@@ -359,7 +359,7 @@ export default class Utils {
     }
 
     public static nudgeChallenge(value: number, delta: number): number {
-        var result = 0;
+        let result = 0;
 
         switch (value) {
             case 0:
@@ -552,7 +552,7 @@ export default class Utils {
             switch (condition.duration.type) {
                 case 'saves':
                     const saveDuration = condition.duration as ConditionDurationSaves;
-                    var saveType = saveDuration.saveType;
+                    let saveType = saveDuration.saveType;
                     if (saveType !== 'death') {
                         saveType = saveType.toUpperCase();
                     }
@@ -584,7 +584,7 @@ export default class Utils {
                 if (slot.count === 1) {
                     names.push(slot.monsterName);
                 } else {
-                    for (var n = 0; n !== slot.count; ++n) {
+                    for (let n = 0; n !== slot.count; ++n) {
                         names.push(slot.monsterName + ' ' + (n + 1));
                     }
                 }

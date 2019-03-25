@@ -59,7 +59,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
     }
 
     private inEncounter(monster: Monster) {
-        var result = false;
+        let result = false;
 
         if (this.props.selection) {
             const group = Utils.getMonsterGroup(monster, this.props.library);
@@ -229,7 +229,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
 
     public render() {
         try {
-            var help = null;
+            let help = null;
             if (this.props.showHelp) {
                 help = (
                     <EncounterBuilderCard encounters={this.props.encounters} />
@@ -237,7 +237,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
             }
 
             const encounters = [];
-            for (var n = 0; n !== this.props.encounters.length; ++n) {
+            for (let n = 0; n !== this.props.encounters.length; ++n) {
                 const e = this.props.encounters[n];
                 encounters.push(
                     <EncounterListItem
@@ -249,9 +249,9 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                 );
             }
 
-            var encounterName;
+            let encounterName;
             const encounterCards = [];
-            var waves: JSX.Element[] = [];
+            let waves: JSX.Element[] = [];
 
             if (this.props.selection) {
                 encounterName = this.props.selection.name || 'unnamed encounter';

@@ -10,7 +10,7 @@ interface Props {
 
 export default class EncounterBuilderCard extends React.Component<Props> {
     private getContent() {
-        var action: JSX.Element | null = null;
+        let action: JSX.Element | null = null;
         if (this.props.encounters.length === 0) {
             action = (
                 <div className='section'>to start building an encounter, press the button below</div>

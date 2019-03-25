@@ -13,7 +13,6 @@
         "max-line-length": false,
         "member-ordering": [true, "fields-first"],
         "no-console": [true, "log"],
-        "no-var-keyword": false,
         "object-literal-shorthand": false,
         "object-literal-sort-keys": false,
         "quotemark": [true, "single"],

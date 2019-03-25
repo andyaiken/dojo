@@ -31,7 +31,7 @@ interface Props {
 
 export default class MonsterLibraryScreen extends React.Component<Props> {
     private showMonsterGroup(group: MonsterGroup) {
-        var result = Utils.match(this.props.filter, group.name);
+        let result = Utils.match(this.props.filter, group.name);
 
         if (!result) {
             group.monsters.forEach(monster => {
@@ -44,7 +44,7 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
 
     public render() {
         try {
-            var help = null;
+            let help = null;
             if (this.props.showHelp) {
                 help = (
                     <MonsterLibraryCard />
@@ -52,7 +52,7 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
             }
 
             const listItems = [];
-            for (var n = 0; n !== this.props.library.length; ++n) {
+            for (let n = 0; n !== this.props.library.length; ++n) {
                 const group = this.props.library[n];
                 if (this.showMonsterGroup(group)) {
                     listItems.push(
@@ -114,7 +114,7 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                 }
             }
 
-            var name;
+            let name;
             if (this.props.selection) {
                 name = this.props.selection.name;
                 if (!name) {

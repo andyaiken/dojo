@@ -17,11 +17,11 @@ export default class MonsterGroupListItem extends React.Component<Props> {
             const matchGroup = Utils.match(this.props.filter, this.props.group.name);
 
             const monsters = [];
-            for (var n = 0; n !== this.props.group.monsters.length; ++n) {
+            for (let n = 0; n !== this.props.group.monsters.length; ++n) {
                 const monster = this.props.group.monsters[n];
                 const matchMonster = Utils.match(this.props.filter, monster.name);
                 if (matchGroup || matchMonster) {
-                    var name = monster.name;
+                    let name = monster.name;
                     if (!name) {
                         name = 'unnamed monster';
                     }

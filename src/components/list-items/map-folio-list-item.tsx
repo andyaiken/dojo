@@ -12,7 +12,7 @@ export default class MapFolioListItem extends React.Component<Props> {
     public render() {
         try {
             const maps = [];
-            for (var n = 0; n !== this.props.mapFolio.maps.length; ++n) {
+            for (let n = 0; n !== this.props.mapFolio.maps.length; ++n) {
                 const map = this.props.mapFolio.maps[n];
                 const name = map.name || 'unnamed map';
                 maps.push(<div key={map.id} className='text'>{name}</div>);

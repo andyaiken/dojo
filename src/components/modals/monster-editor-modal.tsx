@@ -103,7 +103,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         const monsters: Monster[] = [];
         this.props.library.forEach(group => {
             group.monsters.forEach(monster => {
-                var match = true;
+                let match = true;
 
                 if (this.state.monster.id === monster.id) {
                     match = false;
@@ -142,8 +142,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         const index = Math.floor(Math.random() * monsters.length);
         const m = monsters[index];
 
-        var source: any = m;
-        var value = null;
+        let source: any = m;
+        let value = null;
         const tokens = field.split('.');
         tokens.forEach(token => {
             if (token === tokens[tokens.length - 1]) {
@@ -269,7 +269,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     }
 
     private getActionTypeName(type: string, plural: boolean) {
-        var name = Utils.traitType(type);
+        let name = Utils.traitType(type);
         if (plural) {
             name += 's';
         }
@@ -293,8 +293,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     }
 
     private nudgeValue(field: string, delta: number) {
-        var source: any = this.state.monster;
-        var value: any = null;
+        let source: any = this.state.monster;
+        let value: any = null;
         const tokens = field.split('.');
         tokens.forEach(token => {
             if (token === tokens[tokens.length - 1]) {
@@ -309,7 +309,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     }
 
     private changeValue(field: string, value: any, notify = true) {
-        var source: any = this.state.monster;
+        let source: any = this.state.monster;
         const tokens = field.split('.');
         tokens.forEach(token => {
             if (token === tokens[tokens.length - 1]) {
@@ -387,8 +387,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         const values: any[] = monsters
             .map(m => {
                 const tokens = field.split('.');
-                var source: any = m;
-                var value = null;
+                let source: any = m;
+                let value = null;
                 tokens.forEach(token => {
                     if (token === tokens[tokens.length - 1]) {
                         value = source[token];
@@ -405,8 +405,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
         const distinct: { value: any, count: number }[] = [];
         if (dataType === 'number') {
-            var min: number | null = null;
-            var max: number | null = null;
+            let min: number | null = null;
+            let max: number | null = null;
             values.forEach(v => {
                 if ((min === null) || (v < min)) {
                     min = v;
@@ -416,7 +416,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 }
             });
             if ((min !== null) && (max !== null)) {
-                for (var n = min; n <= max; ++n) {
+                for (let n = min; n <= max; ++n) {
                     distinct.push({
                         value: n,
                         count: 0
@@ -510,9 +510,9 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         );
 
         TRAIT_TYPES.forEach(type => {
-            var min: number | null = null;
-            var max: number | null = null;
-            var count = 0;
+            let min: number | null = null;
+            let max: number | null = null;
+            let count = 0;
             monsters.forEach(m => {
                 const n = m.traits.filter(t => t.type === type).length;
                 if ((min === null) || (n < min)) {
@@ -563,7 +563,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             </div>
         );
 
-        var filterContent = null;
+        let filterContent = null;
         if (this.state.showFilter) {
             filterContent = (
                 <div>
@@ -661,12 +661,12 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 }
             ];
 
-            var monsters: Monster[] = [];
+            let monsters: Monster[] = [];
             if (this.props.showMonsters) {
                 monsters = this.getMonsters();
             }
 
-            var content = null;
+            let content = null;
             switch (this.state.page) {
                 case 'overview':
                     const catOptions = CATEGORY_TYPES.map(cat => ({ id: cat, text: cat }));
@@ -783,9 +783,9 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                     break;
             }
 
-            var help = null;
+            let help = null;
             if (this.props.showMonsters && (monsters.length > 1)) {
-                var selector = null;
+                let selector = null;
                 if (this.getHelpOptionsForPage(this.state.page).length > 1) {
                     const options = this.getHelpOptionsForPage(this.state.page).map(s => {
                         return {
@@ -812,7 +812,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 );
             }
 
-            var monsterList = null;
+            let monsterList = null;
             if (this.props.showMonsters) {
                 monsterList = (
                     <div className='columns small-4 medium-4 large-4 scrollable'>

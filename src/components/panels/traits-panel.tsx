@@ -33,7 +33,7 @@ export default class TraitsPanel extends React.Component<Props> {
             const lairActions = [];
             const regionalEffects = [];
 
-            for (var n = 0; n !== this.props.combatant.traits.length; ++n) {
+            for (let n = 0; n !== this.props.combatant.traits.length; ++n) {
                 const a = this.props.combatant.traits[n];
                 const item = (
                     <TraitPanel
@@ -148,7 +148,7 @@ interface TraitPanelProps {
 class TraitPanel extends React.Component<TraitPanelProps> {
     public render() {
         try {
-            var heading = this.props.trait.name || 'unnamed ' + Utils.traitType(this.props.trait.type);
+            let heading = this.props.trait.name || 'unnamed ' + Utils.traitType(this.props.trait.type);
             if (this.props.trait.usage) {
                 heading += ' (' + this.props.trait.usage + ')';
             }

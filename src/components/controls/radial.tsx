@@ -21,7 +21,7 @@ export default class Radial extends React.Component<Props> {
 
     public render() {
         try {
-            var style = 'radial ' + (this.props.direction || 'out');
+            let style = 'radial ' + (this.props.direction || 'out');
             if (this.props.disabled) {
                 style += ' disabled';
             }

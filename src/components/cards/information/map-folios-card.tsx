@@ -10,7 +10,7 @@ interface Props {
 
 export default class MapFoliosCard extends React.Component<Props> {
     private getContent() {
-        var action: JSX.Element | null = null;
+        let action: JSX.Element | null = null;
         if (this.props.mapFolios.length === 0) {
             action = (
                 <div className='section'>to start a new folio, press the button below</div>

@@ -10,7 +10,7 @@ interface Props {
 
 export default class PartiesCard extends React.Component<Props> {
     private getContent() {
-        var action: JSX.Element | null = null;
+        let action: JSX.Element | null = null;
         if (this.props.parties.length === 0) {
             action = (
                 <div className='section'>to start adding a party, press the button below</div>

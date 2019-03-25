@@ -34,8 +34,8 @@ export default class Spin extends React.Component<Props> {
 
     public render() {
         try {
-            var style = 'info-value';
-            var value = this.props.source[this.props.name];
+            let style = 'info-value';
+            let value = this.props.source[this.props.name];
             if (value === 0) {
                 style += ' dimmed';
             }

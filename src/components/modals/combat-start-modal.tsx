@@ -139,7 +139,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
             };
         });
 
-        var partyContent = null;
+        let partyContent = null;
         if (this.state.combatSetup.partyID) {
             const selectedParty = this.props.parties.find(p => p.id === this.state.combatSetup.partyID);
             if (selectedParty) {
@@ -196,12 +196,12 @@ export default class CombatStartModal extends React.Component<Props, State> {
             };
         });
 
-        var encounterContent = null;
+        let encounterContent = null;
         if (this.state.combatSetup.encounterID) {
             const selectedEncounter = this.props.encounters.find(e => e.id === this.state.combatSetup.encounterID);
             if (selectedEncounter) {
                 const monsterSections = selectedEncounter.slots.map(slot => {
-                    var name = slot.monsterName || 'unnamed monster';
+                    let name = slot.monsterName || 'unnamed monster';
                     if (slot.count > 1) {
                         name += ' (x' + slot.count + ')';
                     }
@@ -222,7 +222,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                     }
 
                     const waveMonsters = wave.slots.map(slot => {
-                        var name = slot.monsterName || 'unnamed monster';
+                        let name = slot.monsterName || 'unnamed monster';
                         if (slot.count > 1) {
                             name += ' x' + slot.count;
                         }
@@ -279,8 +279,8 @@ export default class CombatStartModal extends React.Component<Props, State> {
             };
         }));
 
-        var selectMapSection = null;
-        var thumbnailSection = null;
+        let selectMapSection = null;
+        let thumbnailSection = null;
 
         if (this.state.combatSetup.folioID) {
             const folio = this.props.mapFolios.find(f => f.id === this.state.combatSetup.folioID);
@@ -353,12 +353,12 @@ export default class CombatStartModal extends React.Component<Props, State> {
                 };
             });
 
-            var waveContent = null;
+            let waveContent = null;
             if (this.state.combatSetup.waveID) {
                 const selectedWave = selectedEncounter.waves.find(w => w.id === this.state.combatSetup.waveID);
                 if (selectedWave) {
                     const monsterSections = selectedWave.slots.map(slot => {
-                        var name = slot.monsterName || 'unnamed monster';
+                        let name = slot.monsterName || 'unnamed monster';
                         if (slot.count > 1) {
                             name += ' (x' + slot.count + ')';
                         }
@@ -445,7 +445,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
 
         const selectedEncounter = this.props.encounters.find(e => e.id === this.state.combatSetup.encounterID);
         if (selectedEncounter) {
-            var slotsContainer: { slots: EncounterSlot[] } = selectedEncounter;
+            let slotsContainer: { slots: EncounterSlot[] } = selectedEncounter;
             if (this.state.combatSetup.waveID) {
                 const selectedWave = selectedEncounter.waves.find(w => w.id === this.state.combatSetup.waveID);
                 if (selectedWave) {
@@ -476,7 +476,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                 const slot = slotsContainer.slots.find(s => s.id === slotNames.id);
                 if (slot) {
                     const inputs = [];
-                    for (var n = 0; n !== slotNames.names.length; ++n) {
+                    for (let n = 0; n !== slotNames.names.length; ++n) {
                         inputs.push(
                             <div key={n}>
                                 <MonsterName
@@ -523,8 +523,8 @@ export default class CombatStartModal extends React.Component<Props, State> {
 
     public render() {
         try {
-            var leftSection = null;
-            var rightSection = null;
+            let leftSection = null;
+            let rightSection = null;
 
             if (this.props.parties) {
                 leftSection = (

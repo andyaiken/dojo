@@ -22,7 +22,7 @@ export default class ConditionsPanel extends React.Component<Props> {
         try {
             const conditions = [];
             if (this.props.combatant.conditions) {
-                for (var n = 0; n !== this.props.combatant.conditions.length; ++n) {
+                for (let n = 0; n !== this.props.combatant.conditions.length; ++n) {
                     const c = this.props.combatant.conditions[n];
                     conditions.push(
                         <ConditionPanel
@@ -60,7 +60,7 @@ interface ConditionPanelProps {
 class ConditionPanel extends React.Component<ConditionPanelProps> {
     public render() {
         try {
-            var name: string = this.props.condition.name || 'condition';
+            let name: string = this.props.condition.name || 'condition';
             if (this.props.condition.name === 'exhaustion') {
                 name += ' (' + this.props.condition.level + ')';
             }
@@ -86,7 +86,7 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
                 );
             }
             const text = Utils.conditionText(this.props.condition);
-            for (var n = 0; n !== text.length; ++n) {
+            for (let n = 0; n !== text.length; ++n) {
                 description.push(<div key={n} className='section'>{text[n]}</div>);
             }
 

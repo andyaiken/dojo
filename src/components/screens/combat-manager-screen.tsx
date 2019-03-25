@@ -68,7 +68,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
     }
 
     private createCard(combatant: (Combatant & PC) | (Combatant & Monster)) {
-        var mode = 'combat';
+        let mode = 'combat';
         if (this.props.combat && this.props.combat.map) {
             mode += ' tactical';
             const onMap = this.props.combat.map.items.find(i => i.id === combatant.id);
@@ -135,14 +135,14 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
 
     public render() {
         try {
-            var leftPaneContent = null;
-            var centrePaneContent = null;
-            var rightPaneContent = null;
+            let leftPaneContent = null;
+            let centrePaneContent = null;
+            let rightPaneContent = null;
 
             if (this.props.combat) {
                 const current: JSX.Element[] = [];
-                var pending: JSX.Element[] = [];
-                var active: JSX.Element[] = [];
+                let pending: JSX.Element[] = [];
+                let active: JSX.Element[] = [];
                 const defeated: JSX.Element[] = [];
 
                 this.props.combat.combatants.forEach(combatant => {
@@ -240,7 +240,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     />
                 ));
 
-                var mapSection = null;
+                let mapSection = null;
                 if (this.props.combat.map) {
                     mapSection = (
                         <MapPanel
@@ -259,7 +259,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     );
                 }
 
-                var selectedCombatant = null;
+                let selectedCombatant = null;
                 if (this.state.selectedTokenID) {
                     const combatant = this.props.combat.combatants.find(c => c.id === this.state.selectedTokenID);
                     if (combatant && !combatant.current) {
@@ -319,7 +319,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     </div>
                 );
             } else {
-                var help = null;
+                let help = null;
                 if (this.props.showHelp) {
                     help = (
                         <CombatManagerCard />
@@ -453,7 +453,7 @@ class PendingCombatantRow extends React.Component<PendingCombatantRowProps> {
     }
 
     public render() {
-        var style = 'combatant-row ' + this.props.combatant.type;
+        let style = 'combatant-row ' + this.props.combatant.type;
         if (this.props.combatant.current || this.props.selected) {
             style += ' highlight';
         }
@@ -523,21 +523,21 @@ class CombatantRow extends React.Component<CombatantRowProps> {
     }
 
     private getContentMonster(monster: Combatant & Monster, notes: JSX.Element[]) {
-        var hp = (monster.hp ? monster.hp : 0).toString();
+        let hp = (monster.hp ? monster.hp : 0).toString();
         if (monster.hpTemp > 0) {
             hp += '+' + monster.hpTemp;
         }
-        var gauge = null;
+        let gauge = null;
         if (!monster.pending) {
             gauge = (
                 <HitPointGauge combatant={monster} />
             );
         }
 
-        var conditions = null;
+        let conditions = null;
         if (this.props.combatant.conditions) {
             conditions = this.props.combatant.conditions.map(c => {
-                var name = c.name;
+                let name = c.name;
                 if (c.name === 'exhaustion') {
                     name += ' (' + c.level + ')';
                 }
@@ -549,7 +549,7 @@ class CombatantRow extends React.Component<CombatantRowProps> {
                 }
                 const description = [];
                 const text = Utils.conditionText(c);
-                for (var n = 0; n !== text.length; ++n) {
+                for (let n = 0; n !== text.length; ++n) {
                     description.push(<li key={n} className='condition-text'>{text[n]}</li>);
                 }
                 return (
@@ -596,7 +596,7 @@ class CombatantRow extends React.Component<CombatantRowProps> {
             }
         }
 
-        var content = null;
+        let content = null;
 
         switch (this.props.combatant.type) {
             case 'pc':
@@ -610,7 +610,7 @@ class CombatantRow extends React.Component<CombatantRowProps> {
                 break;
         }
 
-        var style = 'combatant-row ' + this.props.combatant.type;
+        let style = 'combatant-row ' + this.props.combatant.type;
         if (this.props.combatant.current || this.props.selected) {
             style += ' highlight';
         }

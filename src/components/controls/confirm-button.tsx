@@ -39,7 +39,7 @@ export default class ConfirmButton extends React.Component<Props, State> {
 
     public render() {
         try {
-            var content = null;
+            let content = null;
             if (this.state.pressed) {
                 content = (
                     <div>

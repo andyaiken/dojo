@@ -10,7 +10,7 @@ interface Props {
 export default class HomeScreen extends React.Component<Props> {
     public render() {
         try {
-            var monsters = null;
+            let monsters = null;
             if (this.props.library.length === 0) {
                 monsters = (
                     <div>

@@ -85,7 +85,7 @@ export default class Dojo extends React.Component<Props, State> {
         };
 
         try {
-            var data: State | null = null;
+            let data: State | null = null;
 
             try {
                 const json = window.localStorage.getItem('data');
@@ -132,7 +132,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     public componentDidUpdate() {
-        var json = null;
+        let json = null;
         try {
             json = JSON.stringify(this.state);
         } catch (ex) {
@@ -546,7 +546,7 @@ export default class Dojo extends React.Component<Props, State> {
                         });
                     }
 
-                    var groupName = monster.tag;
+                    let groupName = monster.tag;
                     if (groupName === '') {
                         groupName = monster.category;
                     }
@@ -557,7 +557,7 @@ export default class Dojo extends React.Component<Props, State> {
                         groupName = 'npc';
                     }
 
-                    var group = this.getMonsterGroupByName(groupName);
+                    let group = this.getMonsterGroupByName(groupName);
                     if (!group) {
                         group = {
                             id: Utils.guid(),
@@ -582,8 +582,8 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private buildTrait(rawTrait: any, type: 'trait' | 'action' | 'legendary' | 'lair' | 'regional'): Trait {
-        var name = '';
-        var usage = '';
+        let name = '';
+        let usage = '';
 
         const openBracket = rawTrait.name.indexOf('(');
         if (openBracket === -1) {
@@ -847,7 +847,7 @@ export default class Dojo extends React.Component<Props, State> {
                     const init = parseInt(Utils.modifier(monster.abilityScores.dex), 10);
                     const groupRoll = Utils.dieRoll();
 
-                    for (var n = 0; n !== slot.count; ++n) {
+                    for (let n = 0; n !== slot.count; ++n) {
                         const singleRoll = Utils.dieRoll();
 
                         const combatant = JSON.parse(JSON.stringify(monster));
@@ -1082,7 +1082,7 @@ export default class Dojo extends React.Component<Props, State> {
                         const init = parseInt(Utils.modifier(monster.abilityScores.dex), 10);
                         const groupRoll = Utils.dieRoll();
 
-                        for (var n = 0; n !== slot.count; ++n) {
+                        for (let n = 0; n !== slot.count; ++n) {
                             const singleRoll = Utils.dieRoll();
 
                             const combatant = JSON.parse(JSON.stringify(monster));
@@ -1159,7 +1159,7 @@ export default class Dojo extends React.Component<Props, State> {
         item.type = combatant.type as 'pc' | 'monster';
         item.x = x;
         item.y = y;
-        var size = 1;
+        let size = 1;
         if (combatant.type === 'monster') {
             size = Utils.miniSize((combatant as Monster).size);
         }
@@ -1289,8 +1289,8 @@ export default class Dojo extends React.Component<Props, State> {
                 // The only person in the fight is me, and I'm defeated
                 this.makeCurrent(null, false);
             } else {
-                var index = active.indexOf(combatant) + 1;
-                var newRound = false;
+                let index = active.indexOf(combatant) + 1;
+                let newRound = false;
                 if (index >= active.length) {
                     index = 0;
                     newRound = true;
@@ -1528,8 +1528,8 @@ export default class Dojo extends React.Component<Props, State> {
         }
 
         const tokens = type.split('.');
-        var obj = combatant;
-        for (var n = 0; n !== tokens.length; ++n) {
+        let obj = combatant;
+        for (let n = 0; n !== tokens.length; ++n) {
             const token = tokens[n];
             if (n === tokens.length - 1) {
                 obj[token] = value;
@@ -1558,11 +1558,11 @@ export default class Dojo extends React.Component<Props, State> {
 
     private nudgeValue(combatant: any, type: string, delta: number) {
         const tokens = type.split('.');
-        var obj = combatant;
-        for (var n = 0; n !== tokens.length; ++n) {
+        let obj = combatant;
+        for (let n = 0; n !== tokens.length; ++n) {
             const token = tokens[n];
             if (n === tokens.length - 1) {
-                var value = null;
+                let value = null;
                 value = (token === 'challenge') ? Utils.nudgeChallenge(obj.challenge, delta) : obj[token] + delta;
                 this.changeValue(combatant, type, value);
             } else {
@@ -1575,8 +1575,8 @@ export default class Dojo extends React.Component<Props, State> {
 
     public render() {
         try {
-            var content: JSX.Element | null = null;
-            var actions: JSX.Element | null = null;
+            let content: JSX.Element | null = null;
+            let actions: JSX.Element | null = null;
             switch (this.state.view) {
                 case 'home':
                     content = (
@@ -1623,7 +1623,7 @@ export default class Dojo extends React.Component<Props, State> {
                             moveToGroup={(combatant, groupID) => this.moveToGroup(combatant, groupID)}
                         />
                     );
-                    var count = 0;
+                    let count = 0;
                     this.state.library.forEach(group => {
                         count += group.monsters.length;
                     });
@@ -1706,7 +1706,7 @@ export default class Dojo extends React.Component<Props, State> {
                     if (combat) {
                         const encounter = this.getEncounter(combat.encounterID);
                         if (encounter) {
-                            var xp = 0;
+                            let xp = 0;
                             combat.combatants.filter(c => c.type === 'monster')
                                 .forEach(combatant => {
                                     xp += Utils.experience((combatant as Combatant & Monster).challenge);
@@ -1739,12 +1739,12 @@ export default class Dojo extends React.Component<Props, State> {
                     break;
             }
 
-            var modal = null;
+            let modal = null;
             if (this.state.modal) {
-                var modalTitle = null;
-                var modalContent = null;
-                var modalAllowClose = true;
-                var modalAllowScroll = true;
+                let modalTitle = null;
+                let modalContent = null;
+                let modalAllowClose = true;
+                let modalAllowScroll = true;
                 const modalButtons = {
                     left: [] as JSX.Element[],
                     right: [] as JSX.Element[]

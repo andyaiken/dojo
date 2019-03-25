@@ -12,9 +12,9 @@ export default class PartyListItem extends React.Component<Props> {
     public render() {
         try {
             const pcs = [];
-            for (var n = 0; n !== this.props.party.pcs.length; ++n) {
+            for (let n = 0; n !== this.props.party.pcs.length; ++n) {
                 const pc = this.props.party.pcs[n];
-                var name = pc.name;
+                let name = pc.name;
                 if (pc.player) {
                     name += ' (' + pc.player + ')';
                 }
