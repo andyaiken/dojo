@@ -27,15 +27,15 @@ export default class TraitsPanel extends React.Component<Props> {
 
     public render() {
         try {
-            var traits = [];
-            var actions = [];
-            var legendaryActions = [];
-            var lairActions = [];
-            var regionalEffects = [];
+            const traits = [];
+            const actions = [];
+            const legendaryActions = [];
+            const lairActions = [];
+            const regionalEffects = [];
 
             for (var n = 0; n !== this.props.combatant.traits.length; ++n) {
-                var action = this.props.combatant.traits[n];
-                var item = (
+                const action = this.props.combatant.traits[n];
+                const item = (
                     <TraitPanel
                         key={action.id}
                         trait={action}
@@ -104,7 +104,7 @@ export default class TraitsPanel extends React.Component<Props> {
                             {regionalEffects}
                         </div>
                     </div>
-                );    
+                );
             }
 
             return (
@@ -134,7 +134,7 @@ export default class TraitsPanel extends React.Component<Props> {
         } catch (e) {
             console.error(e);
         }
-    };
+    }
 }
 
 interface TraitPanelProps {
@@ -161,16 +161,16 @@ class TraitPanel extends React.Component<TraitPanelProps> {
                         </div>
                     );
                 case 'edit':
-                    var details = (
+                    const details = (
                         <div className='section'>
                             <input type='text' placeholder='name' value={this.props.trait.name} onChange={event => this.props.changeTrait(this.props.trait, 'name', event.target.value)} />
                             <input type='text' placeholder='usage' value={this.props.trait.usage} onChange={event => this.props.changeTrait(this.props.trait, 'usage', event.target.value)} />
                             <textarea placeholder='details' value={this.props.trait.text} onChange={event => this.props.changeTrait(this.props.trait, 'text', event.target.value)} />
-                            <div className='divider'></div>
+                            <div className='divider' />
                             <ConfirmButton text='delete' callback={() => this.props.removeTrait(this.props.trait)} />
                         </div>
                     );
-        
+
                     return (
                         <Expander
                             text={this.props.trait.name || 'unnamed ' + Utils.traitType(this.props.trait.type)}

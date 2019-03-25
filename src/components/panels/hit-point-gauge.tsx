@@ -10,10 +10,10 @@ interface Props {
 export default class HitPointGauge extends React.Component<Props> {
     public render() {
         try {
-            var hpCurrent = this.props.combatant.hp || 0;
-            var hpMax = this.props.combatant.hpMax + this.props.combatant.hpTemp;
-            var hpBloodied = this.props.combatant.hpMax / 2;
-            var hpWidth = 100 * Math.max(hpCurrent, 0) / hpMax;
+            const hpCurrent = this.props.combatant.hp || 0;
+            const hpMax = this.props.combatant.hpMax + this.props.combatant.hpTemp;
+            const hpBloodied = this.props.combatant.hpMax / 2;
+            const hpWidth = 100 * Math.max(hpCurrent, 0) / hpMax;
 
             var style = '';
             if (hpCurrent >= this.props.combatant.hpMax) {
@@ -26,18 +26,18 @@ export default class HitPointGauge extends React.Component<Props> {
 
             var hpTempBar = null;
             if (this.props.combatant.hpTemp > 0) {
-                var hpTempWidth = 100 * Math.max(this.props.combatant.hpTemp, 0) / hpMax;
-                hpTempBar = <div className='bar temp' style={{ width: hpTempWidth + '%' }}></div>
+                const hpTempWidth = 100 * Math.max(this.props.combatant.hpTemp, 0) / hpMax;
+                hpTempBar = <div className='bar temp' style={{ width: hpTempWidth + '%' }} />;
             }
 
             return (
                 <div className='hp-gauge'>
-                    <div className={style} style={{ width: hpWidth + '%' }}></div>
+                    <div className={style} style={{ width: hpWidth + '%' }} />
                     {hpTempBar}
                 </div>
             );
         } catch (e) {
             console.error(e);
         }
-    };
+    }
 }

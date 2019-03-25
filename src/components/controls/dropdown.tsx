@@ -52,7 +52,7 @@ export default class Dropdown extends React.Component<Props, State> {
             var style = this.props.disabled ? 'dropdown disabled' : 'dropdown';
             const content = [];
 
-            var selectedText = undefined;
+            var selectedText;
             if (this.props.selectedID) {
                 const option: { id: string; text: string; disabled?: boolean } | undefined = this.props.options.find(o => o.id === this.props.selectedID);
                 if (option) {

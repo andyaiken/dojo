@@ -114,7 +114,7 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                 }
             }
 
-            var name = undefined;
+            var name;
             if (this.props.selection) {
                 name = this.props.selection.name;
                 if (!name) {

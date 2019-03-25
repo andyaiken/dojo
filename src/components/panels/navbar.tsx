@@ -16,14 +16,14 @@ interface Props {
 export default class Navbar extends React.Component<Props> {
     public render() {
         try {
-            var partiesStyle = this.props.view === 'parties' ? 'navigator-item selected' : 'navigator-item';
-            var libraryStyle = this.props.view === 'library' ? 'navigator-item selected' : 'navigator-item';
+            const partiesStyle = this.props.view === 'parties' ? 'navigator-item selected' : 'navigator-item';
+            const libraryStyle = this.props.view === 'library' ? 'navigator-item selected' : 'navigator-item';
             var encounterStyle = this.props.view === 'encounter' ? 'navigator-item selected' : 'navigator-item';
-            var mapStyle = this.props.view === 'maps' ? 'navigator-item selected' : 'navigator-item';
+            const mapStyle = this.props.view === 'maps' ? 'navigator-item selected' : 'navigator-item';
             var combatStyle = this.props.view === 'combat' ? 'navigator-item selected' : 'navigator-item';
 
-            var encountersEnabled = this.props.library.length !== 0;
-            var combatEnabled = (this.props.parties.length !== 0) && (this.props.encounters.length !== 0);
+            const encountersEnabled = this.props.library.length !== 0;
+            const combatEnabled = (this.props.parties.length !== 0) && (this.props.encounters.length !== 0);
             if (!encountersEnabled) {
                 encounterStyle += ' disabled';
             }
@@ -43,5 +43,5 @@ export default class Navbar extends React.Component<Props> {
         } catch (e) {
             console.error(e);
         }
-    };
+    }
 }

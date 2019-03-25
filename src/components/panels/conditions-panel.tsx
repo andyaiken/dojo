@@ -20,10 +20,10 @@ interface Props {
 export default class ConditionsPanel extends React.Component<Props> {
     public render() {
         try {
-            var conditions = [];
+            const conditions = [];
             if (this.props.combatant.conditions) {
                 for (var n = 0; n !== this.props.combatant.conditions.length; ++n) {
-                    var condition = this.props.combatant.conditions[n];
+                    const condition = this.props.combatant.conditions[n];
                     conditions.push(
                         <ConditionPanel
                             key={n}
@@ -46,7 +46,7 @@ export default class ConditionsPanel extends React.Component<Props> {
         } catch (e) {
             console.error(e);
         }
-    };
+    }
 }
 
 interface ConditionPanelProps {
@@ -72,7 +72,7 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
                 name += ' ' + Utils.conditionDurationText(this.props.condition, this.props.combat);
             }
 
-            var description = [];
+            const description = [];
             if (this.props.condition.name === 'exhaustion') {
                 description.push(
                     <div key='level' className='section'>
@@ -85,7 +85,7 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
                     </div>
                 );
             }
-            var text = Utils.conditionText(this.props.condition);
+            const text = Utils.conditionText(this.props.condition);
             for (var n = 0; n !== text.length; ++n) {
                 description.push(<div key={n} className='section'>{text[n]}</div>);
             }
@@ -96,7 +96,7 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
                     content={(
                         <div>
                             {description}
-                            <div className='divider'></div>
+                            <div className='divider' />
                             <button onClick={() => this.props.editCondition(this.props.condition)}>edit</button>
                             <button onClick={() => this.props.removeCondition(this.props.condition.id)}>remove</button>
                         </div>

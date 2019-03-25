@@ -9,7 +9,7 @@ import { Encounter, EncounterSlot } from '../../models/encounter';
 interface Props {
     encounter: Encounter;
     party: Party | null;
-    getMonster: (monsterName: string, groupName: string) => Monster | null
+    getMonster: (monsterName: string, groupName: string) => Monster | null;
 }
 
 export default class DifficultyChartPanel extends React.Component<Props> {
@@ -20,16 +20,16 @@ export default class DifficultyChartPanel extends React.Component<Props> {
         slots = slots.concat(this.props.encounter.slots);
         this.props.encounter.waves.forEach(wave => {
             slots = slots.concat(wave.slots);
-        })
+        });
         slots.forEach(slot => {
             monsterCount += slot.count;
-            var monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
+            const monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
             if (monster) {
                 monsterXp += Utils.experience(monster.challenge) * slot.count;
             }
         });
 
-        var adjustedXp = monsterXp * Utils.experienceFactor(monsterCount);
+        const adjustedXp = monsterXp * Utils.experienceFactor(monsterCount);
 
         var xpThresholds;
         var diffSection;
@@ -38,15 +38,15 @@ export default class DifficultyChartPanel extends React.Component<Props> {
             var xpMedium = 0;
             var xpHard = 0;
             var xpDeadly = 0;
-    
-            var pcs = this.props.party.pcs.filter(pc => pc.active);
+
+            const pcs = this.props.party.pcs.filter(pc => pc.active);
             pcs.forEach(pc => {
                 xpEasy += Utils.pcExperience(pc.level, 'easy');
                 xpMedium += Utils.pcExperience(pc.level, 'medium');
                 xpHard += Utils.pcExperience(pc.level, 'hard');
                 xpDeadly += Utils.pcExperience(pc.level, 'deadly');
             });
-        
+
             var difficulty = null;
             var adjustedDifficulty = null;
             if (adjustedXp > 0) {
@@ -66,7 +66,7 @@ export default class DifficultyChartPanel extends React.Component<Props> {
                 adjustedDifficulty = difficulty;
 
                 if ((pcs.length < 3) || (pcs.length > 5)) {
-                    var small = pcs.length < 3;
+                    const small = pcs.length < 3;
                     switch (difficulty) {
                         case 'trivial':
                             adjustedDifficulty = small ? 'easy' : 'trivial';
@@ -107,12 +107,12 @@ export default class DifficultyChartPanel extends React.Component<Props> {
                 </div>
             );
 
-            var getLeft = (xp: number) => {
-                var max = Math.max(adjustedXp, (xpDeadly * 1.2));
+            const getLeft = (xp: number) => {
+                const max = Math.max(adjustedXp, (xpDeadly * 1.2));
                 return (100 * xp) / max;
             };
 
-            var getRight = (xp: number) => {
+            const getRight = (xp: number) => {
                 return 100 - getLeft(xp);
             };
 
@@ -120,22 +120,22 @@ export default class DifficultyChartPanel extends React.Component<Props> {
                 <div>
                     <div className='difficulty-gauge'>
                         <div className='bar-container'>
-                            <div className='bar trivial' style={{ left: '0', right: getRight(xpEasy) + '%' }}></div>
+                            <div className='bar trivial' style={{ left: '0', right: getRight(xpEasy) + '%' }} />
                         </div>
                         <div className='bar-container'>
-                            <div className='bar easy' style={{ left: getLeft(xpEasy) + '%', right: getRight(xpMedium) + '%' }}></div>
+                            <div className='bar easy' style={{ left: getLeft(xpEasy) + '%', right: getRight(xpMedium) + '%' }} />
                         </div>
                         <div className='bar-container'>
-                            <div className='bar medium' style={{ left: getLeft(xpMedium) + '%', right: getRight(xpHard) + '%' }}></div>
+                            <div className='bar medium' style={{ left: getLeft(xpMedium) + '%', right: getRight(xpHard) + '%' }} />
                         </div>
                         <div className='bar-container'>
-                            <div className='bar hard' style={{ left: getLeft(xpHard) + '%', right: getRight(xpDeadly) + '%' }}></div>
+                            <div className='bar hard' style={{ left: getLeft(xpHard) + '%', right: getRight(xpDeadly) + '%' }} />
                         </div>
                         <div className='bar-container'>
-                            <div className='bar deadly' style={{ left: getLeft(xpDeadly) + '%', right: '0' }}></div>
+                            <div className='bar deadly' style={{ left: getLeft(xpDeadly) + '%', right: '0' }} />
                         </div>
                         <div className='encounter-container'>
-                            <div className='encounter' style={{ left: (getLeft(adjustedXp) - 0.5) + '%' }}></div>
+                            <div className='encounter' style={{ left: (getLeft(adjustedXp) - 0.5) + '%' }} />
                         </div>
                     </div>
                     <div className='subheading'>difficulty</div>

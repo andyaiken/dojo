@@ -11,9 +11,9 @@ interface Props {
 export default class PartyListItem extends React.Component<Props> {
     public render() {
         try {
-            var pcs = [];
+            const pcs = [];
             for (var n = 0; n !== this.props.party.pcs.length; ++n) {
-                var pc = this.props.party.pcs[n];
+                const pc = this.props.party.pcs[n];
                 var name = pc.name;
                 if (pc.player) {
                     name += ' (' + pc.player + ')';

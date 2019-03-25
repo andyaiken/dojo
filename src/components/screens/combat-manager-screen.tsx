@@ -55,23 +55,23 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
         };
     }
 
-    setSelectedTokenID(id: string | null) {
+    private setSelectedTokenID(id: string | null) {
         this.setState({
             selectedTokenID: id
         });
     }
 
-    setAddingToMapID(id: string | null) {
+    private setAddingToMapID(id: string | null) {
         this.setState({
             addingToMapID: id
         });
     }
 
-    createCard(combatant: (Combatant & PC) | (Combatant & Monster)) {
+    private createCard(combatant: (Combatant & PC) | (Combatant & Monster)) {
         var mode = 'combat';
         if (this.props.combat && this.props.combat.map) {
             mode += ' tactical';
-            var onMap = this.props.combat.map.items.find(i => i.id === combatant.id);
+            const onMap = this.props.combat.map.items.find(i => i.id === combatant.id);
             mode += onMap ? ' on-map' : ' off-map';
         }
 
@@ -123,9 +123,9 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
         }
     }
 
-    addCombatantToMap(x: number, y: number) {
+    private addCombatantToMap(x: number, y: number) {
         if (this.props.combat) {
-            var combatant = this.props.combat.combatants.find(c => c.id === this.state.addingToMapID);
+            const combatant = this.props.combat.combatants.find(c => c.id === this.state.addingToMapID);
             if (combatant) {
                 this.props.mapAdd(combatant, x, y);
             }
@@ -140,10 +140,10 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
             var rightPaneContent = null;
 
             if (this.props.combat) {
-                var current: JSX.Element[] = [];
+                const current: JSX.Element[] = [];
                 var pending: JSX.Element[] = [];
                 var active: JSX.Element[] = [];
-                var defeated: JSX.Element[] = [];
+                const defeated: JSX.Element[] = [];
 
                 this.props.combat.combatants.forEach(combatant => {
                     if (combatant.current) {
@@ -190,7 +190,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                 });
 
                 if (this.props.showHelp && (pending.length !== 0)) {
-                    var pendingHelp = (
+                    const pendingHelp = (
                         <div key='pending-help'>
                             <InfoCard
                                 getContent={() =>
@@ -206,7 +206,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                 }
 
                 if (this.props.showHelp && (current.length === 0)) {
-                    var activeHelp = (
+                    const activeHelp = (
                         <div key='active-help'>
                             <InfoCard
                                 getContent={() =>
@@ -232,13 +232,13 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     );
                 }
 
-                var notifications = this.props.combat.notifications.map(n =>
+                const notifications = this.props.combat.notifications.map(n => (
                     <NotificationPanel
                         key={n.id}
                         notification={n}
                         close={(notification, removeCondition) => this.props.close(notification, removeCondition)}
                     />
-                );
+                ));
 
                 var mapSection = null;
                 if (this.props.combat.map) {
@@ -261,7 +261,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
 
                 var selectedCombatant = null;
                 if (this.state.selectedTokenID) {
-                    var combatant = this.props.combat.combatants.find(c => c.id === this.state.selectedTokenID);
+                    const combatant = this.props.combat.combatants.find(c => c.id === this.state.selectedTokenID);
                     if (combatant && !combatant.current) {
                         selectedCombatant = this.createCard(combatant);
                     }
@@ -326,7 +326,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     );
                 }
 
-                var combats: JSX.Element[] = [];
+                const combats: JSX.Element[] = [];
                 this.props.combats.forEach(combat => {
                     combats.push(
                         <CombatListItem
@@ -372,9 +372,9 @@ interface NotificationProps {
 }
 
 class NotificationPanel extends React.Component<NotificationProps> {
-    saveSuccess(notification: Notification) {
+    private saveSuccess(notification: Notification) {
         // Reduce save by 1
-        var condition = this.props.notification.condition as Condition;
+        const condition = this.props.notification.condition as Condition;
         if (condition && condition.duration) {
             if ((condition.duration.type === 'saves') || (condition.duration.type === 'rounds')) {
                 condition.duration.count -= 1;
@@ -388,18 +388,18 @@ class NotificationPanel extends React.Component<NotificationProps> {
         }
     }
 
-    close(notification: Notification, removeCondition = false) {
+    private close(notification: Notification, removeCondition = false) {
         this.props.close(notification, removeCondition);
     }
 
     public render() {
-        var combatant = this.props.notification.combatant as (Combatant & Monster);
-        var condition = this.props.notification.condition as Condition;
+        const combatant = this.props.notification.combatant as (Combatant & Monster);
+        const condition = this.props.notification.condition as Condition;
 
-        var name = combatant.displayName || combatant.name || 'unnamed monster';
+        const name = combatant.displayName || combatant.name || 'unnamed monster';
         switch (this.props.notification.type) {
             case 'condition-save':
-                var duration = condition.duration as ConditionDurationSaves;
+                const duration = condition.duration as ConditionDurationSaves;
                 return (
                     <div key={this.props.notification.id} className='notification'>
                         <div className='text'>
@@ -437,7 +437,7 @@ interface PendingCombatantRowProps {
 }
 
 class PendingCombatantRow extends React.Component<PendingCombatantRowProps> {
-    getInformationText() {
+    private getInformationText() {
         if (this.props.selected) {
             return 'selected';
         }
@@ -445,7 +445,7 @@ class PendingCombatantRow extends React.Component<PendingCombatantRowProps> {
         return null;
     }
 
-    onClick(e: React.MouseEvent) {
+    private onClick(e: React.MouseEvent) {
         e.stopPropagation();
         if (this.props.select) {
             this.props.select(this.props.combatant);
@@ -486,7 +486,7 @@ interface CombatantRowProps {
 }
 
 class CombatantRow extends React.Component<CombatantRowProps> {
-    getInformationText() {
+    private getInformationText() {
         if (this.props.combatant.current) {
             return 'current turn';
         }
@@ -498,14 +498,14 @@ class CombatantRow extends React.Component<CombatantRowProps> {
         return null;
     }
 
-    onClick(e: React.MouseEvent) {
+    private onClick(e: React.MouseEvent) {
         e.stopPropagation();
         if (this.props.select) {
             this.props.select(this.props.combatant);
         }
     }
 
-    getContentPC(pc: Combatant & PC, notes: JSX.Element[]) {
+    private getContentPC(pc: Combatant & PC, notes: JSX.Element[]) {
         return (
             <div className='content'>
                 <div className='section key-stats'>
@@ -522,7 +522,7 @@ class CombatantRow extends React.Component<CombatantRowProps> {
         );
     }
 
-    getContentMonster(monster: Combatant & Monster, notes: JSX.Element[]) {
+    private getContentMonster(monster: Combatant & Monster, notes: JSX.Element[]) {
         var hp = (monster.hp ? monster.hp : 0).toString();
         if (monster.hpTemp > 0) {
             hp += '+' + monster.hpTemp;
@@ -547,8 +547,8 @@ class CombatantRow extends React.Component<CombatantRowProps> {
                 if (c.duration) {
                     name += ' ' + Utils.conditionDurationText(c, this.props.combat);
                 }
-                var description = [];
-                var text = Utils.conditionText(c);
+                const description = [];
+                const text = Utils.conditionText(c);
                 for (var n = 0; n !== text.length; ++n) {
                     description.push(<li key={n} className='condition-text'>{text[n]}</li>);
                 }
@@ -587,7 +587,7 @@ class CombatantRow extends React.Component<CombatantRowProps> {
     }
 
     public render() {
-        var notes = [];
+        const notes = [];
         if (this.props.combat.map) {
             if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
                 notes.push(

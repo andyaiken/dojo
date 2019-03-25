@@ -26,11 +26,11 @@ export default class ConditionModal extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            condition: props.condition,
+            condition: props.condition
         };
     }
 
-    setCondition(conditionName: string) {
+    private setCondition(conditionName: string) {
         // eslint-disable-next-line
         this.state.condition.name = conditionName;
         // eslint-disable-next-line
@@ -43,7 +43,7 @@ export default class ConditionModal extends React.Component<Props, State> {
         });
     }
 
-    setDuration(durationType: 'saves' | 'combatant' | 'rounds') {
+    private setDuration(durationType: 'saves' | 'combatant' | 'rounds') {
         var duration = null;
 
         switch (durationType) {
@@ -68,7 +68,7 @@ export default class ConditionModal extends React.Component<Props, State> {
         });
     }
 
-    changeValue(object: any, field: string, value: any) {
+    private changeValue(object: any, field: string, value: any) {
         object[field] = value;
 
         this.setState({
@@ -76,7 +76,7 @@ export default class ConditionModal extends React.Component<Props, State> {
         });
     }
 
-    nudgeValue(object: any, field: string, delta: number) {
+    private nudgeValue(object: any, field: string, delta: number) {
         var value = object[field] + delta;
         if (field === 'level') {
             value = Math.max(value, 1);
@@ -97,9 +97,9 @@ export default class ConditionModal extends React.Component<Props, State> {
 
     public render() {
         try {
-            var conditions = CONDITION_TYPES.map(condition => {
-                var controls = [];
-                var description = [];
+            const conditions = CONDITION_TYPES.map(condition => {
+                const controls = [];
+                const description = [];
                 if (condition === this.state.condition.name) {
                     if (condition === 'custom') {
                         controls.push(
@@ -117,7 +117,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                             />
                         );
                     }
-                    var text = Utils.conditionText(this.state.condition);
+                    const text = Utils.conditionText(this.state.condition);
                     for (var n = 0; n !== text.length; ++n) {
                         description.push(<li key={n} className='section'>{text[n]}</li>);
                     }
@@ -138,8 +138,8 @@ export default class ConditionModal extends React.Component<Props, State> {
                 };
             });
 
-            var saveOptions = ['str', 'dex', 'con', 'int', 'wis', 'cha', 'death'].map(c => { return { id: c, text: c }; });
-            var pointOptions = [
+            const saveOptions = ['str', 'dex', 'con', 'int', 'wis', 'cha', 'death'].map(c => ({ id: c, text: c }));
+            const pointOptions = [
                 {
                     id: 'start',
                     text: 'start of turn'
@@ -148,10 +148,10 @@ export default class ConditionModal extends React.Component<Props, State> {
                     id: 'end',
                     text: 'end of turn'
                 }
-            ]
-            var combatantOptions = this.props.combat.combatants.map(c => { return { id: c.id, text: (c.displayName || c.name || 'unnamed monster') }; });
+            ];
+            const combatantOptions = this.props.combat.combatants.map(c => ({ id: c.id, text: (c.displayName || c.name || 'unnamed monster') }));
 
-            var durations = [
+            const durations = [
                 {
                     id: 'none',
                     text: 'until removed (default)',

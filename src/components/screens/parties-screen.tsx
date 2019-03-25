@@ -101,7 +101,7 @@ export default class PartiesScreen extends React.Component<Props> {
                 }
             }
 
-            var name = undefined;
+            var name;
             if (this.props.selection) {
                 name = this.props.selection.name || 'unnamed party';
             }

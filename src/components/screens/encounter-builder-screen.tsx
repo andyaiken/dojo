@@ -58,11 +58,11 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
         };
     }
 
-    inEncounter(monster: Monster) {
+    private inEncounter(monster: Monster) {
         var result = false;
 
         if (this.props.selection) {
-            var group = Utils.getMonsterGroup(monster, this.props.library);
+            const group = Utils.getMonsterGroup(monster, this.props.library);
 
             this.props.selection.slots.forEach(slot => {
                 if ((slot.monsterGroupName === group.name) && (slot.monsterName === monster.name)) {
@@ -74,7 +74,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
         return result;
     }
 
-    matchMonster(monster: Monster) {
+    private matchMonster(monster: Monster) {
         if (monster.challenge < this.state.filter.challengeMin) {
             return false;
         }
@@ -104,7 +104,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
         return true;
     }
 
-    changeFilterValue(type: 'name' | 'challengeMin' | 'challengeMax' | 'category' | 'size', value: any) {
+    private changeFilterValue(type: 'name' | 'challengeMin' | 'challengeMax' | 'category' | 'size', value: any) {
         // eslint-disable-next-line
         this.state.filter[type] = value;
         this.setState({
@@ -112,12 +112,12 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
         });
     }
 
-    nudgeFilterValue(type: 'challengeMin' | 'challengeMax', delta: number) {
-        var value = Utils.nudgeChallenge(this.state.filter[type], delta);
+    private nudgeFilterValue(type: 'challengeMin' | 'challengeMax', delta: number) {
+        const value = Utils.nudgeChallenge(this.state.filter[type], delta);
         this.changeFilterValue(type, value);
     }
 
-    resetFilter() {
+    private resetFilter() {
         this.setState({
             filter: {
                 name: '',
@@ -129,11 +129,11 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
         });
     }
 
-    getMonsterCards(slots: EncounterSlot[], waveID: string | null) {
-        var cards = [];
+    private getMonsterCards(slots: EncounterSlot[], waveID: string | null) {
+        const cards = [];
 
         slots.forEach(slot => {
-            var monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
+            const monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
             if (monster) {
                 cards.push(
                     <div className='column' key={monster.id}>
@@ -148,8 +148,8 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                     </div>
                 );
             } else {
-                var index = slots.indexOf(slot);
-                var error = 'unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName;
+                const index = slots.indexOf(slot);
+                const error = 'unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName;
                 cards.push(
                     <div className='column' key={index}>
                         <ErrorCard
@@ -171,7 +171,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
         return cards;
     }
 
-    getLibrarySection() {
+    private getLibrarySection() {
         if (!this.props.selection) {
             return null;
         }
@@ -249,7 +249,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                 );
             }
 
-            var encounterName = undefined;
+            var encounterName;
             const encounterCards = [];
             var waves: JSX.Element[] = [];
 

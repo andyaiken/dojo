@@ -37,7 +37,7 @@ export default class MapPanel extends React.Component<Props> {
         gridSquareClicked: null
     };
 
-    getMapDimensions(border: number): MapDimensions | null {
+    private getMapDimensions(border: number): MapDimensions | null {
         var dimensions: MapDimensions | null = null;
 
         this.props.map.items.filter(i => {
@@ -92,7 +92,7 @@ export default class MapPanel extends React.Component<Props> {
         return dimensions;
     }
 
-    getSideLength(): number {
+    private getSideLength(): number {
         switch (this.props.mode) {
             case 'thumbnail':
                 return 5;
@@ -104,8 +104,8 @@ export default class MapPanel extends React.Component<Props> {
         }
     }
 
-    getPosition(x: number, y: number, width: number, height: number, mapDimensions: MapDimensions): { left: string; top: string; width: string; height: string } {
-        var sideLength = this.getSideLength();
+    private getPosition(x: number, y: number, width: number, height: number, mapDimensions: MapDimensions): { left: string; top: string; width: string; height: string } {
+        const sideLength = this.getSideLength();
 
         return {
             left: 'calc(' + sideLength + 'px * ' + (x - mapDimensions.minX) + ')',
@@ -117,8 +117,8 @@ export default class MapPanel extends React.Component<Props> {
 
     public render() {
         try {
-            var border = (this.props.mode === 'edit') ? 2 : 0;
-            var mapDimensions = this.getMapDimensions(border);
+            const border = (this.props.mode === 'edit') ? 2 : 0;
+            const mapDimensions = this.getMapDimensions(border);
             if (!mapDimensions) {
                 return (
                     <div>(blank map)</div>
@@ -126,11 +126,11 @@ export default class MapPanel extends React.Component<Props> {
             }
 
             // Draw the grid squares
-            var grid = [];
+            const grid = [];
             if (this.props.mode === 'edit') {
                 for (var y = mapDimensions.minY; y !== mapDimensions.maxY + 1; ++y) {
                     for (var x = mapDimensions.minX; x !== mapDimensions.maxX + 1; ++x) {
-                        var pos = this.getPosition(x, y, 1, 1, mapDimensions);
+                        const pos = this.getPosition(x, y, 1, 1, mapDimensions);
                         grid.push(
                             <GridSquare
                                 key={x + ',' + y}
@@ -146,10 +146,10 @@ export default class MapPanel extends React.Component<Props> {
             }
 
             // Draw the map tiles
-            var tiles = this.props.map.items
+            const tiles = this.props.map.items
                 .filter(i => i.type === 'tile')
                 .map(i => {
-                    var pos = this.getPosition(i.x, i.y, i.width, i.height, mapDimensions as MapDimensions);
+                    const pos = this.getPosition(i.x, i.y, i.width, i.height, mapDimensions as MapDimensions);
                     return (
                         <MapTile
                             key={i.id}
@@ -164,13 +164,13 @@ export default class MapPanel extends React.Component<Props> {
                 });
 
             // Draw the tokens
-            var tokens: JSX.Element[] = [];
+            const tokens: JSX.Element[] = [];
             if (this.props.mode !== 'edit') {
                 tokens = this.props.map.items
                     .filter(i => (i.type === 'monster') || (i.type === 'pc'))
                     .map(i => {
-                        var pos = this.getPosition(i.x, i.y, i.width, i.height, mapDimensions as MapDimensions);
-                        var combatant = this.props.combatants.find(c => c.id === i.id);
+                        const pos = this.getPosition(i.x, i.y, i.width, i.height, mapDimensions as MapDimensions);
+                        const combatant = this.props.combatants.find(c => c.id === i.id);
                         if (combatant) {
                             return (
                                 <MapToken
@@ -192,11 +192,11 @@ export default class MapPanel extends React.Component<Props> {
             }
 
             // Draw the drag overlay
-            var dragOverlay = [];
+            const dragOverlay = [];
             if (this.props.showOverlay) {
                 for (var yOver = mapDimensions.minY; yOver !== mapDimensions.maxY + 1; ++yOver) {
                     for (var xOver = mapDimensions.minX; xOver !== mapDimensions.maxX + 1; ++xOver) {
-                        var posOver = this.getPosition(xOver, yOver, 1, 1, mapDimensions);
+                        const posOver = this.getPosition(xOver, yOver, 1, 1, mapDimensions);
                         dragOverlay.push(
                             <GridSquare
                                 key={xOver + ',' + yOver}
@@ -211,7 +211,7 @@ export default class MapPanel extends React.Component<Props> {
                 }
             }
 
-            var style = 'map-panel ' + this.props.mode;
+            const style = 'map-panel ' + this.props.mode;
             return (
                 <div className={style} onClick={() => this.props.setSelectedItemID(null)}>
                     <div className='grid' style={{ height: ((this.getSideLength() * mapDimensions.height) + 1) + 'px' }}>
@@ -243,14 +243,14 @@ class GridSquare extends React.Component<GridSquareProps> {
         onDoubleClick: null
     };
 
-    click(e: React.MouseEvent) {
+    private click(e: React.MouseEvent) {
         e.stopPropagation();
         if (this.props.onClick) {
             this.props.onClick(this.props.x, this.props.y);
         }
     }
 
-    doubleClick(e: React.MouseEvent) {
+    private doubleClick(e: React.MouseEvent) {
         e.stopPropagation();
         if (this.props.onDoubleClick) {
             this.props.onDoubleClick(this.props.x, this.props.y);
@@ -269,8 +269,7 @@ class GridSquare extends React.Component<GridSquareProps> {
                 style={this.props.position}
                 onClick={e => this.click(e)}
                 onDoubleClick={e => this.doubleClick(e)}
-            >
-            </div>
+            />
         );
     }
 }
@@ -285,7 +284,7 @@ interface MapTileProps {
 }
 
 class MapTile extends React.Component<MapTileProps> {
-    select(e: React.MouseEvent) {
+    private select(e: React.MouseEvent) {
         if (this.props.selectable) {
             e.stopPropagation();
             this.props.select(this.props.tile.id);
@@ -305,8 +304,8 @@ class MapTile extends React.Component<MapTileProps> {
             <div
                 className={style}
                 style={this.props.position}
-                onClick={e => this.select(e)}>
-            </div>
+                onClick={e => this.select(e)}
+            />
         );
     }
 }
@@ -322,7 +321,7 @@ interface MapTokenProps {
 }
 
 class MapToken extends React.Component<MapTokenProps> {
-    select(e: React.MouseEvent) {
+    private select(e: React.MouseEvent) {
         if (this.props.selectable) {
             e.stopPropagation();
             this.props.select(this.props.token.id);
@@ -343,7 +342,7 @@ class MapToken extends React.Component<MapTokenProps> {
         var altitudeBadge = null;
         var conditionsBadge = null;
         if (!this.props.simple) {
-            var name = this.props.combatant.displayName || this.props.combatant.name;
+            const name = this.props.combatant.displayName || this.props.combatant.name;
             initials = (
                 <div className='initials'>{name.split(' ').map(s => s[0])}</div>
             );

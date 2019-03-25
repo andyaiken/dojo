@@ -29,7 +29,7 @@ export default class AbilityScorePanel extends React.Component<Props, State> {
         };
     }
 
-    toggleAbilityScores() {
+    private toggleAbilityScores() {
         this.setState({
             showAbilityScores: !this.state.showAbilityScores
         });
@@ -115,5 +115,5 @@ export default class AbilityScorePanel extends React.Component<Props, State> {
         } catch (e) {
             console.error(e);
         }
-    };
+    }
 }

@@ -23,17 +23,17 @@ export default class CardGroup extends React.Component<Props, State> {
         showClose: false,
         showToggle: false,
         close: null
-    }
+    };
 
     constructor(props: Props) {
         super(props);
 
         this.state = {
             showCards: true
-        }
+        };
     }
 
-    toggleCards() {
+    private toggleCards() {
         this.setState({
             showCards: !this.state.showCards
         });
@@ -56,7 +56,7 @@ export default class CardGroup extends React.Component<Props, State> {
 
                 var toggle = null;
                 if (this.props.showToggle) {
-                    var style = this.state.showCards ? 'image rotate' : 'image';
+                    const style = this.state.showCards ? 'image rotate' : 'image';
                     toggle = (
                         <img className={style} src={arrow} alt='arrow' onClick={() => this.toggleCards()} />
                     );

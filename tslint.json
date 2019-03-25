@@ -9,6 +9,7 @@
         "interface-name": false,
         "jsx-no-lambda": false,
         "jsx-no-multiline-js": false,
+        "max-classes-per-file": false,
         "max-line-length": false,
         "member-ordering": [true, "fields-first"],
         "no-console": [true, "log"],

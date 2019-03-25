@@ -32,6 +32,7 @@ import Checkbox from './controls/checkbox';
 import close from '../resources/images/close-black.svg';
 import monsters from '../resources/data/monsters.json';
 
+// tslint:disable-next-line
 interface Props {
     // No props; this is the root component
 }
@@ -129,7 +130,7 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
-    private componentDidUpdate() {
+    public componentDidUpdate() {
         var json = null;
         try {
             json = JSON.stringify(this.state);
@@ -895,9 +896,9 @@ export default class Dojo extends React.Component<Props, State> {
             this.sortCombatants(combat);
 
             if (combatSetup.folioID && combatSetup.mapID) {
-                var folio = this.getMapFolio(combatSetup.folioID);
+                const folio = this.getMapFolio(combatSetup.folioID);
                 if (folio) {
-                    var map = folio.maps.find(m => m.id === combatSetup.mapID);
+                    const map = folio.maps.find(m => m.id === combatSetup.mapID);
                     if (map) {
                         combat.map = JSON.parse(JSON.stringify(map));
                     }
@@ -913,11 +914,11 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private openWaveModal() {
-        var combat = this.getCombat(this.state.selectedCombatID);
+        const combat = this.getCombat(this.state.selectedCombatID);
         if (combat) {
-            var encounter = this.getEncounter(combat.encounterID);
+            const encounter = this.getEncounter(combat.encounterID);
             if (encounter) {
-                var setup = Factory.createCombatSetup();
+                const setup = Factory.createCombatSetup();
                 setup.encounterID = combat.encounterID;
                 setup.monsterNames = Utils.getMonsterNames(encounter);
 
@@ -932,7 +933,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private pauseCombat() {
-        var combat = this.getCombat(this.state.selectedCombatID);
+        const combat = this.getCombat(this.state.selectedCombatID);
         if (combat) {
             combat.timestamp = new Date().toLocaleString();
             this.setState({
@@ -949,9 +950,9 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private endCombat() {
-        var combat = this.getCombat(this.state.selectedCombatID);
+        const combat = this.getCombat(this.state.selectedCombatID);
         if (combat) {
-            var index = this.state.combats.indexOf(combat);
+            const index = this.state.combats.indexOf(combat);
             this.state.combats.splice(index, 1);
             this.setState({
                 combats: this.state.combats,
@@ -961,7 +962,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private makeCurrent(combatant: (Combatant & PC) | (Combatant & Monster) | null, newRound: boolean) {
-        var combat = this.getCombat(this.state.selectedCombatID);
+        const combat = this.getCombat(this.state.selectedCombatID);
         if (combat) {
             // Handle start-of-turn conditions
             combat.combatants.filter(actor => actor.conditions).forEach(actor => {
@@ -982,7 +983,7 @@ export default class Dojo extends React.Component<Props, State> {
                             case 'combatant':
                                 // If this refers to me, and point is START, remove it
                                 if (combat && combatant && (c.duration.combatantID === combatant.id) && (c.duration.point === 'start')) {
-                                    var index = actor.conditions.indexOf(c);
+                                    const index = actor.conditions.indexOf(c);
                                     actor.conditions.splice(index, 1);
                                     // Notify the user
                                     combat.notifications.push({
@@ -1000,7 +1001,7 @@ export default class Dojo extends React.Component<Props, State> {
                                 }
                                 // If it's now at 0, remove it
                                 if (c.duration.count === 0) {
-                                    var n = actor.conditions.indexOf(c);
+                                    const n = actor.conditions.indexOf(c);
                                     actor.conditions.splice(n, 1);
                                     if (combat) {
                                         // Notify the user
@@ -1039,7 +1040,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private makeActive(combatant: (Combatant & PC) | (Combatant & Monster)) {
-        var combat = this.getCombat(this.state.selectedCombatID);
+        const combat = this.getCombat(this.state.selectedCombatID);
         if (combat) {
             combatant.pending = false;
             combatant.active = true;
@@ -1068,27 +1069,27 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private addWaveToCombat() {
-        var combatSetup: CombatSetup = this.state.modal.combat;
-        var encounter = this.getEncounter(combatSetup.encounterID);
-        var combat = this.getCombat(this.state.selectedCombatID);
+        const combatSetup: CombatSetup = this.state.modal.combat;
+        const encounter = this.getEncounter(combatSetup.encounterID);
+        const combat = this.getCombat(this.state.selectedCombatID);
         if (combatSetup && encounter && combat) {
-            var wave = encounter.waves.find(w => w.id === combatSetup.waveID);
+            const wave = encounter.waves.find(w => w.id === combatSetup.waveID);
             if (wave) {
                 wave.slots.forEach(slot => {
-                    var monster = this.getMonster(slot.monsterName, slot.monsterGroupName);
+                    const monster = this.getMonster(slot.monsterName, slot.monsterGroupName);
                     if (monster) {
-                        var init = parseInt(Utils.modifier(monster.abilityScores.dex));
-                        var groupRoll = Utils.dieRoll();
+                        const init = parseInt(Utils.modifier(monster.abilityScores.dex), 10);
+                        const groupRoll = Utils.dieRoll();
 
                         for (var n = 0; n !== slot.count; ++n) {
-                            var singleRoll = Utils.dieRoll();
+                            const singleRoll = Utils.dieRoll();
 
-                            var combatant = JSON.parse(JSON.stringify(monster));
+                            const combatant = JSON.parse(JSON.stringify(monster));
                             combatant.id = Utils.guid();
 
                             combatant.displayName = null;
                             if (combatSetup.monsterNames) {
-                                var slotNames = combatSetup.monsterNames.find(names => names.id === slot.id);
+                                const slotNames = combatSetup.monsterNames.find(names => names.id === slot.id);
                                 if (slotNames) {
                                     combatant.displayName = slotNames.names[n];
                                 }
@@ -1113,7 +1114,7 @@ export default class Dojo extends React.Component<Props, State> {
                             combatant.pending = (this.state.modal.combat.encounterInitMode === 'manual');
                             combatant.active = (this.state.modal.combat.encounterInitMode !== 'manual');
                             combatant.defeated = false;
-                
+
                             combatant.hp = combatant.hpMax;
                             combatant.conditions = [];
 
@@ -1123,7 +1124,7 @@ export default class Dojo extends React.Component<Props, State> {
                         }
                     } else {
                         if (combat) {
-                            var issue = 'unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName;
+                            const issue = 'unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName;
                             combat.issues.push(issue);
                         }
                     }
@@ -1140,9 +1141,9 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private removeCombatant(combatant: (Combatant & PC) | (Combatant & Monster)) {
-        var combat = this.getCombat(this.state.selectedCombatID);
+        const combat = this.getCombat(this.state.selectedCombatID);
         if (combat) {
-            var index = combat.combatants.indexOf(combatant);
+            const index = combat.combatants.indexOf(combatant);
             combat.combatants.splice(index, 1);
 
             this.setState({
@@ -1152,7 +1153,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private mapAdd(combatant: ((Combatant & PC) | (Combatant & Monster)), x: number, y: number) {
-        var item = Factory.createMapItem();
+        const item = Factory.createMapItem();
         item.id = combatant.id;
         item.type = combatant.type as 'pc' | 'monster';
         item.x = x;
@@ -1164,7 +1165,7 @@ export default class Dojo extends React.Component<Props, State> {
         item.height = size;
         item.width = size;
 
-        var combat = this.getCombat(this.state.selectedCombatID);
+        const combat = this.getCombat(this.state.selectedCombatID);
         if (combat && combat.map) {
             combat.map.items.push(item);
 
@@ -1175,9 +1176,9 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private mapMove(combatant: (Combatant & PC) | (Combatant & Monster), dir: string) {
-        var combat = this.getCombat(this.state.selectedCombatID);
+        const combat = this.getCombat(this.state.selectedCombatID);
         if (combat && combat.map) {
-            var item = combat.map.items.find(i => i.id === combatant.id);
+            const item = combat.map.items.find(i => i.id === combatant.id);
             if (item) {
                 switch (dir) {
                     case 'N':
@@ -1221,11 +1222,11 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private mapRemove(combatant: (Combatant & PC) | (Combatant & Monster)) {
-        var combat = this.getCombat(this.state.selectedCombatID);
+        const combat = this.getCombat(this.state.selectedCombatID);
         if (combat && combat.map) {
-            var item = combat.map.items.find(i => i.id === combatant.id);
+            const item = combat.map.items.find(i => i.id === combatant.id);
             if (item) {
-                var index = combat.map.items.indexOf(item);
+                const index = combat.map.items.indexOf(item);
                 combat.map.items.splice(index, 1);
 
                 this.setState({
@@ -1236,7 +1237,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private endTurn(combatant: (Combatant & PC) | (Combatant & Monster)) {
-        var combat = this.getCombat(this.state.selectedCombatID);
+        const combat = this.getCombat(this.state.selectedCombatID);
         if (combat) {
             // Handle end-of-turn conditions
             combat.combatants.filter(actor => actor.conditions).forEach(actor => {
@@ -1246,7 +1247,7 @@ export default class Dojo extends React.Component<Props, State> {
                             case 'saves':
                                 // If it's my condition, and point is END, notify the user
                                 if (combat && (actor.id === combatant.id) && (c.duration.point === 'end')) {
-                                    var saveNotification = Factory.createNotification();
+                                    const saveNotification = Factory.createNotification();
                                     saveNotification.type = 'condition-save';
                                     saveNotification.condition = c;
                                     saveNotification.combatant = combatant as Combatant & Monster;
@@ -1256,10 +1257,10 @@ export default class Dojo extends React.Component<Props, State> {
                             case 'combatant':
                                 // If this refers to me, and point is END, remove it
                                 if (combat && (c.duration.combatantID === combatant.id) && (c.duration.point === 'end')) {
-                                    var index = actor.conditions.indexOf(c);
+                                    const index = actor.conditions.indexOf(c);
                                     actor.conditions.splice(index, 1);
                                     // Notify the user
-                                    var endNotification = Factory.createNotification();
+                                    const endNotification = Factory.createNotification();
                                     endNotification.type = 'condition-end';
                                     endNotification.condition = c;
                                     endNotification.combatant = combatant as Combatant & Monster;
@@ -1277,7 +1278,7 @@ export default class Dojo extends React.Component<Props, State> {
                 });
             });
 
-            var active = combat.combatants.filter(combatant => {
+            const active = combat.combatants.filter(combatant => {
                 return combatant.current || (!combatant.pending && combatant.active && !combatant.defeated);
             });
             if (active.length === 0) {
@@ -1308,9 +1309,9 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private addCondition(combatant: Combatant & Monster) {
-        var combat = this.getCombat(this.state.selectedCombatID);
+        const combat = this.getCombat(this.state.selectedCombatID);
         if (combat) {
-            var condition = Factory.createCondition();
+            const condition = Factory.createCondition();
             condition.name = 'blinded';
 
             this.setState({
@@ -1334,7 +1335,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private editCondition(combatant: Combatant & Monster, condition: Condition) {
-        var combat = this.getCombat(this.state.selectedCombatID);
+        const combat = this.getCombat(this.state.selectedCombatID);
         if (combat) {
             this.setState({
                 modal: {
@@ -1348,10 +1349,10 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private editConditionFromModal() {
-        var conditions: Condition[] = this.state.modal.combatant.conditions;
-        var original = conditions.find(c => c.id === this.state.modal.condition.id);
+        const conditions: Condition[] = this.state.modal.combatant.conditions;
+        const original = conditions.find(c => c.id === this.state.modal.condition.id);
         if (original) {
-            var index = conditions.indexOf(original);
+            const index = conditions.indexOf(original);
             // eslint-disable-next-line
             conditions[index] = this.state.modal.condition;
 
@@ -1363,9 +1364,9 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private removeCondition(combatant: Combatant & Monster, conditionID: string) {
-        var condition = combatant.conditions.find(c => c.id === conditionID);
+        const condition = combatant.conditions.find(c => c.id === conditionID);
         if (condition) {
-            var index = combatant.conditions.indexOf(condition);
+            const index = combatant.conditions.indexOf(condition);
             combatant.conditions.splice(index, 1);
 
             this.setState({
@@ -1377,23 +1378,23 @@ export default class Dojo extends React.Component<Props, State> {
     private sortCombatants(combat: Combat) {
         combat.combatants.sort((a, b) => {
             // First sort by initiative, descending
-            if (a.initiative && b.initiative && (a.initiative < b.initiative)) return 1;
-            if (a.initiative && b.initiative && (a.initiative > b.initiative)) return -1;
+            if (a.initiative && b.initiative && (a.initiative < b.initiative)) { return 1; }
+            if (a.initiative && b.initiative && (a.initiative > b.initiative)) { return -1; }
             // Then sort by name, ascending
-            if (a.name < b.name) return -1;
-            if (a.name > b.name) return 1;
+            if (a.name < b.name) { return -1; }
+            if (a.name > b.name) { return 1; }
             return 0;
         });
     }
 
     private closeNotification(notification: Notification, removeCondition: boolean) {
-        var combat = this.getCombat(this.state.selectedCombatID);
+        const combat = this.getCombat(this.state.selectedCombatID);
         if (combat) {
-            var index = combat.notifications.indexOf(notification);
+            const index = combat.notifications.indexOf(notification);
             combat.notifications.splice(index, 1);
 
             if (removeCondition && notification.combatant && notification.condition) {
-                var conditionIndex = notification.combatant.conditions.indexOf(notification.condition);
+                const conditionIndex = notification.combatant.conditions.indexOf(notification.condition);
                 notification.combatant.conditions.splice(conditionIndex, 1);
             }
 
@@ -1470,7 +1471,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private getMonster(monsterName: string, groupName: string) {
-        var group = this.getMonsterGroupByName(groupName);
+        const group = this.getMonsterGroupByName(groupName);
         if (group) {
             return group.monsters.find(monster => monster.name === monsterName);
         }
@@ -1512,11 +1513,7 @@ export default class Dojo extends React.Component<Props, State> {
                 break;
             case 'level':
                 value = Math.max(value, 1);
-                if (combatant.player !== undefined) {
-                    value = Math.min(value, 20)
-                } else {
-                    value = Math.min(value, 6);
-                }
+                value = (combatant.player !== undefined) ? Math.min(value, 20) : Math.min(value, 6);
                 break;
             case 'count':
                 value = Math.max(value, 1);
@@ -1529,10 +1526,10 @@ export default class Dojo extends React.Component<Props, State> {
                 break;
         }
 
-        var tokens = type.split('.');
+        const tokens = type.split('.');
         var obj = combatant;
         for (var n = 0; n !== tokens.length; ++n) {
-            var token = tokens[n];
+            const token = tokens[n];
             if (n === tokens.length - 1) {
                 obj[token] = value;
             } else {
@@ -1559,17 +1556,13 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private nudgeValue(combatant: any, type: string, delta: number) {
-        var tokens = type.split('.');
+        const tokens = type.split('.');
         var obj = combatant;
         for (var n = 0; n !== tokens.length; ++n) {
-            var token = tokens[n];
+            const token = tokens[n];
             if (n === tokens.length - 1) {
                 var value = null;
-                if (token === 'challenge') {
-                    value = Utils.nudgeChallenge(obj.challenge, delta);
-                } else {
-                    value = obj[token] + delta;
-                }
+                value = (token === 'challenge') ? Utils.nudgeChallenge(obj.challenge, delta) : obj[token] + delta;
                 this.changeValue(combatant, type, value);
             } else {
                 obj = obj[token];
@@ -1684,7 +1677,7 @@ export default class Dojo extends React.Component<Props, State> {
                     );
                     break;
                 case 'combat':
-                    var combat = this.getCombat(this.state.selectedCombatID);
+                    const combat = this.getCombat(this.state.selectedCombatID);
                     content = (
                         <CombatManagerScreen
                             combats={this.state.combats}
@@ -1710,7 +1703,7 @@ export default class Dojo extends React.Component<Props, State> {
                         />
                     );
                     if (combat) {
-                        var encounter = this.getEncounter(combat.encounterID);
+                        const encounter = this.getEncounter(combat.encounterID);
                         if (encounter) {
                             var xp = 0;
                             combat.combatants.filter(c => c.type === 'monster')
@@ -1751,7 +1744,7 @@ export default class Dojo extends React.Component<Props, State> {
                 var modalContent = null;
                 var modalAllowClose = true;
                 var modalAllowScroll = true;
-                var modalButtons = {
+                const modalButtons = {
                     left: [] as JSX.Element[],
                     right: [] as JSX.Element[]
                 };
@@ -1786,12 +1779,14 @@ export default class Dojo extends React.Component<Props, State> {
                         modalAllowClose = false;
                         modalAllowScroll = false;
                         modalButtons.left = [
-                            <Checkbox
-                                key='similar'
-                                label='similar monsters'
-                                checked={this.state.modal.showMonsters}
-                                changeValue={() => this.toggleShowSimilarMonsters()}
-                            /> 
+                            (
+                                <Checkbox
+                                    key='similar'
+                                    label='similar monsters'
+                                    checked={this.state.modal.showMonsters}
+                                    changeValue={() => this.toggleShowSimilarMonsters()}
+                                />
+                            )
                         ];
                         modalButtons.right = [
                             <button key='save' onClick={() => this.saveMonster()}>save</button>,

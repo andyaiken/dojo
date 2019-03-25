@@ -14,12 +14,12 @@ interface Props {
 export default class MonsterGroupListItem extends React.Component<Props> {
     public render() {
         try {
-            var matchGroup = Utils.match(this.props.filter, this.props.group.name);
+            const matchGroup = Utils.match(this.props.filter, this.props.group.name);
 
-            var monsters = [];
+            const monsters = [];
             for (var n = 0; n !== this.props.group.monsters.length; ++n) {
-                var monster = this.props.group.monsters[n];
-                var matchMonster = Utils.match(this.props.filter, monster.name);
+                const monster = this.props.group.monsters[n];
+                const matchMonster = Utils.match(this.props.filter, monster.name);
                 if (matchGroup || matchMonster) {
                     var name = monster.name;
                     if (!name) {

@@ -48,32 +48,32 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 type: true,
                 subtype: false,
                 alignment: false,
-                challenge: true,
+                challenge: true
             }
         };
     }
 
-    setPage(page: 'overview' | 'abilities' | 'combat' | 'actions') {
-        var sections = this.getHelpOptionsForPage(page);
+    private setPage(page: 'overview' | 'abilities' | 'combat' | 'actions') {
+        const sections = this.getHelpOptionsForPage(page);
         this.setState({
             page: page,
             helpSection: sections[0]
         });
     }
 
-    toggleFilter() {
+    private toggleFilter() {
         this.setState({
             showFilter: !this.state.showFilter
         });
     }
 
-    setHelpSection(section: string) {
+    private setHelpSection(section: string) {
         this.setState({
             helpSection: section
         });
     }
 
-    toggleMatch(type: 'size' | 'type' | 'subtype' | 'alignment' | 'challenge') {
+    private toggleMatch(type: 'size' | 'type' | 'subtype' | 'alignment' | 'challenge') {
         // eslint-disable-next-line
         this.state.filter[type] = !this.state.filter[type];
         this.setState({
@@ -84,7 +84,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Helper methods
 
-    getHelpOptionsForPage(page: 'overview' | 'abilities' | 'combat' | 'actions') {
+    private getHelpOptionsForPage(page: 'overview' | 'abilities' | 'combat' | 'actions') {
         switch (page) {
             case 'overview':
                 return ['speed', 'senses', 'languages', 'equipment'];
@@ -99,8 +99,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         }
     }
 
-    getMonsters() {
-        var monsters: Monster[] = [];
+    private getMonsters() {
+        const monsters: Monster[] = [];
         this.props.library.forEach(group => {
             group.monsters.forEach(monster => {
                 var match = true;
@@ -132,19 +132,19 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 if (match) {
                     monsters.push(monster);
                 }
-            })
+            });
         });
 
         return monsters;
     }
 
-    setRandomValue(field: string, monsters: Monster[], notify: boolean) {
-        var index = Math.floor(Math.random() * monsters.length);
-        var m = monsters[index];
+    private setRandomValue(field: string, monsters: Monster[], notify: boolean) {
+        const index = Math.floor(Math.random() * monsters.length);
+        const m = monsters[index];
 
         var source: any = m;
         var value = null;
-        var tokens = field.split('.');
+        const tokens = field.split('.');
         tokens.forEach(token => {
             if (token === tokens[tokens.length - 1]) {
                 value = source[token];
@@ -156,7 +156,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         this.changeValue(field, value, notify);
     }
 
-    geneSplice(monsters: Monster[]) {
+    private geneSplice(monsters: Monster[]) {
         [
             'speed',
             'senses',
@@ -182,23 +182,23 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
         TRAIT_TYPES.forEach(type => {
             // Clear current traits of this type
-            var current = this.state.monster.traits.filter(t => t.type === type);
+            const current = this.state.monster.traits.filter(t => t.type === type);
             current.forEach(c => {
-                var index = this.state.monster.traits.findIndex(t => t === c);
+                const index = this.state.monster.traits.findIndex(t => t === c);
                 this.state.monster.traits.splice(index, 1);
-            })
+            });
 
             // Get all traits of this type
-            var traits: Trait[] = [];
+            const traits: Trait[] = [];
             monsters.forEach(m => {
                 m.traits.filter(t => t.type === type)
                     .forEach(t => traits.push(t));
             });
 
             // Collate by name
-            var distinct: { trait: Trait, count: number }[] = [];
+            const distinct: { trait: Trait, count: number }[] = [];
             traits.forEach(t => {
-                var current = distinct.find(d => d.trait.name === t.name);
+                const current = distinct.find(d => d.trait.name === t.name);
                 if (current) {
                     current.count += 1;
                 } else {
@@ -210,21 +210,21 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             });
 
             // If any are common to all monsters, copy them and remove from the candidates
-            var addedIDs: string[] = [];
+            const addedIDs: string[] = [];
             distinct.filter(d => d.count === monsters.length)
                 .forEach(d => {
                     this.copyTrait(d.trait);
                     addedIDs.push(d.trait.id);
                 });
             addedIDs.forEach(id => {
-                var index = distinct.findIndex(d => d.trait.id === id);
+                const index = distinct.findIndex(d => d.trait.id === id);
                 distinct.splice(index, 1);
             });
 
-            var avg = traits.length / monsters.length;
+            const avg = traits.length / monsters.length;
             while (this.state.monster.traits.filter(t => t.type === type).length < avg) {
-                var index = Math.floor(Math.random() * distinct.length);
-                var t = distinct[index].trait;
+                const index = Math.floor(Math.random() * distinct.length);
+                const t = distinct[index].trait;
                 this.copyTrait(t);
                 distinct.splice(index, 1);
             }
@@ -235,8 +235,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         });
     }
 
-    addTrait(type: 'trait' | 'action' | 'legendary' | 'lair' | 'regional') {
-        var trait = Factory.createTrait();
+    private addTrait(type: 'trait' | 'action' | 'legendary' | 'lair' | 'regional') {
+        const trait = Factory.createTrait();
         trait.type = type;
         trait.name = 'New ' + this.getActionTypeName(type, false).toLowerCase();
         this.state.monster.traits.push(trait);
@@ -245,8 +245,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         });
     }
 
-    addRandomTrait(type: string, monsters: Monster[]) {
-        var traits: Trait[] = [];
+    private addRandomTrait(type: string, monsters: Monster[]) {
+        const traits: Trait[] = [];
         monsters.forEach(m => {
             m.traits.filter(t => t.type === type)
                 .forEach(t => {
@@ -254,21 +254,21 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 });
         });
 
-        var index = Math.floor(Math.random() * traits.length);
-        var trait = traits[index];
+        const index = Math.floor(Math.random() * traits.length);
+        const trait = traits[index];
 
         this.copyTrait(trait);
     }
 
-    removeTrait(trait: Trait) {
-        var index = this.state.monster.traits.indexOf(trait);
+    private removeTrait(trait: Trait) {
+        const index = this.state.monster.traits.indexOf(trait);
         this.state.monster.traits.splice(index, 1);
         this.setState({
             monster: this.state.monster
         });
     }
 
-    getActionTypeName(type: string, plural: boolean) {
+    private getActionTypeName(type: string, plural: boolean) {
         var name = Utils.traitType(type);
         if (plural) {
             name += 's';
@@ -276,8 +276,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         return name;
     }
 
-    copyTrait(trait: Trait) {
-        var copy = JSON.parse(JSON.stringify(trait));
+    private copyTrait(trait: Trait) {
+        const copy = JSON.parse(JSON.stringify(trait));
         copy.id = Utils.guid();
         this.state.monster.traits.push(copy);
         this.setState({
@@ -285,17 +285,17 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         });
     }
 
-    changeTrait(trait: Trait, field: 'name' | 'usage' | 'type' | 'text', value: string) {
+    private changeTrait(trait: Trait, field: 'name' | 'usage' | 'type' | 'text', value: string) {
         trait[field] = value;
         this.setState({
             monster: this.state.monster
         });
     }
 
-    nudgeValue(field: string, delta: number) {
+    private nudgeValue(field: string, delta: number) {
         var source: any = this.state.monster;
         var value: any = null;
-        var tokens = field.split('.');
+        const tokens = field.split('.');
         tokens.forEach(token => {
             if (token === tokens[tokens.length - 1]) {
                 value = source[token];
@@ -304,31 +304,25 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             }
         });
 
-        var newValue = null;
-        if (field === 'challenge') {
-            newValue = Utils.nudgeChallenge(value, delta);
-        } else {
-            newValue = (value ? value : 0) + delta;
-        }
-
+        const newValue = (field === 'challenge') ? Utils.nudgeChallenge(value, delta) : (value ? value : 0) + delta;
         this.changeValue(field, newValue);
     }
 
-    changeValue(field: string, value: any, notify = true) {
+    private changeValue(field: string, value: any, notify = true) {
         var source: any = this.state.monster;
-        var tokens = field.split('.');
+        const tokens = field.split('.');
         tokens.forEach(token => {
             if (token === tokens[tokens.length - 1]) {
                 source[token] = value;
 
                 if ((field === 'abilityScores.con') || (field === 'size') || (field === 'hitDice')) {
-                    var sides = Utils.hitDieType(this.state.monster.size);
-                    var conMod = Math.floor((this.state.monster.abilityScores.con - 10) / 2)
-                    var hpPerDie = ((sides + 1) / 2) + conMod;
-                    var hp = Math.floor(this.state.monster.hitDice * hpPerDie);
+                    const sides = Utils.hitDieType(this.state.monster.size);
+                    const conMod = Math.floor((this.state.monster.abilityScores.con - 10) / 2);
+                    const hpPerDie = ((sides + 1) / 2) + conMod;
+                    const hp = Math.floor(this.state.monster.hitDice * hpPerDie);
                     // eslint-disable-next-line
                     this.state.monster.hpMax = hp;
-                }  
+                }
 
                 if (notify) {
                     this.setState({
@@ -344,7 +338,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // HTML render methods
 
-    getHelpSection(monsters: Monster[]) {
+    private getHelpSection(monsters: Monster[]) {
         switch (this.state.helpSection) {
             case 'speed':
                 return this.getValueSection('speed', 'text', monsters);
@@ -389,10 +383,10 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         }
     }
 
-    getValueSection(field: string, dataType: 'text' | 'number', monsters: Monster[]) {
-        var values: any[] = monsters
+    private getValueSection(field: string, dataType: 'text' | 'number', monsters: Monster[]) {
+        const values: any[] = monsters
             .map(m => {
-                var tokens = field.split('.');
+                const tokens = field.split('.');
                 var source: any = m;
                 var value = null;
                 tokens.forEach(token => {
@@ -409,7 +403,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             })
             .filter(v => v !== null);
 
-        var distinct: { value: any, count: number }[] = [];
+        const distinct: { value: any, count: number }[] = [];
         if (dataType === 'number') {
             var min: number | null = null;
             var max: number | null = null;
@@ -431,7 +425,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             }
         }
         values.forEach(v => {
-            var current = distinct.find(d => d.value === v);
+            const current = distinct.find(d => d.value === v);
             if (current) {
                 current.count += 1;
             } else {
@@ -455,7 +449,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         }
 
         if (dataType === 'text') {
-            var count = monsters.length - values.length;
+            const count = monsters.length - values.length;
             if (count !== 0) {
                 distinct.push({
                     value: '',
@@ -464,8 +458,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             }
         }
 
-        var valueSections = distinct.map(d => {
-            var width = 100 * d.count / monsters.length;
+        const valueSections = distinct.map(d => {
+            const width = 100 * d.count / monsters.length;
             return (
                 <div className='row small-up-3 medium-up-3 large-up-3 value-list' key={distinct.indexOf(d)}>
                     <div className='column'>
@@ -475,7 +469,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                     </div>
                     <div className='column'>
                         <div className='bar-container'>
-                            <div className='bar' style={{ width: width + '%' }}></div>
+                            <div className='bar' style={{ width: width + '%' }} />
                         </div>
                     </div>
                     <div className='column'>
@@ -493,8 +487,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         );
     }
 
-    getActionsSection(monsters: Monster[]) {
-        var rows = [];
+    private getActionsSection(monsters: Monster[]) {
+        const rows = [];
         rows.push(
             <div className='row small-up-3 medium-up-3 large-up-3 value-list' key='header'>
                 <div className='column'>
@@ -520,7 +514,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             var max: number | null = null;
             var count = 0;
             monsters.forEach(m => {
-                var n = m.traits.filter(t => t.type === type).length;
+                const n = m.traits.filter(t => t.type === type).length;
                 if ((min === null) || (n < min)) {
                     min = n;
                 }
@@ -529,7 +523,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 }
                 count += n;
             });
-            var avg = Math.round(count / monsters.length);    
+            const avg = Math.round(count / monsters.length);
 
             rows.push(
                 <div className='row small-up-4 medium-up-4 large-up-4 value-list' key={type}>
@@ -562,8 +556,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         );
     }
 
-    getFilterCard(monsters: Monster[]) {
-        var similar = (
+    private getFilterCard(monsters: Monster[]) {
+        const similar = (
             <div className='section'>
                 {monsters.length} similar monsters
             </div>
@@ -600,9 +594,9 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         checked={this.state.filter.challenge}
                         changeValue={value => this.toggleMatch('challenge')}
                     />
-                    <div className='divider'></div>
+                    <div className='divider' />
                     <button className={monsters.length < 2 ? 'disabled' : ''} onClick={() => this.geneSplice(monsters)}>build random monster</button>
-                    <div className='divider'></div>
+                    <div className='divider' />
                     {similar}
                 </div>
             );
@@ -629,9 +623,9 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         );
     }
 
-    getMonsterCards(monsters: Monster[]) {
-        var sorted = Utils.sort(monsters);
-        var monsterCards = sorted.map(m => (
+    private getMonsterCards(monsters: Monster[]) {
+        const sorted = Utils.sort(monsters);
+        const monsterCards = sorted.map(m => (
             <div className='section' key={m.id}>
                 <MonsterCard
                     combatant={m}
@@ -648,7 +642,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
     public render() {
         try {
-            var pages = [
+            const pages = [
                 {
                     id: 'overview',
                     text: 'overview'
@@ -664,7 +658,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 {
                     id: 'actions',
                     text: 'actions'
-                },
+                }
             ];
 
             var monsters: Monster[] = [];
@@ -675,8 +669,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             var content = null;
             switch (this.state.page) {
                 case 'overview':
-                    var catOptions = CATEGORY_TYPES.map(cat => { return { id: cat, text: cat }; });
-                    var sizeOptions = SIZE_TYPES.map(size => { return { id: size, text: size }; });
+                    const catOptions = CATEGORY_TYPES.map(cat => ({ id: cat, text: cat }));
+                    const sizeOptions = SIZE_TYPES.map(size => ({ id: size, text: size }));
 
                     content = (
                         <div className='row'>

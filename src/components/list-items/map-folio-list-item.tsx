@@ -11,10 +11,10 @@ interface Props {
 export default class MapFolioListItem extends React.Component<Props> {
     public render() {
         try {
-            var maps = [];
+            const maps = [];
             for (var n = 0; n !== this.props.mapFolio.maps.length; ++n) {
-                var map = this.props.mapFolio.maps[n];
-                var name = map.name || 'unnamed map';
+                const map = this.props.mapFolio.maps[n];
+                const name = map.name || 'unnamed map';
                 maps.push(<div key={map.id} className='text'>{name}</div>);
             }
             if (maps.length === 0) {

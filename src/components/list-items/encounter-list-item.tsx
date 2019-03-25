@@ -11,7 +11,7 @@ interface Props {
 export default class EncounterListItem extends React.Component<Props> {
     public render() {
         try {
-            var slots = [];
+            const slots = [];
 
             this.props.encounter.slots.forEach(slot => {
                 var text = slot.monsterName || 'unnamed monster';

@@ -27,14 +27,14 @@ export default class MapEditorModal extends React.Component<Props, State> {
         };
     }
 
-    setSelectedTileID(id: string | null) {
+    private setSelectedTileID(id: string | null) {
         this.setState({
             selectedTileID: id
         });
     }
 
-    addMapTile(x: number, y: number) {
-        var tile = Factory.createMapItem();
+    private addMapTile(x: number, y: number) {
+        const tile = Factory.createMapItem();
         tile.x = x;
         tile.y = y;
         tile.terrain = 'flagstone';
@@ -46,7 +46,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
         });
     }
 
-    moveMapItem(item: MapItem, dir: string) {
+    private moveMapItem(item: MapItem, dir: string) {
         switch (dir) {
             case 'N':
                 item.y -= 1;
@@ -70,7 +70,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
         });
     }
 
-    bigMapItem(item: MapItem, dir: string) {
+    private bigMapItem(item: MapItem, dir: string) {
         switch (dir) {
             case 'N':
                 item.y -= 1;
@@ -96,7 +96,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
         });
     }
 
-    smallMapItem(item: MapItem, dir: string) {
+    private smallMapItem(item: MapItem, dir: string) {
         switch (dir) {
             case 'N':
                 if (item.height > 1) {
@@ -130,7 +130,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
         });
     }
 
-    resizeMapItem(item: MapItem, dir: string, dir2: 'in' | 'out') {
+    private resizeMapItem(item: MapItem, dir: string, dir2: 'in' | 'out') {
         switch (dir2) {
             case 'in':
                 this.smallMapItem(item, dir);
@@ -144,8 +144,8 @@ export default class MapEditorModal extends React.Component<Props, State> {
         }
     }
 
-    cloneMapItem(item: MapItem) {
-        var copy = JSON.parse(JSON.stringify(item));
+    private cloneMapItem(item: MapItem) {
+        const copy = JSON.parse(JSON.stringify(item));
         copy.id = Utils.guid();
         copy.x += 1;
         copy.y += 1;
@@ -157,8 +157,8 @@ export default class MapEditorModal extends React.Component<Props, State> {
         });
     }
 
-    removeMapItem(item: MapItem) {
-        var index = this.state.map.items.indexOf(item);
+    private removeMapItem(item: MapItem) {
+        const index = this.state.map.items.indexOf(item);
         this.state.map.items.splice(index, 1);
 
         this.setState({
@@ -167,9 +167,9 @@ export default class MapEditorModal extends React.Component<Props, State> {
         });
     }
 
-    changeValue(source: any, field: string, value: any) {
+    private changeValue(source: any, field: string, value: any) {
         source[field] = value;
-        
+
         this.setState({
             map: this.state.map
         });
@@ -179,7 +179,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
         try {
             var tools = null;
             if (this.state.selectedTileID) {
-                var item = this.state.map.items.find(i => i.id === this.state.selectedTileID);
+                const item = this.state.map.items.find(i => i.id === this.state.selectedTileID);
                 if (item) {
                     tools = (
                         <div className='tools'>
