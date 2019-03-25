@@ -727,9 +727,17 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                             </div>
                             <div className='columns small-6 medium-6 large-6'>
                                 <div className='subheading'>saving throws</div>
-                                <input type='text' value={this.state.monster.savingThrows} onChange={event => this.changeValue('savingThrows', event.target.value)} />
+                                <input
+                                    type='text'
+                                    value={this.state.monster.savingThrows}
+                                    onChange={event => this.changeValue('savingThrows', event.target.value)}
+                                />
                                 <div className='subheading'>skills</div>
-                                <input type='text' value={this.state.monster.skills} onChange={event => this.changeValue('skills', event.target.value)} />
+                                <input
+                                    type='text'
+                                    value={this.state.monster.skills}
+                                    onChange={event => this.changeValue('skills', event.target.value)}
+                                />
                             </div>
                         </div>
                     );
@@ -756,13 +764,29 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                             </div>
                             <div className='columns small-6 medium-6 large-6'>
                                 <div className='subheading'>damage resistances</div>
-                                <input type='text' value={this.state.monster.damage.resist} onChange={event => this.changeValue('damage.resist', event.target.value)} />
+                                <input
+                                    type='text'
+                                    value={this.state.monster.damage.resist}
+                                    onChange={event => this.changeValue('damage.resist', event.target.value)}
+                                />
                                 <div className='subheading'>damage vulnerabilities</div>
-                                <input type='text' value={this.state.monster.damage.vulnerable} onChange={event => this.changeValue('damage.vulnerable', event.target.value)} />
+                                <input
+                                    type='text'
+                                    value={this.state.monster.damage.vulnerable}
+                                    onChange={event => this.changeValue('damage.vulnerable', event.target.value)}
+                                />
                                 <div className='subheading'>damage immunities</div>
-                                <input type='text' value={this.state.monster.damage.immune} onChange={event => this.changeValue('damage.immune', event.target.value)} />
+                                <input
+                                    type='text'
+                                    value={this.state.monster.damage.immune}
+                                    onChange={event => this.changeValue('damage.immune', event.target.value)}
+                                />
                                 <div className='subheading'>condition immunities</div>
-                                <input type='text' value={this.state.monster.conditionImmunities} onChange={event => this.changeValue('conditionImmunities', event.target.value)} />
+                                <input
+                                    type='text'
+                                    value={this.state.monster.conditionImmunities}
+                                    onChange={event => this.changeValue('conditionImmunities', event.target.value)}
+                                />
                             </div>
                         </div>
                     );
@@ -824,7 +848,14 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
             return (
                 <div className='row' style={{ height: '100%', margin: '0 -15px' }}>
-                    <div className={this.props.showMonsters ? 'columns small-8 medium-8 large-8 scrollable' : 'columns small-12 medium-12 large-12 scrollable'} style={{ transition: 'none' }}>
+                    <div
+                        className={
+                            this.props.showMonsters
+                            ? 'columns small-8 medium-8 large-8 scrollable'
+                            : 'columns small-12 medium-12 large-12 scrollable'
+                        }
+                        style={{ transition: 'none' }}
+                    >
                         <div className='section'>
                             <Selector
                                 tabs={true}

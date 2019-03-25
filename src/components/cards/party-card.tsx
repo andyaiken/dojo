@@ -45,21 +45,21 @@ export default class PartyCard extends React.Component<Props> {
 
             if (activePCs.length !== 0) {
                 const insight: { min: number | null, max: number | null } = { min: null, max: null };
-                const investigation: { min: number | null, max: number | null } = { min: null, max: null };
-                const perception: { min: number | null, max: number | null } = { min: null, max: null };
+                const invest: { min: number | null, max: number | null } = { min: null, max: null };
+                const percep: { min: number | null, max: number | null } = { min: null, max: null };
 
                 activePCs.forEach(pc => {
                     insight.min = insight.min === null ? pc.passiveInsight : Math.min(insight.min, pc.passiveInsight);
                     insight.max = insight.max === null ? pc.passiveInsight : Math.max(insight.max, pc.passiveInsight);
-                    investigation.min = investigation.min === null ? pc.passiveInvestigation : Math.min(investigation.min, pc.passiveInvestigation);
-                    investigation.max = investigation.max === null ? pc.passiveInvestigation : Math.max(investigation.max, pc.passiveInvestigation);
-                    perception.min = perception.min === null ? pc.passivePerception : Math.min(perception.min, pc.passivePerception);
-                    perception.max = perception.max === null ? pc.passivePerception : Math.max(perception.max, pc.passivePerception);
+                    invest.min = invest.min === null ? pc.passiveInvestigation : Math.min(invest.min, pc.passiveInvestigation);
+                    invest.max = invest.max === null ? pc.passiveInvestigation : Math.max(invest.max, pc.passiveInvestigation);
+                    percep.min = percep.min === null ? pc.passivePerception : Math.min(percep.min, pc.passivePerception);
+                    percep.max = percep.max === null ? pc.passivePerception : Math.max(percep.max, pc.passivePerception);
                 });
 
                 insightSummary = insight.min === insight.max ? (insight.min as number).toString() : insight.min + ' - ' + insight.max;
-                investigationSummary = investigation.min === investigation.max ? (investigation.min as number).toString() : investigation.min + ' - ' + investigation.max;
-                perceptionSummary = perception.min === perception.max ? (perception.min as number).toString() : perception.min + ' - ' + perception.max;
+                investigationSummary = invest.min === invest.max ? (invest.min as number).toString() : invest.min + ' - ' + invest.max;
+                perceptionSummary = percep.min === percep.max ? (percep.min as number).toString() : percep.min + ' - ' + percep.max;
             }
 
             const heading = (
@@ -71,7 +71,12 @@ export default class PartyCard extends React.Component<Props> {
             const content = (
                 <div>
                     <div className='section'>
-                        <input type='text' placeholder='party name' value={this.props.selection.name} onChange={event => this.props.changeValue('name', event.target.value)} />
+                        <input
+                            type='text'
+                            placeholder='party name'
+                            value={this.props.selection.name}
+                            onChange={event => this.props.changeValue('name', event.target.value)}
+                        />
                     </div>
                     <div className='divider' />
                     <div className='section'>

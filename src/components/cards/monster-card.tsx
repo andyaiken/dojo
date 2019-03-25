@@ -199,7 +199,12 @@ export default class MonsterCard extends React.Component<Props, State> {
                                 text='clone monster'
                                 content={
                                     <div>
-                                        <input type='text' placeholder='monster name' value={this.state.cloneName} onChange={event => this.setCloneName(event.target.value)} />
+                                        <input
+                                            type='text'
+                                            placeholder='monster name'
+                                            value={this.state.cloneName}
+                                            onChange={event => this.setCloneName(event.target.value)}
+                                        />
                                         <button onClick={() => this.props.cloneMonster(this.props.combatant, this.state.cloneName)}>create copy</button>
                                     </div>
                                 }
@@ -229,17 +234,29 @@ export default class MonsterCard extends React.Component<Props, State> {
                     if (this.props.mode.indexOf('encounter') !== -1) {
                         if (this.props.slot) {
                             // This card is in an encounter or a wave
-                            options.push(<button key='remove' onClick={() => this.props.removeEncounterSlot(this.props.slot)}>remove from encounter</button>);
+                            options.push(
+                                <button key='remove' onClick={() => this.props.removeEncounterSlot(this.props.slot)}>
+                                    remove from encounter
+                                </button>
+                            );
                         } else {
                             let canAdd = false;
                             // This card is in the library list
                             if (!this.monsterIsInWave(this.props.encounter)) {
-                                options.push(<button key='add encounter' onClick={() => this.props.addEncounterSlot(this.props.combatant, null)}>add to encounter</button>);
+                                options.push(
+                                    <button key='add encounter' onClick={() => this.props.addEncounterSlot(this.props.combatant, null)}>
+                                        add to encounter
+                                    </button>
+                                );
                                 canAdd = true;
                             }
                             this.props.encounter.waves.forEach(wave => {
                                 if (!this.monsterIsInWave(wave)) {
-                                    options.push(<button key={'add ' + wave.id} onClick={() => this.props.addEncounterSlot(this.props.combatant, wave.id)}>add to {wave.name}</button>);
+                                    options.push(
+                                        <button key={'add ' + wave.id} onClick={() => this.props.addEncounterSlot(this.props.combatant, wave.id)}>
+                                            add to {wave.name}
+                                        </button>
+                                    );
                                     canAdd = true;
                                 }
                             });
@@ -320,7 +337,11 @@ export default class MonsterCard extends React.Component<Props, State> {
                             text='change name'
                             content={(
                                 <div>
-                                    <input type='text' value={combatant.displayName} onChange={event => this.props.changeValue(this.props.combatant, 'displayName', event.target.value)} />
+                                    <input
+                                        type='text'
+                                        value={combatant.displayName}
+                                        onChange={event => this.props.changeValue(this.props.combatant, 'displayName', event.target.value)}
+                                    />
                                 </div>
                             )}
                         />
@@ -580,10 +601,14 @@ export default class MonsterCard extends React.Component<Props, State> {
                 );
             }
 
+            const name = (this.props.combatant as Combatant ? (this.props.combatant as Combatant).displayName : null)
+                || this.props.combatant.name
+                || 'unnamed monster';
+
             return (
                 <div className='card monster'>
                     <div className='heading'>
-                        <div className='title'>{(this.props.combatant as Combatant ? (this.props.combatant as Combatant).displayName : null) || this.props.combatant.name || 'unnamed monster'}</div>
+                        <div className='title'>{name}</div>
                         {toggle}
                     </div>
                     <div className='card-content'>

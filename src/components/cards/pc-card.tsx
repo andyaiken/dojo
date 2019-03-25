@@ -61,9 +61,17 @@ export default class PCCard extends React.Component<Props, State> {
             const options = [];
             if (this.props.mode.indexOf('edit') !== -1) {
                 if (this.props.combatant.active) {
-                    options.push(<button key='toggle-active' onClick={() => this.props.changeValue(this.props.combatant, 'active', false)}>mark inactive</button>);
+                    options.push(
+                        <button key='toggle-active' onClick={() => this.props.changeValue(this.props.combatant, 'active', false)}>
+                            mark inactive
+                        </button>
+                    );
                 } else {
-                    options.push(<button key='toggle-active' onClick={() => this.props.changeValue(this.props.combatant, 'active', true)}>mark active</button>);
+                    options.push(
+                        <button key='toggle-active' onClick={() => this.props.changeValue(this.props.combatant, 'active', true)}>
+                            mark active
+                        </button>
+                    );
                 }
                 options.push(<ConfirmButton key='remove' text='delete pc' callback={() => this.props.removePC(this.props.combatant)} />);
             }
@@ -157,13 +165,29 @@ export default class PCCard extends React.Component<Props, State> {
                         <div className='edit'>
                             <div className='section'>
                                 <div className='input-label' style={{ display: this.state.showDetails ? '' : 'none' }}>character name:</div>
-                                <input type='text' value={this.props.combatant.name} onChange={event => this.props.changeValue(this.props.combatant, 'name', event.target.value)} />
+                                <input
+                                    type='text'
+                                    value={this.props.combatant.name}
+                                    onChange={event => this.props.changeValue(this.props.combatant, 'name', event.target.value)}
+                                />
                                 <div className='input-label' style={{ display: this.state.showDetails ? '' : 'none' }}>player name:</div>
-                                <input type='text' value={this.props.combatant.player} onChange={event => this.props.changeValue(this.props.combatant, 'player', event.target.value)} />
+                                <input
+                                    type='text'
+                                    value={this.props.combatant.player}
+                                    onChange={event => this.props.changeValue(this.props.combatant, 'player', event.target.value)}
+                                />
                                 <div className='input-label'>race:</div>
-                                <input type='text' value={this.props.combatant.race} onChange={event => this.props.changeValue(this.props.combatant, 'race', event.target.value)} />
+                                <input
+                                    type='text'
+                                    value={this.props.combatant.race}
+                                    onChange={event => this.props.changeValue(this.props.combatant, 'race', event.target.value)}
+                                />
                                 <div className='input-label'>class:</div>
-                                <input type='text' value={this.props.combatant.classes} onChange={event => this.props.changeValue(this.props.combatant, 'classes', event.target.value)} />
+                                <input
+                                    type='text'
+                                    value={this.props.combatant.classes}
+                                    onChange={event => this.props.changeValue(this.props.combatant, 'classes', event.target.value)}
+                                />
                                 <div className='input-label'>level:</div>
                                 <Spin
                                     source={this.props.combatant}
@@ -171,9 +195,17 @@ export default class PCCard extends React.Component<Props, State> {
                                     nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'level', delta)}
                                 />
                                 <div className='input-label'>languages:</div>
-                                <input type='text' value={this.props.combatant.languages} onChange={event => this.props.changeValue(this.props.combatant, 'languages', event.target.value)} />
+                                <input
+                                    type='text'
+                                    value={this.props.combatant.languages}
+                                    onChange={event => this.props.changeValue(this.props.combatant, 'languages', event.target.value)}
+                                />
                                 <div className='input-label'>d&d beyond link:</div>
-                                <input type='text' value={this.props.combatant.url} onChange={event => this.props.changeValue(this.props.combatant, 'url', event.target.value)} />
+                                <input
+                                    type='text'
+                                    value={this.props.combatant.url}
+                                    onChange={event => this.props.changeValue(this.props.combatant, 'url', event.target.value)}
+                                />
                             </div>
                             <div className='divider' />
                             <div className='section subheading'>passive skills</div>
@@ -213,10 +245,14 @@ export default class PCCard extends React.Component<Props, State> {
                 toggle = <img className={imageStyle} src={arrow} alt='arrow' onClick={() => this.toggleDetails()} />;
             }
 
+            const name = (this.props.combatant as Combatant ? (this.props.combatant as Combatant).displayName : null)
+                || this.props.combatant.name
+                || 'unnamed pc';
+
             return (
                 <div className='card pc'>
                     <div className='heading'>
-                        <div className='title'>{(this.props.combatant as Combatant ? (this.props.combatant as Combatant).displayName : null) || this.props.combatant.name || 'unnamed pc'}</div>
+                        <div className='title'>{name}</div>
                         {toggle}
                     </div>
                     <div className='card-content'>

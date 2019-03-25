@@ -22,7 +22,12 @@ export default class MapCard extends React.Component<Props> {
                     </div>
                     <div className='card-content'>
                         <div className='section'>
-                            <input type='text' placeholder='map name' value={this.props.map.name} onChange={event => this.props.changeValue(this.props.map, 'name', event.target.value)} />
+                            <input
+                                type='text'
+                                placeholder='map name'
+                                value={this.props.map.name}
+                                onChange={event => this.props.changeValue(this.props.map, 'name', event.target.value)}
+                            />
                         </div>
                         <div className='divider' />
                         <div className='section centered'>

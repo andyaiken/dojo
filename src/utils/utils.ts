@@ -502,7 +502,7 @@ export default class Utils {
                 ];
             case 'petrified':
                 return [
-                    'a petrified creature is transformed, along with any nonmagical object it is wearing or carrying, into a solid inanimate substance (usually stone)',
+                    'a petrified creature is transformed, along with any nonmagical objects it is wearing or carrying, into a solid inanimate substance (usually stone)',
                     'its weight increases by a factor of ten, and it ceases aging',
                     'the creature is incapacitated (can’t take actions or reactions), can’t move or speak, and is unaware of its surroundings',
                     'attack rolls against the creature have advantage',

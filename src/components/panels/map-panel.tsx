@@ -27,6 +27,13 @@ interface MapDimensions {
     height: number;
 }
 
+interface StyleData {
+    left: string;
+    top: string;
+    width: string;
+    height: string;
+}
+
 export default class MapPanel extends React.Component<Props> {
     public static defaultProps = {
         combatants: null,
@@ -104,7 +111,7 @@ export default class MapPanel extends React.Component<Props> {
         }
     }
 
-    private getPosition(x: number, y: number, width: number, height: number, mapDimensions: MapDimensions): { left: string; top: string; width: string; height: string } {
+    private getStyle(x: number, y: number, width: number, height: number, mapDimensions: MapDimensions): StyleData {
         const sideLength = this.getSideLength();
 
         return {
@@ -130,13 +137,13 @@ export default class MapPanel extends React.Component<Props> {
             if (this.props.mode === 'edit') {
                 for (let y = mapDimensions.minY; y !== mapDimensions.maxY + 1; ++y) {
                     for (let x = mapDimensions.minX; x !== mapDimensions.maxX + 1; ++x) {
-                        const pos = this.getPosition(x, y, 1, 1, mapDimensions);
+                        const gridStyle = this.getStyle(x, y, 1, 1, mapDimensions);
                         grid.push(
                             <GridSquare
                                 key={x + ',' + y}
                                 x={x}
                                 y={y}
-                                position={pos}
+                                style={gridStyle}
                                 onClick={() => this.props.setSelectedItemID(null)}
                                 onDoubleClick={(posX, posY) => this.props.addMapTile(posX, posY)}
                             />
@@ -149,12 +156,12 @@ export default class MapPanel extends React.Component<Props> {
             const tiles = this.props.map.items
                 .filter(i => i.type === 'tile')
                 .map(i => {
-                    const pos = this.getPosition(i.x, i.y, i.width, i.height, mapDimensions as MapDimensions);
+                    const tileStyle = this.getStyle(i.x, i.y, i.width, i.height, mapDimensions as MapDimensions);
                     return (
                         <MapTile
                             key={i.id}
                             tile={i}
-                            position={pos}
+                            style={tileStyle}
                             selectable={this.props.mode === 'edit'}
                             selected={this.props.selectedItemID === i.id}
                             thumbnail={this.props.mode === 'thumbnail'}
@@ -169,7 +176,7 @@ export default class MapPanel extends React.Component<Props> {
                 tokens = this.props.map.items
                     .filter(i => (i.type === 'monster') || (i.type === 'pc'))
                     .map(i => {
-                        const pos = this.getPosition(i.x, i.y, i.width, i.height, mapDimensions as MapDimensions);
+                        const tokenStyle = this.getStyle(i.x, i.y, i.width, i.height, mapDimensions as MapDimensions);
                         const combatant = this.props.combatants.find(c => c.id === i.id);
                         if (combatant) {
                             return (
@@ -177,7 +184,7 @@ export default class MapPanel extends React.Component<Props> {
                                     key={i.id}
                                     token={i}
                                     combatant={combatant}
-                                    position={pos}
+                                    style={tokenStyle}
                                     simple={this.props.mode === 'thumbnail'}
                                     selectable={this.props.mode === 'combat'}
                                     selected={this.props.selectedItemID ===  i.id}
@@ -196,13 +203,13 @@ export default class MapPanel extends React.Component<Props> {
             if (this.props.showOverlay) {
                 for (let yOver = mapDimensions.minY; yOver !== mapDimensions.maxY + 1; ++yOver) {
                     for (let xOver = mapDimensions.minX; xOver !== mapDimensions.maxX + 1; ++xOver) {
-                        const posOver = this.getPosition(xOver, yOver, 1, 1, mapDimensions);
+                        const overlayStyle = this.getStyle(xOver, yOver, 1, 1, mapDimensions);
                         dragOverlay.push(
                             <GridSquare
                                 key={xOver + ',' + yOver}
                                 x={xOver}
                                 y={yOver}
-                                position={posOver}
+                                style={overlayStyle}
                                 overlay={true}
                                 onClick={(posX, posY) => this.props.gridSquareClicked(posX, posY)}
                             />
@@ -231,7 +238,7 @@ export default class MapPanel extends React.Component<Props> {
 interface GridSquareProps {
     x: number;
     y: number;
-    position: { left: string; top: string; width: string; height: string };
+    style: StyleData;
     overlay: boolean;
     onClick: (x: number, y: number) => void;
     onDoubleClick: (x: number, y: number) => void;
@@ -266,7 +273,7 @@ class GridSquare extends React.Component<GridSquareProps> {
         return (
             <div
                 className={style}
-                style={this.props.position}
+                style={this.props.style}
                 onClick={e => this.click(e)}
                 onDoubleClick={e => this.doubleClick(e)}
             />
@@ -276,7 +283,7 @@ class GridSquare extends React.Component<GridSquareProps> {
 
 interface MapTileProps {
     tile: MapItem;
-    position: { left: string; top: string; width: string; height: string };
+    style: StyleData;
     thumbnail: boolean;
     selectable: boolean;
     selected: boolean;
@@ -303,7 +310,7 @@ class MapTile extends React.Component<MapTileProps> {
         return (
             <div
                 className={style}
-                style={this.props.position}
+                style={this.props.style}
                 onClick={e => this.select(e)}
             />
         );
@@ -313,7 +320,7 @@ class MapTile extends React.Component<MapTileProps> {
 interface MapTokenProps {
     token: MapItem;
     combatant: (Combatant & PC) | (Combatant & Monster);
-    position: { left: string; top: string; width: string; height: string };
+    style: StyleData;
     simple: boolean;
     selectable: boolean;
     selected: boolean;
@@ -376,7 +383,7 @@ class MapToken extends React.Component<MapTokenProps> {
             <div
                 title={this.props.combatant.displayName || this.props.combatant.name}
                 className={style}
-                style={this.props.position}
+                style={this.props.style}
                 onClick={e => this.select(e)}
             >
                 {initials}

@@ -1631,7 +1631,12 @@ export default class Dojo extends React.Component<Props, State> {
                         actions = (
                             <div className='actions'>
                                 <div className='section'>
-                                    <input type='text' placeholder='filter' value={this.state.libraryFilter} onChange={event => this.changeValue(this.state, 'libraryFilter', event.target.value)} />
+                                    <input
+                                        type='text'
+                                        placeholder='filter'
+                                        value={this.state.libraryFilter}
+                                        onChange={event => this.changeValue(this.state, 'libraryFilter', event.target.value)}
+                                    />
                                 </div>
                                 <div className='section'>
                                     <button onClick={() => this.openDemographics()}>demographics</button>
@@ -1823,7 +1828,15 @@ export default class Dojo extends React.Component<Props, State> {
                         modalAllowClose = false;
                         modalAllowScroll = false;
                         modalButtons.right = [
-                            <button key='start encounter' className={this.state.modal.combatSetup.partyID && this.state.modal.combatSetup.encounterID ? '' : 'disabled'} onClick={() => this.startCombat()}>start encounter</button>,
+                            (
+                                <button
+                                    key='start encounter'
+                                    className={this.state.modal.combatSetup.partyID && this.state.modal.combatSetup.encounterID ? '' : 'disabled'}
+                                    onClick={() => this.startCombat()}
+                                >
+                                    start encounter
+                                </button>
+                            ),
                             <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
                         ];
                         break;
@@ -1840,7 +1853,15 @@ export default class Dojo extends React.Component<Props, State> {
                         modalAllowClose = false;
                         modalAllowScroll = false;
                         modalButtons.right = [
-                            <button key='add wave' className={this.state.modal.combatSetup.waveID !== null ? '' : 'disabled'} onClick={() => this.addWaveToCombat()}>add wave</button>,
+                            (
+                                <button
+                                    key='add wave'
+                                    className={this.state.modal.combatSetup.waveID !== null ? '' : 'disabled'}
+                                    onClick={() => this.addWaveToCombat()}
+                                >
+                                    add wave
+                                </button>
+                            ),
                             <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
                         ];
                         break;

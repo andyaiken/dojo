@@ -34,7 +34,7 @@ export default class EncounterBuilderCard extends React.Component<Props> {
     public render() {
         try {
             return (
-                <InfoCard getContent={this.getContent} />
+                <InfoCard getContent={() => this.getContent()} />
             );
         } catch (ex) {
             console.error(ex);

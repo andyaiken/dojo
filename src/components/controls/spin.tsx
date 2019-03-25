@@ -50,13 +50,23 @@ export default class Spin extends React.Component<Props> {
             if (this.props.factors) {
                 this.props.factors.forEach(factor => {
                     minusBtns.push(
-                        <div key={'minus' + factor} className='spin-button factor' onTouchEnd={e => this.touchEnd(e, -1 * factor)} onClick={e => this.click(e, -1 * factor)}>
+                        <div
+                            key={'minus' + factor}
+                            className='spin-button factor'
+                            onTouchEnd={e => this.touchEnd(e, -1 * factor)}
+                            onClick={e => this.click(e, -1 * factor)}
+                        >
                             {'-' + factor}
                         </div>
                     );
 
                     plusBtns.push(
-                        <div key={'plus' + factor} className='spin-button factor' onTouchEnd={e => this.touchEnd(e, +1 * factor)} onClick={e => this.click(e, +1 * factor)}>
+                        <div
+                            key={'plus' + factor}
+                            className='spin-button factor'
+                            onTouchEnd={e => this.touchEnd(e, +1 * factor)}
+                            onClick={e => this.click(e, +1 * factor)}
+                        >
                             {'+' + factor}
                         </div>
                     );

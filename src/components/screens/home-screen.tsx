@@ -16,7 +16,12 @@ export default class HomeScreen extends React.Component<Props> {
                     <div>
                         <div className='divider' />
                         <div className='text'>
-                            <div>since your collection of monsters is empty, you might want to start by pressing the button below to add monsters from the <a href='http://dnd.wizards.com/articles/features/systems-reference-document-srd' target='_blank' rel='noopener noreferrer'>system reference document</a></div>
+                            <div>
+                                since your collection of monsters is empty, you might want to start by pressing the button below to add monsters from the
+                                <a href='http://dnd.wizards.com/articles/features/systems-reference-document-srd' target='_blank' rel='noopener noreferrer'>
+                                    system reference document
+                                </a>
+                            </div>
                         </div>
                         <div className='text'>
                             <button onClick={() => this.props.addOpenGameContent()}>add monsters</button>

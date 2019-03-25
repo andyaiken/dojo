@@ -24,7 +24,12 @@ export default class MapFolioCard extends React.Component<Props> {
             const content = (
                 <div>
                     <div className='section'>
-                        <input type='text' placeholder='folio name' value={this.props.selection.name} onChange={event => this.props.changeValue(this.props.selection, 'name', event.target.value)} />
+                        <input
+                            type='text'
+                            placeholder='folio name'
+                            value={this.props.selection.name}
+                            onChange={event => this.props.changeValue(this.props.selection, 'name', event.target.value)}
+                        />
                     </div>
                     <div className='divider' />
                     <div className='section'>

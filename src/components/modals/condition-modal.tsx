@@ -103,7 +103,12 @@ export default class ConditionModal extends React.Component<Props, State> {
                 if (condition === this.state.condition.name) {
                     if (condition === 'custom') {
                         controls.push(
-                            <input type='text' placeholder='custom condition' value={this.state.condition.text ? this.state.condition.text : ''} onChange={event => this.changeValue(this.state.condition, 'text', event.target.value)} />
+                            <input
+                                type='text'
+                                placeholder='custom condition'
+                                value={this.state.condition.text ? this.state.condition.text : ''}
+                                onChange={event => this.changeValue(this.state.condition, 'text', event.target.value)}
+                            />
                         );
                     }
                     if (condition === 'exhaustion') {
@@ -186,7 +191,11 @@ export default class ConditionModal extends React.Component<Props, State> {
                                 <div className='subheading'>type of save</div>
                                 <Selector
                                     options={saveOptions}
-                                    selectedID={(this.props.condition.duration as ConditionDurationSaves) ? (this.props.condition.duration as ConditionDurationSaves).saveType : null}
+                                    selectedID={
+                                        (this.props.condition.duration as ConditionDurationSaves)
+                                        ? (this.props.condition.duration as ConditionDurationSaves).saveType
+                                        : null
+                                    }
                                     select={optionID => this.changeValue(this.props.condition.duration, 'saveType', optionID)}
                                 />
                             </div>
@@ -194,7 +203,11 @@ export default class ConditionModal extends React.Component<Props, State> {
                                 <div className='subheading'>make the save at the start or end of the turn</div>
                                 <Selector
                                     options={pointOptions}
-                                    selectedID={(this.props.condition.duration as ConditionDurationSaves) ? (this.props.condition.duration as ConditionDurationSaves).point : null}
+                                    selectedID={
+                                        (this.props.condition.duration as ConditionDurationSaves)
+                                        ? (this.props.condition.duration as ConditionDurationSaves).point
+                                        : null
+                                    }
                                     select={optionID => this.changeValue(this.props.condition.duration, 'point', optionID)}
                                 />
                             </div>
@@ -210,7 +223,11 @@ export default class ConditionModal extends React.Component<Props, State> {
                                 <div className='subheading'>combatant</div>
                                 <Dropdown
                                     options={combatantOptions}
-                                    selectedID={(this.props.condition.duration as ConditionDurationCombatant) ? (this.props.condition.duration as ConditionDurationCombatant).combatantID || undefined : undefined}
+                                    selectedID={
+                                        (this.props.condition.duration as ConditionDurationCombatant)
+                                        ? (this.props.condition.duration as ConditionDurationCombatant).combatantID || undefined
+                                        : undefined
+                                    }
                                     select={optionID => this.changeValue(this.props.condition.duration, 'combatantID', optionID)}
                                 />
                             </div>
@@ -218,7 +235,11 @@ export default class ConditionModal extends React.Component<Props, State> {
                                 <div className='subheading'>start or end of the turn</div>
                                 <Selector
                                     options={pointOptions}
-                                    selectedID={(this.props.condition.duration as ConditionDurationCombatant) ? (this.props.condition.duration as ConditionDurationCombatant).point : null}
+                                    selectedID={
+                                        (this.props.condition.duration as ConditionDurationCombatant)
+                                        ? (this.props.condition.duration as ConditionDurationCombatant).point
+                                        : null
+                                    }
                                     select={optionID => this.changeValue(this.props.condition.duration, 'point', optionID)}
                                 />
                             </div>

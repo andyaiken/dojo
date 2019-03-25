@@ -23,7 +23,12 @@ export default class WaveCard extends React.Component<Props> {
             const content = (
                 <div>
                     <div className='section'>
-                        <input type='text' placeholder='wave name' value={this.props.wave.name} onChange={event => this.props.changeValue(this.props.wave, 'name', event.target.value)} />
+                        <input
+                            type='text'
+                            placeholder='wave name'
+                            value={this.props.wave.name}
+                            onChange={event => this.props.changeValue(this.props.wave, 'name', event.target.value)}
+                        />
                     </div>
                     <div className='divider' />
                     <div className='section'>

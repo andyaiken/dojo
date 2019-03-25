@@ -26,7 +26,13 @@ export default class MonsterGroupCard extends React.Component<Props> {
             const content = (
                 <div>
                     <div className='section'>
-                        <input type='text' placeholder='group name' value={this.props.selection.name} disabled={!!this.props.filter} onChange={event => this.props.changeValue('name', event.target.value)} />
+                        <input
+                            type='text'
+                            placeholder='group name'
+                            value={this.props.selection.name}
+                            disabled={!!this.props.filter}
+                            onChange={event => this.props.changeValue('name', event.target.value)}
+                        />
                     </div>
                     <div className='divider' />
                     <div className='section'>

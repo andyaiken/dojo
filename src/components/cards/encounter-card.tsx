@@ -88,7 +88,12 @@ export default class EncounterCard extends React.Component<Props, State> {
             const content = (
                 <div>
                     <div className='section'>
-                        <input type='text' placeholder='encounter name' value={this.props.selection.name} onChange={event => this.props.changeValue('name', event.target.value)} />
+                        <input
+                            type='text'
+                            placeholder='encounter name'
+                            value={this.props.selection.name}
+                            onChange={event => this.props.changeValue('name', event.target.value)}
+                        />
                     </div>
                     <div style={{ display: this.state.showDetails ? '' : 'none' }}>
                         <div className='divider' />

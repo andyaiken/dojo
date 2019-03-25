@@ -53,7 +53,12 @@ export default class FilterCard extends React.Component<Props, State> {
                 content = (
                     <div>
                         <div className='section'>
-                            <input type='text' placeholder='name' value={this.props.filter.name} onChange={event => this.props.changeValue('name', event.target.value)} />
+                            <input
+                                type='text'
+                                placeholder='name'
+                                value={this.props.filter.name}
+                                onChange={event => this.props.changeValue('name', event.target.value)}
+                            />
                         </div>
                         <Spin
                             source={this.props.filter}
@@ -100,7 +105,12 @@ export default class FilterCard extends React.Component<Props, State> {
                 content = (
                     <div>
                         <div className='section'>
-                            <input type='text' placeholder='name' value={this.props.filter.name} onChange={event => this.props.changeValue('name', event.target.value)} />
+                            <input
+                                type='text'
+                                placeholder='name'
+                                value={this.props.filter.name}
+                                onChange={event => this.props.changeValue('name', event.target.value)}
+                            />
                         </div>
                         <div className='section'>showing {summary}</div>
                     </div>
