@@ -2,7 +2,7 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { Trait, Monster } from '../../models/monster-group';
+import { Monster, Trait } from '../../models/monster-group';
 
 import ConfirmButton from '../controls/confirm-button';
 import Expander from '../controls/expander';
@@ -34,11 +34,11 @@ export default class TraitsPanel extends React.Component<Props> {
             const regionalEffects = [];
 
             for (var n = 0; n !== this.props.combatant.traits.length; ++n) {
-                const action = this.props.combatant.traits[n];
+                const a = this.props.combatant.traits[n];
                 const item = (
                     <TraitPanel
-                        key={action.id}
-                        trait={action}
+                        key={a.id}
+                        trait={a}
                         mode={this.props.mode}
                         changeTrait={(action, type, value) => this.props.changeTrait(action, type, value)}
                         removeTrait={action => this.props.removeTrait(action)}
@@ -46,7 +46,7 @@ export default class TraitsPanel extends React.Component<Props> {
                     />
                 );
 
-                switch (action.type) {
+                switch (a.type) {
                     case 'trait':
                         traits.push(item);
                         break;

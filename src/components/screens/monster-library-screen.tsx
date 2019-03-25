@@ -2,13 +2,13 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { MonsterGroup, Monster } from '../../models/monster-group';
+import { Monster, MonsterGroup } from '../../models/monster-group';
 
-import MonsterLibraryCard from '../cards/information/monster-library-card';
-import MonsterGroupListItem from '../list-items/monster-group-list-item';
-import MonsterGroupCard from '../cards/monster-group-card';
-import MonsterCard from '../cards/monster-card';
 import InfoCard from '../cards/info-card';
+import MonsterLibraryCard from '../cards/information/monster-library-card';
+import MonsterCard from '../cards/monster-card';
+import MonsterGroupCard from '../cards/monster-group-card';
+import MonsterGroupListItem from '../list-items/monster-group-list-item';
 import CardGroup from '../panels/card-group';
 
 interface Props {
@@ -61,7 +61,7 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                             group={group}
                             filter={this.props.filter}
                             selected={group === this.props.selection}
-                            setSelection={group => this.props.selectMonsterGroup(group)}
+                            setSelection={grp => this.props.selectMonsterGroup(grp)}
                         />
                     );
                 }
@@ -88,19 +88,19 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                 });
 
                 if (monsters.length !== 0) {
-                    monsters.forEach(monster => {
+                    monsters.forEach(m => {
                         cards.push(
-                            <div className='column' key={monster.id}>
+                            <div className='column' key={m.id}>
                                 <MonsterCard
-                                    combatant={monster}
+                                    combatant={m}
                                     mode={'view editable'}
                                     library={this.props.library}
-                                    changeValue={(monster, type, value) => this.props.changeValue(monster, type, value)}
-                                    nudgeValue={(monster, type, delta) => this.props.nudgeValue(monster, type, delta)}
+                                    changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
+                                    nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
                                     moveToGroup={(monster, groupID) => this.props.moveToGroup(monster, groupID)}
                                     removeMonster={monster => this.props.removeMonster(monster)}
                                     editMonster={monster => this.props.editMonster(monster)}
-                                    cloneMonster={(monster, name) => this.props.cloneMonster(monster, name)}
+                                    cloneMonster={(monster, monsterName) => this.props.cloneMonster(monster, monsterName)}
                                 />
                             </div>
                         );

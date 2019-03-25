@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { MapFolio, Map } from '../../models/map-folio';
+import { Map, MapFolio } from '../../models/map-folio';
 
-import MapFoliosCard from '../cards/information/map-folios-card';
-import MapFolioListItem from '../list-items/map-folio-list-item';
-import MapFolioCard from '../cards/map-folio-card';
-import MapCard from '../cards/map-card';
 import InfoCard from '../cards/info-card';
+import MapFoliosCard from '../cards/information/map-folios-card';
+import MapCard from '../cards/map-card';
+import MapFolioCard from '../cards/map-folio-card';
+import MapFolioListItem from '../list-items/map-folio-list-item';
 import CardGroup from '../panels/card-group';
 
 interface Props {
@@ -40,7 +40,7 @@ export default class MapFoliosScreen extends React.Component<Props> {
                         key={mapFolio.id}
                         mapFolio={mapFolio}
                         selected={mapFolio === this.props.selection}
-                        setSelection={mapFolio => this.props.selectMapFolio(mapFolio)}
+                        setSelection={f => this.props.selectMapFolio(f)}
                     />
                 );
             }
@@ -60,11 +60,11 @@ export default class MapFoliosScreen extends React.Component<Props> {
                     </div>
                 );
 
-                this.props.selection.maps.forEach(map => {
+                this.props.selection.maps.forEach(m => {
                     folioCards.push(
-                        <div className='column' key={map.id}>
+                        <div className='column' key={m.id}>
                             <MapCard
-                                map={map}
+                                map={m}
                                 editMap={map => this.props.editMap(map)}
                                 removeMap={map => this.props.removeMap(map)}
                                 changeValue={(source, type, value) => this.props.changeValue(source, type, value)}

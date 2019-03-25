@@ -1,7 +1,7 @@
 import React from 'react';
 
-import arrow from '../../resources/images/down-arrow-black.svg';
 import close from '../../resources/images/close-black.svg';
+import arrow from '../../resources/images/down-arrow-black.svg';
 
 interface Props {
     content: any[];

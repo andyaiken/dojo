@@ -1,11 +1,11 @@
 import Utils from './utils';
 
-import { Party, PC } from '../models/party';
-import { MonsterGroup, Monster, Trait } from '../models/monster-group';
+import { Combat, CombatSetup, Notification } from '../models/combat';
+import { Condition, ConditionDurationCombatant, ConditionDurationRounds, ConditionDurationSaves } from '../models/condition';
 import { Encounter, EncounterSlot, EncounterWave } from '../models/encounter';
-import { MapFolio, Map, MapItem } from '../models/map-folio';
-import { CombatSetup, Combat, Notification } from '../models/combat';
-import { Condition, ConditionDurationSaves, ConditionDurationCombatant, ConditionDurationRounds } from '../models/condition';
+import { Map, MapFolio, MapItem } from '../models/map-folio';
+import { Monster, MonsterGroup, Trait } from '../models/monster-group';
+import { Party, PC } from '../models/party';
 
 export default class Factory {
 

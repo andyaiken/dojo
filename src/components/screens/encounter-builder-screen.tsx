@@ -3,18 +3,18 @@ import React from 'react';
 import Utils from '../../utils/utils';
 
 import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
+import { Monster, MonsterGroup } from '../../models/monster-group';
 import { Party } from '../../models/party';
-import { MonsterGroup, Monster } from '../../models/monster-group';
 
-import MonsterCard from '../cards/monster-card';
-import ErrorCard from '../cards/error-card';
-import InfoCard from '../cards/info-card';
-import FilterCard from '../cards/filter-card';
-import WaveCard from '../cards/wave-card';
-import CardGroup from '../panels/card-group';
-import EncounterBuilderCard from '../cards/information/encounter-builder-card';
 import EncounterCard from '../cards/encounter-card';
+import ErrorCard from '../cards/error-card';
+import FilterCard from '../cards/filter-card';
+import InfoCard from '../cards/info-card';
+import EncounterBuilderCard from '../cards/information/encounter-builder-card';
+import MonsterCard from '../cards/monster-card';
+import WaveCard from '../cards/wave-card';
 import EncounterListItem from '../list-items/encounter-list-item';
+import CardGroup from '../panels/card-group';
 
 interface Props {
     encounters: Encounter[];
@@ -142,8 +142,8 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                             slot={slot}
                             encounter={this.props.selection as Encounter}
                             mode={'view encounter'}
-                            nudgeValue={(slot, type, delta) => this.props.nudgeValue(slot, type, delta)}
-                            removeEncounterSlot={slot => this.props.removeEncounterSlot(slot, waveID)}
+                            nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
+                            removeEncounterSlot={source => this.props.removeEncounterSlot(source, waveID)}
                         />
                     </div>
                 );
@@ -238,12 +238,12 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
 
             const encounters = [];
             for (var n = 0; n !== this.props.encounters.length; ++n) {
-                const encounter = this.props.encounters[n];
+                const e = this.props.encounters[n];
                 encounters.push(
                     <EncounterListItem
-                        key={encounter.id}
-                        encounter={encounter}
-                        selected={encounter === this.props.selection}
+                        key={e.id}
+                        encounter={e}
+                        selected={e === this.props.selection}
                         setSelection={encounter => this.props.selectEncounter(encounter)}
                     />
                 );
@@ -272,25 +272,25 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                 this.getMonsterCards(this.props.selection.slots, null)
                     .forEach(card => encounterCards.push(card));
 
-                waves = this.props.selection.waves.map(wave => {
+                waves = this.props.selection.waves.map(w => {
                     const waveCards = [];
                     waveCards.push(
                         <div className='column' key='info'>
                             <WaveCard
-                                wave={wave}
+                                wave={w}
                                 removeWave={wave => this.props.removeWave(wave)}
-                                changeValue={(wave, field, value) => this.props.changeValue(wave, field, value)}
+                                changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
                             />
                         </div>
                     );
 
-                    this.getMonsterCards(wave.slots, wave.id)
+                    this.getMonsterCards(w.slots, w.id)
                         .forEach(card => waveCards.push(card));
 
                     return (
                         <CardGroup
-                            key={wave.id}
-                            heading={wave.name || 'unnamed wave'}
+                            key={w.id}
+                            heading={w.name || 'unnamed wave'}
                             content={waveCards}
                             showToggle={true}
                         />

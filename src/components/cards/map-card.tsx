@@ -2,8 +2,8 @@ import React from 'react';
 
 import { Map } from '../../models/map-folio';
 
-import MapPanel from '../panels/map-panel';
 import ConfirmButton from '../controls/confirm-button';
+import MapPanel from '../panels/map-panel';
 
 interface Props {
     map: Map;

@@ -2,9 +2,9 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { Party } from '../../models/party';
-import { Monster } from '../../models/monster-group';
 import { Encounter, EncounterSlot } from '../../models/encounter';
+import { Monster } from '../../models/monster-group';
+import { Party } from '../../models/party';
 
 interface Props {
     encounter: Encounter;

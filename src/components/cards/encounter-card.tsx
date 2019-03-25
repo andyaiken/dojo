@@ -1,12 +1,12 @@
 import React from 'react';
 
 import { Encounter } from '../../models/encounter';
-import { Party } from '../../models/party';
 import { Monster } from '../../models/monster-group';
+import { Party } from '../../models/party';
 
+import ConfirmButton from '../controls/confirm-button';
 import Dropdown from '../controls/dropdown';
 import DifficultyChartPanel from '../panels/difficulty-chart-panel';
-import ConfirmButton from '../controls/confirm-button';
 import InfoCard from './info-card';
 
 import arrow from '../../resources/images/down-arrow.svg';

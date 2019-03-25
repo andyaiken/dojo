@@ -1,7 +1,7 @@
 import React from 'react';
 
-import Utils from '../../utils/utils';
 import Factory from '../../utils/factory';
+import Utils from '../../utils/utils';
 
 import { Map, MapItem } from '../../models/map-folio';
 
@@ -185,10 +185,10 @@ export default class MapEditorModal extends React.Component<Props, State> {
                         <div className='tools'>
                             <MapTileCard
                                 tile={item}
-                                moveMapItem={(item, dir) => this.moveMapItem(item, dir)}
-                                resizeMapItem={(item, dir, dir2) => this.resizeMapItem(item, dir, dir2 as 'in' | 'out')}
-                                cloneMapItem={item => this.cloneMapItem(item)}
-                                removeMapItem={item => this.removeMapItem(item)}
+                                moveMapItem={(mapItem, dir) => this.moveMapItem(mapItem, dir)}
+                                resizeMapItem={(mapItem, dir, dir2) => this.resizeMapItem(mapItem, dir, dir2 as 'in' | 'out')}
+                                cloneMapItem={mapItem => this.cloneMapItem(mapItem)}
+                                removeMapItem={mapItem => this.removeMapItem(mapItem)}
                                 changeValue={(source, field, value) => this.changeValue(source, field, value)}
                             />
                         </div>

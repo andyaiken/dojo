@@ -4,18 +4,18 @@ import Utils from '../../utils/utils';
 
 import { Combat, Combatant, Notification } from '../../models/combat';
 import { Condition, ConditionDurationSaves } from '../../models/condition';
-import { PC } from '../../models/party';
 import { Monster } from '../../models/monster-group';
+import { PC } from '../../models/party';
 
-import PCCard from '../cards/pc-card';
-import MonsterCard from '../cards/monster-card';
 import InfoCard from '../cards/info-card';
-import MapPanel from '../panels/map-panel';
-import CardGroup from '../panels/card-group';
 import CombatManagerCard from '../cards/information/combat-manager-card';
-import CombatListItem from '../list-items/combat-list-item';
+import MonsterCard from '../cards/monster-card';
+import PCCard from '../cards/pc-card';
 import Spin from '../controls/spin';
+import CombatListItem from '../list-items/combat-list-item';
+import CardGroup from '../panels/card-group';
 import HitPointGauge from '../panels/hit-point-gauge';
+import MapPanel from '../panels/map-panel';
 
 interface Props {
     combats: Combat[];
@@ -82,16 +82,16 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                         key='selected'
                         combatant={combatant as Combatant & PC}
                         mode={mode}
-                        changeValue={(combatant, type, value) => this.props.changeValue(combatant, type, value)}
-                        nudgeValue={(combatant, type, delta) => this.props.nudgeValue(combatant, type, delta)}
-                        makeCurrent={combatant => this.props.makeCurrent(combatant as Combatant & PC)}
-                        makeActive={combatant => this.props.makeActive(combatant as Combatant & PC)}
-                        makeDefeated={combatant => this.props.makeDefeated(combatant as Combatant & PC)}
-                        removeCombatant={combatant => this.props.removeCombatant(combatant as Combatant & PC)}
-                        mapAdd={combatant => this.setAddingToMapID(combatant.id)}
-                        mapMove={(combatant, dir) => this.props.mapMove(combatant as Combatant & PC, dir)}
-                        mapRemove={combatant => this.props.mapRemove(combatant as Combatant & PC)}
-                        endTurn={combatant => this.props.endTurn(combatant as Combatant & PC)}
+                        changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
+                        nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
+                        makeCurrent={c => this.props.makeCurrent(c as Combatant & PC)}
+                        makeActive={c => this.props.makeActive(c as Combatant & PC)}
+                        makeDefeated={c => this.props.makeDefeated(c as Combatant & PC)}
+                        removeCombatant={c => this.props.removeCombatant(c as Combatant & PC)}
+                        mapAdd={c => this.setAddingToMapID(c.id)}
+                        mapMove={(c, dir) => this.props.mapMove(c as Combatant & PC, dir)}
+                        mapRemove={c => this.props.mapRemove(c as Combatant & PC)}
+                        endTurn={c => this.props.endTurn(c as Combatant & PC)}
                     />
                 );
             case 'monster':
@@ -101,21 +101,21 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                         combatant={combatant as Combatant & Monster}
                         mode={mode}
                         combat={this.props.combat as Combat}
-                        changeValue={(combatant, type, value) => this.props.changeValue(combatant, type, value)}
-                        nudgeValue={(combatant, type, delta) => this.props.nudgeValue(combatant, type, delta)}
-                        makeCurrent={combatant => this.props.makeCurrent(combatant as Combatant & Monster)}
-                        makeActive={combatant => this.props.makeActive(combatant as Combatant & Monster)}
-                        makeDefeated={combatant => this.props.makeDefeated(combatant as Combatant & Monster)}
-                        removeCombatant={combatant => this.props.removeCombatant(combatant as Combatant & Monster)}
-                        addCondition={(combatant) => this.props.addCondition(combatant as Combatant & Monster)}
-                        editCondition={(combatant, condition) => this.props.editCondition(combatant as Combatant & Monster, condition)}
-                        removeCondition={(combatant, conditionID) => this.props.removeCondition(combatant as Combatant & Monster, conditionID)}
-                        nudgeConditionValue={(condition, type, delta) => this.props.nudgeValue(condition, type, delta)}
-                        mapAdd={combatant => this.setAddingToMapID(combatant.id)}
-                        mapMove={(combatant, dir) => this.props.mapMove(combatant as Combatant & Monster, dir)}
-                        mapRemove={combatant => this.props.mapRemove(combatant as Combatant & Monster)}
-                        endTurn={(combatant) => this.props.endTurn(combatant as Combatant & Monster)}
-                        changeHP={(combatant, hp, temp) => this.props.changeHP(combatant as Combatant & Monster, hp, temp)}
+                        changeValue={(c, type, value) => this.props.changeValue(c, type, value)}
+                        nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
+                        makeCurrent={c => this.props.makeCurrent(c as Combatant & Monster)}
+                        makeActive={c => this.props.makeActive(c as Combatant & Monster)}
+                        makeDefeated={c => this.props.makeDefeated(c as Combatant & Monster)}
+                        removeCombatant={c => this.props.removeCombatant(c as Combatant & Monster)}
+                        addCondition={c => this.props.addCondition(c as Combatant & Monster)}
+                        editCondition={(c, condition) => this.props.editCondition(c as Combatant & Monster, condition)}
+                        removeCondition={(c, conditionID) => this.props.removeCondition(c as Combatant & Monster, conditionID)}
+                        nudgeConditionValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
+                        mapAdd={c => this.setAddingToMapID(c.id)}
+                        mapMove={(c, dir) => this.props.mapMove(c as Combatant & Monster, dir)}
+                        mapRemove={c => this.props.mapRemove(c as Combatant & Monster)}
+                        endTurn={(c) => this.props.endTurn(c as Combatant & Monster)}
+                        changeHP={(c, hp, temp) => this.props.changeHP(c as Combatant & Monster, hp, temp)}
                     />
                 );
             default:
@@ -158,10 +158,10 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                             <PendingCombatantRow
                                 key={combatant.id}
                                 combatant={combatant}
-                                select={combatant => this.setSelectedTokenID(combatant.id)}
+                                select={c => this.setSelectedTokenID(c.id)}
                                 selected={combatant.id === this.state.selectedTokenID}
-                                nudgeValue={(combatant, type, delta) => this.props.nudgeValue(combatant, type, delta)}
-                                makeActive={combatant => this.props.makeActive(combatant)}
+                                nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
+                                makeActive={c => this.props.makeActive(c)}
                             />
                         );
                     }
@@ -171,7 +171,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                                 key={combatant.id}
                                 combatant={combatant}
                                 combat={this.props.combat as Combat}
-                                select={combatant => this.setSelectedTokenID(combatant.id)}
+                                select={c => this.setSelectedTokenID(c.id)}
                                 selected={combatant.id === this.state.selectedTokenID}
                             />
                         );
@@ -182,7 +182,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                                 key={combatant.id}
                                 combatant={combatant}
                                 combat={this.props.combat as Combat}
-                                select={combatant => this.setSelectedTokenID(combatant.id)}
+                                select={c => this.setSelectedTokenID(c.id)}
                                 selected={combatant.id === this.state.selectedTokenID}
                             />
                         );
@@ -327,11 +327,11 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                 }
 
                 const combats: JSX.Element[] = [];
-                this.props.combats.forEach(combat => {
+                this.props.combats.forEach(c => {
                     combats.push(
                         <CombatListItem
-                            key={combat.id}
-                            combat={combat}
+                            key={c.id}
+                            combat={c}
                             selected={false}
                             setSelection={combat => this.props.resumeEncounter(combat)}
                         />

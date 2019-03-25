@@ -1,7 +1,7 @@
-import { PC } from './party';
-import { Monster } from './monster-group';
-import { Map } from './map-folio';
 import { Condition } from './condition';
+import { Map } from './map-folio';
+import { Monster } from './monster-group';
+import { PC } from './party';
 
 export interface CombatSetup {
     partyID: string | null;

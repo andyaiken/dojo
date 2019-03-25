@@ -1,7 +1,7 @@
 import React from 'react';
 
-import ConfirmButton from '../controls/confirm-button';
 import Checkbox from '../controls/checkbox';
+import ConfirmButton from '../controls/confirm-button';
 
 interface Props {
     options: {

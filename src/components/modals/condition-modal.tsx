@@ -1,16 +1,16 @@
 import React from 'react';
 
-import Utils from '../../utils/utils';
 import Factory from '../../utils/factory';
+import Utils from '../../utils/utils';
 
-import { CONDITION_TYPES, Condition, ConditionDurationSaves, ConditionDurationCombatant } from '../../models/condition';
+import { Combat, Combatant } from '../../models/combat';
+import { Condition, CONDITION_TYPES, ConditionDurationCombatant, ConditionDurationSaves } from '../../models/condition';
 import { Monster } from '../../models/monster-group';
-import { Combatant, Combat } from '../../models/combat';
 
-import Spin from '../controls/spin';
-import Selector from '../controls/selector';
 import Dropdown from '../controls/dropdown';
 import RadioGroup from '../controls/radio-group';
+import Selector from '../controls/selector';
+import Spin from '../controls/spin';
 
 interface Props {
     condition: Condition;

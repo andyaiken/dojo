@@ -16,13 +16,6 @@
         "no-var-keyword": false,
         "object-literal-shorthand": false,
         "object-literal-sort-keys": false,
-        "ordered-imports": [
-            true,
-            {
-                "import-sources-order": "any",
-                "named-imports-order": "any"
-            }
-        ],
         "quotemark": [true, "single"],
         "trailing-comma": [
             true,

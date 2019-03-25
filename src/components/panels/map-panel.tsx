@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { MapItem, Map } from '../../models/map-folio';
-import { PC } from '../../models/party';
-import { Monster } from '../../models/monster-group';
 import { Combatant } from '../../models/combat';
+import { Map, MapItem } from '../../models/map-folio';
+import { Monster } from '../../models/monster-group';
+import { PC } from '../../models/party';
 
 import HitPointGauge from './hit-point-gauge';
 
@@ -138,7 +138,7 @@ export default class MapPanel extends React.Component<Props> {
                                 y={y}
                                 position={pos}
                                 onClick={() => this.props.setSelectedItemID(null)}
-                                onDoubleClick={(x, y) => this.props.addMapTile(x, y)}
+                                onDoubleClick={(posX, posY) => this.props.addMapTile(posX, posY)}
                             />
                         );
                     }
@@ -204,7 +204,7 @@ export default class MapPanel extends React.Component<Props> {
                                 y={yOver}
                                 position={posOver}
                                 overlay={true}
-                                onClick={(x, y) => this.props.gridSquareClicked(x, y)}
+                                onClick={(posX, posY) => this.props.gridSquareClicked(posX, posY)}
                             />
                         );
                     }

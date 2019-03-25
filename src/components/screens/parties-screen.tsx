@@ -2,11 +2,11 @@ import React from 'react';
 
 import { Party, PC } from '../../models/party';
 
+import InfoCard from '../cards/info-card';
 import PartiesCard from '../cards/information/parties-card';
-import PartyListItem from '../list-items/party-list-item';
 import PartyCard from '../cards/party-card';
 import PCCard from '../cards/pc-card';
-import InfoCard from '../cards/info-card';
+import PartyListItem from '../list-items/party-list-item';
 import CardGroup from '../panels/card-group';
 
 interface Props {
@@ -35,12 +35,12 @@ export default class PartiesScreen extends React.Component<Props> {
 
             const parties = [];
             for (var n = 0; n !== this.props.parties.length; ++n) {
-                const party = this.props.parties[n];
+                const p = this.props.parties[n];
                 parties.push(
                     <PartyListItem
-                        key={party.id}
-                        party={party}
-                        selected={party === this.props.selection}
+                        key={p.id}
+                        party={p}
+                        selected={p === this.props.selection}
                         setSelection={party => this.props.selectParty(party)}
                     />
                 );
@@ -63,11 +63,11 @@ export default class PartiesScreen extends React.Component<Props> {
                 );
 
                 const activePCs = this.props.selection.pcs.filter(pc => pc.active);
-                activePCs.forEach(pc => {
+                activePCs.forEach(activePC => {
                     activeCards.push(
-                        <div className='column' key={pc.id}>
+                        <div className='column' key={activePC.id}>
                             <PCCard
-                                combatant={pc}
+                                combatant={activePC}
                                 mode={'edit'}
                                 changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
                                 nudgeValue={(pc, type, delta) => this.props.nudgeValue(pc, type, delta)}
@@ -78,11 +78,11 @@ export default class PartiesScreen extends React.Component<Props> {
                 });
 
                 const inactivePCs = this.props.selection.pcs.filter(pc => !pc.active);
-                inactivePCs.forEach(pc => {
+                inactivePCs.forEach(inactivePC => {
                     inactiveCards.push(
-                        <div className='column' key={pc.id}>
+                        <div className='column' key={inactivePC.id}>
                             <PCCard
-                                combatant={pc}
+                                combatant={inactivePC}
                                 mode={'edit'}
                                 changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
                                 nudgeValue={(pc, type, delta) => this.props.nudgeValue(pc, type, delta)}

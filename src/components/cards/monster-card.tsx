@@ -2,20 +2,20 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { Monster, Trait, MonsterGroup } from '../../models/monster-group';
-import { EncounterSlot, EncounterWave, Encounter } from '../../models/encounter';
-import { Combatant, Combat } from '../../models/combat';
+import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
+import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
+import { Monster, MonsterGroup, Trait } from '../../models/monster-group';
 
-import Expander from '../controls/expander';
-import Dropdown from '../controls/dropdown';
 import ConfirmButton from '../controls/confirm-button';
+import Dropdown from '../controls/dropdown';
+import Expander from '../controls/expander';
 import Radial from '../controls/radial';
 import Spin from '../controls/spin';
-import InfoCard from './info-card';
 import AbilityScorePanel from '../panels/ability-score-panel';
-import TraitsPanel from '../panels/traits-panel';
 import ConditionsPanel from '../panels/conditions-panel';
+import TraitsPanel from '../panels/traits-panel';
+import InfoCard from './info-card';
 
 import arrow from '../../resources/images/down-arrow.svg';
 

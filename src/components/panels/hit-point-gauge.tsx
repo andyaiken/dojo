@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Monster } from '../../models/monster-group';
 import { Combatant } from '../../models/combat';
+import { Monster } from '../../models/monster-group';
 
 interface Props {
     combatant: Combatant & Monster;

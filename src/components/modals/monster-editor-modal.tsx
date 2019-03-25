@@ -1,17 +1,17 @@
 import React from 'react';
 
-import Utils from '../../utils/utils';
 import Factory from '../../utils/factory';
+import Utils from '../../utils/utils';
 
-import { TRAIT_TYPES, CATEGORY_TYPES, SIZE_TYPES, Monster, MonsterGroup, Trait } from '../../models/monster-group';
+import { CATEGORY_TYPES, Monster, MonsterGroup, SIZE_TYPES, Trait, TRAIT_TYPES } from '../../models/monster-group';
 
+import MonsterCard from '../cards/monster-card';
 import Checkbox from '../controls/checkbox';
 import Dropdown from '../controls/dropdown';
-import MonsterCard from '../cards/monster-card';
+import Selector from '../controls/selector';
 import Spin from '../controls/spin';
 import AbilityScorePanel from '../panels/ability-score-panel';
 import TraitsPanel from '../panels/traits-panel';
-import Selector from '../controls/selector';
 
 import arrow from '../../resources/images/down-arrow.svg';
 
@@ -182,8 +182,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
         TRAIT_TYPES.forEach(type => {
             // Clear current traits of this type
-            const current = this.state.monster.traits.filter(t => t.type === type);
-            current.forEach(c => {
+            const currentTraits = this.state.monster.traits.filter(t => t.type === type);
+            currentTraits.forEach(c => {
                 const index = this.state.monster.traits.findIndex(t => t === c);
                 this.state.monster.traits.splice(index, 1);
             });

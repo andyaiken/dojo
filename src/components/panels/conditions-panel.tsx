@@ -2,11 +2,11 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { Combatant, Combat } from '../../models/combat';
+import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 
-import Spin from '../controls/spin';
 import Expander from '../controls/expander';
+import Spin from '../controls/spin';
 
 interface Props {
     combatant: Combatant;
@@ -23,11 +23,11 @@ export default class ConditionsPanel extends React.Component<Props> {
             const conditions = [];
             if (this.props.combatant.conditions) {
                 for (var n = 0; n !== this.props.combatant.conditions.length; ++n) {
-                    const condition = this.props.combatant.conditions[n];
+                    const c = this.props.combatant.conditions[n];
                     conditions.push(
                         <ConditionPanel
                             key={n}
-                            condition={condition}
+                            condition={c}
                             combat={this.props.combat}
                             nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
                             editCondition={condition => this.props.editCondition(condition)}

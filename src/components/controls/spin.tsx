@@ -1,7 +1,7 @@
 import React from 'react';
 
-import plus from '../../resources/images/plus.svg';
 import minus from '../../resources/images/minus.svg';
+import plus from '../../resources/images/plus.svg';
 
 interface Props {
     source: any;

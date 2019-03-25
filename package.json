@@ -12,7 +12,7 @@
     },
     "scripts": {
         "start": "react-scripts start --display-error-details",
-        "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}'",
+        "lint": "tslint -c tslint.jsonc 'src/**/*.{ts,tsx}'",
         "predeploy": "react-scripts build",
         "deploy": "gh-pages -d build"
     },

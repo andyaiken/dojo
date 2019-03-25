@@ -1,38 +1,39 @@
 import React from 'react';
 
-import Utils from '../utils/utils';
 import Factory from '../utils/factory';
+import Utils from '../utils/utils';
 
-import { Party, PC } from '../models/party';
-import { MonsterGroup, Monster, Trait } from '../models/monster-group';
-import { Encounter, EncounterSlot, EncounterWave } from '../models/encounter';
-import { MapFolio, Map } from '../models/map-folio';
-import { CombatSetup, Combat, Combatant, Notification } from '../models/combat';
+import { Combat, Combatant, CombatSetup, Notification } from '../models/combat';
 import { Condition } from '../models/condition';
+import { Encounter, EncounterSlot, EncounterWave } from '../models/encounter';
+import { Map, MapFolio } from '../models/map-folio';
+import { Monster, MonsterGroup, Trait } from '../models/monster-group';
+import { Party, PC } from '../models/party';
 
-import HomeScreen from './screens/home-screen';
-import PartiesScreen from './screens/parties-screen';
-import MonsterLibraryScreen from './screens/monster-library-screen';
-import EncounterBuilderScreen from './screens/encounter-builder-screen';
-import MapFoliosScreen from './screens/map-folios-screen';
 import CombatManagerScreen from './screens/combat-manager-screen';
+import EncounterBuilderScreen from './screens/encounter-builder-screen';
+import HomeScreen from './screens/home-screen';
+import MapFoliosScreen from './screens/map-folios-screen';
+import MonsterLibraryScreen from './screens/monster-library-screen';
+import PartiesScreen from './screens/parties-screen';
 
 import AboutModal from './modals/about-modal';
-import DemographicsModal from './modals/demographics-modal';
-import MonsterEditorModal from './modals/monster-editor-modal';
-import MapEditorModal from './modals/map-editor-modal';
 import CombatStartModal from './modals/combat-start-modal';
 import ConditionModal from './modals/condition-modal';
+import DemographicsModal from './modals/demographics-modal';
+import MapEditorModal from './modals/map-editor-modal';
+import MonsterEditorModal from './modals/monster-editor-modal';
 
-import Titlebar from './panels/titlebar';
 import Navbar from './panels/navbar';
+import Titlebar from './panels/titlebar';
 
 import Checkbox from './controls/checkbox';
 
 import close from '../resources/images/close-black.svg';
+
 import monsters from '../resources/data/monsters.json';
 
-// tslint:disable-next-line
+// tslint:disable-next-line:no-empty-interface
 interface Props {
     // No props; this is the root component
 }
@@ -1022,8 +1023,8 @@ export default class Dojo extends React.Component<Props, State> {
                 });
             });
 
-            combat.combatants.forEach(combatant => {
-                combatant.current = false;
+            combat.combatants.forEach(c => {
+                c.current = false;
             });
             if (combatant) {
                 combatant.current = true;
@@ -1257,8 +1258,8 @@ export default class Dojo extends React.Component<Props, State> {
                             case 'combatant':
                                 // If this refers to me, and point is END, remove it
                                 if (combat && (c.duration.combatantID === combatant.id) && (c.duration.point === 'end')) {
-                                    const index = actor.conditions.indexOf(c);
-                                    actor.conditions.splice(index, 1);
+                                    const n = actor.conditions.indexOf(c);
+                                    actor.conditions.splice(n, 1);
                                     // Notify the user
                                     const endNotification = Factory.createNotification();
                                     endNotification.type = 'condition-end';
@@ -1278,8 +1279,8 @@ export default class Dojo extends React.Component<Props, State> {
                 });
             });
 
-            const active = combat.combatants.filter(combatant => {
-                return combatant.current || (!combatant.pending && combatant.active && !combatant.defeated);
+            const active = combat.combatants.filter(c => {
+                return c.current || (!c.pending && c.active && !c.defeated);
             });
             if (active.length === 0) {
                 // There's no-one left in the fight
@@ -1684,7 +1685,7 @@ export default class Dojo extends React.Component<Props, State> {
                             combat={combat || null}
                             showHelp={this.state.options.showHelp}
                             createCombat={() => this.createCombat()}
-                            resumeEncounter={combat => this.resumeCombat(combat)}
+                            resumeEncounter={pausedCombat => this.resumeCombat(pausedCombat)}
                             nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                             makeCurrent={(combatant) => this.makeCurrent(combatant, false)}

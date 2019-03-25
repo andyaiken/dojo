@@ -2,7 +2,7 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { CATEGORY_TYPES, SIZE_TYPES, MonsterGroup, Monster } from '../../models/monster-group';
+import { CATEGORY_TYPES, Monster, MonsterGroup, SIZE_TYPES } from '../../models/monster-group';
 
 import Selector from '../controls/selector';
 

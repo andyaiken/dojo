@@ -1,7 +1,7 @@
-﻿import { MonsterGroup, Monster } from '../models/monster-group';
+﻿import { Combat } from '../models/combat';
+import { Condition, ConditionDurationCombatant, ConditionDurationRounds, ConditionDurationSaves } from '../models/condition';
 import { Encounter, EncounterWave } from '../models/encounter';
-import { Combat } from '../models/combat';
-import { Condition, ConditionDurationSaves, ConditionDurationCombatant, ConditionDurationRounds } from '../models/condition';
+import { Monster, MonsterGroup } from '../models/monster-group';
 
 export default class Utils {
 

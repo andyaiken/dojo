@@ -4,14 +4,14 @@ import Utils from '../../utils/utils';
 
 import { CombatSetup } from '../../models/combat';
 import { Encounter, EncounterSlot } from '../../models/encounter';
-import { Party } from '../../models/party';
-import { Monster } from '../../models/monster-group';
 import { MapFolio } from '../../models/map-folio';
+import { Monster } from '../../models/monster-group';
+import { Party } from '../../models/party';
 
 import Dropdown from '../controls/dropdown';
 import Selector from '../controls/selector';
-import MapPanel from '../panels/map-panel';
 import DifficultyChartPanel from '../panels/difficulty-chart-panel';
+import MapPanel from '../panels/map-panel';
 
 interface Props {
     combatSetup: CombatSetup;
@@ -51,7 +51,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
     private setEncounter(encounterID: string) {
         // eslint-disable-next-line
         this.state.combatSetup.encounterID = encounterID;
-        const enc = this.props.encounters.find(enc => enc.id === encounterID);
+        const enc = this.props.encounters.find(e => e.id === encounterID);
         if (enc) {
             // eslint-disable-next-line
             this.state.combatSetup.monsterNames = Utils.getMonsterNames(enc);
@@ -92,7 +92,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
     private setWave(waveID: string) {
         // eslint-disable-next-line
         this.state.combatSetup.waveID = waveID;
-        const enc = this.props.encounters.find(enc => enc.id === this.state.combatSetup.encounterID);
+        const enc = this.props.encounters.find(e => e.id === this.state.combatSetup.encounterID);
         if (enc) {
             const wave = enc.waves.find(w => w.id === waveID);
             if (wave) {
