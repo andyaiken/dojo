@@ -12,7 +12,7 @@ export default class Factory {
     public static createParty(): Party {
         return {
             id: Utils.guid(),
-            name: "",
+            name: '',
             pcs: []
         };
     }
@@ -20,27 +20,27 @@ export default class Factory {
     public static createPC(): PC {
         return {
             id: Utils.guid(),
-            type: "pc",
+            type: 'pc',
             active: true,
-            player: "",
-            name: "",
-            race: "",
-            classes: "",
-            background: "",
+            player: '',
+            name: '',
+            race: '',
+            classes: '',
+            background: '',
             level: 1,
-            languages: "Common",
+            languages: 'Common',
             passiveInsight: 10,
             passiveInvestigation: 10,
             passivePerception: 10,
             initiative: 10,
-            url: ""
+            url: ''
         };
     }
 
     public static createMonsterGroup(): MonsterGroup {
         return {
             id: Utils.guid(),
-            name: "",
+            name: '',
             monsters: []
         };
     }
@@ -48,12 +48,12 @@ export default class Factory {
     public static createMonster(): Monster {
         return {
             id: Utils.guid(),
-            type: "monster",
-            name: "",
-            size: "medium",
-            category: "humanoid",
-            tag: "",
-            alignment: "",
+            type: 'monster',
+            name: '',
+            size: 'medium',
+            category: 'humanoid',
+            tag: '',
+            alignment: '',
             challenge: 1,
             abilityScores: {
                 str: 10,
@@ -68,35 +68,35 @@ export default class Factory {
             hpTemp: 0,
             hitDice: 1,
             damage: {
-                resist: "",
-                vulnerable: "",
-                immune: ""
+                resist: '',
+                vulnerable: '',
+                immune: ''
             },
-            savingThrows: "",
-            speed: "",
-            skills: "",
-            senses: "",
-            languages: "",
-            equipment: "",
+            savingThrows: '',
+            speed: '',
+            skills: '',
+            senses: '',
+            languages: '',
+            equipment: '',
             traits: [],
-            conditionImmunities: ""
+            conditionImmunities: ''
         };
     }
 
     public static createTrait(): Trait {
         return {
             id: Utils.guid(),
-            name: "",
-            usage: "",
-            type: "action",
-            text: ""
+            name: '',
+            usage: '',
+            type: 'action',
+            text: ''
         };
     }
 
     public static createEncounter(): Encounter {
         return {
             id: Utils.guid(),
-            name: "",
+            name: '',
             slots: [],
             waves: []
         };
@@ -105,8 +105,8 @@ export default class Factory {
     public static createEncounterSlot(): EncounterSlot {
         return {
             id: Utils.guid(),
-            monsterGroupName: "",
-            monsterName: "",
+            monsterGroupName: '',
+            monsterName: '',
             count: 1
         };
     }
@@ -114,7 +114,7 @@ export default class Factory {
     public static createEncounterWave(): EncounterWave {
         return {
             id: Utils.guid(),
-            name: "",
+            name: '',
             slots: []
         };
     }
@@ -122,7 +122,7 @@ export default class Factory {
     public static createMapFolio(): MapFolio {
         return {
             id: Utils.guid(),
-            name: "",
+            name: '',
             maps: []
         };
     }
@@ -130,7 +130,7 @@ export default class Factory {
     public static createMap(): Map {
         return {
             id: Utils.guid(),
-            name: "",
+            name: '',
             items: []
         };
     }
@@ -138,7 +138,7 @@ export default class Factory {
     public static createMapItem(): MapItem {
         return {
             id: Utils.guid(),
-            type: "tile",
+            type: 'tile',
             x: 0,
             y: 0,
             width: 4,
@@ -162,7 +162,7 @@ export default class Factory {
     public static createCombat(): Combat {
         return {
             id: Utils.guid(),
-            name: "",
+            name: '',
             encounterID: null,
             combatants: [],
             map: null,
@@ -185,7 +185,7 @@ export default class Factory {
     public static createCondition(): Condition {
         return {
             id: Utils.guid(),
-            name: "",
+            name: '',
             level: 1,
             text: null,
             duration: null

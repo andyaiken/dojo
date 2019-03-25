@@ -12,7 +12,7 @@ export interface Map {
 
 export interface MapItem {
     id: string;
-    type: "tile" | "pc" | "monster";
+    type: 'tile' | 'pc' | 'monster';
     x: number;
     y: number;
     width: number;
@@ -21,13 +21,13 @@ export interface MapItem {
 }
 
 export const TERRAIN_TYPES = [
-    "cavern",
-    "dirt",
-    "flagstone",
-    "floorboard",
-    "grassland",
-    "pit",
-    "sand",
-    "snow",
-    "water"
+    'cavern',
+    'dirt',
+    'flagstone',
+    'floorboard',
+    'grassland',
+    'pit',
+    'sand',
+    'snow',
+    'water'
 ];

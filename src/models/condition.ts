@@ -26,20 +26,20 @@ export interface ConditionDurationRounds {
 }
 
 export const CONDITION_TYPES = [
-    "blinded",
-    "charmed",
-    "deafened",
-    "exhaustion",
-    "frightened",
-    "grappled",
-    "incapacitated",
-    "invisible",
-    "paralyzed",
-    "petrified",
-    "poisoned",
-    "prone",
-    "restrained",
-    "stunned",
-    "unconscious",
-    "custom"
+    'blinded',
+    'charmed',
+    'deafened',
+    'exhaustion',
+    'frightened',
+    'grappled',
+    'incapacitated',
+    'invisible',
+    'paralyzed',
+    'petrified',
+    'poisoned',
+    'prone',
+    'restrained',
+    'stunned',
+    'unconscious',
+    'custom'
 ];

@@ -1,20 +1,20 @@
-﻿import { MonsterGroup, Monster } from "../models/monster-group";
-import { Encounter, EncounterWave } from "../models/encounter";
-import { Combat } from "../models/combat";
-import { Condition, ConditionDurationSaves, ConditionDurationCombatant, ConditionDurationRounds } from "../models/condition";
+﻿import { MonsterGroup, Monster } from '../models/monster-group';
+import { Encounter, EncounterWave } from '../models/encounter';
+import { Combat } from '../models/combat';
+import { Condition, ConditionDurationSaves, ConditionDurationCombatant, ConditionDurationRounds } from '../models/condition';
 
 export default class Utils {
 
     // This is an internal dictionary to speed up lookup
-    private static monsterIdToGroup: { [id: string]: MonsterGroup } = {}
+    private static monsterIdToGroup: { [id: string]: MonsterGroup } = {};
 
     public static getMonsterGroup(monster: Monster, library: MonsterGroup[]): MonsterGroup {
         var group = this.monsterIdToGroup[monster.id];
 
         if (!group) {
-            var g = library.find(g => g.monsters.includes(monster));
-            if (g) {
-                group = g;
+            const grp = library.find(g => g.monsters.includes(monster));
+            if (grp) {
+                group = grp;
                 this.monsterIdToGroup[monster.id] = group;
             }
         }
@@ -29,33 +29,27 @@ export default class Utils {
 
         var result = true;
 
-        try {
-            var tokens = filter.toLowerCase().split(' ');
-            tokens.forEach(token => {
-                if (text.toLowerCase().indexOf(token) === -1) {
-                    result = false;
-                }
-            });
-        } catch (ex) {
-            console.log(ex);
-        }
+        const tokens = filter.toLowerCase().split(' ');
+        tokens.forEach(token => {
+            if (text.toLowerCase().indexOf(token) === -1) {
+                result = false;
+            }
+        });
 
         return result;
     }
 
     public static guid(): string {
-        var s4 = () => {
-            return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-        };
+        const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
         return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
     }
 
     public static sort(collection: any[]): any[] {
         collection.sort((a, b) => {
-            var aName = a.name.toLowerCase();
-            var bName = b.name.toLowerCase();
-            if (aName < bName) return -1;
-            if (aName > bName) return 1;
+            const aName = a.name.toLowerCase();
+            const bName = b.name.toLowerCase();
+            if (aName < bName) { return -1; }
+            if (aName > bName) { return 1; }
             return 0;
         });
         return collection;
@@ -63,8 +57,8 @@ export default class Utils {
 
     public static sortByValue(collection: any[]): any[] {
         collection.sort((a, b) => {
-            if (a.value < b.value) return -1;
-            if (a.value > b.value) return 1;
+            if (a.value < b.value) { return -1; }
+            if (a.value > b.value) { return 1; }
             return 0;
         });
         return collection;
@@ -72,13 +66,13 @@ export default class Utils {
 
     public static sortByCount(collection: any[]): any[] {
         collection.sort((a, b) => {
-            if (a.count < b.count) return 1;
-            if (a.count > b.count) return -1;
+            if (a.count < b.count) { return 1; }
+            if (a.count > b.count) { return -1; }
 
-            var aValue = a.value.toLowerCase();
-            var bValue = b.value.toLowerCase();
-            if (aValue < bValue) return -1;
-            if (aValue > bValue) return 1;
+            const aValue = a.value.toLowerCase();
+            const bValue = b.value.toLowerCase();
+            if (aValue < bValue) { return -1; }
+            if (aValue > bValue) { return 1; }
 
             return 0;
         });
@@ -86,7 +80,7 @@ export default class Utils {
     }
 
     public static modifier(score: number): string {
-        var mod = Math.floor((score - 10) / 2);
+        const mod = Math.floor((score - 10) / 2);
         var str = mod.toString();
         if (mod >= 0) {
             str = '+' + str;
@@ -136,12 +130,12 @@ export default class Utils {
             case '1/8': return 0.125;
             case '1/4': return 0.25;
             case '1/2': return 0.5;
-            default: return parseInt(cr);
+            default: return parseInt(cr, 10);
         }
     }
 
     public static challengeDetails(): any[] {
-        var result: any[] = [];
+        const result: any[] = [];
 
         result.push({ cr: 0,        ac: 13,       hpMin: 1, hpMax: 6,       attack: 3,  dmgMin: 0,   dmgMax: 1,   save: 13 });
         result.push({ cr: 0.125,    ac: 13,       hpMin: 7, hpMax: 35,      attack: 3,  dmgMin: 2,   dmgMax: 3,   save: 13 });
@@ -546,7 +540,7 @@ export default class Utils {
                     'attack rolls against the creature have advantage',
                     'any attack that hits the creature is a critical hit if the attacker is within 5 feet of the creature'
                 ];
-            case "custom":
+            case 'custom':
                 return [];
             default:
                 return [];
@@ -556,24 +550,24 @@ export default class Utils {
     public static conditionDurationText(condition: Condition, combat: Combat) {
         if (condition.duration !== null) {
             switch (condition.duration.type) {
-                case "saves":
-                    var saveDuration = condition.duration as ConditionDurationSaves;
+                case 'saves':
+                    const saveDuration = condition.duration as ConditionDurationSaves;
                     var saveType = saveDuration.saveType;
-                    if (saveType !== "death") {
+                    if (saveType !== 'death') {
                         saveType = saveType.toUpperCase();
                     }
-                    var saves = saveDuration.count > 1 ? "saves" : "save";
-                    return "until you make " + saveDuration.count + " " + saveType + " " + saves + " at dc " + saveDuration.saveDC;
-                case "combatant":
-                    var combatantDuration = condition.duration as ConditionDurationCombatant;
-                    var point = combatantDuration.point;
-                    var c = combat.combatants.find(c => c.id == combatantDuration.combatantID);
-                    var combatant = c ? (c.displayName || c.name || "unnamed monster") + "'s" : "someone's";
-                    return "until the " + point + " of " + combatant + " next turn";
-                case "rounds":
-                    var roundsDuration = condition.duration as ConditionDurationRounds;
-                    var rounds = roundsDuration.count > 1 ? "rounds" : "round";
-                    return "for " + roundsDuration.count + " " + rounds;
+                    const saves = saveDuration.count > 1 ? 'saves' : 'save';
+                    return 'until you make ' + saveDuration.count + ' ' + saveType + ' ' + saves + ' at dc ' + saveDuration.saveDC;
+                case 'combatant':
+                    const combatantDuration = condition.duration as ConditionDurationCombatant;
+                    const point = combatantDuration.point;
+                    const c = combat.combatants.find(cmb => cmb.id === combatantDuration.combatantID);
+                    const combatant = c ? (c.displayName || c.name || 'unnamed monster') + '\'s' : 'someone\'s';
+                    return 'until the ' + point + ' of ' + combatant + ' next turn';
+                case 'rounds':
+                    const roundsDuration = condition.duration as ConditionDurationRounds;
+                    const rounds = roundsDuration.count > 1 ? 'rounds' : 'round';
+                    return 'for ' + roundsDuration.count + ' ' + rounds;
                 default:
                     return null;
             }
@@ -583,15 +577,15 @@ export default class Utils {
     }
 
     public static getMonsterNames(encounter: Encounter | EncounterWave): { id: string, names: string[] }[] {
-        var monsterNames: any[] = [];
+        const monsterNames: any[] = [];
         if (encounter) {
             encounter.slots.forEach(slot => {
-                var names: any[] = [];
+                const names: any[] = [];
                 if (slot.count === 1) {
                     names.push(slot.monsterName);
                 } else {
                     for (var n = 0; n !== slot.count; ++n) {
-                        names.push(slot.monsterName + " " + (n + 1));
+                        names.push(slot.monsterName + ' ' + (n + 1));
                     }
                 }
 

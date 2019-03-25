@@ -49,35 +49,35 @@ export interface Trait {
 }
 
 export const SIZE_TYPES = [
-    "tiny",
-    "small",
-    "medium",
-    "large",
-    "huge",
-    "gargantuan"
+    'tiny',
+    'small',
+    'medium',
+    'large',
+    'huge',
+    'gargantuan'
 ];
 
 export const CATEGORY_TYPES = [
-    "aberration",
-    "beast",
-    "celestial",
-    "construct",
-    "dragon",
-    "elemental",
-    "fey",
-    "fiend",
-    "giant",
-    "humanoid",
-    "monstrosity",
-    "ooze",
-    "plant",
-    "undead"
+    'aberration',
+    'beast',
+    'celestial',
+    'construct',
+    'dragon',
+    'elemental',
+    'fey',
+    'fiend',
+    'giant',
+    'humanoid',
+    'monstrosity',
+    'ooze',
+    'plant',
+    'undead'
 ];
 
 export const TRAIT_TYPES = [
-    "trait",
-    "action",
-    "legendary",
-    "lair",
-    "regional"
+    'trait',
+    'action',
+    'legendary',
+    'lair',
+    'regional'
 ];

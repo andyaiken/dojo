@@ -13,7 +13,7 @@ import AbilityScorePanel from '../panels/ability-score-panel';
 import TraitsPanel from '../panels/traits-panel';
 import Selector from '../controls/selector';
 
-import arrow from "../../resources/images/down-arrow.svg";
+import arrow from '../../resources/images/down-arrow.svg';
 
 interface Props {
     monster: Monster;
@@ -40,9 +40,9 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         super(props);
         this.state = {
             monster: props.monster,
-            page: "overview",
+            page: 'overview',
             showFilter: false,
-            helpSection: "speed",
+            helpSection: 'speed',
             filter: {
                 size: true,
                 type: true,
@@ -86,14 +86,14 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
     getHelpOptionsForPage(page: 'overview' | 'abilities' | 'combat' | 'actions') {
         switch (page) {
-            case "overview":
-                return ["speed", "senses", "languages", "equipment"];
-            case "abilities":
-                return ["str", "dex", "con", "int", "wis", "cha", "saves", "skills"];
-            case "combat":
-                return ["armor class", "hit dice", "resistances", "vulnerabilities", "immunities", "conditions"];
-            case "actions":
-                return ["actions"];
+            case 'overview':
+                return ['speed', 'senses', 'languages', 'equipment'];
+            case 'abilities':
+                return ['str', 'dex', 'con', 'int', 'wis', 'cha', 'saves', 'skills'];
+            case 'combat':
+                return ['armor class', 'hit dice', 'resistances', 'vulnerabilities', 'immunities', 'conditions'];
+            case 'actions':
+                return ['actions'];
             default:
                 return [];
         }
@@ -144,7 +144,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
         var source: any = m;
         var value = null;
-        var tokens = field.split(".");
+        var tokens = field.split('.');
         tokens.forEach(token => {
             if (token === tokens[tokens.length - 1]) {
                 value = source[token];
@@ -158,24 +158,24 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
     geneSplice(monsters: Monster[]) {
         [
-            "speed",
-            "senses",
-            "languages",
-            "equipment",
-            "abilityScores.str",
-            "abilityScores.dex",
-            "abilityScores.con",
-            "abilityScores.int",
-            "abilityScores.wis",
-            "abilityScores.cha",
-            "savingThrows",
-            "skills",
-            "ac",
-            "hitDice",
-            "damage.resist",
-            "damage.vulnerable",
-            "damage.immune",
-            "conditionImmunities"
+            'speed',
+            'senses',
+            'languages',
+            'equipment',
+            'abilityScores.str',
+            'abilityScores.dex',
+            'abilityScores.con',
+            'abilityScores.int',
+            'abilityScores.wis',
+            'abilityScores.cha',
+            'savingThrows',
+            'skills',
+            'ac',
+            'hitDice',
+            'damage.resist',
+            'damage.vulnerable',
+            'damage.immune',
+            'conditionImmunities'
         ].forEach(field => {
             this.setRandomValue(field, monsters, false);
         });
@@ -238,7 +238,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     addTrait(type: 'trait' | 'action' | 'legendary' | 'lair' | 'regional') {
         var trait = Factory.createTrait();
         trait.type = type;
-        trait.name = "New " + this.getActionTypeName(type, false).toLowerCase();
+        trait.name = 'New ' + this.getActionTypeName(type, false).toLowerCase();
         this.state.monster.traits.push(trait);
         this.setState({
             monster: this.state.monster
@@ -271,7 +271,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     getActionTypeName(type: string, plural: boolean) {
         var name = Utils.traitType(type);
         if (plural) {
-            name += "s";
+            name += 's';
         }
         return name;
     }
@@ -295,7 +295,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     nudgeValue(field: string, delta: number) {
         var source: any = this.state.monster;
         var value: any = null;
-        var tokens = field.split(".");
+        var tokens = field.split('.');
         tokens.forEach(token => {
             if (token === tokens[tokens.length - 1]) {
                 value = source[token];
@@ -305,7 +305,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         });
 
         var newValue = null;
-        if (field === "challenge") {
+        if (field === 'challenge') {
             newValue = Utils.nudgeChallenge(value, delta);
         } else {
             newValue = (value ? value : 0) + delta;
@@ -316,12 +316,12 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
     changeValue(field: string, value: any, notify = true) {
         var source: any = this.state.monster;
-        var tokens = field.split(".");
+        var tokens = field.split('.');
         tokens.forEach(token => {
             if (token === tokens[tokens.length - 1]) {
                 source[token] = value;
 
-                if ((field === "abilityScores.con") || (field === "size") || (field === "hitDice")) {
+                if ((field === 'abilityScores.con') || (field === 'size') || (field === 'hitDice')) {
                     var sides = Utils.hitDieType(this.state.monster.size);
                     var conMod = Math.floor((this.state.monster.abilityScores.con - 10) / 2)
                     var hpPerDie = ((sides + 1) / 2) + conMod;
@@ -346,43 +346,43 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
     getHelpSection(monsters: Monster[]) {
         switch (this.state.helpSection) {
-            case "speed":
-                return this.getValueSection("speed", "text", monsters);
-            case "senses":
-                return this.getValueSection("senses", "text", monsters);
-            case "languages":
-                return this.getValueSection("languages", "text", monsters);
-            case "equipment":
-                return this.getValueSection("equipment", "text", monsters);
-            case "str":
-                return this.getValueSection("abilityScores.str", "number", monsters);
-            case "dex":
-                return this.getValueSection("abilityScores.dex", "number", monsters);
-            case "con":
-                return this.getValueSection("abilityScores.con", "number", monsters);
-            case "int":
-                return this.getValueSection("abilityScores.int", "number", monsters);
-            case "wis":
-                return this.getValueSection("abilityScores.wis", "number", monsters);
-            case "cha":
-                return this.getValueSection("abilityScores.cha", "number", monsters);
-            case "saves":
-                return this.getValueSection("savingThrows", "text", monsters);
-            case "skills":
-                return this.getValueSection("skills", "text", monsters);
-            case "armor class":
-                return this.getValueSection("ac", "number", monsters);
-            case "hit dice":
-                return this.getValueSection("hitDice", "number", monsters);
-            case "resistances":
-                return this.getValueSection("damage.resist", "text", monsters);
-            case "vulnerabilities":
-                return this.getValueSection("damage.vulnerable", "text", monsters);
-            case "immunities":
-                return this.getValueSection("damage.immune", "text", monsters);
-            case "conditions":
-                return this.getValueSection("conditionImmunities", "text", monsters);
-            case "actions":
+            case 'speed':
+                return this.getValueSection('speed', 'text', monsters);
+            case 'senses':
+                return this.getValueSection('senses', 'text', monsters);
+            case 'languages':
+                return this.getValueSection('languages', 'text', monsters);
+            case 'equipment':
+                return this.getValueSection('equipment', 'text', monsters);
+            case 'str':
+                return this.getValueSection('abilityScores.str', 'number', monsters);
+            case 'dex':
+                return this.getValueSection('abilityScores.dex', 'number', monsters);
+            case 'con':
+                return this.getValueSection('abilityScores.con', 'number', monsters);
+            case 'int':
+                return this.getValueSection('abilityScores.int', 'number', monsters);
+            case 'wis':
+                return this.getValueSection('abilityScores.wis', 'number', monsters);
+            case 'cha':
+                return this.getValueSection('abilityScores.cha', 'number', monsters);
+            case 'saves':
+                return this.getValueSection('savingThrows', 'text', monsters);
+            case 'skills':
+                return this.getValueSection('skills', 'text', monsters);
+            case 'armor class':
+                return this.getValueSection('ac', 'number', monsters);
+            case 'hit dice':
+                return this.getValueSection('hitDice', 'number', monsters);
+            case 'resistances':
+                return this.getValueSection('damage.resist', 'text', monsters);
+            case 'vulnerabilities':
+                return this.getValueSection('damage.vulnerable', 'text', monsters);
+            case 'immunities':
+                return this.getValueSection('damage.immune', 'text', monsters);
+            case 'conditions':
+                return this.getValueSection('conditionImmunities', 'text', monsters);
+            case 'actions':
                 return this.getActionsSection(monsters);
             default:
                 return null;
@@ -392,7 +392,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     getValueSection(field: string, dataType: 'text' | 'number', monsters: Monster[]) {
         var values: any[] = monsters
             .map(m => {
-                var tokens = field.split(".");
+                var tokens = field.split('.');
                 var source: any = m;
                 var value = null;
                 tokens.forEach(token => {
@@ -402,7 +402,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         source = source[token];
                     }
                 });
-                if ((dataType === "text") && (value === "")) {
+                if ((dataType === 'text') && (value === '')) {
                     value = null;
                 }
                 return value;
@@ -410,7 +410,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             .filter(v => v !== null);
 
         var distinct: { value: any, count: number }[] = [];
-        if (dataType === "number") {
+        if (dataType === 'number') {
             var min: number | null = null;
             var max: number | null = null;
             values.forEach(v => {
@@ -443,10 +443,10 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         });
 
         switch (dataType) {
-            case "number":
+            case 'number':
                 Utils.sortByValue(distinct);
                 break;
-            case "text":
+            case 'text':
                 Utils.sortByCount(distinct);
                 break;
             default:
@@ -454,11 +454,11 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 break;
         }
 
-        if (dataType === "text") {
+        if (dataType === 'text') {
             var count = monsters.length - values.length;
             if (count !== 0) {
                 distinct.push({
-                    value: "",
+                    value: '',
                     count: monsters.length - values.length
                 });
             }
@@ -467,18 +467,18 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         var valueSections = distinct.map(d => {
             var width = 100 * d.count / monsters.length;
             return (
-                <div className="row small-up-3 medium-up-3 large-up-3 value-list" key={distinct.indexOf(d)}>
-                    <div className="column">
-                        <div className="text-container">
-                            {d.value || "(none specified)"}
+                <div className='row small-up-3 medium-up-3 large-up-3 value-list' key={distinct.indexOf(d)}>
+                    <div className='column'>
+                        <div className='text-container'>
+                            {d.value || '(none specified)'}
                         </div>
                     </div>
-                    <div className="column">
-                        <div className="bar-container">
-                            <div className="bar" style={{ width: width + "%" }}></div>
+                    <div className='column'>
+                        <div className='bar-container'>
+                            <div className='bar' style={{ width: width + '%' }}></div>
                         </div>
                     </div>
-                    <div className="column">
+                    <div className='column'>
                         <button onClick={() => this.changeValue(field, d.value)}>use this value</button>
                     </div>
                 </div>
@@ -496,19 +496,19 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     getActionsSection(monsters: Monster[]) {
         var rows = [];
         rows.push(
-            <div className="row small-up-3 medium-up-3 large-up-3 value-list" key="header">
-                <div className="column">
-                    <div className="text-container">
+            <div className='row small-up-3 medium-up-3 large-up-3 value-list' key='header'>
+                <div className='column'>
+                    <div className='text-container'>
                         <b>type</b>
                     </div>
                 </div>
-                <div className="column">
-                    <div className="text-container number">
+                <div className='column'>
+                    <div className='text-container number'>
                         <b>average number</b>
                     </div>
                 </div>
-                <div className="column">
-                    <div className="text-container number">
+                <div className='column'>
+                    <div className='text-container number'>
                         <b>min - max</b>
                     </div>
                 </div>
@@ -532,24 +532,24 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             var avg = Math.round(count / monsters.length);    
 
             rows.push(
-                <div className="row small-up-4 medium-up-4 large-up-4 value-list" key={type}>
-                    <div className="column">
-                        <div className={count === 0 ? "text-container disabled" : "text-container"}>
+                <div className='row small-up-4 medium-up-4 large-up-4 value-list' key={type}>
+                    <div className='column'>
+                        <div className={count === 0 ? 'text-container disabled' : 'text-container'}>
                             {this.getActionTypeName(type, true)}
                         </div>
                     </div>
-                    <div className="column">
-                        <div className={count === 0 ? "text-container number disabled" : "text-container number"}>
+                    <div className='column'>
+                        <div className={count === 0 ? 'text-container number disabled' : 'text-container number'}>
                             {avg}
                         </div>
                     </div>
-                    <div className="column">
-                        <div className={count === 0 ? "text-container number disabled" : "text-container number"}>
+                    <div className='column'>
+                        <div className={count === 0 ? 'text-container number disabled' : 'text-container number'}>
                             {min} - {max}
                         </div>
                     </div>
-                    <div className="column">
-                        <button className={count === 0 ? "disabled" : ""} onClick={() => this.addRandomTrait(type, monsters)}>add random</button>
+                    <div className='column'>
+                        <button className={count === 0 ? 'disabled' : ''} onClick={() => this.addRandomTrait(type, monsters)}>add random</button>
                     </div>
                 </div>
             );
@@ -564,7 +564,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
     getFilterCard(monsters: Monster[]) {
         var similar = (
-            <div className="section">
+            <div className='section'>
                 {monsters.length} similar monsters
             </div>
         );
@@ -574,35 +574,35 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             filterContent = (
                 <div>
                     <Checkbox
-                        label={"size " + this.state.monster.size}
+                        label={'size ' + this.state.monster.size}
                         checked={this.state.filter.size}
-                        changeValue={value => this.toggleMatch("size")}
+                        changeValue={value => this.toggleMatch('size')}
                     />
                     <Checkbox
-                        label={"type " + this.state.monster.category}
+                        label={'type ' + this.state.monster.category}
                         checked={this.state.filter.type}
-                        changeValue={value => this.toggleMatch("type")}
+                        changeValue={value => this.toggleMatch('type')}
                     />
                     <Checkbox
-                        label={this.state.monster.tag ? "subtype " + this.state.monster.tag : "subtype"}
+                        label={this.state.monster.tag ? 'subtype ' + this.state.monster.tag : 'subtype'}
                         checked={this.state.filter.subtype}
                         disabled={!this.state.monster.tag}
-                        changeValue={value => this.toggleMatch("subtype")}
+                        changeValue={value => this.toggleMatch('subtype')}
                     />
                     <Checkbox
-                        label={this.state.monster.alignment ? "alignment " + this.state.monster.alignment : "alignment"}
+                        label={this.state.monster.alignment ? 'alignment ' + this.state.monster.alignment : 'alignment'}
                         checked={this.state.filter.alignment}
                         disabled={!this.state.monster.alignment}
-                        changeValue={value => this.toggleMatch("alignment")}
+                        changeValue={value => this.toggleMatch('alignment')}
                     />
                     <Checkbox
-                        label={"challenge rating " + Utils.challenge(this.state.monster.challenge)}
+                        label={'challenge rating ' + Utils.challenge(this.state.monster.challenge)}
                         checked={this.state.filter.challenge}
-                        changeValue={value => this.toggleMatch("challenge")}
+                        changeValue={value => this.toggleMatch('challenge')}
                     />
-                    <div className="divider"></div>
-                    <button className={monsters.length < 2 ? "disabled" : ""} onClick={() => this.geneSplice(monsters)}>build random monster</button>
-                    <div className="divider"></div>
+                    <div className='divider'></div>
+                    <button className={monsters.length < 2 ? 'disabled' : ''} onClick={() => this.geneSplice(monsters)}>build random monster</button>
+                    <div className='divider'></div>
                     {similar}
                 </div>
             );
@@ -615,13 +615,13 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         }
 
         return (
-            <div className="section">
-                <div className="card">
-                    <div className="heading">
-                        <div className="title">similar monsters</div>
-                        <img className={this.state.showFilter ? "image rotate" : "image"} src={arrow} alt="arrow" onClick={() => this.toggleFilter()} />
+            <div className='section'>
+                <div className='card'>
+                    <div className='heading'>
+                        <div className='title'>similar monsters</div>
+                        <img className={this.state.showFilter ? 'image rotate' : 'image'} src={arrow} alt='arrow' onClick={() => this.toggleFilter()} />
                     </div>
-                    <div className="card-content">
+                    <div className='card-content'>
                         {filterContent}
                     </div>
                 </div>
@@ -632,10 +632,10 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     getMonsterCards(monsters: Monster[]) {
         var sorted = Utils.sort(monsters);
         var monsterCards = sorted.map(m => (
-            <div className="section" key={m.id}>
+            <div className='section' key={m.id}>
                 <MonsterCard
                     combatant={m}
-                    mode={"template " + this.state.page}
+                    mode={'template ' + this.state.page}
                     copyTrait={trait => this.copyTrait(trait)}
                 />
             </div>
@@ -679,96 +679,96 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                     var sizeOptions = SIZE_TYPES.map(size => { return { id: size, text: size }; });
 
                     content = (
-                        <div className="row">
-                            <div className="columns small-6 medium-6 large-6">
-                                <div className="subheading">name</div>
-                                <input type="text" value={this.state.monster.name} onChange={event => this.changeValue("name", event.target.value)} />
-                                <div className="subheading">size</div>
+                        <div className='row'>
+                            <div className='columns small-6 medium-6 large-6'>
+                                <div className='subheading'>name</div>
+                                <input type='text' value={this.state.monster.name} onChange={event => this.changeValue('name', event.target.value)} />
+                                <div className='subheading'>size</div>
                                 <Dropdown
                                     options={sizeOptions}
                                     selectedID={this.state.monster.size}
-                                    select={optionID => this.changeValue("size", optionID)}
+                                    select={optionID => this.changeValue('size', optionID)}
                                 />
-                                <div className="subheading">type</div>
+                                <div className='subheading'>type</div>
                                 <Dropdown
                                     options={catOptions}
                                     selectedID={this.state.monster.category}
-                                    select={optionID => this.changeValue("category", optionID)}
+                                    select={optionID => this.changeValue('category', optionID)}
                                 />
-                                <div className="subheading">subtype</div>
-                                <input type="text" value={this.state.monster.tag} onChange={event => this.changeValue("tag", event.target.value)} />
-                                <div className="subheading">alignment</div>
-                                <input type="text" value={this.state.monster.alignment} onChange={event => this.changeValue("alignment", event.target.value)} />
+                                <div className='subheading'>subtype</div>
+                                <input type='text' value={this.state.monster.tag} onChange={event => this.changeValue('tag', event.target.value)} />
+                                <div className='subheading'>alignment</div>
+                                <input type='text' value={this.state.monster.alignment} onChange={event => this.changeValue('alignment', event.target.value)} />
                             </div>
-                            <div className="columns small-6 medium-6 large-6">
-                                <div className="subheading">challenge rating</div>
+                            <div className='columns small-6 medium-6 large-6'>
+                                <div className='subheading'>challenge rating</div>
                                 <Spin
                                     source={this.state.monster}
-                                    name="challenge"
+                                    name='challenge'
                                     display={value => Utils.challenge(value)}
-                                    nudgeValue={delta => this.nudgeValue("challenge", delta)}
+                                    nudgeValue={delta => this.nudgeValue('challenge', delta)}
                                 />
-                                <div className="subheading">speed</div>
-                                <input type="text" value={this.state.monster.speed} onChange={event => this.changeValue("speed", event.target.value)} />
-                                <div className="subheading">senses</div>
-                                <input type="text" value={this.state.monster.senses} onChange={event => this.changeValue("senses", event.target.value)} />
-                                <div className="subheading">languages</div>
-                                <input type="text" value={this.state.monster.languages} onChange={event => this.changeValue("languages", event.target.value)} />
-                                <div className="subheading">equipment</div>
-                                <input type="text" value={this.state.monster.equipment} onChange={event => this.changeValue("equipment", event.target.value)} />
+                                <div className='subheading'>speed</div>
+                                <input type='text' value={this.state.monster.speed} onChange={event => this.changeValue('speed', event.target.value)} />
+                                <div className='subheading'>senses</div>
+                                <input type='text' value={this.state.monster.senses} onChange={event => this.changeValue('senses', event.target.value)} />
+                                <div className='subheading'>languages</div>
+                                <input type='text' value={this.state.monster.languages} onChange={event => this.changeValue('languages', event.target.value)} />
+                                <div className='subheading'>equipment</div>
+                                <input type='text' value={this.state.monster.equipment} onChange={event => this.changeValue('equipment', event.target.value)} />
                             </div>
                         </div>
                     );
                     break;
                 case 'abilities':
                     content = (
-                        <div className="row">
-                            <div className="columns small-6 medium-6 large-6">
-                                <div className="subheading">ability scores</div>
+                        <div className='row'>
+                            <div className='columns small-6 medium-6 large-6'>
+                                <div className='subheading'>ability scores</div>
                                 <AbilityScorePanel
                                     edit={true}
                                     combatant={this.state.monster}
                                     nudgeValue={(source, type, delta) => this.nudgeValue(type, delta)}
                                 />
                             </div>
-                            <div className="columns small-6 medium-6 large-6">
-                                <div className="subheading">saving throws</div>
-                                <input type="text" value={this.state.monster.savingThrows} onChange={event => this.changeValue("savingThrows", event.target.value)} />
-                                <div className="subheading">skills</div>
-                                <input type="text" value={this.state.monster.skills} onChange={event => this.changeValue("skills", event.target.value)} />
+                            <div className='columns small-6 medium-6 large-6'>
+                                <div className='subheading'>saving throws</div>
+                                <input type='text' value={this.state.monster.savingThrows} onChange={event => this.changeValue('savingThrows', event.target.value)} />
+                                <div className='subheading'>skills</div>
+                                <input type='text' value={this.state.monster.skills} onChange={event => this.changeValue('skills', event.target.value)} />
                             </div>
                         </div>
                     );
                     break;
                 case 'combat':
                     content = (
-                        <div className="row">
-                            <div className="columns small-6 medium-6 large-6">
-                                <div className="subheading">armor class</div>
+                        <div className='row'>
+                            <div className='columns small-6 medium-6 large-6'>
+                                <div className='subheading'>armor class</div>
                                 <Spin
                                     source={this.state.monster}
-                                    name="ac"
-                                    nudgeValue={delta => this.nudgeValue("ac", delta)}
+                                    name='ac'
+                                    nudgeValue={delta => this.nudgeValue('ac', delta)}
                                 />
-                                <div className="subheading">hit dice</div>
+                                <div className='subheading'>hit dice</div>
                                 <Spin
                                     source={this.state.monster}
-                                    name="hitDice"
-                                    display={value => value + "d" + Utils.hitDieType(this.state.monster.size)}
-                                    nudgeValue={delta => this.nudgeValue("hitDice", delta)}
+                                    name='hitDice'
+                                    display={value => value + 'd' + Utils.hitDieType(this.state.monster.size)}
+                                    nudgeValue={delta => this.nudgeValue('hitDice', delta)}
                                 />
-                                <div className="subheading">hit points</div>
-                                <div className="hp-value">{this.state.monster.hpMax} hp</div>
+                                <div className='subheading'>hit points</div>
+                                <div className='hp-value'>{this.state.monster.hpMax} hp</div>
                             </div>
-                            <div className="columns small-6 medium-6 large-6">
-                                <div className="subheading">damage resistances</div>
-                                <input type="text" value={this.state.monster.damage.resist} onChange={event => this.changeValue("damage.resist", event.target.value)} />
-                                <div className="subheading">damage vulnerabilities</div>
-                                <input type="text" value={this.state.monster.damage.vulnerable} onChange={event => this.changeValue("damage.vulnerable", event.target.value)} />
-                                <div className="subheading">damage immunities</div>
-                                <input type="text" value={this.state.monster.damage.immune} onChange={event => this.changeValue("damage.immune", event.target.value)} />
-                                <div className="subheading">condition immunities</div>
-                                <input type="text" value={this.state.monster.conditionImmunities} onChange={event => this.changeValue("conditionImmunities", event.target.value)} />
+                            <div className='columns small-6 medium-6 large-6'>
+                                <div className='subheading'>damage resistances</div>
+                                <input type='text' value={this.state.monster.damage.resist} onChange={event => this.changeValue('damage.resist', event.target.value)} />
+                                <div className='subheading'>damage vulnerabilities</div>
+                                <input type='text' value={this.state.monster.damage.vulnerable} onChange={event => this.changeValue('damage.vulnerable', event.target.value)} />
+                                <div className='subheading'>damage immunities</div>
+                                <input type='text' value={this.state.monster.damage.immune} onChange={event => this.changeValue('damage.immune', event.target.value)} />
+                                <div className='subheading'>condition immunities</div>
+                                <input type='text' value={this.state.monster.conditionImmunities} onChange={event => this.changeValue('conditionImmunities', event.target.value)} />
                             </div>
                         </div>
                     );
@@ -793,7 +793,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             if (this.props.showMonsters && (monsters.length > 1)) {
                 var selector = null;
                 if (this.getHelpOptionsForPage(this.state.page).length > 1) {
-                    var options = this.getHelpOptionsForPage(this.state.page).map(s => {
+                    const options = this.getHelpOptionsForPage(this.state.page).map(s => {
                         return {
                             id: s,
                             text: s
@@ -810,8 +810,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 }
 
                 help = (
-                    <div className="monster-help">
-                        <div className="subheading">information from similar monsters</div>
+                    <div className='monster-help'>
+                        <div className='subheading'>information from similar monsters</div>
                         {selector}
                         {this.getHelpSection(monsters)}
                     </div>
@@ -821,7 +821,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             var monsterList = null;
             if (this.props.showMonsters) {
                 monsterList = (
-                    <div className="columns small-4 medium-4 large-4 scrollable">
+                    <div className='columns small-4 medium-4 large-4 scrollable'>
                         {this.getFilterCard(monsters)}
                         {this.getMonsterCards(monsters)}
                     </div>
@@ -829,9 +829,9 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             }
 
             return (
-                <div className="row" style={{ height: "100%", margin: "0 -15px" }}>
-                    <div className={this.props.showMonsters ? "columns small-8 medium-8 large-8 scrollable" : "columns small-12 medium-12 large-12 scrollable"} style={{ transition: "none" }}>
-                        <div className="section">
+                <div className='row' style={{ height: '100%', margin: '0 -15px' }}>
+                    <div className={this.props.showMonsters ? 'columns small-8 medium-8 large-8 scrollable' : 'columns small-12 medium-12 large-12 scrollable'} style={{ transition: 'none' }}>
+                        <div className='section'>
                             <Selector
                                 tabs={true}
                                 options={pages}

@@ -4,5 +4,28 @@
         "tslint-react"
     ],
     "rules": {
+        "trailing-comma": [
+            true,
+            {
+                "multiline": "never",
+                "singleline": "never"
+            }
+        ],
+        "quotemark": [true, "single"],
+        "array-type": [true, "array"],
+        "no-var-keyword": false,
+        "max-line-length": false,
+        "interface-name": false,
+        "ordered-imports": [
+            true,
+            {
+                "import-sources-order": "any",
+                "named-imports-order": "any"
+            }
+        ],
+        "object-literal-sort-keys": false,
+        "arrow-parens": false,
+        "member-ordering": [true, "fields-first"],
+        "object-literal-shorthand": false
     }
 }

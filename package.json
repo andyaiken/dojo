@@ -6,8 +6,8 @@
         "@types/react": "^16.8.8",
         "gh-pages": "^2.0.1",
         "node-sass": "^4.11.0",
-        "react": "^16.8.4",
-        "react-dom": "^16.8.4",
+        "react": "^16.8.5",
+        "react-dom": "^16.8.5",
         "react-scripts": "2.1.8"
     },
     "scripts": {

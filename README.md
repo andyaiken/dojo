@@ -10,19 +10,29 @@ Dojo is written in TypeScript / JavaScript, using React and SCSS. If you would l
 
 * Open a terminal in the root folder
 * Run `npm install`
+* Check that you're using the latest dependencies by running `npm update --dev`
 
 ## Compiling and running the app
 
 * Open a terminal in the root folder
 * Run `npm start`
-* Your default browser should open; if it does not, open it and navigate to [http://localhost:3000](http://localhost:3000)
 
-The page should automatically reload if you make edits. If there are errors, you will see them in the terminal and the browser debug console.
+Your default browser should open; if it does not, open it and navigate to [http://localhost:3000](http://localhost:3000).
+
+The page should automatically reload if you make edits.
+
+If there are any build errors, you will see them in the terminal and the browser debug console.
+
+## Making a change to the app
+
+Check that your changes don't break the project's style rules:
+
+* Open a terminal in the root folder
+* Run `npm run lint`
 
 ## Publishing the app
 
 * Open a terminal in the root folder
-* Check that your changes don't break the project's style rules by running `npm run lint`
 * Run `npm run deploy`
 
 This will build the app in the `build` folder and attempt to deploy it. You need to have git installed.
