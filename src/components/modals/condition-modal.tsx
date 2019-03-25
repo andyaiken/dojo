@@ -36,7 +36,7 @@ export default class ConditionModal extends React.Component<Props, State> {
         // eslint-disable-next-line
         this.state.condition.level = 1;
         // eslint-disable-next-line
-        this.state.condition.text = conditionName === "custom" ? "custom condition" : null;
+        this.state.condition.text = conditionName === 'custom' ? 'custom condition' : null;
 
         this.setState({
             condition: this.state.condition
@@ -47,13 +47,13 @@ export default class ConditionModal extends React.Component<Props, State> {
         var duration = null;
 
         switch (durationType) {
-            case "saves":
+            case 'saves':
                 duration = Factory.createConditionDurationSaves();
                 break;
-            case "combatant":
+            case 'combatant':
                 duration = Factory.createConditionDurationCombatant();
                 break;
-            case "rounds":
+            case 'rounds':
                 duration = Factory.createConditionDurationRounds();
                 break;
             default:
@@ -78,14 +78,14 @@ export default class ConditionModal extends React.Component<Props, State> {
 
     nudgeValue(object: any, field: string, delta: number) {
         var value = object[field] + delta;
-        if (field === "level") {
+        if (field === 'level') {
             value = Math.max(value, 1);
             value = Math.min(value, 6);
         }
-        if (field === "count") {
+        if (field === 'count') {
             value = Math.max(value, 1);
         }
-        if (field === "saveDC") {
+        if (field === 'saveDC') {
             value = Math.max(value, 0);
         }
         object[field] = value;
@@ -95,31 +95,31 @@ export default class ConditionModal extends React.Component<Props, State> {
         });
     }
 
-    render() {
+    public render() {
         try {
             var conditions = CONDITION_TYPES.map(condition => {
                 var controls = [];
                 var description = [];
                 if (condition === this.state.condition.name) {
-                    if (condition === "custom") {
+                    if (condition === 'custom') {
                         controls.push(
-                            <input type="text" placeholder="custom condition" value={this.state.condition.text ? this.state.condition.text : ''} onChange={event => this.changeValue(this.state.condition, "text", event.target.value)} />
+                            <input type='text' placeholder='custom condition' value={this.state.condition.text ? this.state.condition.text : ''} onChange={event => this.changeValue(this.state.condition, 'text', event.target.value)} />
                         );
                     }
-                    if (condition === "exhaustion") {
+                    if (condition === 'exhaustion') {
                         controls.push(
                             <Spin
-                                key="exhaustion-spin"
+                                key='exhaustion-spin'
                                 source={this.props.condition}
-                                name="level"
-                                label="exhaustion"
-                                nudgeValue={delta => this.nudgeValue(this.props.condition, "level", delta)}
+                                name='level'
+                                label='exhaustion'
+                                nudgeValue={delta => this.nudgeValue(this.props.condition, 'level', delta)}
                             />
                         );
                     }
                     var text = Utils.conditionText(this.state.condition);
                     for (var n = 0; n !== text.length; ++n) {
-                        description.push(<li key={n} className="section">{text[n]}</li>);
+                        description.push(<li key={n} className='section'>{text[n]}</li>);
                     }
                 }
 
@@ -138,104 +138,104 @@ export default class ConditionModal extends React.Component<Props, State> {
                 };
             });
 
-            var saveOptions = ["str", "dex", "con", "int", "wis", "cha", "death"].map(c => { return { id: c, text: c }; });
+            var saveOptions = ['str', 'dex', 'con', 'int', 'wis', 'cha', 'death'].map(c => { return { id: c, text: c }; });
             var pointOptions = [
                 {
-                    id: "start",
-                    text: "start of turn"
+                    id: 'start',
+                    text: 'start of turn'
                 },
                 {
-                    id: "end",
-                    text: "end of turn"
+                    id: 'end',
+                    text: 'end of turn'
                 }
             ]
-            var combatantOptions = this.props.combat.combatants.map(c => { return { id: c.id, text: (c.displayName || c.name || "unnamed monster") }; });
+            var combatantOptions = this.props.combat.combatants.map(c => { return { id: c.id, text: (c.displayName || c.name || 'unnamed monster') }; });
 
             var durations = [
                 {
-                    id: "none",
-                    text: "until removed (default)",
+                    id: 'none',
+                    text: 'until removed (default)',
                     details: (
-                        <div className="section">
+                        <div className='section'>
                             <div>the condition persists until it is manually removed</div>
                         </div>
                     )
                 },
                 {
-                    id: "saves",
-                    text: "until a successful save",
+                    id: 'saves',
+                    text: 'until a successful save',
                     details: (
                         <div>
-                            <div className="section">
-                                <div className="subheading">number of saves required</div>
+                            <div className='section'>
+                                <div className='subheading'>number of saves required</div>
                                 <Spin
                                     source={this.props.condition.duration}
-                                    name="count"
-                                    nudgeValue={delta => this.nudgeValue(this.props.condition.duration, "count", delta)}
+                                    name='count'
+                                    nudgeValue={delta => this.nudgeValue(this.props.condition.duration, 'count', delta)}
                                 />
                             </div>
-                            <div className="section">
-                                <div className="subheading">save dc</div>
+                            <div className='section'>
+                                <div className='subheading'>save dc</div>
                                 <Spin
                                     source={this.props.condition.duration}
-                                    name="saveDC"
-                                    nudgeValue={delta => this.nudgeValue(this.props.condition.duration, "saveDC", delta)}
+                                    name='saveDC'
+                                    nudgeValue={delta => this.nudgeValue(this.props.condition.duration, 'saveDC', delta)}
                                 />
                             </div>
-                            <div className="section">
-                                <div className="subheading">type of save</div>
+                            <div className='section'>
+                                <div className='subheading'>type of save</div>
                                 <Selector
                                     options={saveOptions}
                                     selectedID={(this.props.condition.duration as ConditionDurationSaves) ? (this.props.condition.duration as ConditionDurationSaves).saveType : null}
-                                    select={optionID => this.changeValue(this.props.condition.duration, "saveType", optionID)}
+                                    select={optionID => this.changeValue(this.props.condition.duration, 'saveType', optionID)}
                                 />
                             </div>
-                            <div className="section">
-                                <div className="subheading">make the save at the start or end of the turn</div>
+                            <div className='section'>
+                                <div className='subheading'>make the save at the start or end of the turn</div>
                                 <Selector
                                     options={pointOptions}
                                     selectedID={(this.props.condition.duration as ConditionDurationSaves) ? (this.props.condition.duration as ConditionDurationSaves).point : null}
-                                    select={optionID => this.changeValue(this.props.condition.duration, "point", optionID)}
+                                    select={optionID => this.changeValue(this.props.condition.duration, 'point', optionID)}
                                 />
                             </div>
                         </div>
                     )
                 },
                 {
-                    id: "combatant",
-                    text: "until someone's next turn",
+                    id: 'combatant',
+                    text: 'until someone\'s next turn',
                     details: (
                         <div>
-                            <div className="section">
-                                <div className="subheading">combatant</div>
+                            <div className='section'>
+                                <div className='subheading'>combatant</div>
                                 <Dropdown
                                     options={combatantOptions}
                                     selectedID={(this.props.condition.duration as ConditionDurationCombatant) ? (this.props.condition.duration as ConditionDurationCombatant).combatantID || undefined : undefined}
-                                    select={optionID => this.changeValue(this.props.condition.duration, "combatantID", optionID)}
+                                    select={optionID => this.changeValue(this.props.condition.duration, 'combatantID', optionID)}
                                 />
                             </div>
-                            <div className="section">
-                                <div className="subheading">start or end of the turn</div>
+                            <div className='section'>
+                                <div className='subheading'>start or end of the turn</div>
                                 <Selector
                                     options={pointOptions}
                                     selectedID={(this.props.condition.duration as ConditionDurationCombatant) ? (this.props.condition.duration as ConditionDurationCombatant).point : null}
-                                    select={optionID => this.changeValue(this.props.condition.duration, "point", optionID)}
+                                    select={optionID => this.changeValue(this.props.condition.duration, 'point', optionID)}
                                 />
                             </div>
                         </div>
                     )
                 },
                 {
-                    id: "rounds",
-                    text: "for a number of rounds",
+                    id: 'rounds',
+                    text: 'for a number of rounds',
                     details: (
                         <div>
-                            <div className="section">
-                                <div className="subheading">number of rounds</div>
+                            <div className='section'>
+                                <div className='subheading'>number of rounds</div>
                                 <Spin
                                     source={this.props.condition.duration}
-                                    name="count"
-                                    nudgeValue={delta => this.nudgeValue(this.props.condition.duration, "count", delta)}
+                                    name='count'
+                                    nudgeValue={delta => this.nudgeValue(this.props.condition.duration, 'count', delta)}
                                 />
                             </div>
                         </div>
@@ -244,21 +244,21 @@ export default class ConditionModal extends React.Component<Props, State> {
             ];
 
             return (
-                <div className="condition-modal">
-                    <div className="row" style={{ height: "100%" }}>
-                        <div className="columns small-6 medium-6 large-6 scrollable">
-                            <div className="heading">condition</div>
+                <div className='condition-modal'>
+                    <div className='row' style={{ height: '100%' }}>
+                        <div className='columns small-6 medium-6 large-6 scrollable'>
+                            <div className='heading'>condition</div>
                             <RadioGroup
                                 items={conditions}
                                 selectedItemID={this.state.condition.name}
                                 select={itemID => this.setCondition(itemID)}
                             />
                         </div>
-                        <div className="columns small-6 medium-6 large-6 scrollable">
-                            <div className="heading">duration</div>
+                        <div className='columns small-6 medium-6 large-6 scrollable'>
+                            <div className='heading'>duration</div>
                             <RadioGroup
                                 items={durations}
-                                selectedItemID={this.state.condition.duration ? this.state.condition.duration.type : "none"}
+                                selectedItemID={this.state.condition.duration ? this.state.condition.duration.type : 'none'}
                                 select={itemID => this.setDuration(itemID as 'saves' | 'combatant' | 'rounds')}
                             />
                         </div>

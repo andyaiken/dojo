@@ -24,7 +24,7 @@ interface Props {
 }
 
 export default class PartiesScreen extends React.Component<Props> {
-    render() {
+    public render() {
         try {
             var help = null;
             if (this.props.showHelp) {
@@ -33,9 +33,9 @@ export default class PartiesScreen extends React.Component<Props> {
                 );
             }
 
-            var parties = [];
+            const parties = [];
             for (var n = 0; n !== this.props.parties.length; ++n) {
-                var party = this.props.parties[n];
+                const party = this.props.parties[n];
                 parties.push(
                     <PartyListItem
                         key={party.id}
@@ -44,14 +44,14 @@ export default class PartiesScreen extends React.Component<Props> {
                         setSelection={party => this.props.selectParty(party)}
                     />
                 );
-            };
+            }
 
-            var activeCards: JSX.Element[] = [];
-            var inactiveCards: JSX.Element[] = [];
+            const activeCards: JSX.Element[] = [];
+            const inactiveCards: JSX.Element[] = [];
 
             if (this.props.selection) {
                 activeCards.push(
-                    <div className="column" key="info">
+                    <div className='column' key='info'>
                         <PartyCard
                             selection={this.props.selection}
                             addPC={() => this.props.addPC()}
@@ -62,13 +62,13 @@ export default class PartiesScreen extends React.Component<Props> {
                     </div>
                 );
 
-                var activePCs = this.props.selection.pcs.filter(pc => pc.active);
+                const activePCs = this.props.selection.pcs.filter(pc => pc.active);
                 activePCs.forEach(pc => {
                     activeCards.push(
-                        <div className="column" key={pc.id}>
+                        <div className='column' key={pc.id}>
                             <PCCard
                                 combatant={pc}
-                                mode={"edit"}
+                                mode={'edit'}
                                 changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
                                 nudgeValue={(pc, type, delta) => this.props.nudgeValue(pc, type, delta)}
                                 removePC={pc => this.props.removePC(pc)}
@@ -77,13 +77,13 @@ export default class PartiesScreen extends React.Component<Props> {
                     );
                 });
 
-                var inactivePCs = this.props.selection.pcs.filter(pc => !pc.active);
+                const inactivePCs = this.props.selection.pcs.filter(pc => !pc.active);
                 inactivePCs.forEach(pc => {
                     inactiveCards.push(
-                        <div className="column" key={pc.id}>
+                        <div className='column' key={pc.id}>
                             <PCCard
                                 combatant={pc}
-                                mode={"edit"}
+                                mode={'edit'}
                                 changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
                                 nudgeValue={(pc, type, delta) => this.props.nudgeValue(pc, type, delta)}
                                 removePC={pc => this.props.removePC(pc)}
@@ -94,8 +94,8 @@ export default class PartiesScreen extends React.Component<Props> {
 
                 if (activePCs.length === 0) {
                     activeCards.push(
-                        <div className="column" key="empty">
-                            <InfoCard getContent={() => <div className="section">no pcs</div>} />
+                        <div className='column' key='empty'>
+                            <InfoCard getContent={() => <div className='section'>no pcs</div>} />
                         </div>
                     );
                 }
@@ -103,17 +103,17 @@ export default class PartiesScreen extends React.Component<Props> {
 
             var name = undefined;
             if (this.props.selection) {
-                name = this.props.selection.name || "unnamed party";
+                name = this.props.selection.name || 'unnamed party';
             }
 
             return (
-                <div className="parties row collapse">
-                    <div className="columns small-4 medium-4 large-3 scrollable list-column">
+                <div className='parties row collapse'>
+                    <div className='columns small-4 medium-4 large-3 scrollable list-column'>
                         {help}
                         <button onClick={() => this.props.addParty()}>add a new party</button>
                         {parties}
                     </div>
-                    <div className="columns small-8 medium-8 large-9 scrollable">
+                    <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup
                             content={activeCards}
                             heading={name}
@@ -123,7 +123,7 @@ export default class PartiesScreen extends React.Component<Props> {
                         />
                         <CardGroup
                             content={inactiveCards}
-                            heading="inactive pcs"
+                            heading='inactive pcs'
                             showClose={false}
                             hidden={inactiveCards.length === 0}
                         />

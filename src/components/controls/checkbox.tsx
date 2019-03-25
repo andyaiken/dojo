@@ -1,7 +1,7 @@
 import React from 'react';
 
-import checked from "../../resources/images/checked.svg";
-import unchecked from "../../resources/images/unchecked.svg";
+import checked from '../../resources/images/checked.svg';
+import unchecked from '../../resources/images/unchecked.svg';
 
 interface Props {
     label: string;
@@ -15,17 +15,17 @@ export default class Checkbox extends React.Component<Props> {
         disabled: false
     };
 
-    click(e: React.MouseEvent) {
+    private click(e: React.MouseEvent) {
         e.stopPropagation();
         this.props.changeValue(!this.props.checked);
     }
 
-    render() {
+    public render() {
         try {
             return (
-                <div className={this.props.disabled ? "checkbox disabled" : "checkbox"} onClick={e => this.click(e)}>
-                    <img className="image" src={this.props.checked ? checked : unchecked} alt="check" />
-                    <div className="checkbox-label">{this.props.label}</div>
+                <div className={this.props.disabled ? 'checkbox disabled' : 'checkbox'} onClick={e => this.click(e)}>
+                    <img className='image' src={this.props.checked ? checked : unchecked} alt='check' />
+                    <div className='checkbox-label'>{this.props.label}</div>
                 </div>
             );
 

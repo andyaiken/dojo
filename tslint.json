@@ -4,18 +4,17 @@
         "tslint-react"
     ],
     "rules": {
-        "trailing-comma": [
-            true,
-            {
-                "multiline": "never",
-                "singleline": "never"
-            }
-        ],
-        "quotemark": [true, "single"],
         "array-type": [true, "array"],
-        "no-var-keyword": false,
-        "max-line-length": false,
+        "arrow-parens": false,
         "interface-name": false,
+        "jsx-no-lambda": false,
+        "jsx-no-multiline-js": false,
+        "max-line-length": false,
+        "member-ordering": [true, "fields-first"],
+        "no-console": [true, "log"],
+        "no-var-keyword": false,
+        "object-literal-shorthand": false,
+        "object-literal-sort-keys": false,
         "ordered-imports": [
             true,
             {
@@ -23,9 +22,13 @@
                 "named-imports-order": "any"
             }
         ],
-        "object-literal-sort-keys": false,
-        "arrow-parens": false,
-        "member-ordering": [true, "fields-first"],
-        "object-literal-shorthand": false
+        "quotemark": [true, "single"],
+        "trailing-comma": [
+            true,
+            {
+                "multiline": "never",
+                "singleline": "never"
+            }
+        ]
     }
 }

@@ -10,25 +10,25 @@ export default class ErrorCard extends React.Component<Props> {
         title: null
     };
 
-    render() {
+    public render() {
         try {
             var heading = null;
             if (this.props.title) {
-                heading = <div className="heading"><div className="title">{this.props.title}</div></div>;
+                heading = <div className='heading'><div className='title'>{this.props.title}</div></div>;
             }
 
-            var content = this.props.getContent();
+            const content = this.props.getContent();
 
             return (
-                <div className="card error">
+                <div className='card error'>
                     {heading}
-                    <div className="card-content">
+                    <div className='card-content'>
                         {content}
                     </div>
                 </div>
             );
-        } catch (e) {
-            console.error(e);
+        } catch (ex) {
+            console.error(ex);
         }
     }
 }

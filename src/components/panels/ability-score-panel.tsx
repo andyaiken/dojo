@@ -35,7 +35,7 @@ export default class AbilityScorePanel extends React.Component<Props, State> {
         });
     }
 
-    render() {
+    public render() {
         try {
             var result = null;
 

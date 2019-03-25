@@ -16,24 +16,24 @@ export default class Selector extends React.Component<Props> {
         itemsPerRow: null
     };
 
-    render() {
+    public render() {
         try {
-            var style = this.props.tabs ? "selector tabs" : "selector radio";
+            var style = this.props.tabs ? 'selector tabs' : 'selector radio';
             if (this.props.disabled) {
-                style += " disabled";
+                style += ' disabled';
             }
 
-            var itemsPerRow = this.props.itemsPerRow ? this.props.itemsPerRow : this.props.options.length;
-            var rowCount = Math.ceil(this.props.options.length / itemsPerRow);
-            var rowContents: JSX.Element[][] = [];
+            const itemsPerRow = this.props.itemsPerRow ? this.props.itemsPerRow : this.props.options.length;
+            const rowCount = Math.ceil(this.props.options.length / itemsPerRow);
+            const rowContents: JSX.Element[][] = [];
             for (var n = 0; n !== rowCount; ++n) {
                 rowContents.push([]);
             }
 
             this.props.options.forEach(option => {
-                var index = this.props.options.indexOf(option);
-                var rowIndex = Math.floor(index / itemsPerRow);
-                var row = rowContents[rowIndex];
+                const index = this.props.options.indexOf(option);
+                const rowIndex = Math.floor(index / itemsPerRow);
+                const row = rowContents[rowIndex];
                 row.push(
                     <SelectorOption
                         key={option.id}
@@ -45,8 +45,8 @@ export default class Selector extends React.Component<Props> {
                 );
             });
 
-            var rowSections = rowContents.map(row => {
-                var index = rowContents.indexOf(row);
+            const rowSections = rowContents.map(row => {
+                const index = rowContents.indexOf(row);
                 return <div key={index}>{row}</div>;
             });
 
@@ -70,23 +70,23 @@ interface SelectorOptionInterface {
 }
 
 class SelectorOption extends React.Component<SelectorOptionInterface> {
-    click(e: React.MouseEvent) {
+    private click(e: React.MouseEvent) {
         e.stopPropagation();
         if (!this.props.option.disabled) {
             this.props.select(this.props.option.id);
         }
     }
 
-    render() {
+    public render() {
         try {
-            var width = "calc(((100% - 1px) / " + this.props.count + ") - 2px )";
+            const width = 'calc(((100% - 1px) / ' + this.props.count + ') - 2px )';
 
-            var style = "option";
+            var style = 'option';
             if (this.props.selected) {
-                style += " selected";
+                style += ' selected';
             }
             if (this.props.option.disabled) {
-                style += " disabled";
+                style += ' disabled';
             }
 
             return (

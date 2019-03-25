@@ -646,7 +646,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    render() {
+    public render() {
         try {
             var pages = [
                 {

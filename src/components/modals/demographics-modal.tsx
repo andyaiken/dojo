@@ -18,7 +18,7 @@ export default class DemographicsModal extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            chart: "challenge"
+            chart: 'challenge'
         };
     }
 
@@ -28,7 +28,7 @@ export default class DemographicsModal extends React.Component<Props, State> {
         });
     }
 
-    render() {
+    public render() {
         try {
             var demographics = null;
 
@@ -40,12 +40,12 @@ export default class DemographicsModal extends React.Component<Props, State> {
                 var monsters: { [key: string]: Monster[] } = {};
 
                 switch (this.state.chart) {
-                    case "challenge":
+                    case 'challenge':
                         var challenges = [0, 0.125, 0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
                         challenges.forEach(cr => {
                             buckets.push({
                                 value: cr,
-                                title: "challenge " + Utils.challenge(cr)
+                                title: 'challenge ' + Utils.challenge(cr)
                             })
                         });
 
@@ -59,7 +59,7 @@ export default class DemographicsModal extends React.Component<Props, State> {
                             maxBucketSize = Math.max(monsters[cr].length, maxBucketSize);
                         });
                         break;
-                    case "size":
+                    case 'size':
                         SIZE_TYPES.forEach(size => {
                             buckets.push({
                                 value: size,
@@ -77,7 +77,7 @@ export default class DemographicsModal extends React.Component<Props, State> {
                             maxBucketSize = Math.max(monsters[size].length, maxBucketSize);
                         });
                         break;
-                    case "type":
+                    case 'type':
                         CATEGORY_TYPES.forEach(type => {
                             buckets.push({
                                 value: type,
@@ -108,22 +108,22 @@ export default class DemographicsModal extends React.Component<Props, State> {
                     bars.push(
                         <div
                             key={bucket.title}
-                            className="bar-container"
+                            className='bar-container'
                             style={{
-                                width: "calc((100% - 1px) / " + buckets.length + ")",
-                                left: "calc((100% - 1px) * " + index + " / " + buckets.length + ")"
+                                width: 'calc((100% - 1px) / ' + buckets.length + ')',
+                                left: 'calc((100% - 1px) * ' + index + ' / ' + buckets.length + ')'
                             }}
-                            title={bucket.title + ": " + set.length + " monsters"}>
+                            title={bucket.title + ': ' + set.length + ' monsters'}>
                             <div
-                                className="bar-space"
+                                className='bar-space'
                                 style={{
-                                    height: "calc((100% - 1px) * " + (maxBucketSize - count) + " / " + maxBucketSize + ")"
+                                    height: 'calc((100% - 1px) * ' + (maxBucketSize - count) + ' / ' + maxBucketSize + ')'
                                 }}>
                             </div>
                             <div
-                                className="bar"
+                                className='bar'
                                 style={{
-                                    height: "calc((100% - 1px) * " + count + " / " + maxBucketSize + ")"
+                                    height: 'calc((100% - 1px) * ' + count + ' / ' + maxBucketSize + ')'
                                 }}>
                             </div>
                         </div>
@@ -132,16 +132,16 @@ export default class DemographicsModal extends React.Component<Props, State> {
 
                 var chartOptions = [
                     {
-                        id: "challenge",
-                        text: "challenge rating"
+                        id: 'challenge',
+                        text: 'challenge rating'
                     },
                     {
-                        id: "size",
-                        text: "size"
+                        id: 'size',
+                        text: 'size'
                     },
                     {
-                        id: "type",
-                        text: "type"
+                        id: 'type',
+                        text: 'type'
                     }
                 ]
 
@@ -152,8 +152,8 @@ export default class DemographicsModal extends React.Component<Props, State> {
                             selectedID={this.state.chart}
                             select={optionID => this.selectChart(optionID)}
                         />
-                        <div className="chart">
-                            <div className="plot">{bars}</div>
+                        <div className='chart'>
+                            <div className='plot'>{bars}</div>
                         </div>
                     </div>
                 );

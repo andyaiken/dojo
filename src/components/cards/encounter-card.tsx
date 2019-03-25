@@ -9,7 +9,7 @@ import DifficultyChartPanel from '../panels/difficulty-chart-panel';
 import ConfirmButton from '../controls/confirm-button';
 import InfoCard from './info-card';
 
-import arrow from "../../resources/images/down-arrow.svg";
+import arrow from '../../resources/images/down-arrow.svg';
 
 interface Props {
     selection: Encounter;
@@ -34,25 +34,25 @@ export default class EncounterCard extends React.Component<Props, State> {
         };
     }
 
-    toggleDetails() {
+    private toggleDetails() {
         this.setState({
             showDetails: !this.state.showDetails
-        })
+        });
     }
 
-    selectParty(partyID: string) {
-        var party = this.props.parties.find(p => p.id === partyID);
+    private selectParty(partyID: string) {
+        const party = this.props.parties.find(p => p.id === partyID);
         this.setState({
             party: party as Party
         });
     }
 
-    render() {
+    public render() {
         try {
-            var partyOptions = [];
+            const partyOptions = [];
             if (this.props.parties) {
                 for (var n = 0; n !== this.props.parties.length; ++n) {
-                    var party = this.props.parties[n];
+                    const party = this.props.parties[n];
                     partyOptions.push({
                         id: party.id,
                         text: party.name
@@ -60,11 +60,11 @@ export default class EncounterCard extends React.Component<Props, State> {
                 }
             }
 
-            var difficultySection = (
+            const difficultySection = (
                 <div>
                     <Dropdown
                         options={partyOptions}
-                        placeholder="select party..."
+                        placeholder='select party...'
                         selectedID={this.state.party ? this.state.party.id : undefined}
                         select={optionID => this.selectParty(optionID)}
                     />
@@ -76,28 +76,28 @@ export default class EncounterCard extends React.Component<Props, State> {
                 </div>
             );
 
-            var imageStyle = this.state.showDetails ? "image rotate" : "image";
+            const imageStyle = this.state.showDetails ? 'image rotate' : 'image';
 
-            var heading = (
-                <div className="heading">
-                    <div className="title">encounter</div>
-                    <img className={imageStyle} src={arrow} alt="arrow" onClick={() => this.toggleDetails()} />
+            const heading = (
+                <div className='heading'>
+                    <div className='title'>encounter</div>
+                    <img className={imageStyle} src={arrow} alt='arrow' onClick={() => this.toggleDetails()} />
                 </div>
             );
 
-            var content = (
+            const content = (
                 <div>
-                    <div className="section">
-                        <input type="text" placeholder="encounter name" value={this.props.selection.name} onChange={event => this.props.changeValue("name", event.target.value)} />
+                    <div className='section'>
+                        <input type='text' placeholder='encounter name' value={this.props.selection.name} onChange={event => this.props.changeValue('name', event.target.value)} />
                     </div>
-                    <div style={{ display: this.state.showDetails ? "" : "none" }}>
-                        <div className="divider"></div>
+                    <div style={{ display: this.state.showDetails ? '' : 'none' }}>
+                        <div className='divider' />
                         {difficultySection}
                     </div>
-                    <div className="divider"></div>
-                    <div className="section">
+                    <div className='divider' />
+                    <div className='section'>
                         <button onClick={() => this.props.addWave()}>add a new wave</button>
-                        <ConfirmButton text="delete encounter" callback={() => this.props.removeEncounter()} />
+                        <ConfirmButton text='delete encounter' callback={() => this.props.removeEncounter()} />
                     </div>
                 </div>
             );
@@ -108,5 +108,5 @@ export default class EncounterCard extends React.Component<Props, State> {
         } catch (e) {
             console.error(e);
         }
-    };
+    }
 }

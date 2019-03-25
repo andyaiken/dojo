@@ -10,13 +10,13 @@ interface Props {
 }
 
 export default class Titlebar extends React.Component<Props> {
-    render() {
+    public render() {
         try {
             return (
-                <div className={this.props.blur ? "titlebar blur" : "titlebar"}>
-                    <div className="app-name" onClick={() => this.props.openHome()}>dojo</div>
+                <div className={this.props.blur ? 'titlebar blur' : 'titlebar'}>
+                    <div className='app-name' onClick={() => this.props.openHome()}>dojo</div>
                     {this.props.actions}
-                    <img className="settings-icon" src={cog} title="about" alt="about" onClick={() => this.props.openAbout()} />
+                    <img className='settings-icon' src={cog} title='about' alt='about' onClick={() => this.props.openAbout()} />
                 </div>
             );
         } catch (e) {

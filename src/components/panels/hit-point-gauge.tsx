@@ -8,31 +8,31 @@ interface Props {
 }
 
 export default class HitPointGauge extends React.Component<Props> {
-    render() {
+    public render() {
         try {
             var hpCurrent = this.props.combatant.hp || 0;
             var hpMax = this.props.combatant.hpMax + this.props.combatant.hpTemp;
             var hpBloodied = this.props.combatant.hpMax / 2;
             var hpWidth = 100 * Math.max(hpCurrent, 0) / hpMax;
 
-            var style = "";
+            var style = '';
             if (hpCurrent >= this.props.combatant.hpMax) {
-                style = "bar unhurt";
+                style = 'bar unhurt';
             } else if (hpCurrent <= hpBloodied) {
-                style = "bar bloodied";
+                style = 'bar bloodied';
             } else {
-                style = "bar injured";
+                style = 'bar injured';
             }
 
             var hpTempBar = null;
             if (this.props.combatant.hpTemp > 0) {
                 var hpTempWidth = 100 * Math.max(this.props.combatant.hpTemp, 0) / hpMax;
-                hpTempBar = <div className="bar temp" style={{ width: hpTempWidth + "%" }}></div>
+                hpTempBar = <div className='bar temp' style={{ width: hpTempWidth + '%' }}></div>
             }
 
             return (
-                <div className="hp-gauge">
-                    <div className={style} style={{ width: hpWidth + "%" }}></div>
+                <div className='hp-gauge'>
+                    <div className={style} style={{ width: hpWidth + '%' }}></div>
                     {hpTempBar}
                 </div>
             );

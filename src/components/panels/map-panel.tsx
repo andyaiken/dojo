@@ -41,8 +41,8 @@ export default class MapPanel extends React.Component<Props> {
         var dimensions: MapDimensions | null = null;
 
         this.props.map.items.filter(i => {
-            if (this.props.mode === "edit") {
-                return i.type === "tile";
+            if (this.props.mode === 'edit') {
+                return i.type === 'tile';
             }
             return true;
         }).forEach(i => {
@@ -94,10 +94,10 @@ export default class MapPanel extends React.Component<Props> {
 
     getSideLength(): number {
         switch (this.props.mode) {
-            case "thumbnail":
+            case 'thumbnail':
                 return 5;
-            case "edit":
-            case "combat":
+            case 'edit':
+            case 'combat':
                 return 25;
             default:
                 return 5;
@@ -108,16 +108,16 @@ export default class MapPanel extends React.Component<Props> {
         var sideLength = this.getSideLength();
 
         return {
-            left: "calc(" + sideLength + "px * " + (x - mapDimensions.minX) + ")",
-            top: "calc(" + sideLength + "px * " + (y - mapDimensions.minY) + ")",
-            width: "calc((" + sideLength + "px * " + width + ") + 1px)",
-            height: "calc((" + sideLength + "px * " + height + ") + 1px)"
+            left: 'calc(' + sideLength + 'px * ' + (x - mapDimensions.minX) + ')',
+            top: 'calc(' + sideLength + 'px * ' + (y - mapDimensions.minY) + ')',
+            width: 'calc((' + sideLength + 'px * ' + width + ') + 1px)',
+            height: 'calc((' + sideLength + 'px * ' + height + ') + 1px)'
         };
     }
 
-    render() {
+    public render() {
         try {
-            var border = (this.props.mode === "edit") ? 2 : 0;
+            var border = (this.props.mode === 'edit') ? 2 : 0;
             var mapDimensions = this.getMapDimensions(border);
             if (!mapDimensions) {
                 return (
@@ -127,13 +127,13 @@ export default class MapPanel extends React.Component<Props> {
 
             // Draw the grid squares
             var grid = [];
-            if (this.props.mode === "edit") {
+            if (this.props.mode === 'edit') {
                 for (var y = mapDimensions.minY; y !== mapDimensions.maxY + 1; ++y) {
                     for (var x = mapDimensions.minX; x !== mapDimensions.maxX + 1; ++x) {
                         var pos = this.getPosition(x, y, 1, 1, mapDimensions);
                         grid.push(
                             <GridSquare
-                                key={x + "," + y}
+                                key={x + ',' + y}
                                 x={x}
                                 y={y}
                                 position={pos}
@@ -147,7 +147,7 @@ export default class MapPanel extends React.Component<Props> {
 
             // Draw the map tiles
             var tiles = this.props.map.items
-                .filter(i => i.type === "tile")
+                .filter(i => i.type === 'tile')
                 .map(i => {
                     var pos = this.getPosition(i.x, i.y, i.width, i.height, mapDimensions as MapDimensions);
                     return (
@@ -155,19 +155,19 @@ export default class MapPanel extends React.Component<Props> {
                             key={i.id}
                             tile={i}
                             position={pos}
-                            selectable={this.props.mode === "edit"}
+                            selectable={this.props.mode === 'edit'}
                             selected={this.props.selectedItemID === i.id}
-                            thumbnail={this.props.mode === "thumbnail"}
-                            select={id => this.props.mode === "edit" ? this.props.setSelectedItemID(id) : null}
+                            thumbnail={this.props.mode === 'thumbnail'}
+                            select={id => this.props.mode === 'edit' ? this.props.setSelectedItemID(id) : null}
                         />
                     );
                 });
 
             // Draw the tokens
             var tokens: JSX.Element[] = [];
-            if (this.props.mode !== "edit") {
+            if (this.props.mode !== 'edit') {
                 tokens = this.props.map.items
-                    .filter(i => (i.type === "monster") || (i.type === "pc"))
+                    .filter(i => (i.type === 'monster') || (i.type === 'pc'))
                     .map(i => {
                         var pos = this.getPosition(i.x, i.y, i.width, i.height, mapDimensions as MapDimensions);
                         var combatant = this.props.combatants.find(c => c.id === i.id);
@@ -178,8 +178,8 @@ export default class MapPanel extends React.Component<Props> {
                                     token={i}
                                     combatant={combatant}
                                     position={pos}
-                                    simple={this.props.mode === "thumbnail"}
-                                    selectable={this.props.mode === "combat"}
+                                    simple={this.props.mode === 'thumbnail'}
+                                    selectable={this.props.mode === 'combat'}
                                     selected={this.props.selectedItemID ===  i.id}
                                     select={id => this.props.setSelectedItemID(id)}
                                 />
@@ -199,7 +199,7 @@ export default class MapPanel extends React.Component<Props> {
                         var posOver = this.getPosition(xOver, yOver, 1, 1, mapDimensions);
                         dragOverlay.push(
                             <GridSquare
-                                key={xOver + "," + yOver}
+                                key={xOver + ',' + yOver}
                                 x={xOver}
                                 y={yOver}
                                 position={posOver}
@@ -211,10 +211,10 @@ export default class MapPanel extends React.Component<Props> {
                 }
             }
 
-            var style = "map-panel " + this.props.mode;
+            var style = 'map-panel ' + this.props.mode;
             return (
                 <div className={style} onClick={() => this.props.setSelectedItemID(null)}>
-                    <div className="grid" style={{ height: ((this.getSideLength() * mapDimensions.height) + 1) + "px" }}>
+                    <div className='grid' style={{ height: ((this.getSideLength() * mapDimensions.height) + 1) + 'px' }}>
                         {grid}
                         {tiles}
                         {tokens}
@@ -257,10 +257,10 @@ class GridSquare extends React.Component<GridSquareProps> {
         }
     }
 
-    render() {
-        var style = "grid-square";
+    public render() {
+        var style = 'grid-square';
         if (this.props.overlay) {
-            style += " grid-overlay";
+            style += ' grid-overlay';
         }
 
         return (
@@ -292,13 +292,13 @@ class MapTile extends React.Component<MapTileProps> {
         }
     }
 
-    render() {
-        var style = "tile " + this.props.tile.terrain;
+    public render() {
+        var style = 'tile ' + this.props.tile.terrain;
         if (this.props.selected) {
-            style += " selected";
+            style += ' selected';
         }
         if (this.props.thumbnail) {
-            style += " thumbnail";
+            style += ' thumbnail';
         }
 
         return (
@@ -329,13 +329,13 @@ class MapToken extends React.Component<MapTokenProps> {
         }
     }
 
-    render() {
-        var style = "token " + this.props.token.type;
+    public render() {
+        var style = 'token ' + this.props.token.type;
         if (this.props.selected) {
-            style += " selected";
+            style += ' selected';
         }
         if (this.props.combatant.current) {
-            style += " current";
+            style += ' current';
         }
 
         var initials = null;
@@ -345,10 +345,10 @@ class MapToken extends React.Component<MapTokenProps> {
         if (!this.props.simple) {
             var name = this.props.combatant.displayName || this.props.combatant.name;
             initials = (
-                <div className="initials">{name.split(' ').map(s => s[0])}</div>
+                <div className='initials'>{name.split(' ').map(s => s[0])}</div>
             );
 
-            if (this.props.combatant.type === "monster") {
+            if (this.props.combatant.type === 'monster') {
                 hpGauge = (
                     <HitPointGauge combatant={this.props.combatant as Combatant & Monster} />
                 );
@@ -356,19 +356,19 @@ class MapToken extends React.Component<MapTokenProps> {
 
             if (this.props.combatant.altitude > 0) {
                 altitudeBadge = (
-                    <div className="badge altitude">&#9206;</div>
+                    <div className='badge altitude'>&#9206;</div>
                 );
             }
 
             if (this.props.combatant.altitude < 0) {
                 altitudeBadge = (
-                    <div className="badge altitude">&#9207;</div>
+                    <div className='badge altitude'>&#9207;</div>
                 );
             }
 
             if ((this.props.combatant.conditions) && (this.props.combatant.conditions.length > 0)) {
                 conditionsBadge = (
-                    <div className="badge">&#9670;</div>
+                    <div className='badge'>&#9670;</div>
                 );
             }
         }

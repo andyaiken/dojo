@@ -23,7 +23,7 @@ interface Props {
 }
 
 export default class MapFoliosScreen extends React.Component<Props> {
-    render() {
+    public render() {
         try {
             var help = null;
             if (this.props.showHelp) {
@@ -32,9 +32,9 @@ export default class MapFoliosScreen extends React.Component<Props> {
                 );
             }
 
-            var folios = [];
+            const folios = [];
             for (var n = 0; n !== this.props.mapFolios.length; ++n) {
-                var mapFolio = this.props.mapFolios[n];
+                const mapFolio = this.props.mapFolios[n];
                 folios.push(
                     <MapFolioListItem
                         key={mapFolio.id}
@@ -43,14 +43,14 @@ export default class MapFoliosScreen extends React.Component<Props> {
                         setSelection={mapFolio => this.props.selectMapFolio(mapFolio)}
                     />
                 );
-            };
+            }
 
             var folio = null;
             if (this.props.selection) {
-                var folioCards = [];
+                const folioCards = [];
 
                 folioCards.push(
-                    <div className="column" key="info">
+                    <div className='column' key='info'>
                         <MapFolioCard
                             selection={this.props.selection}
                             addMap={() => this.props.addMap()}
@@ -62,7 +62,7 @@ export default class MapFoliosScreen extends React.Component<Props> {
 
                 this.props.selection.maps.forEach(map => {
                     folioCards.push(
-                        <div className="column" key={map.id}>
+                        <div className='column' key={map.id}>
                             <MapCard
                                 map={map}
                                 editMap={map => this.props.editMap(map)}
@@ -75,8 +75,8 @@ export default class MapFoliosScreen extends React.Component<Props> {
 
                 if (this.props.selection.maps.length === 0) {
                     folioCards.push(
-                        <div className="column" key="empty">
-                            <InfoCard getContent={() => <div className="section">no maps</div>} />
+                        <div className='column' key='empty'>
+                            <InfoCard getContent={() => <div className='section'>no maps</div>} />
                         </div>
                     );
                 }
@@ -85,7 +85,7 @@ export default class MapFoliosScreen extends React.Component<Props> {
                     <div>
                         <CardGroup
                             content={folioCards}
-                            heading={this.props.selection.name || "unnamed folio"}
+                            heading={this.props.selection.name || 'unnamed folio'}
                             showClose={this.props.selection !== null}
                             close={() => this.props.selectMapFolio(null)}
                         />
@@ -94,13 +94,13 @@ export default class MapFoliosScreen extends React.Component<Props> {
             }
 
             return (
-                <div className="map-builder row collapse">
-                    <div className="columns small-4 medium-4 large-3 scrollable list-column">
+                <div className='map-builder row collapse'>
+                    <div className='columns small-4 medium-4 large-3 scrollable list-column'>
                         {help}
                         <button onClick={() => this.props.addMapFolio()}>add a new map folio</button>
                         {folios}
                     </div>
-                    <div className="columns small-8 medium-8 large-9 scrollable">
+                    <div className='columns small-8 medium-8 large-9 scrollable'>
                         {folio}
                     </div>
                 </div>

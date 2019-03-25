@@ -14,13 +14,13 @@ interface Props {
 }
 
 export default class PartyCard extends React.Component<Props> {
-    render() {
+    public render() {
         try {
-            var activePCs = this.props.selection.pcs.filter(pc => pc.active);
+            const activePCs = this.props.selection.pcs.filter(pc => pc.active);
 
-            var languages = activePCs
+            const languages = activePCs
                 .map(pc => pc.languages)
-                .join(", ")
+                .join(', ')
                 .split(/[ ,;]+/)
                 .reduce((array: string[], value) => {
                     if (array.indexOf(value) === -1) {
@@ -29,24 +29,24 @@ export default class PartyCard extends React.Component<Props> {
                     return array;
                 }, [])
                 .sort((a, b) => {
-                    if (a === "Common") {
+                    if (a === 'Common') {
                         return -1;
                     }
-                    if (b === "Common") {
+                    if (b === 'Common') {
                         return 1;
                     }
                     return a.localeCompare(b);
                 })
-                .join(", ");
+                .join(', ');
 
-            var insightSummary = "-";
-            var investigationSummary = "-";
-            var perceptionSummary = "-";
+            var insightSummary = '-';
+            var investigationSummary = '-';
+            var perceptionSummary = '-';
 
             if (activePCs.length !== 0) {
-                var insight: { min: number | null, max: number | null } = { min: null, max: null };
-                var investigation: { min: number | null, max: number | null } = { min: null, max: null };
-                var perception: { min: number | null, max: number | null } = { min: null, max: null };
+                const insight: { min: number | null, max: number | null } = { min: null, max: null };
+                const investigation: { min: number | null, max: number | null } = { min: null, max: null };
+                const perception: { min: number | null, max: number | null } = { min: null, max: null };
 
                 activePCs.forEach(pc => {
                     insight.min = insight.min === null ? pc.passiveInsight : Math.min(insight.min, pc.passiveInsight);
@@ -57,49 +57,49 @@ export default class PartyCard extends React.Component<Props> {
                     perception.max = perception.max === null ? pc.passivePerception : Math.max(perception.max, pc.passivePerception);
                 });
 
-                insightSummary = insight.min === insight.max ? (insight.min as number).toString() : insight.min + " - " + insight.max;
-                investigationSummary = investigation.min === investigation.max ? (investigation.min as number).toString() : investigation.min + " - " + investigation.max;
-                perceptionSummary = perception.min === perception.max ? (perception.min as number).toString() : perception.min + " - " + perception.max;
+                insightSummary = insight.min === insight.max ? (insight.min as number).toString() : insight.min + ' - ' + insight.max;
+                investigationSummary = investigation.min === investigation.max ? (investigation.min as number).toString() : investigation.min + ' - ' + investigation.max;
+                perceptionSummary = perception.min === perception.max ? (perception.min as number).toString() : perception.min + ' - ' + perception.max;
             }
 
-            var heading = (
-                <div className="heading">
-                    <div className="title">party</div>
+            const heading = (
+                <div className='heading'>
+                    <div className='title'>party</div>
                 </div>
             );
 
-            var content = (
+            const content = (
                 <div>
-                    <div className="section">
-                        <input type="text" placeholder="party name" value={this.props.selection.name} onChange={event => this.props.changeValue("name", event.target.value)} />
+                    <div className='section'>
+                        <input type='text' placeholder='party name' value={this.props.selection.name} onChange={event => this.props.changeValue('name', event.target.value)} />
                     </div>
-                    <div className="divider"></div>
-                    <div className="section">
-                        <div className="subheading">languages</div>
+                    <div className='divider' />
+                    <div className='section'>
+                        <div className='subheading'>languages</div>
                     </div>
-                    <div className="section">
+                    <div className='section'>
                         {languages}
                     </div>
-                    <div className="section">
-                        <div className="subheading">passive skills</div>
+                    <div className='section'>
+                        <div className='subheading'>passive skills</div>
                     </div>
-                    <div className="table">
+                    <div className='table'>
                         <div>
-                            <div className="cell three"><b>insight</b></div>
-                            <div className="cell three"><b>invest.</b></div>
-                            <div className="cell three"><b>percep.</b></div>
+                            <div className='cell three'><b>insight</b></div>
+                            <div className='cell three'><b>invest.</b></div>
+                            <div className='cell three'><b>percep.</b></div>
                         </div>
                         <div>
-                            <div className="cell three">{insightSummary}</div>
-                            <div className="cell three">{investigationSummary}</div>
-                            <div className="cell three">{perceptionSummary}</div>
+                            <div className='cell three'>{insightSummary}</div>
+                            <div className='cell three'>{investigationSummary}</div>
+                            <div className='cell three'>{perceptionSummary}</div>
                         </div>
                     </div>
-                    <div className="divider"></div>
-                    <div className="section">
+                    <div className='divider' />
+                    <div className='section'>
                     <button onClick={() => this.props.addPC()}>add a new pc</button>
                         <button onClick={() => this.props.sortPCs()}>sort pcs</button>
-                        <ConfirmButton text="delete party" callback={() => this.props.removeParty()} />
+                        <ConfirmButton text='delete party' callback={() => this.props.removeParty()} />
                     </div>
                 </div>
             );
@@ -110,5 +110,5 @@ export default class PartyCard extends React.Component<Props> {
         } catch (e) {
             console.error(e);
         }
-    };
+    }
 }

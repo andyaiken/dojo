@@ -15,24 +15,24 @@ interface Props {
 }
 
 export default class MonsterGroupCard extends React.Component<Props> {
-    render() {
+    public render() {
         try {
-            var heading = (
-                <div className="heading">
-                    <div className="title">monster group</div>
+            const heading = (
+                <div className='heading'>
+                    <div className='title'>monster group</div>
                 </div>
             );
 
-            var content = (
+            const content = (
                 <div>
-                    <div className="section">
-                        <input type="text" placeholder="group name" value={this.props.selection.name} disabled={!!this.props.filter} onChange={event => this.props.changeValue("name", event.target.value)} />
+                    <div className='section'>
+                        <input type='text' placeholder='group name' value={this.props.selection.name} disabled={!!this.props.filter} onChange={event => this.props.changeValue('name', event.target.value)} />
                     </div>
-                    <div className="divider"></div>
-                    <div className="section">
-                        <button className={this.props.filter ? "disabled" : ""} onClick={() => this.props.addMonster()}>add a new monster</button>
-                        <button className={this.props.filter ? "disabled" : ""} onClick={() => this.props.sortMonsters()}>sort monsters</button>
-                        <ConfirmButton text="delete group" callback={() => this.props.removeMonsterGroup()} />
+                    <div className='divider' />
+                    <div className='section'>
+                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.addMonster()}>add a new monster</button>
+                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.sortMonsters()}>sort monsters</button>
+                        <ConfirmButton text='delete group' callback={() => this.props.removeMonsterGroup()} />
                     </div>
                 </div>
             );
@@ -43,5 +43,5 @@ export default class MonsterGroupCard extends React.Component<Props> {
         } catch (e) {
             console.error(e);
         }
-    };
+    }
 }

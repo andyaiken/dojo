@@ -49,11 +49,11 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
         super(props);
         this.state = {
             filter: {
-                name: "",
+                name: '',
                 challengeMin: 0,
                 challengeMax: 5,
-                category: "all types",
-                size: "all sizes"
+                category: 'all types',
+                size: 'all sizes'
             }
         };
     }
@@ -83,19 +83,19 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
             return false;
         }
 
-        if (this.state.filter.name !== "") {
+        if (this.state.filter.name !== '') {
             if (!Utils.match(this.state.filter.name, monster.name)) {
                 return false;
             }
         }
 
-        if (this.state.filter.category !== "all types") {
+        if (this.state.filter.category !== 'all types') {
             if (monster.category !== this.state.filter.category) {
                 return false;
             }
         }
 
-        if (this.state.filter.size !== "all sizes") {
+        if (this.state.filter.size !== 'all sizes') {
             if (monster.size !== this.state.filter.size) {
                 return false;
             }
@@ -120,11 +120,11 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
     resetFilter() {
         this.setState({
             filter: {
-                name: "",
+                name: '',
                 challengeMin: 0,
                 challengeMax: 5,
-                category: "all types",
-                size: "all sizes"
+                category: 'all types',
+                size: 'all sizes'
             }
         });
     }
@@ -136,12 +136,12 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
             var monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
             if (monster) {
                 cards.push(
-                    <div className="column" key={monster.id}>
+                    <div className='column' key={monster.id}>
                         <MonsterCard
                             combatant={monster}
                             slot={slot}
                             encounter={this.props.selection as Encounter}
-                            mode={"view encounter"}
+                            mode={'view encounter'}
                             nudgeValue={(slot, type, delta) => this.props.nudgeValue(slot, type, delta)}
                             removeEncounterSlot={slot => this.props.removeEncounterSlot(slot, waveID)}
                         />
@@ -149,11 +149,11 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                 );
             } else {
                 var index = slots.indexOf(slot);
-                var error = "unknown monster: " + slot.monsterName + " in group " + slot.monsterGroupName;
+                var error = 'unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName;
                 cards.push(
-                    <div className="column" key={index}>
+                    <div className='column' key={index}>
                         <ErrorCard
-                            getContent={() => <div className="section">{error}</div>}
+                            getContent={() => <div className='section'>{error}</div>}
                         />
                     </div>
                 );
@@ -162,8 +162,8 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
 
         if (slots.length === 0) {
             cards.push(
-                <div className="column" key="empty">
-                    <InfoCard getContent={() => <div className="section">no monsters</div>} />
+                <div className='column' key='empty'>
+                    <InfoCard getContent={() => <div className='section'>no monsters</div>} />
                 </div>
             );
         }
@@ -176,9 +176,9 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
             return null;
         }
 
-        var libraryCards = [];
+        const libraryCards = [];
         libraryCards.push(
-            <div className="column" key="filter">
+            <div className='column' key='filter'>
                 <FilterCard
                     filter={this.state.filter}
                     changeValue={(type, value) => this.changeFilterValue(type, value)}
@@ -188,7 +188,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
             </div>
         );
 
-        var monsters: Monster[] = [];
+        const monsters: Monster[] = [];
         if (this.props.selection) {
             this.props.library.forEach(group => {
                 group.monsters.forEach(monster => {
@@ -198,20 +198,20 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                 });
             });
             monsters.sort((a, b) => {
-                if (a.name < b.name) return -1;
-                if (a.name > b.name) return 1;
+                if (a.name < b.name) { return -1; }
+                if (a.name > b.name) { return 1; }
                 return 0;
             });
         }
         monsters.forEach(monster => {
             libraryCards.push(
-                <div className="column" key={monster.id}>
+                <div className='column' key={monster.id}>
                     <MonsterCard
                         key={monster.id}
                         combatant={monster}
                         encounter={this.props.selection as Encounter}
                         library={this.props.library}
-                        mode={"view encounter"}
+                        mode={'view encounter'}
                         addEncounterSlot={(combatant, waveID) => this.props.addEncounterSlot(combatant, waveID)}
                     />
                 </div>
@@ -220,14 +220,14 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
 
         return (
             <CardGroup
-                heading="monster library"
+                heading='monster library'
                 content={libraryCards}
                 showToggle={true}
             />
         );
     }
 
-    render() {
+    public render() {
         try {
             var help = null;
             if (this.props.showHelp) {
@@ -236,9 +236,9 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                 );
             }
 
-            var encounters = [];
+            const encounters = [];
             for (var n = 0; n !== this.props.encounters.length; ++n) {
-                var encounter = this.props.encounters[n];
+                const encounter = this.props.encounters[n];
                 encounters.push(
                     <EncounterListItem
                         key={encounter.id}
@@ -247,17 +247,17 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                         setSelection={encounter => this.props.selectEncounter(encounter)}
                     />
                 );
-            };
+            }
 
             var encounterName = undefined;
-            var encounterCards = [];
+            const encounterCards = [];
             var waves: JSX.Element[] = [];
 
             if (this.props.selection) {
-                encounterName = this.props.selection.name || "unnamed encounter";
+                encounterName = this.props.selection.name || 'unnamed encounter';
 
                 encounterCards.push(
-                    <div className="column" key="info">
+                    <div className='column' key='info'>
                         <EncounterCard
                             selection={this.props.selection}
                             parties={this.props.parties}
@@ -271,11 +271,11 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
 
                 this.getMonsterCards(this.props.selection.slots, null)
                     .forEach(card => encounterCards.push(card));
-                    
+
                 waves = this.props.selection.waves.map(wave => {
-                    var waveCards = [];
+                    const waveCards = [];
                     waveCards.push(
-                        <div className="column" key="info">
+                        <div className='column' key='info'>
                             <WaveCard
                                 wave={wave}
                                 removeWave={wave => this.props.removeWave(wave)}
@@ -290,7 +290,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                     return (
                         <CardGroup
                             key={wave.id}
-                            heading={wave.name || "unnamed wave"}
+                            heading={wave.name || 'unnamed wave'}
                             content={waveCards}
                             showToggle={true}
                         />
@@ -299,13 +299,13 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
             }
 
             return (
-                <div className="encounter-builder row collapse">
-                    <div className="columns small-4 medium-4 large-3 scrollable list-column">
+                <div className='encounter-builder row collapse'>
+                    <div className='columns small-4 medium-4 large-3 scrollable list-column'>
                         {help}
                         <button onClick={() => this.props.addEncounter()}>add a new encounter</button>
                         {encounters}
                     </div>
-                    <div className="columns small-8 medium-8 large-9 scrollable">
+                    <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup
                             content={encounterCards}
                             heading={encounterName}

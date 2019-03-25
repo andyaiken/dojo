@@ -68,18 +68,18 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
     }
 
     createCard(combatant: (Combatant & PC) | (Combatant & Monster)) {
-        var mode = "combat";
+        var mode = 'combat';
         if (this.props.combat && this.props.combat.map) {
-            mode += " tactical";
+            mode += ' tactical';
             var onMap = this.props.combat.map.items.find(i => i.id === combatant.id);
-            mode += onMap ? " on-map" : " off-map";
+            mode += onMap ? ' on-map' : ' off-map';
         }
 
         switch (combatant.type) {
-            case "pc":
+            case 'pc':
                 return (
                     <PCCard
-                        key="selected"
+                        key='selected'
                         combatant={combatant as Combatant & PC}
                         mode={mode}
                         changeValue={(combatant, type, value) => this.props.changeValue(combatant, type, value)}
@@ -94,10 +94,10 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                         endTurn={combatant => this.props.endTurn(combatant as Combatant & PC)}
                     />
                 );
-            case "monster":
+            case 'monster':
                 return (
                     <MonsterCard
-                        key="selected"
+                        key='selected'
                         combatant={combatant as Combatant & Monster}
                         mode={mode}
                         combat={this.props.combat as Combat}
@@ -133,7 +133,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
         }
     }
 
-    render() {
+    public render() {
         try {
             var leftPaneContent = null;
             var centrePaneContent = null;
@@ -191,12 +191,12 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
 
                 if (this.props.showHelp && (pending.length !== 0)) {
                     var pendingHelp = (
-                        <div key="pending-help">
+                        <div key='pending-help'>
                             <InfoCard
                                 getContent={() =>
                                     <div>
-                                        <div className="section">these combatants are not yet part of the encounter</div>
-                                        <div className="section">set initiative on each of them, then add them to the encounter</div>
+                                        <div className='section'>these combatants are not yet part of the encounter</div>
+                                        <div className='section'>set initiative on each of them, then add them to the encounter</div>
                                     </div>
                                 }
                             />
@@ -207,12 +207,12 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
 
                 if (this.props.showHelp && (current.length === 0)) {
                     var activeHelp = (
-                        <div key="active-help">
+                        <div key='active-help'>
                             <InfoCard
                                 getContent={() =>
                                     <div>
-                                        <div className="section">these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right)</div>
-                                        <div className="section">to begin the encounter, select the first combatant and press the <b>start turn</b> button on their stat block</div>
+                                        <div className='section'>these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right)</div>
+                                        <div className='section'>to begin the encounter, select the first combatant and press the <b>start turn</b> button on their stat block</div>
                                     </div>
                                 }
                             />
@@ -224,9 +224,9 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                 if (current.length === 0) {
                     current.push(
                         <InfoCard
-                            key="current"
+                            key='current'
                             getContent={() =>
-                                <div className="section">the current initiative holder will be displayed here</div>
+                                <div className='section'>the current initiative holder will be displayed here</div>
                             }
                         />
                     );
@@ -245,7 +245,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     mapSection = (
                         <MapPanel
                             map={this.props.combat.map}
-                            mode="combat"
+                            mode='combat'
                             showOverlay={this.state.addingToMapID !== null}
                             combatants={this.props.combat.combatants}
                             selectedItemID={this.state.selectedTokenID ? this.state.selectedTokenID : undefined}
@@ -269,40 +269,40 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                 if (!selectedCombatant) {
                     selectedCombatant = (
                         <InfoCard
-                            key="selected"
+                            key='selected'
                             getContent={() =>
-                                <div className="section">select a pc or monster to see its details here</div>
+                                <div className='section'>select a pc or monster to see its details here</div>
                             }
                         />
                     );
                 }
 
                 leftPaneContent = (
-                    <div className="combat-left">
+                    <div className='combat-left'>
                         <CardGroup
-                            heading="initiative holder"
+                            heading='initiative holder'
                             content={current}
                         />
                     </div>
                 );
 
                 centrePaneContent = (
-                    <div className="combat-centre">
+                    <div className='combat-centre'>
                         {notifications}
                         <CardGroup
-                            heading="waiting for intiative to be entered"
+                            heading='waiting for intiative to be entered'
                             content={pending}
                             hidden={pending.length === 0}
                             showToggle={true}
                         />
                         {mapSection}
                         <CardGroup
-                            heading="combatants in the encounter"
+                            heading='combatants in the encounter'
                             content={active}
                             hidden={active.length === 0}
                         />
                         <CardGroup
-                            heading="defeated"
+                            heading='defeated'
                             content={defeated}
                             hidden={defeated.length === 0}
                             showToggle={true}
@@ -311,9 +311,9 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                 );
 
                 rightPaneContent = (
-                    <div className="combat-right">
+                    <div className='combat-right'>
                         <CardGroup
-                            heading="selected combatant"
+                            heading='selected combatant'
                             content={[selectedCombatant]}
                         />
                     </div>
@@ -339,7 +339,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                 });
 
                 leftPaneContent = (
-                    <div className="combat-left">
+                    <div className='combat-left'>
                         {help}
                         <button onClick={() => this.props.createCombat()}>start a new combat</button>
                         {combats}
@@ -348,14 +348,14 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
             }
 
             return (
-                <div className="combat-manager row collapse">
-                    <div className="columns small-4 medium-4 large-3 scrollable list-column">
+                <div className='combat-manager row collapse'>
+                    <div className='columns small-4 medium-4 large-3 scrollable list-column'>
                         {leftPaneContent}
                     </div>
-                    <div className="columns small-4 medium-4 large-6 scrollable list-column">
+                    <div className='columns small-4 medium-4 large-6 scrollable list-column'>
                         {centrePaneContent}
                     </div>
-                    <div className="columns small-4 medium-4 large-3 scrollable list-column">
+                    <div className='columns small-4 medium-4 large-3 scrollable list-column'>
                         {rightPaneContent}
                     </div>
                 </div>
@@ -392,32 +392,32 @@ class NotificationPanel extends React.Component<NotificationProps> {
         this.props.close(notification, removeCondition);
     }
 
-    render() {
+    public render() {
         var combatant = this.props.notification.combatant as (Combatant & Monster);
         var condition = this.props.notification.condition as Condition;
 
-        var name = combatant.displayName || combatant.name || "unnamed monster";
+        var name = combatant.displayName || combatant.name || 'unnamed monster';
         switch (this.props.notification.type) {
-            case "condition-save":
+            case 'condition-save':
                 var duration = condition.duration as ConditionDurationSaves;
                 return (
-                    <div key={this.props.notification.id} className="notification">
-                        <div className="text">
+                    <div key={this.props.notification.id} className='notification'>
+                        <div className='text'>
                             {name} must make a {duration.saveType} save against dc {duration.saveDC}
                         </div>
-                        <div className="buttons">
+                        <div className='buttons'>
                             <button onClick={() => this.saveSuccess(this.props.notification)}>success</button>
                             <button onClick={() => this.close(this.props.notification)}>ok</button>
                         </div>
                     </div>
                 );
-            case "condition-end":
+            case 'condition-end':
                 return (
-                    <div key={this.props.notification.id} className="notification">
-                        <div className="text">
+                    <div key={this.props.notification.id} className='notification'>
+                        <div className='text'>
                             {name} is no longer affected by condition {condition.name}
                         </div>
-                        <div className="buttons">
+                        <div className='buttons'>
                             <button onClick={() => this.close(this.props.notification)}>ok</button>
                         </div>
                     </div>
@@ -439,7 +439,7 @@ interface PendingCombatantRowProps {
 class PendingCombatantRow extends React.Component<PendingCombatantRowProps> {
     getInformationText() {
         if (this.props.selected) {
-            return "selected";
+            return 'selected';
         }
 
         return null;
@@ -452,24 +452,24 @@ class PendingCombatantRow extends React.Component<PendingCombatantRowProps> {
         }
     }
 
-    render() {
-        var style = "combatant-row " + this.props.combatant.type;
+    public render() {
+        var style = 'combatant-row ' + this.props.combatant.type;
         if (this.props.combatant.current || this.props.selected) {
-            style += " highlight";
+            style += ' highlight';
         }
 
         return (
             <div className={style} onClick={e => this.onClick(e)}>
-                <div className="name">
-                    {this.props.combatant.displayName || this.props.combatant.name || "combatant"}
-                    <span className="info">{this.getInformationText()}</span>
+                <div className='name'>
+                    {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
+                    <span className='info'>{this.getInformationText()}</span>
                 </div>
-                <div className="content">
+                <div className='content'>
                     <Spin
                         source={this.props.combatant}
-                        name="initiative"
-                        label="initiative"
-                        nudgeValue={delta => this.props.nudgeValue(this.props.combatant, "initiative", delta)}
+                        name='initiative'
+                        label='initiative'
+                        nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
                     />
                     <button onClick={e => { e.stopPropagation(); this.props.makeActive(this.props.combatant); }}>add to encounter</button>
                 </div>
@@ -488,11 +488,11 @@ interface CombatantRowProps {
 class CombatantRow extends React.Component<CombatantRowProps> {
     getInformationText() {
         if (this.props.combatant.current) {
-            return "current turn";
+            return 'current turn';
         }
 
         if (this.props.selected) {
-            return "selected";
+            return 'selected';
         }
 
         return null;
@@ -507,14 +507,14 @@ class CombatantRow extends React.Component<CombatantRowProps> {
 
     getContentPC(pc: Combatant & PC, notes: JSX.Element[]) {
         return (
-            <div className="content">
-                <div className="section key-stats">
-                    <div className="key-stat">
-                        <div className="stat-value">{pc.initiative}</div>
-                        <div className="stat-label">init</div>
+            <div className='content'>
+                <div className='section key-stats'>
+                    <div className='key-stat'>
+                        <div className='stat-value'>{pc.initiative}</div>
+                        <div className='stat-label'>init</div>
                     </div>
-                    <div className="key-stat wide">
-                        <div className="stat-value">{pc.player ? pc.player : "-"}</div>
+                    <div className='key-stat wide'>
+                        <div className='stat-value'>{pc.player ? pc.player : '-'}</div>
                     </div>
                 </div>
                 {notes}
@@ -525,7 +525,7 @@ class CombatantRow extends React.Component<CombatantRowProps> {
     getContentMonster(monster: Combatant & Monster, notes: JSX.Element[]) {
         var hp = (monster.hp ? monster.hp : 0).toString();
         if (monster.hpTemp > 0) {
-            hp += "+" + monster.hpTemp;
+            hp += '+' + monster.hpTemp;
         }
         var gauge = null;
         if (!monster.pending) {
@@ -538,23 +538,23 @@ class CombatantRow extends React.Component<CombatantRowProps> {
         if (this.props.combatant.conditions) {
             conditions = this.props.combatant.conditions.map(c => {
                 var name = c.name;
-                if (c.name === "exhaustion") {
-                    name += " (" + c.level + ")";
+                if (c.name === 'exhaustion') {
+                    name += ' (' + c.level + ')';
                 }
-                if ((c.name === "custom") && (c.text)) {
+                if ((c.name === 'custom') && (c.text)) {
                     name = c.text;
                 }
                 if (c.duration) {
-                    name += " " + Utils.conditionDurationText(c, this.props.combat);
+                    name += ' ' + Utils.conditionDurationText(c, this.props.combat);
                 }
                 var description = [];
                 var text = Utils.conditionText(c);
                 for (var n = 0; n !== text.length; ++n) {
-                    description.push(<li key={n} className="condition-text">{text[n]}</li>);
+                    description.push(<li key={n} className='condition-text'>{text[n]}</li>);
                 }
                 return (
-                    <div key={c.id} className="condition">
-                        <div className="condition-name">{name}</div>
+                    <div key={c.id} className='condition'>
+                        <div className='condition-name'>{name}</div>
                         <ul>
                             {description}
                         </ul>
@@ -564,19 +564,19 @@ class CombatantRow extends React.Component<CombatantRowProps> {
         }
 
         return (
-            <div className="content">
-                <div className="section key-stats">
-                    <div className="key-stat">
-                        <div className="stat-value">{monster.initiative}</div>
-                        <div className="stat-label">init</div>
+            <div className='content'>
+                <div className='section key-stats'>
+                    <div className='key-stat'>
+                        <div className='stat-value'>{monster.initiative}</div>
+                        <div className='stat-label'>init</div>
                     </div>
-                    <div className="key-stat">
-                        <div className="stat-value">{monster.ac}</div>
-                        <div className="stat-label">ac</div>
+                    <div className='key-stat'>
+                        <div className='stat-value'>{monster.ac}</div>
+                        <div className='stat-label'>ac</div>
                     </div>
-                    <div className="key-stat">
-                        <div className="stat-value">{hp}</div>
-                        <div className="stat-label">hp</div>
+                    <div className='key-stat'>
+                        <div className='stat-value'>{hp}</div>
+                        <div className='stat-label'>hp</div>
                     </div>
                 </div>
                 {gauge}
@@ -586,12 +586,12 @@ class CombatantRow extends React.Component<CombatantRowProps> {
         );
     }
 
-    render() {
+    public render() {
         var notes = [];
         if (this.props.combat.map) {
             if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
                 notes.push(
-                    <div key="not-on-map" className="note">not on the map</div>
+                    <div key='not-on-map' className='note'>not on the map</div>
                 );
             }
         }
@@ -599,10 +599,10 @@ class CombatantRow extends React.Component<CombatantRowProps> {
         var content = null;
 
         switch (this.props.combatant.type) {
-            case "pc":
+            case 'pc':
                 content = this.getContentPC(this.props.combatant as Combatant & PC, notes);
                 break;
-            case "monster":
+            case 'monster':
                 content = this.getContentMonster(this.props.combatant as Combatant & Monster, notes);
                 break;
             default:
@@ -610,16 +610,16 @@ class CombatantRow extends React.Component<CombatantRowProps> {
                 break;
         }
 
-        var style = "combatant-row " + this.props.combatant.type;
+        var style = 'combatant-row ' + this.props.combatant.type;
         if (this.props.combatant.current || this.props.selected) {
-            style += " highlight";
+            style += ' highlight';
         }
 
         return (
             <div className={style} onClick={e => this.onClick(e)}>
-                <div className="name">
-                    {this.props.combatant.displayName || this.props.combatant.name || "combatant"}
-                    <span className="info">{this.getInformationText()}</span>
+                <div className='name'>
+                    {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
+                    <span className='info'>{this.getInformationText()}</span>
                 </div>
                 {content}
             </div>

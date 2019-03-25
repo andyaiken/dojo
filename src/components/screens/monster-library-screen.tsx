@@ -30,7 +30,7 @@ interface Props {
 }
 
 export default class MonsterLibraryScreen extends React.Component<Props> {
-    showMonsterGroup(group: MonsterGroup) {
+    private showMonsterGroup(group: MonsterGroup) {
         var result = Utils.match(this.props.filter, group.name);
 
         if (!result) {
@@ -42,7 +42,7 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
         return result;
     }
 
-    render() {
+    public render() {
         try {
             var help = null;
             if (this.props.showHelp) {
@@ -50,10 +50,10 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                     <MonsterLibraryCard />
                 );
             }
-            
-            var listItems = [];
+
+            const listItems = [];
             for (var n = 0; n !== this.props.library.length; ++n) {
-                var group = this.props.library[n];
+                const group = this.props.library[n];
                 if (this.showMonsterGroup(group)) {
                     listItems.push(
                         <MonsterGroupListItem
@@ -65,13 +65,13 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                         />
                     );
                 }
-            };
+            }
 
-            var cards = [];
+            const cards = [];
 
             if (this.props.selection) {
                 cards.push(
-                    <div className="column" key="info">
+                    <div className='column' key='info'>
                         <MonsterGroupCard
                             selection={this.props.selection}
                             filter={this.props.filter}
@@ -83,17 +83,17 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                     </div>
                 );
 
-                var monsters = this.props.selection.monsters.filter(monster => {
+                const monsters = this.props.selection.monsters.filter(monster => {
                     return Utils.match(this.props.filter, monster.name);
                 });
 
                 if (monsters.length !== 0) {
                     monsters.forEach(monster => {
                         cards.push(
-                            <div className="column" key={monster.id}>
+                            <div className='column' key={monster.id}>
                                 <MonsterCard
                                     combatant={monster}
-                                    mode={"view editable"}
+                                    mode={'view editable'}
                                     library={this.props.library}
                                     changeValue={(monster, type, value) => this.props.changeValue(monster, type, value)}
                                     nudgeValue={(monster, type, delta) => this.props.nudgeValue(monster, type, delta)}
@@ -107,8 +107,8 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                     });
                 } else {
                     cards.push(
-                        <div className="column" key="empty">
-                            <InfoCard getContent={() => <div className="section">no monsters</div>} />
+                        <div className='column' key='empty'>
+                            <InfoCard getContent={() => <div className='section'>no monsters</div>} />
                         </div>
                     );
                 }
@@ -118,18 +118,18 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
             if (this.props.selection) {
                 name = this.props.selection.name;
                 if (!name) {
-                    name = "unnamed group";
+                    name = 'unnamed group';
                 }
             }
 
             return (
-                <div className="monster-library row collapse">
-                    <div className="columns small-4 medium-4 large-3 scrollable list-column">
+                <div className='monster-library row collapse'>
+                    <div className='columns small-4 medium-4 large-3 scrollable list-column'>
                         {help}
                         <button onClick={() => this.props.addMonsterGroup()}>add a new monster group</button>
                         {listItems}
                     </div>
-                    <div className="columns small-8 medium-8 large-9 scrollable">
+                    <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup
                             content={cards}
                             heading={name}

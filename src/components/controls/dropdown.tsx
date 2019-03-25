@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ellipsis from "../../resources/images/ellipsis.svg";
+import ellipsis from '../../resources/images/ellipsis.svg';
 
 interface Props {
     options: { id: string; text: string; disabled?: boolean }[];
@@ -17,7 +17,7 @@ interface State {
 export default class Dropdown extends React.Component<Props, State> {
     public static defaultProps = {
         selectedID: null,
-        placeholder: "select...",
+        placeholder: 'select...',
         disabled: false
     };
 
@@ -29,32 +29,32 @@ export default class Dropdown extends React.Component<Props, State> {
         };
     }
 
-    toggleOpen(e: React.MouseEvent) {
+    private toggleOpen(e: React.MouseEvent) {
         e.stopPropagation();
         this.setState({
             open: !this.state.open
         });
     }
 
-    select(optionID: string) {
+    private select(optionID: string) {
         this.setState({
             open: false
         });
         this.props.select(optionID);
     }
 
-    render() {
+    public render() {
         try {
             if (this.props.options.length === 0) {
                 return null;
             }
 
-            var style = this.props.disabled ? "dropdown disabled" : "dropdown";
-            var content = [];
+            var style = this.props.disabled ? 'dropdown disabled' : 'dropdown';
+            const content = [];
 
             var selectedText = undefined;
             if (this.props.selectedID) {
-                var option: { id: string; text: string; disabled?: boolean } | undefined = this.props.options.find(o => o.id === this.props.selectedID);
+                const option: { id: string; text: string; disabled?: boolean } | undefined = this.props.options.find(o => o.id === this.props.selectedID);
                 if (option) {
                     selectedText = option.text;
                 }
@@ -63,18 +63,18 @@ export default class Dropdown extends React.Component<Props, State> {
             }
 
             content.push(
-                <div key="selection" className="dropdown-top" title={selectedText}>
-                    <div className="item-text">{selectedText}</div>
-                    <img className="arrow" src={ellipsis} alt="arrow" />
+                <div key='selection' className='dropdown-top' title={selectedText}>
+                    <div className='item-text'>{selectedText}</div>
+                    <img className='arrow' src={ellipsis} alt='arrow' />
                 </div>
             );
 
             if (this.state.open) {
-                style += " open";
+                style += ' open';
 
-                var items = this.props.options.map(option => {
+                const items = this.props.options.map(option => {
                     if (option.text === null) {
-                        return <div key={option.id} className="divider"></div>
+                        return <div key={option.id} className='divider' />;
                     } else {
                         return (
                             <DropdownOption
@@ -88,7 +88,7 @@ export default class Dropdown extends React.Component<Props, State> {
                 });
 
                 content.push(
-                    <div key="options" className="dropdown-options">
+                    <div key='options' className='dropdown-options'>
                         {items}
                     </div>
                 );
@@ -113,21 +113,21 @@ interface DropdownOptionProps {
 }
 
 class DropdownOption extends React.Component<DropdownOptionProps> {
-    click(e: React.MouseEvent) {
+    private click(e: React.MouseEvent) {
         e.stopPropagation();
         if (!this.props.option.disabled) {
             this.props.select(this.props.option.id);
         }
     }
 
-    render() {
+    public render() {
         try {
-            var style = "dropdown-option";
+            var style = 'dropdown-option';
             if (this.props.selected) {
-                style += " selected";
+                style += ' selected';
             }
             if (this.props.option.disabled) {
-                style += " disabled";
+                style += ' disabled';
             }
 
             return (

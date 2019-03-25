@@ -1,7 +1,7 @@
 import React from 'react';
 
-import arrow from "../../resources/images/down-arrow-black.svg";
-import close from "../../resources/images/close-black.svg";
+import arrow from '../../resources/images/down-arrow-black.svg';
+import close from '../../resources/images/close-black.svg';
 
 interface Props {
     content: any[];
@@ -39,7 +39,7 @@ export default class CardGroup extends React.Component<Props, State> {
         });
     }
 
-    render() {
+    public render() {
         try {
             if (this.props.hidden) {
                 return null;
@@ -50,21 +50,21 @@ export default class CardGroup extends React.Component<Props, State> {
                 var closeBtn = null;
                 if (this.props.showClose) {
                     closeBtn = (
-                        <img className="image" src={close} alt="close" onClick={() => this.props.close()} />
+                        <img className='image' src={close} alt='close' onClick={() => this.props.close()} />
                     );
                 }
 
                 var toggle = null;
                 if (this.props.showToggle) {
-                    var style = this.state.showCards ? "image rotate" : "image";
+                    var style = this.state.showCards ? 'image rotate' : 'image';
                     toggle = (
-                        <img className={style} src={arrow} alt="arrow" onClick={() => this.toggleCards()} />
+                        <img className={style} src={arrow} alt='arrow' onClick={() => this.toggleCards()} />
                     );
                 }
 
                 heading = (
-                    <div className="heading">
-                        <div className="title">{this.props.heading}</div>
+                    <div className='heading'>
+                        <div className='title'>{this.props.heading}</div>
                         {toggle}
                         {closeBtn}
                     </div>
@@ -77,9 +77,9 @@ export default class CardGroup extends React.Component<Props, State> {
             }
 
             return (
-                <div className="card-group">
+                <div className='card-group'>
                     {heading}
-                    <div className="row small-up-1 medium-up-2 large-up-4 collapse">
+                    <div className='row small-up-1 medium-up-2 large-up-4 collapse'>
                         {cards}
                     </div>
                 </div>

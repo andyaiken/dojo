@@ -11,7 +11,7 @@ export default class InfoCard extends React.Component<Props> {
         getContent: null
     };
 
-    render() {
+    public render() {
         try {
             var heading = null;
             if (this.props.getHeading) {
@@ -27,9 +27,9 @@ export default class InfoCard extends React.Component<Props> {
             }
 
             return (
-                <div className="card">
+                <div className='card'>
                     {heading}
-                    <div className="card-content">
+                    <div className='card-content'>
                         {content}
                     </div>
                 </div>

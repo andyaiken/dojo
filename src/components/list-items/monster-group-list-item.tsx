@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default class MonsterGroupListItem extends React.Component<Props> {
-    render() {
+    public render() {
         try {
             var matchGroup = Utils.match(this.props.filter, this.props.group.name);
 
@@ -23,18 +23,18 @@ export default class MonsterGroupListItem extends React.Component<Props> {
                 if (matchGroup || matchMonster) {
                     var name = monster.name;
                     if (!name) {
-                        name = "unnamed monster";
+                        name = 'unnamed monster';
                     }
-                    monsters.push(<div key={monster.id} className="text">{name}</div>);
+                    monsters.push(<div key={monster.id} className='text'>{name}</div>);
                 }
             }
             if (monsters.length === 0) {
-                monsters.push(<div key="empty" className="text">no monsters</div>);
+                monsters.push(<div key='empty' className='text'>no monsters</div>);
             }
 
             return (
-                <div className={this.props.selected ? "list-item selected" : "list-item"} onClick={() => this.props.setSelection(this.props.group)}>
-                    <div className="heading">{this.props.group.name || "unnamed group"}</div>
+                <div className={this.props.selected ? 'list-item selected' : 'list-item'} onClick={() => this.props.setSelection(this.props.group)}>
+                    <div className='heading'>{this.props.group.name || 'unnamed group'}</div>
                     {monsters}
                 </div>
             );

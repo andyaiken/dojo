@@ -12,25 +12,25 @@ interface Props {
 }
 
 export default class WaveCard extends React.Component<Props> {
-    render() {
+    public render() {
         try {
-            var heading = (
-                <div className="heading">
-                    <div className="title">wave</div>
+            const heading = (
+                <div className='heading'>
+                    <div className='title'>wave</div>
                 </div>
             );
 
-            var content = (
+            const content = (
                 <div>
-                    <div className="section">
-                        <input type="text" placeholder="wave name" value={this.props.wave.name} onChange={event => this.props.changeValue(this.props.wave, "name", event.target.value)} />
+                    <div className='section'>
+                        <input type='text' placeholder='wave name' value={this.props.wave.name} onChange={event => this.props.changeValue(this.props.wave, 'name', event.target.value)} />
                     </div>
-                    <div className="divider"></div>
-                    <div className="section">
-                        <ConfirmButton text="delete wave" callback={() => this.props.removeWave(this.props.wave)} />
+                    <div className='divider' />
+                    <div className='section'>
+                        <ConfirmButton text='delete wave' callback={() => this.props.removeWave(this.props.wave)} />
                     </div>
                 </div>
-            )
+            );
 
             return (
                 <InfoCard getHeading={() => heading} getContent={() => content} />
@@ -38,5 +38,5 @@ export default class WaveCard extends React.Component<Props> {
         } catch (e) {
             console.error(e);
         }
-    };
+    }
 }

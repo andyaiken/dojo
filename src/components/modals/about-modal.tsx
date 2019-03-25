@@ -12,33 +12,33 @@ interface Props {
 }
 
 export default class AboutModal extends React.Component<Props> {
-    render() {
+    public render() {
         try {
             return (
-                <div className="about">
-                    <div className="row">
-                        <div className="columns small-6 medium-6 large-6 list-column">
-                            <div className="heading">about</div>
-                            <div className="section">dojo by <a href="mailto:andy.aiken@live.co.uk">andy aiken</a></div>
-                            <div className="section">if you would like to contribut to this project, you can do so <a href="https://github.com/andyaiken/dojo" target="_blank" rel="noopener noreferrer">here</a></div>
-                            <div className="section">dungeons and dragons copyright wizards of the coast</div>
+                <div className='about'>
+                    <div className='row'>
+                        <div className='columns small-6 medium-6 large-6 list-column'>
+                            <div className='heading'>about</div>
+                            <div className='section'>dojo by <a href='mailto:andy.aiken@live.co.uk'>andy aiken</a></div>
+                            <div className='section'>if you would like to contribut to this project, you can do so <a href='https://github.com/andyaiken/dojo' target='_blank' rel='noopener noreferrer'>here</a></div>
+                            <div className='section'>dungeons and dragons copyright wizards of the coast</div>
                         </div>
-                        <div className="columns small-6 medium-6 large-6 list-column">
-                            <div className="heading">options</div>
-                            <ConfirmButton text="clear all data" callback={() => this.props.resetAll()} />
+                        <div className='columns small-6 medium-6 large-6 list-column'>
+                            <div className='heading'>options</div>
+                            <ConfirmButton text='clear all data' callback={() => this.props.resetAll()} />
                             <Checkbox
-                                label="show help cards"
+                                label='show help cards'
                                 checked={this.props.options.showHelp}
-                                changeValue={value => this.props.changeValue(this.props.options, "showHelp", value)}
+                                changeValue={value => this.props.changeValue(this.props.options, 'showHelp', value)}
                             />
                         </div>
                     </div>
-                    <div className="row">
-                        <div className="columns small-12 medium-12 large-12 list-column">
-                            <div className="heading">open game license</div>
-                            <div className="section">The following text is the property of Wizards of the Coast, Inc. and is Copyright 2000 Wizards of the Coast, Inc ("Wizards"). All Rights Reserved.</div>
+                    <div className='row'>
+                        <div className='columns small-12 medium-12 large-12 list-column'>
+                            <div className='heading'>open game license</div>
+                            <div className='section'>The following text is the property of Wizards of the Coast, Inc. and is Copyright 2000 Wizards of the Coast, Inc ('Wizards'). All Rights Reserved.</div>
                             <ol>
-                                <li>Definitions: (a)"Contributors" means the copyright and/or trademark owners who have contributed Open Game Content; (b)"Derivative Material" means copyrighted material including derivative works and translations (including into other computer languages), potation, modification, correction, addition, extension, upgrade, improvement, compilation, abridgment or other form in which an existing work may be recast, transformed or adapted; (c) "Distribute" means to reproduce, license, rent, lease, sell, broadcast, publicly display, transmit or otherwise distribute; (d)"Open Game Content" means the game mechanic and includes the methods, procedures, processes and routines to the extent such content does not embody the Product Identity and is an enhancement over the prior art and any additional content clearly identified as Open Game Content by the Contributor, and means any work covered by this License, including translations and derivative works under copyright law, but specifically excludes Product Identity. (e) "Product Identity" means product and product line names, logos and identifying marks including trade dress; artifacts; creatures characters; stories, storylines, plots, thematic elements, dialogue, incidents, language, artwork, symbols, designs, depictions, likenesses, formats, poses, concepts, themes and graphic, photographic and other visual or audio representations; names and descriptions of characters, spells, enchantments, personalities, teams, personas, likenesses and special abilities; places, locations, environments, creatures, equipment, magical or supernatural abilities or effects, logos, symbols, or graphic designs; and any other trademark or registered trademark clearly identified as Product identity by the owner of the Product Identity, and which specifically excludes the Open Game Content; (f) "Trademark" means the logos, names, mark, sign, motto, designs that are used by a Contributor to identify itself or its products or the associated products contributed to the Open Game License by the Contributor (g) "Use", "Used" or "Using" means to use, Distribute, copy, edit, format, modify, translate and otherwise create Derivative Material of Open Game Content. (h) "You" or "Your" means the licensee in terms of this agreement.</li>
+                                <li>Definitions: (a)'Contributors' means the copyright and/or trademark owners who have contributed Open Game Content; (b)'Derivative Material' means copyrighted material including derivative works and translations (including into other computer languages), potation, modification, correction, addition, extension, upgrade, improvement, compilation, abridgment or other form in which an existing work may be recast, transformed or adapted; (c) 'Distribute' means to reproduce, license, rent, lease, sell, broadcast, publicly display, transmit or otherwise distribute; (d)'Open Game Content' means the game mechanic and includes the methods, procedures, processes and routines to the extent such content does not embody the Product Identity and is an enhancement over the prior art and any additional content clearly identified as Open Game Content by the Contributor, and means any work covered by this License, including translations and derivative works under copyright law, but specifically excludes Product Identity. (e) 'Product Identity' means product and product line names, logos and identifying marks including trade dress; artifacts; creatures characters; stories, storylines, plots, thematic elements, dialogue, incidents, language, artwork, symbols, designs, depictions, likenesses, formats, poses, concepts, themes and graphic, photographic and other visual or audio representations; names and descriptions of characters, spells, enchantments, personalities, teams, personas, likenesses and special abilities; places, locations, environments, creatures, equipment, magical or supernatural abilities or effects, logos, symbols, or graphic designs; and any other trademark or registered trademark clearly identified as Product identity by the owner of the Product Identity, and which specifically excludes the Open Game Content; (f) 'Trademark' means the logos, names, mark, sign, motto, designs that are used by a Contributor to identify itself or its products or the associated products contributed to the Open Game License by the Contributor (g) 'Use', 'Used' or 'Using' means to use, Distribute, copy, edit, format, modify, translate and otherwise create Derivative Material of Open Game Content. (h) 'You' or 'Your' means the licensee in terms of this agreement.</li>
                                 <li>The License: This License applies to any Open Game Content that contains a notice indicating that the Open Game Content may only be Used under and in terms of this License. You must affix such a notice to any Open Game Content that you Use. No terms may be added to or subtracted from this License except as described by the License itself. No other terms or conditions may be applied to any Open Game Content distributed using this License.</li>
                                 <li>Offer and Acceptance: By Using the Open Game Content You indicate Your acceptance of the terms of this License.</li>
                                 <li>Grant and Consideration: In consideration for agreeing to use this License, the Contributors grant You a perpetual, worldwide, royalty-free, non-exclusive license with the exact terms of this License to Use, the Open Game Content.</li>

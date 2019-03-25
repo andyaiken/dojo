@@ -37,7 +37,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
         var tile = Factory.createMapItem();
         tile.x = x;
         tile.y = y;
-        tile.terrain = "flagstone";
+        tile.terrain = 'flagstone';
         this.state.map.items.push(tile);
 
         this.setState({
@@ -48,16 +48,16 @@ export default class MapEditorModal extends React.Component<Props, State> {
 
     moveMapItem(item: MapItem, dir: string) {
         switch (dir) {
-            case "N":
+            case 'N':
                 item.y -= 1;
                 break;
-            case "E":
+            case 'E':
                 item.x += 1;
                 break;
-            case "S":
+            case 'S':
                 item.y += 1;
                 break;
-            case "W":
+            case 'W':
                 item.x -= 1;
                 break;
             default:
@@ -72,17 +72,17 @@ export default class MapEditorModal extends React.Component<Props, State> {
 
     bigMapItem(item: MapItem, dir: string) {
         switch (dir) {
-            case "N":
+            case 'N':
                 item.y -= 1;
                 item.height += 1;
                 break;
-            case "E":
+            case 'E':
                 item.width += 1;
                 break;
-            case "S":
+            case 'S':
                 item.height += 1;
                 break;
-            case "W":
+            case 'W':
                 item.x -= 1;
                 item.width += 1;
                 break;
@@ -98,23 +98,23 @@ export default class MapEditorModal extends React.Component<Props, State> {
 
     smallMapItem(item: MapItem, dir: string) {
         switch (dir) {
-            case "N":
+            case 'N':
                 if (item.height > 1) {
                     item.y += 1;
                     item.height -= 1;
                 }
                 break;
-            case "E":
+            case 'E':
                 if (item.width > 1) {
                     item.width -= 1;
                 }
                 break;
-            case "S":
+            case 'S':
                 if (item.height > 1) {
                     item.height -= 1;
                 }
                 break;
-            case "W":
+            case 'W':
                 if (item.width > 1) {
                     item.x += 1;
                     item.width -= 1;
@@ -132,10 +132,10 @@ export default class MapEditorModal extends React.Component<Props, State> {
 
     resizeMapItem(item: MapItem, dir: string, dir2: 'in' | 'out') {
         switch (dir2) {
-            case "in":
+            case 'in':
                 this.smallMapItem(item, dir);
                 break;
-            case "out":
+            case 'out':
                 this.bigMapItem(item, dir);
                 break;
             default:
@@ -175,14 +175,14 @@ export default class MapEditorModal extends React.Component<Props, State> {
         });
     }
 
-    render() {
+    public render() {
         try {
             var tools = null;
             if (this.state.selectedTileID) {
                 var item = this.state.map.items.find(i => i.id === this.state.selectedTileID);
                 if (item) {
                     tools = (
-                        <div className="tools">
+                        <div className='tools'>
                             <MapTileCard
                                 tile={item}
                                 moveMapItem={(item, dir) => this.moveMapItem(item, dir)}
@@ -196,7 +196,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
                 }
             } else {
                 tools = (
-                    <div className="tools">
+                    <div className='tools'>
                         <p>to add a new tile to the map, double-click on an empty grid square</p>
                         <p>to edit an existing tile, click on it once to select it</p>
                     </div>
@@ -204,11 +204,11 @@ export default class MapEditorModal extends React.Component<Props, State> {
             }
 
             return (
-                <div className="map-editor">
+                <div className='map-editor'>
                     {tools}
                     <MapPanel
                         map={this.state.map}
-                        mode="edit"
+                        mode='edit'
                         selectedItemID={this.state.selectedTileID ? this.state.selectedTileID : undefined}
                         setSelectedItemID={id => this.setSelectedTileID(id)}
                         addMapTile={(x, y) => this.addMapTile(x, y)}

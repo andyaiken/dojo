@@ -9,37 +9,35 @@ interface Props {
 }
 
 export default class PartiesCard extends React.Component<Props> {
-    render() {
-        try {
-            var action: JSX.Element | null = null;
-            if (this.props.parties.length === 0) {
-                action = (
-                    <div className="section">to start adding a party, press the button below</div>
-                );
-            } else {
-                action = (
-                    <div className="section">select a party from the list to see pc details</div>
-                );
-            }
-
-            return (
-                <InfoCard
-                    getContent={() => (
-                        <div>
-                            <div className="section">
-                                <div>this page is where you can tell dojo all about your pcs</div>
-                            </div>
-                            <div className="section">
-                                <div>you can add a party for each of your gaming groups</div>
-                            </div>
-                            <div className="divider"></div>
-                            {action}
-                        </div>
-                    )}
-                />
+    private getContent() {
+        var action: JSX.Element | null = null;
+        if (this.props.parties.length === 0) {
+            action = (
+                <div className='section'>to start adding a party, press the button below</div>
             );
-        } catch (e) {
-            console.error(e);
+        } else {
+            action = (
+                <div className='section'>select a party from the list to see pc details</div>
+            );
         }
-    };
+
+        return (
+            <div>
+                <div className='section'>this page is where you can tell dojo all about your pcs</div>
+                <div className='section'>you can add a party for each of your gaming groups</div>
+                <div className='divider'/>
+                {action}
+            </div>
+        );
+    }
+
+    public render() {
+        try {
+            return (
+                <InfoCard getContent={this.getContent} />
+            );
+        } catch (ex) {
+            console.error(ex);
+        }
+    }
 }

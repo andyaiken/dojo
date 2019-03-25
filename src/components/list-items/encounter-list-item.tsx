@@ -9,39 +9,39 @@ interface Props {
 }
 
 export default class EncounterListItem extends React.Component<Props> {
-    render() {
+    public render() {
         try {
             var slots = [];
 
             this.props.encounter.slots.forEach(slot => {
-                var text = slot.monsterName || "unnamed monster";
+                var text = slot.monsterName || 'unnamed monster';
                 if (slot.count > 1) {
-                    text += " x" + slot.count;
+                    text += ' x' + slot.count;
                 }
-                slots.push(<div key={slot.id} className="text">{text}</div>);
+                slots.push(<div key={slot.id} className='text'>{text}</div>);
             });
 
             if (slots.length === 0) {
-                slots.push(<div key="empty" className="text">no monsters</div>);
+                slots.push(<div key='empty' className='text'>no monsters</div>);
             }
 
             this.props.encounter.waves.forEach(wave => {
-                slots.push(<div key={"name " + wave.id} className="text subheading">{wave.name || "unnamed wave"}</div>);
+                slots.push(<div key={'name ' + wave.id} className='text subheading'>{wave.name || 'unnamed wave'}</div>);
                 wave.slots.forEach(slot => {
-                    var text = slot.monsterName || "unnamed monster";
+                    var text = slot.monsterName || 'unnamed monster';
                     if (slot.count > 1) {
-                        text += " x" + slot.count;
+                        text += ' x' + slot.count;
                     }
-                    slots.push(<div key={slot.id} className="text">{text}</div>);
+                    slots.push(<div key={slot.id} className='text'>{text}</div>);
                 });
                 if (slots.length === 0) {
-                    slots.push(<div key={"empty " + wave.id} className="text">no monsters</div>);
+                    slots.push(<div key={'empty ' + wave.id} className='text'>no monsters</div>);
                 }
             });
 
             return (
-                <div className={this.props.selected ? "list-item selected" : "list-item"} onClick={() => this.props.setSelection(this.props.encounter)}>
-                    <div className="heading">{this.props.encounter.name || "unnamed encounter"}</div>
+                <div className={this.props.selected ? 'list-item selected' : 'list-item'} onClick={() => this.props.setSelection(this.props.encounter)}>
+                    <div className='heading'>{this.props.encounter.name || 'unnamed encounter'}</div>
                     {slots}
                 </div>
             );

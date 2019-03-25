@@ -128,14 +128,14 @@ export default class CombatStartModal extends React.Component<Props, State> {
     getPartySection() {
         if (this.props.parties.length === 0) {
             return (
-                <div className="section">you have not defined any parties</div>
+                <div className='section'>you have not defined any parties</div>
             );
         }
 
         var partyOptions = this.props.parties.map(party => {
             return {
                 id: party.id,
-                text: party.name || "unnamed party"
+                text: party.name || 'unnamed party'
             };
         });
 
@@ -147,19 +147,19 @@ export default class CombatStartModal extends React.Component<Props, State> {
 
                 var pcSections = pcs.map(pc => 
                     <li key={pc.id}>
-                        {pc.name || "unnamed pc"} (level {pc.level})
+                        {pc.name || 'unnamed pc'} (level {pc.level})
                     </li>
                 );
 
                 if (pcSections.length === 0) {
                     pcSections.push(
-                        <li key={"empty"}>no pcs</li>
+                        <li key={'empty'}>no pcs</li>
                     );
                 }
         
                 partyContent = (
                     <div>
-                        <div className="subheading">pcs</div>
+                        <div className='subheading'>pcs</div>
                         <ul>{pcSections}</ul>
                     </div>
                 );
@@ -168,10 +168,10 @@ export default class CombatStartModal extends React.Component<Props, State> {
 
         return (
             <div>
-                <div className="heading">party</div>
+                <div className='heading'>party</div>
                 <Dropdown
                     options={partyOptions}
-                    placeholder="select party..."
+                    placeholder='select party...'
                     selectedID={this.state.combatSetup.partyID ? this.state.combatSetup.partyID : undefined}
                     select={optionID => this.setParty(optionID)}
                 />
@@ -183,14 +183,14 @@ export default class CombatStartModal extends React.Component<Props, State> {
     getEncounterSection() {
         if (this.props.encounters.length === 0) {
             return (
-                <div className="section">you have not built any encounters</div>
+                <div className='section'>you have not built any encounters</div>
             );
         }
 
         var encounterOptions = this.props.encounters.map(encounter => {
             return {
                 id: encounter.id,
-                text: encounter.name || "unnamed encounter"
+                text: encounter.name || 'unnamed encounter'
             }
         });
 
@@ -199,9 +199,9 @@ export default class CombatStartModal extends React.Component<Props, State> {
             var selectedEncounter = this.props.encounters.find(e => e.id === this.state.combatSetup.encounterID);
             if (selectedEncounter) {
                 var monsterSections = selectedEncounter.slots.map(slot => {
-                    var name = slot.monsterName || "unnamed monster";
+                    var name = slot.monsterName || 'unnamed monster';
                     if (slot.count > 1) {
-                        name += " (x" + slot.count + ")";
+                        name += ' (x' + slot.count + ')';
                     }
                     return (
                         <li key={slot.id}>{name}</li>
@@ -210,7 +210,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
 
                 if (monsterSections.length === 0) {
                     monsterSections.push(
-                        <li key={"empty"}>no monsters</li>
+                        <li key={'empty'}>no monsters</li>
                     );
                 }
 
@@ -220,9 +220,9 @@ export default class CombatStartModal extends React.Component<Props, State> {
                     }
 
                     var waveMonsters = wave.slots.map(slot => {
-                        var name = slot.monsterName || "unnamed monster";
+                        var name = slot.monsterName || 'unnamed monster';
                         if (slot.count > 1) {
-                            name += " x" + slot.count;
+                            name += ' x' + slot.count;
                         }
                         return (
                             <li key={slot.id}>{name}</li>
@@ -231,7 +231,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
         
                     return (
                         <div key={wave.id}>
-                            <div className="subheading">{wave.name || "unnamed wave"}</div>
+                            <div className='subheading'>{wave.name || 'unnamed wave'}</div>
                             <ul>{waveMonsters}</ul>
                         </div>
                     );
@@ -239,7 +239,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
         
                 encounterContent = (
                     <div>
-                        <div className="subheading">monsters</div>
+                        <div className='subheading'>monsters</div>
                         <ul>{monsterSections}</ul>
                         {waves}
                     </div>
@@ -249,10 +249,10 @@ export default class CombatStartModal extends React.Component<Props, State> {
 
         return (
             <div>
-                <div className="heading">encounter</div>
+                <div className='heading'>encounter</div>
                 <Dropdown
                     options={encounterOptions}
-                    placeholder="select encounter..."
+                    placeholder='select encounter...'
                     selectedID={this.state.combatSetup.encounterID ? this.state.combatSetup.encounterID : undefined}
                     select={optionID => this.setEncounter(optionID)}
                 />
@@ -269,11 +269,11 @@ export default class CombatStartModal extends React.Component<Props, State> {
 
         var folioOptions = [{
             id: '',
-            text: "none"
+            text: 'none'
         }].concat(folios.map(folio => {
             return {
                 id: folio.id,
-                text:folio.name || "unnamed folio"
+                text:folio.name || 'unnamed folio'
             };
         }));
 
@@ -286,7 +286,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                 var mapOptions = folio.maps.map(m => {
                     return {
                         id: m.id,
-                        text: m.name || "unnamed map"
+                        text: m.name || 'unnamed map'
                     };
                 });            
 
@@ -306,7 +306,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                         thumbnailSection = (
                             <MapPanel
                                 map={map}
-                                mode="thumbnail"
+                                mode='thumbnail'
                             />
                         );
                     }
@@ -316,10 +316,10 @@ export default class CombatStartModal extends React.Component<Props, State> {
 
         return (
             <div>
-                <div className="heading">map</div>
+                <div className='heading'>map</div>
                 <Dropdown
                     options={folioOptions}
-                    placeholder="select map folio..."
+                    placeholder='select map folio...'
                     selectedID={this.state.combatSetup.folioID ? this.state.combatSetup.folioID : undefined}
                     select={optionID => this.setFolioID(optionID)}
                 />
@@ -332,7 +332,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
     getWaveSection() {
         if (this.state.combatSetup.encounterID === null) {
             return (
-                <div className="section">you have not selected an encounter</div>
+                <div className='section'>you have not selected an encounter</div>
             );
         }
 
@@ -340,14 +340,14 @@ export default class CombatStartModal extends React.Component<Props, State> {
         if (selectedEncounter) {
             if (selectedEncounter.waves.length === 0) {
                 return (
-                    <div className="section">you have not defined any waves</div>
+                    <div className='section'>you have not defined any waves</div>
                 );
             }
 
             var waveOptions = selectedEncounter.waves.map(wave => {
                 return {
                     id: wave.id,
-                    text: wave.name || "unnamed wave"
+                    text: wave.name || 'unnamed wave'
                 };
             });
 
@@ -356,9 +356,9 @@ export default class CombatStartModal extends React.Component<Props, State> {
                 var selectedWave = selectedEncounter.waves.find(w => w.id === this.state.combatSetup.waveID);
                 if (selectedWave) {
                     var monsterSections = selectedWave.slots.map(slot => {
-                        var name = slot.monsterName || "unnamed monster";
+                        var name = slot.monsterName || 'unnamed monster';
                         if (slot.count > 1) {
-                            name += " (x" + slot.count + ")";
+                            name += ' (x' + slot.count + ')';
                         }
                         return (
                             <li key={slot.id}>{name}</li>
@@ -367,13 +367,13 @@ export default class CombatStartModal extends React.Component<Props, State> {
 
                     if (monsterSections.length === 0) {
                         monsterSections.push(
-                            <li key={"empty"}>no monsters</li>
+                            <li key={'empty'}>no monsters</li>
                         );
                     }
             
                     waveContent = (
                         <div>
-                            <div className="subheading">monsters</div>
+                            <div className='subheading'>monsters</div>
                             <ul>{monsterSections}</ul>
                         </div>
                     );
@@ -382,10 +382,10 @@ export default class CombatStartModal extends React.Component<Props, State> {
 
             return (
                 <div>
-                    <div className="heading">wave</div>
+                    <div className='heading'>wave</div>
                     <Dropdown
                         options={waveOptions}
-                        placeholder="select wave..."
+                        placeholder='select wave...'
                         selectedID={this.state.combatSetup.waveID ? this.state.combatSetup.waveID : undefined}
                         select={optionID => this.setWave(optionID)}
                     />
@@ -404,7 +404,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
         if (party && encounter) {
             return (
                 <div>
-                    <div className="heading">encounter difficulty</div>
+                    <div className='heading'>encounter difficulty</div>
                     <DifficultyChartPanel
                         party={party}
                         encounter={encounter}
@@ -416,8 +416,8 @@ export default class CombatStartModal extends React.Component<Props, State> {
 
         return (
             <div>
-                <div className="heading">encounter difficulty</div>
-                <div className="section">select a party and an encounter on the left to see difficulty information.</div>
+                <div className='heading'>encounter difficulty</div>
+                <div className='section'>select a party and an encounter on the left to see difficulty information.</div>
             </div>
         );
     }
@@ -426,8 +426,8 @@ export default class CombatStartModal extends React.Component<Props, State> {
         if (this.state.combatSetup.encounterID === null) {
             return (
                 <div>
-                    <div className="heading">monsters</div>
-                    <div className="section">select an encounter to see monster options here.</div>
+                    <div className='heading'>monsters</div>
+                    <div className='section'>select an encounter to see monster options here.</div>
                 </div>
             );
         }
@@ -435,8 +435,8 @@ export default class CombatStartModal extends React.Component<Props, State> {
         if (!this.props.parties && this.state.combatSetup.waveID === null) {
             return (
                 <div>
-                    <div className="heading">monsters</div>
-                    <div className="section">select a wave to see monster options here.</div>
+                    <div className='heading'>monsters</div>
+                    <div className='section'>select a wave to see monster options here.</div>
                 </div>
             );
         }
@@ -457,16 +457,16 @@ export default class CombatStartModal extends React.Component<Props, State> {
 
             var initOptions = [
                 {
-                    id: "manual",
-                    text: "enter manually"
+                    id: 'manual',
+                    text: 'enter manually'
                 },
                 {
-                    id: "individual",
-                    text: "roll individually"
+                    id: 'individual',
+                    text: 'roll individually'
                 },
                 {
-                    id: "group",
-                    text: "roll in groups"
+                    id: 'group',
+                    text: 'roll in groups'
                 }
             ];
 
@@ -487,11 +487,11 @@ export default class CombatStartModal extends React.Component<Props, State> {
                         );
                     }
                     return (
-                        <div key={slotNames.id} className="name-row">
-                            <div className="name-label">
+                        <div key={slotNames.id} className='name-row'>
+                            <div className='name-label'>
                                 {slot.monsterName}
                             </div>
-                            <div className="name-inputs">
+                            <div className='name-inputs'>
                                 {inputs}
                             </div>
                         </div>
@@ -501,14 +501,14 @@ export default class CombatStartModal extends React.Component<Props, State> {
 
             return (
                 <div>
-                    <div className="heading">monsters</div>
-                    <div className="subheading">initiative</div>
+                    <div className='heading'>monsters</div>
+                    <div className='subheading'>initiative</div>
                     <Selector
                         options={initOptions}
                         selectedID={this.state.combatSetup.encounterInitMode}
                         select={optionID => this.setEncounterInitMode(optionID as 'manual' | 'individual' | 'group')}
                     />
-                    <div className="subheading">names</div>
+                    <div className='subheading'>names</div>
                     <div>{names}</div>
                 </div>
             );
@@ -519,7 +519,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    render() {
+    public render() {
         try {
             var leftSection = null;
             var rightSection = null;
@@ -554,11 +554,11 @@ export default class CombatStartModal extends React.Component<Props, State> {
             }
 
             return (
-                <div className="row" style={{ height: "100%", margin: "0 -15px" }}>
-                    <div className="column small-6 medium-6 large-6 scrollable">
+                <div className='row' style={{ height: '100%', margin: '0 -15px' }}>
+                    <div className='column small-6 medium-6 large-6 scrollable'>
                         {leftSection}
                     </div>
-                    <div className="column small-6 medium-6 large-6 scrollable">
+                    <div className='column small-6 medium-6 large-6 scrollable'>
                         {rightSection}
                     </div>
                 </div>
@@ -577,9 +577,9 @@ interface MonsterNameProps {
 }
 
 class MonsterName extends React.Component<MonsterNameProps> {
-    render() {
+    public render() {
         return (
-            <input type="text" value={this.props.value} onChange={event => this.props.changeName(this.props.slotID, this.props.index, event.target.value)} />
+            <input type='text' value={this.props.value} onChange={event => this.props.changeName(this.props.slotID, this.props.index, event.target.value)} />
         )
     }
 }

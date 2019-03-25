@@ -1,6 +1,6 @@
 import React from 'react';
 
-import arrow from "../../resources/images/down-arrow-black.svg";
+import arrow from '../../resources/images/down-arrow-black.svg';
 
 interface Props {
     text: string;
@@ -22,26 +22,26 @@ export default class Expander extends React.Component<Props, State> {
 
         this.state = {
             expanded: false
-        }
+        };
     }
 
-    toggle() {
+    private toggle() {
         this.setState({
             expanded: !this.state.expanded
         });
     }
 
-    render() {
+    public render() {
         try {
-            var style = this.props.disabled ? "expander disabled" : "expander";
+            var style = this.props.disabled ? 'expander disabled' : 'expander';
             if (this.state.expanded) {
-                style += " expanded";
+                style += ' expanded';
             }
 
             var content = null;
             if (this.state.expanded) {
                 content = (
-                    <div className="expander-content">
+                    <div className='expander-content'>
                         {this.props.content}
                     </div>
                 );
@@ -49,9 +49,9 @@ export default class Expander extends React.Component<Props, State> {
 
             return (
                 <div className={style}>
-                    <div className="expander-header" onClick={() => this.toggle()}>
-                        <div className="expander-text">{this.props.text}</div>
-                        <img className="expander-button" src={arrow} alt="arrow" />
+                    <div className='expander-header' onClick={() => this.toggle()}>
+                        <div className='expander-text'>{this.props.text}</div>
+                        <img className='expander-button' src={arrow} alt='arrow' />
                     </div>
                     {content}
                 </div>
