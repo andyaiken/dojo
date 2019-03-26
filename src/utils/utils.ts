@@ -79,8 +79,12 @@ export default class Utils {
         return collection;
     }
 
+    public static modifierValue(score: number): number {
+        return Math.floor((score - 10) / 2);
+    }
+
     public static modifier(score: number): string {
-        const mod = Math.floor((score - 10) / 2);
+        const mod = this.modifierValue(score);
         let str = mod.toString();
         if (mod >= 0) {
             str = '+' + str;

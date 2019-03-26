@@ -189,7 +189,15 @@ export default class MonsterCard extends React.Component<Props, State> {
         }
 
         const die = Utils.hitDieType(this.props.combatant.size);
-        return this.props.combatant.hpMax + ' (' + this.props.combatant.hitDice + 'd' + die + ')';
+        const conMod = Utils.modifierValue(this.props.combatant.abilityScores.con) * this.props.combatant.hitDice;
+        let conModStr = '';
+        if (conMod > 0) {
+            conModStr = ' +' + conMod;
+        }
+        if (conMod < 0) {
+            conModStr = ' ' + conMod;
+        }
+        return this.props.combatant.hpMax + ' (' + this.props.combatant.hitDice + 'd' + die + conModStr + ')';
     }
 
     public render() {
