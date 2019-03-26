@@ -557,9 +557,32 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     }
 
     private getFilterCard(monsters: Monster[]) {
+        const criteria: string[] = [];
+        if (this.state.filter.size) {
+            criteria.push('size');
+        }
+        if (this.state.filter.type) {
+            criteria.push('type');
+        }
+        if (this.state.filter.subtype) {
+            criteria.push('subtype');
+        }
+        if (this.state.filter.alignment) {
+            criteria.push('alignment');
+        }
+        if (this.state.filter.challenge) {
+            criteria.push('challenge rating');
+        }
+        let criteriaText = criteria.join(', ');
+        if (criteriaText) {
+            criteriaText = 'based on ' + criteriaText;
+        } else {
+            criteriaText = 'no criteria specified';
+        }
+
         const similar = (
             <div className='section'>
-                {monsters.length} similar monsters
+                {monsters.length} similar monsters ({criteriaText})
             </div>
         );
 
@@ -839,7 +862,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             let monsterList = null;
             if (this.props.showMonsters) {
                 monsterList = (
-                    <div className='columns small-4 medium-4 large-4 scrollable'>
+                    <div className='columns small-4 medium-4 large-4 scrollable list-column'>
                         {this.getFilterCard(monsters)}
                         {this.getMonsterCards(monsters)}
                     </div>
