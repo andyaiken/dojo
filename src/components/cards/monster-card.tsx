@@ -183,6 +183,15 @@ export default class MonsterCard extends React.Component<Props, State> {
         });
     }
 
+    private getHP() {
+        if (this.props.combatant.hitDice === 0) {
+            return this.props.combatant.hpMax;
+        }
+
+        const die = Utils.hitDieType(this.props.combatant.size);
+        return this.props.combatant.hpMax + ' (' + this.props.combatant.hitDice + 'd' + die + ')';
+    }
+
     public render() {
         try {
             const options = [];
@@ -378,7 +387,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                                 <b>ac</b> {this.props.combatant.ac}
                             </div>
                             <div className='section' style={{ display: this.props.combatant.hpMax !== 0 ? '' : 'none' }}>
-                                <b>hp</b> {this.props.combatant.hitDice !== 0 ? this.props.combatant.hpMax + ' (' + this.props.combatant.hitDice + 'd' + Utils.hitDieType(this.props.combatant.size) + ')' : this.props.combatant.hpMax}
+                                <b>hp</b> {this.getHP()}
                             </div>
                             <div className='section' style={{ display: this.props.combatant.speed !== '' ? '' : 'none' }}>
                                 <b>speed</b> {this.props.combatant.speed}
@@ -561,7 +570,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                                 <b>ac</b> {this.props.combatant.ac}
                             </div>
                             <div className='section'>
-                                <b>hp</b> {this.props.combatant.hitDice !== 0 ? this.props.combatant.hpMax + ' (' + this.props.combatant.hitDice + 'd' + Utils.hitDieType(this.props.combatant.size) + ')' : this.props.combatant.hpMax}
+                                <b>hp</b> {this.getHP()}
                             </div>
                             <div className='section'>
                                 <b>damage immunity</b> {this.props.combatant.damage.immune || '-'}

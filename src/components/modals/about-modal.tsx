@@ -14,6 +14,7 @@ interface Props {
 export default class AboutModal extends React.Component<Props> {
     public render() {
         try {
+            /* tslint:disable:max-line-length */
             return (
                 <div className='about'>
                     <div className='row'>
@@ -58,6 +59,7 @@ export default class AboutModal extends React.Component<Props> {
                     </div>
                 </div>
             );
+            /* tslint:enable:max-line-length */
         } catch (e) {
             console.error(e);
         }

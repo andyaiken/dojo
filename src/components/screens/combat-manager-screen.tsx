@@ -207,6 +207,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
 
                 if (this.props.showHelp && (current.length === 0)) {
                     const activeHelp = (
+                        /* tslint:disable:max-line-length */
                         <div key='active-help'>
                             <InfoCard
                                 getContent={() =>
@@ -217,6 +218,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                                 }
                             />
                         </div>
+                        /* tslint:enable:max-line-length */
                     );
                     active = [activeHelp].concat(active);
                 }
