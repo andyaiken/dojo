@@ -448,6 +448,9 @@ body,
             width: calc(100% - 25px);
             display: inline-block;
             vertical-align: middle;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .image {
