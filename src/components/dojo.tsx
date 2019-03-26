@@ -833,7 +833,7 @@ export default class Dojo extends React.Component<Props, State> {
                 combatant.defeated = false;
 
                 combatant.displayName = pc.name;
-                combatant.initiative = null;
+                combatant.initiative = 10;
                 combatant.hp = null;
                 combatant.conditions = [];
                 combatant.altitude = 0;
