@@ -9,7 +9,7 @@ export interface Condition {
 export interface ConditionDurationSaves {
     type: 'saves';
     count: number;
-    saveType: string; // TODO
+    saveType: 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha' | 'death';
     saveDC: number;
     point: 'start' | 'end';
 }

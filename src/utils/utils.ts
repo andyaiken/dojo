@@ -554,7 +554,7 @@ export default class Utils {
             switch (condition.duration.type) {
                 case 'saves':
                     const saveDuration = condition.duration as ConditionDurationSaves;
-                    let saveType = saveDuration.saveType;
+                    let saveType = saveDuration.saveType.toString();
                     if (saveType !== 'death') {
                         saveType = saveType.toUpperCase();
                     }

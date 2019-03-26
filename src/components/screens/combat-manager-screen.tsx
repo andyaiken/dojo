@@ -402,10 +402,14 @@ class NotificationPanel extends React.Component<NotificationProps> {
         switch (this.props.notification.type) {
             case 'condition-save':
                 const duration = condition.duration as ConditionDurationSaves;
+                let saveType = duration.saveType.toString();
+                if (saveType !== 'death') {
+                    saveType = saveType.toUpperCase();
+                }
                 return (
                     <div key={this.props.notification.id} className='notification'>
                         <div className='text'>
-                            {name} must make a {duration.saveType} save against dc {duration.saveDC}
+                            {name} must make a {saveType} save against dc {duration.saveDC}
                         </div>
                         <div className='buttons'>
                             <button onClick={() => this.saveSuccess(this.props.notification)}>success</button>
