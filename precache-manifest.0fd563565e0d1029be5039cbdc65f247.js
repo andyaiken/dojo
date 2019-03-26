@@ -4,16 +4,16 @@ self.__precacheManifest = [
     "url": "/dojo/static/media/warning.67a11a95.svg"
   },
   {
-    "revision": "c2c37579d73726d15753",
-    "url": "/dojo/static/css/main.34ccf48b.chunk.css"
+    "revision": "e075554d9a3716a7a472",
+    "url": "/dojo/static/css/main.6383e08c.chunk.css"
   },
   {
     "revision": "f28ee3be83f814eb9c51",
     "url": "/dojo/static/js/runtime~main.5730ceb0.js"
   },
   {
-    "revision": "20013451b51f0a2a0ecd",
-    "url": "/dojo/static/js/2.f0cddafa.chunk.js"
+    "revision": "d46b9bfc911f2bcb67d0",
+    "url": "/dojo/static/js/2.24a18ff4.chunk.js"
   },
   {
     "revision": "a2fc7a1f717d53828375a0f964dec398",
@@ -28,20 +28,20 @@ self.__precacheManifest = [
     "url": "/dojo/static/media/close-black.7645a5b9.svg"
   },
   {
-    "revision": "c2c37579d73726d15753",
-    "url": "/dojo/static/js/main.c90f181c.chunk.js"
+    "revision": "e075554d9a3716a7a472",
+    "url": "/dojo/static/js/main.b3938977.chunk.js"
   },
   {
-    "revision": "b60accffdc3555f5fdb4f1d2b30dab58",
-    "url": "/dojo/static/media/plus.b60accff.svg"
+    "revision": "9650a20f1269e2b07f732d424928c668",
+    "url": "/dojo/static/media/ellipsis.9650a20f.svg"
   },
   {
     "revision": "7003cf502bb677460860d22d4b84638e",
     "url": "/dojo/static/media/minus.7003cf50.svg"
   },
   {
-    "revision": "9650a20f1269e2b07f732d424928c668",
-    "url": "/dojo/static/media/ellipsis.9650a20f.svg"
+    "revision": "b60accffdc3555f5fdb4f1d2b30dab58",
+    "url": "/dojo/static/media/plus.b60accff.svg"
   },
   {
     "revision": "5cbd1005874ad4ff9ebbb3bdd48ea887",
@@ -56,7 +56,7 @@ self.__precacheManifest = [
     "url": "/dojo/static/media/settings.042bb1c2.svg"
   },
   {
-    "revision": "ce32d54d307b184521a7302827952a5d",
+    "revision": "6a137c7157f10270741e22edaf6594a2",
     "url": "/dojo/index.html"
   }
 ];
