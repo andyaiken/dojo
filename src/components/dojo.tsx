@@ -1070,7 +1070,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private addWaveToCombat() {
-        const combatSetup: CombatSetup = this.state.modal.combat;
+        const combatSetup: CombatSetup = this.state.modal.combatSetup;
         const encounter = this.getEncounter(combatSetup.encounterID);
         const combat = this.getCombat(this.state.selectedCombatID);
         if (combatSetup && encounter && combat) {
@@ -1112,8 +1112,8 @@ export default class Dojo extends React.Component<Props, State> {
                             }
 
                             combatant.current = false;
-                            combatant.pending = (this.state.modal.combat.encounterInitMode === 'manual');
-                            combatant.active = (this.state.modal.combat.encounterInitMode !== 'manual');
+                            combatant.pending = (this.state.modal.combatSetup.encounterInitMode === 'manual');
+                            combatant.active = (this.state.modal.combatSetup.encounterInitMode !== 'manual');
                             combatant.defeated = false;
 
                             combatant.hp = combatant.hpMax;

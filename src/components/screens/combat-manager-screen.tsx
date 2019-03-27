@@ -307,13 +307,13 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
 
                 return (
                     <div className='combat-manager row collapse'>
-                        <div className='columns small-4 medium-4 large-4 scrollable list-column'>
+                        <div className='columns small-4 medium-4 large-4 scrollable'>
                             <CardGroup
                                 heading='initiative holder'
                                 content={current}
                             />
                         </div>
-                        <div className='columns small-4 medium-4 large-4 scrollable list-column'>
+                        <div className='columns small-4 medium-4 large-4 scrollable'>
                             {notifications}
                             <CardGroup
                                 heading='waiting for intiative to be entered'
@@ -334,7 +334,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                                 showToggle={true}
                             />
                         </div>
-                        <div className='columns small-4 medium-4 large-4 scrollable list-column'>
+                        <div className='columns small-4 medium-4 large-4 scrollable'>
                             <CardGroup
                                 heading='selected combatant'
                                 content={[selectedCombatant]}
@@ -369,7 +369,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                             <button onClick={() => this.props.createCombat()}>start a new combat</button>
                             {combats}
                         </div>
-                        <div className='columns small-8 medium-8 large-9 scrollable list-column' />
+                        <div className='columns small-8 medium-8 large-9 scrollable' />
                     </div>
                 );
             }
@@ -517,7 +517,7 @@ class PCRow extends React.Component<PCRowProps> {
 
     private onClick(e: React.MouseEvent) {
         e.stopPropagation();
-        if (this.props.select) {
+        if (!this.props.combatant.current && !this.props.selected && this.props.select) {
             this.props.select(this.props.combatant);
         }
     }
@@ -550,10 +550,10 @@ class PCRow extends React.Component<PCRowProps> {
                             <div className='stat-label'>init</div>
                         </div>
                         <div className='key-stat'>
-                            <div className='stat-label'>-</div>
+                            <div className='stat-value'></div>
                         </div>
                         <div className='key-stat'>
-                            <div className='stat-label'>-</div>
+                            <div className='stat-value'></div>
                         </div>
                     </div>
                     {notes}
@@ -585,7 +585,7 @@ class MonsterRow extends React.Component<MonsterRowProps> {
 
     private onClick(e: React.MouseEvent) {
         e.stopPropagation();
-        if (this.props.select) {
+        if (!this.props.combatant.current && !this.props.selected && this.props.select) {
             this.props.select(this.props.combatant);
         }
     }
