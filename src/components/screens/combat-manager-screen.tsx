@@ -540,7 +540,8 @@ class PCRow extends React.Component<PCRowProps> {
         return (
             <div className={style} onClick={e => this.onClick(e)}>
                 <div className='name'>
-                    {this.props.combatant.displayName || this.props.combatant.name || 'combatant'} {this.props.combatant.player ? '| ' + this.props.combatant.player : ''}
+                    {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
+                    {this.props.combatant.player ? ' | ' + this.props.combatant.player : ''}
                     <span className='info'>{this.getInformationText()}</span>
                 </div>
                 <div className='content'>
@@ -550,10 +551,10 @@ class PCRow extends React.Component<PCRowProps> {
                             <div className='stat-label'>init</div>
                         </div>
                         <div className='key-stat'>
-                            <div className='stat-value'></div>
+                            <div className='stat-value' />
                         </div>
                         <div className='key-stat'>
-                            <div className='stat-value'></div>
+                            <div className='stat-value' />
                         </div>
                     </div>
                     {notes}
