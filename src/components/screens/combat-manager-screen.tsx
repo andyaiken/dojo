@@ -351,13 +351,13 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
 
             return (
                 <div className='combat-manager row collapse'>
-                    <div className='columns small-4 medium-4 large-3 scrollable list-column'>
+                    <div className='columns small-4 medium-4 large-4 scrollable list-column'>
                         {leftPaneContent}
                     </div>
-                    <div className='columns small-4 medium-4 large-6 scrollable list-column'>
+                    <div className='columns small-4 medium-4 large-4 scrollable list-column'>
                         {centrePaneContent}
                     </div>
-                    <div className='columns small-4 medium-4 large-3 scrollable list-column'>
+                    <div className='columns small-4 medium-4 large-4 scrollable list-column'>
                         {rightPaneContent}
                     </div>
                 </div>
