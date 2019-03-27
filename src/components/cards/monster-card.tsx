@@ -470,7 +470,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                         <div className='divider' />
                         <Spin
                             source={this.state}
-                            name='damage'
+                            name='damageOrHealing'
                             factors={[1, 10]}
                             nudgeValue={delta => this.nudgeDamage(delta)}
                         />

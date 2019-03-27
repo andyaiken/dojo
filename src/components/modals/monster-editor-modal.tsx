@@ -573,13 +573,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         if (this.state.filter.challenge) {
             criteria.push('challenge rating');
         }
-        let criteriaText = criteria.join(', ');
-        if (criteriaText) {
-            criteriaText = 'based on ' + criteriaText;
-        } else {
-            criteriaText = 'no criteria specified';
-        }
-
+        const criteriaText = (criteria.length > 0) ? 'based on ' + criteria.join(', ') : 'no criteria specified';
         const similar = (
             <div className='section'>
                 {monsters.length} similar monsters ({criteriaText})
