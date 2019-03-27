@@ -162,26 +162,56 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                         );
                     }
                     if (!combatant.pending && combatant.active && !combatant.defeated) {
-                        active.push(
-                            <CombatantRow
-                                key={combatant.id}
-                                combatant={combatant}
-                                combat={this.props.combat as Combat}
-                                select={c => this.setSelectedTokenID(c.id)}
-                                selected={combatant.id === this.state.selectedTokenID}
-                            />
-                        );
+                        switch (combatant.type) {
+                            case 'pc':
+                                active.push(
+                                    <PCRow
+                                        key={combatant.id}
+                                        combatant={combatant as Combatant & PC}
+                                        combat={this.props.combat as Combat}
+                                        select={c => this.setSelectedTokenID(c.id)}
+                                        selected={combatant.id === this.state.selectedTokenID}
+                                    />
+                                );
+                                break;
+                            case 'monster':
+                                active.push(
+                                    <MonsterRow
+                                        key={combatant.id}
+                                        combatant={combatant as Combatant & Monster}
+                                        combat={this.props.combat as Combat}
+                                        select={c => this.setSelectedTokenID(c.id)}
+                                        selected={combatant.id === this.state.selectedTokenID}
+                                    />
+                                );
+                                break;
+                        }
                     }
                     if (!combatant.pending && !combatant.active && combatant.defeated) {
-                        defeated.push(
-                            <CombatantRow
-                                key={combatant.id}
-                                combatant={combatant}
-                                combat={this.props.combat as Combat}
-                                select={c => this.setSelectedTokenID(c.id)}
-                                selected={combatant.id === this.state.selectedTokenID}
-                            />
-                        );
+                        switch (combatant.type) {
+                            case 'pc':
+                                defeated.push(
+                                    <PCRow
+                                        key={combatant.id}
+                                        combatant={combatant as Combatant & PC}
+                                        combat={this.props.combat as Combat}
+                                        select={c => this.setSelectedTokenID(c.id)}
+                                        selected={combatant.id === this.state.selectedTokenID}
+                                    />
+                                );
+                                break;
+                            case 'monster':
+                                defeated.push(
+                                    <MonsterRow
+                                        key={combatant.id}
+                                        combatant={combatant as Combatant & Monster}
+                                        combat={this.props.combat as Combat}
+                                        select={c => this.setSelectedTokenID(c.id)}
+                                        selected={combatant.id === this.state.selectedTokenID}
+                                    />
+                                );
+                                break;
+                        }
                     }
                 });
 
@@ -465,14 +495,14 @@ class PendingCombatantRow extends React.Component<PendingCombatantRowProps> {
     }
 }
 
-interface CombatantRowProps {
-    combatant: (Combatant & PC) | (Combatant & Monster);
+interface PCRowProps {
+    combatant: Combatant & PC;
     combat: Combat;
     selected: boolean;
-    select: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
+    select: (combatant: Combatant & PC) => void;
 }
 
-class CombatantRow extends React.Component<CombatantRowProps> {
+class PCRow extends React.Component<PCRowProps> {
     private getInformationText() {
         if (this.props.combatant.current) {
             return 'current turn';
@@ -492,32 +522,89 @@ class CombatantRow extends React.Component<CombatantRowProps> {
         }
     }
 
-    private getContentPC(pc: Combatant & PC, notes: JSX.Element[]) {
+    public render() {
+        let style = 'combatant-row ' + this.props.combatant.type;
+        if (this.props.combatant.current || this.props.selected) {
+            style += ' highlight';
+        }
+
+        const notes = [];
+        if (this.props.combat.map) {
+            if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
+                notes.push(
+                    <div key='not-on-map' className='note'>not on the map</div>
+                );
+            }
+        }
+
         return (
-            <div className='content'>
-                <div className='section key-stats'>
-                    <div className='key-stat'>
-                        <div className='stat-value'>{pc.initiative}</div>
-                        <div className='stat-label'>init</div>
-                    </div>
-                    <div className='key-stat wide'>
-                        <div className='stat-value'>{pc.player ? pc.player : '-'}</div>
-                    </div>
+            <div className={style} onClick={e => this.onClick(e)}>
+                <div className='name'>
+                    {this.props.combatant.displayName || this.props.combatant.name || 'combatant'} {this.props.combatant.player ? '| ' + this.props.combatant.player : ''}
+                    <span className='info'>{this.getInformationText()}</span>
                 </div>
-                {notes}
+                <div className='content'>
+                    <div className='section key-stats'>
+                        <div className='key-stat'>
+                            <div className='stat-value'>{this.props.combatant.initiative}</div>
+                            <div className='stat-label'>init</div>
+                        </div>
+                        <div className='key-stat'>
+                            <div className='stat-label'>-</div>
+                        </div>
+                        <div className='key-stat'>
+                            <div className='stat-label'>-</div>
+                        </div>
+                    </div>
+                    {notes}
+                </div>
             </div>
         );
     }
+}
 
-    private getContentMonster(monster: Combatant & Monster, notes: JSX.Element[]) {
-        let hp = (monster.hp ? monster.hp : 0).toString();
-        if (monster.hpTemp > 0) {
-            hp += '+' + monster.hpTemp;
+interface MonsterRowProps {
+    combatant: Combatant & Monster;
+    combat: Combat;
+    selected: boolean;
+    select: (combatant: Combatant & Monster) => void;
+}
+
+class MonsterRow extends React.Component<MonsterRowProps> {
+    private getInformationText() {
+        if (this.props.combatant.current) {
+            return 'current turn';
         }
+
+        if (this.props.selected) {
+            return 'selected';
+        }
+
+        return null;
+    }
+
+    private onClick(e: React.MouseEvent) {
+        e.stopPropagation();
+        if (this.props.select) {
+            this.props.select(this.props.combatant);
+        }
+    }
+
+    public render() {
+        let style = 'combatant-row ' + this.props.combatant.type;
+        if (this.props.combatant.current || this.props.selected) {
+            style += ' highlight';
+        }
+
+        let hp = (this.props.combatant.hp ? this.props.combatant.hp : 0).toString();
+        if (this.props.combatant.hpTemp > 0) {
+            hp += '+' + this.props.combatant.hpTemp;
+        }
+
         let gauge = null;
-        if (!monster.pending) {
+        if (!this.props.combatant.pending) {
             gauge = (
-                <HitPointGauge combatant={monster} />
+                <HitPointGauge combatant={this.props.combatant} />
             );
         }
 
@@ -550,30 +637,6 @@ class CombatantRow extends React.Component<CombatantRowProps> {
             });
         }
 
-        return (
-            <div className='content'>
-                <div className='section key-stats'>
-                    <div className='key-stat'>
-                        <div className='stat-value'>{monster.initiative}</div>
-                        <div className='stat-label'>init</div>
-                    </div>
-                    <div className='key-stat'>
-                        <div className='stat-value'>{monster.ac}</div>
-                        <div className='stat-label'>ac</div>
-                    </div>
-                    <div className='key-stat'>
-                        <div className='stat-value'>{hp}</div>
-                        <div className='stat-label'>hp</div>
-                    </div>
-                </div>
-                {gauge}
-                {conditions}
-                {notes}
-            </div>
-        );
-    }
-
-    public render() {
         const notes = [];
         if (this.props.combat.map) {
             if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
@@ -583,32 +646,31 @@ class CombatantRow extends React.Component<CombatantRowProps> {
             }
         }
 
-        let content = null;
-
-        switch (this.props.combatant.type) {
-            case 'pc':
-                content = this.getContentPC(this.props.combatant as Combatant & PC, notes);
-                break;
-            case 'monster':
-                content = this.getContentMonster(this.props.combatant as Combatant & Monster, notes);
-                break;
-            default:
-                // Do nothing
-                break;
-        }
-
-        let style = 'combatant-row ' + this.props.combatant.type;
-        if (this.props.combatant.current || this.props.selected) {
-            style += ' highlight';
-        }
-
         return (
             <div className={style} onClick={e => this.onClick(e)}>
                 <div className='name'>
                     {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
                     <span className='info'>{this.getInformationText()}</span>
                 </div>
-                {content}
+                <div className='content'>
+                    <div className='section key-stats'>
+                        <div className='key-stat'>
+                            <div className='stat-value'>{this.props.combatant.initiative}</div>
+                            <div className='stat-label'>init</div>
+                        </div>
+                        <div className='key-stat'>
+                            <div className='stat-value'>{this.props.combatant.ac}</div>
+                            <div className='stat-label'>ac</div>
+                        </div>
+                        <div className='key-stat'>
+                            <div className='stat-value'>{hp}</div>
+                            <div className='stat-label'>hp</div>
+                        </div>
+                    </div>
+                    {gauge}
+                    {conditions}
+                    {notes}
+                </div>
             </div>
         );
     }
