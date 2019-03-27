@@ -8,6 +8,8 @@ Dojo is written in TypeScript / JavaScript, using React and SCSS. If you would l
 
 ## Initial set up
 
+You will need to have `Git` and `Node.js` installed.
+
 * Open a terminal in the root folder
 * Run `npm install`
 * Check that you're using the latest dependencies by running `npm update --dev`
@@ -30,8 +32,10 @@ Check that your changes don't break the project's style rules:
 * Open a terminal in the root folder
 * Run `npm run lint`
 
-## Publishing the app
+## Publishing a new version of the app
 
+* Update the app version number in `package.json`
+* Push the change to the repository
 * Open a terminal in the root folder
 * Run `npm run deploy`
 

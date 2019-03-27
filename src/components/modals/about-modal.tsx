@@ -3,6 +3,8 @@ import React from 'react';
 import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
 
+import pkg from '../../../package.json';
+
 interface Props {
     options: {
         showHelp: boolean;
@@ -21,6 +23,7 @@ export default class AboutModal extends React.Component<Props> {
                         <div className='columns small-6 medium-6 large-6 list-column'>
                             <div className='heading'>about</div>
                             <div className='section'>dojo by <a href='mailto:andy.aiken@live.co.uk'>andy aiken</a></div>
+                            <div className='section'>version <b>{pkg.version}</b></div>
                             <div className='section'>if you would like to contribut to this project, you can do so <a href='https://github.com/andyaiken/dojo' target='_blank' rel='noopener noreferrer'>here</a></div>
                             <div className='section'>dungeons and dragons copyright wizards of the coast</div>
                         </div>

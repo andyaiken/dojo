@@ -26,7 +26,6 @@ export default class Factory {
             name: '',
             race: '',
             classes: '',
-            background: '',
             level: 1,
             languages: 'Common',
             passiveInsight: 10,

@@ -12,7 +12,6 @@ export interface PC {
     name: string;
     race: string;
     classes: string;
-    background: string;
     level: number;
     languages: string;
     passiveInsight: number;
