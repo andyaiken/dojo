@@ -670,6 +670,7 @@ body,
 .hp-gauge {
     height: 5px;
     background-color: lightgrey;
+    overflow: hidden;
 
     .bar {
         float: left;

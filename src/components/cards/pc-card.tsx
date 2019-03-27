@@ -129,8 +129,7 @@ export default class PCCard extends React.Component<Props, State> {
                     <div className='section centered'>
                         <div className='lowercase'>
                             <i>
-                                <span>{this.props.combatant.race || 'race'} {this.props.combatant.classes || 'class'}</span>,
-                                <span>level {this.props.combatant.level}</span>
+                                {this.props.combatant.race || 'race'} {this.props.combatant.classes || 'class'}, level {this.props.combatant.level}
                             </i>
                         </div>
                         <div style={{ display: this.props.combatant.url ? '' : 'none' }}>
@@ -143,17 +142,10 @@ export default class PCCard extends React.Component<Props, State> {
                         {this.props.combatant.languages || '-'}
                     </div>
                     <div className='section subheading'>passive skills</div>
-                    <div className='table'>
-                        <div>
-                            <div className='cell three'><b>insight</b></div>
-                            <div className='cell three'><b>invest.</b></div>
-                            <div className='cell three'><b>percep.</b></div>
-                        </div>
-                        <div>
-                            <div className='cell three'>{this.props.combatant.passiveInsight}</div>
-                            <div className='cell three'>{this.props.combatant.passiveInvestigation}</div>
-                            <div className='cell three'>{this.props.combatant.passivePerception}</div>
-                        </div>
+                    <div className='section'>
+                        <div><b>insight</b> {this.props.combatant.passiveInsight}</div>
+                        <div><b>investigation</b> {this.props.combatant.passiveInvestigation}</div>
+                        <div><b>perception</b> {this.props.combatant.passivePerception}</div>
                     </div>
                 </div>
             );
