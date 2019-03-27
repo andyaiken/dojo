@@ -135,10 +135,6 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
 
     public render() {
         try {
-            let leftPaneContent = null;
-            let centrePaneContent = null;
-            let rightPaneContent = null;
-
             if (this.props.combat) {
                 const current: JSX.Element[] = [];
                 let pending: JSX.Element[] = [];
@@ -279,45 +275,41 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     );
                 }
 
-                leftPaneContent = (
-                    <div className='combat-left'>
-                        <CardGroup
-                            heading='initiative holder'
-                            content={current}
-                        />
-                    </div>
-                );
-
-                centrePaneContent = (
-                    <div className='combat-centre'>
-                        {notifications}
-                        <CardGroup
-                            heading='waiting for intiative to be entered'
-                            content={pending}
-                            hidden={pending.length === 0}
-                            showToggle={true}
-                        />
-                        {mapSection}
-                        <CardGroup
-                            heading='combatants in the encounter'
-                            content={active}
-                            hidden={active.length === 0}
-                        />
-                        <CardGroup
-                            heading='defeated'
-                            content={defeated}
-                            hidden={defeated.length === 0}
-                            showToggle={true}
-                        />
-                    </div>
-                );
-
-                rightPaneContent = (
-                    <div className='combat-right'>
-                        <CardGroup
-                            heading='selected combatant'
-                            content={[selectedCombatant]}
-                        />
+                return (
+                    <div className='combat-manager row collapse'>
+                        <div className='columns small-4 medium-4 large-4 scrollable list-column'>
+                            <CardGroup
+                                heading='initiative holder'
+                                content={current}
+                            />
+                        </div>
+                        <div className='columns small-4 medium-4 large-4 scrollable list-column'>
+                            {notifications}
+                            <CardGroup
+                                heading='waiting for intiative to be entered'
+                                content={pending}
+                                hidden={pending.length === 0}
+                                showToggle={true}
+                            />
+                            {mapSection}
+                            <CardGroup
+                                heading='combatants in the encounter'
+                                content={active}
+                                hidden={active.length === 0}
+                            />
+                            <CardGroup
+                                heading='defeated'
+                                content={defeated}
+                                hidden={defeated.length === 0}
+                                showToggle={true}
+                            />
+                        </div>
+                        <div className='columns small-4 medium-4 large-4 scrollable list-column'>
+                            <CardGroup
+                                heading='selected combatant'
+                                content={[selectedCombatant]}
+                            />
+                        </div>
                     </div>
                 );
             } else {
@@ -340,28 +332,17 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     );
                 });
 
-                leftPaneContent = (
-                    <div className='combat-left'>
-                        {help}
-                        <button onClick={() => this.props.createCombat()}>start a new combat</button>
-                        {combats}
+                return (
+                    <div className='combat-manager row collapse'>
+                        <div className='columns small-4 medium-4 large-3 scrollable list-column'>
+                            {help}
+                            <button onClick={() => this.props.createCombat()}>start a new combat</button>
+                            {combats}
+                        </div>
+                        <div className='columns small-8 medium-8 large-9 scrollable list-column' />
                     </div>
                 );
             }
-
-            return (
-                <div className='combat-manager row collapse'>
-                    <div className='columns small-4 medium-4 large-4 scrollable list-column'>
-                        {leftPaneContent}
-                    </div>
-                    <div className='columns small-4 medium-4 large-4 scrollable list-column'>
-                        {centrePaneContent}
-                    </div>
-                    <div className='columns small-4 medium-4 large-4 scrollable list-column'>
-                        {rightPaneContent}
-                    </div>
-                </div>
-            );
         } catch (e) {
             console.error(e);
         }
