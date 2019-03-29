@@ -528,6 +528,10 @@ class PCRow extends React.Component<PCRowProps> {
             style += ' highlight';
         }
 
+        const desc = (this.props.combatant.race || 'unknown race')
+                + ' ' + (this.props.combatant.classes || 'unknown class')
+                + ', level ' + this.props.combatant.level;
+
         const notes = [];
         if (this.props.combat.map) {
             if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
@@ -545,17 +549,8 @@ class PCRow extends React.Component<PCRowProps> {
                     <span className='info'>{this.getInformationText()}</span>
                 </div>
                 <div className='content'>
-                    <div className='section key-stats'>
-                        <div className='key-stat'>
-                            <div className='stat-value'>{this.props.combatant.initiative}</div>
-                            <div className='stat-label'>init</div>
-                        </div>
-                        <div className='key-stat'>
-                            <div className='stat-value' />
-                        </div>
-                        <div className='key-stat'>
-                            <div className='stat-value' />
-                        </div>
+                    <div className='section lowercase'>
+                        {desc}
                     </div>
                     {notes}
                 </div>
@@ -656,12 +651,8 @@ class MonsterRow extends React.Component<MonsterRowProps> {
                 <div className='content'>
                     <div className='section key-stats'>
                         <div className='key-stat'>
-                            <div className='stat-value'>{this.props.combatant.initiative}</div>
-                            <div className='stat-label'>init</div>
-                        </div>
-                        <div className='key-stat'>
-                            <div className='stat-value'>{this.props.combatant.ac}</div>
                             <div className='stat-label'>ac</div>
+                            <div className='stat-value'>{this.props.combatant.ac}</div>
                         </div>
                         <div className='key-stat'>
                             <div className='stat-value'>{hp}</div>

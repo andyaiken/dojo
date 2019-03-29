@@ -1542,6 +1542,11 @@ export default class Dojo extends React.Component<Props, State> {
         Utils.sort(this.state.library);
         Utils.sort(this.state.encounters);
 
+        if (type === 'initiative') {
+            const combat = this.getCombat(this.state.selectedCombatID);
+            this.sortCombatants(combat as Combat);
+        }
+
         this.setState({
             parties: this.state.parties,
             library: this.state.library,

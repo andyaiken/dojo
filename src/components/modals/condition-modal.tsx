@@ -52,6 +52,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                 break;
             case 'combatant':
                 duration = Factory.createConditionDurationCombatant();
+                duration.combatantID = this.props.combatant.id;
                 break;
             case 'rounds':
                 duration = Factory.createConditionDurationRounds();

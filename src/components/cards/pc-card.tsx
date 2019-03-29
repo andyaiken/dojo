@@ -4,6 +4,7 @@ import { Combatant } from '../../models/combat';
 import { PC } from '../../models/party';
 
 import ConfirmButton from '../controls/confirm-button';
+import Expander from '../controls/expander';
 import Radial from '../controls/radial';
 import Spin from '../controls/spin';
 
@@ -117,6 +118,22 @@ export default class PCCard extends React.Component<Props, State> {
                         options.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(combatant)}>mark as defeated</button>);
                         options.push(<ConfirmButton key='remove' text='remove from encounter' callback={() => this.props.removeCombatant(combatant)} />);
                     }
+                    options.push(
+                        <Expander
+                            key='init'
+                            text='change initiative score'
+                            content={(
+                                <div>
+                                    <Spin
+                                        source={this.props.combatant}
+                                        name='initiative'
+                                        label='initiative'
+                                        nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
+                                    />
+                                </div>
+                            )}
+                        />
+                    );    
                 }
                 if (!combatant.pending && !combatant.active && combatant.defeated) {
                     options.push(<button key='makeActive' onClick={() => this.props.makeActive(combatant)}>mark as active</button>);
@@ -124,14 +141,14 @@ export default class PCCard extends React.Component<Props, State> {
                 }
             }
 
+            const desc = (this.props.combatant.race || 'unknown race')
+                + ' ' + (this.props.combatant.classes || 'unknown class')
+                + ', level ' + this.props.combatant.level;
+
             const commonStatBlock = (
                 <div className='stats'>
-                    <div className='section centered'>
-                        <div className='lowercase'>
-                            <i>
-                                {this.props.combatant.race || 'race'} {this.props.combatant.classes || 'class'}, level {this.props.combatant.level}
-                            </i>
-                        </div>
+                    <div className='section centered lowercase'>
+                        <i>{desc}</i>
                         <div style={{ display: this.props.combatant.url ? '' : 'none' }}>
                             <a href={this.props.combatant.url} target='_blank' rel='noopener noreferrer'>d&d beyond sheet</a>
                         </div>

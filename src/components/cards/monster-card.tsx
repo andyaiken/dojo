@@ -363,6 +363,22 @@ export default class MonsterCard extends React.Component<Props, State> {
                             )}
                         />
                     );
+                    options.push(
+                        <Expander
+                            key='init'
+                            text='change initiative score'
+                            content={(
+                                <div>
+                                    <Spin
+                                        source={this.props.combatant}
+                                        name='initiative'
+                                        label='initiative'
+                                        nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
+                                    />
+                                </div>
+                            )}
+                        />
+                    );
                 }
                 if (this.props.mode.indexOf('template') !== -1) {
                     // None
