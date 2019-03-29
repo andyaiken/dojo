@@ -4,7 +4,7 @@ import Utils from '../../utils/utils';
 
 import { Combat, Combatant, Notification } from '../../models/combat';
 import { Condition, ConditionDurationSaves } from '../../models/condition';
-import { Monster } from '../../models/monster-group';
+import { Monster, Trait } from '../../models/monster-group';
 import { PC } from '../../models/party';
 
 import InfoCard from '../cards/info-card';
@@ -260,13 +260,21 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     );
                 }
 
-                const notifications = this.props.combat.notifications.map(n => (
-                    <NotificationPanel
-                        key={n.id}
-                        notification={n}
-                        close={(notification, removeCondition) => this.props.close(notification, removeCondition)}
-                    />
-                ));
+                let notificationSection = null;
+                if (this.props.combat.notifications.length > 0) {
+                    const notifications = this.props.combat.notifications.map(n => (
+                        <NotificationPanel
+                            key={n.id}
+                            notification={n}
+                            close={(notification, removeCondition) => this.props.close(notification, removeCondition)}
+                        />
+                    ));
+                    notificationSection = (
+                        <div className='notifications'>
+                            {notifications}
+                        </div>
+                    );
+                }
 
                 let mapSection = null;
                 if (this.props.combat.map) {
@@ -314,7 +322,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                             />
                         </div>
                         <div className='columns small-4 medium-4 large-4 scrollable'>
-                            {notifications}
+                            {notificationSection}
                             <CardGroup
                                 heading='waiting for intiative to be entered'
                                 content={pending}
@@ -385,29 +393,41 @@ interface NotificationProps {
 }
 
 class NotificationPanel extends React.Component<NotificationProps> {
-    private saveSuccess(notification: Notification) {
-        // Reduce save by 1
-        const condition = this.props.notification.condition as Condition;
-        if (condition && condition.duration) {
-            if ((condition.duration.type === 'saves') || (condition.duration.type === 'rounds')) {
-                condition.duration.count -= 1;
-                if (condition.duration.count === 0) {
-                    // Remove the condition
-                    this.close(notification, true);
-                } else {
-                    this.close(notification);
+    private success() {
+        switch (this.props.notification.type) {
+            case 'condition-save':
+            case 'condition-end':
+                const condition = this.props.notification.data as Condition;
+                if (condition.duration) {
+                    // Reduce save by 1
+                    if ((condition.duration.type === 'saves') || (condition.duration.type === 'rounds')) {
+                        condition.duration.count -= 1;
+                        if (condition.duration.count === 0) {
+                            // Remove the condition
+                            this.close(true);
+                        } else {
+                            this.close();
+                        }
+                    }
                 }
-            }
+                break;
+            case 'trait-recharge':
+                // Mark trait as recharged
+                const trait = this.props.notification.data as Trait;
+                trait.uses = 0;
+                this.close();
+                break;
         }
     }
 
-    private close(notification: Notification, removeCondition = false) {
-        this.props.close(notification, removeCondition);
+    private close(removeCondition = false) {
+        this.props.close(this.props.notification, removeCondition);
     }
 
     public render() {
         const combatant = this.props.notification.combatant as (Combatant & Monster);
-        const condition = this.props.notification.condition as Condition;
+        const condition = this.props.notification.data as Condition;
+        const trait = this.props.notification.data as Trait;
 
         const name = combatant.displayName || combatant.name || 'unnamed monster';
         switch (this.props.notification.type) {
@@ -423,8 +443,8 @@ class NotificationPanel extends React.Component<NotificationProps> {
                             {name} must make a {saveType} save against dc {duration.saveDC}
                         </div>
                         <div className='buttons'>
-                            <button onClick={() => this.saveSuccess(this.props.notification)}>success</button>
-                            <button onClick={() => this.close(this.props.notification)}>ok</button>
+                            <button onClick={() => this.success()}>success</button>
+                            <button onClick={() => this.close()}>close</button>
                         </div>
                     </div>
                 );
@@ -435,7 +455,19 @@ class NotificationPanel extends React.Component<NotificationProps> {
                             {name} is no longer affected by condition {condition.name}
                         </div>
                         <div className='buttons'>
-                            <button onClick={() => this.close(this.props.notification)}>ok</button>
+                            <button onClick={() => this.close()}>close</button>
+                        </div>
+                    </div>
+                );
+            case 'trait-recharge':
+                return (
+                    <div key={this.props.notification.id} className='notification'>
+                        <div className='text'>
+                            {name} can attempt to recharge {trait.name} ({trait.usage})
+                        </div>
+                        <div className='buttons'>
+                            <button onClick={() => this.success()}>recharge</button>
+                            <button onClick={() => this.close()}>close</button>
                         </div>
                     </div>
                 );

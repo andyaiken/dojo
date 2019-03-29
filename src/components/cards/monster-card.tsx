@@ -23,7 +23,7 @@ interface Props {
     combatant: Monster | (Monster & Combatant);
     mode: string;
     library: MonsterGroup[];
-    changeValue: (monster: Monster, field: string, value: any) => void;
+    changeValue: (monster: any, field: string, value: any) => void;
     nudgeValue: (source: any, field: string, delta: number) => void;
     // Library
     editMonster: (monster: Monster) => void;
@@ -530,7 +530,11 @@ export default class MonsterCard extends React.Component<Props, State> {
                             <b>equipment</b> {this.props.combatant.equipment}
                         </div>
                         <div className='divider' />
-                        <TraitsPanel combatant={this.props.combatant} />
+                        <TraitsPanel
+                            combatant={this.props.combatant}
+                            mode='combat'
+                            changeValue={(trait, field, value) => this.props.changeValue(trait, field, value)}
+                        />
                         <div className='divider' />
                         <div className='section subheading'>
                             conditions

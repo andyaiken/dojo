@@ -1,6 +1,6 @@
 import { Condition } from './condition';
 import { Map } from './map-folio';
-import { Monster } from './monster-group';
+import { Monster, Trait } from './monster-group';
 import { PC } from './party';
 
 export interface CombatSetup {
@@ -40,7 +40,7 @@ export interface Combatant {
 
 export interface Notification {
     id: string;
-    type: 'condition-save' | 'condition-end';
-    condition: Condition | null;
+    type: 'condition-save' | 'condition-end' | 'trait-recharge';
+    data: Condition | Trait | null;
     combatant: (Combatant & Monster) | null;
 }

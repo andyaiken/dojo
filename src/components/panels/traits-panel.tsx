@@ -3,6 +3,7 @@ import Showdown from 'showdown';
 
 import Utils from '../../utils/utils';
 
+import { Combatant } from '../../models/combat';
 import { Monster, Trait } from '../../models/monster-group';
 
 import ConfirmButton from '../controls/confirm-button';
@@ -11,12 +12,12 @@ import Expander from '../controls/expander';
 const showdown = new Showdown.Converter();
 
 interface Props {
-    combatant: Monster;
-    mode: 'view' | 'edit' | 'template';
+    combatant: Monster | (Combatant & Monster);
+    mode: 'view' | 'edit' | 'template' | 'combat';
     addTrait: (traitType: 'trait' | 'action' | 'legendary' | 'lair' | 'regional') => void;
     copyTrait: (trait: Trait) => void;
     removeTrait: (trait: Trait) => void;
-    changeTrait: (trait: Trait, field: 'name' | 'usage' | 'text', value: string) => void;
+    changeValue: (trait: Trait, field: string, value: any) => void;
 }
 
 export default class TraitsPanel extends React.Component<Props> {
@@ -25,7 +26,7 @@ export default class TraitsPanel extends React.Component<Props> {
         addTrait: null,
         copyTrait: null,
         removeTrait: null,
-        changeTrait: null
+        changeValue: null
     };
 
     public render() {
@@ -38,12 +39,13 @@ export default class TraitsPanel extends React.Component<Props> {
 
             for (let n = 0; n !== this.props.combatant.traits.length; ++n) {
                 const a = this.props.combatant.traits[n];
+
                 const item = (
                     <TraitPanel
                         key={a.id}
                         trait={a}
                         mode={this.props.mode}
-                        changeTrait={(action, type, value) => this.props.changeTrait(action, type, value)}
+                        changeValue={(action, type, value) => this.props.changeValue(action, type, value)}
                         removeTrait={action => this.props.removeTrait(action)}
                         copyTrait={action => this.props.copyTrait(action)}
                     />
@@ -142,8 +144,8 @@ export default class TraitsPanel extends React.Component<Props> {
 
 interface TraitPanelProps {
     trait: Trait;
-    mode: 'view' | 'edit' | 'template';
-    changeTrait: (trait: Trait, field: 'name' | 'usage' | 'text', value: string) => void;
+    mode: 'view' | 'edit' | 'template' | 'combat';
+    changeValue: (trait: Trait, field: string, value: any) => void;
     copyTrait: (trait: Trait) => void;
     removeTrait: (trait: Trait) => void;
 }
@@ -151,16 +153,33 @@ interface TraitPanelProps {
 class TraitPanel extends React.Component<TraitPanelProps> {
     public render() {
         try {
+            let maxUses = 0;
             let heading = this.props.trait.name || 'unnamed ' + Utils.traitType(this.props.trait.type);
+
             if (this.props.trait.usage) {
-                heading += ' *(' + this.props.trait.usage + ')*';
+                let used = '';
+                if (this.props.trait.usage.toLowerCase().startsWith('recharge ')) {
+                    maxUses = 1;
+                    if (this.props.trait.uses > 0) {
+                        used = '; used'
+                    }
+                }
+                const found = this.props.trait.usage.toLowerCase().match(/(\d+)\/day/);
+                if (found) {
+                    maxUses = parseInt(found[1], 10);
+                    if (this.props.trait.uses > 0) {
+                        used = '; used ' + this.props.trait.uses;
+                    }
+                }
+                heading += ' *(' + this.props.trait.usage + used + ')*';
             }
+            const markdown = '**' + heading + '** ' + this.props.trait.text;
 
             switch (this.props.mode) {
                 case 'view':
                     return (
                         <div key={this.props.trait.id} className='section trait'>
-                            <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml('**' + heading + '** ' + this.props.trait.text) }} />
+                            <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(markdown) }} />
                         </div>
                     );
                 case 'edit':
@@ -170,18 +189,18 @@ class TraitPanel extends React.Component<TraitPanelProps> {
                                 type='text'
                                 placeholder='name'
                                 value={this.props.trait.name}
-                                onChange={event => this.props.changeTrait(this.props.trait, 'name', event.target.value)}
+                                onChange={event => this.props.changeValue(this.props.trait, 'name', event.target.value)}
                             />
                             <input
                                 type='text'
                                 placeholder='usage'
                                 value={this.props.trait.usage}
-                                onChange={event => this.props.changeTrait(this.props.trait, 'usage', event.target.value)}
+                                onChange={event => this.props.changeValue(this.props.trait, 'usage', event.target.value)}
                             />
                             <textarea
                                 placeholder='details'
                                 value={this.props.trait.text}
-                                onChange={event => this.props.changeTrait(this.props.trait, 'text', event.target.value)}
+                                onChange={event => this.props.changeValue(this.props.trait, 'text', event.target.value)}
                             />
                             <div className='divider' />
                             <ConfirmButton text='delete' callback={() => this.props.removeTrait(this.props.trait)} />
@@ -197,8 +216,26 @@ class TraitPanel extends React.Component<TraitPanelProps> {
                 case 'template':
                     return (
                         <div key={this.props.trait.id} className='section trait'>
-                            <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml('**' + heading + '** ' + this.props.trait.text) }} />
+                            <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(markdown) }} />
                             <button onClick={() => this.props.copyTrait(this.props.trait)}>copy</button>
+                        </div>
+                    );
+                case 'combat':
+                    let style = '';
+                    let usage = null;
+                    if (maxUses > 0) {
+                        const isTapped = this.props.trait.uses >= maxUses;
+                        if (isTapped) {
+                            style = 'strikethrough';
+                            usage = <button onClick={() => this.props.changeValue(this.props.trait, 'uses', 0)}>recharge</button>;
+                        } else {
+                            usage = <button onClick={() => this.props.changeValue(this.props.trait, 'uses', this.props.trait.uses + 1)}>use</button>;
+                        }
+                    }
+                    return (
+                        <div key={this.props.trait.id} className='section trait'>
+                            <div className={style} dangerouslySetInnerHTML={{ __html: showdown.makeHtml(markdown) }} />
+                            {usage}
                         </div>
                     );
             }

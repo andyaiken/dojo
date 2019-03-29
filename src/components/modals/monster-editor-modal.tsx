@@ -285,8 +285,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         });
     }
 
-    private changeTrait(trait: Trait, field: 'name' | 'usage' | 'type' | 'text', value: string) {
-        trait[field] = value;
+    private changeTrait(trait: Trait, field: string, value: any) {
+        (trait as any)[field] = value;
         this.setState({
             monster: this.state.monster
         });
@@ -815,7 +815,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                             mode='edit'
                             addTrait={type => this.addTrait(type)}
                             removeTrait={trait => this.removeTrait(trait)}
-                            changeTrait={(trait, type, value) => this.changeTrait(trait, type, value)}
+                            changeValue={(trait, type, value) => this.changeTrait(trait, type, value)}
                         />
                     );
                     break;

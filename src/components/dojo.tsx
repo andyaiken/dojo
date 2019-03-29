@@ -98,16 +98,24 @@ export default class Dojo extends React.Component<Props, State> {
             }
 
             if (data !== null) {
-                if (!data.mapFolios) {
-                    data.mapFolios = [];
-                    data.selectedMapFolioID = null;
-                }
+                data.library.forEach(g => {
+                    g.monsters.forEach(m => {
+                        m.traits.forEach(t => {
+                            t.uses = 0;
+                        });
+                    });
+                });
 
                 data.encounters.forEach(enc => {
                     if (!enc.waves) {
                         enc.waves = [];
                     }
                 });
+
+                if (!data.mapFolios) {
+                    data.mapFolios = [];
+                    data.selectedMapFolioID = null;
+                }
 
                 data.combats.forEach(combat => {
                     if (!combat.notifications) {
@@ -116,6 +124,15 @@ export default class Dojo extends React.Component<Props, State> {
                     combat.combatants.forEach(c => {
                         if (c.altitude === undefined) {
                             c.altitude = 0;
+                        }
+
+                        if (c.type === 'monster') {
+                            const m = c as Combatant & Monster;
+                            m.traits.forEach(t => {
+                                if (t.uses === undefined) {
+                                    t.uses = 0;
+                                }
+                            });
                         }
                     });
                 });
@@ -364,7 +381,8 @@ export default class Dojo extends React.Component<Props, State> {
                         name: trait.name,
                         usage: trait.usage,
                         type: trait.type,
-                        text: trait.text
+                        text: trait.text,
+                        uses: 0
                     };
                 }),
                 conditionImmunities: monster.conditionImmunities
@@ -591,7 +609,7 @@ export default class Dojo extends React.Component<Props, State> {
         } else {
             const closeBracket = rawTrait.name.indexOf(')');
             name = rawTrait.name.substring(0, openBracket - 1);
-            usage = rawTrait.name.substring(openBracket + 1, closeBracket);
+            usage = rawTrait.name.substring(openBracket + 1, closeBracket).toLowerCase();
         }
 
         const text = rawTrait.desc.replace(/•/g, '*');
@@ -601,7 +619,8 @@ export default class Dojo extends React.Component<Props, State> {
             type: type,
             name: name,
             usage: usage,
-            text: text
+            text: text,
+            uses: 0
         };
     }
 
@@ -978,7 +997,7 @@ export default class Dojo extends React.Component<Props, State> {
                                     combat.notifications.push({
                                         id: Utils.guid(),
                                         type: 'condition-save',
-                                        condition: c,
+                                        data: c,
                                         combatant: combatant as Combatant & Monster
                                     });
                                 }
@@ -992,7 +1011,7 @@ export default class Dojo extends React.Component<Props, State> {
                                     combat.notifications.push({
                                         id: Utils.guid(),
                                         type: 'condition-end',
-                                        condition: c,
+                                        data: c,
                                         combatant: combatant as Combatant & Monster
                                     });
                                 }
@@ -1011,7 +1030,7 @@ export default class Dojo extends React.Component<Props, State> {
                                         combat.notifications.push({
                                             id: Utils.guid(),
                                             type: 'condition-end',
-                                            condition: c,
+                                            data: c,
                                             combatant: combatant as Combatant & Monster
                                         });
                                     }
@@ -1024,6 +1043,20 @@ export default class Dojo extends React.Component<Props, State> {
                     }
                 });
             });
+
+            // Handle recharging traits
+            if (combatant && (combatant.type === 'monster')) {
+                (combatant as Monster).traits
+                    .filter(t => (t.uses > 1) && t.usage.toLowerCase().startsWith('recharge '))
+                    .forEach(t => {
+                        combat.notifications.push({
+                            id: Utils.guid(),
+                            type: 'trait-recharge',
+                            data: t,
+                            combatant: combatant as Combatant & Monster
+                        });
+                    });
+            }
 
             combat.combatants.forEach(c => {
                 c.current = false;
@@ -1252,7 +1285,7 @@ export default class Dojo extends React.Component<Props, State> {
                                 if (combat && (actor.id === combatant.id) && (c.duration.point === 'end')) {
                                     const saveNotification = Factory.createNotification();
                                     saveNotification.type = 'condition-save';
-                                    saveNotification.condition = c;
+                                    saveNotification.data = c;
                                     saveNotification.combatant = combatant as Combatant & Monster;
                                     combat.notifications.push(saveNotification);
                                 }
@@ -1265,7 +1298,7 @@ export default class Dojo extends React.Component<Props, State> {
                                     // Notify the user
                                     const endNotification = Factory.createNotification();
                                     endNotification.type = 'condition-end';
-                                    endNotification.condition = c;
+                                    endNotification.data = c;
                                     endNotification.combatant = combatant as Combatant & Monster;
                                     combat.notifications.push(endNotification);
                                 }
@@ -1396,8 +1429,8 @@ export default class Dojo extends React.Component<Props, State> {
             const index = combat.notifications.indexOf(notification);
             combat.notifications.splice(index, 1);
 
-            if (removeCondition && notification.combatant && notification.condition) {
-                const conditionIndex = notification.combatant.conditions.indexOf(notification.condition);
+            if (removeCondition && notification.combatant && notification.data) {
+                const conditionIndex = notification.combatant.conditions.indexOf(notification.data as Condition);
                 notification.combatant.conditions.splice(conditionIndex, 1);
             }
 

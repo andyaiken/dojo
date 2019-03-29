@@ -46,6 +46,7 @@ export interface Trait {
     usage: string;
     type: 'trait' | 'action' | 'legendary' | 'lair' | 'regional';
     text: string;
+    uses: number;
 }
 
 export const SIZE_TYPES = [

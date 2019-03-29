@@ -133,7 +133,7 @@ export default class PCCard extends React.Component<Props, State> {
                                 </div>
                             )}
                         />
-                    );    
+                    );
                 }
                 if (!combatant.pending && !combatant.active && combatant.defeated) {
                     options.push(<button key='makeActive' onClick={() => this.props.makeActive(combatant)}>mark as active</button>);

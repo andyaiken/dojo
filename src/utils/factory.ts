@@ -88,7 +88,8 @@ export default class Factory {
             name: '',
             usage: '',
             type: 'action',
-            text: ''
+            text: '',
+            uses: 0
         };
     }
 
@@ -176,7 +177,7 @@ export default class Factory {
         return {
             id: Utils.guid(),
             type: 'condition-save',
-            condition: null,
+            data: null,
             combatant: null
         };
     }

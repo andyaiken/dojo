@@ -79,7 +79,7 @@ export default class PartyCard extends React.Component<Props> {
                         />
                     </div>
                     <div className='divider' />
-                    <div className='section'>
+                    <div className='section' style={{ display: languages !== '' ? 'block' : 'none' }}>
                         <div className='subheading'>languages</div>
                     </div>
                     <div className='section'>
