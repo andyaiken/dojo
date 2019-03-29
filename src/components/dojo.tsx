@@ -594,12 +594,14 @@ export default class Dojo extends React.Component<Props, State> {
             usage = rawTrait.name.substring(openBracket + 1, closeBracket);
         }
 
+        const text = rawTrait.desc.replace(/•/g, '*');
+
         return {
             id: Utils.guid(),
             type: type,
             name: name,
             usage: usage,
-            text: rawTrait.desc
+            text: text
         };
     }
 

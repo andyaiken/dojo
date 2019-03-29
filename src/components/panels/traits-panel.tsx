@@ -1,4 +1,5 @@
 import React from 'react';
+import Showdown from 'showdown';
 
 import Utils from '../../utils/utils';
 
@@ -6,6 +7,8 @@ import { Monster, Trait } from '../../models/monster-group';
 
 import ConfirmButton from '../controls/confirm-button';
 import Expander from '../controls/expander';
+
+const showdown = new Showdown.Converter();
 
 interface Props {
     combatant: Monster;
@@ -150,14 +153,14 @@ class TraitPanel extends React.Component<TraitPanelProps> {
         try {
             let heading = this.props.trait.name || 'unnamed ' + Utils.traitType(this.props.trait.type);
             if (this.props.trait.usage) {
-                heading += ' (' + this.props.trait.usage + ')';
+                heading += ' *(' + this.props.trait.usage + ')*';
             }
 
             switch (this.props.mode) {
                 case 'view':
                     return (
                         <div key={this.props.trait.id} className='section trait'>
-                            <b>{heading}</b> {this.props.trait.text}
+                            <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml('**' + heading + '** ' + this.props.trait.text) }} />
                         </div>
                     );
                 case 'edit':
@@ -194,7 +197,7 @@ class TraitPanel extends React.Component<TraitPanelProps> {
                 case 'template':
                     return (
                         <div key={this.props.trait.id} className='section trait'>
-                            <b>{heading}</b> {this.props.trait.text}
+                            <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml('**' + heading + '** ' + this.props.trait.text) }} />
                             <button onClick={() => this.props.copyTrait(this.props.trait)}>copy</button>
                         </div>
                     );
