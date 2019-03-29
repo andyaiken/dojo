@@ -354,12 +354,14 @@
             margin: 5px;
             font-size: 10px;
             line-height: 16px;
-            text-align: center;
+            letter-spacing: -0.5px;
+            font-weight: 600;
         }
 
         &:hover {
             background-color: $highlight01;
-            border-color: $highlight02;
+            border-color: $highlight05;
+            color: $highlight;
         }
     }
 
