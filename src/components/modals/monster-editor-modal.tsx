@@ -23,7 +23,7 @@ interface Props {
 
 interface State {
     monster: Monster;
-    page: 'overview' | 'abilities' | 'combat' | 'actions';
+    page: 'overview' | 'abilities' | 'cbt-stats' | 'actions';
     showFilter: boolean;
     helpSection: string;
     filter: {
@@ -53,7 +53,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         };
     }
 
-    private setPage(page: 'overview' | 'abilities' | 'combat' | 'actions') {
+    private setPage(page: 'overview' | 'abilities' | 'cbt-stats' | 'actions') {
         const sections = this.getHelpOptionsForPage(page);
         this.setState({
             page: page,
@@ -84,13 +84,13 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Helper methods
 
-    private getHelpOptionsForPage(page: 'overview' | 'abilities' | 'combat' | 'actions') {
+    private getHelpOptionsForPage(page: 'overview' | 'abilities' | 'cbt-stats' | 'actions') {
         switch (page) {
             case 'overview':
                 return ['speed', 'senses', 'languages', 'equipment'];
             case 'abilities':
                 return ['str', 'dex', 'con', 'int', 'wis', 'cha', 'saves', 'skills'];
-            case 'combat':
+            case 'cbt-stats':
                 return ['armor class', 'hit dice', 'resistances', 'vulnerabilities', 'immunities', 'conditions'];
             case 'actions':
                 return ['actions'];
@@ -669,7 +669,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                     text: 'abilities'
                 },
                 {
-                    id: 'combat',
+                    id: 'cbt-stats',
                     text: 'combat'
                 },
                 {
@@ -759,7 +759,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         </div>
                     );
                     break;
-                case 'combat':
+                case 'cbt-stats':
                     content = (
                         <div className='row'>
                             <div className='columns small-6 medium-6 large-6'>
@@ -878,7 +878,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                 tabs={true}
                                 options={pages}
                                 selectedID={this.state.page}
-                                select={optionID => this.setPage(optionID as 'overview' | 'abilities' | 'combat' | 'actions')}
+                                select={optionID => this.setPage(optionID as 'overview' | 'abilities' | 'cbt-stats' | 'actions')}
                             />
                             {content}
                             {help}

@@ -587,7 +587,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                         </div>
                     );
                 }
-                if (this.props.mode.indexOf('combat') !== -1) {
+                if (this.props.mode.indexOf('cbt-stats') !== -1) {
                     stats = (
                         <div>
                             <div className='section'>
