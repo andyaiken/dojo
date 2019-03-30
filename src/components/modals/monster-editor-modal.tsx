@@ -490,7 +490,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     private getActionsSection(monsters: Monster[]) {
         const rows = [];
         rows.push(
-            <div className='row small-up-3 medium-up-3 large-up-3 value-list' key='header'>
+            <div className='row small-up-4 medium-up-4 large-up-4 value-list' key='header'>
                 <div className='column'>
                     <div className='text-container'>
                         <b>type</b>

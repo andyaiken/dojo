@@ -12,7 +12,7 @@ You will need to have `Git` and `Node.js` installed.
 
 * Open a terminal in the root folder
 * Run `npm install`
-* Check that you're using the latest dependencies by running `npm update --dev`
+* Check that you're using the latest dependencies by running `npm update`
 
 ## Compiling and running the app
 
