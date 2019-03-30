@@ -4,6 +4,14 @@ Dojo is a web app for D&D (5E) dungeon masters.
 
 It can be used to design monsters and to plan and run combat encounters.
 
+![Browsing the monster library](./docs/goblinoids.jpg)
+
+![Planning an encounter](./docs/encounter.jpg)
+
+![Starting an encounter](./docs/start-encounter.jpg)
+
+![Running combat](./docs/combat.jpg)
+
 Dojo is written in TypeScript / JavaScript, using React and SCSS. If you would like to contribute to this project, you are welcome to do so.
 
 ## Initial set up
@@ -32,17 +40,18 @@ Check that your changes don't break the project's style rules:
 * Open a terminal in the root folder
 * Run `npm run lint`
 
+Remember to update the app version number in `package.json` before pushing any change to the repository.
+
 ## Publishing a new version of the app
 
-* Update the app version number in `package.json`
-* Push the change to the repository
 * Open a terminal in the root folder
 * Run `npm run deploy`
 
-This will build the app in the `build` folder and attempt to deploy it. You need to have git installed.
+This will build the app in the `build` folder and attempt to deploy it.
 
 ## Code structure
 
+- docs
 - public
 - src
   - components
