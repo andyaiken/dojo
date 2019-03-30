@@ -11,6 +11,7 @@ import { Monster, MonsterGroup, Trait } from '../models/monster-group';
 import { Party, PC } from '../models/party';
 
 import CombatManagerScreen from './screens/combat-manager-screen';
+import DMScreen from './screens/dm-screen';
 import EncounterBuilderScreen from './screens/encounter-builder-screen';
 import HomeScreen from './screens/home-screen';
 import MapFoliosScreen from './screens/map-folios-screen';
@@ -1778,6 +1779,9 @@ export default class Dojo extends React.Component<Props, State> {
                             );
                         }
                     }
+                    break;
+                case 'dm':
+                    content = <DMScreen showHelp={this.state.options.showHelp} />;
                     break;
                 default:
                     // Do nothing

@@ -21,6 +21,7 @@ export default class Navbar extends React.Component<Props> {
             let encounterStyle = this.props.view === 'encounter' ? 'navigator-item selected' : 'navigator-item';
             const mapStyle = this.props.view === 'maps' ? 'navigator-item selected' : 'navigator-item';
             let combatStyle = this.props.view === 'combat' ? 'navigator-item selected' : 'navigator-item';
+            const dmStyle = this.props.view === 'dm' ? 'navigator-item selected' : 'navigator-item';
 
             const encountersEnabled = this.props.library.length !== 0;
             const combatEnabled = (this.props.parties.length !== 0) && (this.props.encounters.length !== 0);
@@ -38,6 +39,7 @@ export default class Navbar extends React.Component<Props> {
                     <div className={encounterStyle} onClick={() => encountersEnabled ? this.props.setView('encounter') : null}>encounter builder</div>
                     <div className={mapStyle} onClick={() => this.props.setView('maps')}>map folios</div>
                     <div className={combatStyle} onClick={() => combatEnabled ? this.props.setView('combat') : null}>combat manager</div>
+                    <div className={dmStyle} onClick={() => this.props.setView('dm')}>dm screen</div>
                 </div>
             );
         } catch (e) {
