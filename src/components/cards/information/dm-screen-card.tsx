@@ -6,9 +6,10 @@ export default class DMScreenCard extends React.Component {
     private getContent() {
         return (
             <div>
-                <div className='section'>DM SCREEN</div>
+                <div className='section'>this is the dm screen</div>
+                <div className='section'>it contains a collection of modules which might be useful when you're running the game</div>
                 <div className='divider' />
-                <div className='section'>below you will see a list of modules</div>
+                <div className='section'>click on a module below to open it</div>
             </div>
         );
     }
