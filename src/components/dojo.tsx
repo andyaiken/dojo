@@ -32,8 +32,6 @@ import Checkbox from './controls/checkbox';
 
 import close from '../resources/images/close-black.svg';
 
-import monsters from '../resources/data/monsters.json';
-
 // tslint:disable-next-line:no-empty-interface
 interface Props {
     // No props; this is the root component
@@ -399,205 +397,209 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private addOpenGameContent() {
-        monsters.forEach((data: any) => {
-            try {
-                if (data.name) {
-                    const monster = Factory.createMonster();
+        fetch('/data/monsters.json')
+            .then(response => response.json())
+            .then(json => {
+                json.forEach((data: any) => {
+                    try {
+                        if (data.name) {
+                            const monster = Factory.createMonster();
 
-                    monster.type = 'monster';
-                    monster.name = data.name;
-                    monster.size = data.size.toLowerCase();
-                    monster.category = data.type;
-                    monster.tag = data.subtype;
-                    monster.alignment = data.alignment;
-                    monster.challenge = Utils.parseChallenge(data.challenge_rating);
-                    monster.ac = data.armor_class;
-                    monster.hpMax = data.hit_points;
-                    monster.speed = data.speed;
-                    monster.senses = data.senses;
-                    monster.languages = data.languages;
+                            monster.type = 'monster';
+                            monster.name = data.name;
+                            monster.size = data.size.toLowerCase();
+                            monster.category = data.type;
+                            monster.tag = data.subtype;
+                            monster.alignment = data.alignment;
+                            monster.challenge = Utils.parseChallenge(data.challenge_rating);
+                            monster.ac = data.armor_class;
+                            monster.hpMax = data.hit_points;
+                            monster.speed = data.speed;
+                            monster.senses = data.senses;
+                            monster.languages = data.languages;
 
-                    const index = data.hit_dice.indexOf('d');
-                    monster.hitDice = parseInt(data.hit_dice.substring(0, index), 10);
+                            const index = data.hit_dice.indexOf('d');
+                            monster.hitDice = parseInt(data.hit_dice.substring(0, index), 10);
 
-                    monster.abilityScores.str = data.strength;
-                    monster.abilityScores.dex = data.dexterity;
-                    monster.abilityScores.con = data.constitution;
-                    monster.abilityScores.int = data.intelligence;
-                    monster.abilityScores.wis = data.wisdom;
-                    monster.abilityScores.cha = data.charisma;
+                            monster.abilityScores.str = data.strength;
+                            monster.abilityScores.dex = data.dexterity;
+                            monster.abilityScores.con = data.constitution;
+                            monster.abilityScores.int = data.intelligence;
+                            monster.abilityScores.wis = data.wisdom;
+                            monster.abilityScores.cha = data.charisma;
 
-                    monster.damage.resist = data.damage_resistances;
-                    monster.damage.vulnerable = data.damage_vulnerabilities;
-                    monster.damage.immune = data.damage_immunities;
-                    monster.conditionImmunities = data.condition_immunities;
+                            monster.damage.resist = data.damage_resistances;
+                            monster.damage.vulnerable = data.damage_vulnerabilities;
+                            monster.damage.immune = data.damage_immunities;
+                            monster.conditionImmunities = data.condition_immunities;
 
-                    const saves = [
-                        {
-                            field: 'strength_save',
-                            text: 'Strength'
-                        },
-                        {
-                            field: 'dexterity_save',
-                            text: 'Dexterity'
-                        },
-                        {
-                            field: 'constitution_save',
-                            text: 'Constitution'
-                        },
-                        {
-                            field: 'intelligence_save',
-                            text: 'Intelligence'
-                        },
-                        {
-                            field: 'wisdom_save',
-                            text: 'Wisdom'
-                        },
-                        {
-                            field: 'charisma_save',
-                            text: 'Charisma'
+                            const saves = [
+                                {
+                                    field: 'strength_save',
+                                    text: 'Strength'
+                                },
+                                {
+                                    field: 'dexterity_save',
+                                    text: 'Dexterity'
+                                },
+                                {
+                                    field: 'constitution_save',
+                                    text: 'Constitution'
+                                },
+                                {
+                                    field: 'intelligence_save',
+                                    text: 'Intelligence'
+                                },
+                                {
+                                    field: 'wisdom_save',
+                                    text: 'Wisdom'
+                                },
+                                {
+                                    field: 'charisma_save',
+                                    text: 'Charisma'
+                                }
+                            ];
+                            saves.forEach(save => {
+                                if (data[save.field]) {
+                                    const str = save.text + ' ' + data[save.field];
+                                    monster.savingThrows += monster.savingThrows === '' ? str : ', ' + str;
+                                }
+                            });
+
+                            const skills = [
+                                {
+                                    field: 'acrobatics',
+                                    text: 'Acrobatics'
+                                },
+                                {
+                                    field: 'animal_handling',
+                                    text: 'Animal handling'
+                                },
+                                {
+                                    field: 'arcana',
+                                    text: 'Arcana'
+                                },
+                                {
+                                    field: 'athletics',
+                                    text: 'Athletics'
+                                },
+                                {
+                                    field: 'deception',
+                                    text: 'Deception'
+                                },
+                                {
+                                    field: 'history',
+                                    text: 'History'
+                                },
+                                {
+                                    field: 'insight',
+                                    text: 'Insight'
+                                },
+                                {
+                                    field: 'intimidation',
+                                    text: 'Intimidation'
+                                },
+                                {
+                                    field: 'investigation',
+                                    text: 'Investigation'
+                                },
+                                {
+                                    field: 'medicine',
+                                    text: 'Medicine'
+                                },
+                                {
+                                    field: 'nature',
+                                    text: 'Nature'
+                                },
+                                {
+                                    field: 'perception',
+                                    text: 'Perception'
+                                },
+                                {
+                                    field: 'performance',
+                                    text: 'Performance'
+                                },
+                                {
+                                    field: 'persuasion',
+                                    text: 'Persuasion'
+                                },
+                                {
+                                    field: 'religion',
+                                    text: 'Religion'
+                                },
+                                {
+                                    field: 'sleight_of_hand',
+                                    text: 'Sleight of hand'
+                                },
+                                {
+                                    field: 'stealth',
+                                    text: 'Stealth'
+                                },
+                                {
+                                    field: 'survival',
+                                    text: 'Survival'
+                                }
+                            ];
+                            skills.forEach(skill => {
+                                if (data[skill.field]) {
+                                    const str = skill.text + ' ' + data[skill.field];
+                                    monster.skills += monster.skills === '' ? str : ', ' + str;
+                                }
+                            });
+
+                            if (data.special_abilities) {
+                                data.special_abilities.forEach((rawTrait: any) => {
+                                    const trait = this.buildTrait(rawTrait, 'trait');
+                                    monster.traits.push(trait);
+                                });
+                            }
+                            if (data.actions) {
+                                data.actions.forEach((rawTrait: any) => {
+                                    const trait = this.buildTrait(rawTrait, 'action');
+                                    monster.traits.push(trait);
+                                });
+                            }
+                            if (data.legendary_actions) {
+                                data.legendary_actions.forEach((rawTrait: any) => {
+                                    const trait = this.buildTrait(rawTrait, 'legendary');
+                                    monster.traits.push(trait);
+                                });
+                            }
+
+                            let groupName = monster.tag;
+                            if (groupName === '') {
+                                groupName = monster.category;
+                            }
+                            if (groupName.indexOf('swarm') === 0) {
+                                groupName = 'swarm';
+                            }
+                            if (groupName === 'any race') {
+                                groupName = 'npc';
+                            }
+
+                            let group = this.getMonsterGroupByName(groupName);
+                            if (!group) {
+                                group = {
+                                    id: Utils.guid(),
+                                    name: groupName,
+                                    monsters: []
+                                };
+                                this.state.library.push(group);
+                            }
+                            group.monsters.push(monster);
                         }
-                    ];
-                    saves.forEach(save => {
-                        if (data[save.field]) {
-                            const str = save.text + ' ' + data[save.field];
-                            monster.savingThrows += monster.savingThrows === '' ? str : ', ' + str;
-                        }
-                    });
+                    } catch (e) {
+                        console.error(e);
+                    }
+                });
 
-                    const skills = [
-                        {
-                            field: 'acrobatics',
-                            text: 'Acrobatics'
-                        },
-                        {
-                            field: 'animal_handling',
-                            text: 'Animal handling'
-                        },
-                        {
-                            field: 'arcana',
-                            text: 'Arcana'
-                        },
-                        {
-                            field: 'athletics',
-                            text: 'Athletics'
-                        },
-                        {
-                            field: 'deception',
-                            text: 'Deception'
-                        },
-                        {
-                            field: 'history',
-                            text: 'History'
-                        },
-                        {
-                            field: 'insight',
-                            text: 'Insight'
-                        },
-                        {
-                            field: 'intimidation',
-                            text: 'Intimidation'
-                        },
-                        {
-                            field: 'investigation',
-                            text: 'Investigation'
-                        },
-                        {
-                            field: 'medicine',
-                            text: 'Medicine'
-                        },
-                        {
-                            field: 'nature',
-                            text: 'Nature'
-                        },
-                        {
-                            field: 'perception',
-                            text: 'Perception'
-                        },
-                        {
-                            field: 'performance',
-                            text: 'Performance'
-                        },
-                        {
-                            field: 'persuasion',
-                            text: 'Persuasion'
-                        },
-                        {
-                            field: 'religion',
-                            text: 'Religion'
-                        },
-                        {
-                            field: 'sleight_of_hand',
-                            text: 'Sleight of hand'
-                        },
-                        {
-                            field: 'stealth',
-                            text: 'Stealth'
-                        },
-                        {
-                            field: 'survival',
-                            text: 'Survival'
-                        }
-                    ];
-                    skills.forEach(skill => {
-                        if (data[skill.field]) {
-                            const str = skill.text + ' ' + data[skill.field];
-                            monster.skills += monster.skills === '' ? str : ', ' + str;
-                        }
-                    });
+                Utils.sort(this.state.library);
 
-                    if (data.special_abilities) {
-                        data.special_abilities.forEach((rawTrait: any) => {
-                            const trait = this.buildTrait(rawTrait, 'trait');
-                            monster.traits.push(trait);
-                        });
-                    }
-                    if (data.actions) {
-                        data.actions.forEach((rawTrait: any) => {
-                            const trait = this.buildTrait(rawTrait, 'action');
-                            monster.traits.push(trait);
-                        });
-                    }
-                    if (data.legendary_actions) {
-                        data.legendary_actions.forEach((rawTrait: any) => {
-                            const trait = this.buildTrait(rawTrait, 'legendary');
-                            monster.traits.push(trait);
-                        });
-                    }
-
-                    let groupName = monster.tag;
-                    if (groupName === '') {
-                        groupName = monster.category;
-                    }
-                    if (groupName.indexOf('swarm') === 0) {
-                        groupName = 'swarm';
-                    }
-                    if (groupName === 'any race') {
-                        groupName = 'npc';
-                    }
-
-                    let group = this.getMonsterGroupByName(groupName);
-                    if (!group) {
-                        group = {
-                            id: Utils.guid(),
-                            name: groupName,
-                            monsters: []
-                        };
-                        this.state.library.push(group);
-                    }
-                    group.monsters.push(monster);
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        });
-
-        Utils.sort(this.state.library);
-
-        this.setState({
-            view: 'library',
-            library: this.state.library
-        });
+                this.setState({
+                    view: 'library',
+                    library: this.state.library
+                });
+            });
     }
 
     private buildTrait(rawTrait: any, type: 'trait' | 'action' | 'legendary' | 'lair' | 'regional'): Trait {

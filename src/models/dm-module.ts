@@ -3,5 +3,6 @@ export interface DMModule {
     name: string;
     desc: string;
 
-    getContent(): JSX.Element;
+    init: () => void;
+    getContent: () => JSX.Element;
 }

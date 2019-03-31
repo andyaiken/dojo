@@ -23,6 +23,8 @@ export default class DMScreen extends React.Component<Props, State> {
         this.state = {
             moduleID: null
         };
+
+        this.getModules().forEach(m => m.init());
     }
 
     private setModule(moduleID: string) {
@@ -67,7 +69,7 @@ export default class DMScreen extends React.Component<Props, State> {
             if (this.state.moduleID) {
                 const module = modules.find(m => m.id === this.state.moduleID);
                 if (module) {
-                    content = module.getContent();
+                    content = <div className="dm-module">{module.getContent()}</div>;
                 }
             }
 
