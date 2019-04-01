@@ -17,7 +17,7 @@ export default class ConditionsModule implements DMModule {
         const fetchSource = async () => {
             const response = await fetch('/data/conditions.md');
             ConditionsModule.source = await response.text();
-        }
+        };
         if (!ConditionsModule.source) {
             fetchSource();
         }

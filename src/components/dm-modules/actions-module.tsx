@@ -16,7 +16,7 @@ export default class ActionsModule implements DMModule {
         const fetchSource = async () => {
             const response = await fetch('/data/actions.md');
             ActionsModule.source = await response.text();
-        }
+        };
         if (!ActionsModule.source) {
             fetchSource();
         }

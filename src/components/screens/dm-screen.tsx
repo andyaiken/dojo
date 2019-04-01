@@ -57,7 +57,7 @@ export default class DMScreen extends React.Component<Props> {
             if (this.props.selectedModuleID) {
                 const module = modules.find(m => m.id === this.props.selectedModuleID);
                 if (module) {
-                    content = <div className="dm-module">{module.getContent()}</div>;
+                    content = <div className='dm-module'>{module.getContent()}</div>;
                 }
             }
 

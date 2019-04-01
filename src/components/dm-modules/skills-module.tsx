@@ -16,7 +16,7 @@ export default class SkillsModule implements DMModule {
         const fetchSource = async () => {
             const response = await fetch('/data/skills.md');
             SkillsModule.source = await response.text();
-        }
+        };
         if (!SkillsModule.source) {
             fetchSource();
         }
