@@ -16,6 +16,7 @@ interface Props {
 export default class Navbar extends React.Component<Props> {
     public render() {
         try {
+            const dmStyle = this.props.view === 'dm' ? 'navigator-item selected' : 'navigator-item';
             const partiesStyle = this.props.view === 'parties' ? 'navigator-item selected' : 'navigator-item';
             const libraryStyle = this.props.view === 'library' ? 'navigator-item selected' : 'navigator-item';
             let encounterStyle = this.props.view === 'encounter' ? 'navigator-item selected' : 'navigator-item';
@@ -33,6 +34,7 @@ export default class Navbar extends React.Component<Props> {
 
             return (
                 <div className={this.props.blur ? 'navbar blur' : 'navbar'}>
+                    <div className={dmStyle} onClick={() => this.props.setView('dm')}>dm screen</div>
                     <div className={partiesStyle} onClick={() => this.props.setView('parties')}>player characters</div>
                     <div className={libraryStyle} onClick={() => this.props.setView('library')}>monster library</div>
                     <div className={encounterStyle} onClick={() => encountersEnabled ? this.props.setView('encounter') : null}>encounter builder</div>

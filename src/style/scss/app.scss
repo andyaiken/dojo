@@ -9,6 +9,16 @@ strong {
     color: black;
 }
 
+h1 {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+    padding: 10px 0;
+}
+
 p {
     margin: 5px 0;
 }
@@ -289,7 +299,7 @@ body,
 .encounter-builder,
 .map-builder,
 .combat-manager,
-.about {
+.dm-screen {
     height: 100%;
 }
 
@@ -324,7 +334,7 @@ body,
         cursor: pointer;
         height: 50px;
         line-height: 35px;
-        width: calc((100% - 1px) / 5);
+        width: calc((100% - 1px) / 6);
         font-size: 14px;
         color: $header-foreground;
         border-top: 1px solid $control-border;
@@ -1230,3 +1240,7 @@ body,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+.dm-module {
+    padding: 10px 5px;
+}
