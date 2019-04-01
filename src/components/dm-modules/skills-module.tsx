@@ -1,30 +1,39 @@
 import React from 'react';
 import Showdown from 'showdown';
 
-import { DMModule } from '../../models/dm-module';
-
 const showdown = new Showdown.Converter();
 
-export default class SkillsModule implements DMModule {
-    public id: string = 'skills';
-    public name: string = 'skills';
-    public desc: string = 'listing of all the skills in the game';
+interface Props {
+    //
+}
 
-    private static source: string | null = null;
+interface State {
+    source: string | null;
+}
 
-    public init() {
-        const fetchSource = async () => {
-            const response = await fetch('/data/skills.md');
-            SkillsModule.source = await response.text();
+export default class SkillsModule extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            source: null
         };
-        if (!SkillsModule.source) {
-            fetchSource();
-        }
     }
 
-    public getContent(): JSX.Element {
+    private async fetchData() {
+        const response = await fetch('/data/skills.md');
+        this.setState({
+            source: await response.text()
+        });
+    }
+
+    public render() {
+        if (!this.state.source) {
+            this.fetchData();
+        }
+
         return (
-            <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(SkillsModule.source || '') }} />
+            <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.state.source || '') }} />
         );
     }
 }

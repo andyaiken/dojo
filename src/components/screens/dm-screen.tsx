@@ -5,6 +5,7 @@ import { DMModule } from '../../models/dm-module';
 import DMScreenCard from '../cards/information/dm-screen-card';
 import ActionsModule from '../dm-modules/actions-module';
 import ConditionsModule from '../dm-modules/conditions-module';
+import LanguageModule from '../dm-modules/language-module';
 import SkillsModule from '../dm-modules/skills-module';
 import DMModuleListItem from '../list-items/dm-module-list-item';
 
@@ -15,18 +16,52 @@ interface Props {
 }
 
 export default class DMScreen extends React.Component<Props> {
-    constructor(props: Props) {
-        super(props);
-
-        this.getModules().forEach(m => m.init());
-    }
-
     private getModules(): DMModule[] {
         return [
-            new SkillsModule(),
-            new ConditionsModule(),
-            new ActionsModule()
+            {
+                id: 'skills',
+                name: 'skills',
+                desc: 'listing of all the skills in the game'
+            },
+            {
+                id: 'conditions',
+                name: 'conditions',
+                desc: 'information about conditions and their effects'
+            },
+            {
+                id: 'actions',
+                name: 'actions',
+                desc: 'list of the available action types and examples'
+            },
+            {
+                id: 'language',
+                name: 'language',
+                desc: 'this tool allows you to generate unique languages'
+            }
         ];
+    }
+
+    private getContent(): JSX.Element | null {
+        switch (this.props.selectedModuleID) {
+            case 'skills':
+                return (
+                    <SkillsModule />
+                );
+            case 'conditions':
+                return (
+                    <ConditionsModule />
+                );
+            case 'actions':
+                return (
+                    <ActionsModule />
+                );
+            case 'language':
+                return (
+                    <LanguageModule />
+                );
+            default:
+                return null;
+        }
     }
 
     public render() {
@@ -53,14 +88,6 @@ export default class DMScreen extends React.Component<Props> {
                 );
             }
 
-            let content: JSX.Element | null = null;
-            if (this.props.selectedModuleID) {
-                const module = modules.find(m => m.id === this.props.selectedModuleID);
-                if (module) {
-                    content = <div className='dm-module'>{module.getContent()}</div>;
-                }
-            }
-
             return (
                 <div className='dm-screen row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable list-column'>
@@ -68,7 +95,7 @@ export default class DMScreen extends React.Component<Props> {
                         {moduleListItems}
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
-                        {content}
+                        {this.getContent()}
                     </div>
                 </div>
             );
