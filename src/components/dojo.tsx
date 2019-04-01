@@ -5,6 +5,7 @@ import Utils from '../utils/utils';
 
 import { Combat, Combatant, CombatSetup, Notification } from '../models/combat';
 import { Condition } from '../models/condition';
+import { DMModule } from '../models/dm-module';
 import { Encounter, EncounterSlot, EncounterWave } from '../models/encounter';
 import { Map, MapFolio } from '../models/map-folio';
 import { Monster, MonsterGroup, Trait } from '../models/monster-group';
@@ -54,6 +55,7 @@ interface State {
     selectedEncounterID: string | null;
     selectedMapFolioID: string | null;
     selectedCombatID: string | null;
+    selectedDMModuleID: string | null;
 
     modal: any;
 
@@ -79,6 +81,7 @@ export default class Dojo extends React.Component<Props, State> {
             selectedEncounterID: null,
             selectedMapFolioID: null,
             selectedCombatID: null,
+            selectedDMModuleID: null,
             modal: null,
             libraryFilter: ''
         };
@@ -1489,6 +1492,12 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
+    private selectDMModule(module: DMModule | null) {
+        this.setState({
+            selectedDMModuleID: module ? module.id : null
+        });
+    }
+
     private getParty(id: string | null) {
         return this.state.parties.find(p => p.id === id);
     }
@@ -1783,7 +1792,13 @@ export default class Dojo extends React.Component<Props, State> {
                     }
                     break;
                 case 'dm':
-                    content = <DMScreen showHelp={this.state.options.showHelp} />;
+                    content = (
+                        <DMScreen
+                            selectedModuleID={this.state.selectedDMModuleID}
+                            showHelp={this.state.options.showHelp}
+                            selectModule={module => this.selectDMModule(module)}
+                        />
+                    );
                     break;
                 default:
                     // Do nothing

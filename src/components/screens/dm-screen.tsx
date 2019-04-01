@@ -9,28 +9,16 @@ import SkillsModule from '../dm-modules/skills-module';
 import DMModuleListItem from '../list-items/dm-module-list-item';
 
 interface Props {
+    selectedModuleID: string | null;
     showHelp: boolean;
+    selectModule: (module: DMModule | null) => void;
 }
 
-interface State {
-    moduleID: string | null;
-}
-
-export default class DMScreen extends React.Component<Props, State> {
+export default class DMScreen extends React.Component<Props> {
     constructor(props: Props) {
         super(props);
 
-        this.state = {
-            moduleID: null
-        };
-
         this.getModules().forEach(m => m.init());
-    }
-
-    private setModule(moduleID: string) {
-        this.setState({
-            moduleID: moduleID
-        });
     }
 
     private getModules(): DMModule[] {
@@ -59,15 +47,15 @@ export default class DMScreen extends React.Component<Props, State> {
                     <DMModuleListItem
                         key={m.id}
                         module={m}
-                        selected={m.id === this.state.moduleID}
-                        setSelection={module => this.setModule(module.id)}
+                        selected={m.id === this.props.selectedModuleID}
+                        setSelection={module => this.props.selectModule(module)}
                     />
                 );
             }
 
             let content: JSX.Element | null = null;
-            if (this.state.moduleID) {
-                const module = modules.find(m => m.id === this.state.moduleID);
+            if (this.props.selectedModuleID) {
+                const module = modules.find(m => m.id === this.props.selectedModuleID);
                 if (module) {
                     content = <div className="dm-module">{module.getContent()}</div>;
                 }
