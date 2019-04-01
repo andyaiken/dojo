@@ -1468,6 +1468,12 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
+    private selectDMModule(module: DMModule | null) {
+        this.setState({
+            selectedDMModuleID: module ? module.id : null
+        });
+    }
+
     private selectParty(party: Party | null) {
         this.setState({
             selectedPartyID: party ? party.id : null
@@ -1489,12 +1495,6 @@ export default class Dojo extends React.Component<Props, State> {
     private selectMapFolio(mapFolio: MapFolio | null) {
         this.setState({
             selectedMapFolioID: mapFolio ? mapFolio.id : null
-        });
-    }
-
-    private selectDMModule(module: DMModule | null) {
-        this.setState({
-            selectedDMModuleID: module ? module.id : null
         });
     }
 
@@ -1635,6 +1635,15 @@ export default class Dojo extends React.Component<Props, State> {
                         <HomeScreen
                             library={this.state.library}
                             addOpenGameContent={() => this.addOpenGameContent()}
+                        />
+                    );
+                    break;
+                case 'dm':
+                    content = (
+                        <DMScreen
+                            selectedModuleID={this.state.selectedDMModuleID}
+                            showHelp={this.state.options.showHelp}
+                            selectModule={module => this.selectDMModule(module)}
                         />
                     );
                     break;
@@ -1790,15 +1799,6 @@ export default class Dojo extends React.Component<Props, State> {
                             );
                         }
                     }
-                    break;
-                case 'dm':
-                    content = (
-                        <DMScreen
-                            selectedModuleID={this.state.selectedDMModuleID}
-                            showHelp={this.state.options.showHelp}
-                            selectModule={module => this.selectDMModule(module)}
-                        />
-                    );
                     break;
                 default:
                     // Do nothing
