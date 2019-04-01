@@ -8,7 +8,7 @@ const showdown = new Showdown.Converter();
 export default class SkillsModule implements DMModule {
     public id: string = 'skills';
     public name: string = 'skills';
-    public desc: string = 'lists all the skills in the game';
+    public desc: string = 'listing of all the skills in the game';
 
     private static source: string | null = null;
 
