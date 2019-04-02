@@ -35,8 +35,8 @@ export default class DMScreen extends React.Component<Props> {
             },
             {
                 id: 'language',
-                name: 'language',
-                desc: 'this tool allows you to generate unique languages'
+                name: 'language generator',
+                desc: 'this tool allows you to generate text in unique languages'
             }
         ];
     }

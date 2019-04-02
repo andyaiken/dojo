@@ -185,7 +185,7 @@ export default class LanguageModule extends React.Component<Props, State> {
         const output = [];
         for (let n = 0; n !== this.state.output.length; ++n) {
             output.push(
-                <div key={n} className='column small-12 medium-12 large-12 section'>
+                <div key={n} className='section'>
                     {this.state.output[n]}
                 </div>
             );
@@ -204,8 +204,8 @@ export default class LanguageModule extends React.Component<Props, State> {
                     {languages}
                 </div>
                 <div className='subheading'>output</div>
-                <button className={allowGenerate ? '' : 'disabled'} onClick={() => this.generate()}>generate</button>
-                <div className='row language-output'>
+                <button className={allowGenerate ? '' : 'disabled'} onClick={() => this.generate()}>generate text</button>
+                <div className='language-output'>
                     {output}
                 </div>
             </div>

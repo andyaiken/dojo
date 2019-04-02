@@ -1251,7 +1251,11 @@ body,
         }
 
         .language-output {
-            font-size: 20px;
+
+            .section {
+                font-size: 20px;
+                margin: 10px 0;
+            }
         }
     }
 }
