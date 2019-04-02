@@ -22,7 +22,7 @@ export default class SkillsModule extends React.Component<Props, State> {
     }
 
     private async fetchData() {
-        const response = await fetch('/data/skills.md');
+        const response = await fetch('./data/skills.md');
         this.setState({
             source: await response.text()
         });

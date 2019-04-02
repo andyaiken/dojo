@@ -400,7 +400,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private addOpenGameContent() {
-        fetch('/data/monsters.json')
+        fetch('./data/monsters.json')
             .then(response => response.json())
             .then(json => {
                 json.forEach((data: any) => {

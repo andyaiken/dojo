@@ -22,7 +22,7 @@ export default class ConditionsModule extends React.Component<Props, State> {
     }
 
     private async fetchData() {
-        const response = await fetch('/data/conditions.md');
+        const response = await fetch('./data/conditions.md');
         this.setState({
             source: await response.text()
         });

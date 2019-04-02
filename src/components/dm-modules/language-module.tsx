@@ -109,8 +109,7 @@ export default class LanguageModule extends React.Component<Props, State> {
     }
 
     private async addLanguage(language: string) {
-        const path = '/data/langs/' + language + '.txt';
-        const response = await fetch(path);
+        const response = await fetch('./data/langs/' + language + '.txt');
         this.state.sources[language] = await response.text();
         this.setState({
             sources: this.state.sources

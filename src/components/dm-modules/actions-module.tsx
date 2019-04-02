@@ -22,7 +22,7 @@ export default class ActionsModule extends React.Component<Props, State> {
     }
 
     private async fetchData() {
-        const response = await fetch('/data/actions.md');
+        const response = await fetch('./data/actions.md');
         this.setState({
             source: await response.text()
         });
