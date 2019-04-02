@@ -3,6 +3,7 @@ import Showdown from 'showdown';
 
 const showdown = new Showdown.Converter();
 
+// tslint:disable-next-line:no-empty-interface
 interface Props {
     //
 }

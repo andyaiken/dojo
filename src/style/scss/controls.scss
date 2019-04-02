@@ -11,6 +11,10 @@
     cursor: pointer;
     padding: 5px;
 
+    &.checked {
+        background-color: $highlight01;
+    }
+
     &:hover {
         border-color: $highlight;
     }

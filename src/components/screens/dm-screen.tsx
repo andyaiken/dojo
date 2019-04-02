@@ -95,7 +95,9 @@ export default class DMScreen extends React.Component<Props> {
                         {moduleListItems}
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
-                        {this.getContent()}
+                        <div className='dm-module'>
+                            {this.getContent()}
+                        </div>
                     </div>
                 </div>
             );

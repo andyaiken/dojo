@@ -22,8 +22,16 @@ export default class Checkbox extends React.Component<Props> {
 
     public render() {
         try {
+            let style = 'checkbox';
+            if (this.props.checked) {
+                style += ' checked';
+            }
+            if (this.props.disabled) {
+                style += ' disabled';
+            }
+
             return (
-                <div className={this.props.disabled ? 'checkbox disabled' : 'checkbox'} onClick={e => this.click(e)}>
+                <div className={style} onClick={e => this.click(e)}>
                     <img className='image' src={this.props.checked ? checked : unchecked} alt='check' />
                     <div className='checkbox-label'>{this.props.label}</div>
                 </div>
