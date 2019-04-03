@@ -145,7 +145,7 @@ export default class MapPanel extends React.Component<Props> {
                                 y={y}
                                 style={gridStyle}
                                 onClick={() => this.props.setSelectedItemID(null)}
-                                onDoubleClick={(posX, posY) => this.props.addMapTile(posX, posY)}
+                                onDoubleClick={this.props.addMapTile}
                             />
                         );
                     }
@@ -188,7 +188,7 @@ export default class MapPanel extends React.Component<Props> {
                                     simple={this.props.mode === 'thumbnail'}
                                     selectable={this.props.mode === 'combat'}
                                     selected={this.props.selectedItemID ===  i.id}
-                                    select={id => this.props.setSelectedItemID(id)}
+                                    select={this.props.setSelectedItemID}
                                 />
                             );
                         }
@@ -211,7 +211,7 @@ export default class MapPanel extends React.Component<Props> {
                                 y={yOver}
                                 style={overlayStyle}
                                 overlay={true}
-                                onClick={(posX, posY) => this.props.gridSquareClicked(posX, posY)}
+                                onClick={this.props.gridSquareClicked}
                             />
                         );
                     }
@@ -274,8 +274,8 @@ class GridSquare extends React.Component<GridSquareProps> {
             <div
                 className={style}
                 style={this.props.style}
-                onClick={e => this.click(e)}
-                onDoubleClick={e => this.doubleClick(e)}
+                onClick={this.click}
+                onDoubleClick={this.doubleClick}
             />
         );
     }
@@ -311,7 +311,7 @@ class MapTile extends React.Component<MapTileProps> {
             <div
                 className={style}
                 style={this.props.style}
-                onClick={e => this.select(e)}
+                onClick={this.select}
             />
         );
     }
@@ -384,7 +384,7 @@ class MapToken extends React.Component<MapTokenProps> {
                 title={this.props.combatant.displayName || this.props.combatant.name}
                 className={style}
                 style={this.props.style}
-                onClick={e => this.select(e)}
+                onClick={this.select}
             >
                 {initials}
                 {hpGauge}

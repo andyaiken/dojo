@@ -31,7 +31,7 @@ export default class Checkbox extends React.Component<Props> {
             }
 
             return (
-                <div className={style} onClick={e => this.click(e)}>
+                <div className={style} onClick={this.click}>
                     <img className='image' src={this.props.checked ? checked : unchecked} alt='check' />
                     <div className='checkbox-label'>{this.props.label}</div>
                 </div>

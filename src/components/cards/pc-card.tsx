@@ -251,7 +251,7 @@ export default class PCCard extends React.Component<Props, State> {
                 // Don't show toggle button for combatant
             } else {
                 const imageStyle = this.state.showDetails ? 'image rotate' : 'image';
-                toggle = <img className={imageStyle} src={arrow} alt='arrow' onClick={() => this.toggleDetails()} />;
+                toggle = <img className={imageStyle} src={arrow} alt='arrow' onClick={this.toggleDetails} />;
             }
 
             const name = (this.props.combatant as Combatant ? (this.props.combatant as Combatant).displayName : null)

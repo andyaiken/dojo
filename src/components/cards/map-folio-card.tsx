@@ -33,8 +33,8 @@ export default class MapFolioCard extends React.Component<Props> {
                     </div>
                     <div className='divider' />
                     <div className='section'>
-                        <button onClick={() => this.props.addMap()}>add a new map</button>
-                        <ConfirmButton text='delete folio' callback={() => this.props.removeMapFolio()} />
+                        <button onClick={this.props.addMap}>add a new map</button>
+                        <ConfirmButton text='delete folio' callback={this.props.removeMapFolio} />
                     </div>
                 </div>
             );

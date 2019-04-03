@@ -49,7 +49,7 @@ export default class Expander extends React.Component<Props, State> {
 
             return (
                 <div className={style}>
-                    <div className='expander-header' onClick={() => this.toggle()}>
+                    <div className='expander-header' onClick={this.toggle}>
                         <div className='expander-text'>{this.props.text}</div>
                         <img className='expander-button' src={arrow} alt='arrow' />
                     </div>

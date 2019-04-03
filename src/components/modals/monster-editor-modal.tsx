@@ -630,7 +630,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 <div className='card'>
                     <div className='heading'>
                         <div className='title'>similar monsters</div>
-                        <img className={this.state.showFilter ? 'image rotate' : 'image'} src={arrow} alt='arrow' onClick={() => this.toggleFilter()} />
+                        <img className={this.state.showFilter ? 'image rotate' : 'image'} src={arrow} alt='arrow' onClick={this.toggleFilter} />
                     </div>
                     <div className='card-content'>
                         {filterContent}
@@ -647,7 +647,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 <MonsterCard
                     combatant={m}
                     mode={'template ' + this.state.page}
-                    copyTrait={trait => this.copyTrait(trait)}
+                    copyTrait={this.copyTrait}
                 />
             </div>
         ));
@@ -716,7 +716,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                 <Spin
                                     source={this.state.monster}
                                     name='challenge'
-                                    display={value => Utils.challenge(value)}
+                                    display={Utils.challenge}
                                     nudgeValue={delta => this.nudgeValue('challenge', delta)}
                                 />
                                 <div className='subheading'>speed</div>
@@ -813,9 +813,9 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         <TraitsPanel
                             combatant={this.state.monster}
                             mode='edit'
-                            addTrait={type => this.addTrait(type)}
-                            removeTrait={trait => this.removeTrait(trait)}
-                            changeValue={(trait, type, value) => this.changeTrait(trait, type, value)}
+                            addTrait={this.addTrait}
+                            removeTrait={this.removeTrait}
+                            changeValue={this.changeTrait}
                         />
                     );
                     break;
@@ -839,7 +839,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                             tabs={false}
                             options={options}
                             selectedID={this.state.helpSection}
-                            select={optionID => this.setHelpSection(optionID)}
+                            select={this.setHelpSection}
                         />
                     );
                 }

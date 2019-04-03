@@ -82,7 +82,7 @@ export default class AbilityScorePanel extends React.Component<Props, State> {
                 );
             } else {
                 result = (
-                    <div className='ability-scores' onClick={() => this.toggleAbilityScores()}>
+                    <div className='ability-scores' onClick={this.toggleAbilityScores}>
                         <div className='ability-score'>
                             <div className='ability-heading'>str</div>
                             <div className='ability-value'>

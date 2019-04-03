@@ -29,7 +29,7 @@ export default class AboutModal extends React.Component<Props> {
                         </div>
                         <div className='columns small-6 medium-6 large-6 list-column'>
                             <div className='heading'>options</div>
-                            <ConfirmButton text='clear all data' callback={() => this.props.resetAll()} />
+                            <ConfirmButton text='clear all data' callback={this.props.resetAll} />
                             <Checkbox
                                 label='show help cards'
                                 checked={this.props.options.showHelp}

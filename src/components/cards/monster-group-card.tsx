@@ -36,9 +36,9 @@ export default class MonsterGroupCard extends React.Component<Props> {
                     </div>
                     <div className='divider' />
                     <div className='section'>
-                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.addMonster()}>add a new monster</button>
-                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.sortMonsters()}>sort monsters</button>
-                        <ConfirmButton text='delete group' callback={() => this.props.removeMonsterGroup()} />
+                        <button className={this.props.filter ? 'disabled' : ''} onClick={this.props.addMonster}>add a new monster</button>
+                        <button className={this.props.filter ? 'disabled' : ''} onClick={this.props.sortMonsters}>sort monsters</button>
+                        <ConfirmButton text='delete group' callback={this.props.removeMonsterGroup} />
                     </div>
                 </div>
             );

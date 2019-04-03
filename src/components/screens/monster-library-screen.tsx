@@ -61,7 +61,7 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                             group={group}
                             filter={this.props.filter}
                             selected={group === this.props.selection}
-                            setSelection={grp => this.props.selectMonsterGroup(grp)}
+                            setSelection={this.props.selectMonsterGroup}
                         />
                     );
                 }
@@ -75,10 +75,10 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                         <MonsterGroupCard
                             selection={this.props.selection}
                             filter={this.props.filter}
-                            addMonster={() => this.props.addMonster()}
-                            sortMonsters={() => this.props.sortMonsters()}
+                            addMonster={this.props.addMonster}
+                            sortMonsters={this.props.sortMonsters}
                             changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
-                            removeMonsterGroup={() => this.props.removeMonsterGroup()}
+                            removeMonsterGroup={this.props.removeMonsterGroup}
                         />
                     </div>
                 );
@@ -95,12 +95,12 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                                     combatant={m}
                                     mode={'view editable'}
                                     library={this.props.library}
-                                    changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
-                                    nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
-                                    moveToGroup={(monster, groupID) => this.props.moveToGroup(monster, groupID)}
-                                    removeMonster={monster => this.props.removeMonster(monster)}
-                                    editMonster={monster => this.props.editMonster(monster)}
-                                    cloneMonster={(monster, monsterName) => this.props.cloneMonster(monster, monsterName)}
+                                    changeValue={this.props.changeValue}
+                                    nudgeValue={this.props.nudgeValue}
+                                    moveToGroup={this.props.moveToGroup}
+                                    removeMonster={this.props.removeMonster}
+                                    editMonster={this.props.editMonster}
+                                    cloneMonster={this.props.cloneMonster}
                                 />
                             </div>
                         );
@@ -126,7 +126,7 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                 <div className='monster-library row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable list-column'>
                         {help}
-                        <button onClick={() => this.props.addMonsterGroup()}>add a new monster group</button>
+                        <button onClick={this.props.addMonsterGroup}>add a new monster group</button>
                         {listItems}
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>

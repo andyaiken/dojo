@@ -41,7 +41,7 @@ export default class PartiesScreen extends React.Component<Props> {
                         key={p.id}
                         party={p}
                         selected={p === this.props.selection}
-                        setSelection={party => this.props.selectParty(party)}
+                        setSelection={this.props.selectParty}
                     />
                 );
             }
@@ -54,10 +54,10 @@ export default class PartiesScreen extends React.Component<Props> {
                     <div className='column' key='info'>
                         <PartyCard
                             selection={this.props.selection}
-                            addPC={() => this.props.addPC()}
-                            sortPCs={() => this.props.sortPCs()}
+                            addPC={this.props.addPC}
+                            sortPCs={this.props.sortPCs}
                             changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
-                            removeParty={() => this.props.removeParty()}
+                            removeParty={this.props.removeParty}
                         />
                     </div>
                 );
@@ -69,9 +69,9 @@ export default class PartiesScreen extends React.Component<Props> {
                             <PCCard
                                 combatant={activePC}
                                 mode={'edit'}
-                                changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
-                                nudgeValue={(pc, type, delta) => this.props.nudgeValue(pc, type, delta)}
-                                removePC={pc => this.props.removePC(pc)}
+                                changeValue={this.props.changeValue}
+                                nudgeValue={this.props.nudgeValue}
+                                removePC={this.props.removePC}
                             />
                         </div>
                     );
@@ -84,9 +84,9 @@ export default class PartiesScreen extends React.Component<Props> {
                             <PCCard
                                 combatant={inactivePC}
                                 mode={'edit'}
-                                changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
-                                nudgeValue={(pc, type, delta) => this.props.nudgeValue(pc, type, delta)}
-                                removePC={pc => this.props.removePC(pc)}
+                                changeValue={this.props.changeValue}
+                                nudgeValue={this.props.nudgeValue}
+                                removePC={this.props.removePC}
                             />
                         </div>
                     );
@@ -110,7 +110,7 @@ export default class PartiesScreen extends React.Component<Props> {
                 <div className='parties row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable list-column'>
                         {help}
-                        <button onClick={() => this.props.addParty()}>add a new party</button>
+                        <button onClick={this.props.addParty}>add a new party</button>
                         {parties}
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>

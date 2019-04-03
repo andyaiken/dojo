@@ -488,12 +488,12 @@ export default class MonsterCard extends React.Component<Props, State> {
                             source={this.state}
                             name='damageOrHealing'
                             factors={[1, 10]}
-                            nudgeValue={delta => this.nudgeDamage(delta)}
+                            nudgeValue={this.nudgeDamage}
                         />
                         <div className={this.state.damageOrHealing > 0 ? '' : 'disabled'}>
-                            <button className='damage-btn' onClick={() => this.heal()}>heal</button>
+                            <button className='damage-btn' onClick={this.heal}>heal</button>
                             <button className='damage-btn' onClick={() => this.setDamage(0)}>reset</button>
-                            <button className='damage-btn' onClick={() => this.damage()}>damage</button>
+                            <button className='damage-btn' onClick={this.damage}>damage</button>
                         </div>
                         <div className='section' style={{ display: this.props.combatant.damage.resist !== '' ? '' : 'none' }}>
                             <b>damage resistances</b> {this.props.combatant.damage.resist}
@@ -533,7 +533,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                         <TraitsPanel
                             combatant={this.props.combatant}
                             mode='combat'
-                            changeValue={(trait, field, value) => this.props.changeValue(trait, field, value)}
+                            changeValue={this.props.changeValue}
                         />
                         <div className='divider' />
                         <div className='section subheading'>
@@ -548,7 +548,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                             addCondition={() => this.props.addCondition(this.props.combatant as Combatant)}
                             editCondition={condition => this.props.editCondition(this.props.combatant as Combatant, condition)}
                             removeCondition={conditionID => this.props.removeCondition(this.props.combatant as Combatant, conditionID)}
-                            nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
+                            nudgeConditionValue={this.props.nudgeConditionValue}
                         />
                     </div>
                 );
@@ -620,7 +620,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                         <TraitsPanel
                             combatant={this.props.combatant}
                             mode='template'
-                            copyTrait={trait => this.props.copyTrait(trait)}
+                            copyTrait={this.props.copyTrait}
                         />
                     );
                 }
@@ -634,7 +634,7 @@ export default class MonsterCard extends React.Component<Props, State> {
             } else {
                 const imageStyle = this.state.showDetails ? 'image rotate' : 'image';
                 toggle = (
-                    <img className={imageStyle} src={arrow} alt='arrow' onClick={() => this.toggleDetails()} />
+                    <img className={imageStyle} src={arrow} alt='arrow' onClick={this.toggleDetails} />
                 );
             }
 

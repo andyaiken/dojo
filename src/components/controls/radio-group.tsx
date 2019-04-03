@@ -19,7 +19,7 @@ export default class RadioGroup extends React.Component<Props> {
                         key={item.id}
                         item={item}
                         selected={this.props.selectedItemID === item.id}
-                        select={(itemID: string) => this.props.select(itemID)}
+                        select={this.props.select}
                     />
                 );
             });

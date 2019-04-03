@@ -16,7 +16,7 @@ export default class MonsterLibraryCard extends React.Component {
 
     public render() {
         return (
-            <InfoCard getContent={() => this.getContent()} />
+            <InfoCard getContent={this.getContent} />
         );
     }
 }

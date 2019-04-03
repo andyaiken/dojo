@@ -29,9 +29,9 @@ export default class ConditionsPanel extends React.Component<Props> {
                             key={n}
                             condition={c}
                             combat={this.props.combat}
-                            nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
-                            editCondition={condition => this.props.editCondition(condition)}
-                            removeCondition={conditionID => this.props.removeCondition(conditionID)}
+                            nudgeConditionValue={this.props.nudgeConditionValue}
+                            editCondition={this.props.editCondition}
+                            removeCondition={this.props.removeCondition}
                         />
                     );
                 }
@@ -40,7 +40,7 @@ export default class ConditionsPanel extends React.Component<Props> {
             return (
                 <div className='section'>
                     {conditions}
-                    <button onClick={() => this.props.addCondition()}>add a condition</button>
+                    <button onClick={this.props.addCondition}>add a condition</button>
                 </div>
             );
         } catch (e) {

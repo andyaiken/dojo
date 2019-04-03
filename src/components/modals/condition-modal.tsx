@@ -273,7 +273,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                             <RadioGroup
                                 items={conditions}
                                 selectedItemID={this.state.condition.name}
-                                select={itemID => this.setCondition(itemID)}
+                                select={this.setCondition}
                             />
                         </div>
                         <div className='columns small-6 medium-6 large-6 scrollable'>

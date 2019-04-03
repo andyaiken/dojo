@@ -81,7 +81,7 @@ export default class Dropdown extends React.Component<Props, State> {
                                 key={option.id}
                                 option={option}
                                 selected={option.id === this.props.selectedID}
-                                select={optionID => this.select(optionID)}
+                                select={this.select}
                             />
                         );
                     }
@@ -95,7 +95,7 @@ export default class Dropdown extends React.Component<Props, State> {
             }
 
             return (
-                <div className={style} onClick={e => this.toggleOpen(e)}>
+                <div className={style} onClick={this.toggleOpen}>
                     {content}
                 </div>
             );
@@ -131,7 +131,7 @@ class DropdownOption extends React.Component<DropdownOptionProps> {
             }
 
             return (
-                <div className={style} title={this.props.option.text} onClick={e => this.click(e)}>
+                <div className={style} title={this.props.option.text} onClick={this.click}>
                     {this.props.option.text}
                 </div>
             );

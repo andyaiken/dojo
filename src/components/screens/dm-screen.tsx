@@ -83,7 +83,7 @@ export default class DMScreen extends React.Component<Props> {
                         key={m.id}
                         module={m}
                         selected={m.id === this.props.selectedModuleID}
-                        setSelection={module => this.props.selectModule(module)}
+                        setSelection={this.props.selectModule}
                     />
                 );
             }
