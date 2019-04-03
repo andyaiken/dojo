@@ -4,7 +4,7 @@ import Showdown from 'showdown';
 import Utils from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
-import { Monster, Trait } from '../../models/monster-group';
+import { Monster, Trait, TRAIT_TYPES } from '../../models/monster-group';
 
 import ConfirmButton from '../controls/confirm-button';
 import Expander from '../controls/expander';
@@ -18,6 +18,7 @@ interface Props {
     copyTrait: (trait: Trait) => void;
     removeTrait: (trait: Trait) => void;
     changeValue: (trait: Trait, field: string, value: any) => void;
+    swapTraits: (t1: Trait, t2: Trait) => void;
 }
 
 export default class TraitsPanel extends React.Component<Props> {
@@ -26,87 +27,68 @@ export default class TraitsPanel extends React.Component<Props> {
         addTrait: null,
         copyTrait: null,
         removeTrait: null,
-        changeValue: null
+        changeValue: null,
+        swapTraits: null
     };
+
+    private createTraitPanel(trait: Trait, prevTrait: Trait | null, nextTrait: Trait | null) {
+        return (
+            <TraitPanel
+                key={trait.id}
+                trait={trait}
+                mode={this.props.mode}
+                prevTrait={prevTrait}
+                nextTrait={nextTrait}
+                changeValue={(action, type, value) => this.props.changeValue(action, type, value)}
+                removeTrait={action => this.props.removeTrait(action)}
+                copyTrait={action => this.props.copyTrait(action)}
+                swapTraits={(t1, t2) => this.props.swapTraits(t1, t2)}
+            />
+        );
+    }
 
     public render() {
         try {
-            const traits = [];
-            const actions = [];
-            const legendaryActions = [];
-            const lairActions = [];
-            const regionalEffects = [];
+            const traitsByType: { [id: string]: JSX.Element[] } = {};
 
-            for (let n = 0; n !== this.props.combatant.traits.length; ++n) {
-                const a = this.props.combatant.traits[n];
+            TRAIT_TYPES.forEach(type => {
+                const traits = this.props.combatant.traits.filter(t => t.type === type);
 
-                const item = (
-                    <TraitPanel
-                        key={a.id}
-                        trait={a}
-                        mode={this.props.mode}
-                        changeValue={(action, type, value) => this.props.changeValue(action, type, value)}
-                        removeTrait={action => this.props.removeTrait(action)}
-                        copyTrait={action => this.props.copyTrait(action)}
-                    />
-                );
-
-                switch (a.type) {
-                    case 'trait':
-                        traits.push(item);
-                        break;
-                    case 'action':
-                        actions.push(item);
-                        break;
-                    case 'legendary':
-                        legendaryActions.push(item);
-                        break;
-                    case 'lair':
-                        lairActions.push(item);
-                        break;
-                    case 'regional':
-                        regionalEffects.push(item);
-                        break;
-                    default:
-                        // Do nothing
-                        break;
+                const list: JSX.Element[] = [];
+                for (let n = 0; n !== traits.length; ++n) {
+                    const trait = traits[n];
+                    const prevTrait = n !== 0 ? traits[n - 1] : null;
+                    const nextTrait = n !== traits.length - 1 ? traits[n + 1] : null;
+                    list.push(this.createTraitPanel(trait, prevTrait, nextTrait));
                 }
-            }
+
+                if (this.props.mode === 'edit') {
+                    list.push(
+                        <button key='add' onClick={() => this.props.addTrait(type as 'trait' | 'action' | 'legendary' | 'lair' | 'regional')}>add a new {Utils.traitType(type)}</button>
+                    );
+                }
+
+                traitsByType[type] = list;
+            });
 
             if (this.props.mode === 'edit') {
-                traits.push(
-                    <button key='add' onClick={() => this.props.addTrait('trait')}>add a new trait</button>
-                );
-                actions.push(
-                    <button key='add' onClick={() => this.props.addTrait('action')}>add a new action</button>
-                );
-                legendaryActions.push(
-                    <button key='add' onClick={() => this.props.addTrait('legendary')}>add a new legendary action</button>
-                );
-                lairActions.push(
-                    <button key='add' onClick={() => this.props.addTrait('lair')}>add a new lair action</button>
-                );
-                regionalEffects.push(
-                    <button key='add' onClick={() => this.props.addTrait('regional')}>add a new regional effect</button>
-                );
-
                 return (
                     <div className='row collapse'>
                         <div className='columns small-4 medium-4 large-4 list-column'>
                             <div className='section subheading'>traits</div>
-                            {traits}
+                            {traitsByType['trait']}
                         </div>
                         <div className='columns small-4 medium-4 large-4 list-column'>
                             <div className='section subheading'>actions</div>
-                            {actions}
+                            {traitsByType['action']}
                         </div>
                         <div className='columns small-4 medium-4 large-4 list-column'>
                             <div className='section subheading'>legendary actions</div>
-                            {legendaryActions}
+                            {traitsByType['legendary']}
                             <div className='section subheading'>lair actions</div>
-                            {lairActions}
+                            {traitsByType['lair']}
                             <div className='section subheading'>regional effects</div>
-                            {regionalEffects}
+                            {traitsByType['regional']}
                         </div>
                     </div>
                 );
@@ -114,25 +96,25 @@ export default class TraitsPanel extends React.Component<Props> {
 
             return (
                 <div>
-                    <div style={{ display: traits.length > 0 ? '' : 'none' }}>
+                    <div style={{ display: traitsByType['trait'].length > 0 ? '' : 'none' }}>
                         <div className='section subheading'>traits</div>
-                        {traits}
+                        {traitsByType['trait']}
                     </div>
-                    <div style={{ display: actions.length > 0 ? '' : 'none' }}>
+                    <div style={{ display: traitsByType['action'].length > 0 ? '' : 'none' }}>
                         <div className='section subheading'>actions</div>
-                        {actions}
+                        {traitsByType['action']}
                     </div>
-                    <div style={{ display: legendaryActions.length > 0 ? '' : 'none' }}>
+                    <div style={{ display: traitsByType['legendary'].length > 0 ? '' : 'none' }}>
                         <div className='section subheading'>legendary actions</div>
-                        {legendaryActions}
+                        {traitsByType['legendary']}
                     </div>
-                    <div style={{ display: lairActions.length > 0 ? '' : 'none' }}>
+                    <div style={{ display: traitsByType['lair'].length > 0 ? '' : 'none' }}>
                         <div className='section subheading'>lair actions</div>
-                        {lairActions}
+                        {traitsByType['lair']}
                     </div>
-                    <div style={{ display: regionalEffects.length > 0 ? '' : 'none' }}>
+                    <div style={{ display: traitsByType['regional'].length > 0 ? '' : 'none' }}>
                         <div className='section subheading'>regional effects</div>
-                        {regionalEffects}
+                        {traitsByType['regional']}
                     </div>
                 </div>
             );
@@ -145,9 +127,12 @@ export default class TraitsPanel extends React.Component<Props> {
 interface TraitPanelProps {
     trait: Trait;
     mode: 'view' | 'edit' | 'template' | 'combat';
+    prevTrait: Trait | null;
+    nextTrait: Trait | null;
     changeValue: (trait: Trait, field: string, value: any) => void;
     copyTrait: (trait: Trait) => void;
     removeTrait: (trait: Trait) => void;
+    swapTraits: (t1: Trait, t2: Trait) => void;
 }
 
 class TraitPanel extends React.Component<TraitPanelProps> {
@@ -203,6 +188,8 @@ class TraitPanel extends React.Component<TraitPanelProps> {
                                 onChange={event => this.props.changeValue(this.props.trait, 'text', event.target.value)}
                             />
                             <div className='divider' />
+                            <button className={this.props.prevTrait ? '' : 'disabled'} onClick={() => this.props.swapTraits(this.props.trait, this.props.prevTrait as Trait)}>move up</button>
+                            <button className={this.props.nextTrait ? '' : 'disabled'} onClick={() => this.props.swapTraits(this.props.trait, this.props.nextTrait as Trait)}>move down</button>
                             <ConfirmButton text='delete' callback={() => this.props.removeTrait(this.props.trait)} />
                         </div>
                     );

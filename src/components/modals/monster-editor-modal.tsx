@@ -14,6 +14,7 @@ import AbilityScorePanel from '../panels/ability-score-panel';
 import TraitsPanel from '../panels/traits-panel';
 
 import arrow from '../../resources/images/down-arrow.svg';
+import { SSL_OP_NO_TLSv1_1 } from 'constants';
 
 interface Props {
     monster: Monster;
@@ -263,6 +264,16 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     private removeTrait(trait: Trait) {
         const index = this.state.monster.traits.indexOf(trait);
         this.state.monster.traits.splice(index, 1);
+        this.setState({
+            monster: this.state.monster
+        });
+    }
+
+    private swapTraits(t1: Trait, t2: Trait) {
+        const index1 = this.state.monster.traits.indexOf(t1);
+        const index2 = this.state.monster.traits.indexOf(t2);
+        this.state.monster.traits[index2] = t1;
+        this.state.monster.traits[index1] = t2;
         this.setState({
             monster: this.state.monster
         });
@@ -815,6 +826,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                             mode='edit'
                             addTrait={type => this.addTrait(type)}
                             removeTrait={trait => this.removeTrait(trait)}
+                            swapTraits={(t1, t2) => this.swapTraits(t1, t2)}
                             changeValue={(trait, type, value) => this.changeTrait(trait, type, value)}
                         />
                     );
