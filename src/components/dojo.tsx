@@ -1636,7 +1636,7 @@ export default class Dojo extends React.Component<Props, State> {
                     content = (
                         <HomeScreen
                             library={this.state.library}
-                            addOpenGameContent={this.addOpenGameContent}
+                            addOpenGameContent={() => this.addOpenGameContent()}
                         />
                     );
                     break;
@@ -1645,7 +1645,7 @@ export default class Dojo extends React.Component<Props, State> {
                         <DMScreen
                             selectedModuleID={this.state.selectedDMModuleID}
                             showHelp={this.state.options.showHelp}
-                            selectModule={this.selectDMModule}
+                            selectModule={module => this.selectDMModule(module)}
                         />
                     );
                     break;
@@ -1655,14 +1655,14 @@ export default class Dojo extends React.Component<Props, State> {
                             parties={this.state.parties}
                             selection={this.getParty(this.state.selectedPartyID) || null}
                             showHelp={this.state.options.showHelp}
-                            selectParty={this.selectParty}
-                            addParty={this.addParty}
-                            removeParty={this.removeParty}
-                            addPC={this.addPC}
-                            removePC={this.removePC}
-                            sortPCs={this.sortPCs}
-                            changeValue={this.changeValue}
-                            nudgeValue={this.nudgeValue}
+                            selectParty={party => this.selectParty(party)}
+                            addParty={() => this.addParty()}
+                            removeParty={() => this.removeParty()}
+                            addPC={() => this.addPC()}
+                            removePC={pc => this.removePC(pc)}
+                            sortPCs={() => this.sortPCs()}
+                            changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
+                            nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
                         />
                     );
                     break;
@@ -1673,17 +1673,17 @@ export default class Dojo extends React.Component<Props, State> {
                             selection={this.getMonsterGroup(this.state.selectedMonsterGroupID) || null}
                             filter={this.state.libraryFilter}
                             showHelp={this.state.options.showHelp}
-                            selectMonsterGroup={this.selectMonsterGroup}
-                            addMonsterGroup={this.addMonsterGroup}
-                            removeMonsterGroup={this.removeMonsterGroup}
-                            addMonster={this.addMonster}
-                            removeMonster={this.removeMonster}
-                            sortMonsters={this.sortMonsters}
-                            changeValue={this.changeValue}
-                            nudgeValue={this.nudgeValue}
-                            editMonster={this.editMonster}
-                            cloneMonster={this.cloneMonster}
-                            moveToGroup={this.moveToGroup}
+                            selectMonsterGroup={group => this.selectMonsterGroup(group)}
+                            addMonsterGroup={() => this.addMonsterGroup()}
+                            removeMonsterGroup={() => this.removeMonsterGroup()}
+                            addMonster={() => this.addMonster()}
+                            removeMonster={monster => this.removeMonster(monster)}
+                            sortMonsters={() => this.sortMonsters()}
+                            changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
+                            nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
+                            editMonster={combatant => this.editMonster(combatant)}
+                            cloneMonster={(combatant, name) => this.cloneMonster(combatant, name)}
+                            moveToGroup={(combatant, groupID) => this.moveToGroup(combatant, groupID)}
                         />
                     );
                     let count = 0;
@@ -1702,7 +1702,7 @@ export default class Dojo extends React.Component<Props, State> {
                                     />
                                 </div>
                                 <div className='section'>
-                                    <button onClick={this.openDemographics}>demographics</button>
+                                    <button onClick={() => this.openDemographics()}>demographics</button>
                                 </div>
                             </div>
                         );
@@ -1716,16 +1716,16 @@ export default class Dojo extends React.Component<Props, State> {
                             parties={this.state.parties}
                             library={this.state.library}
                             showHelp={this.state.options.showHelp}
-                            selectEncounter={this.selectEncounter}
-                            addEncounter={this.addEncounter}
-                            removeEncounter={this.removeEncounter}
-                            addWave={this.addWaveToEncounter}
-                            removeWave={this.removeWave}
+                            selectEncounter={encounter => this.selectEncounter(encounter)}
+                            addEncounter={() => this.addEncounter()}
+                            removeEncounter={() => this.removeEncounter()}
+                            addWave={() => this.addWaveToEncounter()}
+                            removeWave={wave => this.removeWave(wave)}
                             getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName) || null}
-                            addEncounterSlot={this.addEncounterSlot}
-                            removeEncounterSlot={this.removeEncounterSlot}
-                            nudgeValue={this.nudgeValue}
-                            changeValue={this.changeValue}
+                            addEncounterSlot={(monster, waveID) => this.addEncounterSlot(monster, waveID)}
+                            removeEncounterSlot={(slot, waveID) => this.removeEncounterSlot(slot, waveID)}
+                            nudgeValue={(slot, type, delta) => this.nudgeValue(slot, type, delta)}
+                            changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                         />
                     );
                     break;
@@ -1735,13 +1735,13 @@ export default class Dojo extends React.Component<Props, State> {
                             mapFolios={this.state.mapFolios}
                             selection={this.getMapFolio(this.state.selectedMapFolioID) || null}
                             showHelp={this.state.options.showHelp}
-                            selectMapFolio={this.selectMapFolio}
-                            addMapFolio={this.addMapFolio}
-                            removeMapFolio={this.removeMapFolio}
-                            addMap={this.addMap}
-                            editMap={this.editMap}
-                            removeMap={this.removeMap}
-                            changeValue={this.changeValue}
+                            selectMapFolio={folio => this.selectMapFolio(folio)}
+                            addMapFolio={() => this.addMapFolio()}
+                            removeMapFolio={() => this.removeMapFolio()}
+                            addMap={() => this.addMap()}
+                            editMap={map => this.editMap(map)}
+                            removeMap={map => this.removeMap(map)}
+                            changeValue={(source, type, value) => this.changeValue(source, type, value)}
                         />
                     );
                     break;
@@ -1752,23 +1752,23 @@ export default class Dojo extends React.Component<Props, State> {
                             combats={this.state.combats}
                             combat={combat || null}
                             showHelp={this.state.options.showHelp}
-                            createCombat={this.createCombat}
-                            resumeEncounter={this.resumeCombat}
-                            nudgeValue={this.nudgeValue}
-                            changeValue={this.changeValue}
-                            makeCurrent={combatant => this.makeCurrent(combatant, false)}
-                            makeActive={this.makeActive}
-                            makeDefeated={this.makeDefeated}
-                            removeCombatant={this.removeCombatant}
-                            addCondition={this.addCondition}
-                            editCondition={this.editCondition}
-                            removeCondition={this.removeCondition}
-                            mapAdd={this.mapAdd}
-                            mapMove={this.mapMove}
-                            mapRemove={this.mapRemove}
-                            endTurn={this.endTurn}
-                            changeHP={this.changeHP}
-                            close={this.closeNotification}
+                            createCombat={() => this.createCombat()}
+                            resumeEncounter={pausedCombat => this.resumeCombat(pausedCombat)}
+                            nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
+                            changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
+                            makeCurrent={(combatant) => this.makeCurrent(combatant, false)}
+                            makeActive={(combatant) => this.makeActive(combatant)}
+                            makeDefeated={(combatant) => this.makeDefeated(combatant)}
+                            removeCombatant={(combatant) => this.removeCombatant(combatant)}
+                            addCondition={(combatant) => this.addCondition(combatant)}
+                            editCondition={(combatant, condition) => this.editCondition(combatant, condition)}
+                            removeCondition={(combatant, conditionID) => this.removeCondition(combatant, conditionID)}
+                            mapAdd={(combatant, x, y) => this.mapAdd(combatant, x, y)}
+                            mapMove={(combatant, dir) => this.mapMove(combatant, dir)}
+                            mapRemove={combatant => this.mapRemove(combatant)}
+                            endTurn={(combatant) => this.endTurn(combatant)}
+                            changeHP={(combatant, hp, temp) => this.changeHP(combatant, hp, temp)}
+                            close={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
                         />
                     );
                     if (combat) {
@@ -1789,13 +1789,13 @@ export default class Dojo extends React.Component<Props, State> {
                                         <div className='text'>xp: {xp}</div>
                                     </div>
                                     <div className='section' style={{ display: encounter.waves.length === 0 ? 'none' : ''}}>
-                                        <button onClick={this.openWaveModal}>add wave</button>
+                                        <button onClick={() => this.openWaveModal()}>add wave</button>
                                     </div>
                                     <div className='section'>
-                                        <button onClick={this.pauseCombat}>pause encounter</button>
+                                        <button onClick={() => this.pauseCombat()}>pause encounter</button>
                                     </div>
                                     <div className='section'>
-                                        <button onClick={this.endCombat}>end encounter</button>
+                                        <button onClick={() => this.endCombat()}>end encounter</button>
                                     </div>
                                 </div>
                             );
@@ -1824,7 +1824,7 @@ export default class Dojo extends React.Component<Props, State> {
                             <AboutModal
                                 options={this.state.options}
                                 resetAll={() => this.resetAll()}
-                                changeValue={this.changeValue}
+                                changeValue={(source, type, value) => this.changeValue(source, type, value)}
                             />
                         );
                         break;
@@ -1853,13 +1853,13 @@ export default class Dojo extends React.Component<Props, State> {
                                     key='similar'
                                     label='similar monsters'
                                     checked={this.state.modal.showMonsters}
-                                    changeValue={this.toggleShowSimilarMonsters}
+                                    changeValue={() => this.toggleShowSimilarMonsters()}
                                 />
                             )
                         ];
                         modalButtons.right = [
-                            <button key='save' onClick={this.saveMonster}>save</button>,
-                            <button key='cancel' onClick={this.closeModal}>cancel</button>
+                            <button key='save' onClick={() => this.saveMonster()}>save</button>,
+                            <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
                         ];
                         break;
                     case 'map':
@@ -1872,8 +1872,8 @@ export default class Dojo extends React.Component<Props, State> {
                         modalAllowClose = false;
                         modalAllowScroll = false;
                         modalButtons.right = [
-                            <button key='save' onClick={this.saveMap}>save</button>,
-                            <button key='cancel' onClick={this.closeModal}>cancel</button>
+                            <button key='save' onClick={() => this.saveMap()}>save</button>,
+                            <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
                         ];
                         break;
                     case 'combat-start':
@@ -1895,12 +1895,12 @@ export default class Dojo extends React.Component<Props, State> {
                                 <button
                                     key='start encounter'
                                     className={this.state.modal.combatSetup.partyID && this.state.modal.combatSetup.encounterID ? '' : 'disabled'}
-                                    onClick={this.startCombat}
+                                    onClick={() => this.startCombat()}
                                 >
                                     start encounter
                                 </button>
                             ),
-                            <button key='cancel' onClick={this.closeModal}>cancel</button>
+                            <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
                         ];
                         break;
                     case 'combat-wave':
@@ -1920,12 +1920,12 @@ export default class Dojo extends React.Component<Props, State> {
                                 <button
                                     key='add wave'
                                     className={this.state.modal.combatSetup.waveID !== null ? '' : 'disabled'}
-                                    onClick={this.addWaveToCombat}
+                                    onClick={() => this.addWaveToCombat()}
                                 >
                                     add wave
                                 </button>
                             ),
-                            <button key='cancel' onClick={this.closeModal}>cancel</button>
+                            <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
                         ];
                         break;
                     case 'condition-add':
@@ -1940,8 +1940,8 @@ export default class Dojo extends React.Component<Props, State> {
                         modalAllowClose = false;
                         modalAllowScroll = false;
                         modalButtons.right = [
-                            <button key='add' onClick={this.addConditionFromModal}>add</button>,
-                            <button key='cancel' onClick={this.closeModal}>cancel</button>
+                            <button key='add' onClick={() => this.addConditionFromModal()}>add</button>,
+                            <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
                         ];
                         break;
                     case 'condition-edit':
@@ -1955,8 +1955,8 @@ export default class Dojo extends React.Component<Props, State> {
                         );
                         modalAllowClose = false;
                         modalButtons.right = [
-                            <button key='save' onClick={this.editConditionFromModal}>save</button>,
-                            <button key='cancel' onClick={this.closeModal}>cancel</button>
+                            <button key='save' onClick={() => this.editConditionFromModal()}>save</button>,
+                            <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
                         ];
                         break;
                     default:
@@ -1989,7 +1989,7 @@ export default class Dojo extends React.Component<Props, State> {
                         actions={actions}
                         blur={modal !== null}
                         openHome={() => this.setView('home')}
-                        openAbout={this.openAbout}
+                        openAbout={() => this.openAbout()}
                     />
                     <div className={(modal === null) ? 'page-content' : 'page-content blur'}>
                         {content}
@@ -2000,7 +2000,7 @@ export default class Dojo extends React.Component<Props, State> {
                         library={this.state.library}
                         encounters={this.state.encounters}
                         blur={modal !== null}
-                        setView={this.setView}
+                        setView={view => this.setView(view)}
                     />
                     {modal}
                 </div>

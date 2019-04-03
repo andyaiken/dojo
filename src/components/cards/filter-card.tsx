@@ -64,14 +64,14 @@ export default class FilterCard extends React.Component<Props, State> {
                             source={this.props.filter}
                             name='challengeMin'
                             label='min cr'
-                            display={Utils.challenge}
+                            display={value => Utils.challenge(value)}
                             nudgeValue={delta => this.props.nudgeValue('challengeMin', delta)}
                         />
                         <Spin
                             source={this.props.filter}
                             name='challengeMax'
                             label='max cr'
-                            display={Utils.challenge}
+                            display={value => Utils.challenge(value)}
                             nudgeValue={delta => this.props.nudgeValue('challengeMax', delta)}
                         />
                         <Dropdown
@@ -88,7 +88,7 @@ export default class FilterCard extends React.Component<Props, State> {
                         />
                         <div className='divider' />
                         <div className='section'>
-                            <button onClick={this.props.resetFilter}>clear filter</button>
+                            <button onClick={() => this.props.resetFilter()}>clear filter</button>
                         </div>
                     </div>
                 );
@@ -121,7 +121,7 @@ export default class FilterCard extends React.Component<Props, State> {
                 <div className='card'>
                     <div className='heading'>
                         <div className='title'>filter</div>
-                        <img className={this.state.showAll ? 'image rotate' : 'image'} src={arrow} alt='arrow' onClick={this.toggleAll} />
+                        <img className={this.state.showAll ? 'image rotate' : 'image'} src={arrow} alt='arrow' onClick={() => this.toggleAll()} />
                     </div>
                     <div className='card-content'>
                         {content}

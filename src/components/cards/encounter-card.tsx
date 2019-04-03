@@ -66,12 +66,12 @@ export default class EncounterCard extends React.Component<Props, State> {
                         options={partyOptions}
                         placeholder='select party...'
                         selectedID={this.state.party ? this.state.party.id : undefined}
-                        select={this.selectParty}
+                        select={optionID => this.selectParty(optionID)}
                     />
                     <DifficultyChartPanel
                         encounter={this.props.selection}
                         party={this.state.party}
-                        getMonster={this.props.getMonster}
+                        getMonster={(monsterName, monsterGroupName) => this.props.getMonster(monsterName, monsterGroupName)}
                     />
                 </div>
             );
@@ -81,7 +81,7 @@ export default class EncounterCard extends React.Component<Props, State> {
             const heading = (
                 <div className='heading'>
                     <div className='title'>encounter</div>
-                    <img className={imageStyle} src={arrow} alt='arrow' onClick={this.toggleDetails} />
+                    <img className={imageStyle} src={arrow} alt='arrow' onClick={() => this.toggleDetails()} />
                 </div>
             );
 
@@ -101,8 +101,8 @@ export default class EncounterCard extends React.Component<Props, State> {
                     </div>
                     <div className='divider' />
                     <div className='section'>
-                        <button onClick={this.props.addWave}>add a new wave</button>
-                        <ConfirmButton text='delete encounter' callback={this.props.removeEncounter} />
+                        <button onClick={() => this.props.addWave()}>add a new wave</button>
+                        <ConfirmButton text='delete encounter' callback={() => this.props.removeEncounter()} />
                     </div>
                 </div>
             );

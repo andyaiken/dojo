@@ -40,7 +40,7 @@ export default class MapFoliosScreen extends React.Component<Props> {
                         key={mapFolio.id}
                         mapFolio={mapFolio}
                         selected={mapFolio === this.props.selection}
-                        setSelection={this.props.selectMapFolio}
+                        setSelection={f => this.props.selectMapFolio(f)}
                     />
                 );
             }
@@ -53,9 +53,9 @@ export default class MapFoliosScreen extends React.Component<Props> {
                     <div className='column' key='info'>
                         <MapFolioCard
                             selection={this.props.selection}
-                            addMap={this.props.addMap}
-                            removeMapFolio={this.props.removeMapFolio}
-                            changeValue={this.props.changeValue}
+                            addMap={() => this.props.addMap()}
+                            removeMapFolio={() => this.props.removeMapFolio()}
+                            changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
                         />
                     </div>
                 );
@@ -65,9 +65,9 @@ export default class MapFoliosScreen extends React.Component<Props> {
                         <div className='column' key={m.id}>
                             <MapCard
                                 map={m}
-                                editMap={this.props.editMap}
-                                removeMap={this.props.removeMap}
-                                changeValue={this.props.changeValue}
+                                editMap={map => this.props.editMap(map)}
+                                removeMap={map => this.props.removeMap(map)}
+                                changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
                             />
                         </div>
                     );
@@ -97,7 +97,7 @@ export default class MapFoliosScreen extends React.Component<Props> {
                 <div className='map-builder row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable list-column'>
                         {help}
-                        <button onClick={this.props.addMapFolio}>add a new map folio</button>
+                        <button onClick={() => this.props.addMapFolio()}>add a new map folio</button>
                         {folios}
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>

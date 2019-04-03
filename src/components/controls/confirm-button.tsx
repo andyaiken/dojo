@@ -47,8 +47,8 @@ export default class ConfirmButton extends React.Component<Props, State> {
                         <img className='image' src={warning} alt='warning' />
                         {this.props.details ? <div className='details'>{this.props.details}</div> : null}
                         <div className='confirmation'>
-                            <div className='destructive' onClick={this.perform}>yes</div>
-                            <div className='non-destructive' onClick={this.toggle}>no</div>
+                            <div className='destructive' onClick={() => this.perform()}>yes</div>
+                            <div className='non-destructive' onClick={() => this.toggle()}>no</div>
                         </div>
                     </div>
                 );
@@ -62,7 +62,7 @@ export default class ConfirmButton extends React.Component<Props, State> {
             }
 
             return (
-                <button className={this.props.disabled ? 'disabled' : ''} onClick={this.toggle}>
+                <button className={this.props.disabled ? 'disabled' : ''} onClick={() => this.toggle()}>
                     {content}
                 </button>
             );

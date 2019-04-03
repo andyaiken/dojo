@@ -185,11 +185,11 @@ export default class MapEditorModal extends React.Component<Props, State> {
                         <div className='tools'>
                             <MapTileCard
                                 tile={item}
-                                moveMapItem={this.moveMapItem}
+                                moveMapItem={(mapItem, dir) => this.moveMapItem(mapItem, dir)}
                                 resizeMapItem={(mapItem, dir, dir2) => this.resizeMapItem(mapItem, dir, dir2 as 'in' | 'out')}
-                                cloneMapItem={this.cloneMapItem}
-                                removeMapItem={this.removeMapItem}
-                                changeValue={this.changeValue}
+                                cloneMapItem={mapItem => this.cloneMapItem(mapItem)}
+                                removeMapItem={mapItem => this.removeMapItem(mapItem)}
+                                changeValue={(source, field, value) => this.changeValue(source, field, value)}
                             />
                         </div>
                     );
@@ -210,8 +210,8 @@ export default class MapEditorModal extends React.Component<Props, State> {
                         map={this.state.map}
                         mode='edit'
                         selectedItemID={this.state.selectedTileID ? this.state.selectedTileID : undefined}
-                        setSelectedItemID={this.setSelectedTileID}
-                        addMapTile={this.addMapTile}
+                        setSelectedItemID={id => this.setSelectedTileID(id)}
+                        addMapTile={(x, y) => this.addMapTile(x, y)}
                     />
                 </div>
             );

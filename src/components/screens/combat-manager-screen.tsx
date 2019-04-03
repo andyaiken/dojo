@@ -82,8 +82,8 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                         key='selected'
                         combatant={combatant as Combatant & PC}
                         mode={mode}
-                        changeValue={this.props.changeValue}
-                        nudgeValue={this.props.nudgeValue}
+                        changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
+                        nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
                         makeCurrent={c => this.props.makeCurrent(c as Combatant & PC)}
                         makeActive={c => this.props.makeActive(c as Combatant & PC)}
                         makeDefeated={c => this.props.makeDefeated(c as Combatant & PC)}
@@ -101,8 +101,8 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                         combatant={combatant as Combatant & Monster}
                         mode={mode}
                         combat={this.props.combat as Combat}
-                        changeValue={this.props.changeValue}
-                        nudgeValue={this.props.nudgeValue}
+                        changeValue={(c, type, value) => this.props.changeValue(c, type, value)}
+                        nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
                         makeCurrent={c => this.props.makeCurrent(c as Combatant & Monster)}
                         makeActive={c => this.props.makeActive(c as Combatant & Monster)}
                         makeDefeated={c => this.props.makeDefeated(c as Combatant & Monster)}
@@ -110,7 +110,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                         addCondition={c => this.props.addCondition(c as Combatant & Monster)}
                         editCondition={(c, condition) => this.props.editCondition(c as Combatant & Monster, condition)}
                         removeCondition={(c, conditionID) => this.props.removeCondition(c as Combatant & Monster, conditionID)}
-                        nudgeConditionValue={this.props.nudgeValue}
+                        nudgeConditionValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
                         mapAdd={c => this.setAddingToMapID(c.id)}
                         mapMove={(c, dir) => this.props.mapMove(c as Combatant & Monster, dir)}
                         mapRemove={c => this.props.mapRemove(c as Combatant & Monster)}
@@ -156,8 +156,8 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                                 combatant={combatant}
                                 select={c => this.setSelectedTokenID(c.id)}
                                 selected={combatant.id === this.state.selectedTokenID}
-                                nudgeValue={this.props.nudgeValue}
-                                makeActive={this.props.makeActive}
+                                nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
+                                makeActive={c => this.props.makeActive(c)}
                             />
                         );
                     }
@@ -266,7 +266,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                         <NotificationPanel
                             key={n.id}
                             notification={n}
-                            close={this.props.close}
+                            close={(notification, removeCondition) => this.props.close(notification, removeCondition)}
                         />
                     ));
                     notificationSection = (
@@ -290,7 +290,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                                     this.setSelectedTokenID(id);
                                 }
                             }}
-                            gridSquareClicked={this.addCombatantToMap}
+                            gridSquareClicked={(x, y) => this.addCombatantToMap(x, y)}
                         />
                     );
                 }
@@ -365,7 +365,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                             key={c.id}
                             combat={c}
                             selected={false}
-                            setSelection={this.props.resumeEncounter}
+                            setSelection={combat => this.props.resumeEncounter(combat)}
                         />
                     );
                 });
@@ -374,7 +374,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     <div className='combat-manager row collapse'>
                         <div className='columns small-4 medium-4 large-3 scrollable list-column'>
                             {help}
-                            <button onClick={this.props.createCombat}>start a new combat</button>
+                            <button onClick={() => this.props.createCombat()}>start a new combat</button>
                             {combats}
                         </div>
                         <div className='columns small-8 medium-8 large-9 scrollable' />
@@ -443,7 +443,7 @@ class NotificationPanel extends React.Component<NotificationProps> {
                             {name} must make a {saveType} save against dc {duration.saveDC}
                         </div>
                         <div className='buttons'>
-                            <button onClick={this.success}>success</button>
+                            <button onClick={() => this.success()}>success</button>
                             <button onClick={() => this.close()}>close</button>
                         </div>
                     </div>
@@ -466,7 +466,7 @@ class NotificationPanel extends React.Component<NotificationProps> {
                             {name} can attempt to recharge {trait.name} ({trait.usage})
                         </div>
                         <div className='buttons'>
-                            <button onClick={this.success}>recharge</button>
+                            <button onClick={() => this.success()}>recharge</button>
                             <button onClick={() => this.close()}>close</button>
                         </div>
                     </div>
@@ -508,7 +508,7 @@ class PendingCombatantRow extends React.Component<PendingCombatantRowProps> {
         }
 
         return (
-            <div className={style} onClick={this.onClick}>
+            <div className={style} onClick={e => this.onClick(e)}>
                 <div className='name'>
                     {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
                     <span className='info'>{this.getInformationText()}</span>
@@ -574,7 +574,7 @@ class PCRow extends React.Component<PCRowProps> {
         }
 
         return (
-            <div className={style} onClick={this.onClick}>
+            <div className={style} onClick={e => this.onClick(e)}>
                 <div className='name'>
                     {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
                     {this.props.combatant.player ? ' | ' + this.props.combatant.player : ''}
@@ -675,7 +675,7 @@ class MonsterRow extends React.Component<MonsterRowProps> {
         }
 
         return (
-            <div className={style} onClick={this.onClick}>
+            <div className={style} onClick={e => this.onClick(e)}>
                 <div className='name'>
                     {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
                     <span className='info'>{this.getInformationText()}</span>

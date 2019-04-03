@@ -142,7 +142,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                             slot={slot}
                             encounter={this.props.selection as Encounter}
                             mode={'view encounter'}
-                            nudgeValue={this.props.nudgeValue}
+                            nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
                             removeEncounterSlot={source => this.props.removeEncounterSlot(source, waveID)}
                         />
                     </div>
@@ -181,9 +181,9 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
             <div className='column' key='filter'>
                 <FilterCard
                     filter={this.state.filter}
-                    changeValue={this.changeFilterValue}
-                    nudgeValue={this.nudgeFilterValue}
-                    resetFilter={this.resetFilter}
+                    changeValue={(type, value) => this.changeFilterValue(type, value)}
+                    nudgeValue={(type, delta) => this.nudgeFilterValue(type, delta)}
+                    resetFilter={() => this.resetFilter()}
                 />
             </div>
         );
@@ -212,7 +212,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                         encounter={this.props.selection as Encounter}
                         library={this.props.library}
                         mode={'view encounter'}
-                        addEncounterSlot={this.props.addEncounterSlot}
+                        addEncounterSlot={(combatant, waveID) => this.props.addEncounterSlot(combatant, waveID)}
                     />
                 </div>
             );
@@ -244,7 +244,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                         key={e.id}
                         encounter={e}
                         selected={e === this.props.selection}
-                        setSelection={this.props.selectEncounter}
+                        setSelection={encounter => this.props.selectEncounter(encounter)}
                     />
                 );
             }
@@ -262,9 +262,9 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                             selection={this.props.selection}
                             parties={this.props.parties}
                             changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
-                            addWave={this.props.addWave}
-                            removeEncounter={this.props.removeEncounter}
-                            getMonster={this.props.getMonster}
+                            addWave={() => this.props.addWave()}
+                            removeEncounter={() => this.props.removeEncounter()}
+                            getMonster={(monsterName, monsterGroupName) => this.props.getMonster(monsterName, monsterGroupName)}
                         />
                     </div>
                 );
@@ -278,8 +278,8 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                         <div className='column' key='info'>
                             <WaveCard
                                 wave={w}
-                                removeWave={this.props.removeWave}
-                                changeValue={this.props.changeValue}
+                                removeWave={wave => this.props.removeWave(wave)}
+                                changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
                             />
                         </div>
                     );
@@ -302,7 +302,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                 <div className='encounter-builder row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable list-column'>
                         {help}
-                        <button onClick={this.props.addEncounter}>add a new encounter</button>
+                        <button onClick={() => this.props.addEncounter()}>add a new encounter</button>
                         {encounters}
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>

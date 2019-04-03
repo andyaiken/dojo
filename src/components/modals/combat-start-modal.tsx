@@ -175,7 +175,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                     options={partyOptions}
                     placeholder='select party...'
                     selectedID={this.state.combatSetup.partyID ? this.state.combatSetup.partyID : undefined}
-                    select={this.setParty}
+                    select={optionID => this.setParty(optionID)}
                 />
                 {partyContent}
             </div>
@@ -256,7 +256,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                     options={encounterOptions}
                     placeholder='select encounter...'
                     selectedID={this.state.combatSetup.encounterID ? this.state.combatSetup.encounterID : undefined}
-                    select={this.setEncounter}
+                    select={optionID => this.setEncounter(optionID)}
                 />
                 {encounterContent}
             </div>
@@ -297,7 +297,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                         <Selector
                             options={mapOptions}
                             selectedID={this.state.combatSetup.mapID}
-                            select={this.setMapID}
+                            select={optionID => this.setMapID(optionID)}
                         />
                     );
                 }
@@ -323,7 +323,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                     options={folioOptions}
                     placeholder='select map folio...'
                     selectedID={this.state.combatSetup.folioID ? this.state.combatSetup.folioID : undefined}
-                    select={this.setFolioID}
+                    select={optionID => this.setFolioID(optionID)}
                 />
                 {selectMapSection}
                 {thumbnailSection}
@@ -389,7 +389,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                         options={waveOptions}
                         placeholder='select wave...'
                         selectedID={this.state.combatSetup.waveID ? this.state.combatSetup.waveID : undefined}
-                        select={this.setWave}
+                        select={optionID => this.setWave(optionID)}
                     />
                     {waveContent}
                 </div>
@@ -410,7 +410,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                     <DifficultyChartPanel
                         party={party}
                         encounter={encounter}
-                        getMonster={this.props.getMonster}
+                        getMonster={(monsterName, monsterGroupName) => this.props.getMonster(monsterName, monsterGroupName)}
                     />
                 </div>
             );
@@ -483,7 +483,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                                     value={slotNames.names[n]}
                                     slotID={slot.id}
                                     index={n}
-                                    changeName={this.changeName}
+                                    changeName={(slotID, index, value) => this.changeName(slotID, index, value)}
                                 />
                             </div>
                         );

@@ -197,14 +197,14 @@ export default class LanguageModule extends React.Component<Props, State> {
                 <Selector
                     options={presetOptions}
                     selectedID={selectedPreset}
-                    select={this.usePreset}
+                    select={optionID => this.usePreset(optionID)}
                 />
                 <div className='subheading'>languages</div>
                 <div className='row collapse small-up-3 medium-up-4 large-up-6 language-options'>
                     {languages}
                 </div>
                 <div className='subheading'>output</div>
-                <button className={allowGenerate ? '' : 'disabled'} onClick={this.generate}>generate text</button>
+                <button className={allowGenerate ? '' : 'disabled'} onClick={() => this.generate()}>generate text</button>
                 <div className='language-output'>
                     {output}
                 </div>

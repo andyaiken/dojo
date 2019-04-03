@@ -24,7 +24,7 @@ export default class HomeScreen extends React.Component<Props> {
                             </div>
                         </div>
                         <div className='text'>
-                            <button onClick={this.props.addOpenGameContent}>add monsters</button>
+                            <button onClick={() => this.props.addOpenGameContent()}>add monsters</button>
                         </div>
                     </div>
                 );

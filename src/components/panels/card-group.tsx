@@ -50,7 +50,7 @@ export default class CardGroup extends React.Component<Props, State> {
                 let closeBtn = null;
                 if (this.props.showClose) {
                     closeBtn = (
-                        <img className='image' src={close} alt='close' onClick={this.props.close} />
+                        <img className='image' src={close} alt='close' onClick={() => this.props.close()} />
                     );
                 }
 
@@ -58,7 +58,7 @@ export default class CardGroup extends React.Component<Props, State> {
                 if (this.props.showToggle) {
                     const style = this.state.showCards ? 'image rotate' : 'image';
                     toggle = (
-                        <img className={style} src={arrow} alt='arrow' onClick={this.toggleCards} />
+                        <img className={style} src={arrow} alt='arrow' onClick={() => this.toggleCards()} />
                     );
                 }
 

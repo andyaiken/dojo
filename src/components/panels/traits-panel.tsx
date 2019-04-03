@@ -45,9 +45,9 @@ export default class TraitsPanel extends React.Component<Props> {
                         key={a.id}
                         trait={a}
                         mode={this.props.mode}
-                        changeValue={this.props.changeValue}
-                        removeTrait={this.props.removeTrait}
-                        copyTrait={this.props.copyTrait}
+                        changeValue={(action, type, value) => this.props.changeValue(action, type, value)}
+                        removeTrait={action => this.props.removeTrait(action)}
+                        copyTrait={action => this.props.copyTrait(action)}
                     />
                 );
 

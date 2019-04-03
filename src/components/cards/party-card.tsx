@@ -102,9 +102,9 @@ export default class PartyCard extends React.Component<Props> {
                     </div>
                     <div className='divider' />
                     <div className='section'>
-                    <button onClick={this.props.addPC}>add a new pc</button>
-                        <button onClick={this.props.sortPCs}>sort pcs</button>
-                        <ConfirmButton text='delete party' callback={this.props.removeParty} />
+                    <button onClick={() => this.props.addPC()}>add a new pc</button>
+                        <button onClick={() => this.props.sortPCs()}>sort pcs</button>
+                        <ConfirmButton text='delete party' callback={() => this.props.removeParty()} />
                     </div>
                 </div>
             );

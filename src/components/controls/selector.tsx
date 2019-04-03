@@ -40,7 +40,7 @@ export default class Selector extends React.Component<Props> {
                         option={option}
                         selected={option.id === this.props.selectedID}
                         count={itemsPerRow}
-                        select={this.props.select}
+                        select={(optionID: string) => this.props.select(optionID)}
                     />
                 );
             });
@@ -90,7 +90,7 @@ class SelectorOption extends React.Component<SelectorOptionInterface> {
             }
 
             return (
-                <div key={this.props.option.id} className={style} style={{ width: width }} title={this.props.option.text} onClick={this.click}>
+                <div key={this.props.option.id} className={style} style={{ width: width }} title={this.props.option.text} onClick={e => this.click(e)}>
                     {this.props.option.text}
                 </div>
             );
