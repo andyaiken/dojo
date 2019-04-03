@@ -164,7 +164,7 @@ class TraitPanel extends React.Component<TraitPanelProps> {
                         used = '; used';
                     }
                 }
-                const found = this.props.trait.usage.toLowerCase().match(/(\d+)\/day/);
+                const found = this.props.trait.usage.toLowerCase().match(/(\d+)\s*\/\s*day/);
                 if (found) {
                     maxUses = parseInt(found[1], 10);
                     if (this.props.trait.uses > 0) {
