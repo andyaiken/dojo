@@ -2,6 +2,7 @@ import React from 'react';
 import Showdown from 'showdown';
 
 const showdown = new Showdown.Converter();
+showdown.setOption('tables', true);
 
 // tslint:disable-next-line:no-empty-interface
 interface Props {
