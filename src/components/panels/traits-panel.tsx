@@ -47,6 +47,21 @@ export default class TraitsPanel extends React.Component<Props> {
         );
     }
 
+    private createSection(traitsByType: { [id: string]: JSX.Element[] }, type: string) {
+        const types = Utils.traitType(type) + 's';
+        const traits = traitsByType[type];
+        if (traits.length === 0) {
+            return null;
+        }
+
+        return (
+            <div>
+                <div className='section subheading'>{types}</div>
+                {traits}
+            </div>
+        );
+    }
+
     public render() {
         try {
             const traitsByType: { [id: string]: JSX.Element[] } = {};
@@ -64,7 +79,9 @@ export default class TraitsPanel extends React.Component<Props> {
 
                 if (this.props.mode === 'edit') {
                     list.push(
-                        <button key='add' onClick={() => this.props.addTrait(type as 'trait' | 'action' | 'legendary' | 'lair' | 'regional')}>add a new {Utils.traitType(type)}</button>
+                        <button key='add' onClick={() => this.props.addTrait(type as 'trait' | 'action' | 'legendary' | 'lair' | 'regional')}>
+                            add a new {Utils.traitType(type)}
+                        </button>
                     );
                 }
 
@@ -75,20 +92,15 @@ export default class TraitsPanel extends React.Component<Props> {
                 return (
                     <div className='row collapse'>
                         <div className='columns small-4 medium-4 large-4 list-column'>
-                            <div className='section subheading'>traits</div>
-                            {traitsByType['trait']}
+                            {this.createSection(traitsByType, 'trait')}
                         </div>
                         <div className='columns small-4 medium-4 large-4 list-column'>
-                            <div className='section subheading'>actions</div>
-                            {traitsByType['action']}
+                            {this.createSection(traitsByType, 'action')}
                         </div>
                         <div className='columns small-4 medium-4 large-4 list-column'>
-                            <div className='section subheading'>legendary actions</div>
-                            {traitsByType['legendary']}
-                            <div className='section subheading'>lair actions</div>
-                            {traitsByType['lair']}
-                            <div className='section subheading'>regional effects</div>
-                            {traitsByType['regional']}
+                            {this.createSection(traitsByType, 'legendary')}
+                            {this.createSection(traitsByType, 'lair')}
+                            {this.createSection(traitsByType, 'regional')}
                         </div>
                     </div>
                 );
@@ -96,26 +108,11 @@ export default class TraitsPanel extends React.Component<Props> {
 
             return (
                 <div>
-                    <div style={{ display: traitsByType['trait'].length > 0 ? '' : 'none' }}>
-                        <div className='section subheading'>traits</div>
-                        {traitsByType['trait']}
-                    </div>
-                    <div style={{ display: traitsByType['action'].length > 0 ? '' : 'none' }}>
-                        <div className='section subheading'>actions</div>
-                        {traitsByType['action']}
-                    </div>
-                    <div style={{ display: traitsByType['legendary'].length > 0 ? '' : 'none' }}>
-                        <div className='section subheading'>legendary actions</div>
-                        {traitsByType['legendary']}
-                    </div>
-                    <div style={{ display: traitsByType['lair'].length > 0 ? '' : 'none' }}>
-                        <div className='section subheading'>lair actions</div>
-                        {traitsByType['lair']}
-                    </div>
-                    <div style={{ display: traitsByType['regional'].length > 0 ? '' : 'none' }}>
-                        <div className='section subheading'>regional effects</div>
-                        {traitsByType['regional']}
-                    </div>
+                    {this.createSection(traitsByType, 'trait')}
+                    {this.createSection(traitsByType, 'action')}
+                    {this.createSection(traitsByType, 'legendary')}
+                    {this.createSection(traitsByType, 'lair')}
+                    {this.createSection(traitsByType, 'regional')}
                 </div>
             );
         } catch (e) {
@@ -188,8 +185,18 @@ class TraitPanel extends React.Component<TraitPanelProps> {
                                 onChange={event => this.props.changeValue(this.props.trait, 'text', event.target.value)}
                             />
                             <div className='divider' />
-                            <button className={this.props.prevTrait ? '' : 'disabled'} onClick={() => this.props.swapTraits(this.props.trait, this.props.prevTrait as Trait)}>move up</button>
-                            <button className={this.props.nextTrait ? '' : 'disabled'} onClick={() => this.props.swapTraits(this.props.trait, this.props.nextTrait as Trait)}>move down</button>
+                            <button
+                                className={this.props.prevTrait ? '' : 'disabled'}
+                                onClick={() => this.props.swapTraits(this.props.trait, this.props.prevTrait as Trait)}
+                            >
+                                move up
+                            </button>
+                            <button
+                                className={this.props.nextTrait ? '' : 'disabled'}
+                                onClick={() => this.props.swapTraits(this.props.trait, this.props.nextTrait as Trait)}
+                            >
+                                move down
+                            </button>
                             <ConfirmButton text='delete' callback={() => this.props.removeTrait(this.props.trait)} />
                         </div>
                     );

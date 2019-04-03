@@ -14,7 +14,6 @@ import AbilityScorePanel from '../panels/ability-score-panel';
 import TraitsPanel from '../panels/traits-panel';
 
 import arrow from '../../resources/images/down-arrow.svg';
-import { SSL_OP_NO_TLSv1_1 } from 'constants';
 
 interface Props {
     monster: Monster;
