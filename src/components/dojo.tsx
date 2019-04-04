@@ -1696,7 +1696,7 @@ export default class Dojo extends React.Component<Props, State> {
                                 <div className='section'>
                                     <input
                                         type='text'
-                                        placeholder='filter'
+                                        placeholder='search'
                                         value={this.state.libraryFilter}
                                         onChange={event => this.changeValue(this.state, 'libraryFilter', event.target.value)}
                                     />

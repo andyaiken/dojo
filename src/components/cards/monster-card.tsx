@@ -27,6 +27,7 @@ interface Props {
     changeValue: (monster: any, field: string, value: any) => void;
     nudgeValue: (source: any, field: string, delta: number) => void;
     // Library
+    filter: string;
     editMonster: (monster: Monster) => void;
     removeMonster: (monster: Monster) => void;
     cloneMonster: (monster: Monster, name: string) => void;
@@ -65,6 +66,7 @@ export default class MonsterCard extends React.Component<Props, State> {
         library: null,
         changeValue: null,
         nudgeValue: null,
+        filter: '',
         editMonster: null,
         removeMonster: null,
         cloneMonster: null,
@@ -624,6 +626,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                         <TraitsPanel
                             combatant={this.props.combatant}
                             mode='template'
+                            filter={this.props.filter}
                             copyTrait={trait => this.props.copyTrait(trait)}
                         />
                     );

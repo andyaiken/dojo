@@ -14,6 +14,7 @@ const showdown = new Showdown.Converter();
 interface Props {
     combatant: Monster | (Combatant & Monster);
     mode: 'view' | 'edit' | 'template' | 'combat';
+    filter: string;
     addTrait: (traitType: 'trait' | 'action' | 'legendary' | 'lair' | 'regional') => void;
     copyTrait: (trait: Trait) => void;
     removeTrait: (trait: Trait) => void;
@@ -24,6 +25,7 @@ interface Props {
 export default class TraitsPanel extends React.Component<Props> {
     public static defaultProps = {
         mode: 'view',
+        filter: '',
         addTrait: null,
         copyTrait: null,
         removeTrait: null,
@@ -67,7 +69,9 @@ export default class TraitsPanel extends React.Component<Props> {
             const traitsByType: { [id: string]: JSX.Element[] } = {};
 
             TRAIT_TYPES.forEach(type => {
-                const traits = this.props.combatant.traits.filter(t => t.type === type);
+                const traits = this.props.combatant.traits
+                    .filter(t => t.type === type)
+                    .filter(t => Utils.match(this.props.filter, t.name));
 
                 const list: JSX.Element[] = [];
                 for (let n = 0; n !== traits.length; ++n) {

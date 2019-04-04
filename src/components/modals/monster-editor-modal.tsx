@@ -31,7 +31,8 @@ interface State {
         type: boolean,
         subtype: boolean,
         alignment: boolean,
-        challenge: boolean
+        challenge: boolean,
+        text: string
     };
 }
 
@@ -48,7 +49,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 type: true,
                 subtype: false,
                 alignment: false,
-                challenge: true
+                challenge: true,
+                text: ''
             }
         };
     }
@@ -76,6 +78,14 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     private toggleMatch(type: 'size' | 'type' | 'subtype' | 'alignment' | 'challenge') {
         // eslint-disable-next-line
         this.state.filter[type] = !this.state.filter[type];
+        this.setState({
+            filter: this.state.filter
+        });
+    }
+
+    private setFilterText(value: string) {
+        // eslint-disable-next-line
+        this.state.filter.text = value;
         this.setState({
             filter: this.state.filter
         });
@@ -652,15 +662,23 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
     private getMonsterCards(monsters: Monster[]) {
         const sorted = Utils.sort(monsters);
-        const monsterCards = sorted.map(m => (
-            <div className='section' key={m.id}>
-                <MonsterCard
-                    combatant={m}
-                    mode={'template ' + this.state.page}
-                    copyTrait={trait => this.copyTrait(trait)}
-                />
-            </div>
-        ));
+        const monsterCards = sorted.map(m => {
+            const showMonster = m.traits.some((t: Trait) => Utils.match(this.state.filter.text, t.name));
+            if (showMonster) {
+                return (
+                    <div className='section' key={m.id}>
+                        <MonsterCard
+                            combatant={m}
+                            mode={'template ' + this.state.page}
+                            filter={this.state.filter.text}
+                            copyTrait={trait => this.copyTrait(trait)}
+                        />
+                    </div>
+                );
+            } else {
+                return null;
+            }
+        }).filter(m => !!m);
 
         return monsterCards;
     }
@@ -866,9 +884,21 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
             let monsterList = null;
             if (this.props.showMonsters) {
+                let searchBox = null;
+                if ((this.state.page === 'actions') && (monsters.length > 0)) {
+                    searchBox = (
+                        <input
+                            type='text'
+                            placeholder='search for traits and actions'
+                            value={this.state.filter.text}
+                            onChange={event => this.setFilterText(event.target.value)}
+                        />
+                    );
+                }
                 monsterList = (
                     <div className='columns small-4 medium-4 large-4 scrollable list-column'>
                         {this.getFilterCard(monsters)}
+                        {searchBox}
                         {this.getMonsterCards(monsters)}
                     </div>
                 );
