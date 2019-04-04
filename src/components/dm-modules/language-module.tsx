@@ -144,6 +144,28 @@ export default class LanguageModule extends React.Component<Props, State> {
         }
     }
 
+    private random() {
+        const languages = this.getLanguages();
+
+        const selection: string[] = [];
+        while (selection.length !== 3) {
+            const n = Math.floor(Math.random() * languages.length);
+            const lang = languages[n];
+            if (!selection.includes(lang)) {
+                selection.push(lang);
+            }
+        }
+
+        this.setState({
+            sources: {},
+            output: []
+        }, () => {
+            selection.forEach(lang => {
+                this.addLanguage(lang);
+            });
+        });
+    }
+
     private generate() {
         const sources: string[] = [];
         Object.keys(this.state.sources).forEach(key => {
@@ -171,7 +193,7 @@ export default class LanguageModule extends React.Component<Props, State> {
             };
         });
 
-        let selectedPreset = 'custom';
+        let selectedPreset = '';
         this.getPresets().forEach(p => {
             const selected = Object.keys(this.state.sources).sort().join(', ');
             const setting = p.languages.sort().join(', ');
@@ -222,7 +244,8 @@ export default class LanguageModule extends React.Component<Props, State> {
                 <ButtonRow
                     buttons={[
                         { id: 'generate', text: 'generate text', disabled: !allowGenerate, callback: () => this.generate() },
-                        { id: 'reset', text: 'reset', disabled: !allowReset, callback: () => this.reset() }
+                        { id: 'reset', text: 'reset', disabled: !allowReset, callback: () => this.reset() },
+                        { id: 'random', text: 'random sources', disabled: false, callback: () => this.random() }
                     ]}
                 />
                 <div className='language-output'>
