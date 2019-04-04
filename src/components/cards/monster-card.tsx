@@ -7,8 +7,8 @@ import { Condition } from '../../models/condition';
 import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
 import { Monster, MonsterGroup, Trait } from '../../models/monster-group';
 
-import ButtonRow from '../controls/button-row';
 import ConfirmButton from '../controls/confirm-button';
+import ControlRow from '../controls/control-row';
 import Dropdown from '../controls/dropdown';
 import Expander from '../controls/expander';
 import Radial from '../controls/radial';
@@ -491,11 +491,11 @@ export default class MonsterCard extends React.Component<Props, State> {
                             factors={[1, 10]}
                             nudgeValue={delta => this.nudgeDamage(delta)}
                         />
-                        <ButtonRow
-                            buttons={[
-                                { id: 'heal', text: 'heal', disabled: false, callback: () => this.heal() },
-                                { id: 'reset', text: 'reset', disabled: false, callback: () => this.setDamage(0) },
-                                { id: 'damage', text: 'damage', disabled: false, callback: () => this.damage() }
+                        <ControlRow
+                            controls={[
+                                <button key='heal' onClick={() => this.heal()}>heal</button>,
+                                <button key='reset' onClick={() => this.setDamage(0)}>reset</button>,
+                                <button key='damage' onClick={() => this.damage()}>damage</button>
                             ]}
                             disabled={this.state.damageOrHealing === 0}
                         />

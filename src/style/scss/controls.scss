@@ -1,39 +1,6 @@
 @import 'theme.scss';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Button row
-
-.button-row {
-    margin: 5px -3px;
-
-    button {
-        vertical-align: top;
-        display: inline-block;
-        margin: 0 3px;
-    }
-
-    &.one button {
-        width: calc(((100% - 1px) - (1 * 6px)) / 1);
-    }
-
-    &.two button {
-        width: calc(((100% - 1px) - (2 * 6px)) / 2);
-    }
-
-    &.three button {
-        width: calc(((100% - 1px) - (3 * 6px)) / 3);
-    }
-
-    &.four button {
-        width: calc(((100% - 1px) - (4 * 6px)) / 4);
-    }
-
-    &.five button {
-        width: calc(((100% - 1px) - (5 * 6px)) / 5);
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Checkbox
 
 .checkbox {
@@ -65,6 +32,39 @@
         margin-left: 5px;
         width: calc(100% - 25px);
         font-weight: 600;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Control row
+
+.control-row {
+    margin: 5px -3px;
+
+    & > * {
+        vertical-align: top;
+        display: inline-block;
+        margin: 0 3px;
+    }
+
+    &.one > * {
+        width: calc(((100% - 1px) - (1 * 6px)) / 1);
+    }
+
+    &.two > * {
+        width: calc(((100% - 1px) - (2 * 6px)) / 2);
+    }
+
+    &.three > * {
+        width: calc(((100% - 1px) - (3 * 6px)) / 3);
+    }
+
+    &.four > * {
+        width: calc(((100% - 1px) - (4 * 6px)) / 4);
+    }
+
+    &.five > * {
+        width: calc(((100% - 1px) - (5 * 6px)) / 5);
     }
 }
 

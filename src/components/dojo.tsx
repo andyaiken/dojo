@@ -1053,7 +1053,7 @@ export default class Dojo extends React.Component<Props, State> {
             // Handle recharging traits
             if (combatant && (combatant.type === 'monster')) {
                 (combatant as Monster).traits
-                    .filter(t => (t.uses > 1) && t.usage.toLowerCase().startsWith('recharge '))
+                    .filter(t => (t.uses > 0) && t.usage.toLowerCase().startsWith('recharge '))
                     .forEach(t => {
                         combat.notifications.push({
                             id: Utils.guid(),

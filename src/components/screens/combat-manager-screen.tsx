@@ -11,6 +11,7 @@ import InfoCard from '../cards/info-card';
 import CombatManagerCard from '../cards/information/combat-manager-card';
 import MonsterCard from '../cards/monster-card';
 import PCCard from '../cards/pc-card';
+import ControlRow from '../controls/control-row';
 import Spin from '../controls/spin';
 import CombatListItem from '../list-items/combat-list-item';
 import CardGroup from '../panels/card-group';
@@ -442,10 +443,12 @@ class NotificationPanel extends React.Component<NotificationProps> {
                         <div className='text'>
                             {name} must make a {saveType} save against dc {duration.saveDC}
                         </div>
-                        <div className='buttons'>
-                            <button onClick={() => this.success()}>success</button>
-                            <button onClick={() => this.close()}>close</button>
-                        </div>
+                        <ControlRow
+                            controls={[
+                                <button key='success' onClick={() => this.success()}>success</button>,
+                                <button key='close' onClick={() => this.close()}>close</button>
+                            ]}
+                        />
                     </div>
                 );
             case 'condition-end':
@@ -454,9 +457,11 @@ class NotificationPanel extends React.Component<NotificationProps> {
                         <div className='text'>
                             {name} is no longer affected by condition {condition.name}
                         </div>
-                        <div className='buttons'>
-                            <button onClick={() => this.close()}>close</button>
-                        </div>
+                        <ControlRow
+                            controls={[
+                                <button key='close' onClick={() => this.close()}>close</button>
+                            ]}
+                        />
                     </div>
                 );
             case 'trait-recharge':
@@ -465,10 +470,12 @@ class NotificationPanel extends React.Component<NotificationProps> {
                         <div className='text'>
                             {name} can attempt to recharge {trait.name} ({trait.usage})
                         </div>
-                        <div className='buttons'>
-                            <button onClick={() => this.success()}>recharge</button>
-                            <button onClick={() => this.close()}>close</button>
-                        </div>
+                        <ControlRow
+                            controls={[
+                                <button key='recharge' onClick={() => this.success()}>recharge</button>,
+                                <button key='close' onClick={() => this.close()}>close</button>
+                            ]}
+                        />
                     </div>
                 );
             default:

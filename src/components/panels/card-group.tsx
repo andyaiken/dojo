@@ -79,7 +79,7 @@ export default class CardGroup extends React.Component<Props, State> {
             return (
                 <div className='card-group'>
                     {heading}
-                    <div className='row small-up-1 medium-up-2 large-up-4 collapse'>
+                    <div className='row small-up-1 medium-up-2 large-up-3 collapse'>
                         {cards}
                     </div>
                 </div>

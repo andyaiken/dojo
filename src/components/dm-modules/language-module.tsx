@@ -2,8 +2,8 @@ import React from 'react';
 
 import TextGenerator from '../../utils/text-generation';
 
-import ButtonRow from '../controls/button-row';
 import Checkbox from '../controls/checkbox';
+import ControlRow from '../controls/control-row';
 import Selector from '../controls/selector';
 
 // tslint:disable-next-line:no-empty-interface
@@ -241,11 +241,11 @@ export default class LanguageModule extends React.Component<Props, State> {
                     {languages}
                 </div>
                 <div className='subheading'>output</div>
-                <ButtonRow
-                    buttons={[
-                        { id: 'generate', text: 'generate text', disabled: !allowGenerate, callback: () => this.generate() },
-                        { id: 'reset', text: 'reset', disabled: !allowReset, callback: () => this.reset() },
-                        { id: 'random', text: 'random sources', disabled: false, callback: () => this.random() }
+                <ControlRow
+                    controls={[
+                        <button key='generate' className={allowGenerate ? '' : 'disabled'} onClick={() => this.generate()}>generate text</button>,
+                        <button key='reset' onClick={() => this.reset()}>reset</button>,
+                        <button key='random' className={allowReset ? '' : 'disabled'} onClick={() => this.random()}>random sources</button>
                     ]}
                 />
                 <div className='language-output'>
