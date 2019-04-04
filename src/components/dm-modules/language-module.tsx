@@ -2,6 +2,7 @@ import React from 'react';
 
 import TextGenerator from '../../utils/text-generation';
 
+import ButtonRow from '../controls/button-row';
 import Checkbox from '../controls/checkbox';
 import Selector from '../controls/selector';
 
@@ -32,13 +33,19 @@ export default class LanguageModule extends React.Component<Props, State> {
 
     private getLanguages(): string[] {
         return [
+            'afrikaans',
+            'amharic',
             'armenian',
             'basque',
+            'belarusian',
             'bulgarian',
+            'chichewa',
+            'chinese',
             'croatian',
             'czech',
             'danish',
             'dutch',
+            'english',
             'finnish',
             'french',
             'german',
@@ -149,6 +156,13 @@ export default class LanguageModule extends React.Component<Props, State> {
         });
     }
 
+    private reset() {
+        this.setState({
+            sources: {},
+            output: []
+        });
+    }
+
     public render() {
         const presetOptions = this.getPresets().map(p => {
             return {
@@ -181,6 +195,7 @@ export default class LanguageModule extends React.Component<Props, State> {
             });
 
         const allowGenerate = Object.keys(this.state.sources).length > 0;
+        const allowReset = allowGenerate || this.state.output.length > 0;
 
         const output = [];
         for (let n = 0; n !== this.state.output.length; ++n) {
@@ -204,7 +219,12 @@ export default class LanguageModule extends React.Component<Props, State> {
                     {languages}
                 </div>
                 <div className='subheading'>output</div>
-                <button className={allowGenerate ? '' : 'disabled'} onClick={() => this.generate()}>generate text</button>
+                <ButtonRow
+                    buttons={[
+                        { id: 'generate', text: 'generate text', disabled: !allowGenerate, callback: () => this.generate() },
+                        { id: 'reset', text: 'reset', disabled: !allowReset, callback: () => this.reset() }
+                    ]}
+                />
                 <div className='language-output'>
                     {output}
                 </div>
