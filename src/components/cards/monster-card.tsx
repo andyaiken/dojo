@@ -7,6 +7,7 @@ import { Condition } from '../../models/condition';
 import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
 import { Monster, MonsterGroup, Trait } from '../../models/monster-group';
 
+import ButtonRow from '../controls/button-row';
 import ConfirmButton from '../controls/confirm-button';
 import Dropdown from '../controls/dropdown';
 import Expander from '../controls/expander';
@@ -490,11 +491,14 @@ export default class MonsterCard extends React.Component<Props, State> {
                             factors={[1, 10]}
                             nudgeValue={delta => this.nudgeDamage(delta)}
                         />
-                        <div className={this.state.damageOrHealing > 0 ? '' : 'disabled'}>
-                            <button className='damage-btn' onClick={() => this.heal()}>heal</button>
-                            <button className='damage-btn' onClick={() => this.setDamage(0)}>reset</button>
-                            <button className='damage-btn' onClick={() => this.damage()}>damage</button>
-                        </div>
+                        <ButtonRow
+                            buttons={[
+                                { id: 'heal', text: 'heal', disabled: false, callback: () => this.heal() },
+                                { id: 'reset', text: 'reset', disabled: false, callback: () => this.setDamage(0) },
+                                { id: 'damage', text: 'damage', disabled: false, callback: () => this.damage() }
+                            ]}
+                            disabled={this.state.damageOrHealing === 0}
+                        />
                         <div className='section' style={{ display: this.props.combatant.damage.resist !== '' ? '' : 'none' }}>
                             <b>damage resistances</b> {this.props.combatant.damage.resist}
                         </div>
