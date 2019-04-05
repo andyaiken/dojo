@@ -1856,17 +1856,21 @@ export default class Dojo extends React.Component<Props, State> {
 
             let modal = null;
             if (this.state.modal) {
+                let modalSidebar = false;
                 let modalTitle = null;
                 let modalContent = null;
-                let modalAllowClose = true;
                 let modalAllowScroll = true;
                 const modalButtons = {
                     left: [] as JSX.Element[],
-                    right: [] as JSX.Element[]
+                    right: [
+                        <button key='close' onClick={() => this.closeModal()}
+                    >close</button>] as JSX.Element[]
                 };
 
                 switch (this.state.modal.type) {
                     case 'about':
+                        modalSidebar = true;
+                        modalTitle = 'about';
                         modalContent = (
                             <AboutModal
                                 options={this.state.options}
@@ -1874,6 +1878,7 @@ export default class Dojo extends React.Component<Props, State> {
                                 changeValue={(source, type, value) => this.changeValue(source, type, value)}
                             />
                         );
+                        modalButtons.right = [];
                         break;
                     case 'demographics':
                         modalTitle = 'demographics';
@@ -1892,7 +1897,6 @@ export default class Dojo extends React.Component<Props, State> {
                                 showMonsters={this.state.modal.showMonsters}
                             />
                         );
-                        modalAllowClose = false;
                         modalAllowScroll = false;
                         modalButtons.left = [
                             (
@@ -1916,7 +1920,6 @@ export default class Dojo extends React.Component<Props, State> {
                                 map={this.state.modal.map}
                             />
                         );
-                        modalAllowClose = false;
                         modalAllowScroll = false;
                         modalButtons.right = [
                             <button key='save' onClick={() => this.saveMap()}>save</button>,
@@ -1935,7 +1938,6 @@ export default class Dojo extends React.Component<Props, State> {
                                 notify={() => this.setState({modal: this.state.modal})}
                             />
                         );
-                        modalAllowClose = false;
                         modalAllowScroll = false;
                         modalButtons.right = [
                             (
@@ -1960,7 +1962,6 @@ export default class Dojo extends React.Component<Props, State> {
                                 notify={() => this.setState({modal: this.state.modal})}
                             />
                         );
-                        modalAllowClose = false;
                         modalAllowScroll = false;
                         modalButtons.right = [
                             (
@@ -1984,7 +1985,6 @@ export default class Dojo extends React.Component<Props, State> {
                                 combat={this.state.modal.combat}
                             />
                         );
-                        modalAllowClose = false;
                         modalAllowScroll = false;
                         modalButtons.right = [
                             <button key='add' onClick={() => this.addConditionFromModal()}>add</button>,
@@ -2000,7 +2000,6 @@ export default class Dojo extends React.Component<Props, State> {
                                 combat={this.state.modal.combat}
                             />
                         );
-                        modalAllowClose = false;
                         modalButtons.right = [
                             <button key='save' onClick={() => this.editConditionFromModal()}>save</button>,
                             <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
@@ -2013,10 +2012,10 @@ export default class Dojo extends React.Component<Props, State> {
 
                 modal = (
                     <div className='overlay'>
-                        <div className='modal'>
+                        <div className={modalSidebar ? 'modal sidebar' : 'modal'}>
                             <div className='modal-header'>
                                 <div className='title'>{modalTitle}</div>
-                                {modalAllowClose ? <img className='image' src={close} alt='close' onClick={() => this.closeModal()} /> : null}
+                                {modalSidebar ? <img className='image' src={close} alt='close' onClick={() => this.closeModal()} /> : null}
                             </div>
                             <div className={modalAllowScroll ? 'modal-content scrollable' : 'modal-content'}>
                                 {modalContent}

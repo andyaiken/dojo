@@ -303,7 +303,7 @@ body,
 
 .welcome-panel {
     padding: 3px;
-    border-left: 5px solid $foreground;
+    border-left: 3px solid $foreground;
 
     .heading {
         padding-left: 8px;
@@ -752,7 +752,7 @@ body,
     margin: 5px 0;
     padding: 3px;
     cursor: pointer;
-    border-left: 5px solid $foreground;
+    border-left: 3px solid $foreground;
 
     &:hover {
         background-color: $highlight01;
@@ -880,12 +880,18 @@ body,
 }
 
 .modal {
-    height: calc(100% - 160px);
+    height: calc(100% - 100px);
     width: calc(100% - 100px);
-    margin: 80px 50px;
+    margin: 50px;
+
+    &.sidebar {
+        height: 100%;
+        width: 50%;
+        margin: 0 0 0 50%;
+    }
 
     .modal-header {
-        height: 40px;
+        height: 50px;
         background-color: $header-background;
         border-top: 1px solid $control-border;
         border-bottom: 1px solid $control-border;
@@ -893,19 +899,21 @@ body,
         .title {
             display: inline-block;
             vertical-align: middle;
-            width: calc(100% - 40px);
-            padding-left: 15px;
-            line-height: 40px;
+            width: calc(100% - 70px);
+            padding-left: 5px;
+            line-height: 30px;
             font-size: 20px;
             font-weight: 600;
             color: $header-foreground;
+            border-left: 3px solid black;
+            margin: 10px;
         }
 
         .image {
             display: inline-block;
             vertical-align: middle;
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             padding: 2px;
             margin: 5px;
             border-radius: 50%;
@@ -918,7 +926,7 @@ body,
     }
 
     .modal-content {
-        height: calc(100% - 82px);
+        height: calc(100% - 100px);
         padding: 0 15px;
         background-color: $background;
 
@@ -995,23 +1003,24 @@ body,
     }
     
     .modal-footer {
-        height: 42px;
+        height: 50px;
         background-color: $header-background;
         border-top: 1px solid $control-border;
         border-bottom: 1px solid $control-border;
+        padding: 9px 4px;
 
         button,
         .checkbox {
             display: inline-block;
             width: 180px;
-            margin: 4px 5px;
+            margin: 0 4px;
         }
     }
 }
 
 .name-row {
     margin: 5px 0;
-    border-left: 5px solid $foreground;
+    border-left: 3px solid $foreground;
 
     &:hover {
         border-color: $highlight;
@@ -1042,7 +1051,7 @@ body,
     .notification {
         min-height: 40px;
         margin: 5px;
-        border-left: 5px solid $foreground;
+        border-left: 3px solid $foreground;
         font-weight: 600;
 
         &:hover {
