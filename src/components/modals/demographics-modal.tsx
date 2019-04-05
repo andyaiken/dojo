@@ -111,22 +111,12 @@ export default class DemographicsModal extends React.Component<Props, State> {
                         <div
                             key={bucket.title}
                             className='bar-container'
-                            style={{
-                                width: 'calc((100% - 1px) / ' + buckets.length + ')',
-                                left: 'calc((100% - 1px) * ' + index + ' / ' + buckets.length + ')'
-                            }}
                             title={bucket.title + ': ' + set.length + ' monsters'}
                         >
                             <div
-                                className='bar-space'
-                                style={{
-                                    height: 'calc((100% - 1px) * ' + (maxBucketSize - count) + ' / ' + maxBucketSize + ')'
-                                }}
-                            />
-                            <div
                                 className='bar'
                                 style={{
-                                    height: 'calc((100% - 1px) * ' + count + ' / ' + maxBucketSize + ')'
+                                    width: 'calc((100% - 1px) * ' + count + ' / ' + maxBucketSize + ')'
                                 }}
                             />
                         </div>

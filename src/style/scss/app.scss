@@ -633,33 +633,23 @@ body,
 // Chart
 
 .chart {
-    height: 300px;
-    border: 1px solid $control-border;
-    background-color: $background;
 
     .plot {
-        height: calc(100% - 20px);
-        width: calc(100% - 20px);
-        margin: 10px;
-        border-bottom: 1px solid $control-border;
+        margin: 10px 0;
 
         .bar-container {
-            display: inline-block;
-            height: 100%;
 
             .bar {
                 background-color: lightsteelblue;
-                border-top: 1px solid steelblue;
-                vertical-align: bottom;
+                border-right: 1px solid steelblue;
+                height: 20px;
             }
 
             &:hover {
+                background-color: #EEEEEE;
+
                 .bar {
                     background-color: steelblue;
-                }
-
-                .bar-space {
-                    background-color: #EEEEEE;
                 }
             }
         }
