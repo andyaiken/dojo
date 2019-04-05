@@ -7,8 +7,8 @@ import { Combatant } from '../../models/combat';
 import { Monster, Trait, TRAIT_TYPES } from '../../models/monster-group';
 
 import ConfirmButton from '../controls/confirm-button';
-import Expander from '../controls/expander';
 import ControlRow from '../controls/control-row';
+import Expander from '../controls/expander';
 
 const showdown = new Showdown.Converter();
 

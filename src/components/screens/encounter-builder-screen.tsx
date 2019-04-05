@@ -211,7 +211,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
             />
         );
     }
-    
+
     private showEncounter(enc: Encounter) {
         return Utils.match(this.props.filter, enc.name);
     }

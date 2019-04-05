@@ -1846,7 +1846,7 @@ export default class Dojo extends React.Component<Props, State> {
                                     />
                                 </div>
                             </div>
-                        );    
+                        );
                     }
                     break;
                 default:
@@ -1863,8 +1863,8 @@ export default class Dojo extends React.Component<Props, State> {
                 const modalButtons = {
                     left: [] as JSX.Element[],
                     right: [
-                        <button key='close' onClick={() => this.closeModal()}
-                    >close</button>] as JSX.Element[]
+                        <button key='close' onClick={() => this.closeModal()}>close</button>
+                    ] as JSX.Element[]
                 };
 
                 switch (this.state.modal.type) {
