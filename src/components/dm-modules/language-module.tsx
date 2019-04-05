@@ -244,8 +244,8 @@ export default class LanguageModule extends React.Component<Props, State> {
                 <ControlRow
                     controls={[
                         <button key='generate' className={allowGenerate ? '' : 'disabled'} onClick={() => this.generate()}>generate text</button>,
-                        <button key='reset' onClick={() => this.reset()}>reset</button>,
-                        <button key='random' className={allowReset ? '' : 'disabled'} onClick={() => this.random()}>random sources</button>
+                        <button key='reset' className={allowReset ? '' : 'disabled'} onClick={() => this.reset()}>reset</button>,
+                        <button key='random' onClick={() => this.random()}>random sources</button>
                     ]}
                 />
                 <div className='language-output'>
