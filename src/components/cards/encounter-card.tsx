@@ -14,6 +14,7 @@ import arrow from '../../resources/images/down-arrow.svg';
 interface Props {
     selection: Encounter;
     parties: Party[];
+    filter: string;
     changeValue: (field: string, value: string) => void;
     addWave: () => void;
     removeEncounter: () => void;
@@ -92,6 +93,7 @@ export default class EncounterCard extends React.Component<Props, State> {
                             type='text'
                             placeholder='encounter name'
                             value={this.props.selection.name}
+                            disabled={!!this.props.filter}
                             onChange={event => this.props.changeValue('name', event.target.value)}
                         />
                     </div>
@@ -101,7 +103,7 @@ export default class EncounterCard extends React.Component<Props, State> {
                     </div>
                     <div className='divider' />
                     <div className='section'>
-                        <button onClick={() => this.props.addWave()}>add a new wave</button>
+                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.addWave()}>add a new wave</button>
                         <ConfirmButton text='delete encounter' callback={() => this.props.removeEncounter()} />
                     </div>
                 </div>

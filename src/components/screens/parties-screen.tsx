@@ -1,5 +1,7 @@
 import React from 'react';
 
+import Utils from '../../utils/utils';
+
 import { Party, PC } from '../../models/party';
 
 import InfoCard from '../cards/info-card';
@@ -12,6 +14,7 @@ import CardGroup from '../panels/card-group';
 interface Props {
     parties: Party[];
     selection: Party | null;
+    filter: string;
     showHelp: boolean;
     selectParty: (party: Party | null) => void;
     addParty: () => void;
@@ -24,6 +27,18 @@ interface Props {
 }
 
 export default class PartiesScreen extends React.Component<Props> {
+    private showParty(party: Party) {
+        let result = Utils.match(this.props.filter, party.name);
+
+        if (!result) {
+            party.pcs.forEach(pc => {
+                result = Utils.match(this.props.filter, pc.name) || result;
+            });
+        }
+
+        return result;
+    }
+
     public render() {
         try {
             let help = null;
@@ -33,18 +48,17 @@ export default class PartiesScreen extends React.Component<Props> {
                 );
             }
 
-            const parties = [];
-            for (let n = 0; n !== this.props.parties.length; ++n) {
-                const p = this.props.parties[n];
-                parties.push(
+            const parties = this.props.parties.filter(p => this.showParty(p)).map(p => {
+                return (
                     <PartyListItem
                         key={p.id}
                         party={p}
+                        filter={this.props.filter}
                         selected={p === this.props.selection}
                         setSelection={party => this.props.selectParty(party)}
                     />
                 );
-            }
+            });
 
             const activeCards: JSX.Element[] = [];
             const inactiveCards: JSX.Element[] = [];
@@ -54,6 +68,7 @@ export default class PartiesScreen extends React.Component<Props> {
                     <div className='column' key='info'>
                         <PartyCard
                             selection={this.props.selection}
+                            filter={this.props.filter}
                             addPC={() => this.props.addPC()}
                             sortPCs={() => this.props.sortPCs()}
                             changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
@@ -62,7 +77,11 @@ export default class PartiesScreen extends React.Component<Props> {
                     </div>
                 );
 
-                const activePCs = this.props.selection.pcs.filter(pc => pc.active);
+                const pcs = this.props.selection.pcs.filter(pc => {
+                    return Utils.match(this.props.filter, pc.name);
+                });
+
+                const activePCs = pcs.filter(pc => pc.active);
                 activePCs.forEach(activePC => {
                     activeCards.push(
                         <div className='column' key={activePC.id}>
@@ -77,7 +96,7 @@ export default class PartiesScreen extends React.Component<Props> {
                     );
                 });
 
-                const inactivePCs = this.props.selection.pcs.filter(pc => !pc.active);
+                const inactivePCs = pcs.filter(pc => !pc.active);
                 inactivePCs.forEach(inactivePC => {
                     inactiveCards.push(
                         <div className='column' key={inactivePC.id}>

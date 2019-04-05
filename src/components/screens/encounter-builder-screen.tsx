@@ -21,6 +21,7 @@ interface Props {
     selection: Encounter | null;
     parties: Party[];
     library: MonsterGroup[];
+    filter: string;
     showHelp: boolean;
     selectEncounter: (encounter: Encounter | null) => void;
     addEncounter: () => void;
@@ -56,22 +57,6 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                 size: 'all sizes'
             }
         };
-    }
-
-    private inEncounter(monster: Monster) {
-        let result = false;
-
-        if (this.props.selection) {
-            const group = Utils.getMonsterGroup(monster, this.props.library);
-
-            this.props.selection.slots.forEach(slot => {
-                if ((slot.monsterGroupName === group.name) && (slot.monsterName === monster.name)) {
-                    result = true;
-                }
-            });
-        }
-
-        return result;
     }
 
     private matchMonster(monster: Monster) {
@@ -226,6 +211,10 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
             />
         );
     }
+    
+    private showEncounter(enc: Encounter) {
+        return Utils.match(this.props.filter, enc.name);
+    }
 
     public render() {
         try {
@@ -236,10 +225,8 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                 );
             }
 
-            const encounters = [];
-            for (let n = 0; n !== this.props.encounters.length; ++n) {
-                const e = this.props.encounters[n];
-                encounters.push(
+            const encounters = this.props.encounters.filter(e => this.showEncounter(e)).map(e => {
+                return (
                     <EncounterListItem
                         key={e.id}
                         encounter={e}
@@ -247,7 +234,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                         setSelection={encounter => this.props.selectEncounter(encounter)}
                     />
                 );
-            }
+            });
 
             let encounterName;
             const encounterCards = [];
@@ -261,6 +248,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                         <EncounterCard
                             selection={this.props.selection}
                             parties={this.props.parties}
+                            filter={this.props.filter}
                             changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
                             addWave={() => this.props.addWave()}
                             removeEncounter={() => this.props.removeEncounter()}

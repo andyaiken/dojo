@@ -1,27 +1,31 @@
 import React from 'react';
 
+import Utils from '../../utils/utils';
+
 import { Party } from '../../models/party';
 
 interface Props {
     party: Party;
     selected: boolean;
+    filter: string;
     setSelection: (party: Party) => void;
 }
 
 export default class PartyListItem extends React.Component<Props> {
     public render() {
         try {
+            const matchParty = Utils.match(this.props.filter, this.props.party.name);
+
             const pcs = [];
             for (let n = 0; n !== this.props.party.pcs.length; ++n) {
                 const pc = this.props.party.pcs[n];
-                let name = pc.name;
+                let name = pc.name || 'unnamed pc';
                 if (pc.player) {
                     name += ' (' + pc.player + ')';
                 }
-                if (!name) {
-                    name = 'unnamed pc';
+                if (matchParty || Utils.match(this.props.filter, name)) {
+                    pcs.push(<div key={pc.id} className='text'>{name}</div>);
                 }
-                pcs.push(<div key={pc.id} className='text'>{name}</div>);
             }
             if (pcs.length === 0) {
                 pcs.push(<div key='empty' className='text'>no pcs</div>);

@@ -21,6 +21,7 @@ import MapPanel from '../panels/map-panel';
 interface Props {
     combats: Combat[];
     combat: Combat | null;
+    filter: string;
     showHelp: boolean;
     createCombat: () => void;
     resumeEncounter: (combat: Combat) => void;
@@ -132,6 +133,10 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
             }
             this.setAddingToMapID(null);
         }
+    }
+
+    private showCombat(combat: Combat) {
+        return Utils.match(this.props.filter, combat.name);
     }
 
     public render() {
@@ -359,9 +364,8 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     );
                 }
 
-                const combats: JSX.Element[] = [];
-                this.props.combats.forEach(c => {
-                    combats.push(
+                const combats = this.props.combats.filter(c => this.showCombat(c)).map(c => {
+                    return (
                         <CombatListItem
                             key={c.id}
                             combat={c}

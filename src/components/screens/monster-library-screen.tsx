@@ -51,21 +51,17 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                 );
             }
 
-            const listItems = [];
-            for (let n = 0; n !== this.props.library.length; ++n) {
-                const group = this.props.library[n];
-                if (this.showMonsterGroup(group)) {
-                    listItems.push(
-                        <MonsterGroupListItem
-                            key={group.id}
-                            group={group}
-                            filter={this.props.filter}
-                            selected={group === this.props.selection}
-                            setSelection={grp => this.props.selectMonsterGroup(grp)}
-                        />
-                    );
-                }
-            }
+            const listItems = this.props.library.filter(group => this.showMonsterGroup(group)).map(group => {
+                return (
+                    <MonsterGroupListItem
+                        key={group.id}
+                        group={group}
+                        filter={this.props.filter}
+                        selected={group === this.props.selection}
+                        setSelection={grp => this.props.selectMonsterGroup(grp)}
+                    />
+                );
+            });
 
             const cards = [];
 

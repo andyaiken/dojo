@@ -59,7 +59,7 @@ interface State {
 
     modal: any;
 
-    libraryFilter: string;
+    filter: string;
 }
 
 export default class Dojo extends React.Component<Props, State> {
@@ -83,7 +83,7 @@ export default class Dojo extends React.Component<Props, State> {
             selectedCombatID: null,
             selectedDMModuleID: null,
             modal: null,
-            libraryFilter: ''
+            filter: ''
         };
 
         try {
@@ -141,7 +141,7 @@ export default class Dojo extends React.Component<Props, State> {
 
                 data.view = 'home';
                 data.modal = null;
-                data.libraryFilter = '';
+                data.filter = '';
 
                 this.state = data;
             }
@@ -1654,6 +1654,7 @@ export default class Dojo extends React.Component<Props, State> {
                         <PartiesScreen
                             parties={this.state.parties}
                             selection={this.getParty(this.state.selectedPartyID) || null}
+                            filter={this.state.filter}
                             showHelp={this.state.options.showHelp}
                             selectParty={party => this.selectParty(party)}
                             addParty={() => this.addParty()}
@@ -1665,13 +1666,25 @@ export default class Dojo extends React.Component<Props, State> {
                             nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
                         />
                     );
+                    actions = (
+                        <div className='actions'>
+                            <div className='section'>
+                                <input
+                                    type='text'
+                                    placeholder='search'
+                                    value={this.state.filter}
+                                    onChange={event => this.changeValue(this.state, 'filter', event.target.value)}
+                                />
+                            </div>
+                        </div>
+                    );
                     break;
                 case 'library':
                     content = (
                         <MonsterLibraryScreen
                             library={this.state.library}
                             selection={this.getMonsterGroup(this.state.selectedMonsterGroupID) || null}
-                            filter={this.state.libraryFilter}
+                            filter={this.state.filter}
                             showHelp={this.state.options.showHelp}
                             selectMonsterGroup={group => this.selectMonsterGroup(group)}
                             addMonsterGroup={() => this.addMonsterGroup()}
@@ -1686,33 +1699,28 @@ export default class Dojo extends React.Component<Props, State> {
                             moveToGroup={(combatant, groupID) => this.moveToGroup(combatant, groupID)}
                         />
                     );
-                    let count = 0;
-                    this.state.library.forEach(group => {
-                        count += group.monsters.length;
-                    });
-                    if (count > 0) {
-                        actions = (
-                            <div className='actions'>
-                                <div className='section'>
-                                    <input
-                                        type='text'
-                                        placeholder='search'
-                                        value={this.state.libraryFilter}
-                                        onChange={event => this.changeValue(this.state, 'libraryFilter', event.target.value)}
-                                    />
-                                </div>
-                                <div className='section'>
-                                    <button onClick={() => this.openDemographics()}>demographics</button>
-                                </div>
+                    actions = (
+                        <div className='actions'>
+                            <div className='section'>
+                                <button onClick={() => this.openDemographics()}>demographics</button>
                             </div>
-                        );
-                    }
+                            <div className='section'>
+                                <input
+                                    type='text'
+                                    placeholder='search'
+                                    value={this.state.filter}
+                                    onChange={event => this.changeValue(this.state, 'filter', event.target.value)}
+                                />
+                            </div>
+                        </div>
+                    );
                     break;
                 case 'encounter':
                     content = (
                         <EncounterBuilderScreen
                             encounters={this.state.encounters}
                             selection={this.getEncounter(this.state.selectedEncounterID) || null}
+                            filter={this.state.filter}
                             parties={this.state.parties}
                             library={this.state.library}
                             showHelp={this.state.options.showHelp}
@@ -1728,12 +1736,25 @@ export default class Dojo extends React.Component<Props, State> {
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                         />
                     );
+                    actions = (
+                        <div className='actions'>
+                            <div className='section'>
+                                <input
+                                    type='text'
+                                    placeholder='search'
+                                    value={this.state.filter}
+                                    onChange={event => this.changeValue(this.state, 'filter', event.target.value)}
+                                />
+                            </div>
+                        </div>
+                    );
                     break;
                 case 'maps':
                     content = (
                         <MapFoliosScreen
                             mapFolios={this.state.mapFolios}
                             selection={this.getMapFolio(this.state.selectedMapFolioID) || null}
+                            filter={this.state.filter}
                             showHelp={this.state.options.showHelp}
                             selectMapFolio={folio => this.selectMapFolio(folio)}
                             addMapFolio={() => this.addMapFolio()}
@@ -1744,6 +1765,18 @@ export default class Dojo extends React.Component<Props, State> {
                             changeValue={(source, type, value) => this.changeValue(source, type, value)}
                         />
                     );
+                    actions = (
+                        <div className='actions'>
+                            <div className='section'>
+                                <input
+                                    type='text'
+                                    placeholder='search'
+                                    value={this.state.filter}
+                                    onChange={event => this.changeValue(this.state, 'filter', event.target.value)}
+                                />
+                            </div>
+                        </div>
+                    );
                     break;
                 case 'combat':
                     const combat = this.getCombat(this.state.selectedCombatID);
@@ -1751,6 +1784,7 @@ export default class Dojo extends React.Component<Props, State> {
                         <CombatManagerScreen
                             combats={this.state.combats}
                             combat={combat || null}
+                            filter={this.state.filter}
                             showHelp={this.state.options.showHelp}
                             createCombat={() => this.createCombat()}
                             resumeEncounter={pausedCombat => this.resumeCombat(pausedCombat)}
@@ -1800,6 +1834,19 @@ export default class Dojo extends React.Component<Props, State> {
                                 </div>
                             );
                         }
+                    } else {
+                        actions = (
+                            <div className='actions'>
+                                <div className='section'>
+                                    <input
+                                        type='text'
+                                        placeholder='search'
+                                        value={this.state.filter}
+                                        onChange={event => this.changeValue(this.state, 'filter', event.target.value)}
+                                    />
+                                </div>
+                            </div>
+                        );    
                     }
                     break;
                 default:

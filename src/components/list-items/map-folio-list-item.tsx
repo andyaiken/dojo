@@ -1,21 +1,28 @@
 import React from 'react';
 
+import Utils from '../../utils/utils';
+
 import { MapFolio } from '../../models/map-folio';
 
 interface Props {
     mapFolio: MapFolio;
     selected: boolean;
+    filter: string;
     setSelection: (mapFolio: MapFolio) => void;
 }
 
 export default class MapFolioListItem extends React.Component<Props> {
     public render() {
         try {
+            const matchFolio = Utils.match(this.props.filter, this.props.mapFolio.name);
+
             const maps = [];
             for (let n = 0; n !== this.props.mapFolio.maps.length; ++n) {
                 const map = this.props.mapFolio.maps[n];
                 const name = map.name || 'unnamed map';
-                maps.push(<div key={map.id} className='text'>{name}</div>);
+                if (matchFolio || Utils.match(this.props.filter, name)) {
+                    maps.push(<div key={map.id} className='text'>{name}</div>);
+                }
             }
             if (maps.length === 0) {
                 maps.push(<div key='empty' className='text'>no maps</div>);

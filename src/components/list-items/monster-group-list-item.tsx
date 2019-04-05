@@ -19,12 +19,8 @@ export default class MonsterGroupListItem extends React.Component<Props> {
             const monsters = [];
             for (let n = 0; n !== this.props.group.monsters.length; ++n) {
                 const monster = this.props.group.monsters[n];
-                const matchMonster = Utils.match(this.props.filter, monster.name);
-                if (matchGroup || matchMonster) {
-                    let name = monster.name;
-                    if (!name) {
-                        name = 'unnamed monster';
-                    }
+                let name = monster.name || 'unnamed monster';
+                if (matchGroup || Utils.match(this.props.filter, name)) {
                     monsters.push(<div key={monster.id} className='text'>{name}</div>);
                 }
             }

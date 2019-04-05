@@ -7,6 +7,7 @@ import InfoCard from './info-card';
 
 interface Props {
     selection: Party;
+    filter: string | null;
     changeValue: (field: string, value: string) => void;
     addPC: () => void;
     sortPCs: () => void;
@@ -75,6 +76,7 @@ export default class PartyCard extends React.Component<Props> {
                             type='text'
                             placeholder='party name'
                             value={this.props.selection.name}
+                            disabled={!!this.props.filter}
                             onChange={event => this.props.changeValue('name', event.target.value)}
                         />
                     </div>
@@ -102,8 +104,8 @@ export default class PartyCard extends React.Component<Props> {
                     </div>
                     <div className='divider' />
                     <div className='section'>
-                    <button onClick={() => this.props.addPC()}>add a new pc</button>
-                        <button onClick={() => this.props.sortPCs()}>sort pcs</button>
+                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.addPC()}>add a new pc</button>
+                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.sortPCs()}>sort pcs</button>
                         <ConfirmButton text='delete party' callback={() => this.props.removeParty()} />
                     </div>
                 </div>

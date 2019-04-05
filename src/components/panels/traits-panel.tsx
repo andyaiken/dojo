@@ -8,6 +8,7 @@ import { Monster, Trait, TRAIT_TYPES } from '../../models/monster-group';
 
 import ConfirmButton from '../controls/confirm-button';
 import Expander from '../controls/expander';
+import ControlRow from '../controls/control-row';
 
 const showdown = new Showdown.Converter();
 
@@ -189,18 +190,24 @@ class TraitPanel extends React.Component<TraitPanelProps> {
                                 onChange={event => this.props.changeValue(this.props.trait, 'text', event.target.value)}
                             />
                             <div className='divider' />
-                            <button
-                                className={this.props.prevTrait ? '' : 'disabled'}
-                                onClick={() => this.props.swapTraits(this.props.trait, this.props.prevTrait as Trait)}
-                            >
-                                move up
-                            </button>
-                            <button
-                                className={this.props.nextTrait ? '' : 'disabled'}
-                                onClick={() => this.props.swapTraits(this.props.trait, this.props.nextTrait as Trait)}
-                            >
-                                move down
-                            </button>
+                            <ControlRow
+                                controls={[
+                                    <button
+                                        key='up'
+                                        className={this.props.prevTrait ? '' : 'disabled'}
+                                        onClick={() => this.props.swapTraits(this.props.trait, this.props.prevTrait as Trait)}
+                                    >
+                                        move up
+                                    </button>,
+                                    <button
+                                        key='down'
+                                        className={this.props.nextTrait ? '' : 'disabled'}
+                                        onClick={() => this.props.swapTraits(this.props.trait, this.props.nextTrait as Trait)}
+                                    >
+                                        move down
+                                    </button>
+                                ]}
+                            />
                             <ConfirmButton text='delete' callback={() => this.props.removeTrait(this.props.trait)} />
                         </div>
                     );

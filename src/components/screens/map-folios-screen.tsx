@@ -1,5 +1,7 @@
 import React from 'react';
 
+import Utils from '../../utils/utils';
+
 import { Map, MapFolio } from '../../models/map-folio';
 
 import InfoCard from '../cards/info-card';
@@ -12,6 +14,7 @@ import CardGroup from '../panels/card-group';
 interface Props {
     mapFolios: MapFolio[];
     selection: MapFolio | null;
+    filter: string;
     showHelp: boolean;
     selectMapFolio: (mapFolio: MapFolio | null) => void;
     addMapFolio: () => void;
@@ -23,6 +26,18 @@ interface Props {
 }
 
 export default class MapFoliosScreen extends React.Component<Props> {
+    private showMapFolio(folio: MapFolio) {
+        let result = Utils.match(this.props.filter, folio.name);
+
+        if (!result) {
+            folio.maps.forEach(map => {
+                result = Utils.match(this.props.filter, map.name) || result;
+            });
+        }
+
+        return result;
+    }
+
     public render() {
         try {
             let help = null;
@@ -32,18 +47,17 @@ export default class MapFoliosScreen extends React.Component<Props> {
                 );
             }
 
-            const folios = [];
-            for (let n = 0; n !== this.props.mapFolios.length; ++n) {
-                const mapFolio = this.props.mapFolios[n];
-                folios.push(
+            const folios = this.props.mapFolios.filter(f => this.showMapFolio(f)).map(mapFolio => {
+                return (
                     <MapFolioListItem
                         key={mapFolio.id}
                         mapFolio={mapFolio}
+                        filter={this.props.filter}
                         selected={mapFolio === this.props.selection}
                         setSelection={f => this.props.selectMapFolio(f)}
                     />
                 );
-            }
+            });
 
             let folio = null;
             if (this.props.selection) {
@@ -53,6 +67,7 @@ export default class MapFoliosScreen extends React.Component<Props> {
                     <div className='column' key='info'>
                         <MapFolioCard
                             selection={this.props.selection}
+                            filter={this.props.filter}
                             addMap={() => this.props.addMap()}
                             removeMapFolio={() => this.props.removeMapFolio()}
                             changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
@@ -60,7 +75,7 @@ export default class MapFoliosScreen extends React.Component<Props> {
                     </div>
                 );
 
-                this.props.selection.maps.forEach(m => {
+                this.props.selection.maps.filter(m => Utils.match(this.props.filter, m.name)).forEach(m => {
                     folioCards.push(
                         <div className='column' key={m.id}>
                             <MapCard
@@ -73,7 +88,7 @@ export default class MapFoliosScreen extends React.Component<Props> {
                     );
                 });
 
-                if (this.props.selection.maps.length === 0) {
+                if (folioCards.length === 0) {
                     folioCards.push(
                         <div className='column' key='empty'>
                             <InfoCard getContent={() => <div className='section'>no maps</div>} />
