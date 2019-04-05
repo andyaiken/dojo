@@ -1881,12 +1881,14 @@ export default class Dojo extends React.Component<Props, State> {
                         modalButtons.right = [];
                         break;
                     case 'demographics':
+                        modalSidebar = true;
                         modalTitle = 'demographics';
                         modalContent = (
                             <DemographicsModal
                                 library={this.state.library}
                             />
                         );
+                        modalButtons.right = [];
                         break;
                     case 'monster':
                         modalTitle = 'monster editor';
