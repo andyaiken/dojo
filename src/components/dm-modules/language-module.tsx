@@ -220,10 +220,15 @@ export default class LanguageModule extends React.Component<Props, State> {
         const allowReset = allowGenerate || this.state.output.length > 0;
 
         const output = [];
+        if (this.state.output.length > 0) {
+            output.push(
+                <div key='div' className="divider" />
+            );
+        }
         for (let n = 0; n !== this.state.output.length; ++n) {
             output.push(
                 <div key={n} className='section'>
-                    {this.state.output[n]}
+                    {this.state.output[n].toLowerCase()}
                 </div>
             );
         }
@@ -240,7 +245,7 @@ export default class LanguageModule extends React.Component<Props, State> {
                 <div className='row collapse small-up-3 medium-up-4 large-up-6 language-options'>
                     {languages}
                 </div>
-                <div className='subheading'>output</div>
+                <div className='divider' />
                 <ControlRow
                     controls={[
                         <button key='generate' className={allowGenerate ? '' : 'disabled'} onClick={() => this.generate()}>generate text</button>,
