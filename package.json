@@ -1,6 +1,6 @@
 {
     "name": "dojo",
-    "version": "3.4.19",
+    "version": "3.4.20",
     "homepage": "https://andyaiken.github.io/dojo/",
     "dependencies": {
         "@types/react": "^16.8.12",

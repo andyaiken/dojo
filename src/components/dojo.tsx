@@ -2013,7 +2013,7 @@ export default class Dojo extends React.Component<Props, State> {
                 }
 
                 modal = (
-                    <div className='overlay'>
+                    <div className='overlay' onClick={() => modalSidebar ? this.closeModal() : null}>
                         <div className={modalSidebar ? 'modal sidebar' : 'modal'}>
                             <div className='modal-header'>
                                 <div className='title'>{modalTitle}</div>

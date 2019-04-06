@@ -222,7 +222,7 @@ export default class LanguageModule extends React.Component<Props, State> {
         const output = [];
         if (this.state.output.length > 0) {
             output.push(
-                <div key='div' className="divider" />
+                <div key='div' className='divider' />
             );
         }
         for (let n = 0; n !== this.state.output.length; ++n) {
