@@ -4,6 +4,8 @@ Dojo is a web app for D&D (5E) dungeon masters.
 
 It can be used to design monsters and to plan and run combat encounters.
 
+You can find it at [https://andyaiken.github.io/dojo/](https://andyaiken.github.io/dojo/).
+
 ![Browsing the monster library](./docs/goblinoids.jpg)
 
 ![Planning an encounter](./docs/encounter.jpg)
