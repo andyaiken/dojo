@@ -6,6 +6,7 @@ import DMScreenCard from '../cards/information/dm-screen-card';
 import ActionsModule from '../dm-modules/actions-module';
 import ConditionsModule from '../dm-modules/conditions-module';
 import LanguageModule from '../dm-modules/language-module';
+import NameModule from '../dm-modules/name-module';
 import SkillsModule from '../dm-modules/skills-module';
 import DMModuleListItem from '../list-items/dm-module-list-item';
 
@@ -37,6 +38,11 @@ export default class DMScreen extends React.Component<Props> {
                 id: 'language',
                 name: 'language generator',
                 desc: 'this tool allows you to generate text in unique languages'
+            },
+            {
+                id: 'names',
+                name: 'name generator',
+                desc: 'this tool generates names for people and places'
             }
         ];
     }
@@ -58,6 +64,10 @@ export default class DMScreen extends React.Component<Props> {
             case 'language':
                 return (
                     <LanguageModule />
+                );
+            case 'names':
+                return (
+                    <NameModule />
                 );
             default:
                 return null;
