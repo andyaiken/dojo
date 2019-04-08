@@ -235,13 +235,13 @@ export default class LanguageModule extends React.Component<Props, State> {
 
         return (
             <div className='language'>
-                <div className='subheading'>presets</div>
+                <div className='heading'>presets</div>
                 <Selector
                     options={presetOptions}
                     selectedID={selectedPreset}
                     select={optionID => this.usePreset(optionID)}
                 />
-                <div className='subheading'>languages</div>
+                <div className='heading'>languages</div>
                 <div className='row collapse small-up-3 medium-up-4 large-up-6 language-options'>
                     {languages}
                 </div>
