@@ -332,7 +332,7 @@ body,
         cursor: pointer;
         height: 50px;
         line-height: 35px;
-        width: calc((100% - 1px) / 6);
+        width: calc((100% - 1px) / 5);
         font-size: 14px;
         color: $header-foreground;
         border-top: 1px solid $control-border;
@@ -861,10 +861,10 @@ body,
 }
 
 .blur {
-    -webkit-filter: blur(5px);
-    -moz-filter: blur(5px);
-    -ms-filter: blur(5px);
-    filter: blur(5px);
+    -webkit-filter: blur(1px);
+    -moz-filter: blur(1px);
+    -ms-filter: blur(1px);
+    filter: blur(1px);
     touch-action: none;
     pointer-events: none;
 }
@@ -1218,7 +1218,6 @@ body,
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 .dm-module {
-    padding: 10px 5px;
 
     .language {
 

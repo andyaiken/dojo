@@ -7,11 +7,13 @@ interface Props {
     label: string;
     checked: boolean;
     changeValue: (value: boolean) => void;
+    showCheck: boolean;
     disabled: boolean;
 }
 
 export default class Checkbox extends React.Component<Props> {
     public static defaultProps = {
+        showCheck: true,
         disabled: false
     };
 
@@ -30,9 +32,16 @@ export default class Checkbox extends React.Component<Props> {
                 style += ' disabled';
             }
 
+            let check = null;
+            if (this.props.showCheck) {
+                check = (
+                    <img className='image' src={this.props.checked ? checked : unchecked} alt='check' />
+                );
+            }
+
             return (
                 <div className={style} onClick={e => this.click(e)}>
-                    <img className='image' src={this.props.checked ? checked : unchecked} alt='check' />
+                    {check}
                     <div className='checkbox-label'>{this.props.label}</div>
                 </div>
             );

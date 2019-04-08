@@ -4,6 +4,7 @@ import TextGenerator from '../../utils/text-generation';
 
 import Checkbox from '../controls/checkbox';
 import ControlRow from '../controls/control-row';
+import Expander from '../controls/expander';
 import Selector from '../controls/selector';
 
 // tslint:disable-next-line:no-empty-interface
@@ -202,14 +203,20 @@ export default class LanguageModule extends React.Component<Props, State> {
             }
         });
 
+        let selectedLanguages = Object.keys(this.state.sources).sort().join(', ');
+        if (selectedLanguages === '') {
+            selectedLanguages = 'none';
+        }
+
         const languages = this.getLanguages()
             .map(lang => {
-                const selected = Object.keys(this.state.sources).includes(lang);
+                const isSelected = Object.keys(this.state.sources).includes(lang);
                 return (
                     <div className='column' key={lang}>
                         <Checkbox
                             label={lang}
-                            checked={selected}
+                            checked={isSelected}
+                            showCheck={false}
                             changeValue={value => value ? this.addLanguage(lang) : this.removeLanguage(lang)}
                         />
                     </div>
@@ -241,10 +248,15 @@ export default class LanguageModule extends React.Component<Props, State> {
                     selectedID={selectedPreset}
                     select={optionID => this.usePreset(optionID)}
                 />
-                <div className='heading'>languages</div>
-                <div className='row collapse small-up-3 medium-up-4 large-up-6 language-options'>
-                    {languages}
-                </div>
+                <div className='divider' />
+                <Expander
+                    text={'selected languages: ' + selectedLanguages}
+                    content={
+                        <div className='row collapse small-up-1 medium-up-2 large-up-3 language-options'>
+                            {languages}
+                        </div>
+                    }
+                />
                 <div className='divider' />
                 <ControlRow
                     controls={[

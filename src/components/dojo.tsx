@@ -5,14 +5,12 @@ import Utils from '../utils/utils';
 
 import { Combat, Combatant, CombatSetup, Notification } from '../models/combat';
 import { Condition } from '../models/condition';
-import { DMModule } from '../models/dm-module';
 import { Encounter, EncounterSlot, EncounterWave } from '../models/encounter';
 import { Map, MapFolio } from '../models/map-folio';
 import { Monster, MonsterGroup, Trait } from '../models/monster-group';
 import { Party, PC } from '../models/party';
 
 import CombatManagerScreen from './screens/combat-manager-screen';
-import DMScreen from './screens/dm-screen';
 import EncounterBuilderScreen from './screens/encounter-builder-screen';
 import HomeScreen from './screens/home-screen';
 import MapFoliosScreen from './screens/map-folios-screen';
@@ -55,7 +53,6 @@ interface State {
     selectedEncounterID: string | null;
     selectedMapFolioID: string | null;
     selectedCombatID: string | null;
-    selectedDMModuleID: string | null;
 
     modal: any;
 
@@ -81,7 +78,6 @@ export default class Dojo extends React.Component<Props, State> {
             selectedEncounterID: null,
             selectedMapFolioID: null,
             selectedCombatID: null,
-            selectedDMModuleID: null,
             modal: null,
             filter: ''
         };
@@ -1468,12 +1464,6 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
-    private selectDMModule(module: DMModule | null) {
-        this.setState({
-            selectedDMModuleID: module ? module.id : null
-        });
-    }
-
     private selectParty(party: Party | null) {
         this.setState({
             selectedPartyID: party ? party.id : null
@@ -1627,409 +1617,387 @@ export default class Dojo extends React.Component<Props, State> {
 
     /////////////////////////////////////////////////////////////////////////////
 
-    public render() {
-        try {
-            let content: JSX.Element | null = null;
-            let actions: JSX.Element | null = null;
-            switch (this.state.view) {
-                case 'home':
-                    content = (
-                        <HomeScreen
-                            library={this.state.library}
-                            addOpenGameContent={() => this.addOpenGameContent()}
-                        />
-                    );
-                    break;
-                case 'dm':
-                    content = (
-                        <DMScreen
-                            selectedModuleID={this.state.selectedDMModuleID}
-                            showHelp={this.state.options.showHelp}
-                            selectModule={module => this.selectDMModule(module)}
-                        />
-                    );
-                    break;
-                case 'parties':
-                    content = (
-                        <PartiesScreen
-                            parties={this.state.parties}
-                            selection={this.getParty(this.state.selectedPartyID) || null}
-                            filter={this.state.filter}
-                            showHelp={this.state.options.showHelp}
-                            selectParty={party => this.selectParty(party)}
-                            addParty={() => this.addParty()}
-                            removeParty={() => this.removeParty()}
-                            addPC={() => this.addPC()}
-                            removePC={pc => this.removePC(pc)}
-                            sortPCs={() => this.sortPCs()}
-                            changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
-                            nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
-                        />
-                    );
-                    actions = (
-                        <div className='actions'>
-                            <div className='section'>
-                                <input
-                                    type='text'
-                                    placeholder='search'
-                                    value={this.state.filter}
-                                    onChange={event => this.changeValue(this.state, 'filter', event.target.value)}
-                                />
-                            </div>
+    private getActions() {
+        switch (this.state.view) {
+            case 'parties':
+            case 'encounter':
+            case 'maps':
+                return (
+                    <div className='actions'>
+                        <div className='section'>
+                            <input
+                                type='text'
+                                placeholder='search'
+                                value={this.state.filter}
+                                onChange={event => this.changeValue(this.state, 'filter', event.target.value)}
+                            />
                         </div>
-                    );
-                    break;
-                case 'library':
-                    content = (
-                        <MonsterLibraryScreen
-                            library={this.state.library}
-                            selection={this.getMonsterGroup(this.state.selectedMonsterGroupID) || null}
-                            filter={this.state.filter}
-                            showHelp={this.state.options.showHelp}
-                            selectMonsterGroup={group => this.selectMonsterGroup(group)}
-                            addMonsterGroup={() => this.addMonsterGroup()}
-                            removeMonsterGroup={() => this.removeMonsterGroup()}
-                            addMonster={() => this.addMonster()}
-                            removeMonster={monster => this.removeMonster(monster)}
-                            sortMonsters={() => this.sortMonsters()}
-                            changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
-                            nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
-                            editMonster={combatant => this.editMonster(combatant)}
-                            cloneMonster={(combatant, name) => this.cloneMonster(combatant, name)}
-                            moveToGroup={(combatant, groupID) => this.moveToGroup(combatant, groupID)}
-                        />
-                    );
-                    actions = (
-                        <div className='actions'>
-                            <div className='section'>
-                                <button onClick={() => this.openDemographics()}>demographics</button>
-                            </div>
-                            <div className='section'>
-                                <input
-                                    type='text'
-                                    placeholder='search'
-                                    value={this.state.filter}
-                                    onChange={event => this.changeValue(this.state, 'filter', event.target.value)}
-                                />
-                            </div>
+                    </div>
+                );
+            case 'library':
+                return (
+                    <div className='actions'>
+                        <div className='section'>
+                            <button onClick={() => this.openDemographics()}>demographics</button>
                         </div>
-                    );
-                    break;
-                case 'encounter':
-                    content = (
-                        <EncounterBuilderScreen
-                            encounters={this.state.encounters}
-                            selection={this.getEncounter(this.state.selectedEncounterID) || null}
-                            filter={this.state.filter}
-                            parties={this.state.parties}
-                            library={this.state.library}
-                            showHelp={this.state.options.showHelp}
-                            selectEncounter={encounter => this.selectEncounter(encounter)}
-                            addEncounter={() => this.addEncounter()}
-                            removeEncounter={() => this.removeEncounter()}
-                            addWave={() => this.addWaveToEncounter()}
-                            removeWave={wave => this.removeWave(wave)}
-                            getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName) || null}
-                            addEncounterSlot={(monster, waveID) => this.addEncounterSlot(monster, waveID)}
-                            removeEncounterSlot={(slot, waveID) => this.removeEncounterSlot(slot, waveID)}
-                            nudgeValue={(slot, type, delta) => this.nudgeValue(slot, type, delta)}
-                            changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
-                        />
-                    );
-                    actions = (
-                        <div className='actions'>
-                            <div className='section'>
-                                <input
-                                    type='text'
-                                    placeholder='search'
-                                    value={this.state.filter}
-                                    onChange={event => this.changeValue(this.state, 'filter', event.target.value)}
-                                />
-                            </div>
+                        <div className='section'>
+                            <input
+                                type='text'
+                                placeholder='search'
+                                value={this.state.filter}
+                                onChange={event => this.changeValue(this.state, 'filter', event.target.value)}
+                            />
                         </div>
-                    );
-                    break;
-                case 'maps':
-                    content = (
-                        <MapFoliosScreen
-                            mapFolios={this.state.mapFolios}
-                            selection={this.getMapFolio(this.state.selectedMapFolioID) || null}
-                            filter={this.state.filter}
-                            showHelp={this.state.options.showHelp}
-                            selectMapFolio={folio => this.selectMapFolio(folio)}
-                            addMapFolio={() => this.addMapFolio()}
-                            removeMapFolio={() => this.removeMapFolio()}
-                            addMap={() => this.addMap()}
-                            editMap={map => this.editMap(map)}
-                            removeMap={map => this.removeMap(map)}
-                            changeValue={(source, type, value) => this.changeValue(source, type, value)}
-                        />
-                    );
-                    actions = (
-                        <div className='actions'>
-                            <div className='section'>
-                                <input
-                                    type='text'
-                                    placeholder='search'
-                                    value={this.state.filter}
-                                    onChange={event => this.changeValue(this.state, 'filter', event.target.value)}
-                                />
-                            </div>
-                        </div>
-                    );
-                    break;
-                case 'combat':
-                    const combat = this.getCombat(this.state.selectedCombatID);
-                    content = (
-                        <CombatManagerScreen
-                            combats={this.state.combats}
-                            combat={combat || null}
-                            filter={this.state.filter}
-                            showHelp={this.state.options.showHelp}
-                            createCombat={() => this.createCombat()}
-                            resumeEncounter={pausedCombat => this.resumeCombat(pausedCombat)}
-                            nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
-                            changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
-                            makeCurrent={(combatant) => this.makeCurrent(combatant, false)}
-                            makeActive={(combatant) => this.makeActive(combatant)}
-                            makeDefeated={(combatant) => this.makeDefeated(combatant)}
-                            removeCombatant={(combatant) => this.removeCombatant(combatant)}
-                            addCondition={(combatant) => this.addCondition(combatant)}
-                            editCondition={(combatant, condition) => this.editCondition(combatant, condition)}
-                            removeCondition={(combatant, conditionID) => this.removeCondition(combatant, conditionID)}
-                            mapAdd={(combatant, x, y) => this.mapAdd(combatant, x, y)}
-                            mapMove={(combatant, dir) => this.mapMove(combatant, dir)}
-                            mapRemove={combatant => this.mapRemove(combatant)}
-                            endTurn={(combatant) => this.endTurn(combatant)}
-                            changeHP={(combatant, hp, temp) => this.changeHP(combatant, hp, temp)}
-                            close={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
-                        />
-                    );
-                    if (combat) {
-                        const encounter = this.getEncounter(combat.encounterID);
-                        if (encounter) {
-                            let xp = 0;
-                            combat.combatants.filter(c => c.type === 'monster')
-                                .forEach(combatant => {
-                                    xp += Utils.experience((combatant as Combatant & Monster).challenge);
-                                });
+                    </div>
+                );
+            case 'combat':
+                const combat = this.getCombat(this.state.selectedCombatID);
+                if (combat) {
+                    const encounter = this.getEncounter(combat.encounterID);
+                    if (encounter) {
+                        let xp = 0;
+                        combat.combatants.filter(c => c.type === 'monster')
+                            .forEach(combatant => {
+                                xp += Utils.experience((combatant as Combatant & Monster).challenge);
+                            });
 
-                            actions = (
-                                <div className='actions'>
-                                    <div className='section'>
-                                        <div className='text'>round: {combat.round}</div>
-                                    </div>
-                                    <div className='section'>
-                                        <div className='text'>xp: {xp}</div>
-                                    </div>
-                                    <div className='section' style={{ display: encounter.waves.length === 0 ? 'none' : ''}}>
-                                        <button onClick={() => this.openWaveModal()}>add wave</button>
-                                    </div>
-                                    <div className='section'>
-                                        <button onClick={() => this.pauseCombat()}>pause encounter</button>
-                                    </div>
-                                    <div className='section'>
-                                        <button onClick={() => this.endCombat()}>end encounter</button>
-                                    </div>
-                                </div>
-                            );
-                        }
-                    } else {
-                        actions = (
+                        return (
                             <div className='actions'>
                                 <div className='section'>
-                                    <input
-                                        type='text'
-                                        placeholder='search'
-                                        value={this.state.filter}
-                                        onChange={event => this.changeValue(this.state, 'filter', event.target.value)}
-                                    />
+                                    <div className='text'>round: {combat.round}</div>
+                                </div>
+                                <div className='section'>
+                                    <div className='text'>xp: {xp}</div>
+                                </div>
+                                <div className='section' style={{ display: encounter.waves.length === 0 ? 'none' : ''}}>
+                                    <button onClick={() => this.openWaveModal()}>add wave</button>
+                                </div>
+                                <div className='section'>
+                                    <button onClick={() => this.pauseCombat()}>pause encounter</button>
+                                </div>
+                                <div className='section'>
+                                    <button onClick={() => this.endCombat()}>end encounter</button>
                                 </div>
                             </div>
                         );
                     }
+                } else {
+                    return (
+                        <div className='actions'>
+                            <div className='section'>
+                                <input
+                                    type='text'
+                                    placeholder='search'
+                                    value={this.state.filter}
+                                    onChange={event => this.changeValue(this.state, 'filter', event.target.value)}
+                                />
+                            </div>
+                        </div>
+                    );
+                }
+        }
+
+        return null;
+    }
+
+    private getContent() {
+        switch (this.state.view) {
+            case 'home':
+                return (
+                    <HomeScreen
+                        library={this.state.library}
+                        addOpenGameContent={() => this.addOpenGameContent()}
+                    />
+                );
+            case 'parties':
+                return (
+                    <PartiesScreen
+                        parties={this.state.parties}
+                        selection={this.getParty(this.state.selectedPartyID) || null}
+                        filter={this.state.filter}
+                        showHelp={this.state.options.showHelp}
+                        selectParty={party => this.selectParty(party)}
+                        addParty={() => this.addParty()}
+                        removeParty={() => this.removeParty()}
+                        addPC={() => this.addPC()}
+                        removePC={pc => this.removePC(pc)}
+                        sortPCs={() => this.sortPCs()}
+                        changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
+                        nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
+                    />
+                );
+            case 'library':
+                return (
+                    <MonsterLibraryScreen
+                        library={this.state.library}
+                        selection={this.getMonsterGroup(this.state.selectedMonsterGroupID) || null}
+                        filter={this.state.filter}
+                        showHelp={this.state.options.showHelp}
+                        selectMonsterGroup={group => this.selectMonsterGroup(group)}
+                        addMonsterGroup={() => this.addMonsterGroup()}
+                        removeMonsterGroup={() => this.removeMonsterGroup()}
+                        addMonster={() => this.addMonster()}
+                        removeMonster={monster => this.removeMonster(monster)}
+                        sortMonsters={() => this.sortMonsters()}
+                        changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
+                        nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
+                        editMonster={combatant => this.editMonster(combatant)}
+                        cloneMonster={(combatant, name) => this.cloneMonster(combatant, name)}
+                        moveToGroup={(combatant, groupID) => this.moveToGroup(combatant, groupID)}
+                    />
+                );
+            case 'encounter':
+                return (
+                    <EncounterBuilderScreen
+                        encounters={this.state.encounters}
+                        selection={this.getEncounter(this.state.selectedEncounterID) || null}
+                        filter={this.state.filter}
+                        parties={this.state.parties}
+                        library={this.state.library}
+                        showHelp={this.state.options.showHelp}
+                        selectEncounter={encounter => this.selectEncounter(encounter)}
+                        addEncounter={() => this.addEncounter()}
+                        removeEncounter={() => this.removeEncounter()}
+                        addWave={() => this.addWaveToEncounter()}
+                        removeWave={wave => this.removeWave(wave)}
+                        getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName) || null}
+                        addEncounterSlot={(monster, waveID) => this.addEncounterSlot(monster, waveID)}
+                        removeEncounterSlot={(slot, waveID) => this.removeEncounterSlot(slot, waveID)}
+                        nudgeValue={(slot, type, delta) => this.nudgeValue(slot, type, delta)}
+                        changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
+                    />
+                );
+            case 'maps':
+                return (
+                    <MapFoliosScreen
+                        mapFolios={this.state.mapFolios}
+                        selection={this.getMapFolio(this.state.selectedMapFolioID) || null}
+                        filter={this.state.filter}
+                        showHelp={this.state.options.showHelp}
+                        selectMapFolio={folio => this.selectMapFolio(folio)}
+                        addMapFolio={() => this.addMapFolio()}
+                        removeMapFolio={() => this.removeMapFolio()}
+                        addMap={() => this.addMap()}
+                        editMap={map => this.editMap(map)}
+                        removeMap={map => this.removeMap(map)}
+                        changeValue={(source, type, value) => this.changeValue(source, type, value)}
+                    />
+                );
+            case 'combat':
+                return (
+                    <CombatManagerScreen
+                        combats={this.state.combats}
+                        combat={this.getCombat(this.state.selectedCombatID) || null}
+                        filter={this.state.filter}
+                        showHelp={this.state.options.showHelp}
+                        createCombat={() => this.createCombat()}
+                        resumeEncounter={pausedCombat => this.resumeCombat(pausedCombat)}
+                        nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
+                        changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
+                        makeCurrent={(combatant) => this.makeCurrent(combatant, false)}
+                        makeActive={(combatant) => this.makeActive(combatant)}
+                        makeDefeated={(combatant) => this.makeDefeated(combatant)}
+                        removeCombatant={(combatant) => this.removeCombatant(combatant)}
+                        addCondition={(combatant) => this.addCondition(combatant)}
+                        editCondition={(combatant, condition) => this.editCondition(combatant, condition)}
+                        removeCondition={(combatant, conditionID) => this.removeCondition(combatant, conditionID)}
+                        mapAdd={(combatant, x, y) => this.mapAdd(combatant, x, y)}
+                        mapMove={(combatant, dir) => this.mapMove(combatant, dir)}
+                        mapRemove={combatant => this.mapRemove(combatant)}
+                        endTurn={(combatant) => this.endTurn(combatant)}
+                        changeHP={(combatant, hp, temp) => this.changeHP(combatant, hp, temp)}
+                        close={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
+                    />
+                );
+        }
+
+        return null;
+    }
+
+    private getModal() {
+        if (this.state.modal) {
+            let modalSidebar = false;
+            let modalTitle = null;
+            let modalContent = null;
+            let modalAllowScroll = true;
+
+            const modalButtons = {
+                left: [] as JSX.Element[],
+                right: [
+                    <button key='close' onClick={() => this.closeModal()}>close</button>
+                ] as JSX.Element[]
+            };
+
+            switch (this.state.modal.type) {
+                case 'about':
+                    modalSidebar = true;
+                    modalContent = (
+                        <AboutModal
+                            options={this.state.options}
+                            resetAll={() => this.resetAll()}
+                            changeValue={(source, type, value) => this.changeValue(source, type, value)}
+                        />
+                    );
+                    modalButtons.right = [];
+                    break;
+                case 'demographics':
+                    modalSidebar = true;
+                    modalContent = (
+                        <DemographicsModal
+                            library={this.state.library}
+                        />
+                    );
+                    modalButtons.right = [];
+                    break;
+                case 'monster':
+                    modalTitle = 'monster editor';
+                    modalContent = (
+                        <MonsterEditorModal
+                            monster={this.state.modal.monster}
+                            library={this.state.library}
+                            showMonsters={this.state.modal.showMonsters}
+                        />
+                    );
+                    modalAllowScroll = false;
+                    modalButtons.left = [
+                        (
+                            <Checkbox
+                                key='similar'
+                                label='similar monsters'
+                                checked={this.state.modal.showMonsters}
+                                changeValue={() => this.toggleShowSimilarMonsters()}
+                            />
+                        )
+                    ];
+                    modalButtons.right = [
+                        <button key='save' onClick={() => this.saveMonster()}>save</button>,
+                        <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
+                    ];
+                    break;
+                case 'map':
+                    modalTitle = 'map editor';
+                    modalContent = (
+                        <MapEditorModal
+                            map={this.state.modal.map}
+                        />
+                    );
+                    modalAllowScroll = false;
+                    modalButtons.right = [
+                        <button key='save' onClick={() => this.saveMap()}>save</button>,
+                        <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
+                    ];
+                    break;
+                case 'combat-start':
+                    modalTitle = 'start a new encounter';
+                    modalContent = (
+                        <CombatStartModal
+                            combatSetup={this.state.modal.combatSetup}
+                            parties={this.state.parties}
+                            encounters={this.state.encounters}
+                            mapFolios={this.state.mapFolios}
+                            getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName) || null}
+                            notify={() => this.setState({modal: this.state.modal})}
+                        />
+                    );
+                    modalAllowScroll = false;
+                    modalButtons.right = [
+                        (
+                            <button
+                                key='start encounter'
+                                className={this.state.modal.combatSetup.partyID && this.state.modal.combatSetup.encounterID ? '' : 'disabled'}
+                                onClick={() => this.startCombat()}
+                            >
+                                start encounter
+                            </button>
+                        ),
+                        <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
+                    ];
+                    break;
+                case 'combat-wave':
+                    modalTitle = 'encounter waves';
+                    modalContent = (
+                        <CombatStartModal
+                            combatSetup={this.state.modal.combatSetup}
+                            encounters={this.state.encounters}
+                            getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName) || null}
+                            notify={() => this.setState({modal: this.state.modal})}
+                        />
+                    );
+                    modalAllowScroll = false;
+                    modalButtons.right = [
+                        (
+                            <button
+                                key='add wave'
+                                className={this.state.modal.combatSetup.waveID !== null ? '' : 'disabled'}
+                                onClick={() => this.addWaveToCombat()}
+                            >
+                                add wave
+                            </button>
+                        ),
+                        <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
+                    ];
+                    break;
+                case 'condition-add':
+                    modalTitle = 'add a condition';
+                    modalContent = (
+                        <ConditionModal
+                            condition={this.state.modal.condition}
+                            combatant={this.state.modal.combatant}
+                            combat={this.state.modal.combat}
+                        />
+                    );
+                    modalAllowScroll = false;
+                    modalButtons.right = [
+                        <button key='add' onClick={() => this.addConditionFromModal()}>add</button>,
+                        <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
+                    ];
+                    break;
+                case 'condition-edit':
+                    modalTitle = 'edit condition';
+                    modalContent = (
+                        <ConditionModal
+                            condition={this.state.modal.condition}
+                            combatant={this.state.modal.combatant}
+                            combat={this.state.modal.combat}
+                        />
+                    );
+                    modalButtons.right = [
+                        <button key='save' onClick={() => this.editConditionFromModal()}>save</button>,
+                        <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
+                    ];
                     break;
                 default:
                     // Do nothing
                     break;
             }
 
-            let modal = null;
-            if (this.state.modal) {
-                let modalSidebar = false;
-                let modalTitle = null;
-                let modalContent = null;
-                let modalAllowScroll = true;
-                const modalButtons = {
-                    left: [] as JSX.Element[],
-                    right: [
-                        <button key='close' onClick={() => this.closeModal()}>close</button>
-                    ] as JSX.Element[]
-                };
-
-                switch (this.state.modal.type) {
-                    case 'about':
-                        modalSidebar = true;
-                        modalTitle = 'about';
-                        modalContent = (
-                            <AboutModal
-                                options={this.state.options}
-                                resetAll={() => this.resetAll()}
-                                changeValue={(source, type, value) => this.changeValue(source, type, value)}
-                            />
-                        );
-                        modalButtons.right = [];
-                        break;
-                    case 'demographics':
-                        modalSidebar = true;
-                        modalTitle = 'demographics';
-                        modalContent = (
-                            <DemographicsModal
-                                library={this.state.library}
-                            />
-                        );
-                        modalButtons.right = [];
-                        break;
-                    case 'monster':
-                        modalTitle = 'monster editor';
-                        modalContent = (
-                            <MonsterEditorModal
-                                monster={this.state.modal.monster}
-                                library={this.state.library}
-                                showMonsters={this.state.modal.showMonsters}
-                            />
-                        );
-                        modalAllowScroll = false;
-                        modalButtons.left = [
-                            (
-                                <Checkbox
-                                    key='similar'
-                                    label='similar monsters'
-                                    checked={this.state.modal.showMonsters}
-                                    changeValue={() => this.toggleShowSimilarMonsters()}
-                                />
-                            )
-                        ];
-                        modalButtons.right = [
-                            <button key='save' onClick={() => this.saveMonster()}>save</button>,
-                            <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
-                        ];
-                        break;
-                    case 'map':
-                        modalTitle = 'map editor';
-                        modalContent = (
-                            <MapEditorModal
-                                map={this.state.modal.map}
-                            />
-                        );
-                        modalAllowScroll = false;
-                        modalButtons.right = [
-                            <button key='save' onClick={() => this.saveMap()}>save</button>,
-                            <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
-                        ];
-                        break;
-                    case 'combat-start':
-                        modalTitle = 'start a new encounter';
-                        modalContent = (
-                            <CombatStartModal
-                                combatSetup={this.state.modal.combatSetup}
-                                parties={this.state.parties}
-                                encounters={this.state.encounters}
-                                mapFolios={this.state.mapFolios}
-                                getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName) || null}
-                                notify={() => this.setState({modal: this.state.modal})}
-                            />
-                        );
-                        modalAllowScroll = false;
-                        modalButtons.right = [
-                            (
-                                <button
-                                    key='start encounter'
-                                    className={this.state.modal.combatSetup.partyID && this.state.modal.combatSetup.encounterID ? '' : 'disabled'}
-                                    onClick={() => this.startCombat()}
-                                >
-                                    start encounter
-                                </button>
-                            ),
-                            <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
-                        ];
-                        break;
-                    case 'combat-wave':
-                        modalTitle = 'encounter waves';
-                        modalContent = (
-                            <CombatStartModal
-                                combatSetup={this.state.modal.combatSetup}
-                                encounters={this.state.encounters}
-                                getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName) || null}
-                                notify={() => this.setState({modal: this.state.modal})}
-                            />
-                        );
-                        modalAllowScroll = false;
-                        modalButtons.right = [
-                            (
-                                <button
-                                    key='add wave'
-                                    className={this.state.modal.combatSetup.waveID !== null ? '' : 'disabled'}
-                                    onClick={() => this.addWaveToCombat()}
-                                >
-                                    add wave
-                                </button>
-                            ),
-                            <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
-                        ];
-                        break;
-                    case 'condition-add':
-                        modalTitle = 'add a condition';
-                        modalContent = (
-                            <ConditionModal
-                                condition={this.state.modal.condition}
-                                combatant={this.state.modal.combatant}
-                                combat={this.state.modal.combat}
-                            />
-                        );
-                        modalAllowScroll = false;
-                        modalButtons.right = [
-                            <button key='add' onClick={() => this.addConditionFromModal()}>add</button>,
-                            <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
-                        ];
-                        break;
-                    case 'condition-edit':
-                        modalTitle = 'edit condition';
-                        modalContent = (
-                            <ConditionModal
-                                condition={this.state.modal.condition}
-                                combatant={this.state.modal.combatant}
-                                combat={this.state.modal.combat}
-                            />
-                        );
-                        modalButtons.right = [
-                            <button key='save' onClick={() => this.editConditionFromModal()}>save</button>,
-                            <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
-                        ];
-                        break;
-                    default:
-                        // Do nothing
-                        break;
-                }
-
-                modal = (
-                    <div className='overlay' onClick={() => modalSidebar ? this.closeModal() : null}>
-                        <div className={modalSidebar ? 'modal sidebar' : 'modal'}>
-                            <div className='modal-header'>
-                                <div className='title'>{modalTitle}</div>
-                                {modalSidebar ? <img className='image' src={close} alt='close' onClick={() => this.closeModal()} /> : null}
-                            </div>
-                            <div className={modalAllowScroll ? 'modal-content scrollable' : 'modal-content'}>
-                                {modalContent}
-                            </div>
-                            <div className='modal-footer'>
-                                <div className='left'>{modalButtons.left}</div>
-                                <div className='right'>{modalButtons.right}</div>
-                            </div>
+            return (
+                <div className='overlay' onClick={() => modalSidebar ? this.closeModal() : null}>
+                    <div className={modalSidebar ? 'modal sidebar' : 'modal'} onClick={e => e.stopPropagation()}>
+                        <div className='modal-header'>
+                            <div className='title'>{modalTitle}</div>
+                            {modalSidebar ? <img className='image' src={close} alt='close' onClick={() => this.closeModal()} /> : null}
+                        </div>
+                        <div className={modalAllowScroll ? 'modal-content scrollable' : 'modal-content'}>
+                            {modalContent}
+                        </div>
+                        <div className='modal-footer'>
+                            <div className='left'>{modalButtons.left}</div>
+                            <div className='right'>{modalButtons.right}</div>
                         </div>
                     </div>
-                );
-            }
+                </div>
+            );
+        }
+
+        return null;
+    }
+
+    public render() {
+        try {
+            const content = this.getContent();
+            const actions = this.getActions();
+            const modal = this.getModal();
 
             return (
                 <div className='dojo'>

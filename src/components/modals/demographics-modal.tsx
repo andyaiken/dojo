@@ -140,6 +140,7 @@ export default class DemographicsModal extends React.Component<Props, State> {
 
                 demographics = (
                     <div>
+                        <div className='heading'>monster demographics</div>
                         <Selector
                             options={chartOptions}
                             selectedID={this.state.chart}
