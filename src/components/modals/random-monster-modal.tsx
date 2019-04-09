@@ -151,7 +151,7 @@ export default class RandomMonsterModal extends React.Component<Props, State> {
                             <div className='section'><i>no monsters</i></div>
                         )}
                     />
-                )
+                );
             }
 
             let selectedMonsters: JSX.Element | JSX.Element[] = this.state.selectedMonsters.map(m => {
@@ -166,7 +166,7 @@ export default class RandomMonsterModal extends React.Component<Props, State> {
                             <div className='section'><i>no monsters selected</i></div>
                         )}
                     />
-                )
+                );
             }
 
             return (
