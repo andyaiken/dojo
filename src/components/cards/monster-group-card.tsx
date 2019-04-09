@@ -10,6 +10,7 @@ interface Props {
     filter: string | null;
     changeValue: (field: string, value: string) => void;
     addMonster: () => void;
+    generateMonster: () => void;
     sortMonsters: () => void;
     removeMonsterGroup: () => void;
 }
@@ -36,7 +37,8 @@ export default class MonsterGroupCard extends React.Component<Props> {
                     </div>
                     <div className='divider' />
                     <div className='section'>
-                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.addMonster()}>add a new monster</button>
+                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.addMonster()}>add a new blank monster</button>
+                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.generateMonster()}>generate a random monster</button>
                         <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.sortMonsters()}>sort monsters</button>
                         <ConfirmButton text='delete group' callback={() => this.props.removeMonsterGroup()} />
                     </div>

@@ -51,7 +51,6 @@ export default class TraitsPanel extends React.Component<Props> {
     }
 
     private createSection(traitsByType: { [id: string]: JSX.Element[] }, type: string) {
-        const types = Utils.traitType(type) + 's';
         const traits = traitsByType[type];
         if (traits.length === 0) {
             return null;
@@ -59,7 +58,7 @@ export default class TraitsPanel extends React.Component<Props> {
 
         return (
             <div>
-                <div className='section subheading'>{types}</div>
+                <div className='section subheading'>{Utils.traitType(type, true)}</div>
                 {traits}
             </div>
         );
@@ -85,7 +84,7 @@ export default class TraitsPanel extends React.Component<Props> {
                 if (this.props.mode === 'edit') {
                     list.push(
                         <button key='add' onClick={() => this.props.addTrait(type as 'trait' | 'action' | 'legendary' | 'lair' | 'regional')}>
-                            add a new {Utils.traitType(type)}
+                            add a new {Utils.traitType(type, false)}
                         </button>
                     );
                 }
@@ -108,6 +107,12 @@ export default class TraitsPanel extends React.Component<Props> {
                             {this.createSection(traitsByType, 'regional')}
                         </div>
                     </div>
+                );
+            }
+
+            if (this.props.combatant.traits.length === 0) {
+                return (
+                    <div><i>no traits or actions</i></div>
                 );
             }
 
@@ -141,7 +146,7 @@ class TraitPanel extends React.Component<TraitPanelProps> {
     public render() {
         try {
             let maxUses = 0;
-            let heading = this.props.trait.name || 'unnamed ' + Utils.traitType(this.props.trait.type);
+            let heading = this.props.trait.name || 'unnamed ' + Utils.traitType(this.props.trait.type, false);
 
             if (this.props.trait.usage) {
                 let used = '';
@@ -214,7 +219,7 @@ class TraitPanel extends React.Component<TraitPanelProps> {
 
                     return (
                         <Expander
-                            text={this.props.trait.name || 'unnamed ' + Utils.traitType(this.props.trait.type)}
+                            text={this.props.trait.name || 'unnamed ' + Utils.traitType(this.props.trait.type, false)}
                             content={details}
                         />
                     );

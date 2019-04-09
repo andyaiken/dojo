@@ -990,6 +990,15 @@ body,
             height: 100%;
             margin: 0 -15px;
         }
+
+        .random-monster-modal {
+            height: 100%;
+            margin: 0 -15px;
+
+            .columns .card {
+                margin: 5px 0;
+            }
+        }
     }
     
     .modal-footer {

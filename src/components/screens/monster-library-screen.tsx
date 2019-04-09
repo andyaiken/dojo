@@ -20,6 +20,7 @@ interface Props {
     addMonsterGroup: () => void;
     removeMonsterGroup: () => void;
     addMonster: () => void;
+    generateMonster: () => void;
     removeMonster: (monster: Monster) => void;
     editMonster: (monster: Monster) => void;
     cloneMonster: (monster: Monster, name: string) => void;
@@ -72,6 +73,7 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                             selection={this.props.selection}
                             filter={this.props.filter}
                             addMonster={() => this.props.addMonster()}
+                            generateMonster={() => this.props.generateMonster()}
                             sortMonsters={() => this.props.sortMonsters()}
                             changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
                             removeMonsterGroup={() => this.props.removeMonsterGroup()}

@@ -33,6 +33,8 @@ interface Props {
     cloneMonster: (monster: Monster, name: string) => void;
     moveToGroup: (monster: Monster, group: string) => void;
     copyTrait: (trait: Trait) => void;
+    selectMonster: (monster: Monster) => void;
+    deselectMonster: (monster: Monster) => void;
     // Encounter builder
     encounter: Encounter;
     slot: EncounterSlot;
@@ -72,6 +74,8 @@ export default class MonsterCard extends React.Component<Props, State> {
         cloneMonster: null,
         moveToGroup: null,
         copyTrait: null,
+        selectMonster: null,
+        deselectMonster: null,
         encounter: null,
         slot: null,
         addEncounterSlot: null,
@@ -303,6 +307,17 @@ export default class MonsterCard extends React.Component<Props, State> {
                             }
                         }
                     }
+                    if (this.props.mode.indexOf('candidate') !== -1) {
+                        if (this.props.mode.indexOf('selected') === -1) {
+                            options.push(
+                                <button key='select' onClick={() => this.props.selectMonster(this.props.combatant)}>select monster</button>
+                            );
+                        } else {
+                            options.push(
+                                <button key='deselect' onClick={() => this.props.deselectMonster(this.props.combatant)}>deselect monster</button>
+                            );
+                        }
+                    }
                 }
                 if (this.props.mode.indexOf('combat') !== -1) {
                     const combatant = this.props.combatant as Combatant;
@@ -406,7 +421,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                 }
 
                 let details = null;
-                if (this.state.showDetails) {
+                if (this.state.showDetails || (this.props.mode.indexOf('generated') !== -1)) {
                     details = (
                         <div>
                             <div className='divider' />
@@ -638,6 +653,8 @@ export default class MonsterCard extends React.Component<Props, State> {
                 // Don't show toggle button for combatant
             } else if (this.props.mode.indexOf('template') !== -1) {
                 // Don't show toggle button for template
+            } else if (this.props.mode.indexOf('view generated') !== -1) {
+                // Don't show toggle button for generated monster
             } else {
                 const imageStyle = this.state.showDetails ? 'image rotate' : 'image';
                 toggle = (

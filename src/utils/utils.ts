@@ -345,21 +345,31 @@ export default class Utils {
         }
     }
 
-    public static traitType(type: string): string {
+    public static traitType(type: string, plural: boolean): string {
+        let str = '';
         switch (type) {
             case 'trait':
-                return 'trait';
+                str = 'trait';
+                break;
             case 'action':
-                return 'action';
+                str = 'action';
+                break;
             case 'legendary':
-                return 'legendary action';
+                str = 'legendary action';
+                break;
             case 'lair':
-                return 'lair action';
+                str = 'lair action';
+                break;
             case 'regional':
-                return 'regional effect';
-            default:
-                return type;
+                str = 'regional effect';
+                break;
         }
+
+        if (plural) {
+            str += 's';
+        }
+
+        return str;
     }
 
     public static nudgeChallenge(value: number, delta: number): number {

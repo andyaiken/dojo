@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Factory from '../../utils/factory';
+import Frankenstein from '../../utils/frankenstein';
 import Utils from '../../utils/utils';
 
 import { CATEGORY_TYPES, Monster, MonsterGroup, SIZE_TYPES, Trait, TRAIT_TYPES } from '../../models/monster-group';
@@ -148,158 +149,50 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         return monsters;
     }
 
-    private setRandomValue(field: string, monsters: Monster[], notify: boolean) {
-        const index = Math.floor(Math.random() * monsters.length);
-        const m = monsters[index];
-
-        let source: any = m;
-        let value = null;
-        const tokens = field.split('.');
-        tokens.forEach(token => {
-            if (token === tokens[tokens.length - 1]) {
-                value = source[token];
-            } else {
-                source = source[token];
-            }
+    private setRandomValue(field: string, monsters: Monster[]) {
+        Frankenstein.setRandomValue(this.state.monster, field, monsters);
+        this.setState({
+            monster: this.state.monster
         });
-
-        this.changeValue(field, value, notify);
     }
 
-    private geneSplice(monsters: Monster[]) {
-        [
-            'speed',
-            'senses',
-            'languages',
-            'equipment',
-            'abilityScores.str',
-            'abilityScores.dex',
-            'abilityScores.con',
-            'abilityScores.int',
-            'abilityScores.wis',
-            'abilityScores.cha',
-            'savingThrows',
-            'skills',
-            'ac',
-            'hitDice',
-            'damage.resist',
-            'damage.vulnerable',
-            'damage.immune',
-            'conditionImmunities'
-        ].forEach(field => {
-            this.setRandomValue(field, monsters, false);
-        });
-
-        TRAIT_TYPES.forEach(type => {
-            // Clear current traits of this type
-            const currentTraits = this.state.monster.traits.filter(t => t.type === type);
-            currentTraits.forEach(c => {
-                const index = this.state.monster.traits.findIndex(t => t === c);
-                this.state.monster.traits.splice(index, 1);
-            });
-
-            // Get all traits of this type
-            const traits: Trait[] = [];
-            monsters.forEach(m => {
-                m.traits.filter(t => t.type === type)
-                    .forEach(t => traits.push(t));
-            });
-
-            // Collate by name
-            const distinct: { trait: Trait, count: number }[] = [];
-            traits.forEach(t => {
-                const current = distinct.find(d => d.trait.name === t.name);
-                if (current) {
-                    current.count += 1;
-                } else {
-                    distinct.push({
-                        trait: t,
-                        count: 1
-                    });
-                }
-            });
-
-            // If any are common to all monsters, copy them and remove from the candidates
-            const addedIDs: string[] = [];
-            distinct.filter(d => d.count === monsters.length)
-                .forEach(d => {
-                    this.copyTrait(d.trait);
-                    addedIDs.push(d.trait.id);
-                });
-            addedIDs.forEach(id => {
-                const index = distinct.findIndex(d => d.trait.id === id);
-                distinct.splice(index, 1);
-            });
-
-            const avg = traits.length / monsters.length;
-            while (this.state.monster.traits.filter(t => t.type === type).length < avg) {
-                const index = Math.floor(Math.random() * distinct.length);
-                const t = distinct[index].trait;
-                this.copyTrait(t);
-                distinct.splice(index, 1);
-            }
-        });
-
+    private spliceMonsters(monsters: Monster[]) {
+        Frankenstein.spliceMonsters(this.state.monster, monsters);
         this.setState({
             monster: this.state.monster
         });
     }
 
     private addTrait(type: 'trait' | 'action' | 'legendary' | 'lair' | 'regional') {
-        const trait = Factory.createTrait();
-        trait.type = type;
-        trait.name = 'New ' + this.getActionTypeName(type, false).toLowerCase();
-        this.state.monster.traits.push(trait);
+        Frankenstein.addTrait(this.state.monster, type);
         this.setState({
             monster: this.state.monster
         });
     }
 
     private addRandomTrait(type: string, monsters: Monster[]) {
-        const traits: Trait[] = [];
-        monsters.forEach(m => {
-            m.traits.filter(t => t.type === type)
-                .forEach(t => {
-                    traits.push(t);
-                });
+        Frankenstein.addRandomTrait(this.state.monster, type, monsters);
+        this.setState({
+            monster: this.state.monster
         });
-
-        const index = Math.floor(Math.random() * traits.length);
-        const trait = traits[index];
-
-        this.copyTrait(trait);
     }
 
     private removeTrait(trait: Trait) {
-        const index = this.state.monster.traits.indexOf(trait);
-        this.state.monster.traits.splice(index, 1);
+        Frankenstein.removeTrait(this.state.monster, trait);
         this.setState({
             monster: this.state.monster
         });
     }
 
     private swapTraits(t1: Trait, t2: Trait) {
-        const index1 = this.state.monster.traits.indexOf(t1);
-        const index2 = this.state.monster.traits.indexOf(t2);
-        this.state.monster.traits[index2] = t1;
-        this.state.monster.traits[index1] = t2;
+        Frankenstein.swapTraits(this.state.monster, t1, t2);
         this.setState({
             monster: this.state.monster
         });
     }
 
-    private getActionTypeName(type: string, plural: boolean) {
-        let name = Utils.traitType(type);
-        if (plural) {
-            name += 's';
-        }
-        return name;
-    }
-
     private copyTrait(trait: Trait) {
-        const copy = JSON.parse(JSON.stringify(trait));
-        copy.id = Utils.guid();
-        this.state.monster.traits.push(copy);
+        Frankenstein.copyTrait(this.state.monster, trait);
         this.setState({
             monster: this.state.monster
         });
@@ -313,45 +206,16 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     }
 
     private nudgeValue(field: string, delta: number) {
-        let source: any = this.state.monster;
-        let value: any = null;
-        const tokens = field.split('.');
-        tokens.forEach(token => {
-            if (token === tokens[tokens.length - 1]) {
-                value = source[token];
-            } else {
-                source = source[token];
-            }
+        Frankenstein.nudgeValue(this.state.monster, field, delta);
+        this.setState({
+            monster: this.state.monster
         });
-
-        const newValue = (field === 'challenge') ? Utils.nudgeChallenge(value, delta) : (value ? value : 0) + delta;
-        this.changeValue(field, newValue);
     }
 
-    private changeValue(field: string, value: any, notify = true) {
-        let source: any = this.state.monster;
-        const tokens = field.split('.');
-        tokens.forEach(token => {
-            if (token === tokens[tokens.length - 1]) {
-                source[token] = value;
-
-                if ((field === 'abilityScores.con') || (field === 'size') || (field === 'hitDice')) {
-                    const sides = Utils.hitDieType(this.state.monster.size);
-                    const conMod = Math.floor((this.state.monster.abilityScores.con - 10) / 2);
-                    const hpPerDie = ((sides + 1) / 2) + conMod;
-                    const hp = Math.floor(this.state.monster.hitDice * hpPerDie);
-                    // eslint-disable-next-line
-                    this.state.monster.hpMax = hp;
-                }
-
-                if (notify) {
-                    this.setState({
-                        monster: this.state.monster
-                    });
-                }
-            } else {
-                source = source[token];
-            }
+    private changeValue(field: string, value: any) {
+        Frankenstein.changeValue(this.state.monster, field, value);
+        this.setState({
+            monster: this.state.monster
         });
     }
 
@@ -502,7 +366,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         return (
             <div>
                 {valueSections}
-                <button onClick={() => this.setRandomValue(field, monsters, true)}>select random value</button>
+                <button onClick={() => this.setRandomValue(field, monsters)}>select random value</button>
             </div>
         );
     }
@@ -549,7 +413,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 <div className='row small-up-4 medium-up-4 large-up-4 value-list' key={type}>
                     <div className='column'>
                         <div className={count === 0 ? 'text-container disabled' : 'text-container'}>
-                            {this.getActionTypeName(type, true)}
+                            {Utils.traitType(type, true)}
                         </div>
                     </div>
                     <div className='column'>
@@ -632,7 +496,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         changeValue={value => this.toggleMatch('challenge')}
                     />
                     <div className='divider' />
-                    <button className={monsters.length < 2 ? 'disabled' : ''} onClick={() => this.geneSplice(monsters)}>build random monster</button>
+                    <button className={monsters.length < 2 ? 'disabled' : ''} onClick={() => this.spliceMonsters(monsters)}>build random monster</button>
                     <div className='divider' />
                     {similar}
                 </div>
