@@ -705,6 +705,7 @@ class MonsterRow extends React.Component<MonsterRowProps> {
                 return (
                     <Note
                         key={c.id}
+                        white={true}
                         content={
                             <div className='condition'>
                                 <div className='condition-name'>{name}</div>

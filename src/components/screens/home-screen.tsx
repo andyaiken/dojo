@@ -36,10 +36,10 @@ export default class HomeScreen extends React.Component<Props> {
                         <div>
                             <div className='heading'>welcome to <b>dojo</b></div>
                             <div className='divider' />
-                            <div className='text'>
+                            <div className='section'>
                                 <b>dojo</b> is an app for dms of dungeons and dragons fifth edition
                             </div>
-                            <div className='text'>
+                            <div className='section'>
                                 with <b>dojo</b> you can:
                                 <ul>
                                     <li>build unique, challenging monsters</li>
@@ -50,7 +50,7 @@ export default class HomeScreen extends React.Component<Props> {
                             </div>
                             {monsters}
                             <div className='divider' />
-                            <div className='text'>
+                            <div className='section'>
                                 use the buttons at the bottom of the screen to access the app's features
                             </div>
                         </div>
