@@ -9,12 +9,11 @@ import { Party } from '../../models/party';
 import EncounterCard from '../cards/encounter-card';
 import ErrorCard from '../cards/error-card';
 import FilterCard from '../cards/filter-card';
-import InfoCard from '../cards/info-card';
-import EncounterBuilderCard from '../cards/information/encounter-builder-card';
 import MonsterCard from '../cards/monster-card';
 import WaveCard from '../cards/wave-card';
 import EncounterListItem from '../list-items/encounter-list-item';
 import CardGroup from '../panels/card-group';
+import Readaloud from '../panels/readaloud';
 
 interface Props {
     encounters: Encounter[];
@@ -148,7 +147,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
         if (slots.length === 0) {
             cards.push(
                 <div className='column' key='empty'>
-                    <InfoCard getContent={() => <div className='section'>no monsters</div>} />
+                    <Readaloud content={<div className='section'>there are no monsters in this {waveID ? 'wave' : 'encounter'}</div>} />
                 </div>
             );
         }
@@ -221,7 +220,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
             let help = null;
             if (this.props.showHelp) {
                 help = (
-                    <EncounterBuilderCard encounters={this.props.encounters} />
+                    <HelpCard encounters={this.props.encounters} />
                 );
             }
 
@@ -307,6 +306,44 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
             );
         } catch (e) {
             console.error(e);
+        }
+    }
+}
+
+interface HelpCardProps {
+    encounters: Encounter[];
+}
+
+class HelpCard extends React.Component<HelpCardProps> {
+    public render() {
+        try {
+            let action: JSX.Element | null = null;
+            if (this.props.encounters.length === 0) {
+                action = (
+                    <div className='section'>to start building an encounter, press the button below</div>
+                );
+            } else {
+                action = (
+                    <div className='section'>select an encounter from the list to add monsters to it</div>
+                );
+            }
+
+            return (
+                <Readaloud
+                    content={
+                        <div>
+                            <div className='section'>on this page you can set up encounters</div>
+                            <div className='section'>
+                                when you have created an encounter you can add monsters to it, then gauge its difficulty for a party of pcs
+                            </div>
+                            <div className='divider'/>
+                            {action}
+                        </div>
+                    }
+                />
+            );
+        } catch (ex) {
+            console.error(ex);
         }
     }
 }

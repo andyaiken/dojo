@@ -4,12 +4,11 @@ import Utils from '../../utils/utils';
 
 import { Monster, MonsterGroup } from '../../models/monster-group';
 
-import InfoCard from '../cards/info-card';
-import MonsterLibraryCard from '../cards/information/monster-library-card';
 import MonsterCard from '../cards/monster-card';
 import MonsterGroupCard from '../cards/monster-group-card';
 import MonsterGroupListItem from '../list-items/monster-group-list-item';
 import CardGroup from '../panels/card-group';
+import Readaloud from '../panels/readaloud';
 
 interface Props {
     library: MonsterGroup[];
@@ -48,7 +47,7 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
             let help = null;
             if (this.props.showHelp) {
                 help = (
-                    <MonsterLibraryCard />
+                    <HelpCard library={this.props.library} />
                 );
             }
 
@@ -106,7 +105,7 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                 } else {
                     cards.push(
                         <div className='column' key='empty'>
-                            <InfoCard getContent={() => <div className='section'>no monsters</div>} />
+                            <Readaloud content={<div className='section'>there are no monsters in this group</div>} />
                         </div>
                     );
                 }
@@ -140,5 +139,36 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
         } catch (e) {
             console.error(e);
         }
+    }
+}
+
+interface HelpCardProps {
+    library: MonsterGroup[];
+}
+
+class HelpCard extends React.Component<HelpCardProps> {
+    public render() {
+        let action: JSX.Element | null = null;
+        if (this.props.library.length === 0) {
+            action = (
+                <div className='section'>to start adding monsters, press the button below</div>
+            );
+        } else {
+            action = (
+                <div className='section'>select a monster group from the list to see stat blocks for monsters in that group</div>
+            );
+        }
+
+        return (
+            <Readaloud
+                content={
+                    <div>
+                        <div className='section'>you can maintain your menagerie of monsters here</div>
+                        <div className='divider'/>
+                        {action}
+                    </div>
+                }
+            />
+        );
     }
 }

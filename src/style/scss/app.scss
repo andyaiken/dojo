@@ -1253,3 +1253,17 @@ body,
         }
     }
 }
+
+.readaloud {
+    margin: 25px 10px;
+    background-color: #e0e5c1;
+    border-style: solid;
+    border-width: 11px;
+    border-image: url("../../resources/images/readaloud.png") 11;
+    border-image-outset: 9px 0;
+
+    .heading {
+        border: none;
+        text-align: center;
+    }
+}

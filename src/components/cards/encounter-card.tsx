@@ -110,7 +110,7 @@ export default class EncounterCard extends React.Component<Props, State> {
             );
 
             return (
-                <InfoCard getHeading={() => heading} getContent={() => content} />
+                <InfoCard heading={heading} content={content} />
             );
         } catch (e) {
             console.error(e);

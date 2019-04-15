@@ -112,7 +112,7 @@ export default class PartyCard extends React.Component<Props> {
             );
 
             return (
-                <InfoCard getHeading={() => heading} getContent={() => content} />
+                <InfoCard heading={heading} content={content} />
             );
         } catch (e) {
             console.error(e);

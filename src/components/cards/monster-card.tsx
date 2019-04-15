@@ -288,20 +288,20 @@ export default class MonsterCard extends React.Component<Props, State> {
                             if (!canAdd) {
                                 return (
                                     <InfoCard
-                                        getHeading={() => {
-                                            return (
+                                        heading={
+                                            (
                                                 <div className='heading'>
                                                     <div className='title'>{this.props.combatant.name}</div>
                                                 </div>
-                                            );
-                                        }}
-                                        getContent={() => {
-                                            return (
+                                            )
+                                        }
+                                        content={
+                                            (
                                                 <div className='section centered'>
                                                     <i>this monster is already part of this encounter</i>
                                                 </div>
-                                            );
-                                        }}
+                                            )
+                                        }
                                     />
                                 );
                             }

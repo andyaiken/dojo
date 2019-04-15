@@ -4,12 +4,11 @@ import Utils from '../../utils/utils';
 
 import { Map, MapFolio } from '../../models/map-folio';
 
-import InfoCard from '../cards/info-card';
-import MapFoliosCard from '../cards/information/map-folios-card';
 import MapCard from '../cards/map-card';
 import MapFolioCard from '../cards/map-folio-card';
 import MapFolioListItem from '../list-items/map-folio-list-item';
 import CardGroup from '../panels/card-group';
+import Readaloud from '../panels/readaloud';
 
 interface Props {
     mapFolios: MapFolio[];
@@ -43,7 +42,7 @@ export default class MapFoliosScreen extends React.Component<Props> {
             let help = null;
             if (this.props.showHelp) {
                 help = (
-                    <MapFoliosCard mapFolios={this.props.mapFolios} />
+                    <HelpCard mapFolios={this.props.mapFolios} />
                 );
             }
 
@@ -91,7 +90,7 @@ export default class MapFoliosScreen extends React.Component<Props> {
                 if (folioCards.length === 0) {
                     folioCards.push(
                         <div className='column' key='empty'>
-                            <InfoCard getContent={() => <div className='section'>no maps</div>} />
+                            <Readaloud content={<div className='section'>there are no maps in this folio</div>} />
                         </div>
                     );
                 }
@@ -122,6 +121,42 @@ export default class MapFoliosScreen extends React.Component<Props> {
             );
         } catch (e) {
             console.error(e);
+        }
+    }
+}
+
+interface HelpCardProps {
+    mapFolios: MapFolio[];
+}
+
+class HelpCard extends React.Component<HelpCardProps> {
+    public render() {
+        try {
+            let action: JSX.Element | null = null;
+            if (this.props.mapFolios.length === 0) {
+                action = (
+                    <div className='section'>to start a new folio, press the button below</div>
+                );
+            } else {
+                action = (
+                    <div className='section'>select a map folio from the list to see the maps it contains</div>
+                );
+            }
+
+            return (
+                <Readaloud
+                    content={
+                        <div>
+                            <div className='section'>on this page you can set up folios containing tactical maps</div>
+                            <div className='section'>when you have created a map you can use it in encounters</div>
+                            <div className='divider'/>
+                            {action}
+                        </div>
+                    }
+                />
+            );
+        } catch (ex) {
+            console.error(ex);
         }
     }
 }

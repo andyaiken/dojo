@@ -4,12 +4,11 @@ import Utils from '../../utils/utils';
 
 import { Party, PC } from '../../models/party';
 
-import InfoCard from '../cards/info-card';
-import PartiesCard from '../cards/information/parties-card';
 import PartyCard from '../cards/party-card';
 import PCCard from '../cards/pc-card';
 import PartyListItem from '../list-items/party-list-item';
 import CardGroup from '../panels/card-group';
+import Readaloud from '../panels/readaloud';
 
 interface Props {
     parties: Party[];
@@ -44,7 +43,7 @@ export default class PartiesScreen extends React.Component<Props> {
             let help = null;
             if (this.props.showHelp) {
                 help = (
-                    <PartiesCard parties={this.props.parties}/>
+                    <HelpCard parties={this.props.parties}/>
                 );
             }
 
@@ -114,7 +113,7 @@ export default class PartiesScreen extends React.Component<Props> {
                 if (activePCs.length === 0) {
                     activeCards.push(
                         <div className='column' key='empty'>
-                            <InfoCard getContent={() => <div className='section'>no pcs</div>} />
+                            <Readaloud content={<div className='section'>there are no pcs in this party</div>} />
                         </div>
                     );
                 }
@@ -151,6 +150,42 @@ export default class PartiesScreen extends React.Component<Props> {
             );
         } catch (e) {
             console.error(e);
+        }
+    }
+}
+
+interface HelpCardProps {
+    parties: Party[];
+}
+
+class HelpCard extends React.Component<HelpCardProps> {
+    public render() {
+        try {
+            let action: JSX.Element | null = null;
+            if (this.props.parties.length === 0) {
+                action = (
+                    <div className='section'>to start adding a party, press the button below</div>
+                );
+            } else {
+                action = (
+                    <div className='section'>select a party from the list to see pc details</div>
+                );
+            }
+
+            return (
+                <Readaloud
+                    content={
+                        <div>
+                            <div className='section'>this page is where you can tell dojo all about your pcs</div>
+                            <div className='section'>you can add a party for each of your gaming groups</div>
+                            <div className='divider'/>
+                            {action}
+                        </div>
+                    }
+                />
+            );
+        } catch (ex) {
+            console.error(ex);
         }
     }
 }

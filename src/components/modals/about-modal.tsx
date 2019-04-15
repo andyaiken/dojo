@@ -1,12 +1,12 @@
 import React from 'react';
 
-import InfoCard from '../cards/info-card';
 import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
 import Selector from '../controls/selector';
 import LanguageModule from '../dm-modules/language-module';
 import NameModule from '../dm-modules/name-module';
 import ReferenceModule from '../dm-modules/reference-module';
+import Readaloud from '../panels/readaloud';
 
 import pkg from '../../../package.json';
 
@@ -65,8 +65,8 @@ export default class AboutModal extends React.Component<Props, State> {
         ];
 
         let module = (
-            <InfoCard
-                getContent={() => (
+            <Readaloud
+                content={(
                     <div className='section'>
                         <b>dojo</b> includes several dm tools; select one of them above
                     </div>

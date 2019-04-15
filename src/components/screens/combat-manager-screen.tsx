@@ -7,8 +7,6 @@ import { Condition, ConditionDurationSaves } from '../../models/condition';
 import { Monster, Trait } from '../../models/monster-group';
 import { PC } from '../../models/party';
 
-import InfoCard from '../cards/info-card';
-import CombatManagerCard from '../cards/information/combat-manager-card';
 import MonsterCard from '../cards/monster-card';
 import PCCard from '../cards/pc-card';
 import ControlRow from '../controls/control-row';
@@ -17,6 +15,7 @@ import CombatListItem from '../list-items/combat-list-item';
 import CardGroup from '../panels/card-group';
 import HitPointGauge from '../panels/hit-point-gauge';
 import MapPanel from '../panels/map-panel';
+import Readaloud from '../panels/readaloud';
 
 interface Props {
     combats: Combat[];
@@ -224,8 +223,8 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                 if (this.props.showHelp && (pending.length !== 0)) {
                     const pendingHelp = (
                         <div key='pending-help'>
-                            <InfoCard
-                                getContent={() =>
+                            <Readaloud
+                                content={
                                     <div>
                                         <div className='section'>these combatants are not yet part of the encounter</div>
                                         <div className='section'>set initiative on each of them, then add them to the encounter</div>
@@ -241,8 +240,8 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     const activeHelp = (
                         /* tslint:disable:max-line-length */
                         <div key='active-help'>
-                            <InfoCard
-                                getContent={() =>
+                            <Readaloud
+                                content={
                                     <div>
                                         <div className='section'>these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right)</div>
                                         <div className='section'>to begin the encounter, select the first combatant and press the <b>start turn</b> button on their stat block</div>
@@ -257,10 +256,12 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
 
                 if (current.length === 0) {
                     current.push(
-                        <InfoCard
+                        <Readaloud
                             key='current'
-                            getContent={() =>
-                                <div className='section'>the current initiative holder will be displayed here</div>
+                            content={
+                                <div className='section'>
+                                    the current initiative holder will be displayed here
+                                </div>
                             }
                         />
                     );
@@ -310,10 +311,12 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                 }
                 if (!selectedCombatant) {
                     selectedCombatant = (
-                        <InfoCard
+                        <Readaloud
                             key='selected'
-                            getContent={() =>
-                                <div className='section'>select a pc or monster to see its details here</div>
+                            content={
+                                <div className='section'>
+                                    select a pc or monster from the central list to see its details here
+                                </div>
                             }
                         />
                     );
@@ -360,7 +363,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                 let help = null;
                 if (this.props.showHelp) {
                     help = (
-                        <CombatManagerCard />
+                        <HelpCard combats={this.props.combats} />
                     );
                 }
 
@@ -389,6 +392,40 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
         } catch (e) {
             console.error(e);
         }
+    }
+}
+
+interface HelpCardProps {
+    combats: Combat[];
+}
+
+class HelpCard extends React.Component<HelpCardProps> {
+    public render() {
+        let action: JSX.Element | null = null;
+        if (this.props.combats.length === 0) {
+            action = (
+                <div className='section'>to start a combat encounter, press the button below</div>
+            );
+        } else {
+            action = (
+                <div>
+                    <div className='section'>below you will see a list of encounters that you have paused</div>
+                    <div className='section'>you can resume a paused combat by selecting it</div>
+                </div>
+            );
+        }
+
+        return (
+            <Readaloud
+                content={
+                    <div>
+                        <div className='section'>here you can run a combat encounter by specifying a party and an encounter</div>
+                        <div className='divider' />
+                        {action}
+                    </div>
+                }
+            />
+        );
     }
 }
 

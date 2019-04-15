@@ -1,36 +1,18 @@
 import React from 'react';
 
 interface Props {
-    getHeading: () => (string | JSX.Element);
-    getContent: () => (string | JSX.Element);
+    heading: string | JSX.Element | JSX.Element[];
+    content: string | JSX.Element | JSX.Element[];
 }
 
 export default class InfoCard extends React.Component<Props> {
-    public static defaultProps = {
-        getHeading: null,
-        getContent: null
-    };
-
     public render() {
         try {
-            let heading = null;
-            if (this.props.getHeading) {
-                heading = this.props.getHeading();
-            }
-
-            let content = null;
-            if (this.props.getContent) {
-                content = this.props.getContent();
-            }
-            if (!content) {
-                return null;
-            }
-
             return (
                 <div className='card'>
-                    {heading}
+                    {this.props.heading}
                     <div className='card-content'>
-                        {content}
+                        {this.props.content}
                     </div>
                 </div>
             );

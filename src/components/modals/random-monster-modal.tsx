@@ -6,8 +6,8 @@ import Utils from '../../utils/utils';
 import { Monster, MonsterGroup } from '../../models/monster-group';
 
 import FilterCard from '../cards/filter-card';
-import InfoCard from '../cards/info-card';
 import MonsterCard from '../cards/monster-card';
+import Readaloud from '../panels/readaloud';
 
 interface Props {
     monster: Monster;
@@ -124,6 +124,24 @@ export default class RandomMonsterModal extends React.Component<Props, State> {
         });
     }
 
+    private selectAll() {
+        this.props.library.forEach(group => {
+            group.monsters.forEach(monster => {
+                if (this.matchMonster(monster)) {
+                    this.state.selectedMonsters.push(monster);
+                }
+            });
+        });
+        this.state.selectedMonsters.sort((a, b) => {
+            if (a.name < b.name) { return -1; }
+            if (a.name > b.name) { return 1; }
+            return 0;
+        });
+        this.setState({
+            selectedMonsters: this.state.selectedMonsters
+        });
+    }
+
     public render() {
         try {
             const monsters: Monster[] = [];
@@ -146,24 +164,32 @@ export default class RandomMonsterModal extends React.Component<Props, State> {
             });
             if (allMonsters.length === 0) {
                 allMonsters = (
-                    <InfoCard
-                        getContent={() => (
-                            <div className='section'><i>no monsters</i></div>
+                    <Readaloud
+                        content={(
+                            <div className='section'>
+                                there are no monsters that match the above criteria (or you have already selected them all)
+                            </div>
                         )}
                     />
                 );
             }
 
-            let selectedMonsters: JSX.Element | JSX.Element[] = this.state.selectedMonsters.map(m => {
+            const selectedMonsters: JSX.Element | JSX.Element[] = this.state.selectedMonsters.map(m => {
                 return (
                     <MonsterCard key={m.id} combatant={m} mode='view candidate selected' deselectMonster={monster => this.deselectMonster(monster)} />
                 );
             });
-            if (selectedMonsters.length === 0) {
-                selectedMonsters = (
-                    <InfoCard
-                        getContent={() => (
-                            <div className='section'><i>no monsters selected</i></div>
+            let selectedMonstersInfo = null;
+            if (selectedMonsters.length < 2) {
+                selectedMonstersInfo = (
+                    <Readaloud
+                        content={(
+                            <div>
+                                <div className='section'>
+                                    in order to generate a random monster, select at least two source monsters from the list on the left
+                                </div>
+                                <button onClick={() => this.selectAll()}>select all monsters</button>
+                            </div>
                         )}
                     />
                 );
@@ -185,13 +211,6 @@ export default class RandomMonsterModal extends React.Component<Props, State> {
                         </div>
                         <div className='columns small-4 medium-4 large-4 scrollable'>
                             <div className='heading'>selected monsters</div>
-                            <InfoCard
-                                getContent={() => (
-                                    <div className='section'>
-                                        in order to generate a random monster, select at least two source monsters from the list on the left
-                                    </div>
-                                )}
-                            />
                             <button
                                 className={this.state.selectedMonsters.length < 2 ? 'disabled' : ''}
                                 onClick={() => this.generateMonster()}
@@ -199,6 +218,7 @@ export default class RandomMonsterModal extends React.Component<Props, State> {
                                 randomly generate monster
                             </button>
                             <div className='divider' />
+                            {selectedMonstersInfo}
                             {selectedMonsters}
                         </div>
                         <div className='columns small-4 medium-4 large-4 scrollable'>
