@@ -13,7 +13,7 @@ import MonsterCard from '../cards/monster-card';
 import WaveCard from '../cards/wave-card';
 import EncounterListItem from '../list-items/encounter-list-item';
 import CardGroup from '../panels/card-group';
-import Readaloud from '../panels/readaloud';
+import Note from '../panels/note';
 
 interface Props {
     encounters: Encounter[];
@@ -147,7 +147,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
         if (slots.length === 0) {
             cards.push(
                 <div className='column' key='empty'>
-                    <Readaloud content={<div className='section'>there are no monsters in this {waveID ? 'wave' : 'encounter'}</div>} />
+                    <Note content={<div className='section'>there are no monsters in this {waveID ? 'wave' : 'encounter'}</div>} />
                 </div>
             );
         }
@@ -329,7 +329,7 @@ class HelpCard extends React.Component<HelpCardProps> {
             }
 
             return (
-                <Readaloud
+                <Note
                     content={
                         <div>
                             <div className='section'>on this page you can set up encounters</div>

@@ -739,6 +739,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
                 help = (
                     <div className='monster-help'>
+                        <div className='divider' />
                         <div className='subheading'>information from similar monsters</div>
                         {selector}
                         {this.getHelpSection(monsters)}

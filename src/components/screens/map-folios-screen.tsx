@@ -8,7 +8,7 @@ import MapCard from '../cards/map-card';
 import MapFolioCard from '../cards/map-folio-card';
 import MapFolioListItem from '../list-items/map-folio-list-item';
 import CardGroup from '../panels/card-group';
-import Readaloud from '../panels/readaloud';
+import Note from '../panels/note';
 
 interface Props {
     mapFolios: MapFolio[];
@@ -90,7 +90,7 @@ export default class MapFoliosScreen extends React.Component<Props> {
                 if (folioCards.length === 0) {
                     folioCards.push(
                         <div className='column' key='empty'>
-                            <Readaloud content={<div className='section'>there are no maps in this folio</div>} />
+                            <Note content={<div className='section'>there are no maps in this folio</div>} />
                         </div>
                     );
                 }
@@ -144,7 +144,7 @@ class HelpCard extends React.Component<HelpCardProps> {
             }
 
             return (
-                <Readaloud
+                <Note
                     content={
                         <div>
                             <div className='section'>on this page you can set up folios containing tactical maps</div>

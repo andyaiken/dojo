@@ -15,7 +15,7 @@ import CombatListItem from '../list-items/combat-list-item';
 import CardGroup from '../panels/card-group';
 import HitPointGauge from '../panels/hit-point-gauge';
 import MapPanel from '../panels/map-panel';
-import Readaloud from '../panels/readaloud';
+import Note from '../panels/note';
 
 interface Props {
     combats: Combat[];
@@ -223,7 +223,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                 if (this.props.showHelp && (pending.length !== 0)) {
                     const pendingHelp = (
                         <div key='pending-help'>
-                            <Readaloud
+                            <Note
                                 content={
                                     <div>
                                         <div className='section'>these combatants are not yet part of the encounter</div>
@@ -240,7 +240,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     const activeHelp = (
                         /* tslint:disable:max-line-length */
                         <div key='active-help'>
-                            <Readaloud
+                            <Note
                                 content={
                                     <div>
                                         <div className='section'>these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right)</div>
@@ -256,7 +256,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
 
                 if (current.length === 0) {
                     current.push(
-                        <Readaloud
+                        <Note
                             key='current'
                             content={
                                 <div className='section'>
@@ -311,7 +311,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                 }
                 if (!selectedCombatant) {
                     selectedCombatant = (
-                        <Readaloud
+                        <Note
                             key='selected'
                             content={
                                 <div className='section'>
@@ -416,7 +416,7 @@ class HelpCard extends React.Component<HelpCardProps> {
         }
 
         return (
-            <Readaloud
+            <Note
                 content={
                     <div>
                         <div className='section'>here you can run a combat encounter by specifying a party and an encounter</div>
@@ -703,12 +703,17 @@ class MonsterRow extends React.Component<MonsterRowProps> {
                     description.push(<li key={n} className='condition-text'>{text[n]}</li>);
                 }
                 return (
-                    <div key={c.id} className='condition'>
-                        <div className='condition-name'>{name}</div>
-                        <ul>
-                            {description}
-                        </ul>
-                    </div>
+                    <Note
+                        key={c.id}
+                        content={
+                            <div className='condition'>
+                                <div className='condition-name'>{name}</div>
+                                <ul>
+                                    {description}
+                                </ul>
+                            </div>
+                        }
+                    />
                 );
             });
         }

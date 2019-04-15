@@ -7,7 +7,7 @@ import { Monster, MonsterGroup } from '../../models/monster-group';
 
 import FilterCard from '../cards/filter-card';
 import MonsterCard from '../cards/monster-card';
-import Readaloud from '../panels/readaloud';
+import Note from '../panels/note';
 
 interface Props {
     monster: Monster;
@@ -164,7 +164,7 @@ export default class RandomMonsterModal extends React.Component<Props, State> {
             });
             if (allMonsters.length === 0) {
                 allMonsters = (
-                    <Readaloud
+                    <Note
                         content={(
                             <div className='section'>
                                 there are no monsters that match the above criteria (or you have already selected them all)
@@ -182,7 +182,7 @@ export default class RandomMonsterModal extends React.Component<Props, State> {
             let selectedMonstersInfo = null;
             if (selectedMonsters.length < 2) {
                 selectedMonstersInfo = (
-                    <Readaloud
+                    <Note
                         content={(
                             <div>
                                 <div className='section'>

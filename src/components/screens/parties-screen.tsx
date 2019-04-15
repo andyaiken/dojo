@@ -8,7 +8,7 @@ import PartyCard from '../cards/party-card';
 import PCCard from '../cards/pc-card';
 import PartyListItem from '../list-items/party-list-item';
 import CardGroup from '../panels/card-group';
-import Readaloud from '../panels/readaloud';
+import Note from '../panels/note';
 
 interface Props {
     parties: Party[];
@@ -113,7 +113,7 @@ export default class PartiesScreen extends React.Component<Props> {
                 if (activePCs.length === 0) {
                     activeCards.push(
                         <div className='column' key='empty'>
-                            <Readaloud content={<div className='section'>there are no pcs in this party</div>} />
+                            <Note content={<div className='section'>there are no pcs in this party</div>} />
                         </div>
                     );
                 }
@@ -173,7 +173,7 @@ class HelpCard extends React.Component<HelpCardProps> {
             }
 
             return (
-                <Readaloud
+                <Note
                     content={
                         <div>
                             <div className='section'>this page is where you can tell dojo all about your pcs</div>

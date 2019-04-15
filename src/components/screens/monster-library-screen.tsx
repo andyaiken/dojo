@@ -8,7 +8,7 @@ import MonsterCard from '../cards/monster-card';
 import MonsterGroupCard from '../cards/monster-group-card';
 import MonsterGroupListItem from '../list-items/monster-group-list-item';
 import CardGroup from '../panels/card-group';
-import Readaloud from '../panels/readaloud';
+import Note from '../panels/note';
 
 interface Props {
     library: MonsterGroup[];
@@ -105,7 +105,7 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                 } else {
                     cards.push(
                         <div className='column' key='empty'>
-                            <Readaloud content={<div className='section'>there are no monsters in this group</div>} />
+                            <Note content={<div className='section'>there are no monsters in this group</div>} />
                         </div>
                     );
                 }
@@ -160,7 +160,7 @@ class HelpCard extends React.Component<HelpCardProps> {
         }
 
         return (
-            <Readaloud
+            <Note
                 content={
                     <div>
                         <div className='section'>you can maintain your menagerie of monsters here</div>
