@@ -175,7 +175,7 @@ export default class LanguageModule extends React.Component<Props, State> {
         });
         TextGenerator.initModel(sources);
         this.setState({
-            output: TextGenerator.generate(5)
+            output: TextGenerator.generate(5).map(l => l.line)
         });
     }
 

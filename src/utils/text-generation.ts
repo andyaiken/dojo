@@ -11,20 +11,24 @@ interface ModelChar {
 export default class TextGenerator {
 
     private static model: ModelLine[] = [];
+    private static maxLength: number = 0;
 
     public static initModel(sources: string[]) {
         const model: ModelLine[] = [];
+        let maxLength: number = 0;
 
         sources.forEach(source => {
             const lines = source.split(/\r?\n/);
             lines.forEach(line => {
                 if (line) {
                     TextGenerator.addLineToModel(line, model);
+                    maxLength = Math.max(maxLength, line.length);
                 }
             });
         });
 
         TextGenerator.model = model;
+        TextGenerator.maxLength = maxLength;
     }
 
     private static addLineToModel(line: string, model: ModelLine[]) {
@@ -56,15 +60,16 @@ export default class TextGenerator {
         }
     }
 
-    public static generate(requiredResults: number): string[] {
-        const lines: string[] = [];
+    public static generate(requiredResults: number): { line: string, fit: number }[] {
+        const lines: { line: string, fit: number }[] = [];
         const allowedFailures = 100;
         let failures = 0;
 
         while ((lines.length < requiredResults) && (failures < allowedFailures)) {
             const line = TextGenerator.extractLine();
-            if (line && !lines.includes(line)) {
-                lines.push(line);
+            if (line && !lines.map(l => l.line).includes(line) && line.length <= TextGenerator.maxLength) {
+                const fit = TextGenerator.fit(line);
+                lines.push({ line, fit });
             } else {
                 failures += 1;
             }
@@ -98,5 +103,26 @@ export default class TextGenerator {
                 return null;
             }
         }
+    }
+
+    private static fit(text: string): number {
+        text = String.fromCharCode(0, 1) + text + String.fromCharCode(2);
+
+        let values: number[] = [];
+        for (let n = 2; n != text.length; ++n) {
+            const prev = text.substr(n - 2, 2);
+            const ch = text[n];
+
+            const line = TextGenerator.model.find(m => m.prev === prev);
+            if (line) {
+                const maxCount = line.freq.reduce((max, value) => Math.max(max, value.count), 0);
+                const thisCount = (line.freq.find(f => f.char === ch) as ModelChar).count;
+                const fit = thisCount / maxCount;
+
+                values.push(fit);
+            }
+        }
+
+        return values.reduce((sum, value) => sum + value, 0) / values.length;
     }
 }

@@ -322,10 +322,10 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
         switch (dataType) {
             case 'number':
-                Utils.sortByValue(distinct);
+                Utils.sort(distinct, [{ field: 'value', dir: 'asc' }]);
                 break;
             case 'text':
-                Utils.sortByCount(distinct);
+                Utils.sort(distinct, [{ field: 'count', dir: 'desc' }, { field: 'value', dir: 'asc' }]);
                 break;
             default:
                 // Do nothing

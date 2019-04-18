@@ -33,7 +33,7 @@ export default class NameModule extends React.Component<Props, State> {
         const input = await response.text();
 
         TextGenerator.initModel([input]);
-        const names = TextGenerator.generate(10).sort();
+        const names = TextGenerator.generate(10).map(n => n.line).sort();
 
         this.state.output[type] = names;
         this.setState({

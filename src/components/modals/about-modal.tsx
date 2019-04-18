@@ -55,12 +55,12 @@ export default class AboutModal extends React.Component<Props, State> {
                 text: 'd&d reference'
             },
             {
-                id: 'language',
-                text: 'language generator'
-            },
-            {
                 id: 'names',
                 text: 'name generator'
+            },
+            {
+                id: 'language',
+                text: 'language generator'
             }
         ];
 

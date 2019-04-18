@@ -44,38 +44,29 @@ export default class Utils {
         return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
     }
 
-    public static sort(collection: any[]): any[] {
-        collection.sort((a, b) => {
-            const aName = a.name.toLowerCase();
-            const bName = b.name.toLowerCase();
-            if (aName < bName) { return -1; }
-            if (aName > bName) { return 1; }
+    public static sort(collection: any[], sorts: { field: string, dir: 'asc' | 'desc' }[] = []): any[] {
+        if (sorts.length === 0) {
+            sorts = [{ field: 'name', dir: 'asc' }];
+        }
+
+        var fn = (a: any, b: any, field: string): number => {
+            if ((a[field] !== undefined) && (b[field] !== undefined)) {
+                if (a[field] < b[field]) { return -1; }
+                if (a[field] > b[field]) { return 1; }
+            }
             return 0;
-        });
-        return collection;
-    }
+        };
 
-    public static sortByValue(collection: any[]): any[] {
         collection.sort((a, b) => {
-            if (a.value < b.value) { return -1; }
-            if (a.value > b.value) { return 1; }
-            return 0;
+            let order = 0;
+            sorts.forEach(sort => {
+                if (order === 0) {
+                    order = fn(a, b, sort.field) * (sort.dir === 'asc' ? 1 : -1);
+                }
+            });
+            return order;
         });
-        return collection;
-    }
 
-    public static sortByCount(collection: any[]): any[] {
-        collection.sort((a, b) => {
-            if (a.count < b.count) { return 1; }
-            if (a.count > b.count) { return -1; }
-
-            const aValue = a.value.toLowerCase();
-            const bValue = b.value.toLowerCase();
-            if (aValue < bValue) { return -1; }
-            if (aValue > bValue) { return 1; }
-
-            return 0;
-        });
         return collection;
     }
 
