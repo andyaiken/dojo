@@ -480,7 +480,7 @@ class NotificationPanel extends React.Component<NotificationProps> {
                     saveType = saveType.toUpperCase();
                 }
                 return (
-                    <div key={this.props.notification.id} className='notification'>
+                    <div key={this.props.notification.id} className='descriptive'>
                         <div className='text'>
                             {name} must make a {saveType} save against dc {duration.saveDC}
                         </div>
@@ -494,7 +494,7 @@ class NotificationPanel extends React.Component<NotificationProps> {
                 );
             case 'condition-end':
                 return (
-                    <div key={this.props.notification.id} className='notification'>
+                    <div key={this.props.notification.id} className='descriptive'>
                         <div className='text'>
                             {name} is no longer affected by condition {condition.name}
                         </div>
@@ -507,7 +507,7 @@ class NotificationPanel extends React.Component<NotificationProps> {
                 );
             case 'trait-recharge':
                 return (
-                    <div key={this.props.notification.id} className='notification'>
+                    <div key={this.props.notification.id} className='descriptive'>
                         <div className='text'>
                             {name} can attempt to recharge {trait.name} ({trait.usage})
                         </div>

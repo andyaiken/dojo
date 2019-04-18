@@ -108,8 +108,8 @@ export default class TextGenerator {
     private static fit(text: string): number {
         text = String.fromCharCode(0, 1) + text + String.fromCharCode(2);
 
-        let values: number[] = [];
-        for (let n = 2; n != text.length; ++n) {
+        const values: number[] = [];
+        for (let n = 2; n !== text.length; ++n) {
             const prev = text.substr(n - 2, 2);
             const ch = text[n];
 

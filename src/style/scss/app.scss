@@ -1047,27 +1047,7 @@ body,
     position: sticky;
     top: 0;
     background-color: white;
-    padding-top: 1px;
-
-    .notification {
-        min-height: 40px;
-        margin: 5px;
-        border-left: 3px solid $foreground;
-        font-weight: 600;
-
-        &:hover {
-            background-color: $highlight01;
-            border-color: $highlight;
-        }
-
-        .text {
-            padding: 7px;
-        }
-
-        .control-row {
-            padding: 0 4px 7px 4px;
-        }
-    }
+    padding: 1px 5px 0 5px;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1287,5 +1267,13 @@ body,
     .heading {
         font-size: 20px;
         border: none;
+    }
+
+    .text {
+        padding: 5px;
+    }
+
+    .control-row {
+        padding: 0 5px 5px 5px;
     }
 }

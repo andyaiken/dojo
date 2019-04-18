@@ -49,7 +49,7 @@ export default class Utils {
             sorts = [{ field: 'name', dir: 'asc' }];
         }
 
-        var fn = (a: any, b: any, field: string): number => {
+        const fn = (a: any, b: any, field: string): number => {
             if ((a[field] !== undefined) && (b[field] !== undefined)) {
                 if (a[field] < b[field]) { return -1; }
                 if (a[field] > b[field]) { return 1; }
