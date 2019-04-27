@@ -1,3 +1,5 @@
+import Utils from './utils';
+
 interface ModelLine {
     prev: string;
     freq: ModelChar[];
@@ -92,11 +94,21 @@ export default class TextGenerator {
                 });
 
                 const index = Math.floor(Math.random() * candidates.length);
-                const char = candidates[index];
+                let char = candidates[index];
                 if (char === String.fromCharCode(2)) {
                     line = line.substr(2);
                     return line;
                 } else {
+                    if (Utils.dieRoll() === 1) {
+                        // TODO: Mutate choice
+                        const groups = ['bdg', 'ptk', 'sz', 'aeiouy', 'lr', 'ckq', 'vf'];
+                        groups.forEach(g => {
+                            if (g.includes(char)) {
+                                const n = Math.floor(Math.random() * g.length);
+                                char = g[n];
+                            }
+                        });
+                    }
                     line += char;
                 }
             } else {
@@ -115,11 +127,14 @@ export default class TextGenerator {
 
             const line = TextGenerator.model.find(m => m.prev === prev);
             if (line) {
-                const maxCount = line.freq.reduce((max, value) => Math.max(max, value.count), 0);
-                const thisCount = (line.freq.find(f => f.char === ch) as ModelChar).count;
-                const fit = thisCount / maxCount;
-
-                values.push(fit);
+                const mc = line.freq.find(f => f.char === ch);
+                if (mc) {
+                    const maxCount = line.freq.reduce((max, value) => Math.max(max, value.count), 0);
+                    const fit = mc.count / maxCount;
+                    values.push(fit);
+                } else {
+                    values.push(0);
+                }
             }
         }
 
