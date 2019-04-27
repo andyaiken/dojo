@@ -1,0 +1,114 @@
+import React from 'react';
+
+import Utils from '../../utils/utils';
+
+import Selector from '../controls/selector';
+import Spin from '../controls/spin';
+
+// tslint:disable-next-line:no-empty-interface
+interface Props {
+    //
+}
+
+interface State {
+    dice: string;
+    count: number;
+    result: number | null;
+}
+
+export default class DieRollerModule extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            dice: '20',
+            count: 1,
+            result: null
+        };
+    }
+
+    private setDice(dice: string) {
+        this.setState({
+            dice: dice
+        });
+    }
+
+    private nudgeCount(delta: number) {
+        this.setState({
+            count: Math.max(1, this.state.count + delta)
+        });
+    }
+
+    private roll() {
+        const sides = parseInt(this.state.dice, 10);
+
+        let result = 0;
+        for (let n = 0; n !== this.state.count; ++n) {
+            result += Utils.dieRoll(sides);
+        }
+
+        this.setState({
+            result: result
+        });
+    }
+
+    public render() {
+        const options = [
+            {
+                id: '4',
+                text: 'd4'
+            },
+            {
+                id: '6',
+                text: 'd6'
+            },
+            {
+                id: '8',
+                text: 'd8'
+            },
+            {
+                id: '10',
+                text: 'd10'
+            },
+            {
+                id: '12',
+                text: 'd12'
+            },
+            {
+                id: '20',
+                text: 'd20'
+            },
+            {
+                id: '100',
+                text: 'd100'
+            }
+        ];
+
+        let resultSection = null;
+        if (this.state.result !== null) {
+            resultSection = (
+                <div className='section die-roll'>{this.state.result}</div>
+            );
+        }
+
+        return (
+            <div>
+                <div className='subheading'>die type</div>
+                <Selector
+                    options={options}
+                    selectedID={this.state.dice}
+                    select={optionID => this.setDice(optionID)}
+                />
+                <div className='subheading'>number to roll</div>
+                <Spin
+                    source={this.state}
+                    name='count'
+                    nudgeValue={delta => this.nudgeCount(delta)}
+                />
+                <div className='divider' />
+                <button onClick={() => this.roll()}>roll dice</button>
+                {resultSection}
+            </div>
+        );
+    }
+}

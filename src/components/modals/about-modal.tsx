@@ -3,6 +3,7 @@ import React from 'react';
 import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
 import Selector from '../controls/selector';
+import DieRollerModule from '../dm-modules/die-roller-module';
 import LanguageModule from '../dm-modules/language-module';
 import NameModule from '../dm-modules/name-module';
 import ReferenceModule from '../dm-modules/reference-module';
@@ -61,6 +62,10 @@ export default class AboutModal extends React.Component<Props, State> {
             {
                 id: 'language',
                 text: 'language generator'
+            },
+            {
+                id: 'die-roller',
+                text: 'die roller'
             }
         ];
 
@@ -88,6 +93,11 @@ export default class AboutModal extends React.Component<Props, State> {
             case 'names':
                 module = (
                     <NameModule />
+                );
+                break;
+            case 'die-roller':
+                module = (
+                    <DieRollerModule />
                 );
                 break;
         }

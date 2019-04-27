@@ -83,8 +83,8 @@ export default class Utils {
         return str;
     }
 
-    public static dieRoll(): number {
-        return Math.floor(Math.random() * 20) + 1;
+    public static dieRoll(sides: number = 20): number {
+        return Math.floor(Math.random() * sides) + 1;
     }
 
     public static miniSize(size: string): number {
