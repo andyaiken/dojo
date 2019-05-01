@@ -117,6 +117,7 @@ export default class DieRollerModule extends React.Component<Props, State> {
                 <Spin
                     source={this.state}
                     name='count'
+                    display={count => count + 'd' + this.state.dice}
                     nudgeValue={delta => this.nudgeCount(delta)}
                 />
                 <div className='divider' />
