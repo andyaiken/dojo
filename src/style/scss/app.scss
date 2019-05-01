@@ -1278,9 +1278,17 @@ body,
     }
 }
 
-.die-roll {
-    text-align: center;
-    font-size: 50px;
-    font-weight: 600;
-    padding-top: 20px;
+.die-roller {
+    .die-rolls {
+        text-align: center;
+        font-weight: 600;
+        padding-top: 20px;
+    }
+
+    .die-result {
+        text-align: center;
+        font-size: 50px;
+        font-weight: 600;
+        padding-top: 20px;
+    }
 }

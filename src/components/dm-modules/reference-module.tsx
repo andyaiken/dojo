@@ -62,7 +62,7 @@ export default class ReferenceModule extends React.Component<Props, State> {
         ];
 
         return (
-            <div>
+            <div className='reference'>
                 <Selector
                     options={options}
                     selectedID={this.state.view}

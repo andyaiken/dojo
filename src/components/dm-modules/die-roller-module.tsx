@@ -13,6 +13,7 @@ interface Props {
 interface State {
     dice: string;
     count: number;
+    rolls: number[] | null;
     result: number | null;
 }
 
@@ -23,6 +24,7 @@ export default class DieRollerModule extends React.Component<Props, State> {
         this.state = {
             dice: '20',
             count: 1,
+            rolls: null,
             result: null
         };
     }
@@ -42,12 +44,17 @@ export default class DieRollerModule extends React.Component<Props, State> {
     private roll() {
         const sides = parseInt(this.state.dice, 10);
 
-        let result = 0;
+        const rolls: number[] = [];
         for (let n = 0; n !== this.state.count; ++n) {
-            result += Utils.dieRoll(sides);
+            rolls.push(Utils.dieRoll(sides));
         }
+        rolls.sort((a, b) => a - b);
+
+        let result = 0;
+        rolls.forEach(roll => result += roll);
 
         this.setState({
+            rolls: rolls,
             result: result
         });
     }
@@ -84,15 +91,22 @@ export default class DieRollerModule extends React.Component<Props, State> {
             }
         ];
 
+        let rollsSection = null;
+        if (this.state.rolls !== null) {
+            rollsSection = (
+                <div className='section die-rolls'>{this.state.rolls.join(', ')}</div>
+            );
+        }
+
         let resultSection = null;
         if (this.state.result !== null) {
             resultSection = (
-                <div className='section die-roll'>{this.state.result}</div>
+                <div className='section die-result'>{this.state.result}</div>
             );
         }
 
         return (
-            <div>
+            <div className='die-roller'>
                 <div className='subheading'>die type</div>
                 <Selector
                     options={options}
@@ -107,6 +121,7 @@ export default class DieRollerModule extends React.Component<Props, State> {
                 />
                 <div className='divider' />
                 <button onClick={() => this.roll()}>roll dice</button>
+                {rollsSection}
                 {resultSection}
             </div>
         );
