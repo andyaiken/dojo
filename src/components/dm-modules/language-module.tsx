@@ -194,24 +194,26 @@ export default class LanguageModule extends React.Component<Props, State> {
         }
 
         const getVoices = () => {
-            return new Promise(resolve => {
-                let voices = window.speechSynthesis.getVoices();
-                if (voices.length > 0) {
-                    resolve(voices);
+            return new Promise<SpeechSynthesisVoice[]>(resolve => {
+                let list = window.speechSynthesis.getVoices();
+                if (list.length > 0) {
+                    resolve(list);
                     return;
                 }
                 speechSynthesis.onvoiceschanged = () => {
-                    voices = window.speechSynthesis.getVoices();
-                    resolve(voices);
-                }
+                    list = window.speechSynthesis.getVoices();
+                    resolve(list);
+                };
             });
+        };
+
+        const voices = await getVoices();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        if (voices.length !== 0) {
+            const voiceIndex = Math.floor(Math.random() * voices.length);
+            utterance.voice = voices[voiceIndex];
         }
-          
-        var voices = (await getVoices()) as SpeechSynthesisVoice[];
-        var voiceIndex = Math.floor(Math.random() * voices.length);
-          
-        var utterance = new SpeechSynthesisUtterance(text);
-        utterance.voice = voices[voiceIndex];
         window.speechSynthesis.speak(utterance);
     }
 
