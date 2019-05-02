@@ -186,6 +186,35 @@ export default class LanguageModule extends React.Component<Props, State> {
         });
     }
 
+    private async say(e: React.MouseEvent, text: string) {
+        e.preventDefault();
+
+        if (window.speechSynthesis.speaking) {
+            return;
+        }
+
+        const getVoices = () => {
+            return new Promise(resolve => {
+                let voices = window.speechSynthesis.getVoices();
+                if (voices.length > 0) {
+                    resolve(voices);
+                    return;
+                }
+                speechSynthesis.onvoiceschanged = () => {
+                    voices = window.speechSynthesis.getVoices();
+                    resolve(voices);
+                }
+            });
+        }
+          
+        var voices = (await getVoices()) as SpeechSynthesisVoice[];
+        var voiceIndex = Math.floor(Math.random() * voices.length);
+          
+        var utterance = new SpeechSynthesisUtterance(text);
+        utterance.voice = voices[voiceIndex];
+        window.speechSynthesis.speak(utterance);
+    }
+
     public render() {
         const presetOptions = this.getPresets().map(p => {
             return {
@@ -234,7 +263,7 @@ export default class LanguageModule extends React.Component<Props, State> {
         }
         for (let n = 0; n !== this.state.output.length; ++n) {
             output.push(
-                <div key={n} className='section'>
+                <div key={n} className='section' onDoubleClick={e => this.say(e, this.state.output[n])}>
                     {this.state.output[n].toLowerCase()}
                 </div>
             );
