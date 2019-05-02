@@ -71,7 +71,7 @@ export default class LanguageModule extends React.Component<Props, State> {
             'myanmar',
             'nepalese',
             'norwegian',
-            'persian',
+            'polish',
             'portuguese',
             'punjabi',
             'romanian',
