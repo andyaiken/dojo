@@ -69,7 +69,7 @@ export default class LanguageModule extends React.Component<Props, State> {
             'maltese',
             'maori',
             'myanmar',
-            'nepalese',
+            'nepali',
             'norwegian',
             'polish',
             'portuguese',
@@ -89,6 +89,73 @@ export default class LanguageModule extends React.Component<Props, State> {
             'yiddish',
             'zulu'
         ];
+    }
+
+    private getLanguageCode(language: string) {
+        switch (language) {
+            case 'armenian':
+                return 'hy';
+            case 'basque':
+                return 'eu';
+            case 'bulgarian':
+                return 'bg';
+            case 'chichewa':
+                return 'ny';
+            case 'chinese':
+                return 'zh';
+            case 'croatian':
+                return 'hr';
+            case 'czech':
+                return 'cs';
+            case 'dutch':
+                return 'nl';
+            case 'german':
+                return 'de';
+            case 'greek':
+                return 'el';
+            case 'icelandic':
+                return 'is';
+            case 'irish':
+                return 'ga';
+            case 'kannada':
+                return 'kn';
+            case 'kazakh':
+                return 'kk';
+            case 'latvian':
+                return 'lv';
+            case 'lithuanian':
+                return 'lt';
+            case 'macedonian':
+                return 'mk';
+            case 'malay':
+                return 'ms';
+            case 'maltese':
+                return 'mt';
+            case 'maori':
+                return 'mi';
+            case 'polish':
+                return 'pl';
+            case 'portuguese':
+                return 'pt';
+            case 'punjabi':
+                return 'pa';
+            case 'samoan':
+                return 'sm';
+            case 'serbian':
+                return 'sr';
+            case 'shona':
+                return 'sn';
+            case 'spanish':
+                return 'es';
+            case 'swedish':
+                return 'sv';
+            case 'turkish':
+                return 'tr';
+            case 'welsh':
+                return 'cy';
+            default:
+                return language.substr(0, 2);
+        }
     }
 
     private getPresets(): Preset[] {
@@ -186,6 +253,36 @@ export default class LanguageModule extends React.Component<Props, State> {
         });
     }
 
+    private getVoices() {
+        return new Promise<SpeechSynthesisVoice[]>(resolve => {
+            let list = window.speechSynthesis.getVoices();
+            if (list.length > 0) {
+                resolve(list);
+                return;
+            }
+            speechSynthesis.onvoiceschanged = () => {
+                list = window.speechSynthesis.getVoices();
+                resolve(list);
+            };
+        });
+    }
+
+    private async chooseVoice() {
+        const voices = await this.getVoices();
+
+        // Get language codes for the selected languages
+        const langCodes = Object.keys(this.state.sources).map(lang => this.getLanguageCode(lang));
+
+        // Filter voice list by these language codes
+        let candidates = voices.filter(v => langCodes.includes(v.lang.substr(0, 2)));
+        if (candidates.length === 0) {
+            candidates = voices.filter(v => v.default);
+        }
+
+        const index = Math.floor(Math.random() * candidates.length);
+        return candidates[index];
+    }
+
     private async say(e: React.MouseEvent, text: string) {
         e.preventDefault();
 
@@ -193,27 +290,8 @@ export default class LanguageModule extends React.Component<Props, State> {
             return;
         }
 
-        const getVoices = () => {
-            return new Promise<SpeechSynthesisVoice[]>(resolve => {
-                let list = window.speechSynthesis.getVoices();
-                if (list.length > 0) {
-                    resolve(list);
-                    return;
-                }
-                speechSynthesis.onvoiceschanged = () => {
-                    list = window.speechSynthesis.getVoices();
-                    resolve(list);
-                };
-            });
-        };
-
-        const voices = await getVoices();
-
         const utterance = new SpeechSynthesisUtterance(text);
-        if (voices.length !== 0) {
-            const voiceIndex = Math.floor(Math.random() * voices.length);
-            utterance.voice = voices[voiceIndex];
-        }
+        utterance.voice = await this.chooseVoice();
         window.speechSynthesis.speak(utterance);
     }
 
