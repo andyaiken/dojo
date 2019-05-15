@@ -1,19 +1,16 @@
 import React from 'react';
 
-import checked from '../../resources/images/checked.svg';
-import unchecked from '../../resources/images/unchecked.svg';
-
 interface Props {
     label: string;
+    style: 'switch' | 'button';
     checked: boolean;
     changeValue: (value: boolean) => void;
-    showCheck: boolean;
     disabled: boolean;
 }
 
 export default class Checkbox extends React.Component<Props> {
     public static defaultProps = {
-        showCheck: true,
+        style: 'switch',
         disabled: false
     };
 
@@ -24,7 +21,7 @@ export default class Checkbox extends React.Component<Props> {
 
     public render() {
         try {
-            let style = 'checkbox';
+            let style = 'checkbox ' + this.props.style;
             if (this.props.checked) {
                 style += ' checked';
             }
@@ -32,17 +29,19 @@ export default class Checkbox extends React.Component<Props> {
                 style += ' disabled';
             }
 
-            let check = null;
-            if (this.props.showCheck) {
-                check = (
-                    <img className='image' src={this.props.checked ? checked : unchecked} alt='check' />
+            let toggle = null;
+            if (this.props.style === 'switch') {
+                toggle = (
+                    <div className='toggle-container'>
+                        <div className='toggle'/>
+                    </div>
                 );
             }
 
             return (
                 <div className={style} onClick={e => this.click(e)}>
-                    {check}
                     <div className='checkbox-label'>{this.props.label}</div>
+                    {toggle}
                 </div>
             );
 

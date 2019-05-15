@@ -222,8 +222,8 @@ export default class LanguageModule extends React.Component<Props, State> {
                     <div className='column' key={lang}>
                         <Checkbox
                             label={lang}
+                            style='button'
                             checked={isSelected}
-                            showCheck={false}
                             changeValue={value => value ? this.addLanguage(lang) : this.removeLanguage(lang)}
                         />
                     </div>
