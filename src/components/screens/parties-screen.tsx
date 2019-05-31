@@ -14,7 +14,6 @@ interface Props {
     parties: Party[];
     selection: Party | null;
     filter: string;
-    showHelp: boolean;
     selectParty: (party: Party | null) => void;
     addParty: () => void;
     removeParty: () => void;
@@ -71,15 +70,16 @@ export default class PartiesScreen extends React.Component<Props> {
                 });
                 if (listItems.length === 0) {
                     listItems = [(
-                        <div key='empty' className='descriptive'>
-                            you have not set up any parties yet
-                        </div>
+                        <Note
+                            key='empty'
+                            white={true}
+                            content={'you have not set up any parties yet'}
+                        />
                     )];
                 }
 
                 leftColumn = (
                     <div>
-                        {this.props.showHelp ? <HelpCard parties={this.props.parties} /> : null}
                         <button onClick={() => this.props.addParty()}>add a new party</button>
                         <div className='divider' />
                         {listItems}
@@ -146,7 +146,9 @@ export default class PartiesScreen extends React.Component<Props> {
                 watermark = (
                     <div className='vertical-center-outer'>
                         <div className='vertical-center-middle'>
-                            <div className='watermark'>player characters</div>
+                            <div className='vertical-center-inner'>
+                                <HelpCard parties={this.props.parties} />
+                            </div>
                         </div>
                     </div>
                 );
@@ -188,11 +190,14 @@ class HelpCard extends React.Component<HelpCardProps> {
             let action: JSX.Element | null = null;
             if (this.props.parties.length === 0) {
                 action = (
-                    <div className='section'>to start adding a party, press the button below</div>
+                    <div className='section'>to start adding a party, press the <b>add a new party</b> button</div>
                 );
             } else {
                 action = (
-                    <div className='section'>select a party from the list to see pc details</div>
+                    <div>
+                        <div className='section'>on the left you will see a list of parties that you have created</div>
+                        <div className='section'>select a party from the list to see pc details</div>
+                    </div>
                 );
             }
 

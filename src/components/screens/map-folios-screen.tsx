@@ -14,7 +14,6 @@ interface Props {
     mapFolios: MapFolio[];
     selection: MapFolio | null;
     filter: string;
-    showHelp: boolean;
     selectMapFolio: (mapFolio: MapFolio | null) => void;
     addMapFolio: () => void;
     removeMapFolio: () => void;
@@ -68,15 +67,16 @@ export default class MapFoliosScreen extends React.Component<Props> {
                 });
                 if (listItems.length === 0) {
                     listItems = [(
-                        <div key='empty' className='descriptive'>
-                            you have not set up any tactical maps yet
-                        </div>
+                        <Note
+                            key='empty'
+                            white={true}
+                            content={'you have not set up any tactical maps yet'}
+                        />
                     )];
                 }
 
                 leftColumn = (
                     <div>
-                        {this.props.showHelp ? <HelpCard mapFolios={this.props.mapFolios} /> : null}
                         <button onClick={() => this.props.addMapFolio()}>add a new map folio</button>
                         <div className='divider' />
                         {listItems}
@@ -122,7 +122,9 @@ export default class MapFoliosScreen extends React.Component<Props> {
                 watermark = (
                     <div className='vertical-center-outer'>
                         <div className='vertical-center-middle'>
-                            <div className='watermark'>map folios</div>
+                            <div className='vertical-center-inner'>
+                                <HelpCard mapFolios={this.props.mapFolios} />
+                            </div>
                         </div>
                     </div>
                 );
@@ -155,11 +157,14 @@ class HelpCard extends React.Component<HelpCardProps> {
             let action: JSX.Element | null = null;
             if (this.props.mapFolios.length === 0) {
                 action = (
-                    <div className='section'>to start a new folio, press the button below</div>
+                    <div className='section'>to start a new folio, press the <b>add a new map folio</b> button</div>
                 );
             } else {
                 action = (
-                    <div className='section'>select a map folio from the list to see the maps it contains</div>
+                    <div>
+                        <div className='section'>on the left you will see a list of map folios</div>
+                        <div className='section'>select a folio from the list to see the maps it contains</div>
+                    </div>
                 );
             }
 

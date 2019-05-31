@@ -1,6 +1,5 @@
 import React from 'react';
 
-import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
 import Selector from '../controls/selector';
 import DieRollerModule from '../dm-modules/die-roller-module';
@@ -12,9 +11,6 @@ import Note from '../panels/note';
 import pkg from '../../../package.json';
 
 interface Props {
-    options: {
-        showHelp: boolean;
-    };
     resetAll: () => void;
     changeValue: (source: {}, field: string, value: any) => void;
 }
@@ -131,11 +127,6 @@ export default class AboutModal extends React.Component<Props, State> {
                 <div className='section'>dungeons and dragons copyright wizards of the coast</div>
                 <div className='heading'>options</div>
                 <ConfirmButton text='clear all data' callback={() => this.props.resetAll()} />
-                <Checkbox
-                    label='show help cards'
-                    checked={this.props.options.showHelp}
-                    changeValue={value => this.props.changeValue(this.props.options, 'showHelp', value)}
-                />
                 <div className='heading'>open game license</div>
                 <div className='section'>The following text is the property of Wizards of the Coast, Inc. and is Copyright 2000 Wizards of the Coast, Inc ('Wizards'). All Rights Reserved.</div>
                 <ol>

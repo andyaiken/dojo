@@ -22,7 +22,6 @@ interface Props {
     parties: Party[];
     library: MonsterGroup[];
     filter: string;
-    showHelp: boolean;
     selectEncounter: (encounter: Encounter | null) => void;
     addEncounter: () => void;
     removeEncounter: () => void;
@@ -252,15 +251,16 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                 });
                 if (listItems.length === 0) {
                     listItems = [(
-                        <div key='empty' className='descriptive'>
-                            you have not defined any encounters yet
-                        </div>
+                        <Note
+                            key='empty'
+                            white={true}
+                            content={'you have not defined any encounters yet'}
+                        />
                     )];
                 }
 
                 leftColumn = (
                     <div>
-                        {this.props.showHelp ? <HelpCard encounters={this.props.encounters} /> : null}
                         <button onClick={() => this.props.addEncounter()}>add a new encounter</button>
                         <div className='divider' />
                         {listItems}
@@ -309,7 +309,9 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                 watermark = (
                     <div className='vertical-center-outer'>
                         <div className='vertical-center-middle'>
-                            <div className='watermark'>encounter builder</div>
+                            <div className='vertical-center-inner'>
+                                <HelpCard encounters={this.props.encounters} />
+                            </div>
                         </div>
                     </div>
                 );
@@ -348,11 +350,14 @@ class HelpCard extends React.Component<HelpCardProps> {
             let action: JSX.Element | null = null;
             if (this.props.encounters.length === 0) {
                 action = (
-                    <div className='section'>to start building an encounter, press the button below</div>
+                    <div className='section'>to start building an encounter, press the <b>add a new encounter</b> button</div>
                 );
             } else {
                 action = (
-                    <div className='section'>select an encounter from the list to add monsters to it</div>
+                    <div>
+                        <div className='section'>on the left you will see a list of encounters that you have created</div>
+                        <div className='section'>select an encounter from the list to add monsters to it</div>
+                    </div>
                 );
             }
 

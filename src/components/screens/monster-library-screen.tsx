@@ -13,7 +13,6 @@ import Note from '../panels/note';
 interface Props {
     library: MonsterGroup[];
     selection: MonsterGroup | null;
-    showHelp: boolean;
     filter: string;
     selectMonsterGroup: (group: MonsterGroup | null) => void;
     addMonsterGroup: () => void;
@@ -75,15 +74,16 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                 });
                 if (listItems.length === 0) {
                     listItems = [(
-                        <div key='empty' className='descriptive'>
-                            you do not have any monsters in your library
-                        </div>
+                        <Note
+                            key='empty'
+                            white={true}
+                            content={'you do not have any monsters in your library'}
+                        />
                     )];
                 }
 
                 leftColumn = (
                     <div>
-                        {this.props.showHelp ? <HelpCard library={this.props.library} /> : null}
                         <button onClick={() => this.props.addMonsterGroup()}>add a new monster group</button>
                         <div className='divider' />
                         {listItems}
@@ -138,7 +138,9 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                 watermark = (
                     <div className='vertical-center-outer'>
                         <div className='vertical-center-middle'>
-                            <div className='watermark'>monster library</div>
+                            <div className='vertical-center-inner'>
+                                <HelpCard library={this.props.library} />
+                            </div>
                         </div>
                     </div>
                 );
@@ -174,11 +176,14 @@ class HelpCard extends React.Component<HelpCardProps> {
         let action: JSX.Element | null = null;
         if (this.props.library.length === 0) {
             action = (
-                <div className='section'>to start adding monsters, press the button below</div>
+                <div className='section'>to start adding monsters, press the <b>add a new monster group</b> button</div>
             );
         } else {
             action = (
-                <div className='section'>select a monster group from the list to see stat blocks for monsters in that group</div>
+                <div>
+                    <div className='section'>on the left you will see a list of monster groups</div>
+                    <div className='section'>select a monster group from the list to see stat blocks for monsters in that group</div>
+                </div>
             );
         }
 

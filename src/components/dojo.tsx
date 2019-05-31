@@ -41,9 +41,8 @@ interface Props {
 
 interface State {
     view: string;
-    options: {
-        showHelp: boolean;
-    };
+    modal: any;
+    filter: string;
 
     parties: Party[];
     library: MonsterGroup[];
@@ -56,10 +55,6 @@ interface State {
     selectedEncounterID: string | null;
     selectedMapFolioID: string | null;
     selectedCombatID: string | null;
-
-    modal: any;
-
-    filter: string;
 }
 
 export default class Dojo extends React.Component<Props, State> {
@@ -68,9 +63,8 @@ export default class Dojo extends React.Component<Props, State> {
 
         this.state = {
             view: 'home',
-            options: {
-                showHelp: true
-            },
+            modal: null,
+            filter: '',
             parties: [],
             library: [],
             encounters: [],
@@ -80,9 +74,7 @@ export default class Dojo extends React.Component<Props, State> {
             selectedMonsterGroupID: null,
             selectedEncounterID: null,
             selectedMapFolioID: null,
-            selectedCombatID: null,
-            modal: null,
-            filter: ''
+            selectedCombatID: null
         };
 
         try {
@@ -1383,7 +1375,6 @@ export default class Dojo extends React.Component<Props, State> {
             selectedMonsterGroupID: this.state.selectedMonsterGroupID,
             selectedEncounterID: this.state.selectedEncounterID,
             selectedCombatID: this.state.selectedCombatID,
-            options: this.state.options,
             modal: this.state.modal
         });
     }
@@ -1503,7 +1494,6 @@ export default class Dojo extends React.Component<Props, State> {
                         parties={this.state.parties}
                         selection={this.state.parties.find(p => p.id === this.state.selectedPartyID) || null}
                         filter={this.state.filter}
-                        showHelp={this.state.options.showHelp}
                         selectParty={party => this.selectParty(party)}
                         addParty={() => this.addParty()}
                         removeParty={() => this.removeParty()}
@@ -1521,7 +1511,6 @@ export default class Dojo extends React.Component<Props, State> {
                         library={this.state.library}
                         selection={this.state.library.find(g => g.id === this.state.selectedMonsterGroupID) || null}
                         filter={this.state.filter}
-                        showHelp={this.state.options.showHelp}
                         selectMonsterGroup={group => this.selectMonsterGroup(group)}
                         addMonsterGroup={() => this.addMonsterGroup()}
                         removeMonsterGroup={() => this.removeMonsterGroup()}
@@ -1544,7 +1533,6 @@ export default class Dojo extends React.Component<Props, State> {
                         filter={this.state.filter}
                         parties={this.state.parties}
                         library={this.state.library}
-                        showHelp={this.state.options.showHelp}
                         selectEncounter={encounter => this.selectEncounter(encounter)}
                         addEncounter={() => this.addEncounter()}
                         removeEncounter={() => this.removeEncounter()}
@@ -1563,7 +1551,6 @@ export default class Dojo extends React.Component<Props, State> {
                         mapFolios={this.state.mapFolios}
                         selection={this.state.mapFolios.find(f => f.id === this.state.selectedMapFolioID) || null}
                         filter={this.state.filter}
-                        showHelp={this.state.options.showHelp}
                         selectMapFolio={folio => this.selectMapFolio(folio)}
                         addMapFolio={() => this.addMapFolio()}
                         removeMapFolio={() => this.removeMapFolio()}
@@ -1579,7 +1566,6 @@ export default class Dojo extends React.Component<Props, State> {
                         combats={this.state.combats}
                         combat={this.state.combats.find(c => c.id === this.state.selectedCombatID) || null}
                         filter={this.state.filter}
-                        showHelp={this.state.options.showHelp}
                         createCombat={() => this.createCombat()}
                         resumeEncounter={pausedCombat => this.resumeCombat(pausedCombat)}
                         nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
@@ -1623,7 +1609,6 @@ export default class Dojo extends React.Component<Props, State> {
                     modalSidebar = true;
                     modalContent = (
                         <AboutModal
-                            options={this.state.options}
                             resetAll={() => this.resetAll()}
                             changeValue={(source, type, value) => this.changeValue(source, type, value)}
                         />

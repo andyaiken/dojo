@@ -21,7 +21,6 @@ interface Props {
     combats: Combat[];
     combat: Combat | null;
     filter: string;
-    showHelp: boolean;
     createCombat: () => void;
     resumeEncounter: (combat: Combat) => void;
     close: (notification: Notification, removeCondition: boolean) => void;
@@ -220,7 +219,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     }
                 });
 
-                if (this.props.showHelp && (pending.length !== 0)) {
+                if (pending.length !== 0) {
                     const pendingHelp = (
                         <div key='pending-help'>
                             <Note
@@ -236,7 +235,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     pending = [pendingHelp].concat(pending);
                 }
 
-                if (this.props.showHelp && (current.length === 0)) {
+                if (current.length === 0) {
                     const activeHelp = (
                         /* tslint:disable:max-line-length */
                         <div key='active-help'>
@@ -360,13 +359,6 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     </div>
                 );
             } else {
-                let help = null;
-                if (this.props.showHelp) {
-                    help = (
-                        <HelpCard combats={this.props.combats} />
-                    );
-                }
-
                 let listItems = this.props.combats.filter(c => this.showCombat(c)).map(c => {
                     return (
                         <CombatListItem
@@ -379,16 +371,17 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                 });
                 if (listItems.length === 0) {
                     listItems = [(
-                        <div key='empty' className='descriptive'>
-                            you have no in-progress encounters
-                        </div>
+                        <Note
+                            key='empty'
+                            white={true}
+                            content={'you have no in-progress encounters'}
+                        />
                     )];
                 }
 
                 return (
                     <div className='combat-manager row collapse'>
                         <div className='columns small-4 medium-4 large-3 scrollable list-column'>
-                            {help}
                             <button onClick={() => this.props.createCombat()}>start a new combat</button>
                             <div className='divider' />
                             {listItems}
@@ -396,7 +389,9 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                         <div className='columns small-8 medium-8 large-9 scrollable'>
                             <div className='vertical-center-outer'>
                                 <div className='vertical-center-middle'>
-                                    <div className='watermark'>combat manager</div>
+                                    <div className='vertical-center-inner'>
+                                        <HelpCard combats={this.props.combats} />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -418,12 +413,12 @@ class HelpCard extends React.Component<HelpCardProps> {
         let action: JSX.Element | null = null;
         if (this.props.combats.length === 0) {
             action = (
-                <div className='section'>to start a combat encounter, press the button below</div>
+                <div className='section'>to start a combat encounter, press the <b>start a new combat</b> button</div>
             );
         } else {
             action = (
                 <div>
-                    <div className='section'>below you will see a list of encounters that you have paused</div>
+                    <div className='section'>on the left you will see a list of encounters that you have paused</div>
                     <div className='section'>you can resume a paused combat by selecting it</div>
                 </div>
             );
