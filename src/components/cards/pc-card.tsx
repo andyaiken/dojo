@@ -16,6 +16,7 @@ interface Props {
     changeValue: (pc: PC, field: string, value: any) => void;
     nudgeValue: (pc: PC, field: string, delta: number) => void;
     removePC: (pc: PC) => void;
+    editPC: (pc: PC) => void;
     // Combat
     makeCurrent: (combatant: Combatant) => void;
     makeActive: (combatant: Combatant) => void;
@@ -27,13 +28,10 @@ interface Props {
     removeCombatant: (combatant: Combatant) => void;
 }
 
-interface State {
-    showDetails: boolean;
-}
-
-export default class PCCard extends React.Component<Props, State> {
+export default class PCCard extends React.Component<Props> {
     public static defaultProps = {
         removePC: null,
+        editPC: null,
         makeCurrent: null,
         makeActive: null,
         makeDefeated: null,
@@ -44,33 +42,21 @@ export default class PCCard extends React.Component<Props, State> {
         removeCombatant: null
     };
 
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            showDetails: false
-        };
-    }
-
-    private toggleDetails() {
-        this.setState({
-            showDetails: !this.state.showDetails
-        });
-    }
-
     public render() {
         try {
             const options = [];
             if (this.props.mode.indexOf('edit') !== -1) {
+                options.push(<button key='edit' onClick={() => this.props.editPC(this.props.combatant)}>edit pc</button>);
                 if (this.props.combatant.active) {
                     options.push(
                         <button key='toggle-active' onClick={() => this.props.changeValue(this.props.combatant, 'active', false)}>
-                            mark inactive
+                            mark pc as inactive
                         </button>
                     );
                 } else {
                     options.push(
                         <button key='toggle-active' onClick={() => this.props.changeValue(this.props.combatant, 'active', true)}>
-                            mark active
+                            mark pc as active
                         </button>
                     );
                 }
@@ -145,115 +131,6 @@ export default class PCCard extends React.Component<Props, State> {
                 + ' ' + (this.props.combatant.classes || 'unknown class')
                 + ', level ' + this.props.combatant.level;
 
-            const commonStatBlock = (
-                <div className='stats'>
-                    <div className='section centered lowercase'>
-                        <i>{desc}</i>
-                        <div style={{ display: this.props.combatant.url ? '' : 'none' }}>
-                            <a href={this.props.combatant.url} target='_blank' rel='noopener noreferrer'>d&d beyond sheet</a>
-                        </div>
-                    </div>
-                    <div className='divider' />
-                    <div className='section subheading'>languages</div>
-                    <div className='section'>
-                        {this.props.combatant.languages || '-'}
-                    </div>
-                    <div className='section subheading'>passive skills</div>
-                    <div className='section'>
-                        <div><b>insight</b> {this.props.combatant.passiveInsight}</div>
-                        <div><b>investigation</b> {this.props.combatant.passiveInvestigation}</div>
-                        <div><b>perception</b> {this.props.combatant.passivePerception}</div>
-                    </div>
-                </div>
-            );
-
-            let stats = null;
-            if (this.props.mode.indexOf('edit') !== -1) {
-                if (this.state.showDetails) {
-                    stats = (
-                        <div className='edit'>
-                            <div className='section'>
-                                <div className='input-label' style={{ display: this.state.showDetails ? '' : 'none' }}>character name:</div>
-                                <input
-                                    type='text'
-                                    value={this.props.combatant.name}
-                                    onChange={event => this.props.changeValue(this.props.combatant, 'name', event.target.value)}
-                                />
-                                <div className='input-label' style={{ display: this.state.showDetails ? '' : 'none' }}>player name:</div>
-                                <input
-                                    type='text'
-                                    value={this.props.combatant.player}
-                                    onChange={event => this.props.changeValue(this.props.combatant, 'player', event.target.value)}
-                                />
-                                <div className='input-label'>race:</div>
-                                <input
-                                    type='text'
-                                    value={this.props.combatant.race}
-                                    onChange={event => this.props.changeValue(this.props.combatant, 'race', event.target.value)}
-                                />
-                                <div className='input-label'>class:</div>
-                                <input
-                                    type='text'
-                                    value={this.props.combatant.classes}
-                                    onChange={event => this.props.changeValue(this.props.combatant, 'classes', event.target.value)}
-                                />
-                                <div className='input-label'>level:</div>
-                                <Spin
-                                    source={this.props.combatant}
-                                    name='level'
-                                    nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'level', delta)}
-                                />
-                                <div className='input-label'>languages:</div>
-                                <input
-                                    type='text'
-                                    value={this.props.combatant.languages}
-                                    onChange={event => this.props.changeValue(this.props.combatant, 'languages', event.target.value)}
-                                />
-                                <div className='input-label'>d&d beyond link:</div>
-                                <input
-                                    type='text'
-                                    value={this.props.combatant.url}
-                                    onChange={event => this.props.changeValue(this.props.combatant, 'url', event.target.value)}
-                                />
-                            </div>
-                            <div className='divider' />
-                            <div className='section subheading'>passive skills</div>
-                            <Spin
-                                source={this.props.combatant}
-                                name='passiveInsight'
-                                label='insight'
-                                nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'passiveInsight', delta)}
-                            />
-                            <Spin
-                                source={this.props.combatant}
-                                name='passiveInvestigation'
-                                label='investigation'
-                                nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'passiveInvestigation', delta)}
-                            />
-                            <Spin
-                                source={this.props.combatant}
-                                name='passivePerception'
-                                label='perception'
-                                nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'passivePerception', delta)}
-                            />
-                        </div>
-                    );
-                } else {
-                    stats = commonStatBlock;
-                }
-            }
-            if (this.props.mode.indexOf('combat') !== -1) {
-                stats = commonStatBlock;
-            }
-
-            let toggle = null;
-            if (this.props.mode.indexOf('combat') !== -1) {
-                // Don't show toggle button for combatant
-            } else {
-                const imageStyle = this.state.showDetails ? 'image rotate' : 'image';
-                toggle = <img className={imageStyle} src={arrow} alt='arrow' onClick={() => this.toggleDetails()} />;
-            }
-
             const name = (this.props.combatant as Combatant ? (this.props.combatant as Combatant).displayName : null)
                 || this.props.combatant.name
                 || 'unnamed pc';
@@ -262,10 +139,27 @@ export default class PCCard extends React.Component<Props, State> {
                 <div className='card pc'>
                     <div className='heading'>
                         <div className='title'>{name}</div>
-                        {toggle}
                     </div>
                     <div className='card-content'>
-                        {stats}
+                        <div className='stats'>
+                            <div className='section centered lowercase'>
+                                <i>{desc}</i>
+                                <div style={{ display: this.props.combatant.url ? '' : 'none' }}>
+                                    <a href={this.props.combatant.url} target='_blank' rel='noopener noreferrer'>d&d beyond sheet</a>
+                                </div>
+                            </div>
+                            <div className='divider' />
+                            <div className='section subheading'>languages</div>
+                            <div className='section'>
+                                {this.props.combatant.languages || '-'}
+                            </div>
+                            <div className='section subheading'>passive skills</div>
+                            <div className='section'>
+                                <div><b>insight</b> {this.props.combatant.passiveInsight}</div>
+                                <div><b>investigation</b> {this.props.combatant.passiveInvestigation}</div>
+                                <div><b>perception</b> {this.props.combatant.passivePerception}</div>
+                            </div>
+                        </div>
                         <div style={{ display: options.length > 0 ? '' : 'none' }}>
                             <div className='divider' />
                             <div className='section'>

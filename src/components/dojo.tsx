@@ -24,6 +24,7 @@ import ConditionModal from './modals/condition-modal';
 import DemographicsModal from './modals/demographics-modal';
 import MapEditorModal from './modals/map-editor-modal';
 import MonsterEditorModal from './modals/monster-editor-modal';
+import PCEditorModal from './modals/pc-editor-modal';
 
 import Navbar from './panels/navbar';
 import Titlebar from './panels/titlebar';
@@ -218,6 +219,31 @@ export default class Dojo extends React.Component<Props, State> {
             this.setState({
                 parties: this.state.parties
             });
+        }
+    }
+
+    private editPC(pc: PC) {
+        const copy = JSON.parse(JSON.stringify(pc));
+        this.setState({
+            modal: {
+                type: 'pc',
+                pc: copy
+            }
+        });
+    }
+
+    private savePC() {
+        const party = this.state.parties.find(p => p.id === this.state.selectedPartyID);
+        if (party) {
+            const original = party.pcs.find(pc => pc.id === this.state.modal.pc.id);
+            if (original) {
+                const index = party.pcs.indexOf(original);
+                party.pcs[index] = this.state.modal.pc;
+                this.setState({
+                    library: this.state.library,
+                    modal: null
+                });
+            }
         }
     }
 
@@ -1482,6 +1508,7 @@ export default class Dojo extends React.Component<Props, State> {
                         addParty={() => this.addParty()}
                         removeParty={() => this.removeParty()}
                         addPC={() => this.addPC()}
+                        editPC={pc => this.editPC(pc)}
                         removePC={pc => this.removePC(pc)}
                         sortPCs={() => this.sortPCs()}
                         changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
@@ -1612,6 +1639,18 @@ export default class Dojo extends React.Component<Props, State> {
                     );
                     modalButtons.right = [];
                     break;
+                case 'pc':
+                        modalTitle = 'pc editor';
+                        modalContent = (
+                            <PCEditorModal
+                                pc={this.state.modal.pc}
+                            />
+                        );
+                        modalButtons.right = [
+                            <button key='save' onClick={() => this.savePC()}>save</button>,
+                            <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
+                        ];
+                        break;
                 case 'monster':
                     modalTitle = 'monster editor';
                     modalContent = (

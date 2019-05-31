@@ -19,6 +19,7 @@ interface Props {
     addParty: () => void;
     removeParty: () => void;
     addPC: () => void;
+    editPC: (pc: PC) => void;
     removePC: (pc: PC) => void;
     sortPCs: () => void;
     changeValue: (source: any, field: string, value: any) => void;
@@ -89,6 +90,7 @@ export default class PartiesScreen extends React.Component<Props> {
                                 mode={'edit'}
                                 changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
                                 nudgeValue={(pc, type, delta) => this.props.nudgeValue(pc, type, delta)}
+                                editPC={pc => this.props.editPC(pc)}
                                 removePC={pc => this.props.removePC(pc)}
                             />
                         </div>
@@ -104,6 +106,7 @@ export default class PartiesScreen extends React.Component<Props> {
                                 mode={'edit'}
                                 changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
                                 nudgeValue={(pc, type, delta) => this.props.nudgeValue(pc, type, delta)}
+                                editPC={pc => this.props.editPC(pc)}
                                 removePC={pc => this.props.removePC(pc)}
                             />
                         </div>
