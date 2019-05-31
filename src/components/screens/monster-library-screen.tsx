@@ -5,7 +5,7 @@ import Utils from '../../utils/utils';
 import { Monster, MonsterGroup } from '../../models/monster-group';
 
 import MonsterCard from '../cards/monster-card';
-import MonsterGroupCard from '../cards/monster-group-card';
+import ConfirmButton from '../controls/confirm-button';
 import MonsterGroupListItem from '../list-items/monster-group-list-item';
 import CardGroup from '../panels/card-group';
 import Note from '../panels/note';
@@ -44,31 +44,11 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
 
     public render() {
         try {
-            let help = null;
-            if (this.props.showHelp) {
-                help = (
-                    <HelpCard library={this.props.library} />
-                );
-            }
-
-            const listItems = this.props.library.filter(group => this.showMonsterGroup(group)).map(group => {
-                return (
-                    <MonsterGroupListItem
-                        key={group.id}
-                        group={group}
-                        filter={this.props.filter}
-                        selected={group === this.props.selection}
-                        setSelection={grp => this.props.selectMonsterGroup(grp)}
-                    />
-                );
-            });
-
-            const cards = [];
-
+            let leftColumn = null;
             if (this.props.selection) {
-                cards.push(
-                    <div className='column' key='info'>
-                        <MonsterGroupCard
+                leftColumn = (
+                    <div>
+                        <MonsterInfo
                             selection={this.props.selection}
                             filter={this.props.filter}
                             addMonster={() => this.props.addMonster()}
@@ -77,9 +57,43 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                             changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
                             removeMonsterGroup={() => this.props.removeMonsterGroup()}
                         />
+                        <div className='divider' />
+                        <button onClick={() => this.props.selectMonsterGroup(null)}>&larr; back to list</button>
                     </div>
                 );
+            } else {
+                let listItems = this.props.library.filter(group => this.showMonsterGroup(group)).map(group => {
+                    return (
+                        <MonsterGroupListItem
+                            key={group.id}
+                            group={group}
+                            filter={this.props.filter}
+                            selected={group === this.props.selection}
+                            setSelection={grp => this.props.selectMonsterGroup(grp)}
+                        />
+                    );
+                });
+                if (listItems.length === 0) {
+                    listItems = [(
+                        <div key='empty' className='descriptive'>
+                            you do not have any monsters in your library
+                        </div>
+                    )];
+                }
 
+                leftColumn = (
+                    <div>
+                        {this.props.showHelp ? <HelpCard library={this.props.library} /> : null}
+                        <button onClick={() => this.props.addMonsterGroup()}>add a new monster group</button>
+                        <div className='divider' />
+                        {listItems}
+                    </div>
+                );
+            }
+
+            const cards: JSX.Element[] = [];
+
+            if (this.props.selection) {
                 const monsters = this.props.selection.monsters.filter(monster => {
                     return Utils.match(this.props.filter, monster.name);
                 });
@@ -133,16 +147,12 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
             return (
                 <div className='monster-library row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable list-column'>
-                        {help}
-                        <button onClick={() => this.props.addMonsterGroup()}>add a new monster group</button>
-                        {listItems}
+                        {leftColumn}
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup
                             content={cards}
                             heading={name}
-                            showClose={this.props.selection !== null}
-                            close={() => this.props.selectMonsterGroup(null)}
                             hidden={!this.props.selection}
                         />
                         {watermark}
@@ -183,5 +193,45 @@ class HelpCard extends React.Component<HelpCardProps> {
                 }
             />
         );
+    }
+}
+
+interface MonsterInfoProps {
+    selection: MonsterGroup;
+    filter: string | null;
+    changeValue: (field: string, value: string) => void;
+    addMonster: () => void;
+    generateMonster: () => void;
+    sortMonsters: () => void;
+    removeMonsterGroup: () => void;
+}
+
+class MonsterInfo extends React.Component<MonsterInfoProps> {
+    public render() {
+        try {
+            return (
+                <div>
+                    <div className='section'>
+                        <div className='subheading'>monster group name</div>
+                        <input
+                            type='text'
+                            placeholder='monster group name'
+                            value={this.props.selection.name}
+                            disabled={!!this.props.filter}
+                            onChange={event => this.props.changeValue('name', event.target.value)}
+                        />
+                    </div>
+                    <div className='divider' />
+                    <div className='section'>
+                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.addMonster()}>add a new blank monster</button>
+                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.generateMonster()}>generate a random monster</button>
+                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.sortMonsters()}>sort monsters</button>
+                        <ConfirmButton text='delete group' callback={() => this.props.removeMonsterGroup()} />
+                    </div>
+                </div>
+            );
+        } catch (e) {
+            console.error(e);
+        }
     }
 }

@@ -1,11 +1,16 @@
 import React from 'react';
 
 interface Props {
-    heading: string | JSX.Element | JSX.Element[];
-    content: string | JSX.Element | JSX.Element[];
+    heading: string | JSX.Element | JSX.Element[] | null;
+    content: string | JSX.Element | JSX.Element[] | null;
 }
 
 export default class InfoCard extends React.Component<Props> {
+    public static defaultProps = {
+        heading: null,
+        content: null
+    };
+
     public render() {
         try {
             return (

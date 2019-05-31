@@ -7,7 +7,6 @@ interface Props {
     content: any[];
     heading: string;
     hidden: boolean;
-    showClose: boolean;
     showToggle: boolean;
     close: () => void;
 }
@@ -20,7 +19,6 @@ export default class CardGroup extends React.Component<Props, State> {
     public static defaultProps = {
         heading: null,
         hidden: false,
-        showClose: false,
         showToggle: false,
         close: null
     };
@@ -48,7 +46,7 @@ export default class CardGroup extends React.Component<Props, State> {
             let heading = null;
             if (this.props.heading) {
                 let closeBtn = null;
-                if (this.props.showClose) {
+                if (this.props.close) {
                     closeBtn = (
                         <img className='image' src={close} alt='close' onClick={() => this.props.close()} />
                     );

@@ -6,12 +6,14 @@ import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter'
 import { Monster, MonsterGroup } from '../../models/monster-group';
 import { Party } from '../../models/party';
 
-import EncounterCard from '../cards/encounter-card';
 import FilterCard from '../cards/filter-card';
 import MonsterCard from '../cards/monster-card';
 import WaveCard from '../cards/wave-card';
+import ConfirmButton from '../controls/confirm-button';
+import Dropdown from '../controls/dropdown';
 import EncounterListItem from '../list-items/encounter-list-item';
 import CardGroup from '../panels/card-group';
+import DifficultyChartPanel from '../panels/difficulty-chart-panel';
 import Note from '../panels/note';
 
 interface Props {
@@ -220,34 +222,11 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
 
     public render() {
         try {
-            let help = null;
-            if (this.props.showHelp) {
-                help = (
-                    <HelpCard encounters={this.props.encounters} />
-                );
-            }
-
-            const encounters = this.props.encounters.filter(e => this.showEncounter(e)).map(e => {
-                return (
-                    <EncounterListItem
-                        key={e.id}
-                        encounter={e}
-                        selected={e === this.props.selection}
-                        setSelection={encounter => this.props.selectEncounter(encounter)}
-                    />
-                );
-            });
-
-            let encounterName;
-            const encounterCards = [];
-            let waves: JSX.Element[] = [];
-
+            let leftColumn = null;
             if (this.props.selection) {
-                encounterName = this.props.selection.name || 'unnamed encounter';
-
-                encounterCards.push(
-                    <div className='column' key='info'>
-                        <EncounterCard
+                leftColumn = (
+                    <div>
+                        <EncounterInfo
                             selection={this.props.selection}
                             parties={this.props.parties}
                             filter={this.props.filter}
@@ -256,8 +235,45 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                             removeEncounter={() => this.props.removeEncounter()}
                             getMonster={(monsterName, monsterGroupName) => this.props.getMonster(monsterName, monsterGroupName)}
                         />
+                        <div className='divider' />
+                        <button onClick={() => this.props.selectEncounter(null)}>&larr; back to list</button>
                     </div>
                 );
+            } else {
+                let listItems = this.props.encounters.filter(e => this.showEncounter(e)).map(e => {
+                    return (
+                        <EncounterListItem
+                            key={e.id}
+                            encounter={e}
+                            selected={e === this.props.selection}
+                            setSelection={encounter => this.props.selectEncounter(encounter)}
+                        />
+                    );
+                });
+                if (listItems.length === 0) {
+                    listItems = [(
+                        <div key='empty' className='descriptive'>
+                            you have not defined any encounters yet
+                        </div>
+                    )];
+                }
+
+                leftColumn = (
+                    <div>
+                        {this.props.showHelp ? <HelpCard encounters={this.props.encounters} /> : null}
+                        <button onClick={() => this.props.addEncounter()}>add a new encounter</button>
+                        <div className='divider' />
+                        {listItems}
+                    </div>
+                );
+            }
+
+            let encounterName;
+            const encounterCards: JSX.Element[] = [];
+            let waves: JSX.Element[] = [];
+
+            if (this.props.selection) {
+                encounterName = this.props.selection.name || 'unnamed encounter';
 
                 this.getMonsterCards(this.props.selection.slots, null)
                     .forEach(card => encounterCards.push(card));
@@ -302,16 +318,12 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
             return (
                 <div className='encounter-builder row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable list-column'>
-                        {help}
-                        <button onClick={() => this.props.addEncounter()}>add a new encounter</button>
-                        {encounters}
+                        {leftColumn}
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup
                             content={encounterCards}
                             heading={encounterName}
-                            showClose={this.props.selection !== null}
-                            close={() => this.props.selectEncounter(null)}
                             hidden={!this.props.selection}
                         />
                         {waves}
@@ -360,6 +372,85 @@ class HelpCard extends React.Component<HelpCardProps> {
             );
         } catch (ex) {
             console.error(ex);
+        }
+    }
+}
+
+interface EncounterInfoProps {
+    selection: Encounter;
+    parties: Party[];
+    filter: string;
+    changeValue: (field: string, value: string) => void;
+    addWave: () => void;
+    removeEncounter: () => void;
+    getMonster: (monsterName: string, groupName: string) => Monster | null;
+}
+
+interface EncounterInfoState {
+    party: Party | null;
+}
+
+class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoState> {
+    constructor(props: EncounterInfoProps) {
+        super(props);
+        this.state = {
+            party: null
+        };
+    }
+
+    private selectParty(partyID: string) {
+        const party = this.props.parties.find(p => p.id === partyID);
+        this.setState({
+            party: party as Party
+        });
+    }
+
+    public render() {
+        try {
+            const partyOptions = [];
+            if (this.props.parties) {
+                for (let n = 0; n !== this.props.parties.length; ++n) {
+                    const party = this.props.parties[n];
+                    partyOptions.push({
+                        id: party.id,
+                        text: party.name
+                    });
+                }
+            }
+
+            return (
+                <div>
+                    <div className='section'>
+                        <div className='subheading'>encounter name</div>
+                        <input
+                            type='text'
+                            placeholder='encounter name'
+                            value={this.props.selection.name}
+                            disabled={!!this.props.filter}
+                            onChange={event => this.props.changeValue('name', event.target.value)}
+                        />
+                    </div>
+                    <div className='divider' />
+                    <Dropdown
+                        options={partyOptions}
+                        placeholder='select party...'
+                        selectedID={this.state.party ? this.state.party.id : undefined}
+                        select={optionID => this.selectParty(optionID)}
+                    />
+                    <DifficultyChartPanel
+                        encounter={this.props.selection}
+                        party={this.state.party}
+                        getMonster={(monsterName, monsterGroupName) => this.props.getMonster(monsterName, monsterGroupName)}
+                    />
+                    <div className='divider' />
+                    <div className='section'>
+                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.addWave()}>add a new wave</button>
+                        <ConfirmButton text='delete encounter' callback={() => this.props.removeEncounter()} />
+                    </div>
+                </div>
+            );
+        } catch (e) {
+            console.error(e);
         }
     }
 }

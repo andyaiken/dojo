@@ -95,13 +95,13 @@ export default class TraitsPanel extends React.Component<Props> {
             if (this.props.mode === 'edit') {
                 return (
                     <div className='row collapse'>
-                        <div className='columns small-4 medium-4 large-4 list-column'>
+                        <div className='columns small-4 medium-4 large-4 wide-column'>
                             {this.createSection(traitsByType, 'trait')}
                         </div>
-                        <div className='columns small-4 medium-4 large-4 list-column'>
+                        <div className='columns small-4 medium-4 large-4 wide-column'>
                             {this.createSection(traitsByType, 'action')}
                         </div>
-                        <div className='columns small-4 medium-4 large-4 list-column'>
+                        <div className='columns small-4 medium-4 large-4 wide-column'>
                             {this.createSection(traitsByType, 'legendary')}
                             {this.createSection(traitsByType, 'lair')}
                             {this.createSection(traitsByType, 'regional')}

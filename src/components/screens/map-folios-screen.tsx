@@ -5,7 +5,7 @@ import Utils from '../../utils/utils';
 import { Map, MapFolio } from '../../models/map-folio';
 
 import MapCard from '../cards/map-card';
-import MapFolioCard from '../cards/map-folio-card';
+import ConfirmButton from '../controls/confirm-button';
 import MapFolioListItem from '../list-items/map-folio-list-item';
 import CardGroup from '../panels/card-group';
 import Note from '../panels/note';
@@ -39,40 +39,54 @@ export default class MapFoliosScreen extends React.Component<Props> {
 
     public render() {
         try {
-            let help = null;
-            if (this.props.showHelp) {
-                help = (
-                    <HelpCard mapFolios={this.props.mapFolios} />
-                );
-            }
-
-            const folios = this.props.mapFolios.filter(f => this.showMapFolio(f)).map(mapFolio => {
-                return (
-                    <MapFolioListItem
-                        key={mapFolio.id}
-                        mapFolio={mapFolio}
-                        filter={this.props.filter}
-                        selected={mapFolio === this.props.selection}
-                        setSelection={f => this.props.selectMapFolio(f)}
-                    />
-                );
-            });
-
-            let folio = null;
+            let leftColumn = null;
             if (this.props.selection) {
-                const folioCards = [];
-
-                folioCards.push(
-                    <div className='column' key='info'>
-                        <MapFolioCard
+                leftColumn = (
+                    <div>
+                        <MapFolioInfo
                             selection={this.props.selection}
                             filter={this.props.filter}
                             addMap={() => this.props.addMap()}
                             removeMapFolio={() => this.props.removeMapFolio()}
                             changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
                         />
+                        <div className='divider' />
+                        <button onClick={() => this.props.selectMapFolio(null)}>&larr; back to list</button>
                     </div>
                 );
+            } else {
+                let listItems = this.props.mapFolios.filter(f => this.showMapFolio(f)).map(mapFolio => {
+                    return (
+                        <MapFolioListItem
+                            key={mapFolio.id}
+                            mapFolio={mapFolio}
+                            filter={this.props.filter}
+                            selected={mapFolio === this.props.selection}
+                            setSelection={f => this.props.selectMapFolio(f)}
+                        />
+                    );
+                });
+                if (listItems.length === 0) {
+                    listItems = [(
+                        <div key='empty' className='descriptive'>
+                            you have not set up any tactical maps yet
+                        </div>
+                    )];
+                }
+
+                leftColumn = (
+                    <div>
+                        {this.props.showHelp ? <HelpCard mapFolios={this.props.mapFolios} /> : null}
+                        <button onClick={() => this.props.addMapFolio()}>add a new map folio</button>
+                        <div className='divider' />
+                        {listItems}
+                    </div>
+                );
+            }
+
+            let folio = null;
+            if (this.props.selection) {
+                const folioCards = [];
 
                 this.props.selection.maps.filter(m => Utils.match(this.props.filter, m.name)).forEach(m => {
                     folioCards.push(
@@ -99,8 +113,6 @@ export default class MapFoliosScreen extends React.Component<Props> {
                     <CardGroup
                         content={folioCards}
                         heading={this.props.selection.name || 'unnamed folio'}
-                        showClose={this.props.selection !== null}
-                        close={() => this.props.selectMapFolio(null)}
                     />
                 );
             }
@@ -119,9 +131,7 @@ export default class MapFoliosScreen extends React.Component<Props> {
             return (
                 <div className='map-builder row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable list-column'>
-                        {help}
-                        <button onClick={() => this.props.addMapFolio()}>add a new map folio</button>
-                        {folios}
+                        {leftColumn}
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         {folio}
@@ -167,6 +177,42 @@ class HelpCard extends React.Component<HelpCardProps> {
             );
         } catch (ex) {
             console.error(ex);
+        }
+    }
+}
+
+interface MapFolioInfoProps {
+    selection: MapFolio;
+    filter: string | null;
+    changeValue: (source: MapFolio, field: string, value: string) => void;
+    addMap: () => void;
+    removeMapFolio: () => void;
+}
+
+class MapFolioInfo extends React.Component<MapFolioInfoProps> {
+    public render() {
+        try {
+            return (
+                <div>
+                    <div className='section'>
+                        <div className='subheading'>map folio name</div>
+                        <input
+                            type='text'
+                            placeholder='map folio name'
+                            value={this.props.selection.name}
+                            disabled={!!this.props.filter}
+                            onChange={event => this.props.changeValue(this.props.selection, 'name', event.target.value)}
+                        />
+                    </div>
+                    <div className='divider' />
+                    <div className='section'>
+                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.addMap()}>add a new map</button>
+                        <ConfirmButton text='delete folio' callback={() => this.props.removeMapFolio()} />
+                    </div>
+                </div>
+            );
+        } catch (e) {
+            console.error(e);
         }
     }
 }

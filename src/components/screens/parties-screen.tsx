@@ -4,8 +4,8 @@ import Utils from '../../utils/utils';
 
 import { Party, PC } from '../../models/party';
 
-import PartyCard from '../cards/party-card';
 import PCCard from '../cards/pc-card';
+import ConfirmButton from '../controls/confirm-button';
 import PartyListItem from '../list-items/party-list-item';
 import CardGroup from '../panels/card-group';
 import Note from '../panels/note';
@@ -41,32 +41,11 @@ export default class PartiesScreen extends React.Component<Props> {
 
     public render() {
         try {
-            let help = null;
-            if (this.props.showHelp) {
-                help = (
-                    <HelpCard parties={this.props.parties}/>
-                );
-            }
-
-            const parties = this.props.parties.filter(p => this.showParty(p)).map(p => {
-                return (
-                    <PartyListItem
-                        key={p.id}
-                        party={p}
-                        filter={this.props.filter}
-                        selected={p === this.props.selection}
-                        setSelection={party => this.props.selectParty(party)}
-                    />
-                );
-            });
-
-            const activeCards: JSX.Element[] = [];
-            const inactiveCards: JSX.Element[] = [];
-
+            let leftColumn = null;
             if (this.props.selection) {
-                activeCards.push(
-                    <div className='column' key='info'>
-                        <PartyCard
+                leftColumn = (
+                    <div>
+                        <PartyInfo
                             selection={this.props.selection}
                             filter={this.props.filter}
                             addPC={() => this.props.addPC()}
@@ -74,9 +53,44 @@ export default class PartiesScreen extends React.Component<Props> {
                             changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
                             removeParty={() => this.props.removeParty()}
                         />
+                        <div className='divider' />
+                        <button onClick={() => this.props.selectParty(null)}>&larr; back to list</button>
                     </div>
                 );
+            } else {
+                let listItems = this.props.parties.filter(p => this.showParty(p)).map(p => {
+                    return (
+                        <PartyListItem
+                            key={p.id}
+                            party={p}
+                            filter={this.props.filter}
+                            selected={p === this.props.selection}
+                            setSelection={party => this.props.selectParty(party)}
+                        />
+                    );
+                });
+                if (listItems.length === 0) {
+                    listItems = [(
+                        <div key='empty' className='descriptive'>
+                            you have not set up any parties yet
+                        </div>
+                    )];
+                }
 
+                leftColumn = (
+                    <div>
+                        {this.props.showHelp ? <HelpCard parties={this.props.parties} /> : null}
+                        <button onClick={() => this.props.addParty()}>add a new party</button>
+                        <div className='divider' />
+                        {listItems}
+                    </div>
+                );
+            }
+
+            const activeCards: JSX.Element[] = [];
+            const inactiveCards: JSX.Element[] = [];
+
+            if (this.props.selection) {
                 const pcs = this.props.selection.pcs.filter(pc => {
                     return Utils.match(this.props.filter, pc.name);
                 });
@@ -141,22 +155,17 @@ export default class PartiesScreen extends React.Component<Props> {
             return (
                 <div className='parties row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable list-column'>
-                        {help}
-                        <button onClick={() => this.props.addParty()}>add a new party</button>
-                        {parties}
+                        {leftColumn}
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup
                             content={activeCards}
                             heading={name}
-                            showClose={this.props.selection !== null}
-                            close={() => this.props.selectParty(null)}
                             hidden={!this.props.selection}
                         />
                         <CardGroup
                             content={inactiveCards}
                             heading='inactive pcs'
-                            showClose={false}
                             hidden={inactiveCards.length === 0}
                         />
                         {watermark}
@@ -201,6 +210,121 @@ class HelpCard extends React.Component<HelpCardProps> {
             );
         } catch (ex) {
             console.error(ex);
+        }
+    }
+}
+
+interface PartyInfoProps {
+    selection: Party;
+    filter: string | null;
+    changeValue: (field: string, value: string) => void;
+    addPC: () => void;
+    sortPCs: () => void;
+    removeParty: () => void;
+}
+
+class PartyInfo extends React.Component<PartyInfoProps> {
+    public render() {
+        try {
+            const activePCs = this.props.selection.pcs.filter(pc => pc.active);
+
+            let summary = null;
+
+            if (activePCs.length !== 0) {
+
+                let languages = '';
+                let insightSummary = '-';
+                let investigationSummary = '-';
+                let perceptionSummary = '-';
+
+                languages = activePCs
+                    .map(pc => pc.languages)
+                    .join(', ')
+                    .split(/[ ,;]+/)
+                    .reduce((array: string[], value) => {
+                        if (array.indexOf(value) === -1) {
+                            array.push(value);
+                        }
+                        return array;
+                    }, [])
+                    .sort((a, b) => {
+                        if (a === 'Common') {
+                            return -1;
+                        }
+                        if (b === 'Common') {
+                            return 1;
+                        }
+                        return a.localeCompare(b);
+                    })
+                    .join(', ');
+
+                const insight: { min: number | null, max: number | null } = { min: null, max: null };
+                const invest: { min: number | null, max: number | null } = { min: null, max: null };
+                const percep: { min: number | null, max: number | null } = { min: null, max: null };
+
+                activePCs.forEach(pc => {
+                    insight.min = insight.min === null ? pc.passiveInsight : Math.min(insight.min, pc.passiveInsight);
+                    insight.max = insight.max === null ? pc.passiveInsight : Math.max(insight.max, pc.passiveInsight);
+                    invest.min = invest.min === null ? pc.passiveInvestigation : Math.min(invest.min, pc.passiveInvestigation);
+                    invest.max = invest.max === null ? pc.passiveInvestigation : Math.max(invest.max, pc.passiveInvestigation);
+                    percep.min = percep.min === null ? pc.passivePerception : Math.min(percep.min, pc.passivePerception);
+                    percep.max = percep.max === null ? pc.passivePerception : Math.max(percep.max, pc.passivePerception);
+                });
+
+                insightSummary = insight.min === insight.max ? (insight.min as number).toString() : insight.min + ' - ' + insight.max;
+                investigationSummary = invest.min === invest.max ? (invest.min as number).toString() : invest.min + ' - ' + invest.max;
+                perceptionSummary = percep.min === percep.max ? (percep.min as number).toString() : percep.min + ' - ' + percep.max;
+
+                summary = (
+                    <div>
+                        <div className='section' style={{ display: languages !== '' ? 'block' : 'none' }}>
+                            <div className='subheading'>party known languages</div>
+                        </div>
+                        <div className='section'>
+                            {languages}
+                        </div>
+                        <div className='section'>
+                            <div className='subheading'>party passive skills</div>
+                        </div>
+                        <div className='table'>
+                            <div>
+                                <div className='cell three'><b>insight</b></div>
+                                <div className='cell three'><b>invest.</b></div>
+                                <div className='cell three'><b>percep.</b></div>
+                            </div>
+                            <div>
+                                <div className='cell three'>{insightSummary}</div>
+                                <div className='cell three'>{investigationSummary}</div>
+                                <div className='cell three'>{perceptionSummary}</div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div>
+                    <div className='section'>
+                        <div className='subheading'>party name</div>
+                        <input
+                            type='text'
+                            placeholder='party name'
+                            value={this.props.selection.name}
+                            disabled={!!this.props.filter}
+                            onChange={event => this.props.changeValue('name', event.target.value)}
+                        />
+                    </div>
+                    {summary}
+                    <div className='divider' />
+                    <div className='section'>
+                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.addPC()}>add a new pc</button>
+                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.sortPCs()}>sort pcs</button>
+                        <ConfirmButton text='delete party' callback={() => this.props.removeParty()} />
+                    </div>
+                </div>
+            );
+        } catch (e) {
+            console.error(e);
         }
     }
 }

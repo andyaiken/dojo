@@ -367,7 +367,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     );
                 }
 
-                const combats = this.props.combats.filter(c => this.showCombat(c)).map(c => {
+                let listItems = this.props.combats.filter(c => this.showCombat(c)).map(c => {
                     return (
                         <CombatListItem
                             key={c.id}
@@ -377,13 +377,21 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                         />
                     );
                 });
+                if (listItems.length === 0) {
+                    listItems = [(
+                        <div key='empty' className='descriptive'>
+                            you have no in-progress encounters
+                        </div>
+                    )];
+                }
 
                 return (
                     <div className='combat-manager row collapse'>
                         <div className='columns small-4 medium-4 large-3 scrollable list-column'>
                             {help}
                             <button onClick={() => this.props.createCombat()}>start a new combat</button>
-                            {combats}
+                            <div className='divider' />
+                            {listItems}
                         </div>
                         <div className='columns small-8 medium-8 large-9 scrollable'>
                             <div className='vertical-center-outer'>

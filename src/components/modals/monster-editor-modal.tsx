@@ -761,7 +761,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                     );
                 }
                 monsterList = (
-                    <div className='columns small-4 medium-4 large-4 scrollable list-column'>
+                    <div className='columns small-4 medium-4 large-4 scrollable wide-column'>
                         {this.getFilterCard(monsters)}
                         {searchBox}
                         {this.getMonsterCards(monsters)}
