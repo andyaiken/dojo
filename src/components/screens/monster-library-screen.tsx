@@ -119,6 +119,17 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                 }
             }
 
+            let watermark;
+            if (!this.props.selection) {
+                watermark = (
+                    <div className='vertical-center-outer'>
+                        <div className='vertical-center-middle'>
+                            <div className='watermark'>monster library</div>
+                        </div>
+                    </div>
+                );
+            }
+
             return (
                 <div className='monster-library row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable list-column'>
@@ -132,7 +143,9 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                             heading={name}
                             showClose={this.props.selection !== null}
                             close={() => this.props.selectMonsterGroup(null)}
+                            hidden={!this.props.selection}
                         />
+                        {watermark}
                     </div>
                 </div>
             );

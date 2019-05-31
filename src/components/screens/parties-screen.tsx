@@ -124,6 +124,17 @@ export default class PartiesScreen extends React.Component<Props> {
                 name = this.props.selection.name || 'unnamed party';
             }
 
+            let watermark;
+            if (!this.props.selection) {
+                watermark = (
+                    <div className='vertical-center-outer'>
+                        <div className='vertical-center-middle'>
+                            <div className='watermark'>player characters</div>
+                        </div>
+                    </div>
+                );
+            }
+
             return (
                 <div className='parties row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable list-column'>
@@ -145,6 +156,7 @@ export default class PartiesScreen extends React.Component<Props> {
                             showClose={false}
                             hidden={inactiveCards.length === 0}
                         />
+                        {watermark}
                     </div>
                 </div>
             );

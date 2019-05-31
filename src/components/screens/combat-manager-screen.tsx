@@ -385,7 +385,13 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                             <button onClick={() => this.props.createCombat()}>start a new combat</button>
                             {combats}
                         </div>
-                        <div className='columns small-8 medium-8 large-9 scrollable' />
+                        <div className='columns small-8 medium-8 large-9 scrollable'>
+                            <div className='vertical-center-outer'>
+                                <div className='vertical-center-middle'>
+                                    <div className='watermark'>combat manager</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 );
             }

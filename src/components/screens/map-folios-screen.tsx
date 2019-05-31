@@ -96,13 +96,22 @@ export default class MapFoliosScreen extends React.Component<Props> {
                 }
 
                 folio = (
-                    <div>
-                        <CardGroup
-                            content={folioCards}
-                            heading={this.props.selection.name || 'unnamed folio'}
-                            showClose={this.props.selection !== null}
-                            close={() => this.props.selectMapFolio(null)}
-                        />
+                    <CardGroup
+                        content={folioCards}
+                        heading={this.props.selection.name || 'unnamed folio'}
+                        showClose={this.props.selection !== null}
+                        close={() => this.props.selectMapFolio(null)}
+                    />
+                );
+            }
+
+            let watermark;
+            if (!this.props.selection) {
+                watermark = (
+                    <div className='vertical-center-outer'>
+                        <div className='vertical-center-middle'>
+                            <div className='watermark'>map folios</div>
+                        </div>
                     </div>
                 );
             }
@@ -116,6 +125,7 @@ export default class MapFoliosScreen extends React.Component<Props> {
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         {folio}
+                        {watermark}
                     </div>
                 </div>
             );

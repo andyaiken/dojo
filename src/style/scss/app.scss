@@ -1292,3 +1292,11 @@ body,
         padding-top: 20px;
     }
 }
+
+.watermark {
+    text-align: center;
+    font-size: 80px;
+    color: rgb(240, 240, 240);
+    text-shadow: 0px -1px 1px rgb(150, 150, 150);
+    opacity: 0.5;
+}

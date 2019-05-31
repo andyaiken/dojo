@@ -7,7 +7,6 @@ import { Monster, MonsterGroup } from '../../models/monster-group';
 import { Party } from '../../models/party';
 
 import EncounterCard from '../cards/encounter-card';
-import ErrorCard from '../cards/error-card';
 import FilterCard from '../cards/filter-card';
 import MonsterCard from '../cards/monster-card';
 import WaveCard from '../cards/wave-card';
@@ -136,9 +135,13 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                 const error = 'unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName;
                 cards.push(
                     <div className='column' key={index}>
-                        <ErrorCard
-                            getContent={() => <div className='section'>{error}</div>}
-                        />
+                        <div className='card error'>
+                            <div className='card-content'>
+                                <div className='section'>
+                                    {error}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 );
             }
@@ -285,6 +288,17 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                 });
             }
 
+            let watermark;
+            if (!this.props.selection) {
+                watermark = (
+                    <div className='vertical-center-outer'>
+                        <div className='vertical-center-middle'>
+                            <div className='watermark'>encounter builder</div>
+                        </div>
+                    </div>
+                );
+            }
+
             return (
                 <div className='encounter-builder row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable list-column'>
@@ -298,9 +312,11 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                             heading={encounterName}
                             showClose={this.props.selection !== null}
                             close={() => this.props.selectEncounter(null)}
+                            hidden={!this.props.selection}
                         />
                         {waves}
                         {this.getLibrarySection()}
+                        {watermark}
                     </div>
                 </div>
             );
