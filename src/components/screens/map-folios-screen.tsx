@@ -69,7 +69,6 @@ export default class MapFoliosScreen extends React.Component<Props> {
                     listItems = [(
                         <Note
                             key='empty'
-                            white={true}
                             content={'you have not set up any tactical maps yet'}
                         />
                     )];

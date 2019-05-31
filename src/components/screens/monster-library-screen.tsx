@@ -76,7 +76,6 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                     listItems = [(
                         <Note
                             key='empty'
-                            white={true}
                             content={'you do not have any monsters in your library'}
                         />
                     )];

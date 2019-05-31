@@ -72,7 +72,6 @@ export default class PartiesScreen extends React.Component<Props> {
                     listItems = [(
                         <Note
                             key='empty'
-                            white={true}
                             content={'you have not set up any parties yet'}
                         />
                     )];

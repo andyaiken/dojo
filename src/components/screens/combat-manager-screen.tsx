@@ -243,6 +243,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                                 content={
                                     <div>
                                         <div className='section'>these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right)</div>
+                                        <div className='section'>they are listed in initiative order (with the highest initiative score at the top of the list, and the lowest at the bottom)</div>
                                         <div className='section'>to begin the encounter, select the first combatant and press the <b>start turn</b> button on their stat block</div>
                                     </div>
                                 }
@@ -314,7 +315,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                             key='selected'
                             content={
                                 <div className='section'>
-                                    select a pc or monster from the central list to see its details here
+                                    select a pc or monster from the <b>initiative order</b> list to see its details here
                                 </div>
                             }
                         />
@@ -339,7 +340,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                             />
                             {mapSection}
                             <CardGroup
-                                heading='combatants in the encounter'
+                                heading='initiative order'
                                 content={active}
                                 hidden={active.length === 0}
                             />
@@ -373,7 +374,6 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     listItems = [(
                         <Note
                             key='empty'
-                            white={true}
                             content={'you have no in-progress encounters'}
                         />
                     )];
