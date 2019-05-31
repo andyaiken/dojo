@@ -7,8 +7,9 @@ import { Combatant } from '../../models/combat';
 import { Monster, Trait, TRAIT_TYPES } from '../../models/monster-group';
 
 import ConfirmButton from '../controls/confirm-button';
-import ControlRow from '../controls/control-row';
 import Expander from '../controls/expander';
+
+import arrow from '../../resources/images/down-arrow-black.svg';
 
 const showdown = new Showdown.Converter();
 
@@ -177,42 +178,49 @@ class TraitPanel extends React.Component<TraitPanelProps> {
                 case 'edit':
                     const details = (
                         <div className='section'>
-                            <input
-                                type='text'
-                                placeholder='name'
-                                value={this.props.trait.name}
-                                onChange={event => this.props.changeValue(this.props.trait, 'name', event.target.value)}
-                            />
-                            <input
-                                type='text'
-                                placeholder='usage'
-                                value={this.props.trait.usage}
-                                onChange={event => this.props.changeValue(this.props.trait, 'usage', event.target.value)}
-                            />
+                            <div className='row collapse'>
+                                <div className='columns small-6 medium-8 large-9'>
+                                    <input
+                                        type='text'
+                                        placeholder='name'
+                                        value={this.props.trait.name}
+                                        onChange={event => this.props.changeValue(this.props.trait, 'name', event.target.value)}
+                                    />
+                                    <input
+                                        type='text'
+                                        placeholder='usage'
+                                        value={this.props.trait.usage}
+                                        onChange={event => this.props.changeValue(this.props.trait, 'usage', event.target.value)}
+                                    />
+                                </div>
+                                <div className='columns small-6 medium-4 large-3'>
+                                    <div className='trait-ordering'>
+                                        <div className='vertical-center-outer'>
+                                            <div className='vertical-center-middle'>
+                                                <img
+                                                    className={this.props.prevTrait ? 'rotate' : 'rotate disabled'}
+                                                    src={arrow}
+                                                    alt='move up'
+                                                    onClick={() => this.props.swapTraits(this.props.trait, this.props.prevTrait as Trait)}
+                                                />
+                                                <img
+                                                    className={this.props.nextTrait ? '' : 'disabled'}
+                                                    src={arrow}
+                                                    alt='move down'
+                                                    onClick={() => this.props.swapTraits(this.props.trait, this.props.nextTrait as Trait)}
+                                                />
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
                             <textarea
                                 placeholder='details'
                                 value={this.props.trait.text}
                                 onChange={event => this.props.changeValue(this.props.trait, 'text', event.target.value)}
                             />
                             <div className='divider' />
-                            <ControlRow
-                                controls={[
-                                    <button
-                                        key='up'
-                                        className={this.props.prevTrait ? '' : 'disabled'}
-                                        onClick={() => this.props.swapTraits(this.props.trait, this.props.prevTrait as Trait)}
-                                    >
-                                        move up
-                                    </button>,
-                                    <button
-                                        key='down'
-                                        className={this.props.nextTrait ? '' : 'disabled'}
-                                        onClick={() => this.props.swapTraits(this.props.trait, this.props.nextTrait as Trait)}
-                                    >
-                                        move down
-                                    </button>
-                                ]}
-                            />
                             <ConfirmButton text='delete' callback={() => this.props.removeTrait(this.props.trait)} />
                         </div>
                     );

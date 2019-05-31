@@ -774,8 +774,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                     <div
                         className={
                             this.props.showMonsters
-                            ? 'columns small-8 medium-8 large-8 scrollable'
-                            : 'columns small-12 medium-12 large-12 scrollable'
+                            ? 'columns small-8 medium-8 large-8 scrollable wide-column'
+                            : 'columns small-12 medium-12 large-12 scrollable wide-column'
                         }
                         style={{ transition: 'none' }}
                     >
