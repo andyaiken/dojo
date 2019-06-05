@@ -19,12 +19,14 @@ import MonsterLibraryScreen from './screens/monster-library-screen';
 import PartiesScreen from './screens/parties-screen';
 
 import AboutModal from './modals/about-modal';
+import AddCombatantsModal from './modals/add-combatants-modal';
 import CombatStartModal from './modals/combat-start-modal';
 import ConditionModal from './modals/condition-modal';
 import DemographicsModal from './modals/demographics-modal';
 import MapEditorModal from './modals/map-editor-modal';
 import MonsterEditorModal from './modals/monster-editor-modal';
 import PCEditorModal from './modals/pc-editor-modal';
+import RandomMonsterModal from './modals/random-monster-modal';
 
 import Navbar from './panels/navbar';
 import Titlebar from './panels/titlebar';
@@ -32,7 +34,6 @@ import Titlebar from './panels/titlebar';
 import Checkbox from './controls/checkbox';
 
 import close from '../resources/images/close-black.svg';
-import RandomMonsterModal from './modals/random-monster-modal';
 
 // tslint:disable-next-line:no-empty-interface
 interface Props {
@@ -654,74 +655,29 @@ export default class Dojo extends React.Component<Props, State> {
 
             // Add a copy of each PC to the encounter
             party.pcs.filter(pc => pc.active).forEach(pc => {
-                const combatant = JSON.parse(JSON.stringify(pc));
-
-                combatant.current = false;
-                combatant.pending = true;
-                combatant.active = false;
-                combatant.defeated = false;
-
-                combatant.displayName = pc.name;
-                combatant.initiative = 10;
-                combatant.hp = null;
-                combatant.conditions = [];
-                combatant.altitude = 0;
-
-                combat.combatants.push(combatant);
+                this.addPCToCombat(pc, combat);
             });
 
             encounter.slots.forEach(slot => {
                 const monster = this.getMonster(slot.monsterName, slot.monsterGroupName);
                 if (monster) {
-                    const init = parseInt(Utils.modifier(monster.abilityScores.dex), 10);
-                    const groupRoll = Utils.dieRoll();
+                    const groupInitRoll = Utils.dieRoll();
 
                     for (let n = 0; n !== slot.count; ++n) {
-                        const singleRoll = Utils.dieRoll();
-
-                        const combatant = JSON.parse(JSON.stringify(monster));
-                        combatant.id = Utils.guid();
-
-                        combatant.displayName = null;
+                        let displayName = null;
                         if (combatSetup.monsterNames) {
                             const slotNames = combatSetup.monsterNames.find(names => names.id === slot.id);
                             if (slotNames) {
-                                combatant.displayName = slotNames.names[n];
+                                displayName = slotNames.names[n];
                             }
                         }
 
-                        switch (combatSetup.encounterInitMode) {
-                            case 'manual':
-                                combatant.initiative = 10;
-                                break;
-                            case 'group':
-                                combatant.initiative = init + groupRoll;
-                                break;
-                            case 'individual':
-                                combatant.initiative = init + singleRoll;
-                                break;
-                            default:
-                                // Do nothing
-                                break;
-                        }
-
-                        combatant.current = false;
-                        combatant.pending = (combatSetup.encounterInitMode === 'manual');
-                        combatant.active = (combatSetup.encounterInitMode !== 'manual');
-                        combatant.defeated = false;
-
-                        combatant.hp = combatant.hpMax;
-                        combatant.conditions = [];
-                        combatant.altitude = 0;
-
-                        combat.combatants.push(combatant);
+                        this.addMonsterToCombat(monster, combat, displayName, combatSetup.encounterInitMode, groupInitRoll);
                     }
                 } else {
                     combat.issues.push('unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName);
                 }
             });
-
-            combat.combatants.forEach(c => c.altitude = 0);
 
             this.sortCombatants(combat);
 
@@ -743,6 +699,57 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
+    private addPCToCombat(pc: PC, combat: Combat) {
+        const combatant = JSON.parse(JSON.stringify(pc));
+
+        combatant.current = false;
+        combatant.pending = true;
+        combatant.active = false;
+        combatant.defeated = false;
+
+        combatant.displayName = pc.name;
+        combatant.initiative = 10;
+        combatant.hp = null;
+        combatant.conditions = [];
+        combatant.altitude = 0;
+
+        combat.combatants.push(combatant);
+    }
+
+    private addMonsterToCombat(
+        monster: Monster,
+        combat: Combat, displayName: string | null = null,
+        initMode: 'manual' | 'individual' | 'group' = 'individual',
+        groupInitRoll: number = 0) {
+
+        const combatant = JSON.parse(JSON.stringify(monster));
+        combatant.id = Utils.guid();
+
+        switch (initMode) {
+            case 'group':
+                combatant.initiative = Utils.modifierValue(monster.abilityScores.dex) + groupInitRoll;
+                break;
+            case 'individual':
+                combatant.initiative = Utils.modifierValue(monster.abilityScores.dex) + Utils.dieRoll();
+                break;
+            default:
+                combatant.initiative = 10;
+                break;
+        }
+
+        combatant.current = false;
+        combatant.pending = (initMode === 'manual');
+        combatant.active = (initMode !== 'manual');
+        combatant.defeated = false;
+
+        combatant.displayName = displayName;
+        combatant.hp = combatant.hpMax;
+        combatant.conditions = [];
+        combatant.altitude = 0;
+
+        combat.combatants.push(combatant);
+    }
+
     private openWaveModal() {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
@@ -759,6 +766,33 @@ export default class Dojo extends React.Component<Props, State> {
                     }
                 });
             }
+        }
+    }
+
+    private addToEncounter() {
+        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+        if (combat) {
+            this.setState({
+                modal: {
+                    type: 'combat-add-combatants',
+                    combatants: [],
+                    combat: combat
+                }
+            });
+        }
+    }
+
+    private addCombatantsFromModal() {
+        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+        if (combat) {
+            this.state.modal.combatants.forEach((m: Monster) => {
+                this.addMonsterToCombat(m, combat);
+            });
+
+            this.setState({
+                combats: this.state.combats,
+                modal: null
+            });
         }
     }
 
@@ -1439,7 +1473,6 @@ export default class Dojo extends React.Component<Props, State> {
                             .forEach(combatant => {
                                 xp += Utils.experience((combatant as Combatant & Monster).challenge);
                             });
-
                         return (
                             <div className='actions'>
                                 <div className='section'>
@@ -1450,6 +1483,9 @@ export default class Dojo extends React.Component<Props, State> {
                                 </div>
                                 <div className='section' style={{ display: encounter.waves.length === 0 ? 'none' : ''}}>
                                     <button onClick={() => this.openWaveModal()}>add wave</button>
+                                </div>
+                                <div className='section'>
+                                    <button onClick={() => this.addToEncounter()}>add combatants</button>
                                 </div>
                                 <div className='section'>
                                     <button onClick={() => this.pauseCombat()}>pause encounter</button>
@@ -1738,6 +1774,27 @@ export default class Dojo extends React.Component<Props, State> {
                         <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
                     ];
                     break;
+                case 'combat-add-combatants':
+                        modalTitle = 'add combatants';
+                        modalContent = (
+                            <AddCombatantsModal
+                                combatants={this.state.modal.combatants}
+                                library={this.state.library}
+                            />
+                        );
+                        modalAllowScroll = false;
+                        modalButtons.right = [
+                            (
+                                <button
+                                    key='add combatants'
+                                    onClick={() => this.addCombatantsFromModal()}
+                                >
+                                    add combatants
+                                </button>
+                            ),
+                            <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
+                        ];
+                        break;
                 case 'condition-add':
                     modalTitle = 'add a condition';
                     modalContent = (
