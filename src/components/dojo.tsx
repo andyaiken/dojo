@@ -120,6 +120,10 @@ export default class Dojo extends React.Component<Props, State> {
                             c.altitude = 0;
                         }
 
+                        if (c.concentrating === undefined) {
+                            c.concentrating = false;
+                        }
+
                         if (c.type === 'monster') {
                             const m = c as Combatant & Monster;
                             m.traits.forEach(t => {

@@ -7,6 +7,7 @@ import { Condition } from '../../models/condition';
 import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
 import { Monster, MonsterGroup, Trait } from '../../models/monster-group';
 
+import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
 import ControlRow from '../controls/control-row';
 import Dropdown from '../controls/dropdown';
@@ -366,6 +367,14 @@ export default class MonsterCard extends React.Component<Props, State> {
                         options.push(<button key='makeActive' onClick={() => this.props.makeActive(combatant)}>mark as active</button>);
                         options.push(<ConfirmButton key='remove' text='remove from encounter' callback={() => this.props.removeCombatant(combatant)} />);
                     }
+                    options.push(
+                        <Checkbox
+                            key='concentrating'
+                            label='concentrating'
+                            checked={combatant.concentrating}
+                            changeValue={value => this.props.changeValue(combatant, 'concentrating', value)}
+                        />
+                    );
                     options.push(
                         <Expander
                             key='rename'

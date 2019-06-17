@@ -625,9 +625,14 @@ class PCRow extends React.Component<PCRowProps> {
         if (this.props.combat.map) {
             if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
                 notes.push(
-                    <div key='not-on-map' className='note'>not on the map</div>
+                    <Note key='not-on-map' white={true} content='not on the map' />
                 );
             }
+        }
+        if (this.props.combatant.concentrating) {
+            notes.push(
+                <Note key='concentrating' white={true} content='concentrating' />
+            );
         }
 
         return (
@@ -732,9 +737,14 @@ class MonsterRow extends React.Component<MonsterRowProps> {
         if (this.props.combat.map) {
             if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
                 notes.push(
-                    <div key='not-on-map' className='note'>not on the map</div>
+                    <Note key='not-on-map' white={true} content='not on the map' />
                 );
             }
+        }
+        if (this.props.combatant.concentrating) {
+            notes.push(
+                <Note key='concentrating' white={true} content='concentrating' />
+            );
         }
 
         return (

@@ -36,6 +36,7 @@ export interface Combatant {
     hp: number | null;
     conditions: Condition[];
     altitude: number;
+    concentrating: boolean;
 }
 
 export interface Notification {

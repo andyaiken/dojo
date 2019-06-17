@@ -3,17 +3,16 @@ import React from 'react';
 import { Combatant } from '../../models/combat';
 import { PC } from '../../models/party';
 
+import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
 import Expander from '../controls/expander';
 import Radial from '../controls/radial';
 import Spin from '../controls/spin';
 
-import arrow from '../../resources/images/down-arrow.svg';
-
 interface Props {
     combatant: PC | (PC & Combatant);
     mode: string;
-    changeValue: (pc: PC, field: string, value: any) => void;
+    changeValue: (pc: PC | Combatant, field: string, value: any) => void;
     nudgeValue: (pc: PC, field: string, delta: number) => void;
     removePC: (pc: PC) => void;
     editPC: (pc: PC) => void;
@@ -125,6 +124,14 @@ export default class PCCard extends React.Component<Props> {
                     options.push(<button key='makeActive' onClick={() => this.props.makeActive(combatant)}>mark as active</button>);
                     options.push(<ConfirmButton key='remove' text='remove from encounter' callback={() => this.props.removeCombatant(combatant)} />);
                 }
+                options.push(
+                    <Checkbox
+                        key='concentrating'
+                        label='concentrating'
+                        checked={combatant.concentrating}
+                        changeValue={value => this.props.changeValue(combatant, 'concentrating', value)}
+                    />
+                );
             }
 
             const desc = (this.props.combatant.race || 'unknown race')
