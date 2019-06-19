@@ -5,12 +5,8 @@ export default class Speech {
 
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.voice = await Speech.chooseVoice(languages);
-        utterance.rate = Speech.randomValue(0.5, 2);
-        utterance.pitch = Speech.randomValue(0, 1.5);
-
-        // console.log('Voice: ' + utterance.voice.name);
-        // console.log('Rate: ' + utterance.rate);
-        // console.log('Pitch: ' + utterance.pitch);
+        utterance.rate = Speech.randomValue(0.5, 1.5);
+        utterance.pitch = Speech.randomValue(0.5, 1.5);
 
         window.speechSynthesis.speak(utterance);
     }

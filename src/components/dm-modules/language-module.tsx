@@ -188,11 +188,6 @@ export default class LanguageModule extends React.Component<Props, State> {
         });
     }
 
-    private async say(e: React.MouseEvent, text: string) {
-        e.preventDefault();
-        Speech.say(text, Object.keys(this.state.sources));
-    }
-
     public render() {
         const presetOptions = this.getPresets().map(p => {
             return {
@@ -241,9 +236,11 @@ export default class LanguageModule extends React.Component<Props, State> {
         }
         for (let n = 0; n !== this.state.output.length; ++n) {
             output.push(
-                <div key={n} className='section' onDoubleClick={e => this.say(e, this.state.output[n])}>
-                    {this.state.output[n].toLowerCase()}
-                </div>
+                <GeneratedText
+                    key={n}
+                    text={this.state.output[n]}
+                    languages={Object.keys(this.state.sources)}
+                />
             );
         }
 
@@ -276,6 +273,40 @@ export default class LanguageModule extends React.Component<Props, State> {
                     {output}
                 </div>
             </div>
+        );
+    }
+}
+
+interface GeneratedTextProps {
+    text: string;
+    languages: string[];
+}
+
+class GeneratedText extends React.Component<GeneratedTextProps> {
+    private copy(e: React.MouseEvent) {
+        e.preventDefault();
+        navigator.clipboard.writeText(this.props.text);
+    }
+
+    private say(e: React.MouseEvent) {
+        e.preventDefault();
+        Speech.say(this.props.text, this.props.languages);
+    }
+
+    public render() {
+        return (
+            <Expander
+                text={this.props.text.toLowerCase()}
+                content={
+                    <div>
+                        <button onClick={e => this.copy(e)}>copy to clipboard</button>
+                        <button onClick={e => this.say(e)}>say</button>
+                        <div className='section'>
+                            <b>note:</b> speech may not work consistently on all platforms
+                        </div>
+                    </div>
+                }
+            />
         );
     }
 }
