@@ -351,9 +351,6 @@ export default class Utils {
             case 'lair':
                 str = 'lair action';
                 break;
-            case 'regional':
-                str = 'regional effect';
-                break;
         }
 
         if (plural) {

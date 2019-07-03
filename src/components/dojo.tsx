@@ -902,6 +902,11 @@ export default class Dojo extends React.Component<Props, State> {
                             combatant: combatant as Combatant & Monster
                         });
                     });
+                (combatant as Monster).traits
+                    .filter(t => t.type === 'legendary')
+                    .forEach(t => {
+                        t.uses = 0;
+                    });
             }
 
             combat.combatants.forEach(c => {

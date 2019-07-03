@@ -44,7 +44,7 @@ export interface Trait {
     id: string;
     name: string;
     usage: string;
-    type: 'trait' | 'action' | 'legendary' | 'lair' | 'regional';
+    type: 'trait' | 'action' | 'legendary' | 'lair';
     text: string;
     uses: number;
 }
@@ -79,6 +79,5 @@ export const TRAIT_TYPES = [
     'trait',
     'action',
     'legendary',
-    'lair',
-    'regional'
+    'lair'
 ];

@@ -16,6 +16,7 @@ import CardGroup from '../panels/card-group';
 import HitPointGauge from '../panels/hit-point-gauge';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
+import TraitsPanel from '../panels/traits-panel';
 
 interface Props {
     combats: Combat[];
@@ -302,6 +303,27 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     );
                 }
 
+                const special: JSX.Element[] = [];
+                this.props.combat.combatants.forEach(c => {
+                    const monster = c as (Combatant & Monster);
+                    const legendary = monster && monster.traits && monster.traits.some(t => t.type === 'legendary') && !monster.current;
+                    const lair = monster && monster.traits && monster.traits.some(t => t.type === 'lair');
+                    if (legendary || lair) {
+                        special.push(
+                            <div className='card monster' key={monster.id}>
+                                <div className='heading'><div className='title'>{monster.name}</div></div>
+                                <div className='card-content'>
+                                    <TraitsPanel
+                                        combatant={monster}
+                                        mode='combat-special'
+                                        changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
+                                    />
+                                </div>
+                            </div>
+                        );
+                    }
+                });
+
                 let selectedCombatant = null;
                 if (this.state.selectedTokenID) {
                     const combatant = this.props.combat.combatants.find(c => c.id === this.state.selectedTokenID);
@@ -352,6 +374,12 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                             />
                         </div>
                         <div className='columns small-4 medium-4 large-4 scrollable'>
+                            <CardGroup
+                                heading={'don\'t forget'}
+                                content={special}
+                                hidden={special.length === 0}
+                                showToggle={true}
+                            />
                             <CardGroup
                                 heading='selected combatant'
                                 content={[selectedCombatant]}

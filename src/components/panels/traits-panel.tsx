@@ -8,6 +8,7 @@ import { Monster, Trait, TRAIT_TYPES } from '../../models/monster-group';
 
 import ConfirmButton from '../controls/confirm-button';
 import Expander from '../controls/expander';
+import Note from '../panels/note';
 
 import arrow from '../../resources/images/down-arrow-black.svg';
 
@@ -15,9 +16,9 @@ const showdown = new Showdown.Converter();
 
 interface Props {
     combatant: Monster | (Combatant & Monster);
-    mode: 'view' | 'edit' | 'template' | 'combat';
+    mode: 'view' | 'edit' | 'template' | 'combat' | 'combat-special';
     filter: string;
-    addTrait: (traitType: 'trait' | 'action' | 'legendary' | 'lair' | 'regional') => void;
+    addTrait: (traitType: 'trait' | 'action' | 'legendary' | 'lair') => void;
     copyTrait: (trait: Trait) => void;
     removeTrait: (trait: Trait) => void;
     changeValue: (trait: Trait, field: string, value: any) => void;
@@ -51,15 +52,40 @@ export default class TraitsPanel extends React.Component<Props> {
         );
     }
 
-    private createSection(traitsByType: { [id: string]: JSX.Element[] }, type: string) {
+    private createSection(traitsByType: { [id: string]: JSX.Element[] }, type: string, showInfo: boolean = false) {
         const traits = traitsByType[type];
         if (traits.length === 0) {
             return null;
         }
 
+        let info: JSX.Element | null = null;
+        if (showInfo) {
+            switch (type) {
+                case 'legendary':
+                    /* tslint:disable:max-line-length */
+                    info = (
+                        <Note
+                            content={'one legendary action can be used at the end of each other combatant\'s turn; spent actions are refreshed at the start of the creature\'s turn'}
+                            white={true}
+                        />
+                    );
+                    /* tslint:enable:max-line-length */
+                    break;
+                case 'lair':
+                    info = (
+                        <Note
+                            content={'one lair action can be taken each round on initiative 20'}
+                            white={true}
+                        />
+                    );
+                    break;
+            }
+        }
+
         return (
             <div>
                 <div className='section subheading'>{Utils.traitType(type, true)}</div>
+                {info}
                 {traits}
             </div>
         );
@@ -84,7 +110,7 @@ export default class TraitsPanel extends React.Component<Props> {
 
                 if (this.props.mode === 'edit') {
                     list.push(
-                        <button key='add' onClick={() => this.props.addTrait(type as 'trait' | 'action' | 'legendary' | 'lair' | 'regional')}>
+                        <button key='add' onClick={() => this.props.addTrait(type as 'trait' | 'action' | 'legendary' | 'lair')}>
                             add a new {Utils.traitType(type, false)}
                         </button>
                     );
@@ -104,8 +130,8 @@ export default class TraitsPanel extends React.Component<Props> {
                         </div>
                         <div className='columns small-4 medium-4 large-4 wide-column'>
                             {this.createSection(traitsByType, 'legendary')}
+                            <div className='divider' />
                             {this.createSection(traitsByType, 'lair')}
-                            {this.createSection(traitsByType, 'regional')}
                         </div>
                     </div>
                 );
@@ -117,13 +143,30 @@ export default class TraitsPanel extends React.Component<Props> {
                 );
             }
 
+            if (this.props.mode === 'combat') {
+                return (
+                    <div>
+                        {this.createSection(traitsByType, 'trait')}
+                        {this.createSection(traitsByType, 'action')}
+                    </div>
+                );
+            }
+
+            if (this.props.mode === 'combat-special') {
+                return (
+                    <div>
+                        {this.createSection(traitsByType, 'legendary', true)}
+                        {this.createSection(traitsByType, 'lair', true)}
+                    </div>
+                );
+            }
+
             return (
                 <div>
                     {this.createSection(traitsByType, 'trait')}
                     {this.createSection(traitsByType, 'action')}
                     {this.createSection(traitsByType, 'legendary')}
                     {this.createSection(traitsByType, 'lair')}
-                    {this.createSection(traitsByType, 'regional')}
                 </div>
             );
         } catch (e) {
@@ -134,7 +177,7 @@ export default class TraitsPanel extends React.Component<Props> {
 
 interface TraitPanelProps {
     trait: Trait;
-    mode: 'view' | 'edit' | 'template' | 'combat';
+    mode: 'view' | 'edit' | 'template' | 'combat' | 'combat-special';
     prevTrait: Trait | null;
     nextTrait: Trait | null;
     changeValue: (trait: Trait, field: string, value: any) => void;
@@ -165,6 +208,12 @@ class TraitPanel extends React.Component<TraitPanelProps> {
                     }
                 }
                 heading += ' *(' + this.props.trait.usage + used + ')*';
+            }
+            if (this.props.trait.type === 'legendary') {
+                maxUses = 1;
+                if (this.props.trait.uses > 0) {
+                    heading += ' *(used)*';
+                }
             }
             const markdown = '**' + heading + '** ' + this.props.trait.text;
 
@@ -239,6 +288,7 @@ class TraitPanel extends React.Component<TraitPanelProps> {
                         </div>
                     );
                 case 'combat':
+                case 'combat-special':
                     let style = '';
                     let usage = null;
                     if (maxUses > 0) {

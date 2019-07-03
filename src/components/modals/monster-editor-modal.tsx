@@ -163,7 +163,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         });
     }
 
-    private addTrait(type: 'trait' | 'action' | 'legendary' | 'lair' | 'regional') {
+    private addTrait(type: 'trait' | 'action' | 'legendary' | 'lair') {
         Frankenstein.addTrait(this.state.monster, type);
         this.setState({
             monster: this.state.monster

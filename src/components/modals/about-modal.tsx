@@ -25,7 +25,7 @@ export default class AboutModal extends React.Component<Props, State> {
         super(props);
         this.state = {
             view: 'dm',
-            module: null
+            module: 'reference'
         };
     }
 

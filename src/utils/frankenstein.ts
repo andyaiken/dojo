@@ -257,7 +257,7 @@ export default class Frankenstein {
         return monster;
     }
 
-    private static buildTrait(rawTrait: any, type: 'trait' | 'action' | 'legendary' | 'lair' | 'regional'): Trait {
+    private static buildTrait(rawTrait: any, type: 'trait' | 'action' | 'legendary' | 'lair'): Trait {
         let name = '';
         let usage = '';
 
@@ -274,7 +274,7 @@ export default class Frankenstein {
 
         return {
             id: Utils.guid(),
-            type: type,
+            type: (name === 'Lair Actions') ? 'lair' : type,
             name: name,
             usage: usage,
             text: text,
@@ -291,7 +291,7 @@ export default class Frankenstein {
         target.traits.push(copy);
     }
 
-    public static addTrait(target: Monster, type: 'trait' | 'action' | 'legendary' | 'lair' | 'regional') {
+    public static addTrait(target: Monster, type: 'trait' | 'action' | 'legendary' | 'lair') {
         const trait = Factory.createTrait();
         trait.type = type;
         trait.name = 'New ' + Utils.traitType(type, false).toLowerCase();
