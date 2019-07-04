@@ -24,6 +24,7 @@ p {
 }
 
 input[type=text],
+input[type=color],
 textarea {
     -webkit-appearance: none;
     -webkit-user-select: text;
@@ -41,8 +42,13 @@ textarea {
     }
 }
 
-input[type=text] {
+input[type=text],
+input[type=color] {
     height: 32px;
+}
+
+input[type=color] {
+    padding: 0 2px;
 }
 
 textarea {
@@ -1153,6 +1159,21 @@ body,
 
     &.thumbnail {
         background-size: 5px;
+    }
+}
+
+.aura {
+    position: absolute;
+    background-color: rgb(0, 80, 128);
+    opacity: 0.2;
+    pointer-events: none;
+
+    &.square {
+        border-radius: 15px;
+    }
+
+    &.circle {
+        border-radius: 50%;
     }
 }
 

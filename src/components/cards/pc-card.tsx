@@ -7,13 +7,14 @@ import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
 import Expander from '../controls/expander';
 import Radial from '../controls/radial';
+import Selector from '../controls/selector';
 import Spin from '../controls/spin';
 
 interface Props {
     combatant: PC | (PC & Combatant);
     mode: string;
-    changeValue: (pc: PC | Combatant, field: string, value: any) => void;
-    nudgeValue: (pc: PC, field: string, delta: number) => void;
+    changeValue: (pc: any, field: string, value: any) => void;
+    nudgeValue: (pc: any, field: string, delta: number) => void;
     removePC: (pc: PC) => void;
     editPC: (pc: PC) => void;
     // Combat
@@ -82,6 +83,51 @@ export default class PCCard extends React.Component<Props> {
                                 label='altitude'
                                 display={value => value + ' ft.'}
                                 nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'altitude', delta * 5)}
+                            />
+                        );
+                        let auraDetails = null;
+                        if (combatant.aura.size > 0) {
+                            const auraStyleOptions = [
+                                {
+                                    id: 'square',
+                                    text: 'square'
+                                },
+                                {
+                                    id: 'circle',
+                                    text: 'circle'
+                                }
+                            ];
+                            auraDetails = (
+                                <div>
+                                    <Selector
+                                        options={auraStyleOptions}
+                                        selectedID={combatant.aura.style}
+                                        select={optionID => this.props.changeValue(combatant.aura, 'style', optionID)}
+                                    />
+                                    <input
+                                        type='color'
+                                        value={combatant.aura.color}
+                                        onChange={event => this.props.changeValue(combatant.aura, 'color', event.target.value)}
+                                    />
+                                </div>
+                            );
+                        }
+                        options.push(
+                            <Expander
+                                key='aura'
+                                text='aura'
+                                content={(
+                                    <div>
+                                        <Spin
+                                            source={combatant.aura}
+                                            name='size'
+                                            label='size'
+                                            display={value => value + ' ft.'}
+                                            nudgeValue={delta => this.props.nudgeValue(combatant.aura, 'size', delta * 5)}
+                                        />
+                                        {auraDetails}
+                                    </div>
+                                )}
                             />
                         );
                         options.push(<button key='mapRemove' onClick={() => this.props.mapRemove(combatant)}>remove from map</button>);

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import Utils from '../../utils/utils';
+
 import { Combatant } from '../../models/combat';
 import { Map, MapItem } from '../../models/map-folio';
 import { Monster } from '../../models/monster-group';
@@ -32,6 +34,7 @@ interface StyleData {
     top: string;
     width: string;
     height: string;
+    backgroundColor?: string;
 }
 
 export default class MapPanel extends React.Component<Props> {
@@ -69,6 +72,31 @@ export default class MapPanel extends React.Component<Props> {
                 dimensions.maxY = Math.max(dimensions.maxY, i.y + i.height - 1);
             }
         });
+
+        if (this.props.combatants) {
+            this.props.combatants.filter(c => c.aura.size > 0).forEach(c => {
+                const mi = this.props.map.items.find(i => i.id === c.id);
+                if (mi) {
+                    const sizeInSquares = c.aura.size / 5;
+                    let miniSize = 1;
+                    const m = c as Monster;
+                    if (m) {
+                        miniSize = Utils.miniSize(m.size);
+                    }
+                    const minX = mi.x - sizeInSquares;
+                    const maxX = mi.x + (miniSize - 1) + sizeInSquares;
+                    const minY = mi.y - sizeInSquares;
+                    const maxY = mi.y + (miniSize - 1) + sizeInSquares;
+
+                    if (dimensions) {
+                        dimensions.minX = Math.min(dimensions.minX, minX);
+                        dimensions.maxX = Math.max(dimensions.maxX, maxX);
+                        dimensions.minY = Math.min(dimensions.minY, minY);
+                        dimensions.maxY = Math.max(dimensions.maxY, maxY);
+                    }
+                }
+            });
+        }
 
         if (!dimensions) {
             // The map is blank
@@ -170,6 +198,35 @@ export default class MapPanel extends React.Component<Props> {
                     );
                 });
 
+            // Draw token auras
+            let auras: JSX.Element[] = [];
+            if ((this.props.mode !== 'edit') && (this.props.mode !== 'thumbnail')) {
+                auras = this.props.combatants
+                    .filter(c => c.aura.size > 0)
+                    .map(c => {
+                        const mi = this.props.map.items.find(i => i.id === c.id);
+                        if (mi) {
+                            const sizeInSquares = c.aura.size / 5;
+                            let miniSize = 1;
+                            const m = c as Monster;
+                            if (m) {
+                                miniSize = Utils.miniSize(m.size);
+                            }
+                            const dim = (sizeInSquares * 2) + miniSize;
+                            const auraStyle = this.getStyle(mi.x - sizeInSquares, mi.y - sizeInSquares, dim, dim, mapDimensions as MapDimensions);
+                            auraStyle.backgroundColor = c.aura.color;
+                            return (
+                                <div
+                                    key={c.id + ' aura'}
+                                    className={'aura ' + c.aura.style}
+                                    style={auraStyle}
+                                />
+                            );
+                        }
+                    })
+                    .filter(mt => mt !== null) as JSX.Element[];
+            }
+
             // Draw the tokens
             let tokens: JSX.Element[] = [];
             if (this.props.mode !== 'edit') {
@@ -224,6 +281,7 @@ export default class MapPanel extends React.Component<Props> {
                     <div className='grid' style={{ height: ((this.getSideLength() * mapDimensions.height) + 1) + 'px' }}>
                         {grid}
                         {tiles}
+                        {auras}
                         {tokens}
                         {dragOverlay}
                     </div>
@@ -349,7 +407,7 @@ class MapToken extends React.Component<MapTokenProps> {
         let altitudeBadge = null;
         let conditionsBadge = null;
         if (!this.props.simple) {
-            const name = this.props.combatant.displayName || this.props.combatant.name;
+            const name = this.props.combatant.displayName || this.props.combatant.name || 'combatant';
             initials = (
                 <div className='initials'>{name.split(' ').map(s => s[0])}</div>
             );

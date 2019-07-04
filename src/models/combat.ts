@@ -37,6 +37,11 @@ export interface Combatant {
     conditions: Condition[];
     altitude: number;
     concentrating: boolean;
+    aura: {
+        size: number;
+        style: 'square' | 'circle';
+        color: string;
+    };
 }
 
 export interface Notification {

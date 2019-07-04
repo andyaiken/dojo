@@ -1,9 +1,9 @@
 {
     "name": "dojo",
-    "version": "3.8.5",
+    "version": "3.8.6",
     "homepage": "https://andyaiken.github.io/dojo/",
     "dependencies": {
-        "@types/react": "^16.8.22",
+        "@types/react": "^16.8.23",
         "@types/showdown": "^1.9.3",
         "gh-pages": "^2.0.1",
         "node-sass": "^4.12.0",

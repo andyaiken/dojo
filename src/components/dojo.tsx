@@ -124,6 +124,10 @@ export default class Dojo extends React.Component<Props, State> {
                             c.concentrating = false;
                         }
 
+                        if (c.aura === undefined) {
+                            c.aura = { size: 0, style: 'circle', color: '#005080' };
+                        }
+
                         if (c.type === 'monster') {
                             const m = c as Combatant & Monster;
                             m.traits.forEach(t => {
@@ -716,6 +720,7 @@ export default class Dojo extends React.Component<Props, State> {
         combatant.hp = null;
         combatant.conditions = [];
         combatant.altitude = 0;
+        combatant.aura = { size: 0, style: 'circle', color: '#005080' };
 
         combat.combatants.push(combatant);
     }
@@ -750,6 +755,7 @@ export default class Dojo extends React.Component<Props, State> {
         combatant.hp = combatant.hpMax;
         combatant.conditions = [];
         combatant.altitude = 0;
+        combatant.aura = { size: 0, style: 'circle', color: '#005080' };
 
         combat.combatants.push(combatant);
     }
