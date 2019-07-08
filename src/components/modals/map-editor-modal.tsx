@@ -15,6 +15,7 @@ interface Props {
 interface State {
     map: Map;
     selectedTileID: string | null;
+    addingTile: boolean;
 }
 
 export default class MapEditorModal extends React.Component<Props, State> {
@@ -23,13 +24,20 @@ export default class MapEditorModal extends React.Component<Props, State> {
 
         this.state = {
             map: props.map,
-            selectedTileID: null
+            selectedTileID: null,
+            addingTile: false
         };
     }
 
     private setSelectedTileID(id: string | null) {
         this.setState({
             selectedTileID: id
+        });
+    }
+
+    private toggleAddingTile() {
+        this.setState({
+            addingTile: !this.state.addingTile
         });
     }
 
@@ -177,6 +185,11 @@ export default class MapEditorModal extends React.Component<Props, State> {
 
     public render() {
         try {
+            const addBtn = (
+                <button onClick={() => this.toggleAddingTile()}>
+                    {this.state.addingTile ? 'click somewhere on the map to add your new tile' : 'add a new tile'}
+                </button>
+            );
             let tools = null;
             if (this.state.selectedTileID) {
                 const item = this.state.map.items.find(i => i.id === this.state.selectedTileID);
@@ -191,14 +204,17 @@ export default class MapEditorModal extends React.Component<Props, State> {
                                 removeMapItem={mapItem => this.removeMapItem(mapItem)}
                                 changeValue={(source, field, value) => this.changeValue(source, field, value)}
                             />
+                            {addBtn}
                         </div>
                     );
                 }
             } else {
                 tools = (
                     <div className='tools'>
-                        <p>to add a new tile to the map, double-click on an empty grid square</p>
+                        <p>to add a new tile to the map, click on the button below</p>
                         <p>to edit an existing tile, click on it once to select it</p>
+                        <div className='divider' />
+                        {addBtn}
                     </div>
                 );
             }
@@ -210,8 +226,9 @@ export default class MapEditorModal extends React.Component<Props, State> {
                         map={this.state.map}
                         mode='edit'
                         selectedItemID={this.state.selectedTileID ? this.state.selectedTileID : undefined}
+                        showOverlay={this.state.addingTile}
                         setSelectedItemID={id => this.setSelectedTileID(id)}
-                        addMapTile={(x, y) => this.addMapTile(x, y)}
+                        gridSquareClicked={(x, y) => this.addMapTile(x, y)}
                     />
                 </div>
             );

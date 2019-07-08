@@ -16,7 +16,6 @@ interface Props {
     showOverlay: boolean;
     selectedItemID: string;
     setSelectedItemID: (itemID: string | null) => void;
-    addMapTile: (x: number, y: number) => void;
     gridSquareClicked: (x: number, y: number) => void;
 }
 
@@ -43,7 +42,6 @@ export default class MapPanel extends React.Component<Props> {
         showOverlay: false,
         selectedItemID: null,
         setSelectedItemID: null,
-        addMapTile: null,
         gridSquareClicked: null
     };
 
@@ -173,7 +171,6 @@ export default class MapPanel extends React.Component<Props> {
                                 y={y}
                                 style={gridStyle}
                                 onClick={() => this.props.setSelectedItemID(null)}
-                                onDoubleClick={(posX, posY) => this.props.addMapTile(posX, posY)}
                             />
                         );
                     }
