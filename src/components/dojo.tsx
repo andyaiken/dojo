@@ -8,7 +8,7 @@ import { Combat, Combatant, CombatSetup, Notification } from '../models/combat';
 import { Condition } from '../models/condition';
 import { Encounter, EncounterSlot, EncounterWave } from '../models/encounter';
 import { Map, MapFolio } from '../models/map-folio';
-import { Monster, MonsterGroup, Trait } from '../models/monster-group';
+import { Monster, MonsterGroup } from '../models/monster-group';
 import { Party, PC } from '../models/party';
 
 import CombatManagerScreen from './screens/combat-manager-screen';

@@ -220,6 +220,7 @@ export default class MapPanel extends React.Component<Props> {
                                 />
                             );
                         }
+                        return null;
                     })
                     .filter(mt => mt !== null) as JSX.Element[];
             }

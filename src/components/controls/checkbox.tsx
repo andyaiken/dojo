@@ -2,7 +2,7 @@ import React from 'react';
 
 interface Props {
     label: string;
-    style: 'switch' | 'button';
+    display: 'switch' | 'button';
     checked: boolean;
     changeValue: (value: boolean) => void;
     disabled: boolean;
@@ -10,7 +10,7 @@ interface Props {
 
 export default class Checkbox extends React.Component<Props> {
     public static defaultProps = {
-        style: 'switch',
+        display: 'switch',
         disabled: false
     };
 
@@ -21,7 +21,7 @@ export default class Checkbox extends React.Component<Props> {
 
     public render() {
         try {
-            let style = 'checkbox ' + this.props.style;
+            let style = 'checkbox ' + this.props.display;
             if (this.props.checked) {
                 style += ' checked';
             }
@@ -30,7 +30,7 @@ export default class Checkbox extends React.Component<Props> {
             }
 
             let toggle = null;
-            if (this.props.style === 'switch') {
+            if (this.props.display === 'switch') {
                 toggle = (
                     <div className='toggle-container'>
                         <div className='toggle'/>

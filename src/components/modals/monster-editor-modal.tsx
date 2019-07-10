@@ -1,6 +1,5 @@
 import React from 'react';
 
-import Factory from '../../utils/factory';
 import Frankenstein from '../../utils/frankenstein';
 import Utils from '../../utils/utils';
 

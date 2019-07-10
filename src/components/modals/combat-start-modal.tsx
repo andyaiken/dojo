@@ -499,6 +499,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                         </div>
                     );
                 }
+                return null;
             });
 
             return (
