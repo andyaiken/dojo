@@ -120,8 +120,8 @@ export default class Dojo extends React.Component<Props, State> {
                             c.altitude = 0;
                         }
 
-                        if (c.concentrating === undefined) {
-                            c.concentrating = false;
+                        if (c.tags === undefined) {
+                            c.tags = [];
                         }
 
                         if (c.aura === undefined) {
@@ -719,6 +719,7 @@ export default class Dojo extends React.Component<Props, State> {
         combatant.initiative = 10;
         combatant.hp = null;
         combatant.conditions = [];
+        combatant.tags = [];
         combatant.altitude = 0;
         combatant.aura = { size: 0, style: 'circle', color: '#005080' };
 
@@ -754,6 +755,7 @@ export default class Dojo extends React.Component<Props, State> {
         combatant.displayName = displayName;
         combatant.hp = combatant.hpMax;
         combatant.conditions = [];
+        combatant.tags = [];
         combatant.altitude = 0;
         combatant.aura = { size: 0, style: 'circle', color: '#005080' };
 
@@ -1010,6 +1012,9 @@ export default class Dojo extends React.Component<Props, State> {
 
                             combatant.hp = combatant.hpMax;
                             combatant.conditions = [];
+                            combatant.tags = [];
+                            combatant.altitude = 0;
+                            combatant.aura = { size: 0, style: 'circle', color: '#005080' };
 
                             if (combat) {
                                 combat.combatants.push(combatant);
@@ -1295,6 +1300,18 @@ export default class Dojo extends React.Component<Props, State> {
                 combats: this.state.combats
             });
         }
+    }
+
+    private toggleTag(combatant: Combatant, tag: string) {
+        if (combatant.tags.includes(tag)) {
+            combatant.tags = combatant.tags.filter(t => t !== tag);
+        } else {
+            combatant.tags.push(tag);
+        }
+
+        this.setState({
+            combats: this.state.combats
+        });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1634,6 +1651,7 @@ export default class Dojo extends React.Component<Props, State> {
                         endTurn={(combatant) => this.endTurn(combatant)}
                         changeHP={(combatant, hp, temp) => this.changeHP(combatant, hp, temp)}
                         close={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
+                        toggleTag={(combatant, tag) => this.toggleTag(combatant, tag)}
                     />
                 );
         }

@@ -1,10 +1,11 @@
 import React from 'react';
 
-import { Combatant } from '../../models/combat';
+import { COMBAT_TAGS, Combatant } from '../../models/combat';
 import { PC } from '../../models/party';
 
 import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
+import ControlRow from '../controls/control-row';
 import Expander from '../controls/expander';
 import Radial from '../controls/radial';
 import Selector from '../controls/selector';
@@ -26,6 +27,7 @@ interface Props {
     mapMove: (combatant: Combatant, dir: string) => void;
     mapRemove: (combatant: Combatant) => void;
     removeCombatant: (combatant: Combatant) => void;
+    toggleTag: (combatant: Combatant, tag: string) => void;
 }
 
 export default class PCCard extends React.Component<Props> {
@@ -39,7 +41,8 @@ export default class PCCard extends React.Component<Props> {
         mapAdd: null,
         mapMove: null,
         mapRemove: null,
-        removeCombatant: null
+        removeCombatant: null,
+        toggleTag: null
     };
 
     public render() {
@@ -171,11 +174,17 @@ export default class PCCard extends React.Component<Props> {
                     options.push(<ConfirmButton key='remove' text='remove from encounter' callback={() => this.props.removeCombatant(combatant)} />);
                 }
                 options.push(
-                    <Checkbox
-                        key='concentrating'
-                        label='concentrating'
-                        checked={combatant.concentrating}
-                        changeValue={value => this.props.changeValue(combatant, 'concentrating', value)}
+                    <ControlRow
+                        key='tags'
+                        controls={COMBAT_TAGS.map(tag =>
+                            <Checkbox
+                                key={tag}
+                                label={tag}
+                                display='button'
+                                checked={combatant.tags.includes(tag)}
+                                changeValue={value => this.props.toggleTag(combatant, tag)}
+                            />
+                        )}
                     />
                 );
             }

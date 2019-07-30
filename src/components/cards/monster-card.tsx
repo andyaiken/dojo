@@ -2,7 +2,7 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { Combat, Combatant } from '../../models/combat';
+import { Combat, COMBAT_TAGS, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
 import { Monster, MonsterGroup, Trait } from '../../models/monster-group';
@@ -57,6 +57,7 @@ interface Props {
     editCondition: (combatant: Combatant, condition: Condition) => void;
     removeCondition: (combatant: Combatant, conditionID: string) => void;
     nudgeConditionValue: (condition: Condition, field: string, delta: number) => void;
+    toggleTag: (combatant: Combatant, tag: string) => void;
 }
 
 interface State {
@@ -95,7 +96,8 @@ export default class MonsterCard extends React.Component<Props, State> {
         addCondition: null,
         editCondition: null,
         removeCondition: null,
-        nudgeConditionValue: null
+        nudgeConditionValue: null,
+        toggleTag: null
     };
 
     constructor(props: Props) {
@@ -414,11 +416,17 @@ export default class MonsterCard extends React.Component<Props, State> {
                         options.push(<ConfirmButton key='remove' text='remove from encounter' callback={() => this.props.removeCombatant(combatant)} />);
                     }
                     options.push(
-                        <Checkbox
-                            key='concentrating'
-                            label='concentrating'
-                            checked={combatant.concentrating}
-                            changeValue={value => this.props.changeValue(combatant, 'concentrating', value)}
+                        <ControlRow
+                            key='tags'
+                            controls={COMBAT_TAGS.map(tag =>
+                                <Checkbox
+                                    key={tag}
+                                    label={tag}
+                                    display='button'
+                                    checked={combatant.tags.includes(tag)}
+                                    changeValue={value => this.props.toggleTag(combatant, tag)}
+                                />
+                            )}
                         />
                     );
                     options.push(

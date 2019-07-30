@@ -39,6 +39,7 @@ interface Props {
     changeHP: (combatant: Combatant & Monster, hp: number, temp: number) => void;
     changeValue: (source: {}, type: string, value: any) => void;
     nudgeValue: (source: {}, type: string, delta: number) => void;
+    toggleTag: (combatant: Combatant, tag: string) => void;
 }
 
 interface State {
@@ -93,6 +94,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                         mapMove={(c, dir) => this.props.mapMove(c as Combatant & PC, dir)}
                         mapRemove={c => this.props.mapRemove(c as Combatant & PC)}
                         endTurn={c => this.props.endTurn(c as Combatant & PC)}
+                        toggleTag={(c, tag) => this.props.toggleTag(c, tag)}
                     />
                 );
             case 'monster':
@@ -117,6 +119,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                         mapRemove={c => this.props.mapRemove(c as Combatant & Monster)}
                         endTurn={(c) => this.props.endTurn(c as Combatant & Monster)}
                         changeHP={(c, hp, temp) => this.props.changeHP(c as Combatant & Monster, hp, temp)}
+                        toggleTag={(c, tag) => this.props.toggleTag(c, tag)}
                     />
                 );
             default:
@@ -657,11 +660,11 @@ class PCRow extends React.Component<PCRowProps> {
                 );
             }
         }
-        if (this.props.combatant.concentrating) {
+        this.props.combatant.tags.forEach(tag => {
             notes.push(
-                <Note key='concentrating' white={true} content='concentrating' />
+                <Note key={tag} white={true} content={Utils.getTagDescription(tag)} />
             );
-        }
+        });
 
         return (
             <div className={style} onClick={e => this.onClick(e)}>
@@ -769,11 +772,11 @@ class MonsterRow extends React.Component<MonsterRowProps> {
                 );
             }
         }
-        if (this.props.combatant.concentrating) {
+        this.props.combatant.tags.forEach(tag => {
             notes.push(
-                <Note key='concentrating' white={true} content='concentrating' />
+                <Note key={tag} white={true} content={Utils.getTagDescription(tag)} />
             );
-        }
+        });
 
         return (
             <div className={style} onClick={e => this.onClick(e)}>

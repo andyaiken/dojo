@@ -35,8 +35,8 @@ export interface Combatant {
     initiative: number | null;
     hp: number | null;
     conditions: Condition[];
+    tags: string[];
     altitude: number;
-    concentrating: boolean;
     aura: {
         size: number;
         style: 'square' | 'circle';
@@ -50,3 +50,11 @@ export interface Notification {
     data: Condition | Trait | null;
     combatant: (Combatant & Monster) | null;
 }
+
+export const COMBAT_TAGS = [
+    'conc',
+    'bane',
+    'bless',
+    'hex',
+    'prone'
+];

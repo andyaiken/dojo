@@ -602,4 +602,19 @@ export default class Utils {
 
         return monsterNames;
     }
+
+    public static getTagDescription(tag: string) {
+        switch (tag) {
+            case 'conc':
+                return 'concentrating';
+            case 'bane':
+                return 'baned (subtract d4 from attack rolls and saving throws)';
+            case 'bless':
+                return 'blessed (add d4 to attack rolls and saving throws)';
+            case 'hex':
+                return 'hexed (disadvantage on one saving throw; take additional damage on hit)';
+            default:
+                return tag;
+        }
+    }
 }
