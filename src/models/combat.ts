@@ -39,7 +39,7 @@ export interface Combatant {
     altitude: number;
     aura: {
         size: number;
-        style: 'square' | 'circle';
+        style: 'square' | 'rounded' | 'circle';
         color: string;
     };
 }

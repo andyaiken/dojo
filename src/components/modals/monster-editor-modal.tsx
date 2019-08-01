@@ -5,20 +5,22 @@ import Utils from '../../utils/utils';
 
 import { CATEGORY_TYPES, Monster, MonsterGroup, SIZE_TYPES, Trait, TRAIT_TYPES } from '../../models/monster-group';
 
+import FilterCard from '../cards/filter-card';
 import MonsterCard from '../cards/monster-card';
 import Checkbox from '../controls/checkbox';
 import Dropdown from '../controls/dropdown';
+import Expander from '../controls/expander';
 import Selector from '../controls/selector';
 import Spin from '../controls/spin';
 import AbilityScorePanel from '../panels/ability-score-panel';
 import TraitsPanel from '../panels/traits-panel';
 
-import arrow from '../../resources/images/down-arrow.svg';
+import Note from '../panels/note';
 
 interface Props {
     monster: Monster;
     library: MonsterGroup[];
-    showMonsters: boolean;
+    showSidebar: boolean;
 }
 
 interface State {
@@ -26,7 +28,8 @@ interface State {
     page: 'overview' | 'abilities' | 'cbt-stats' | 'actions';
     showFilter: boolean;
     helpSection: string;
-    filter: {
+    sidebar: 'similar' | 'scratchpad';
+    similarFilter: {
         size: boolean,
         type: boolean,
         subtype: boolean,
@@ -34,6 +37,14 @@ interface State {
         challenge: boolean,
         text: string
     };
+    scratchpadFilter: {
+        name: string,
+        challengeMin: number;
+        challengeMax: number;
+        category: string;
+        size: string;
+    };
+    scratchpadList: Monster[];
 }
 
 export default class MonsterEditorModal extends React.Component<Props, State> {
@@ -44,14 +55,23 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             page: 'overview',
             showFilter: false,
             helpSection: 'speed',
-            filter: {
+            sidebar: 'similar',
+            similarFilter: {
                 size: true,
                 type: true,
                 subtype: false,
                 alignment: false,
                 challenge: true,
                 text: ''
-            }
+            },
+            scratchpadFilter: {
+                name: '',
+                challengeMin: 0,
+                challengeMax: 5,
+                category: 'all types',
+                size: 'all sizes'
+            },
+            scratchpadList: []
         };
     }
 
@@ -77,17 +97,35 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
     private toggleMatch(type: 'size' | 'type' | 'subtype' | 'alignment' | 'challenge') {
         // eslint-disable-next-line
-        this.state.filter[type] = !this.state.filter[type];
+        this.state.similarFilter[type] = !this.state.similarFilter[type];
         this.setState({
-            filter: this.state.filter
+            similarFilter: this.state.similarFilter
         });
     }
 
     private setFilterText(value: string) {
         // eslint-disable-next-line
-        this.state.filter.text = value;
+        this.state.similarFilter.text = value;
         this.setState({
-            filter: this.state.filter
+            similarFilter: this.state.similarFilter
+        });
+    }
+
+    private addToScratchpadList(monster: Monster) {
+        // eslint-disable-next-line
+        this.state.scratchpadList.push(monster);
+        // eslint-disable-next-line
+        Utils.sort(this.state.scratchpadList);
+        this.setState({
+            scratchpadList: this.state.scratchpadList
+        });
+    }
+
+    private removeFromScratchpadList(monster: Monster) {
+        const index = this.state.scratchpadList.indexOf(monster);
+        this.state.scratchpadList.splice(index, 1);
+        this.setState({
+            scratchpadList: this.state.scratchpadList
         });
     }
 
@@ -119,23 +157,23 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                     match = false;
                 }
 
-                if (this.state.filter.size && (this.state.monster.size !== monster.size)) {
+                if (this.state.similarFilter.size && (this.state.monster.size !== monster.size)) {
                     match = false;
                 }
 
-                if (this.state.filter.type && (this.state.monster.category !== monster.category)) {
+                if (this.state.similarFilter.type && (this.state.monster.category !== monster.category)) {
                     match = false;
                 }
 
-                if (this.state.filter.subtype && (this.state.monster.tag !== monster.tag)) {
+                if (this.state.similarFilter.subtype && (this.state.monster.tag !== monster.tag)) {
                     match = false;
                 }
 
-                if (this.state.filter.alignment && (this.state.monster.alignment !== monster.alignment)) {
+                if (this.state.similarFilter.alignment && (this.state.monster.alignment !== monster.alignment)) {
                     match = false;
                 }
 
-                if (this.state.filter.challenge && (this.state.monster.challenge !== monster.challenge)) {
+                if (this.state.similarFilter.challenge && (this.state.monster.challenge !== monster.challenge)) {
                     match = false;
                 }
 
@@ -216,6 +254,61 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         this.setState({
             monster: this.state.monster
         });
+    }
+
+    private changeFilterValue(type: 'name' | 'challengeMin' | 'challengeMax' | 'category' | 'size', value: any) {
+        // eslint-disable-next-line
+        this.state.scratchpadFilter[type] = value;
+        this.setState({
+            scratchpadFilter: this.state.scratchpadFilter
+        });
+    }
+
+    private nudgeFilterValue(type: 'challengeMin' | 'challengeMax', delta: number) {
+        const value = Utils.nudgeChallenge(this.state.scratchpadFilter[type], delta);
+        this.changeFilterValue(type, value);
+    }
+
+    private resetFilter() {
+        this.setState({
+            scratchpadFilter: {
+                name: '',
+                challengeMin: 0,
+                challengeMax: 5,
+                category: 'all types',
+                size: 'all sizes'
+            }
+        });
+    }
+
+    private matchMonster(monster: Monster) {
+        if (monster.challenge < this.state.scratchpadFilter.challengeMin) {
+            return false;
+        }
+
+        if (monster.challenge > this.state.scratchpadFilter.challengeMax) {
+            return false;
+        }
+
+        if (this.state.scratchpadFilter.name !== '') {
+            if (!Utils.match(this.state.scratchpadFilter.name, monster.name)) {
+                return false;
+            }
+        }
+
+        if (this.state.scratchpadFilter.category !== 'all types') {
+            if (monster.category !== this.state.scratchpadFilter.category) {
+                return false;
+            }
+        }
+
+        if (this.state.scratchpadFilter.size !== 'all sizes') {
+            if (monster.size !== this.state.scratchpadFilter.size) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -439,101 +532,17 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         );
     }
 
-    private getFilterCard(monsters: Monster[]) {
-        const criteria: string[] = [];
-        if (this.state.filter.size) {
-            criteria.push('size');
-        }
-        if (this.state.filter.type) {
-            criteria.push('type');
-        }
-        if (this.state.filter.subtype) {
-            criteria.push('subtype');
-        }
-        if (this.state.filter.alignment) {
-            criteria.push('alignment');
-        }
-        if (this.state.filter.challenge) {
-            criteria.push('challenge rating');
-        }
-        const criteriaText = (criteria.length > 0) ? 'based on ' + criteria.join(', ') : 'no criteria specified';
-        const similar = (
-            <div className='section'>
-                {monsters.length} similar monsters ({criteriaText})
-            </div>
-        );
-
-        let filterContent = null;
-        if (this.state.showFilter) {
-            filterContent = (
-                <div>
-                    <Checkbox
-                        label={'size ' + this.state.monster.size}
-                        checked={this.state.filter.size}
-                        changeValue={value => this.toggleMatch('size')}
-                    />
-                    <Checkbox
-                        label={'type ' + this.state.monster.category}
-                        checked={this.state.filter.type}
-                        changeValue={value => this.toggleMatch('type')}
-                    />
-                    <Checkbox
-                        label={this.state.monster.tag ? 'subtype ' + this.state.monster.tag : 'subtype'}
-                        checked={this.state.filter.subtype}
-                        disabled={!this.state.monster.tag}
-                        changeValue={value => this.toggleMatch('subtype')}
-                    />
-                    <Checkbox
-                        label={this.state.monster.alignment ? 'alignment ' + this.state.monster.alignment : 'alignment'}
-                        checked={this.state.filter.alignment}
-                        disabled={!this.state.monster.alignment}
-                        changeValue={value => this.toggleMatch('alignment')}
-                    />
-                    <Checkbox
-                        label={'challenge rating ' + Utils.challenge(this.state.monster.challenge)}
-                        checked={this.state.filter.challenge}
-                        changeValue={value => this.toggleMatch('challenge')}
-                    />
-                    <div className='divider' />
-                    <button className={monsters.length < 2 ? 'disabled' : ''} onClick={() => this.spliceMonsters(monsters)}>build random monster</button>
-                    <div className='divider' />
-                    {similar}
-                </div>
-            );
-        } else {
-            filterContent = (
-                <div>
-                    {similar}
-                </div>
-            );
-        }
-
-        return (
-            <div className='section'>
-                <div className='card'>
-                    <div className='heading'>
-                        <div className='title'>similar monsters</div>
-                        <img className={this.state.showFilter ? 'image rotate' : 'image'} src={arrow} alt='arrow' onClick={() => this.toggleFilter()} />
-                    </div>
-                    <div className='card-content'>
-                        {filterContent}
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     private getMonsterCards(monsters: Monster[]) {
         const sorted = Utils.sort(monsters);
         const monsterCards = sorted.map(m => {
-            const showMonster = m.traits.some((t: Trait) => Utils.match(this.state.filter.text, t.name));
+            const showMonster = m.traits.some((t: Trait) => Utils.match(this.state.similarFilter.text, t.name));
             if (showMonster) {
                 return (
                     <div className='section' key={m.id}>
                         <MonsterCard
                             combatant={m}
                             mode={'template ' + this.state.page}
-                            filter={this.state.filter.text}
+                            filter={this.state.similarFilter.text}
                             copyTrait={trait => this.copyTrait(trait)}
                         />
                     </div>
@@ -542,6 +551,22 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 return null;
             }
         }).filter(m => !!m);
+
+        if (monsterCards.length === 0) {
+            let info = '';
+            switch (this.state.sidebar) {
+                case 'similar':
+                    info = 'there are no monsters in your library which match the above criteria.';
+                    break;
+                case 'scratchpad':
+                    info = 'your scratchpad list is empty; you can add monsters to it to see their stats here.';
+                    break;
+            }
+
+            return (
+                <Note content={info} />
+            );
+        }
 
         return monsterCards;
     }
@@ -570,8 +595,15 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             ];
 
             let monsters: Monster[] = [];
-            if (this.props.showMonsters) {
-                monsters = this.getMonsters();
+            if (this.props.showSidebar) {
+                switch (this.state.sidebar) {
+                    case 'similar':
+                        monsters = this.getMonsters();
+                        break;
+                    case 'scratchpad':
+                        monsters = this.state.scratchpadList;
+                        break;
+                }
             }
 
             let content = null;
@@ -717,7 +749,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             }
 
             let help = null;
-            if (this.props.showMonsters && (monsters.length > 1)) {
+            if (this.props.showSidebar && (monsters.length > 1)) {
                 let selector = null;
                 if (this.getHelpOptionsForPage(this.state.page).length > 1) {
                     const options = this.getHelpOptionsForPage(this.state.page).map(s => {
@@ -739,40 +771,148 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 help = (
                     <div className='monster-help'>
                         <div className='divider' />
-                        <div className='subheading'>information from similar monsters</div>
+                        <div className='heading'>information from sidebar monsters</div>
                         {selector}
                         {this.getHelpSection(monsters)}
                     </div>
                 );
             }
 
-            let monsterList = null;
-            if (this.props.showMonsters) {
-                let searchBox = null;
-                if ((this.state.page === 'actions') && (monsters.length > 0)) {
-                    searchBox = (
-                        <input
-                            type='text'
-                            placeholder='search for traits and actions'
-                            value={this.state.filter.text}
-                            onChange={event => this.setFilterText(event.target.value)}
-                        />
-                    );
+            let sidebar = null;
+            if (this.props.showSidebar) {
+                let sidebarContent = null;
+                switch (this.state.sidebar) {
+                    case 'similar':
+                        sidebarContent = (
+                            <Expander
+                                text='similarity criteria'
+                                content={
+                                    <div>
+                                        <Checkbox
+                                            label={'size ' + this.state.monster.size}
+                                            checked={this.state.similarFilter.size}
+                                            changeValue={value => this.toggleMatch('size')}
+                                        />
+                                        <Checkbox
+                                            label={'type ' + this.state.monster.category}
+                                            checked={this.state.similarFilter.type}
+                                            changeValue={value => this.toggleMatch('type')}
+                                        />
+                                        <Checkbox
+                                            label={this.state.monster.tag ? 'subtype ' + this.state.monster.tag : 'subtype'}
+                                            checked={this.state.similarFilter.subtype}
+                                            disabled={!this.state.monster.tag}
+                                            changeValue={value => this.toggleMatch('subtype')}
+                                        />
+                                        <Checkbox
+                                            label={this.state.monster.alignment ? 'alignment ' + this.state.monster.alignment : 'alignment'}
+                                            checked={this.state.similarFilter.alignment}
+                                            disabled={!this.state.monster.alignment}
+                                            changeValue={value => this.toggleMatch('alignment')}
+                                        />
+                                        <Checkbox
+                                            label={'challenge rating ' + Utils.challenge(this.state.monster.challenge)}
+                                            checked={this.state.similarFilter.challenge}
+                                            changeValue={value => this.toggleMatch('challenge')}
+                                        />
+                                    </div>
+                                }
+                            />
+                        );
+                        break;
+                    case 'scratchpad':
+                        {
+                            let searchResults: Monster[] = [];
+                            this.props.library.forEach(group => {
+                                group.monsters.forEach(m => {
+                                    if (!monsters.includes(m) && this.matchMonster(m)) {
+                                        searchResults.push(m);
+                                    }
+                                });
+                            });
+                            Utils.sort(searchResults);
+                            if (searchResults.length > 10) {
+                                searchResults = searchResults.slice(0, 10);
+                            }
+                            let resultsRows = searchResults.map(m =>
+                                <button key={m.id} onClick={() => this.addToScratchpadList(m)}>{m.name}</button>
+                            );
+                            if (searchResults.length === 0) {
+                                resultsRows = [(
+                                    <Note key='none' content='no monsters found' />
+                                )];
+                            }
+                            let removeSection = null;
+                            if (monsters.length > 0) {
+                                const deleteRows = monsters.map(m =>
+                                    <button key={m.id} onClick={() => this.removeFromScratchpadList(m)}>{m.name}</button>
+                                );
+                                removeSection = (
+                                    <Expander
+                                        text='remove monsters from the list'
+                                        content={
+                                            <div>
+                                                {deleteRows}
+                                            </div>
+                                        }
+                                    />
+                                );
+                            }
+                            sidebarContent = (
+                                <div>
+                                    <Expander
+                                        text='add monsters to the list'
+                                        content={
+                                            <div>
+                                                <FilterCard
+                                                    filter={this.state.scratchpadFilter}
+                                                    changeValue={(type, value) => this.changeFilterValue(type, value)}
+                                                    nudgeValue={(type, delta) => this.nudgeFilterValue(type, delta)}
+                                                    resetFilter={() => this.resetFilter()}
+                                                />
+                                                {resultsRows}
+                                            </div>
+                                        }
+                                    />
+                                    {removeSection}
+                                </div>
+                            );
+                        }
+                        break;
                 }
-                monsterList = (
+                const sidebarOptions = [
+                    {
+                        id: 'similar',
+                        text: 'similar'
+                    },
+                    {
+                        id: 'scratchpad',
+                        text: 'scratchpad'
+                    }
+                ];
+                sidebar = (
                     <div className='columns small-4 medium-4 large-4 scrollable wide-column'>
-                        {this.getFilterCard(monsters)}
-                        {searchBox}
+                        <Selector
+                            tabs={true}
+                            options={sidebarOptions}
+                            selectedID={this.state.sidebar}
+                            select={optionID => this.setState({sidebar: optionID as 'similar' | 'scratchpad'})}
+                        />
+                        {sidebarContent}
+                        <button className={monsters.length < 2 ? 'disabled' : ''} onClick={() => this.spliceMonsters(monsters)}>
+                            build random monster
+                        </button>
+                        <div className='divider'/>
                         {this.getMonsterCards(monsters)}
                     </div>
                 );
             }
 
             return (
-                <div className='row' style={{ height: '100%', margin: '0 -15px' }}>
+                <div className='row' style={{ height: '100%', margin: '0 -5px' }}>
                     <div
                         className={
-                            this.props.showMonsters
+                            this.props.showSidebar
                             ? 'columns small-8 medium-8 large-8 scrollable wide-column'
                             : 'columns small-12 medium-12 large-12 scrollable wide-column'
                         }
@@ -789,7 +929,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                             {help}
                         </div>
                     </div>
-                    {monsterList}
+                    {sidebar}
                 </div>
             );
         } catch (e) {

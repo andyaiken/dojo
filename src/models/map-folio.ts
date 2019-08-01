@@ -18,6 +18,7 @@ export interface MapItem {
     width: number;
     height: number;
     terrain: string | null;
+    style: 'square' | 'rounded' | 'circle' | null;
 }
 
 export const TERRAIN_TYPES = [

@@ -354,6 +354,10 @@ export default class MonsterCard extends React.Component<Props, State> {
                                         text: 'square'
                                     },
                                     {
+                                        id: 'rounded',
+                                        text: 'rounded'
+                                    },
+                                    {
                                         id: 'circle',
                                         text: 'circle'
                                     }

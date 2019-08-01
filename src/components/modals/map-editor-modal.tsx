@@ -50,7 +50,8 @@ export default class MapEditorModal extends React.Component<Props, State> {
 
         this.setState({
             map: this.state.map,
-            selectedTileID: tile.id
+            selectedTileID: tile.id,
+            addingTile: false
         });
     }
 
@@ -187,7 +188,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
         try {
             const addBtn = (
                 <button onClick={() => this.toggleAddingTile()}>
-                    {this.state.addingTile ? 'click somewhere on the map to add your new tile' : 'add a new tile'}
+                    {this.state.addingTile ? 'click somewhere on the map to add your new tile, or click here to cancel' : 'add a new tile'}
                 </button>
             );
             let tools = null;

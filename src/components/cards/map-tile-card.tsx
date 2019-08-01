@@ -4,6 +4,7 @@ import { MapItem, TERRAIN_TYPES } from '../../models/map-folio';
 
 import Dropdown from '../controls/dropdown';
 import Radial from '../controls/radial';
+import Selector from '../controls/selector';
 
 interface Props {
     tile: MapItem;
@@ -18,6 +19,10 @@ export default class MapTileCard extends React.Component<Props> {
     public render() {
         try {
             const terrainOptions = TERRAIN_TYPES.map(t => {
+                return { id: t, text: t };
+            });
+
+            const styleOptions = ['square', 'rounded', 'circle'].map(t => {
                 return { id: t, text: t };
             });
 
@@ -37,6 +42,13 @@ export default class MapTileCard extends React.Component<Props> {
                             placeholder='select terrain'
                             selectedID={this.props.tile.terrain ? this.props.tile.terrain : undefined}
                             select={optionID => this.props.changeValue(this.props.tile, 'terrain', optionID)}
+                        />
+                        <div className='divider' />
+                        <div className='subheading'>style</div>
+                        <Selector
+                            options={styleOptions}
+                            selectedID={this.props.tile.style}
+                            select={optionID => this.props.changeValue(this.props.tile, 'style', optionID)}
                         />
                         <div className='divider' />
                         <div className='subheading'>move</div>

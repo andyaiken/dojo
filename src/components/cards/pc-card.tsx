@@ -96,6 +96,10 @@ export default class PCCard extends React.Component<Props> {
                                     text: 'square'
                                 },
                                 {
+                                    id: 'rounded',
+                                    text: 'rounded'
+                                },
+                                {
                                     id: 'circle',
                                     text: 'circle'
                                 }

@@ -143,7 +143,8 @@ export default class Factory {
             y: 0,
             width: 4,
             height: 4,
-            terrain: null
+            terrain: null,
+            style: null
         };
     }
 

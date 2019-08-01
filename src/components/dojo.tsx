@@ -111,6 +111,16 @@ export default class Dojo extends React.Component<Props, State> {
                     data.selectedMapFolioID = null;
                 }
 
+                data.mapFolios.forEach(folio => {
+                    folio.maps.forEach(map => {
+                        map.items.forEach(item => {
+                            if (item.style === undefined) {
+                                item.style = null;
+                            }
+                        });
+                    });
+                });
+
                 data.combats.forEach(combat => {
                     if (!combat.notifications) {
                         combat.notifications = [];
@@ -125,7 +135,7 @@ export default class Dojo extends React.Component<Props, State> {
                         }
 
                         if (c.aura === undefined) {
-                            c.aura = { size: 0, style: 'circle', color: '#005080' };
+                            c.aura = { size: 0, style: 'rounded', color: '#005080' };
                         }
 
                         if (c.type === 'monster') {
@@ -342,7 +352,7 @@ export default class Dojo extends React.Component<Props, State> {
             modal: {
                 type: 'monster',
                 monster: copy,
-                showMonsters: false
+                showSidebar: false
             }
         });
     }
@@ -370,9 +380,9 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
-    private toggleShowSimilarMonsters() {
+    private toggleShowSidebar() {
         // eslint-disable-next-line
-        this.state.modal.showMonsters = !this.state.modal.showMonsters;
+        this.state.modal.showSidebar = !this.state.modal.showSidebar;
         this.setState({
             modal: this.state.modal
         });
@@ -721,7 +731,7 @@ export default class Dojo extends React.Component<Props, State> {
         combatant.conditions = [];
         combatant.tags = [];
         combatant.altitude = 0;
-        combatant.aura = { size: 0, style: 'circle', color: '#005080' };
+        combatant.aura = { size: 0, style: 'rounded', color: '#005080' };
 
         combat.combatants.push(combatant);
     }
@@ -757,7 +767,7 @@ export default class Dojo extends React.Component<Props, State> {
         combatant.conditions = [];
         combatant.tags = [];
         combatant.altitude = 0;
-        combatant.aura = { size: 0, style: 'circle', color: '#005080' };
+        combatant.aura = { size: 0, style: 'rounded', color: '#005080' };
 
         combat.combatants.push(combatant);
     }
@@ -1014,7 +1024,7 @@ export default class Dojo extends React.Component<Props, State> {
                             combatant.conditions = [];
                             combatant.tags = [];
                             combatant.altitude = 0;
-                            combatant.aura = { size: 0, style: 'circle', color: '#005080' };
+                            combatant.aura = { size: 0, style: 'rounded', color: '#005080' };
 
                             if (combat) {
                                 combat.combatants.push(combatant);
@@ -1711,17 +1721,17 @@ export default class Dojo extends React.Component<Props, State> {
                         <MonsterEditorModal
                             monster={this.state.modal.monster}
                             library={this.state.library}
-                            showMonsters={this.state.modal.showMonsters}
+                            showSidebar={this.state.modal.showSidebar}
                         />
                     );
                     modalAllowScroll = false;
                     modalButtons.left = [
                         (
                             <Checkbox
-                                key='similar'
-                                label='similar monsters'
-                                checked={this.state.modal.showMonsters}
-                                changeValue={() => this.toggleShowSimilarMonsters()}
+                                key='sidebar'
+                                label='advanced tools'
+                                checked={this.state.modal.showSidebar}
+                                changeValue={() => this.toggleShowSidebar()}
                             />
                         )
                     ];

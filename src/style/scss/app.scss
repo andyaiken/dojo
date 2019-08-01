@@ -1153,6 +1153,22 @@ body,
         background-size: 25px;
     }
 
+    &.square {
+        border-radius: 0;
+    }
+
+    &.rounded {
+        border-radius: 25px;
+
+        .thumbnail & {
+            border-radius: 5px;
+        }
+    }
+
+    &.circle {
+        border-radius: 50%;
+    }
+
     &.selected {
         border-color: $highlight;
     }
@@ -1169,7 +1185,11 @@ body,
     pointer-events: none;
 
     &.square {
-        border-radius: 15px;
+        border-radius: 0;
+    }
+
+    &.rounded {
+        border-radius: 25px;
     }
 
     &.circle {
