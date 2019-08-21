@@ -55,6 +55,5 @@ export const COMBAT_TAGS = [
     'conc',
     'bane',
     'bless',
-    'hex',
-    'prone'
+    'hex'
 ];

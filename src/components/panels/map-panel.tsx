@@ -418,19 +418,19 @@ class MapToken extends React.Component<MapTokenProps> {
 
             if (this.props.combatant.altitude > 0) {
                 altitudeBadge = (
-                    <div className='badge altitude'>&#9206;</div>
+                    <div className='badge altitude' title='above the map'>&#9206;</div>
                 );
             }
 
             if (this.props.combatant.altitude < 0) {
                 altitudeBadge = (
-                    <div className='badge altitude'>&#9207;</div>
+                    <div className='badge altitude' title='below the map'>&#9207;</div>
                 );
             }
 
             if ((this.props.combatant.conditions) && (this.props.combatant.conditions.length > 0)) {
                 conditionsBadge = (
-                    <div className='badge'>&#9670;</div>
+                    <div className='badge' title='affected by conditions'>&#9670;</div>
                 );
             }
         }

@@ -30,7 +30,11 @@ interface Props {
     toggleTag: (combatant: Combatant, tag: string) => void;
 }
 
-export default class PCCard extends React.Component<Props> {
+interface State {
+    combatMode: string;
+}
+
+export default class PCCard extends React.Component<Props, State> {
     public static defaultProps = {
         removePC: null,
         editPC: null,
@@ -44,6 +48,185 @@ export default class PCCard extends React.Component<Props> {
         removeCombatant: null,
         toggleTag: null
     };
+
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            combatMode: 'main'
+        };
+    }
+
+    private setCombatMode(mode: string) {
+        this.setState({
+            combatMode: mode
+        });
+    }
+
+    private getCombatControls() {
+        const combatant = this.props.combatant as Combatant;
+
+        const options = [];
+
+        const combatModes = ['main', 'map', 'adv'].map(m => {
+            return {
+                id: m,
+                text: m
+            };
+        });
+        if (this.props.mode.indexOf('tactical') === -1) {
+            // No combat map, so remove the map option
+            combatModes.splice(1, 1);
+        }
+        options.push(
+            <Selector
+                key='selector'
+                options={combatModes}
+                selectedID={this.state.combatMode}
+                select={option => this.setCombatMode(option)}
+            />
+        );
+        options.push(<div key='selector-sep' className='divider' />);
+
+        switch (this.state.combatMode) {
+            case 'main':
+                if (!combatant.pending && combatant.active && !combatant.defeated) {
+                    if (combatant.current) {
+                        options.push(<button key='endTurn' onClick={() => this.props.endTurn(combatant)}>end turn</button>);
+                        options.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(combatant)}>mark as defeated and end turn</button>);
+                    } else {
+                        options.push(<button key='makeCurrent' onClick={() => this.props.makeCurrent(combatant)}>start turn</button>);
+                        options.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(combatant)}>mark as defeated</button>);
+                    }
+                }
+                if (!combatant.pending && !combatant.active && combatant.defeated) {
+                    options.push(<button key='makeActive' onClick={() => this.props.makeActive(combatant)}>mark as active</button>);
+                }
+                options.push(<div key='tag-sep' className='divider' />);
+                options.push(
+                    <ControlRow
+                        key='tags'
+                        controls={COMBAT_TAGS.map(tag =>
+                            <Checkbox
+                                key={tag}
+                                label={tag}
+                                display='button'
+                                checked={combatant.tags.includes(tag)}
+                                changeValue={value => this.props.toggleTag(combatant, tag)}
+                            />
+                        )}
+                    />
+                );
+                break;
+            case 'map':
+                if (this.props.mode.indexOf('on-map') !== -1) {
+                    options.push(
+                        <div key='mapMove' className='section centered'>
+                            <Radial
+                                direction='eight'
+                                click={dir => this.props.mapMove(combatant, dir)}
+                            />
+                        </div>
+                    );
+                    options.push(<div key='move-sep' className='divider' />);
+                    options.push(
+                        <Spin
+                            key='altitude'
+                            source={this.props.combatant}
+                            name='altitude'
+                            label='altitude'
+                            display={value => value + ' ft.'}
+                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'altitude', delta * 5)}
+                        />
+                    );
+                    let auraDetails = null;
+                    if (combatant.aura.size > 0) {
+                        const auraStyleOptions = [
+                            {
+                                id: 'square',
+                                text: 'square'
+                            },
+                            {
+                                id: 'rounded',
+                                text: 'rounded'
+                            },
+                            {
+                                id: 'circle',
+                                text: 'circle'
+                            }
+                        ];
+                        auraDetails = (
+                            <div>
+                                <Selector
+                                    options={auraStyleOptions}
+                                    selectedID={combatant.aura.style}
+                                    select={optionID => this.props.changeValue(combatant.aura, 'style', optionID)}
+                                />
+                                <input
+                                    type='color'
+                                    value={combatant.aura.color}
+                                    onChange={event => this.props.changeValue(combatant.aura, 'color', event.target.value)}
+                                />
+                            </div>
+                        );
+                    }
+                    options.push(
+                        <Expander
+                            key='aura'
+                            text='aura'
+                            content={(
+                                <div>
+                                    <Spin
+                                        source={combatant.aura}
+                                        name='size'
+                                        label='size'
+                                        display={value => value + ' ft.'}
+                                        nudgeValue={delta => this.props.nudgeValue(combatant.aura, 'size', delta * 5)}
+                                    />
+                                    {auraDetails}
+                                </div>
+                            )}
+                        />
+                    );
+                    options.push(<button key='mapRemove' onClick={() => this.props.mapRemove(combatant)}>remove from map</button>);
+                }
+                if (this.props.mode.indexOf('off-map') !== -1) {
+                    options.push(<button key='mapAdd' onClick={() => this.props.mapAdd(combatant)}>add to map</button>);
+                }
+                break;
+            case 'adv':
+                if (!combatant.current) {
+                    options.push(<ConfirmButton key='remove' text='remove from encounter' callback={() => this.props.removeCombatant(combatant)} />);
+                }
+                if (!combatant.pending) {
+                    options.push(
+                        <Expander
+                            key='init'
+                            text='change initiative score'
+                            content={(
+                                <div>
+                                    <Spin
+                                        source={this.props.combatant}
+                                        name='initiative'
+                                        label='initiative'
+                                        nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
+                                    />
+                                </div>
+                            )}
+                        />
+                    );
+                }
+                break;
+        }
+
+        return (
+            <div>
+                <div className='combat-options-panel'>
+                    {options}
+                </div>
+                <div className='divider' />
+            </div>
+        );
+    }
 
     public render() {
         try {
@@ -65,132 +248,10 @@ export default class PCCard extends React.Component<Props> {
                 }
                 options.push(<ConfirmButton key='remove' text='delete pc' callback={() => this.props.removePC(this.props.combatant)} />);
             }
-            if (this.props.mode.indexOf('combat') !== -1) {
-                const combatant = this.props.combatant as Combatant;
 
-                if (this.props.mode.indexOf('tactical') !== -1) {
-                    if (this.props.mode.indexOf('on-map') !== -1) {
-                        options.push(
-                            <div key='mapMove' className='section centered'>
-                                <Radial
-                                    direction='eight'
-                                    click={dir => this.props.mapMove(combatant, dir)}
-                                />
-                            </div>
-                        );
-                        options.push(
-                            <Spin
-                                key='altitude'
-                                source={this.props.combatant}
-                                name='altitude'
-                                label='altitude'
-                                display={value => value + ' ft.'}
-                                nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'altitude', delta * 5)}
-                            />
-                        );
-                        let auraDetails = null;
-                        if (combatant.aura.size > 0) {
-                            const auraStyleOptions = [
-                                {
-                                    id: 'square',
-                                    text: 'square'
-                                },
-                                {
-                                    id: 'rounded',
-                                    text: 'rounded'
-                                },
-                                {
-                                    id: 'circle',
-                                    text: 'circle'
-                                }
-                            ];
-                            auraDetails = (
-                                <div>
-                                    <Selector
-                                        options={auraStyleOptions}
-                                        selectedID={combatant.aura.style}
-                                        select={optionID => this.props.changeValue(combatant.aura, 'style', optionID)}
-                                    />
-                                    <input
-                                        type='color'
-                                        value={combatant.aura.color}
-                                        onChange={event => this.props.changeValue(combatant.aura, 'color', event.target.value)}
-                                    />
-                                </div>
-                            );
-                        }
-                        options.push(
-                            <Expander
-                                key='aura'
-                                text='aura'
-                                content={(
-                                    <div>
-                                        <Spin
-                                            source={combatant.aura}
-                                            name='size'
-                                            label='size'
-                                            display={value => value + ' ft.'}
-                                            nudgeValue={delta => this.props.nudgeValue(combatant.aura, 'size', delta * 5)}
-                                        />
-                                        {auraDetails}
-                                    </div>
-                                )}
-                            />
-                        );
-                        options.push(<button key='mapRemove' onClick={() => this.props.mapRemove(combatant)}>remove from map</button>);
-                    }
-                    if (this.props.mode.indexOf('off-map') !== -1) {
-                        options.push(<button key='mapAdd' onClick={() => this.props.mapAdd(combatant)}>add to map</button>);
-                    }
-                    options.push(<div key='tactical-div' className='divider' />);
-                }
-                if (combatant.pending && !combatant.active && !combatant.defeated) {
-                    options.push(<ConfirmButton key='remove' text='remove from encounter' callback={() => this.props.removeCombatant(combatant)} />);
-                }
-                if (!combatant.pending && combatant.active && !combatant.defeated) {
-                    if (combatant.current) {
-                        options.push(<button key='endTurn' onClick={() => this.props.endTurn(combatant)}>end turn</button>);
-                        options.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(combatant)}>mark as defeated and end turn</button>);
-                    } else {
-                        options.push(<button key='makeCurrent' onClick={() => this.props.makeCurrent(combatant)}>start turn</button>);
-                        options.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(combatant)}>mark as defeated</button>);
-                        options.push(<ConfirmButton key='remove' text='remove from encounter' callback={() => this.props.removeCombatant(combatant)} />);
-                    }
-                    options.push(
-                        <Expander
-                            key='init'
-                            text='change initiative score'
-                            content={(
-                                <div>
-                                    <Spin
-                                        source={this.props.combatant}
-                                        name='initiative'
-                                        label='initiative'
-                                        nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
-                                    />
-                                </div>
-                            )}
-                        />
-                    );
-                }
-                if (!combatant.pending && !combatant.active && combatant.defeated) {
-                    options.push(<button key='makeActive' onClick={() => this.props.makeActive(combatant)}>mark as active</button>);
-                    options.push(<ConfirmButton key='remove' text='remove from encounter' callback={() => this.props.removeCombatant(combatant)} />);
-                }
-                options.push(
-                    <ControlRow
-                        key='tags'
-                        controls={COMBAT_TAGS.map(tag =>
-                            <Checkbox
-                                key={tag}
-                                label={tag}
-                                display='button'
-                                checked={combatant.tags.includes(tag)}
-                                changeValue={value => this.props.toggleTag(combatant, tag)}
-                            />
-                        )}
-                    />
-                );
+            let combat = null;
+            if (this.props.mode.indexOf('combat') !== -1) {
+                combat = this.getCombatControls();
             }
 
             const desc = (this.props.combatant.race || 'unknown race')
@@ -215,6 +276,7 @@ export default class PCCard extends React.Component<Props> {
                                 </div>
                             </div>
                             <div className='divider' />
+                            {combat}
                             <div className='section subheading'>languages</div>
                             <div className='section'>
                                 {this.props.combatant.languages || '-'}

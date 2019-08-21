@@ -63,6 +63,7 @@ interface Props {
 interface State {
     showDetails: boolean;
     cloneName: string;
+    combatMode: string;
     damageOrHealing: number;
 }
 
@@ -105,6 +106,7 @@ export default class MonsterCard extends React.Component<Props, State> {
         this.state = {
             showDetails: false,
             cloneName: props.combatant.name + ' copy',
+            combatMode: 'main',
             damageOrHealing: 0
         };
     }
@@ -130,6 +132,12 @@ export default class MonsterCard extends React.Component<Props, State> {
     private nudgeDamage(delta: number) {
         this.setState({
             damageOrHealing: Math.max(this.state.damageOrHealing + delta, 0)
+        });
+    }
+
+    private setCombatMode(mode: string) {
+        this.setState({
+            combatMode: mode
         });
     }
 
@@ -209,6 +217,248 @@ export default class MonsterCard extends React.Component<Props, State> {
             conModStr = ' ' + conMod;
         }
         return this.props.combatant.hpMax + ' (' + this.props.combatant.hitDice + 'd' + die + conModStr + ')';
+    }
+
+    private getCombatControls() {
+        const combatant = this.props.combatant as Combatant;
+
+        const options = [];
+
+        const combatModes = ['main', 'hp', 'cond', 'map', 'adv'].map(m => {
+            return {
+                id: m,
+                text: m
+            };
+        });
+        if (this.props.mode.indexOf('tactical') === -1) {
+            // No combat map, so remove the map option
+            combatModes.splice(3, 1);
+        }
+        options.push(
+            <Selector
+                key='selector'
+                options={combatModes}
+                selectedID={this.state.combatMode}
+                select={option => this.setCombatMode(option)}
+            />
+        );
+        options.push(<div key='selector-sep' className='divider' />);
+
+        switch (this.state.combatMode) {
+            case 'main':
+                if (!combatant.pending && combatant.active && !combatant.defeated) {
+                    if (combatant.current) {
+                        options.push(<button key='endTurn' onClick={() => this.props.endTurn(combatant)}>end turn</button>);
+                        options.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(combatant)}>mark as defeated and end turn</button>);
+                    } else {
+                        options.push(<button key='makeCurrent' onClick={() => this.props.makeCurrent(combatant)}>start turn</button>);
+                        options.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(combatant)}>mark as defeated</button>);
+                    }
+                }
+                if (!combatant.pending && !combatant.active && combatant.defeated) {
+                    options.push(<button key='makeActive' onClick={() => this.props.makeActive(combatant)}>mark as active</button>);
+                }
+                options.push(<div key='tag-sep' className='divider' />);
+                options.push(
+                    <ControlRow
+                        key='tags'
+                        controls={COMBAT_TAGS.map(tag =>
+                            <Checkbox
+                                key={tag}
+                                label={tag}
+                                display='button'
+                                checked={combatant.tags.includes(tag)}
+                                changeValue={value => this.props.toggleTag(combatant, tag)}
+                            />
+                        )}
+                    />
+                );
+                break;
+            case 'hp':
+                options.push(
+                    <div key='hp'>
+                        <Spin
+                            source={this.props.combatant}
+                            name='hp'
+                            label='hit points'
+                            factors={[1, 10]}
+                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'hp', delta)}
+                        />
+                        <Spin
+                            source={this.props.combatant}
+                            name='hpTemp'
+                            label='temp hp'
+                            factors={[1, 10]}
+                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'hpTemp', delta)}
+                        />
+                        <div className='divider' />
+                        <div className='section' style={{ display: this.props.combatant.damage.resist !== '' ? '' : 'none' }}>
+                            <b>damage resistances</b> {this.props.combatant.damage.resist}
+                        </div>
+                        <div className='section' style={{ display: this.props.combatant.damage.vulnerable !== '' ? '' : 'none' }}>
+                            <b>damage vulnerabilities</b> {this.props.combatant.damage.vulnerable}
+                        </div>
+                        <div className='section' style={{ display: this.props.combatant.damage.immune !== '' ? '' : 'none' }}>
+                            <b>damage immunities</b> {this.props.combatant.damage.immune}
+                        </div>
+                        <Spin
+                            source={this.state}
+                            name='damageOrHealing'
+                            factors={[1, 10]}
+                            nudgeValue={delta => this.nudgeDamage(delta)}
+                        />
+                        <ControlRow
+                            controls={[
+                                <button key='heal' onClick={() => this.heal()}>heal</button>,
+                                <button key='reset' onClick={() => this.setDamage(0)}>reset</button>,
+                                <button key='damage' onClick={() => this.damage()}>damage</button>
+                            ]}
+                            disabled={this.state.damageOrHealing === 0}
+                        />
+                    </div>
+                );
+                break;
+            case 'cond':
+                options.push(
+                    <div key='conditions'>
+                        <div className='section' style={{ display: this.props.combatant.conditionImmunities !== '' ? '' : 'none' }}>
+                            <b>condition immunities</b> {this.props.combatant.conditionImmunities}
+                        </div>
+                        <ConditionsPanel
+                            combatant={this.props.combatant as Combatant}
+                            combat={this.props.combat}
+                            addCondition={() => this.props.addCondition(this.props.combatant as Combatant)}
+                            editCondition={condition => this.props.editCondition(this.props.combatant as Combatant, condition)}
+                            removeCondition={conditionID => this.props.removeCondition(this.props.combatant as Combatant, conditionID)}
+                            nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
+                        />
+                    </div>
+                );
+                break;
+            case 'map':
+                if (this.props.mode.indexOf('on-map') !== -1) {
+                    options.push(
+                        <div key='mapMove' className='section centered'>
+                            <Radial
+                                direction='eight'
+                                click={dir => this.props.mapMove(combatant, dir)}
+                            />
+                        </div>
+                    );
+                    options.push(<div key='move-sep' className='divider' />);
+                    options.push(
+                        <Spin
+                            key='altitude'
+                            source={combatant}
+                            name='altitude'
+                            label='altitude'
+                            display={value => value + ' ft.'}
+                            nudgeValue={delta => this.props.nudgeValue(combatant, 'altitude', delta * 5)}
+                        />
+                    );
+                    let auraDetails = null;
+                    if (combatant.aura.size > 0) {
+                        const auraStyleOptions = [
+                            {
+                                id: 'square',
+                                text: 'square'
+                            },
+                            {
+                                id: 'rounded',
+                                text: 'rounded'
+                            },
+                            {
+                                id: 'circle',
+                                text: 'circle'
+                            }
+                        ];
+                        auraDetails = (
+                            <div>
+                                <Selector
+                                    options={auraStyleOptions}
+                                    selectedID={combatant.aura.style}
+                                    select={optionID => this.props.changeValue(combatant.aura, 'style', optionID)}
+                                />
+                                <input
+                                    type='color'
+                                    value={combatant.aura.color}
+                                    onChange={event => this.props.changeValue(combatant.aura, 'color', event.target.value)}
+                                />
+                            </div>
+                        );
+                    }
+                    options.push(
+                        <Expander
+                            key='aura'
+                            text='aura'
+                            content={(
+                                <div>
+                                    <Spin
+                                        source={combatant.aura}
+                                        name='size'
+                                        label='size'
+                                        display={value => value + ' ft.'}
+                                        nudgeValue={delta => this.props.nudgeValue(combatant.aura, 'size', delta * 5)}
+                                    />
+                                    {auraDetails}
+                                </div>
+                            )}
+                        />
+                    );
+                    options.push(<button key='mapRemove' onClick={() => this.props.mapRemove(combatant)}>remove from map</button>);
+                }
+                if (this.props.mode.indexOf('off-map') !== -1) {
+                    options.push(<button key='mapAdd' onClick={() => this.props.mapAdd(combatant)}>add to map</button>);
+                }
+                break;
+            case 'adv':
+                if (!combatant.current) {
+                    options.push(<ConfirmButton key='remove' text='remove from encounter' callback={() => this.props.removeCombatant(combatant)} />);
+                }
+                if (!combatant.pending) {
+                    options.push(
+                        <Expander
+                            key='init'
+                            text='change initiative score'
+                            content={(
+                                <div>
+                                    <Spin
+                                        source={this.props.combatant}
+                                        name='initiative'
+                                        label='initiative'
+                                        nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
+                                    />
+                                </div>
+                            )}
+                        />
+                    );
+                }
+                options.push(
+                    <Expander
+                        key='rename'
+                        text='change name'
+                        content={(
+                            <div>
+                                <input
+                                    type='text'
+                                    value={combatant.displayName}
+                                    onChange={event => this.props.changeValue(this.props.combatant, 'displayName', event.target.value)}
+                                />
+                            </div>
+                        )}
+                    />
+                );
+                break;
+        }
+
+        return (
+            <div>
+                <div className='combat-options-panel'>
+                    {options}
+                </div>
+                <div className='divider' />
+            </div>
+        );
     }
 
     public render() {
@@ -323,151 +573,14 @@ export default class MonsterCard extends React.Component<Props, State> {
                         }
                     }
                 }
-                if (this.props.mode.indexOf('combat') !== -1) {
-                    const combatant = this.props.combatant as Combatant;
-
-                    if (this.props.mode.indexOf('tactical') !== -1) {
-                        if (this.props.mode.indexOf('on-map') !== -1) {
-                            options.push(
-                                <div key='mapMove' className='section centered'>
-                                    <Radial
-                                        direction='eight'
-                                        click={dir => this.props.mapMove(combatant, dir)}
-                                    />
-                                </div>
-                            );
-                            options.push(
-                                <Spin
-                                    key='altitude'
-                                    source={combatant}
-                                    name='altitude'
-                                    label='altitude'
-                                    display={value => value + ' ft.'}
-                                    nudgeValue={delta => this.props.nudgeValue(combatant, 'altitude', delta * 5)}
-                                />
-                            );
-                            let auraDetails = null;
-                            if (combatant.aura.size > 0) {
-                                const auraStyleOptions = [
-                                    {
-                                        id: 'square',
-                                        text: 'square'
-                                    },
-                                    {
-                                        id: 'rounded',
-                                        text: 'rounded'
-                                    },
-                                    {
-                                        id: 'circle',
-                                        text: 'circle'
-                                    }
-                                ];
-                                auraDetails = (
-                                    <div>
-                                        <Selector
-                                            options={auraStyleOptions}
-                                            selectedID={combatant.aura.style}
-                                            select={optionID => this.props.changeValue(combatant.aura, 'style', optionID)}
-                                        />
-                                        <input
-                                            type='color'
-                                            value={combatant.aura.color}
-                                            onChange={event => this.props.changeValue(combatant.aura, 'color', event.target.value)}
-                                        />
-                                    </div>
-                                );
-                            }
-                            options.push(
-                                <Expander
-                                    key='aura'
-                                    text='aura'
-                                    content={(
-                                        <div>
-                                            <Spin
-                                                source={combatant.aura}
-                                                name='size'
-                                                label='size'
-                                                display={value => value + ' ft.'}
-                                                nudgeValue={delta => this.props.nudgeValue(combatant.aura, 'size', delta * 5)}
-                                            />
-                                            {auraDetails}
-                                        </div>
-                                    )}
-                                />
-                            );
-                            options.push(<button key='mapRemove' onClick={() => this.props.mapRemove(combatant)}>remove from map</button>);
-                        }
-                        if (this.props.mode.indexOf('off-map') !== -1) {
-                            options.push(<button key='mapAdd' onClick={() => this.props.mapAdd(combatant)}>add to map</button>);
-                        }
-                        options.push(<div key='tactical-div' className='divider' />);
-                    }
-                    if (combatant.pending && !combatant.active && !combatant.defeated) {
-                        options.push(<ConfirmButton key='remove' text='remove from encounter' callback={() => this.props.removeCombatant(combatant)} />);
-                    }
-                    if (!combatant.pending && combatant.active && !combatant.defeated) {
-                        if (combatant.current) {
-                            options.push(<button key='endTurn' onClick={() => this.props.endTurn(combatant)}>end turn</button>);
-                            options.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(combatant)}>mark as defeated and end turn</button>);
-                        } else {
-                            options.push(<button key='makeCurrent' onClick={() => this.props.makeCurrent(combatant)}>start turn</button>);
-                            options.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(combatant)}>mark as defeated</button>);
-                            options.push(<ConfirmButton key='remove' text='remove from encounter' callback={() => this.props.removeCombatant(combatant)} />);
-                        }
-                    }
-                    if (!combatant.pending && !combatant.active && combatant.defeated) {
-                        options.push(<button key='makeActive' onClick={() => this.props.makeActive(combatant)}>mark as active</button>);
-                        options.push(<ConfirmButton key='remove' text='remove from encounter' callback={() => this.props.removeCombatant(combatant)} />);
-                    }
-                    options.push(
-                        <ControlRow
-                            key='tags'
-                            controls={COMBAT_TAGS.map(tag =>
-                                <Checkbox
-                                    key={tag}
-                                    label={tag}
-                                    display='button'
-                                    checked={combatant.tags.includes(tag)}
-                                    changeValue={value => this.props.toggleTag(combatant, tag)}
-                                />
-                            )}
-                        />
-                    );
-                    options.push(
-                        <Expander
-                            key='rename'
-                            text='change name'
-                            content={(
-                                <div>
-                                    <input
-                                        type='text'
-                                        value={combatant.displayName}
-                                        onChange={event => this.props.changeValue(this.props.combatant, 'displayName', event.target.value)}
-                                    />
-                                </div>
-                            )}
-                        />
-                    );
-                    options.push(
-                        <Expander
-                            key='init'
-                            text='change initiative score'
-                            content={(
-                                <div>
-                                    <Spin
-                                        source={this.props.combatant}
-                                        name='initiative'
-                                        label='initiative'
-                                        nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
-                                    />
-                                </div>
-                            )}
-                        />
-                    );
-                }
                 if (this.props.mode.indexOf('template') !== -1) {
                     // None
                 }
+            }
+
+            let combat = null;
+            if (this.props.mode.indexOf('combat') !== -1) {
+                combat = this.getCombatControls();
             }
 
             let stats = null;
@@ -554,45 +667,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                             <i>{this.description()}</i>
                         </div>
                         <div className='divider' />
-                        <Spin
-                            source={this.props.combatant}
-                            name='hp'
-                            label='hit points'
-                            factors={[1, 10]}
-                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'hp', delta)}
-                        />
-                        <Spin
-                            source={this.props.combatant}
-                            name='hpTemp'
-                            label='temp hp'
-                            factors={[1, 10]}
-                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'hpTemp', delta)}
-                        />
-                        <div className='divider' />
-                        <Spin
-                            source={this.state}
-                            name='damageOrHealing'
-                            factors={[1, 10]}
-                            nudgeValue={delta => this.nudgeDamage(delta)}
-                        />
-                        <ControlRow
-                            controls={[
-                                <button key='heal' onClick={() => this.heal()}>heal</button>,
-                                <button key='reset' onClick={() => this.setDamage(0)}>reset</button>,
-                                <button key='damage' onClick={() => this.damage()}>damage</button>
-                            ]}
-                            disabled={this.state.damageOrHealing === 0}
-                        />
-                        <div className='section' style={{ display: this.props.combatant.damage.resist !== '' ? '' : 'none' }}>
-                            <b>damage resistances</b> {this.props.combatant.damage.resist}
-                        </div>
-                        <div className='section' style={{ display: this.props.combatant.damage.vulnerable !== '' ? '' : 'none' }}>
-                            <b>damage vulnerabilities</b> {this.props.combatant.damage.vulnerable}
-                        </div>
-                        <div className='section' style={{ display: this.props.combatant.damage.immune !== '' ? '' : 'none' }}>
-                            <b>damage immunities</b> {this.props.combatant.damage.immune}
-                        </div>
-                        <div className='divider' />
+                        {combat}
                         <div className='section'>
                             <AbilityScorePanel combatant={this.props.combatant} />
                         </div>
@@ -611,6 +686,18 @@ export default class MonsterCard extends React.Component<Props, State> {
                         <div className='section' style={{ display: this.props.combatant.senses !== '' ? '' : 'none' }}>
                             <b>senses</b> {this.props.combatant.senses}
                         </div>
+                        <div className='section' style={{ display: this.props.combatant.damage.resist !== '' ? '' : 'none' }}>
+                            <b>damage resistances</b> {this.props.combatant.damage.resist}
+                        </div>
+                        <div className='section' style={{ display: this.props.combatant.damage.vulnerable !== '' ? '' : 'none' }}>
+                            <b>damage vulnerabilities</b> {this.props.combatant.damage.vulnerable}
+                        </div>
+                        <div className='section' style={{ display: this.props.combatant.damage.immune !== '' ? '' : 'none' }}>
+                            <b>damage immunities</b> {this.props.combatant.damage.immune}
+                        </div>
+                        <div className='section' style={{ display: this.props.combatant.conditionImmunities !== '' ? '' : 'none' }}>
+                            <b>condition immunities</b> {this.props.combatant.conditionImmunities}
+                        </div>
                         <div className='section' style={{ display: this.props.combatant.languages !== '' ? '' : 'none' }}>
                             <b>languages</b> {this.props.combatant.languages}
                         </div>
@@ -622,21 +709,6 @@ export default class MonsterCard extends React.Component<Props, State> {
                             combatant={this.props.combatant}
                             mode='combat'
                             changeValue={(trait, field, value) => this.props.changeValue(trait, field, value)}
-                        />
-                        <div className='divider' />
-                        <div className='section subheading'>
-                            conditions
-                        </div>
-                        <div className='section' style={{ display: this.props.combatant.conditionImmunities !== '' ? '' : 'none' }}>
-                            <b>condition immunities</b> {this.props.combatant.conditionImmunities}
-                        </div>
-                        <ConditionsPanel
-                            combatant={this.props.combatant as Combatant}
-                            combat={this.props.combat}
-                            addCondition={() => this.props.addCondition(this.props.combatant as Combatant)}
-                            editCondition={condition => this.props.editCondition(this.props.combatant as Combatant, condition)}
-                            removeCondition={conditionID => this.props.removeCondition(this.props.combatant as Combatant, conditionID)}
-                            nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
                         />
                     </div>
                 );

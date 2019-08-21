@@ -7,6 +7,7 @@ import { Map, MapItem } from '../../models/map-folio';
 
 import MapTileCard from '../cards/map-tile-card';
 import MapPanel from '../panels/map-panel';
+import Note from '../panels/note';
 
 interface Props {
     map: Map;
@@ -212,9 +213,14 @@ export default class MapEditorModal extends React.Component<Props, State> {
             } else {
                 tools = (
                     <div className='tools'>
-                        <p>to add a new tile to the map, click on the button below</p>
-                        <p>to edit an existing tile, click on it once to select it</p>
-                        <div className='divider' />
+                        <Note
+                            content={
+                                <div>
+                                    <p>to add a new tile to the map, click on the button below</p>
+                                    <p>to edit an existing tile, click on it to select it</p>
+                                </div>
+                            }
+                        />
                         {addBtn}
                     </div>
                 );

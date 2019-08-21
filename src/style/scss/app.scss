@@ -406,7 +406,7 @@ body,
 
             button,
             .selector {
-                min-width: 130px;
+                min-width: 120px;
             }
 
             .text {
@@ -991,14 +991,14 @@ body,
                 vertical-align: top;
                 overflow-y: auto;
                 height: 100%;
-                width: 250px;
+                width: 300px;
                 padding: 10px;
             }
 
             .map-panel {
                 display: inline-block;
                 vertical-align: top;
-                width: calc(100% - 250px);
+                width: calc(100% - 300px);
                 height: 100%;
             }
         }
@@ -1028,7 +1028,7 @@ body,
         button,
         .checkbox {
             display: inline-block;
-            width: 180px;
+            width: 150px;
             margin: 0 4px;
         }
     }
@@ -1080,6 +1080,7 @@ body,
 
             &.grid-overlay {
                 opacity: 0.5;
+                cursor: pointer;
             }
         }
     }
@@ -1213,6 +1214,11 @@ body,
 
     &.current {
         background-color: white;
+
+        & .initials {
+            color: black;
+            font-weight: 600;
+        }
     }
 
     &.selected {
@@ -1227,7 +1233,6 @@ body,
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        text-shadow: 0 0 2px $foreground;
     }
 
     .hp-gauge {
@@ -1283,6 +1288,12 @@ body,
             }
         }
     }
+}
+
+.combat-options-panel {
+    border-left: 5px solid #c3c3c3;
+    background: $background;
+    padding: 5px 10px;
 }
 
 .readaloud {

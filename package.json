@@ -1,6 +1,6 @@
 {
     "name": "dojo",
-    "version": "3.8.12",
+    "version": "3.9.0",
     "homepage": "https://andyaiken.github.io/dojo/",
     "dependencies": {
         "@types/react": "^16.9.2",
@@ -11,7 +11,7 @@
         "react-dom": "^16.9.0",
         "react-scripts": "^3.1.1",
         "showdown": "^1.9.0",
-        "tslint": "^5.18.0",
+        "tslint": "^5.19.0",
         "tslint-react": "^3.6.0",
         "typescript": "^3.5.3"
     },

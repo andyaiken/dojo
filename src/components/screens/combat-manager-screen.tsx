@@ -291,6 +291,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                 if (this.props.combat.map) {
                     mapSection = (
                         <MapPanel
+                            key='map'
                             map={this.props.combat.map}
                             mode='combat'
                             showOverlay={this.state.addingToMapID !== null}
@@ -363,11 +364,17 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                                 hidden={pending.length === 0}
                                 showToggle={true}
                             />
-                            {mapSection}
+                            <CardGroup
+                                heading='encounter map'
+                                content={[mapSection]}
+                                hidden={mapSection === null}
+                                showToggle={true}
+                            />
                             <CardGroup
                                 heading='initiative order'
                                 content={active}
                                 hidden={active.length === 0}
+                                showToggle={true}
                             />
                             <CardGroup
                                 heading='defeated'
