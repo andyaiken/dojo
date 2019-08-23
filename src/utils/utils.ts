@@ -486,7 +486,8 @@ export default class Utils {
                 ];
             case 'incapacitated':
                 return [
-                    'an incapacitated creature can’t take actions or reactions'
+                    'an incapacitated creature can’t take actions or reactions',
+                    'being incapacitated breaks concentration'
                 ];
             case 'invisible':
                 return [

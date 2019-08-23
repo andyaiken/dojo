@@ -1216,7 +1216,7 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
-    private addCondition(combatant: Combatant & Monster) {
+    private addCondition(combatant: (Combatant & PC) | (Combatant & Monster)) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
             const condition = Factory.createCondition();
@@ -1242,7 +1242,7 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
-    private editCondition(combatant: Combatant & Monster, condition: Condition) {
+    private editCondition(combatant: (Combatant & PC) | (Combatant & Monster), condition: Condition) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
             this.setState({
@@ -1271,7 +1271,7 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
-    private removeCondition(combatant: Combatant & Monster, conditionID: string) {
+    private removeCondition(combatant: (Combatant & PC) | (Combatant & Monster), conditionID: string) {
         const condition = combatant.conditions.find(c => c.id === conditionID);
         if (condition) {
             const index = combatant.conditions.indexOf(condition);

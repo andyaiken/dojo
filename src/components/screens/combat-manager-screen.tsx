@@ -30,9 +30,9 @@ interface Props {
     makeActive: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
     makeDefeated: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
     removeCombatant: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
-    addCondition: (combatant: Combatant & Monster) => void;
-    editCondition: (combatant: Combatant & Monster, condition: Condition) => void;
-    removeCondition: (combatant: Combatant & Monster, conditionID: string) => void;
+    addCondition: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
+    editCondition: (combatant: (Combatant & PC) | (Combatant & Monster), condition: Condition) => void;
+    removeCondition: (combatant: (Combatant & PC) | (Combatant & Monster), conditionID: string) => void;
     mapMove: (combatant: (Combatant & PC) | (Combatant & Monster), dir: string) => void;
     mapRemove: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
     endTurn: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
@@ -84,12 +84,17 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                         key='selected'
                         combatant={combatant as Combatant & PC}
                         mode={mode}
+                        combat={this.props.combat as Combat}
                         changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
                         nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
                         makeCurrent={c => this.props.makeCurrent(c as Combatant & PC)}
                         makeActive={c => this.props.makeActive(c as Combatant & PC)}
                         makeDefeated={c => this.defeatCombatant(c as Combatant & PC)}
                         removeCombatant={c => this.props.removeCombatant(c as Combatant & PC)}
+                        addCondition={c => this.props.addCondition(c as Combatant & Monster)}
+                        editCondition={(c, condition) => this.props.editCondition(c as Combatant & Monster, condition)}
+                        removeCondition={(c, conditionID) => this.props.removeCondition(c as Combatant & Monster, conditionID)}
+                        nudgeConditionValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
                         mapAdd={c => this.setAddingToMapID(c.id)}
                         mapMove={(c, dir) => this.props.mapMove(c as Combatant & PC, dir)}
                         mapRemove={c => this.props.mapRemove(c as Combatant & PC)}
@@ -669,6 +674,41 @@ class PCRow extends React.Component<PCRowProps> {
                 + ' ' + (this.props.combatant.classes || 'unknown class')
                 + ', level ' + this.props.combatant.level;
 
+        let conditions = null;
+        if (this.props.combatant.conditions) {
+            conditions = this.props.combatant.conditions.map(c => {
+                let name = c.name;
+                if (c.name === 'exhaustion') {
+                    name += ' (' + c.level + ')';
+                }
+                if ((c.name === 'custom') && (c.text)) {
+                    name = c.text;
+                }
+                if (c.duration) {
+                    name += ' ' + Utils.conditionDurationText(c, this.props.combat);
+                }
+                const description = [];
+                const text = Utils.conditionText(c);
+                for (let n = 0; n !== text.length; ++n) {
+                    description.push(<li key={n} className='condition-text'>{text[n]}</li>);
+                }
+                return (
+                    <Note
+                        key={c.id}
+                        white={true}
+                        content={
+                            <div className='condition'>
+                                <div className='condition-name'>{name}</div>
+                                <ul>
+                                    {description}
+                                </ul>
+                            </div>
+                        }
+                    />
+                );
+            });
+        }
+
         const notes = [];
         if (this.props.combat.map) {
             if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
@@ -694,6 +734,7 @@ class PCRow extends React.Component<PCRowProps> {
                     <div className='section lowercase'>
                         {desc}
                     </div>
+                    {conditions}
                     {notes}
                 </div>
             </div>

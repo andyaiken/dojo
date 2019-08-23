@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { COMBAT_TAGS, Combatant } from '../../models/combat';
+import { Combat, COMBAT_TAGS, Combatant } from '../../models/combat';
+import { Condition } from '../../models/condition';
 import { PC } from '../../models/party';
 
 import Checkbox from '../controls/checkbox';
@@ -10,6 +11,7 @@ import Expander from '../controls/expander';
 import Radial from '../controls/radial';
 import Selector from '../controls/selector';
 import Spin from '../controls/spin';
+import ConditionsPanel from '../panels/conditions-panel';
 
 interface Props {
     combatant: PC | (PC & Combatant);
@@ -19,6 +21,7 @@ interface Props {
     removePC: (pc: PC) => void;
     editPC: (pc: PC) => void;
     // Combat
+    combat: Combat;
     makeCurrent: (combatant: Combatant) => void;
     makeActive: (combatant: Combatant) => void;
     makeDefeated: (combatant: Combatant) => void;
@@ -27,6 +30,10 @@ interface Props {
     mapMove: (combatant: Combatant, dir: string) => void;
     mapRemove: (combatant: Combatant) => void;
     removeCombatant: (combatant: Combatant) => void;
+    addCondition: (combatant: Combatant) => void;
+    editCondition: (combatant: Combatant, condition: Condition) => void;
+    removeCondition: (combatant: Combatant, conditionID: string) => void;
+    nudgeConditionValue: (condition: Condition, field: string, delta: number) => void;
     toggleTag: (combatant: Combatant, tag: string) => void;
 }
 
@@ -38,6 +45,7 @@ export default class PCCard extends React.Component<Props, State> {
     public static defaultProps = {
         removePC: null,
         editPC: null,
+        combat: null,
         makeCurrent: null,
         makeActive: null,
         makeDefeated: null,
@@ -46,6 +54,10 @@ export default class PCCard extends React.Component<Props, State> {
         mapMove: null,
         mapRemove: null,
         removeCombatant: null,
+        addCondition: null,
+        editCondition: null,
+        removeCondition: null,
+        nudgeConditionValue: null,
         toggleTag: null
     };
 
@@ -67,7 +79,7 @@ export default class PCCard extends React.Component<Props, State> {
 
         const options = [];
 
-        const combatModes = ['main', 'map', 'adv'].map(m => {
+        const combatModes = ['main', 'cond', 'map', 'adv'].map(m => {
             return {
                 id: m,
                 text: m
@@ -115,6 +127,20 @@ export default class PCCard extends React.Component<Props, State> {
                             />
                         )}
                     />
+                );
+                break;
+            case 'cond':
+                options.push(
+                    <div key='conditions'>
+                        <ConditionsPanel
+                            combatant={this.props.combatant as Combatant}
+                            combat={this.props.combat}
+                            addCondition={() => this.props.addCondition(this.props.combatant as Combatant)}
+                            editCondition={condition => this.props.editCondition(this.props.combatant as Combatant, condition)}
+                            removeCondition={conditionID => this.props.removeCondition(this.props.combatant as Combatant, conditionID)}
+                            nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
+                        />
+                    </div>
                 );
                 break;
             case 'map':
