@@ -88,7 +88,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                         nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
                         makeCurrent={c => this.props.makeCurrent(c as Combatant & PC)}
                         makeActive={c => this.props.makeActive(c as Combatant & PC)}
-                        makeDefeated={c => this.props.makeDefeated(c as Combatant & PC)}
+                        makeDefeated={c => this.defeatCombatant(c as Combatant & PC)}
                         removeCombatant={c => this.props.removeCombatant(c as Combatant & PC)}
                         mapAdd={c => this.setAddingToMapID(c.id)}
                         mapMove={(c, dir) => this.props.mapMove(c as Combatant & PC, dir)}
@@ -108,7 +108,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                         nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
                         makeCurrent={c => this.props.makeCurrent(c as Combatant & Monster)}
                         makeActive={c => this.props.makeActive(c as Combatant & Monster)}
-                        makeDefeated={c => this.props.makeDefeated(c as Combatant & Monster)}
+                        makeDefeated={c => this.defeatCombatant(c as Combatant & Monster)}
                         removeCombatant={c => this.props.removeCombatant(c as Combatant & Monster)}
                         addCondition={c => this.props.addCondition(c as Combatant & Monster)}
                         editCondition={(c, condition) => this.props.editCondition(c as Combatant & Monster, condition)}
@@ -125,6 +125,16 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
             default:
                 return null;
         }
+    }
+
+    private defeatCombatant(combatant: (Combatant & PC) | (Combatant & Monster)) {
+        if (this.state.selectedTokenID === combatant.id) {
+            this.setState({
+                selectedTokenID: null
+            });
+        }
+
+        this.props.makeDefeated(combatant);
     }
 
     private addCombatantToMap(x: number, y: number) {
