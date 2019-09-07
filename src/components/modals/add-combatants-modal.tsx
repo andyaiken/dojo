@@ -5,10 +5,10 @@ import Utils from '../../utils/utils';
 import { EncounterSlot } from '../../models/encounter';
 import { Monster, MonsterGroup } from '../../models/monster-group';
 
+import Factory from '../../utils/factory';
 import FilterCard from '../cards/filter-card';
 import MonsterCard from '../cards/monster-card';
 import Note from '../panels/note';
-import Factory from '../../utils/factory';
 
 interface Props {
     combatantSlots: EncounterSlot[];
@@ -193,7 +193,7 @@ export default class AddCombatantsModal extends React.Component<Props, State> {
                                 combatant={monster}
                                 slot={slot}
                                 mode='view candidate selected'
-                                deselectMonster={monster => this.deselectMonster(monster)}
+                                deselectMonster={m => this.deselectMonster(m)}
                                 nudgeValue={(source, field, delta) => this.nudgeMonsterCount(slot, delta)}
                             />
                         );
