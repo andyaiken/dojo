@@ -797,7 +797,7 @@ export default class Dojo extends React.Component<Props, State> {
             this.setState({
                 modal: {
                     type: 'combat-add-combatants',
-                    combatants: [],
+                    combatantSlots: [],
                     combat: combat
                 }
             });
@@ -807,9 +807,21 @@ export default class Dojo extends React.Component<Props, State> {
     private addCombatantsFromModal() {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
-            this.state.modal.combatants.forEach((m: Monster) => {
-                this.addMonsterToCombat(m, combat);
+            this.state.modal.combatantSlots.forEach((slot: EncounterSlot) => {
+                const m = this.getMonster(slot.monsterName, slot.monsterGroupName);
+                if (m) {
+                    const roll = Utils.dieRoll();
+                    for (let n = 0; n !== slot.count; ++n) {
+                        let displayName = m.name;
+                        if (slot.count > 1) {
+                            displayName += ' ' + (n + 1);
+                        }
+                        this.addMonsterToCombat(m, combat, displayName, 'group', roll);
+                    }
+                }
             });
+
+            this.sortCombatants(combat);
 
             this.setState({
                 combats: this.state.combats,
@@ -1821,7 +1833,7 @@ export default class Dojo extends React.Component<Props, State> {
                         modalTitle = 'add combatants';
                         modalContent = (
                             <AddCombatantsModal
-                                combatants={this.state.modal.combatants}
+                                combatantSlots={this.state.modal.combatantSlots}
                                 library={this.state.library}
                             />
                         );

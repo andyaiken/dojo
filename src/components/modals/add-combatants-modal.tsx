@@ -2,19 +2,21 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
+import { EncounterSlot } from '../../models/encounter';
 import { Monster, MonsterGroup } from '../../models/monster-group';
 
 import FilterCard from '../cards/filter-card';
 import MonsterCard from '../cards/monster-card';
 import Note from '../panels/note';
+import Factory from '../../utils/factory';
 
 interface Props {
-    combatants: Monster[];
+    combatantSlots: EncounterSlot[];
     library: MonsterGroup[];
 }
 
 interface State {
-    combatants: Monster[];
+    combatantSlots: EncounterSlot[];
     filter: {
         name: string,
         challengeMin: number;
@@ -28,7 +30,7 @@ export default class AddCombatantsModal extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            combatants: props.combatants,
+            combatantSlots: props.combatantSlots,
             filter: {
                 name: '',
                 challengeMin: 0,
@@ -63,6 +65,7 @@ export default class AddCombatantsModal extends React.Component<Props, State> {
             }
         });
     }
+
     private matchMonster(monster: Monster) {
         if (monster.challenge < this.state.filter.challengeMin) {
             return false;
@@ -94,23 +97,47 @@ export default class AddCombatantsModal extends React.Component<Props, State> {
     }
 
     private selectMonster(monster: Monster) {
-        this.state.combatants.push(monster);
-        this.state.combatants.sort((a, b) => {
-            if (a.name < b.name) { return -1; }
-            if (a.name > b.name) { return 1; }
+        const slot = Factory.createEncounterSlot();
+        slot.monsterGroupName = Utils.getMonsterGroup(monster, this.props.library).name;
+        slot.monsterName = monster.name;
+        this.state.combatantSlots.push(slot);
+        this.state.combatantSlots.sort((a, b) => {
+            if (a.monsterName < b.monsterName) { return -1; }
+            if (a.monsterName > b.monsterName) { return 1; }
             return 0;
         });
         this.setState({
-            combatants: this.state.combatants
+            combatantSlots: this.state.combatantSlots
         });
     }
 
     private deselectMonster(monster: Monster) {
-        const index = this.state.combatants.indexOf(monster);
-        this.state.combatants.splice(index, 1);
-        this.setState({
-            combatants: this.state.combatants
-        });
+        const group = Utils.getMonsterGroup(monster, this.props.library);
+        const slot = this.state.combatantSlots.find(s => (s.monsterGroupName === group.name) && (s.monsterName === monster.name));
+        if (slot) {
+            const index = this.state.combatantSlots.indexOf(slot);
+            this.state.combatantSlots.splice(index, 1);
+            this.setState({
+                combatantSlots: this.state.combatantSlots
+            });
+        }
+    }
+
+    private nudgeMonsterCount(slot: EncounterSlot, delta: number) {
+        slot.count += delta;
+        if (slot.count === 0) {
+            const group = this.props.library.find(g => g.name === slot.monsterGroupName);
+            if (group) {
+                const monster = group.monsters.find(m => m.name === slot.monsterName);
+                if (monster) {
+                    this.deselectMonster(monster);
+                }
+            }
+        } else {
+            this.setState({
+                combatantSlots: this.state.combatantSlots
+            });
+        }
     }
 
     public render() {
@@ -128,7 +155,17 @@ export default class AddCombatantsModal extends React.Component<Props, State> {
                 if (a.name > b.name) { return 1; }
                 return 0;
             });
-            let allCombatants: JSX.Element | JSX.Element[] = monsters.filter(m => !this.state.combatants.includes(m)).map(m => {
+            const currentIDs = this.state.combatantSlots.map(slot => {
+                const group = this.props.library.find(g => g.name === slot.monsterGroupName);
+                if (group) {
+                    const monster = group.monsters.find(m => m.name === slot.monsterName);
+                    if (monster) {
+                        return monster.id;
+                    }
+                }
+                return null;
+            }).filter(id => !!id);
+            let allCombatants: JSX.Element | JSX.Element[] = monsters.filter(m => !currentIDs.includes(m.id)).map(m => {
                 return (
                     <MonsterCard key={m.id} combatant={m} mode='view candidate' selectMonster={monster => this.selectMonster(monster)} />
                 );
@@ -145,10 +182,24 @@ export default class AddCombatantsModal extends React.Component<Props, State> {
                 );
             }
 
-            const selectedCombatants: JSX.Element | JSX.Element[] = this.state.combatants.map(c => {
-                return (
-                    <MonsterCard key={c.id} combatant={c} mode='view candidate selected' deselectMonster={monster => this.deselectMonster(monster)} />
-                );
+            const selectedCombatants: (JSX.Element | null)[] = this.state.combatantSlots.map(slot => {
+                const group = this.props.library.find(g => g.name === slot.monsterGroupName);
+                if (group) {
+                    const monster = group.monsters.find(m => m.name === slot.monsterName);
+                    if (monster) {
+                        return (
+                            <MonsterCard
+                                key={monster.id}
+                                combatant={monster}
+                                slot={slot}
+                                mode='view candidate selected'
+                                deselectMonster={monster => this.deselectMonster(monster)}
+                                nudgeValue={(source, field, delta) => this.nudgeMonsterCount(slot, delta)}
+                            />
+                        );
+                    }
+                }
+                return null;
             });
 
             return (
