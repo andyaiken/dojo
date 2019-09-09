@@ -726,6 +726,7 @@ export default class Dojo extends React.Component<Props, State> {
         combatant.defeated = false;
 
         combatant.displayName = pc.name;
+        combatant.displaySize = 'medium';
         combatant.initiative = 10;
         combatant.hp = null;
         combatant.conditions = [];
@@ -763,6 +764,7 @@ export default class Dojo extends React.Component<Props, State> {
         combatant.defeated = false;
 
         combatant.displayName = displayName;
+        combatant.displaySize = monster.size;
         combatant.hp = combatant.hpMax;
         combatant.conditions = [];
         combatant.tags = [];
@@ -1011,6 +1013,8 @@ export default class Dojo extends React.Component<Props, State> {
                                     combatant.displayName = slotNames.names[n];
                                 }
                             }
+
+                            combatant.displaySize = monster.size;
 
                             switch (combatSetup.encounterInitMode) {
                                 case 'manual':
@@ -1474,7 +1478,16 @@ export default class Dojo extends React.Component<Props, State> {
             const token = tokens[n];
             if (n === tokens.length - 1) {
                 let value = null;
-                value = (token === 'challenge') ? Utils.nudgeChallenge(obj.challenge, delta) : obj[token] + delta;
+                switch (token) {
+                    case 'challenge':
+                        value = Utils.nudgeChallenge(obj[token], delta);
+                        break;
+                    case 'displaySize':
+                        value = Utils.nudgeSize(obj[token], delta);
+                        break;
+                    default:
+                        value = obj[token] + delta;
+                }
                 this.changeValue(combatant, type, value);
             } else {
                 obj = obj[token];

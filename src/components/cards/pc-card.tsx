@@ -241,6 +241,22 @@ export default class PCCard extends React.Component<Props, State> {
                         />
                     );
                 }
+                options.push(
+                    <Expander
+                        key='size'
+                        text='change size'
+                        content={(
+                            <div>
+                                <Spin
+                                    source={this.props.combatant}
+                                    name='displaySize'
+                                    label='size'
+                                    nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'displaySize', delta)}
+                                />
+                            </div>
+                        )}
+                    />
+                );
                 break;
         }
 

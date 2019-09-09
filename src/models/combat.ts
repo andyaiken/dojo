@@ -28,6 +28,7 @@ export interface Combat {
 export interface Combatant {
     id: string;
     displayName: string;
+    displaySize: string;
     current: boolean;
     pending: boolean;
     active: boolean;

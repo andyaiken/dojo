@@ -204,11 +204,7 @@ export default class MapPanel extends React.Component<Props> {
                         const mi = this.props.map.items.find(i => i.id === c.id);
                         if (mi) {
                             const sizeInSquares = c.aura.size / 5;
-                            let miniSize = 1;
-                            const m = c as Monster;
-                            if (m) {
-                                miniSize = Utils.miniSize(m.size);
-                            }
+                            const miniSize = Utils.miniSize(c.displaySize);
                             const dim = (sizeInSquares * 2) + miniSize;
                             const auraStyle = this.getStyle(mi.x - sizeInSquares, mi.y - sizeInSquares, dim, dim, mapDimensions as MapDimensions);
                             auraStyle.backgroundColor = c.aura.color;
@@ -231,9 +227,10 @@ export default class MapPanel extends React.Component<Props> {
                 tokens = this.props.map.items
                     .filter(i => (i.type === 'monster') || (i.type === 'pc'))
                     .map(i => {
-                        const tokenStyle = this.getStyle(i.x, i.y, i.width, i.height, mapDimensions as MapDimensions);
                         const combatant = this.props.combatants.find(c => c.id === i.id);
                         if (combatant) {
+                            const miniSize = Utils.miniSize(combatant.displaySize);
+                            const tokenStyle = this.getStyle(i.x, i.y, miniSize, miniSize, mapDimensions as MapDimensions);
                             return (
                                 <MapToken
                                     key={i.id}

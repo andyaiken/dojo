@@ -1,6 +1,8 @@
 {
     "name": "dojo",
-    "version": "3.9.3",
+    "version": "3.9.4",
+    "license": "MIT",
+    "repository": "https://github.com/andyaiken/dojo.git",
     "homepage": "https://andyaiken.github.io/dojo/",
     "dependencies": {
         "@types/react": "^16.9.2",

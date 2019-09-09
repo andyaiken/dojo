@@ -179,7 +179,12 @@ export default class MonsterCard extends React.Component<Props, State> {
     }
 
     private description() {
-        let sizeAndType = (this.props.combatant.size + ' ' + this.props.combatant.category).toLowerCase();
+        let size = this.props.combatant.size;
+        const combatant = this.props.combatant as (Monster & Combatant);
+        if (combatant) {
+            size = combatant.displaySize || size;
+        }
+        let sizeAndType = (size + ' ' + this.props.combatant.category).toLowerCase();
         if (this.props.combatant.tag) {
             sizeAndType += ' (' + this.props.combatant.tag.toLowerCase() + ')';
         }
@@ -433,6 +438,22 @@ export default class MonsterCard extends React.Component<Props, State> {
                         />
                     );
                 }
+                options.push(
+                    <Expander
+                        key='size'
+                        text='change size'
+                        content={(
+                            <div>
+                                <Spin
+                                    source={this.props.combatant}
+                                    name='displaySize'
+                                    label='size'
+                                    nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'displaySize', delta)}
+                                />
+                            </div>
+                        )}
+                    />
+                );
                 options.push(
                     <Expander
                         key='rename'
