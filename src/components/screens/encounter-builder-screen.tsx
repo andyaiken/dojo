@@ -10,7 +10,6 @@ import FilterCard from '../cards/filter-card';
 import MonsterCard from '../cards/monster-card';
 import WaveCard from '../cards/wave-card';
 import ConfirmButton from '../controls/confirm-button';
-import Dropdown from '../controls/dropdown';
 import EncounterListItem from '../list-items/encounter-list-item';
 import CardGroup from '../panels/card-group';
 import DifficultyChartPanel from '../panels/difficulty-chart-panel';
@@ -90,7 +89,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
 
     private changeFilterValue(type: 'name' | 'challengeMin' | 'challengeMax' | 'category' | 'size', value: any) {
         // eslint-disable-next-line
-        this.state.filter[type] = value;
+        this.state.filter[type] = value as never;
         this.setState({
             filter: this.state.filter
         });
@@ -164,18 +163,6 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
             return null;
         }
 
-        const libraryCards = [];
-        libraryCards.push(
-            <div className='column' key='filter'>
-                <FilterCard
-                    filter={this.state.filter}
-                    changeValue={(type, value) => this.changeFilterValue(type, value)}
-                    nudgeValue={(type, delta) => this.nudgeFilterValue(type, delta)}
-                    resetFilter={() => this.resetFilter()}
-                />
-            </div>
-        );
-
         const monsters: Monster[] = [];
         if (this.props.selection) {
             this.props.library.forEach(group => {
@@ -191,8 +178,9 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                 return 0;
             });
         }
-        monsters.forEach(monster => {
-            libraryCards.push(
+
+        const libraryCards = monsters.map(monster => {
+            return (
                 <div className='column' key={monster.id}>
                     <MonsterCard
                         key={monster.id}
@@ -229,10 +217,14 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                             selection={this.props.selection}
                             parties={this.props.parties}
                             filter={this.props.filter}
+                            monsterFilter={this.state.filter}
                             changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
                             addWave={() => this.props.addWave()}
                             removeEncounter={() => this.props.removeEncounter()}
                             getMonster={(monsterName, monsterGroupName) => this.props.getMonster(monsterName, monsterGroupName)}
+                            changeFilterValue={(type, value) => this.changeFilterValue(type, value)}
+                            nudgeFilterValue={(type, delta) => this.nudgeFilterValue(type, delta)}
+                            resetFilter={() => this.resetFilter()}
                         />
                         <div className='divider' />
                         <button onClick={() => this.props.selectEncounter(null)}>&larr; back to list</button>
@@ -384,44 +376,25 @@ interface EncounterInfoProps {
     selection: Encounter;
     parties: Party[];
     filter: string;
+    monsterFilter: {
+        name: string,
+        challengeMin: number;
+        challengeMax: number;
+        category: string;
+        size: string;
+    };
     changeValue: (field: string, value: string) => void;
     addWave: () => void;
     removeEncounter: () => void;
     getMonster: (monsterName: string, groupName: string) => Monster | null;
+    changeFilterValue: (type: 'name' | 'challengeMin' | 'challengeMax' | 'category' | 'size', value: any) => void;
+    nudgeFilterValue: (type: 'challengeMin' | 'challengeMax', delta: number) => void;
+    resetFilter: () => void;
 }
 
-interface EncounterInfoState {
-    party: Party | null;
-}
-
-class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoState> {
-    constructor(props: EncounterInfoProps) {
-        super(props);
-        this.state = {
-            party: null
-        };
-    }
-
-    private selectParty(partyID: string) {
-        const party = this.props.parties.find(p => p.id === partyID);
-        this.setState({
-            party: party as Party
-        });
-    }
-
+class EncounterInfo extends React.Component<EncounterInfoProps> {
     public render() {
         try {
-            const partyOptions = [];
-            if (this.props.parties) {
-                for (let n = 0; n !== this.props.parties.length; ++n) {
-                    const party = this.props.parties[n];
-                    partyOptions.push({
-                        id: party.id,
-                        text: party.name
-                    });
-                }
-            }
-
             return (
                 <div>
                     <div className='section'>
@@ -435,19 +408,19 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
                         />
                     </div>
                     <div className='divider' />
-                    <Dropdown
-                        options={partyOptions}
-                        placeholder='select party...'
-                        selectedID={this.state.party ? this.state.party.id : undefined}
-                        select={optionID => this.selectParty(optionID)}
-                    />
                     <DifficultyChartPanel
                         encounter={this.props.selection}
-                        party={this.state.party}
+                        parties={this.props.parties}
                         getMonster={(monsterName, monsterGroupName) => this.props.getMonster(monsterName, monsterGroupName)}
                     />
                     <div className='divider' />
                     <div className='section'>
+                        <FilterCard
+                            filter={this.props.monsterFilter}
+                            changeValue={(type, value) => this.props.changeFilterValue(type, value)}
+                            nudgeValue={(type, delta) => this.props.nudgeFilterValue(type, delta)}
+                            resetFilter={() => this.props.resetFilter()}
+                        />
                         <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.addWave()}>add a new wave</button>
                         <ConfirmButton text='delete encounter' callback={() => this.props.removeEncounter()} />
                     </div>

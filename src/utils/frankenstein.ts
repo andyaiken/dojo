@@ -16,7 +16,18 @@ export default class Frankenstein {
             }
         });
 
-        const newValue = (field === 'challenge') ? Utils.nudgeChallenge(value, delta) : (value ? value : 0) + delta;
+        let newValue;
+        switch (field) {
+            case 'challenge':
+                newValue = Utils.nudgeChallenge(value, delta);
+                break;
+            case 'size':
+                newValue = Utils.nudgeSize(value, delta);
+                break;
+            default:
+                newValue = (value ? value : 0) + delta;
+                break;
+        }
         Frankenstein.changeValue(target, field, newValue);
     }
 
@@ -247,6 +258,12 @@ export default class Frankenstein {
                 monster.traits.push(trait);
             });
         }
+        if (data.reactions) {
+            data.reactions.forEach((rawTrait: any) => {
+                const trait = this.buildTrait(rawTrait, 'reaction');
+                monster.traits.push(trait);
+            });
+        }
         if (data.legendary_actions) {
             data.legendary_actions.forEach((rawTrait: any) => {
                 const trait = this.buildTrait(rawTrait, 'legendary');
@@ -257,7 +274,7 @@ export default class Frankenstein {
         return monster;
     }
 
-    private static buildTrait(rawTrait: any, type: 'trait' | 'action' | 'legendary' | 'lair'): Trait {
+    private static buildTrait(rawTrait: any, type: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'lair'): Trait {
         let name = '';
         let usage = '';
 
@@ -270,11 +287,19 @@ export default class Frankenstein {
             usage = rawTrait.name.substring(openBracket + 1, closeBracket).toLowerCase();
         }
 
-        const text = rawTrait.desc.replace(/•/g, '*');
+        const text: string = rawTrait.desc.replace(/•/g, '*');
+
+        let finalType = type;
+        if (name === 'Lair Actions') {
+            finalType = 'lair';
+        }
+        if (text.indexOf('As a bonus action') === 0) {
+            finalType = 'bonus';
+        }
 
         return {
             id: Utils.guid(),
-            type: (name === 'Lair Actions') ? 'lair' : type,
+            type: finalType,
             name: name,
             usage: usage,
             text: text,
@@ -291,7 +316,7 @@ export default class Frankenstein {
         target.traits.push(copy);
     }
 
-    public static addTrait(target: Monster, type: 'trait' | 'action' | 'legendary' | 'lair') {
+    public static addTrait(target: Monster, type: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'lair') {
         const trait = Factory.createTrait();
         trait.type = type;
         trait.name = 'New ' + Utils.traitType(type, false).toLowerCase();

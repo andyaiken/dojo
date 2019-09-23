@@ -72,10 +72,10 @@ export default class MapPanel extends React.Component<Props> {
         });
 
         if (this.props.combatants) {
-            this.props.combatants.filter(c => c.aura.size > 0).forEach(c => {
+            this.props.combatants.filter(c => c.aura.radius > 0).forEach(c => {
                 const mi = this.props.map.items.find(i => i.id === c.id);
                 if (mi) {
-                    const sizeInSquares = c.aura.size / 5;
+                    const sizeInSquares = c.aura.radius / 5;
                     let miniSize = 1;
                     const m = c as Monster;
                     if (m) {
@@ -140,9 +140,18 @@ export default class MapPanel extends React.Component<Props> {
     private getStyle(x: number, y: number, width: number, height: number, mapDimensions: MapDimensions): StyleData {
         const sideLength = this.getSideLength();
 
+        let offsetX = 0;
+        let offsetY = 0;
+        if (width < 1) {
+            offsetX = (1 - width) / 2;
+        }
+        if (height < 1) {
+            offsetY = (1 - height) / 2;
+        }
+
         return {
-            left: 'calc(' + sideLength + 'px * ' + (x - mapDimensions.minX) + ')',
-            top: 'calc(' + sideLength + 'px * ' + (y - mapDimensions.minY) + ')',
+            left: 'calc(' + sideLength + 'px * ' + (x + offsetX - mapDimensions.minX) + ')',
+            top: 'calc(' + sideLength + 'px * ' + (y + offsetY - mapDimensions.minY) + ')',
             width: 'calc((' + sideLength + 'px * ' + width + ') + 1px)',
             height: 'calc((' + sideLength + 'px * ' + height + ') + 1px)'
         };
@@ -199,11 +208,11 @@ export default class MapPanel extends React.Component<Props> {
             let auras: JSX.Element[] = [];
             if ((this.props.mode !== 'edit') && (this.props.mode !== 'thumbnail')) {
                 auras = this.props.combatants
-                    .filter(c => c.aura.size > 0)
+                    .filter(c => c.aura.radius > 0)
                     .map(c => {
                         const mi = this.props.map.items.find(i => i.id === c.id);
                         if (mi) {
-                            const sizeInSquares = c.aura.size / 5;
+                            const sizeInSquares = c.aura.radius / 5;
                             const miniSize = Utils.miniSize(c.displaySize);
                             const dim = (sizeInSquares * 2) + miniSize;
                             const auraStyle = this.getStyle(mi.x - sizeInSquares, mi.y - sizeInSquares, dim, dim, mapDimensions as MapDimensions);

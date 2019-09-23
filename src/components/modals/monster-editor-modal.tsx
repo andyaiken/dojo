@@ -3,7 +3,7 @@ import React from 'react';
 import Frankenstein from '../../utils/frankenstein';
 import Utils from '../../utils/utils';
 
-import { CATEGORY_TYPES, Monster, MonsterGroup, SIZE_TYPES, Trait, TRAIT_TYPES } from '../../models/monster-group';
+import { CATEGORY_TYPES, Monster, MonsterGroup, Trait, TRAIT_TYPES } from '../../models/monster-group';
 
 import FilterCard from '../cards/filter-card';
 import MonsterCard from '../cards/monster-card';
@@ -200,7 +200,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         });
     }
 
-    private addTrait(type: 'trait' | 'action' | 'legendary' | 'lair') {
+    private addTrait(type: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'lair') {
         Frankenstein.addTrait(this.state.monster, type);
         this.setState({
             monster: this.state.monster
@@ -258,7 +258,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
     private changeFilterValue(type: 'name' | 'challengeMin' | 'challengeMax' | 'category' | 'size', value: any) {
         // eslint-disable-next-line
-        this.state.scratchpadFilter[type] = value;
+        this.state.scratchpadFilter[type] = value as never;
         this.setState({
             scratchpadFilter: this.state.scratchpadFilter
         });
@@ -610,7 +610,6 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             switch (this.state.page) {
                 case 'overview':
                     const catOptions = CATEGORY_TYPES.map(cat => ({ id: cat, text: cat }));
-                    const sizeOptions = SIZE_TYPES.map(size => ({ id: size, text: size }));
 
                     content = (
                         <div className='row'>
@@ -618,10 +617,10 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                 <div className='subheading'>name</div>
                                 <input type='text' value={this.state.monster.name} onChange={event => this.changeValue('name', event.target.value)} />
                                 <div className='subheading'>size</div>
-                                <Dropdown
-                                    options={sizeOptions}
-                                    selectedID={this.state.monster.size}
-                                    select={optionID => this.changeValue('size', optionID)}
+                                <Spin
+                                    source={this.state.monster}
+                                    name='size'
+                                    nudgeValue={delta => this.nudgeValue('size', delta)}
                                 />
                                 <div className='subheading'>type</div>
                                 <Dropdown
@@ -870,6 +869,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                                     nudgeValue={(type, delta) => this.nudgeFilterValue(type, delta)}
                                                     resetFilter={() => this.resetFilter()}
                                                 />
+                                                <div className='divider' />
                                                 {resultsRows}
                                             </div>
                                         }

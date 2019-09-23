@@ -89,8 +89,8 @@ export default class Utils {
 
     public static miniSize(size: string): number {
         switch (size) {
-            case 'tiny': return 1;
-            case 'small': return 1;
+            case 'tiny': return 0.4;
+            case 'small': return 0.6;
             case 'medium': return 1;
             case 'large': return 2;
             case 'huge': return 3;
@@ -344,6 +344,12 @@ export default class Utils {
                 break;
             case 'action':
                 str = 'action';
+                break;
+            case 'bonus':
+                str = 'bonus action';
+                break;
+            case 'reaction':
+                str = 'reaction';
                 break;
             case 'legendary':
                 str = 'legendary action';

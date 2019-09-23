@@ -43,7 +43,7 @@ export default class AddCombatantsModal extends React.Component<Props, State> {
 
     private changeFilterValue(type: 'name' | 'challengeMin' | 'challengeMax' | 'category' | 'size', value: any) {
         // eslint-disable-next-line
-        this.state.filter[type] = value;
+        this.state.filter[type] = value as never;
         this.setState({
             filter: this.state.filter
         });

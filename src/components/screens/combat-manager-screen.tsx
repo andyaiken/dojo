@@ -95,7 +95,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                         editCondition={(c, condition) => this.props.editCondition(c as Combatant & Monster, condition)}
                         removeCondition={(c, conditionID) => this.props.removeCondition(c as Combatant & Monster, conditionID)}
                         nudgeConditionValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
-                        mapAdd={c => this.setAddingToMapID(c.id)}
+                        mapAdd={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
                         mapMove={(c, dir) => this.props.mapMove(c as Combatant & PC, dir)}
                         mapRemove={c => this.props.mapRemove(c as Combatant & PC)}
                         endTurn={c => this.props.endTurn(c as Combatant & PC)}
@@ -119,7 +119,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                         editCondition={(c, condition) => this.props.editCondition(c as Combatant & Monster, condition)}
                         removeCondition={(c, conditionID) => this.props.removeCondition(c as Combatant & Monster, conditionID)}
                         nudgeConditionValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
-                        mapAdd={c => this.setAddingToMapID(c.id)}
+                        mapAdd={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
                         mapMove={(c, dir) => this.props.mapMove(c as Combatant & Monster, dir)}
                         mapRemove={c => this.props.mapRemove(c as Combatant & Monster)}
                         endTurn={(c) => this.props.endTurn(c as Combatant & Monster)}

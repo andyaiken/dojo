@@ -165,7 +165,7 @@ export default class PCCard extends React.Component<Props, State> {
                         />
                     );
                     let auraDetails = null;
-                    if (combatant.aura.size > 0) {
+                    if (combatant.aura.radius > 0) {
                         const auraStyleOptions = [
                             {
                                 id: 'square',
@@ -203,10 +203,10 @@ export default class PCCard extends React.Component<Props, State> {
                                 <div>
                                     <Spin
                                         source={combatant.aura}
-                                        name='size'
+                                        name='radius'
                                         label='size'
                                         display={value => value + ' ft.'}
-                                        nudgeValue={delta => this.props.nudgeValue(combatant.aura, 'size', delta * 5)}
+                                        nudgeValue={delta => this.props.nudgeValue(combatant.aura, 'radius', delta * 5)}
                                     />
                                     {auraDetails}
                                 </div>

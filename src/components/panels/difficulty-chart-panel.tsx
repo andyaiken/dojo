@@ -2,17 +2,40 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
+import Dropdown from '../controls/dropdown';
 import { Encounter, EncounterSlot } from '../../models/encounter';
 import { Monster } from '../../models/monster-group';
 import { Party } from '../../models/party';
 
 interface Props {
     encounter: Encounter;
+    parties: Party[];
     party: Party | null;
     getMonster: (monsterName: string, groupName: string) => Monster | null;
 }
 
-export default class DifficultyChartPanel extends React.Component<Props> {
+interface State {
+    selectedPartyID: string | null;
+}
+
+export default class DifficultyChartPanel extends React.Component<Props, State> {
+    public static defaultProps = {
+        party: null
+    };
+
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            selectedPartyID: props.party ? props.party.id : null
+        };
+    }
+
+    private selectParty(partyID: string) {
+        this.setState({
+            selectedPartyID: partyID
+        });
+    }
+    
     public render() {
         let monsterCount = 0;
         let monsterXp = 0;
@@ -33,13 +56,14 @@ export default class DifficultyChartPanel extends React.Component<Props> {
 
         let xpThresholds;
         let diffSection;
-        if (this.props.party) {
+        const party = this.props.parties.find(p => p.id === this.state.selectedPartyID);
+        if (party) {
             let xpEasy = 0;
             let xpMedium = 0;
             let xpHard = 0;
             let xpDeadly = 0;
 
-            const pcs = this.props.party.pcs.filter(pc => pc.active);
+            const pcs = party.pcs.filter(pc => pc.active);
             pcs.forEach(pc => {
                 xpEasy += Utils.pcExperience(pc.level, 'easy');
                 xpMedium += Utils.pcExperience(pc.level, 'medium');
@@ -138,7 +162,6 @@ export default class DifficultyChartPanel extends React.Component<Props> {
                             <div className='encounter' style={{ left: (getLeft(adjustedXp) - 0.5) + '%' }} />
                         </div>
                     </div>
-                    <div className='subheading'>difficulty</div>
                     <div className='section'>
                         difficulty for this party
                         <div className='right'>{difficulty}</div>
@@ -149,6 +172,29 @@ export default class DifficultyChartPanel extends React.Component<Props> {
                     </div>
                 </div>
             );
+        }
+
+        let partySelection = null;
+        if (!this.props.party) {
+            const partyOptions = [];
+            if (this.props.parties) {
+                for (let n = 0; n !== this.props.parties.length; ++n) {
+                    const party = this.props.parties[n];
+                    partyOptions.push({
+                        id: party.id,
+                        text: party.name
+                    });
+                }
+            }
+
+            partySelection = (
+                <Dropdown
+                    options={partyOptions}
+                    placeholder='select party...'
+                    selectedID={this.state.selectedPartyID ? this.state.selectedPartyID : undefined}
+                    select={optionID => this.selectParty(optionID)}
+                />
+            )
         }
 
         return (
@@ -162,6 +208,8 @@ export default class DifficultyChartPanel extends React.Component<Props> {
                     effective xp for {monsterCount} monster(s)
                     <div className='right'>{adjustedXp} xp</div>
                 </div>
+                <div className='subheading'>difficulty</div>
+                {partySelection}
                 {xpThresholds}
                 {diffSection}
             </div>

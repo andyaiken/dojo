@@ -408,6 +408,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                 <div>
                     <div className='heading'>encounter difficulty</div>
                     <DifficultyChartPanel
+                        parties={this.props.parties}
                         party={party}
                         encounter={encounter}
                         getMonster={(monsterName, monsterGroupName) => this.props.getMonster(monsterName, monsterGroupName)}

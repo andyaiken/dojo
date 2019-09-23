@@ -135,7 +135,7 @@ export default class Dojo extends React.Component<Props, State> {
                         }
 
                         if (c.aura === undefined) {
-                            c.aura = { size: 0, style: 'rounded', color: '#005080' };
+                            c.aura = { radius: 0, style: 'rounded', color: '#005080' };
                         }
 
                         if (c.type === 'monster') {
@@ -732,7 +732,7 @@ export default class Dojo extends React.Component<Props, State> {
         combatant.conditions = [];
         combatant.tags = [];
         combatant.altitude = 0;
-        combatant.aura = { size: 0, style: 'rounded', color: '#005080' };
+        combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
 
         combat.combatants.push(combatant);
     }
@@ -769,7 +769,7 @@ export default class Dojo extends React.Component<Props, State> {
         combatant.conditions = [];
         combatant.tags = [];
         combatant.altitude = 0;
-        combatant.aura = { size: 0, style: 'rounded', color: '#005080' };
+        combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
 
         combat.combatants.push(combatant);
     }
@@ -1040,7 +1040,7 @@ export default class Dojo extends React.Component<Props, State> {
                             combatant.conditions = [];
                             combatant.tags = [];
                             combatant.altitude = 0;
-                            combatant.aura = { size: 0, style: 'rounded', color: '#005080' };
+                            combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
 
                             if (combat) {
                                 combat.combatants.push(combatant);
@@ -1482,6 +1482,7 @@ export default class Dojo extends React.Component<Props, State> {
                     case 'challenge':
                         value = Utils.nudgeChallenge(obj[token], delta);
                         break;
+                    case 'size':
                     case 'displaySize':
                         value = Utils.nudgeSize(obj[token], delta);
                         break;
