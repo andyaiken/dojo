@@ -2,10 +2,10 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import Dropdown from '../controls/dropdown';
 import { Encounter, EncounterSlot } from '../../models/encounter';
 import { Monster } from '../../models/monster-group';
 import { Party } from '../../models/party';
+import Dropdown from '../controls/dropdown';
 
 interface Props {
     encounter: Encounter;
@@ -35,7 +35,7 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
             selectedPartyID: partyID
         });
     }
-    
+
     public render() {
         let monsterCount = 0;
         let monsterXp = 0;
@@ -179,10 +179,10 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
             const partyOptions = [];
             if (this.props.parties) {
                 for (let n = 0; n !== this.props.parties.length; ++n) {
-                    const party = this.props.parties[n];
+                    const p = this.props.parties[n];
                     partyOptions.push({
-                        id: party.id,
-                        text: party.name
+                        id: p.id,
+                        text: p.name
                     });
                 }
             }
@@ -194,7 +194,7 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
                     selectedID={this.state.selectedPartyID ? this.state.selectedPartyID : undefined}
                     select={optionID => this.selectParty(optionID)}
                 />
-            )
+            );
         }
 
         return (
