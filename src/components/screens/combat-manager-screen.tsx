@@ -17,6 +17,7 @@ import HitPointGauge from '../panels/hit-point-gauge';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 import TraitsPanel from '../panels/traits-panel';
+import WindowPortal from '../portals/window-portal';
 
 interface Props {
     combats: Combat[];
@@ -45,6 +46,7 @@ interface Props {
 interface State {
     selectedTokenID: string | null;
     addingToMapID: string | null;
+    showMapWindow: boolean;
 }
 
 export default class CombatManagerScreen extends React.Component<Props, State> {
@@ -53,8 +55,15 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
 
         this.state = {
             selectedTokenID: null,  // The ID of the combatant that's selected
-            addingToMapID: null     // The ID of the combatant we're adding to the map
+            addingToMapID: null,    // The ID of the combatant we're adding to the map
+            showMapWindow: false
         };
+    }
+
+    public componentDidMount() {
+        window.addEventListener('beforeunload', () => {
+            this.closeMapWindow();
+        });
     }
 
     private setSelectedTokenID(id: string | null) {
@@ -66,6 +75,18 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
     private setAddingToMapID(id: string | null) {
         this.setState({
             addingToMapID: id
+        });
+    }
+
+    private toggleMapWindow() {
+        this.setState({
+            showMapWindow: !this.state.showMapWindow
+        });
+    }
+
+    private closeMapWindow() {
+        this.setState({
+            showMapWindow: false
         });
     }
 
@@ -304,21 +325,44 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
 
                 let mapSection = null;
                 if (this.props.combat.map) {
+                    let mapWindow = null;
+                    if (this.state.showMapWindow) {
+                        mapWindow = (
+                            <WindowPortal title='Map' closeWindow={() => this.closeMapWindow()}>
+                                <MapPanel
+                                    map={this.props.combat.map}
+                                    mode='combat'
+                                    combatants={this.props.combat.combatants}
+                                    selectedItemID={this.state.selectedTokenID ? this.state.selectedTokenID : undefined}
+                                    setSelectedItemID={id => {
+                                        if (id) {
+                                            this.setSelectedTokenID(id);
+                                        }
+                                    }}
+                                />
+                                <button onClick={() => this.closeMapWindow()}>close</button>
+                            </WindowPortal>
+                        );
+                    }
+
                     mapSection = (
-                        <MapPanel
-                            key='map'
-                            map={this.props.combat.map}
-                            mode='combat'
-                            showOverlay={this.state.addingToMapID !== null}
-                            combatants={this.props.combat.combatants}
-                            selectedItemID={this.state.selectedTokenID ? this.state.selectedTokenID : undefined}
-                            setSelectedItemID={id => {
-                                if (id) {
-                                    this.setSelectedTokenID(id);
-                                }
-                            }}
-                            gridSquareClicked={(x, y) => this.addCombatantToMap(x, y)}
-                        />
+                        <div key='map'>
+                            <MapPanel
+                                map={this.props.combat.map}
+                                mode='combat'
+                                showOverlay={this.state.addingToMapID !== null}
+                                combatants={this.props.combat.combatants}
+                                selectedItemID={this.state.selectedTokenID ? this.state.selectedTokenID : undefined}
+                                setSelectedItemID={id => {
+                                    if (id) {
+                                        this.setSelectedTokenID(id);
+                                    }
+                                }}
+                                gridSquareClicked={(x, y) => this.addCombatantToMap(x, y)}
+                            />
+                            <button onClick={() => this.toggleMapWindow()}>{this.state.showMapWindow ? 'close' : 'open'} map</button>
+                            {mapWindow}
+                        </div>
                     );
                 }
 
