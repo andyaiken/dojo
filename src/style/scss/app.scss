@@ -314,6 +314,10 @@ body,
     color: $foreground;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    &.popout {
+        overflow: auto;
+    }
 }
 
 .page-content {
@@ -607,7 +611,7 @@ body,
     }
 
     .content {
-        padding: 0 5px 2px 5px;
+        padding: 0 5px;
 
         button, .hp-gauge, .condition, .note {
             margin-bottom: 5px;
@@ -1095,7 +1099,8 @@ body,
         }
     }
 
-    &.combat {
+    &.combat,
+    &.combat-player {
         padding: 20px;
 
         .token:hover {

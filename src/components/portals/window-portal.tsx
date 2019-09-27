@@ -21,12 +21,12 @@ export default class WindowPortal extends React.Component<Props, State> {
     }
 
     public componentDidMount() {
-        const externalWindow = window.open('', '', 'width=600, height=400, left=200, top=200');
+        const externalWindow = window.open('', '', 'width=800, height=500, left=200, top=200');
 
         let containerElement = null;
         if (externalWindow) {
             containerElement = externalWindow.document.createElement('div');
-            containerElement.className = 'dojo';
+            containerElement.className = 'dojo popout';
             externalWindow.document.body.appendChild(containerElement);
 
             const stylesheets = Array.from(document.styleSheets);

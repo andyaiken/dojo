@@ -183,6 +183,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                 const current: JSX.Element[] = [];
                 let pending: JSX.Element[] = [];
                 let active: JSX.Element[] = [];
+                const popout: JSX.Element[] = [];
                 const defeated: JSX.Element[] = [];
 
                 this.props.combat.combatants.forEach(combatant => {
@@ -217,12 +218,32 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                                         selected={combatant.id === this.state.selectedTokenID}
                                     />
                                 );
+                                popout.push(
+                                    <PCRow
+                                        key={combatant.id}
+                                        combatant={combatant as Combatant & PC}
+                                        minimal={true}
+                                        combat={this.props.combat as Combat}
+                                        select={c => this.setSelectedTokenID(c.id)}
+                                        selected={combatant.id === this.state.selectedTokenID}
+                                    />
+                                );
                                 break;
                             case 'monster':
                                 active.push(
                                     <MonsterRow
                                         key={combatant.id}
                                         combatant={combatant as Combatant & Monster}
+                                        combat={this.props.combat as Combat}
+                                        select={c => this.setSelectedTokenID(c.id)}
+                                        selected={combatant.id === this.state.selectedTokenID}
+                                    />
+                                );
+                                popout.push(
+                                    <MonsterRow
+                                        key={combatant.id}
+                                        combatant={combatant as Combatant & Monster}
+                                        minimal={true}
                                         combat={this.props.combat as Combat}
                                         select={c => this.setSelectedTokenID(c.id)}
                                         selected={combatant.id === this.state.selectedTokenID}
@@ -328,19 +349,36 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     let mapWindow = null;
                     let button = null;
                     if (this.state.showMapWindow) {
+                        const mapPanel = (
+                            <MapPanel
+                                key='map'
+                                map={this.props.combat.map}
+                                mode='combat-player'
+                                combatants={this.props.combat.combatants}
+                                selectedItemID={this.state.selectedTokenID ? this.state.selectedTokenID : undefined}
+                                setSelectedItemID={id => {
+                                    if (id) {
+                                        this.setSelectedTokenID(id);
+                                    }
+                                }}
+                            />
+                        );
                         mapWindow = (
-                            <WindowPortal title='Map' closeWindow={() => this.closeMapWindow()}>
-                                <MapPanel
-                                    map={this.props.combat.map}
-                                    mode='combat'
-                                    combatants={this.props.combat.combatants}
-                                    selectedItemID={this.state.selectedTokenID ? this.state.selectedTokenID : undefined}
-                                    setSelectedItemID={id => {
-                                        if (id) {
-                                            this.setSelectedTokenID(id);
-                                        }
-                                    }}
-                                />
+                            <WindowPortal title='Encounter' closeWindow={() => this.closeMapWindow()}>
+                                <div className='row collapse'>
+                                    <div className='columns small-12 medium-6 large-6 scrollable'>
+                                        <CardGroup
+                                            heading='encounter map'
+                                            content={[mapPanel]}
+                                        />
+                                    </div>
+                                    <div className='columns small-12 medium-6 large-6 scrollable'>
+                                        <CardGroup
+                                            heading='initiative order'
+                                            content={popout}
+                                        />
+                                    </div>
+                                </div>
                             </WindowPortal>
                         );
                     } else {
@@ -687,12 +725,17 @@ class PendingCombatantRow extends React.Component<PendingCombatantRowProps> {
 
 interface PCRowProps {
     combatant: Combatant & PC;
+    minimal: boolean;
     combat: Combat;
     selected: boolean;
     select: (combatant: Combatant & PC) => void;
 }
 
 class PCRow extends React.Component<PCRowProps> {
+    public static defaultProps = {
+        minimal: false
+    };
+
     private getInformationText() {
         if (this.props.combatant.current) {
             return 'current turn';
@@ -707,20 +750,27 @@ class PCRow extends React.Component<PCRowProps> {
 
     private onClick(e: React.MouseEvent) {
         e.stopPropagation();
-        if (!this.props.combatant.current && !this.props.selected && this.props.select) {
+        if (!this.props.selected && this.props.select) {
             this.props.select(this.props.combatant);
         }
     }
 
     public render() {
         let style = 'combatant-row ' + this.props.combatant.type;
-        if (this.props.combatant.current || this.props.selected) {
+        if (this.props.selected) {
             style += ' highlight';
         }
 
-        const desc = (this.props.combatant.race || 'unknown race')
-                + ' ' + (this.props.combatant.classes || 'unknown class')
-                + ', level ' + this.props.combatant.level;
+        let desc = null;
+        if (!this.props.minimal) {
+            const race = this.props.combatant.race || 'unknown race';
+            const cls = this.props.combatant.classes || 'unknown class';
+            desc = (
+                <div className='section lowercase'>
+                    {race + ' ' + cls + ', level ' + this.props.combatant.level}
+                </div>
+            );
+        }
 
         let conditions = null;
         if (this.props.combatant.conditions) {
@@ -779,9 +829,7 @@ class PCRow extends React.Component<PCRowProps> {
                     <span className='info'>{this.getInformationText()}</span>
                 </div>
                 <div className='content'>
-                    <div className='section lowercase'>
-                        {desc}
-                    </div>
+                    {desc}
                     {conditions}
                     {notes}
                 </div>
@@ -792,12 +840,17 @@ class PCRow extends React.Component<PCRowProps> {
 
 interface MonsterRowProps {
     combatant: Combatant & Monster;
+    minimal: boolean;
     combat: Combat;
     selected: boolean;
     select: (combatant: Combatant & Monster) => void;
 }
 
 class MonsterRow extends React.Component<MonsterRowProps> {
+    public static defaultProps = {
+        minimal: false
+    };
+
     private getInformationText() {
         if (this.props.combatant.current) {
             return 'current turn';
@@ -812,14 +865,14 @@ class MonsterRow extends React.Component<MonsterRowProps> {
 
     private onClick(e: React.MouseEvent) {
         e.stopPropagation();
-        if (!this.props.combatant.current && !this.props.selected && this.props.select) {
+        if (!this.props.selected && this.props.select) {
             this.props.select(this.props.combatant);
         }
     }
 
     public render() {
         let style = 'combatant-row ' + this.props.combatant.type;
-        if (this.props.combatant.current || this.props.selected) {
+        if (this.props.selected) {
             style += ' highlight';
         }
 
@@ -884,13 +937,10 @@ class MonsterRow extends React.Component<MonsterRowProps> {
             );
         });
 
-        return (
-            <div className={style} onClick={e => this.onClick(e)}>
-                <div className='name'>
-                    {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
-                    <span className='info'>{this.getInformationText()}</span>
-                </div>
-                <div className='content'>
+        let dmInfo = null;
+        if (!this.props.minimal) {
+            dmInfo = (
+                <div>
                     <div className='section key-stats'>
                         <div className='key-stat'>
                             <div className='stat-label'>ac</div>
@@ -902,6 +952,18 @@ class MonsterRow extends React.Component<MonsterRowProps> {
                         </div>
                     </div>
                     {gauge}
+                </div>
+            );
+        }
+
+        return (
+            <div className={style} onClick={e => this.onClick(e)}>
+                <div className='name'>
+                    {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
+                    <span className='info'>{this.getInformationText()}</span>
+                </div>
+                <div className='content'>
+                    {dmInfo}
                     {conditions}
                     {notes}
                 </div>

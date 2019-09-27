@@ -11,7 +11,7 @@ import HitPointGauge from './hit-point-gauge';
 
 interface Props {
     map: Map;
-    mode: 'edit' | 'thumbnail' | 'combat';
+    mode: 'edit' | 'thumbnail' | 'combat' | 'combat-player';
     combatants: ((Combatant & PC) | (Combatant & Monster))[];
     showOverlay: boolean;
     selectedItemID: string;
@@ -131,6 +131,7 @@ export default class MapPanel extends React.Component<Props> {
                 return 5;
             case 'edit':
             case 'combat':
+            case 'combat-player':
                 return 25;
             default:
                 return 5;
@@ -247,7 +248,8 @@ export default class MapPanel extends React.Component<Props> {
                                     combatant={combatant}
                                     style={tokenStyle}
                                     simple={this.props.mode === 'thumbnail'}
-                                    selectable={this.props.mode === 'combat'}
+                                    showGauge={this.props.mode === 'combat'}
+                                    selectable={(this.props.mode === 'combat') || (this.props.mode === 'combat-player')}
                                     selected={this.props.selectedItemID ===  i.id}
                                     select={id => this.props.setSelectedItemID(id)}
                                 />
@@ -384,6 +386,7 @@ interface MapTokenProps {
     combatant: (Combatant & PC) | (Combatant & Monster);
     style: StyleData;
     simple: boolean;
+    showGauge: boolean;
     selectable: boolean;
     selected: boolean;
     select: (tokenID: string) => void;
@@ -416,7 +419,7 @@ class MapToken extends React.Component<MapTokenProps> {
                 <div className='initials'>{name.split(' ').map(s => s[0])}</div>
             );
 
-            if (this.props.combatant.type === 'monster') {
+            if (this.props.combatant.type === 'monster' && this.props.showGauge) {
                 hpGauge = (
                     <HitPointGauge combatant={this.props.combatant as Combatant & Monster} />
                 );
