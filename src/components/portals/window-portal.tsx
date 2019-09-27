@@ -1,28 +1,33 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-export interface Props {
+interface Props {
     title: string;
     closeWindow: () => void;
 }
 
-export default class WindowPortal extends React.Component<Props> {
+interface State {
+    externalWindow: Window | null;
+    containerElement: HTMLElement | null;
+}
+
+export default class WindowPortal extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
-        this.containerElement = null;
-        this.externalWindow = null;
+        this.state = {
+            externalWindow: null,
+            containerElement: null
+        };
     }
 
-    private containerElement: HTMLElement | null;
-    private externalWindow: Window | null;
-
     public componentDidMount() {
-        this.externalWindow = window.open('', '', 'width=600, height=400, left=200, top=200');
-        if (this.externalWindow) {
-            this.containerElement = this.externalWindow.document.createElement('div');
-            this.externalWindow.document.body.appendChild(this.containerElement);
+        const externalWindow = window.open('', '', 'width=600, height=400, left=200, top=200');
 
-            this.externalWindow.document.title = this.props.title;
+        let containerElement = null;
+        if (externalWindow) {
+            containerElement = externalWindow.document.createElement('div');
+            containerElement.className = 'dojo';
+            externalWindow.document.body.appendChild(containerElement);
 
             const stylesheets = Array.from(document.styleSheets);
             stylesheets.forEach(stylesheet => {
@@ -33,28 +38,32 @@ export default class WindowPortal extends React.Component<Props> {
                     newStyleElement.appendChild(document.createTextNode(rule.cssText));
                 });
 
-                if (this.externalWindow) {
-                    this.externalWindow.document.head.appendChild(newStyleElement);
-                }
+                externalWindow.document.head.appendChild(newStyleElement);
             });
 
-            this.externalWindow.addEventListener('beforeunload', () => {
+            externalWindow.document.title = this.props.title;
+            externalWindow.addEventListener('beforeunload', () => {
                 this.props.closeWindow();
             });
         }
+
+        this.setState({
+            externalWindow: externalWindow,
+            containerElement: containerElement
+        });
     }
 
     public componentWillUnmount() {
-        if (this.externalWindow) {
-            this.externalWindow.close();
+        if (this.state.externalWindow) {
+            this.state.externalWindow.close();
         }
     }
 
     public render() {
-        if (!this.containerElement) {
+        if (!this.state.containerElement) {
             return null;
         }
 
-        return ReactDOM.createPortal(this.props.children, this.containerElement);
+        return ReactDOM.createPortal(this.props.children, this.state.containerElement);
     }
 }

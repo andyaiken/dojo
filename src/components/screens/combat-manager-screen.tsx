@@ -326,6 +326,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                 let mapSection = null;
                 if (this.props.combat.map) {
                     let mapWindow = null;
+                    let button = null;
                     if (this.state.showMapWindow) {
                         mapWindow = (
                             <WindowPortal title='Map' closeWindow={() => this.closeMapWindow()}>
@@ -340,8 +341,11 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                                         }
                                     }}
                                 />
-                                <button onClick={() => this.closeMapWindow()}>close</button>
                             </WindowPortal>
+                        );
+                    } else {
+                        button = (
+                            <button onClick={() => this.toggleMapWindow()}>open popout map</button>
                         );
                     }
 
@@ -360,7 +364,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                                 }}
                                 gridSquareClicked={(x, y) => this.addCombatantToMap(x, y)}
                             />
-                            <button onClick={() => this.toggleMapWindow()}>{this.state.showMapWindow ? 'close' : 'open'} map</button>
+                            {button}
                             {mapWindow}
                         </div>
                     );
