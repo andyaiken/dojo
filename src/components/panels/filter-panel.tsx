@@ -22,7 +22,7 @@ interface Props {
     resetFilter: () => void;
 }
 
-export default class FilterCard extends React.Component<Props> {
+export default class FilterPanel extends React.Component<Props> {
     public render() {
         try {
             const sizes = ['all sizes'].concat(SIZE_TYPES);

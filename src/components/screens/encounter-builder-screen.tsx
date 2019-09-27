@@ -6,13 +6,13 @@ import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter'
 import { Monster, MonsterGroup } from '../../models/monster-group';
 import { Party } from '../../models/party';
 
-import FilterCard from '../cards/filter-card';
 import MonsterCard from '../cards/monster-card';
 import WaveCard from '../cards/wave-card';
 import ConfirmButton from '../controls/confirm-button';
 import EncounterListItem from '../list-items/encounter-list-item';
 import CardGroup from '../panels/card-group';
 import DifficultyChartPanel from '../panels/difficulty-chart-panel';
+import FilterPanel from '../panels/filter-panel';
 import Note from '../panels/note';
 
 interface Props {
@@ -415,7 +415,7 @@ class EncounterInfo extends React.Component<EncounterInfoProps> {
                     />
                     <div className='divider' />
                     <div className='section'>
-                        <FilterCard
+                        <FilterPanel
                             filter={this.props.monsterFilter}
                             changeValue={(type, value) => this.props.changeFilterValue(type, value)}
                             nudgeValue={(type, delta) => this.props.nudgeFilterValue(type, delta)}

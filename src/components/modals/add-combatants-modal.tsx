@@ -6,8 +6,8 @@ import { EncounterSlot } from '../../models/encounter';
 import { Monster, MonsterGroup } from '../../models/monster-group';
 
 import Factory from '../../utils/factory';
-import FilterCard from '../cards/filter-card';
 import MonsterCard from '../cards/monster-card';
+import FilterPanel from '../panels/filter-panel';
 import Note from '../panels/note';
 
 interface Props {
@@ -207,7 +207,7 @@ export default class AddCombatantsModal extends React.Component<Props, State> {
                     <div className='row' style={{ height: '100%' }}>
                         <div className='columns small-6 medium-6 large-6 scrollable'>
                             <div className='heading'>all combatants</div>
-                            <FilterCard
+                            <FilterPanel
                                 filter={this.state.filter}
                                 changeValue={(type, value) => this.changeFilterValue(type, value)}
                                 nudgeValue={(type, delta) => this.nudgeFilterValue(type, delta)}

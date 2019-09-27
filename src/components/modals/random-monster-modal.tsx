@@ -5,8 +5,8 @@ import Utils from '../../utils/utils';
 
 import { Monster, MonsterGroup } from '../../models/monster-group';
 
-import FilterCard from '../cards/filter-card';
 import MonsterCard from '../cards/monster-card';
+import FilterPanel from '../panels/filter-panel';
 import Note from '../panels/note';
 
 interface Props {
@@ -200,7 +200,7 @@ export default class RandomMonsterModal extends React.Component<Props, State> {
                     <div className='row' style={{ height: '100%' }}>
                         <div className='columns small-4 medium-4 large-4 scrollable'>
                             <div className='heading'>all monsters</div>
-                            <FilterCard
+                            <FilterPanel
                                 filter={this.state.filter}
                                 changeValue={(type, value) => this.changeFilterValue(type, value)}
                                 nudgeValue={(type, delta) => this.nudgeFilterValue(type, delta)}

@@ -5,7 +5,6 @@ import Utils from '../../utils/utils';
 
 import { CATEGORY_TYPES, Monster, MonsterGroup, Trait, TRAIT_TYPES } from '../../models/monster-group';
 
-import FilterCard from '../cards/filter-card';
 import MonsterCard from '../cards/monster-card';
 import Checkbox from '../controls/checkbox';
 import Dropdown from '../controls/dropdown';
@@ -13,6 +12,7 @@ import Expander from '../controls/expander';
 import Selector from '../controls/selector';
 import Spin from '../controls/spin';
 import AbilityScorePanel from '../panels/ability-score-panel';
+import FilterPanel from '../panels/filter-panel';
 import TraitsPanel from '../panels/traits-panel';
 
 import Note from '../panels/note';
@@ -863,7 +863,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                         text='add monsters to the list'
                                         content={
                                             <div>
-                                                <FilterCard
+                                                <FilterPanel
                                                     filter={this.state.scratchpadFilter}
                                                     changeValue={(type, value) => this.changeFilterValue(type, value)}
                                                     nudgeValue={(type, delta) => this.nudgeFilterValue(type, delta)}
