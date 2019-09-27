@@ -26,11 +26,15 @@ export default class WindowPortal extends React.Component<Props> {
 
             const stylesheets = Array.from(document.styleSheets);
             stylesheets.forEach(stylesheet => {
-                if (stylesheet.href && this.externalWindow) {
-                    const link = this.externalWindow.document.createElement('link');
-                    link.rel = 'stylesheet';
-                    link.href = stylesheet.href;
-                    this.externalWindow.document.head.appendChild(link);
+                const newStyleElement = document.createElement('style');
+
+                const css = stylesheet as CSSStyleSheet;
+                Array.from(css.rules).forEach(rule => {
+                    newStyleElement.appendChild(document.createTextNode(rule.cssText));
+                });
+
+                if (this.externalWindow) {
+                    this.externalWindow.document.head.appendChild(newStyleElement);
                 }
             });
 
