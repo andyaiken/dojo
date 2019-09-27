@@ -18,7 +18,6 @@ interface Props {
     addMonsterGroup: () => void;
     removeMonsterGroup: () => void;
     addMonster: () => void;
-    generateMonster: () => void;
     removeMonster: (monster: Monster) => void;
     editMonster: (monster: Monster) => void;
     cloneMonster: (monster: Monster, name: string) => void;
@@ -51,7 +50,6 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                             selection={this.props.selection}
                             filter={this.props.filter}
                             addMonster={() => this.props.addMonster()}
-                            generateMonster={() => this.props.generateMonster()}
                             sortMonsters={() => this.props.sortMonsters()}
                             changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
                             removeMonsterGroup={() => this.props.removeMonsterGroup()}
@@ -205,7 +203,6 @@ interface MonsterInfoProps {
     filter: string | null;
     changeValue: (field: string, value: string) => void;
     addMonster: () => void;
-    generateMonster: () => void;
     sortMonsters: () => void;
     removeMonsterGroup: () => void;
 }
@@ -227,8 +224,7 @@ class MonsterInfo extends React.Component<MonsterInfoProps> {
                     </div>
                     <div className='divider' />
                     <div className='section'>
-                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.addMonster()}>add a new blank monster</button>
-                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.generateMonster()}>generate a random monster</button>
+                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.addMonster()}>add a new monster</button>
                         <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.sortMonsters()}>sort monsters</button>
                         <ConfirmButton text='delete group' callback={() => this.props.removeMonsterGroup()} />
                     </div>

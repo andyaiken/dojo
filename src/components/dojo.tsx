@@ -26,7 +26,6 @@ import DemographicsModal from './modals/demographics-modal';
 import MapEditorModal from './modals/map-editor-modal';
 import MonsterEditorModal from './modals/monster-editor-modal';
 import PCEditorModal from './modals/pc-editor-modal';
-import RandomMonsterModal from './modals/random-monster-modal';
 
 import Navbar from './panels/navbar';
 import Titlebar from './panels/titlebar';
@@ -294,17 +293,6 @@ export default class Dojo extends React.Component<Props, State> {
                 library: this.state.library
             });
         }
-    }
-
-    private generateMonster() {
-        const monster = Factory.createMonster();
-        monster.name = 'generated monster';
-        this.setState({
-            modal: {
-                type: 'random-monster',
-                monster: monster
-            }
-        });
     }
 
     private removeMonster(monster: Monster) {
@@ -1619,7 +1607,6 @@ export default class Dojo extends React.Component<Props, State> {
                         addMonsterGroup={() => this.addMonsterGroup()}
                         removeMonsterGroup={() => this.removeMonsterGroup()}
                         addMonster={() => this.addMonster()}
-                        generateMonster={() => this.generateMonster()}
                         removeMonster={monster => this.removeMonster(monster)}
                         sortMonsters={() => this.sortMonsters()}
                         changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
@@ -1761,20 +1748,6 @@ export default class Dojo extends React.Component<Props, State> {
                             />
                         )
                     ];
-                    modalButtons.right = [
-                        <button key='save' onClick={() => this.saveMonster()}>save</button>,
-                        <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
-                    ];
-                    break;
-                case 'random-monster':
-                    modalTitle = 'random monster generator';
-                    modalContent = (
-                        <RandomMonsterModal
-                            monster={this.state.modal.monster}
-                            library={this.state.library}
-                        />
-                    );
-                    modalAllowScroll = false;
                     modalButtons.right = [
                         <button key='save' onClick={() => this.saveMonster()}>save</button>,
                         <button key='cancel' onClick={() => this.closeModal()}>cancel</button>

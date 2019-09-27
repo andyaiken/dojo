@@ -821,7 +821,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         break;
                     case 'scratchpad':
                         {
-                            let searchResults: Monster[] = [];
+                            const searchResults: Monster[] = [];
                             this.props.library.forEach(group => {
                                 group.monsters.forEach(m => {
                                     if (!monsters.includes(m) && this.matchMonster(m)) {
@@ -830,9 +830,6 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                 });
                             });
                             Utils.sort(searchResults);
-                            if (searchResults.length > 10) {
-                                searchResults = searchResults.slice(0, 10);
-                            }
                             let resultsRows = searchResults.map(m =>
                                 <button key={m.id} onClick={() => this.addToScratchpadList(m)}>{m.name}</button>
                             );
@@ -899,6 +896,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                             select={optionID => this.setState({sidebar: optionID as 'similar' | 'scratchpad'})}
                         />
                         {sidebarContent}
+                        <div className='divider'/>
                         <button className={monsters.length < 2 ? 'disabled' : ''} onClick={() => this.spliceMonsters(monsters)}>
                             build random monster
                         </button>
