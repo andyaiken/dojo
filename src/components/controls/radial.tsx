@@ -1,7 +1,5 @@
 import React from 'react';
 
-import arrow from '../../resources/images/down-arrow-black.svg';
-
 interface Props {
     click: (dir: string, dir2: 'in' | 'out' | null) => void;
     direction: 'out' | 'in' | 'both' | 'eight';
@@ -32,106 +30,62 @@ export default class Radial extends React.Component<Props> {
 
             return (
                 <div className={style}>
-                    <div className='empty' style={{ display: showDiag ? 'none' : 'inline-block' }} />
-                    <div className='btn diag' style={{ display: showDiag ? 'inline-block' : 'none' }}>
-                        <img
-                            src={arrow}
-                            style={{ display: showOut ? 'inline-block' : 'none', transform: 'rotate(135deg)' }}
-                            alt='nw'
-                            onClick={e => this.click(e, 'NW')}
-                        />
-                    </div>
-                    <div className='btn'>
-                        <div>
-                            <img
-                                src={arrow}
-                                style={{ display: showOut ? 'inline-block' : 'none', transform: 'rotate(180deg)' }}
-                                alt='n'
-                                onClick={e => this.click(e, 'N', 'out')}
-                            />
-                        </div>
-                        <div>
-                            <img
-                                src={arrow}
-                                style={{ display: showIn ? 'inline-block' : 'none' }}
-                                alt='n'
-                                onClick={e => this.click(e, 'N', 'in')}
-                            />
+                    <div className='cell' style={{ display: showDiag ? 'none' : 'inline-block' }} />
+                    <div className='cell' style={{ display: showDiag ? 'inline-block' : 'none' }}>
+                        <div className='arrow diag' style={{ display: showOut ? 'block' : 'none' }} onClick={e => this.click(e, 'NW')}>
+                            &#8598;
                         </div>
                     </div>
-                    <div className='empty' style={{ display: showDiag ? 'none' : 'inline-block' }} />
-                    <div className='btn diag' style={{ display: showDiag ? 'inline-block' : 'none' }}>
-                        <img
-                            src={arrow}
-                            style={{ display: showOut ? 'inline-block' : 'none', transform: 'rotate(-135deg)' }}
-                            alt='ne'
-                            onClick={e => this.click(e, 'NE')}
-                        />
-                    </div>
-                    <div className='btn' style={{ padding: (showIn && showOut) ? '10px 0' : '0'}}>
-                        <img
-                            src={arrow}
-                            style={{ display: showOut ? 'inline-block' : 'none', transform: 'rotate(90deg)' }}
-                            alt='w'
-                            onClick={e => this.click(e, 'W', 'out')}
-                        />
-                        <img
-                            src={arrow}
-                            style={{ display: showIn ? 'inline-block' : 'none', transform: 'rotate(-90deg)' }}
-                            alt='w'
-                            onClick={e => this.click(e, 'W', 'in')}
-                        />
-                    </div>
-                    <div className='empty' />
-                    <div className='btn' style={{ padding: (showIn && showOut) ? '10px 0' : '0'}}>
-                        <img
-                            src={arrow}
-                            style={{ display: showIn ? 'inline-block' : 'none', transform: 'rotate(90deg)' }}
-                            alt='e'
-                            onClick={e => this.click(e, 'E', 'in')}
-                        />
-                        <img
-                            src={arrow}
-                            style={{ display: showOut ? 'inline-block' : 'none', transform: 'rotate(-90deg)' }}
-                            alt='e'
-                            onClick={e => this.click(e, 'E', 'out')}
-                        />
-                    </div>
-                    <div className='empty' style={{ display: showDiag ? 'none' : 'inline-block' }} />
-                    <div className='btn diag' style={{ display: showDiag ? 'inline-block' : 'none' }}>
-                        <img
-                            src={arrow}
-                            style={{ display: showOut ? 'inline-block' : 'none', transform: 'rotate(45deg)' }}
-                            alt='sw'
-                            onClick={e => this.click(e, 'SW')}
-                        />
-                    </div>
-                    <div className='btn'>
-                        <div>
-                            <img
-                                src={arrow}
-                                style={{ display: showIn ? 'inline-block' : 'none', transform: 'rotate(180deg)' }}
-                                alt='s'
-                                onClick={e => this.click(e, 'S', 'in')}
-                            />
+                    <div className='cell'>
+                        <div className='arrow vertical' style={{ display: showOut ? 'block' : 'none' }} onClick={e => this.click(e, 'N', 'out')}>
+                            &#8593;
                         </div>
-                        <div>
-                            <img
-                                src={arrow}
-                                style={{ display: showOut ? 'inline-block' : 'none' }}
-                                alt='s'
-                                onClick={e => this.click(e, 'S', 'out')}
-                            />
+                        <div className='arrow vertical' style={{ display: showIn ? 'block' : 'none' }} onClick={e => this.click(e, 'N', 'in')}>
+                            &#8595;
                         </div>
                     </div>
-                    <div className='empty' style={{ display: showDiag ? 'none' : 'inline-block' }} />
-                    <div className='btn diag' style={{ display: showDiag ? 'inline-block' : 'none' }}>
-                        <img
-                            src={arrow}
-                            style={{ display: showOut ? 'inline-block' : 'none', transform: 'rotate(-45deg)' }}
-                            alt='se'
-                            onClick={e => this.click(e, 'SE')}
-                        />
+                    <div className='cell' style={{ display: showDiag ? 'none' : 'inline-block' }} />
+                    <div className='cell' style={{ display: showDiag ? 'inline-block' : 'none' }}>
+                        <div className='arrow diag' style={{ display: showOut ? 'block' : 'none' }} onClick={e => this.click(e, 'NE')}>
+                            &#8599;
+                        </div>
+                    </div>
+                    <div className='cell'>
+                        <div className='arrow horizontal' style={{ display: showOut ? 'inline-block' : 'none' }} onClick={e => this.click(e, 'W', 'out')}>
+                            &#8592;
+                        </div>
+                        <div className='arrow horizontal' style={{ display: showIn ? 'inline-block' : 'none' }} onClick={e => this.click(e, 'W', 'in')}>
+                            &#8594;
+                        </div>
+                    </div>
+                    <div className='cell' />
+                    <div className='cell'>
+                        <div className='arrow horizontal' style={{ display: showIn ? 'inline-block' : 'none' }} onClick={e => this.click(e, 'E', 'in')}>
+                            &#8592;
+                        </div>
+                        <div className='arrow horizontal' style={{ display: showOut ? 'inline-block' : 'none' }} onClick={e => this.click(e, 'E', 'out')}>
+                            &#8594;
+                        </div>
+                    </div>
+                    <div className='cell' style={{ display: showDiag ? 'none' : 'inline-block' }} />
+                    <div className='cell' style={{ display: showDiag ? 'inline-block' : 'none' }}>
+                        <div className='arrow diag' style={{ display: showOut ? 'block' : 'none' }} onClick={e => this.click(e, 'SW')}>
+                            &#8601;
+                        </div>
+                    </div>
+                    <div className='cell'>
+                        <div className='arrow vertical' style={{ display: showIn ? 'block' : 'none' }} onClick={e => this.click(e, 'S', 'in')}>
+                            &#8593;
+                        </div>
+                        <div className='arrow vertical' style={{ display: showOut ? 'block' : 'none' }} onClick={e => this.click(e, 'S', 'out')}>
+                            &#8595;
+                        </div>
+                    </div>
+                    <div className='cell' style={{ display: showDiag ? 'none' : 'inline-block' }} />
+                    <div className='cell' style={{ display: showDiag ? 'inline-block' : 'none' }}>
+                        <div className='arrow diag' style={{ display: showOut ? 'block' : 'none' }} onClick={e => this.click(e, 'SE', 'out')}>
+                            &#8600;
+                        </div>
                     </div>
                 </div>
             );

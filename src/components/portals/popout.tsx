@@ -11,7 +11,7 @@ interface State {
     containerElement: HTMLElement | null;
 }
 
-export default class WindowPortal extends React.Component<Props, State> {
+export default class Popout extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -31,14 +31,20 @@ export default class WindowPortal extends React.Component<Props, State> {
 
             const stylesheets = Array.from(document.styleSheets);
             stylesheets.forEach(stylesheet => {
-                const newStyleElement = document.createElement('style');
-
                 const css = stylesheet as CSSStyleSheet;
-                Array.from(css.rules).forEach(rule => {
-                    newStyleElement.appendChild(document.createTextNode(rule.cssText));
-                });
 
-                externalWindow.document.head.appendChild(newStyleElement);
+                if (stylesheet.href) {
+                    const newStyleElement = document.createElement('link');
+                    newStyleElement.rel = 'stylesheet';
+                    newStyleElement.href = stylesheet.href;
+                    externalWindow.document.head.appendChild(newStyleElement);
+                } else if (css && css.cssRules && css.cssRules.length > 0) {
+                    const newStyleElement = document.createElement('style');
+                    Array.from(css.cssRules).forEach(rule => {
+                        newStyleElement.appendChild(document.createTextNode(rule.cssText));
+                    });
+                    externalWindow.document.head.appendChild(newStyleElement);
+                }
             });
 
             externalWindow.document.title = this.props.title;

@@ -46,6 +46,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
         const tile = Factory.createMapItem();
         tile.x = x;
         tile.y = y;
+        tile.style = 'square';
         tile.terrain = 'flagstone';
         this.state.map.items.push(tile);
 

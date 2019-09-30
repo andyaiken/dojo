@@ -10,6 +10,7 @@ import { PC } from '../../models/party';
 import MonsterCard from '../cards/monster-card';
 import PCCard from '../cards/pc-card';
 import ControlRow from '../controls/control-row';
+import Radial from '../controls/radial';
 import Spin from '../controls/spin';
 import CombatListItem from '../list-items/combat-list-item';
 import CardGroup from '../panels/card-group';
@@ -17,7 +18,7 @@ import HitPointGauge from '../panels/hit-point-gauge';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 import TraitsPanel from '../panels/traits-panel';
-import WindowPortal from '../portals/window-portal';
+import Popout from '../portals/popout';
 
 interface Props {
     combats: Combat[];
@@ -349,37 +350,50 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     let mapWindow = null;
                     let button = null;
                     if (this.state.showMapWindow) {
-                        const mapPanel = (
-                            <MapPanel
-                                key='map'
-                                map={this.props.combat.map}
-                                mode='combat-player'
-                                combatants={this.props.combat.combatants}
-                                selectedItemID={this.state.selectedTokenID ? this.state.selectedTokenID : undefined}
-                                setSelectedItemID={id => {
-                                    if (id) {
-                                        this.setSelectedTokenID(id);
-                                    }
-                                }}
-                            />
-                        );
-                        mapWindow = (
-                            <WindowPortal title='Encounter' closeWindow={() => this.closeMapWindow()}>
-                                <div className='row collapse'>
-                                    <div className='columns small-12 medium-6 large-6 scrollable'>
-                                        <CardGroup
-                                            heading='encounter map'
-                                            content={[mapPanel]}
-                                        />
-                                    </div>
-                                    <div className='columns small-12 medium-6 large-6 scrollable'>
-                                        <CardGroup
-                                            heading='initiative order'
-                                            content={popout}
+                        let selection = this.props.combat.combatants.find(c => c.id === this.state.selectedTokenID);
+                        if (!selection) {
+                            selection = this.props.combat.combatants.find(c => c.current);
+                        }
+                        let controls = null;
+                        if (selection) {
+                            const token = selection as ((Combatant & PC) | (Combatant & Monster));
+                            controls = (
+                                <div>
+                                    <div className='divider' />
+                                    <div className='section centered'>
+                                        <Radial
+                                            direction='eight'
+                                            click={dir => this.props.mapMove(token, dir)}
                                         />
                                     </div>
                                 </div>
-                            </WindowPortal>
+                            );
+                        }
+                        mapWindow = (
+                            <Popout title='Encounter' closeWindow={() => this.closeMapWindow()}>
+                                <div className='row'>
+                                    <div className='columns small-12 medium-6 large-8'>
+                                        <div className='heading'>encounter map</div>
+                                        <MapPanel
+                                            key='map'
+                                            map={this.props.combat.map}
+                                            mode='combat-player'
+                                            combatants={this.props.combat.combatants}
+                                            selectedItemID={this.state.selectedTokenID ? this.state.selectedTokenID : undefined}
+                                            setSelectedItemID={id => {
+                                                if (id) {
+                                                    this.setSelectedTokenID(id);
+                                                }
+                                            }}
+                                        />
+                                        {controls}
+                                    </div>
+                                    <div className='columns small-12 medium-6 large-4'>
+                                        <div className='heading'>initiative order</div>
+                                        {popout}
+                                    </div>
+                                </div>
+                            </Popout>
                         );
                     } else {
                         button = (
