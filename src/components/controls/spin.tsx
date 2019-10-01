@@ -1,8 +1,5 @@
 import React from 'react';
 
-import minus from '../../resources/images/minus.svg';
-import plus from '../../resources/images/plus.svg';
-
 interface Props {
     source: any;
     name: string;
@@ -47,54 +44,39 @@ export default class Spin extends React.Component<Props> {
             const minusBtns: JSX.Element[] = [];
             const plusBtns: JSX.Element[] = [];
 
-            if (this.props.factors) {
-                this.props.factors.forEach(factor => {
-                    minusBtns.push(
-                        <div
-                            key={'minus' + factor}
-                            className='spin-button factor'
-                            onTouchEnd={e => this.touchEnd(e, -1 * factor)}
-                            onClick={e => this.click(e, -1 * factor)}
-                        >
-                            {'-' + factor}
-                        </div>
-                    );
-
-                    plusBtns.push(
-                        <div
-                            key={'plus' + factor}
-                            className='spin-button factor'
-                            onTouchEnd={e => this.touchEnd(e, +1 * factor)}
-                            onClick={e => this.click(e, +1 * factor)}
-                        >
-                            {'+' + factor}
-                        </div>
-                    );
-                });
-
-                minusBtns.reverse();
-            } else {
+            const factors = this.props.factors || [1];
+            factors.forEach(factor => {
                 minusBtns.push(
-                    <div key='minus1' className='spin-button' onTouchEnd={e => this.touchEnd(e, -1)} onClick={e => this.click(e, -1)}>
-                        <img className='image' src={minus} alt='minus' />
+                    <div
+                        key={'minus' + factor}
+                        className={factors.length > 1 ? 'spin-button factor' : 'spin-button factor single'}
+                        onTouchEnd={e => this.touchEnd(e, -1 * factor)}
+                        onClick={e => this.click(e, -1 * factor)}
+                    >
+                        {factors.length > 1 ? '-' + factor : '-'}
                     </div>
                 );
 
                 plusBtns.push(
-                    <div key='plus1' className='spin-button' onTouchEnd={e => this.touchEnd(e, +1)} onClick={e => this.click(e, +1)}>
-                        <img className='image' src={plus} alt='plus' />
+                    <div
+                        key={'plus' + factor}
+                        className={factors.length > 1 ? 'spin-button factor' : 'spin-button factor single'}
+                        onTouchEnd={e => this.touchEnd(e, +1 * factor)}
+                        onClick={e => this.click(e, +1 * factor)}
+                    >
+                        {factors.length > 1 ? '+' + factor : '+'}
                     </div>
                 );
-            }
+            });
 
-            const infoWidth = 80 * (this.props.factors ? this.props.factors.length : 1);
+            minusBtns.reverse();
 
             return (
                 <div className={this.props.disabled ? 'spin disabled' : 'spin'}>
                     <div className='minus'>
                         {minusBtns}
                     </div>
-                    <div className='info' style={{ width: 'calc(100% - ' + infoWidth + 'px)' }}>
+                    <div className='info' style={{ width: 'calc(100% - ' + (80 * factors.length) + 'px)' }}>
                         <div className='info-label'>{this.props.label}</div>
                         <div className={style}>{value}</div>
                     </div>

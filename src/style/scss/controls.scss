@@ -52,6 +52,7 @@
     }
 
     &.button.checked {
+        color: $highlight;
         background-color: $highlight01;
     }
 }
@@ -423,6 +424,11 @@
             line-height: 16px;
             letter-spacing: -0.5px;
             font-weight: 600;
+
+            &.single {
+                font-size: 22px;
+                line-height: 12px;
+            }
         }
 
         &:hover {

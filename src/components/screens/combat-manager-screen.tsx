@@ -2,13 +2,14 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { Combat, Combatant, Notification } from '../../models/combat';
+import { Combat, COMBAT_TAGS, Combatant, Notification } from '../../models/combat';
 import { Condition, ConditionDurationSaves } from '../../models/condition';
 import { Monster, Trait } from '../../models/monster-group';
 import { PC } from '../../models/party';
 
 import MonsterCard from '../cards/monster-card';
 import PCCard from '../cards/pc-card';
+import Checkbox from '../controls/checkbox';
 import ControlRow from '../controls/control-row';
 import Radial from '../controls/radial';
 import Spin from '../controls/spin';
@@ -359,13 +360,33 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                             const token = selection as ((Combatant & PC) | (Combatant & Monster));
                             controls = (
                                 <div>
-                                    <div className='divider' />
                                     <div className='section centered'>
                                         <Radial
                                             direction='eight'
                                             click={dir => this.props.mapMove(token, dir)}
                                         />
                                     </div>
+                                    <div className='divider' />
+                                    <Spin
+                                        key='altitude'
+                                        source={token}
+                                        name='altitude'
+                                        label='altitude'
+                                        display={value => value + ' ft.'}
+                                        nudgeValue={delta => this.props.nudgeValue(token, 'altitude', delta * 5)}
+                                    />
+                                    <ControlRow
+                                        key='tags'
+                                        controls={COMBAT_TAGS.map(tag =>
+                                            <Checkbox
+                                                key={tag}
+                                                label={tag}
+                                                display='button'
+                                                checked={token.tags.includes(tag)}
+                                                changeValue={value => this.props.toggleTag(token, tag)}
+                                            />
+                                        )}
+                                    />
                                 </div>
                             );
                         }
@@ -386,9 +407,10 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                                                 }
                                             }}
                                         />
-                                        {controls}
                                     </div>
                                     <div className='columns small-12 medium-6 large-4'>
+                                        <div className='heading'>controls</div>
+                                        {controls}
                                         <div className='heading'>initiative order</div>
                                         {popout}
                                     </div>

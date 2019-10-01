@@ -1,12 +1,12 @@
 {
     "name": "dojo",
-    "version": "3.9.10",
+    "version": "3.9.11",
     "license": "MIT",
     "repository": "https://github.com/andyaiken/dojo.git",
     "homepage": "https://andyaiken.github.io/dojo/",
     "dependencies": {
         "@types/node": "^12.7.8",
-        "@types/react": "^16.9.2",
+        "@types/react": "^16.9.4",
         "@types/react-dom": "^16.9.1",
         "@types/showdown": "^1.9.3",
         "gh-pages": "^2.1.1",
