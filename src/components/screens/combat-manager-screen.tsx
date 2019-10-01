@@ -360,6 +360,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                             const token = selection as ((Combatant & PC) | (Combatant & Monster));
                             controls = (
                                 <div>
+                                    <div className='heading'>controls</div>
                                     <div className='section centered'>
                                         <Radial
                                             direction='eight'
@@ -409,7 +410,6 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                                         />
                                     </div>
                                     <div className='columns small-12 medium-6 large-4'>
-                                        <div className='heading'>controls</div>
                                         {controls}
                                         <div className='heading'>initiative order</div>
                                         {popout}

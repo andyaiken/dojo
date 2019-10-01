@@ -1522,36 +1522,36 @@ export default class Dojo extends React.Component<Props, State> {
             case 'combat':
                 const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
                 if (combat) {
+                    let xp = 0;
                     const encounter = this.state.encounters.find(e => e.id === combat.encounterID);
                     if (encounter) {
-                        let xp = 0;
                         combat.combatants.filter(c => c.type === 'monster')
                             .forEach(combatant => {
                                 xp += Utils.experience((combatant as Combatant & Monster).challenge);
                             });
-                        return (
-                            <div className='actions'>
-                                <div className='section'>
-                                    <div className='text'>round: {combat.round}</div>
-                                </div>
-                                <div className='section'>
-                                    <div className='text'>xp: {xp}</div>
-                                </div>
-                                <div className='section' style={{ display: encounter.waves.length === 0 ? 'none' : ''}}>
-                                    <button onClick={() => this.openWaveModal()}>add wave</button>
-                                </div>
-                                <div className='section'>
-                                    <button onClick={() => this.addToEncounter()}>add combatants</button>
-                                </div>
-                                <div className='section'>
-                                    <button onClick={() => this.pauseCombat()}>pause encounter</button>
-                                </div>
-                                <div className='section'>
-                                    <button onClick={() => this.endCombat()}>end encounter</button>
-                                </div>
-                            </div>
-                        );
                     }
+                    return (
+                        <div className='actions'>
+                            <div className='section'>
+                                <div className='text'>round: {combat.round}</div>
+                            </div>
+                            <div className='section'>
+                                <div className='text'>xp: {xp}</div>
+                            </div>
+                            <div className='section' style={{ display: encounter && (encounter.waves.length !== 0) ? '' : 'none'}}>
+                                <button onClick={() => this.openWaveModal()}>add wave</button>
+                            </div>
+                            <div className='section'>
+                                <button onClick={() => this.addToEncounter()}>add combatants</button>
+                            </div>
+                            <div className='section'>
+                                <button onClick={() => this.pauseCombat()}>pause encounter</button>
+                            </div>
+                            <div className='section'>
+                                <button onClick={() => this.endCombat()}>end encounter</button>
+                            </div>
+                        </div>
+                    );
                 } else {
                     return (
                         <div className='actions'>
