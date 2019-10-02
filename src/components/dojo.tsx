@@ -973,6 +973,14 @@ export default class Dojo extends React.Component<Props, State> {
         combatant.active = false;
         combatant.defeated = true;
 
+        if (combatant.type === 'monster') {
+            // If this monster is on the map, remove them from it
+            const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+            if (combat && combat.map) {
+                combat.map.items = combat.map.items.filter(item => item.id !== combatant.id);
+            }
+        }
+
         if (combatant.current) {
             this.endTurn(combatant);
         } else {

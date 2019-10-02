@@ -101,6 +101,9 @@ export default class PCCard extends React.Component<Props, State> {
 
         switch (this.state.combatMode) {
             case 'main':
+                if (combatant.pending && !combatant.active && !combatant.defeated) {
+                    options.push(<div key='pending' className='section'>pending initiative entry</div>);
+                }
                 if (!combatant.pending && combatant.active && !combatant.defeated) {
                     if (combatant.current) {
                         options.push(<button key='endTurn' onClick={() => this.props.endTurn(combatant)}>end turn</button>);
@@ -113,21 +116,23 @@ export default class PCCard extends React.Component<Props, State> {
                 if (!combatant.pending && !combatant.active && combatant.defeated) {
                     options.push(<button key='makeActive' onClick={() => this.props.makeActive(combatant)}>mark as active</button>);
                 }
-                options.push(<div key='tag-sep' className='divider' />);
-                options.push(
-                    <ControlRow
-                        key='tags'
-                        controls={COMBAT_TAGS.map(tag =>
-                            <Checkbox
-                                key={tag}
-                                label={tag}
-                                display='button'
-                                checked={combatant.tags.includes(tag)}
-                                changeValue={value => this.props.toggleTag(combatant, tag)}
-                            />
-                        )}
-                    />
-                );
+                if (!combatant.pending && combatant.active && !combatant.defeated) {
+                    options.push(<div key='tag-sep' className='divider' />);
+                    options.push(
+                        <ControlRow
+                            key='tags'
+                            controls={COMBAT_TAGS.map(tag =>
+                                <Checkbox
+                                    key={tag}
+                                    label={tag}
+                                    display='button'
+                                    checked={combatant.tags.includes(tag)}
+                                    changeValue={value => this.props.toggleTag(combatant, tag)}
+                                />
+                            )}
+                        />
+                    );
+                }
                 break;
             case 'cond':
                 options.push(
