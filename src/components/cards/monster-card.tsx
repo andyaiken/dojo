@@ -265,6 +265,15 @@ export default class MonsterCard extends React.Component<Props, State> {
                 }
                 options.push(<div key='tag-sep' className='divider' />);
                 options.push(
+                    <Checkbox
+                        key='hidden'
+                        label='hidden'
+                        display='switch'
+                        checked={!combatant.showOnMap}
+                        changeValue={value => this.props.changeValue(combatant, 'showOnMap', !value)}
+                    />
+                );
+                options.push(
                     <ControlRow
                         key='tags'
                         controls={COMBAT_TAGS.map(tag =>

@@ -29,6 +29,7 @@ export interface Combatant {
     id: string;
     displayName: string;
     displaySize: string;
+    showOnMap: boolean;
     current: boolean;
     pending: boolean;
     active: boolean;

@@ -1234,6 +1234,10 @@ body,
         border-color: $highlight;
     }
 
+    &.hidden {
+        opacity: 0.3;
+    }
+
     .initials {
         font-size: 10px;
         text-transform: uppercase;

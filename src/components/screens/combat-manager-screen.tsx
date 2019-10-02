@@ -109,9 +109,13 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
 
         let controls = null;
         if (combat.map && this.state.playerView.showControls) {
-            let selection = combat.combatants.find(c => c.id === this.state.selectedTokenID);
+            let selection = combat.combatants
+                .filter(c => c.showOnMap)
+                .find(c => c.id === this.state.selectedTokenID);
             if (!selection) {
-                selection = combat.combatants.find(c => c.current);
+                selection = combat.combatants
+                    .filter(c => c.showOnMap)
+                    .find(c => c.current);
             }
 
             if (selection) {
@@ -152,6 +156,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
         }
 
         const init = combat.combatants
+            .filter(c => c.showOnMap)
             .filter(combatant => !combatant.pending && combatant.active && !combatant.defeated)
             .map(combatant => {
                 switch (combatant.type) {

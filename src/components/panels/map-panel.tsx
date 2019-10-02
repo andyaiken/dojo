@@ -212,6 +212,7 @@ export default class MapPanel extends React.Component<Props> {
             if ((this.props.mode !== 'edit') && (this.props.mode !== 'thumbnail')) {
                 auras = this.props.combatants
                     .filter(c => c.aura.radius > 0)
+                    .filter(c => c.showOnMap || (this.props.mode !== 'combat-player'))
                     .map(c => {
                         const mi = this.props.map.items.find(i => i.id === c.id);
                         if (mi) {
@@ -251,6 +252,7 @@ export default class MapPanel extends React.Component<Props> {
                                     style={tokenStyle}
                                     simple={this.props.mode === 'thumbnail'}
                                     showGauge={this.props.mode === 'combat'}
+                                    showHidden={this.props.mode === 'combat'}
                                     selectable={(this.props.mode === 'combat') || (this.props.mode === 'combat-player')}
                                     selected={this.props.selectedItemID ===  i.id}
                                     select={id => this.props.setSelectedItemID(id)}
@@ -393,6 +395,7 @@ interface MapTokenProps {
     style: StyleData;
     simple: boolean;
     showGauge: boolean;
+    showHidden: boolean;
     selectable: boolean;
     selected: boolean;
     select: (tokenID: string) => void;
@@ -413,6 +416,13 @@ class MapToken extends React.Component<MapTokenProps> {
         }
         if (this.props.combatant.current) {
             style += ' current';
+        }
+        if (!this.props.combatant.showOnMap) {
+            if (this.props.showHidden) {
+                style += ' hidden';
+            } else {
+                return null;
+            }
         }
 
         let initials = null;

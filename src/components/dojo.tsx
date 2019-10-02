@@ -126,6 +126,10 @@ export default class Dojo extends React.Component<Props, State> {
                         combat.notifications = [];
                     }
                     combat.combatants.forEach(c => {
+                        if (c.showOnMap === undefined) {
+                            c.showOnMap = true;
+                        }
+
                         if (c.altitude === undefined) {
                             c.altitude = 0;
                         }
@@ -716,6 +720,7 @@ export default class Dojo extends React.Component<Props, State> {
 
         combatant.displayName = pc.name;
         combatant.displaySize = 'medium';
+        combatant.showOnMap = true;
         combatant.initiative = 10;
         combatant.hp = null;
         combatant.conditions = [];
@@ -754,6 +759,7 @@ export default class Dojo extends React.Component<Props, State> {
 
         combatant.displayName = displayName;
         combatant.displaySize = monster.size;
+        combatant.showOnMap = true;
         combatant.hp = combatant.hpMax;
         combatant.conditions = [];
         combatant.tags = [];
@@ -1020,6 +1026,7 @@ export default class Dojo extends React.Component<Props, State> {
                                     break;
                             }
 
+                            combatant.showOnMap = true;
                             combatant.current = false;
                             combatant.pending = (this.state.modal.combatSetup.encounterInitMode === 'manual');
                             combatant.active = (this.state.modal.combatSetup.encounterInitMode !== 'manual');

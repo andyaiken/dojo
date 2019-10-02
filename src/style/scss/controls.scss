@@ -52,7 +52,7 @@
     }
 
     &.button.checked {
-        color: $highlight;
+        border-color: $highlight;
         background-color: $highlight01;
     }
 }
