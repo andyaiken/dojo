@@ -189,6 +189,10 @@ button {
     overflow-x: hidden;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+
+    &.scrollable-both {
+        overflow: auto;
+    }
 }
 
 .left {
@@ -316,7 +320,10 @@ body,
     -moz-osx-font-smoothing: grayscale;
 
     &.popout {
-        overflow: auto;
+        
+        .map-panel {
+            overflow: visible;
+        }
     }
 }
 
@@ -402,15 +409,16 @@ body,
         top: 4px;
         vertical-align: middle;
 
-        .section {
+        > .section {
             display: inline-block;
             margin: 0 5px;
             color: $header-foreground;
             vertical-align: top;
 
-            button,
-            .selector {
-                min-width: 120px;
+            > button,
+            > .menu,
+            > .selector {
+                width: 150px;
             }
 
             .text {
@@ -1113,50 +1121,42 @@ body,
     position: absolute;
     border: 1px solid darkgrey;
     background-color: lightgrey;
+    background-size: 25px;
 
     &.cavern {
         background-image: url("../../resources/images/map-tiles/cavern.jpg");
-        background-size: 25px;
     }
 
     &.dirt {
         background-image: url("../../resources/images/map-tiles/dirt.jpg");
-        background-size: 25px;
     }
 
     &.flagstone {
         background-image: url("../../resources/images/map-tiles/flagstone.jpg");
-        background-size: 25px;
     }
 
     &.floorboard {
         background-image: url("../../resources/images/map-tiles/floorboard.jpg");
-        background-size: 25px;
     }
 
     &.grassland {
         background-image: url("../../resources/images/map-tiles/grassland.jpg");
-        background-size: 25px;
     }
 
     &.pit {
         background-image: url("../../resources/images/map-tiles/pit.jpg");
-        background-size: 25px;
     }
 
     &.sand {
         background-image: url("../../resources/images/map-tiles/sand.jpg");
-        background-size: 25px;
     }
 
     &.snow {
         background-image: url("../../resources/images/map-tiles/snow.jpg");
-        background-size: 25px;
     }
 
     &.water {
         background-image: url("../../resources/images/map-tiles/water.jpg");
-        background-size: 25px;
     }
 
     &.square {
@@ -1173,6 +1173,10 @@ body,
 
     &.circle {
         border-radius: 50%;
+    }
+
+    &.large {
+        background-size: 50px;
     }
 
     &.selected {

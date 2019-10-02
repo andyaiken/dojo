@@ -133,7 +133,7 @@
             vertical-align: middle;
             height: 20px;
             width: 20px;
-            transform: rotate(90deg);
+            transform: rotate(-90deg);
         }
     }
 
@@ -225,6 +225,68 @@
                 transform: rotate(-180deg);
             }
         }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Menu
+
+.menu {
+    margin: 5px 0;
+    background-color: $background;
+    cursor: pointer;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    position: relative;
+
+        &:hover {
+            .menu-top,
+            .menu-content {
+                border-color: $highlight;
+            }
+        }
+
+        &.open .menu-top .arrow {
+            transform: rotate(0);
+        }
+
+    .menu-top {
+        padding: 5px 10px;
+        font-weight: 600;
+        border: 1px solid $control-border;
+        border-left-width: 5px;
+
+        .menu-text {
+            display: inline-block;
+            vertical-align: middle;
+            height: 20px;
+            width: calc(100% - 21px);
+            line-height: 20px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .arrow {
+            display: inline-block;
+            vertical-align: middle;
+            height: 20px;
+            width: 20px;
+            transform: rotate(-90deg);
+        }
+    }
+
+    .menu-content {
+        background-color: $background;
+        border: 1px solid $control-border;
+        max-height: 155px;
+        overflow-y: auto;
+        position: absolute;
+        top: 31px;
+        left: 0px;
+        right: 0px;
+        padding: 0 5px;
+        box-shadow: 0 3px 5px 0 $header-background-05;
+        z-index: 1;
     }
 }
 

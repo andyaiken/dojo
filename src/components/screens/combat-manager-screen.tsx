@@ -48,7 +48,10 @@ interface Props {
 interface State {
     selectedTokenID: string | null;
     addingToMapID: string | null;
-    showMapWindow: boolean;
+    playerView: {
+        open: boolean;
+        showControls: boolean;
+    };
 }
 
 export default class CombatManagerScreen extends React.Component<Props, State> {
@@ -58,13 +61,16 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
         this.state = {
             selectedTokenID: null,  // The ID of the combatant that's selected
             addingToMapID: null,    // The ID of the combatant we're adding to the map
-            showMapWindow: false
+            playerView: {
+                open: false,
+                showControls: true
+            }
         };
     }
 
     public componentDidMount() {
         window.addEventListener('beforeunload', () => {
-            this.closeMapWindow();
+            this.setPlayerViewOpen(false);
         });
     }
 
@@ -80,16 +86,136 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
         });
     }
 
-    private toggleMapWindow() {
+    private setPlayerViewOpen(show: boolean) {
+        // eslint-disable-next-line
+        this.state.playerView.open = show;
         this.setState({
-            showMapWindow: !this.state.showMapWindow
+            playerView: this.state.playerView
         });
     }
 
-    private closeMapWindow() {
+    private setPlayerViewShowControls(show: boolean) {
+        // eslint-disable-next-line
+        this.state.playerView.showControls = show;
         this.setState({
-            showMapWindow: false
+            playerView: this.state.playerView
         });
+    }
+
+    private getPlayerView(combat: Combat) {
+        if (!this.state.playerView.open) {
+            return null;
+        }
+
+        let controls = null;
+        if (combat.map && this.state.playerView.showControls) {
+            let selection = combat.combatants.find(c => c.id === this.state.selectedTokenID);
+            if (!selection) {
+                selection = combat.combatants.find(c => c.current);
+            }
+
+            if (selection) {
+                const token = selection as ((Combatant & PC) | (Combatant & Monster));
+                controls = (
+                    <div>
+                        <div className='heading lowercase'>{token.displayName}</div>
+                        <div className='section centered'>
+                            <Radial
+                                direction='eight'
+                                click={dir => this.props.mapMove(token, dir)}
+                            />
+                        </div>
+                        <div className='divider' />
+                        <Spin
+                            key='altitude'
+                            source={token}
+                            name='altitude'
+                            label='altitude'
+                            display={value => value + ' ft.'}
+                            nudgeValue={delta => this.props.nudgeValue(token, 'altitude', delta * 5)}
+                        />
+                        <ControlRow
+                            key='tags'
+                            controls={COMBAT_TAGS.map(tag =>
+                                <Checkbox
+                                    key={tag}
+                                    label={tag}
+                                    display='button'
+                                    checked={token.tags.includes(tag)}
+                                    changeValue={value => this.props.toggleTag(token, tag)}
+                                />
+                            )}
+                        />
+                    </div>
+                );
+            }
+        }
+
+        const init = combat.combatants
+            .filter(combatant => !combatant.pending && combatant.active && !combatant.defeated)
+            .map(combatant => {
+                switch (combatant.type) {
+                    case 'pc':
+                        return (
+                            <PCRow
+                                key={combatant.id}
+                                combatant={combatant as Combatant & PC}
+                                minimal={true}
+                                combat={this.props.combat as Combat}
+                                select={c => this.setSelectedTokenID(c.id)}
+                                selected={combatant.id === this.state.selectedTokenID}
+                            />
+                        );
+                    case 'monster':
+                        return (
+                            <MonsterRow
+                                key={combatant.id}
+                                combatant={combatant as Combatant & Monster}
+                                minimal={true}
+                                combat={this.props.combat as Combat}
+                                select={c => this.setSelectedTokenID(c.id)}
+                                selected={combatant.id === this.state.selectedTokenID}
+                            />
+                        );
+                    default:
+                        return null;
+                }
+            });
+
+        if (combat.map) {
+            return (
+                <Popout title='Encounter' closeWindow={() => this.setPlayerViewOpen(false)}>
+                    <div className='row'>
+                        <div className='columns small-12 medium-6 large-8 scrollable scrollable-both'>
+                            <MapPanel
+                                key='map'
+                                map={combat.map}
+                                mode='combat-player'
+                                combatants={combat.combatants}
+                                selectedItemID={this.state.selectedTokenID ? this.state.selectedTokenID : undefined}
+                                setSelectedItemID={id => this.setSelectedTokenID(id)}
+                            />
+                        </div>
+                        <div className='columns small-12 medium-6 large-4 scrollable'>
+                            {controls}
+                            <div className='heading'>initiative order</div>
+                            {init}
+                        </div>
+                    </div>
+                </Popout>
+            );
+        } else {
+            return (
+                <Popout title='Encounter' closeWindow={() => this.setPlayerViewOpen(false)}>
+                    <div className='row'>
+                        <div className='columns small-12 medium-12 large-12 scrollable'>
+                            <div className='heading'>initiative order</div>
+                            {init}
+                        </div>
+                    </div>
+                </Popout>
+            );
+        }
     }
 
     private createCard(combatant: (Combatant & PC) | (Combatant & Monster)) {
@@ -185,7 +311,6 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                 const current: JSX.Element[] = [];
                 let pending: JSX.Element[] = [];
                 let active: JSX.Element[] = [];
-                const popout: JSX.Element[] = [];
                 const defeated: JSX.Element[] = [];
 
                 this.props.combat.combatants.forEach(combatant => {
@@ -220,32 +345,12 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                                         selected={combatant.id === this.state.selectedTokenID}
                                     />
                                 );
-                                popout.push(
-                                    <PCRow
-                                        key={combatant.id}
-                                        combatant={combatant as Combatant & PC}
-                                        minimal={true}
-                                        combat={this.props.combat as Combat}
-                                        select={c => this.setSelectedTokenID(c.id)}
-                                        selected={combatant.id === this.state.selectedTokenID}
-                                    />
-                                );
                                 break;
                             case 'monster':
                                 active.push(
                                     <MonsterRow
                                         key={combatant.id}
                                         combatant={combatant as Combatant & Monster}
-                                        combat={this.props.combat as Combat}
-                                        select={c => this.setSelectedTokenID(c.id)}
-                                        selected={combatant.id === this.state.selectedTokenID}
-                                    />
-                                );
-                                popout.push(
-                                    <MonsterRow
-                                        key={combatant.id}
-                                        combatant={combatant as Combatant & Monster}
-                                        minimal={true}
                                         combat={this.props.combat as Combat}
                                         select={c => this.setSelectedTokenID(c.id)}
                                         selected={combatant.id === this.state.selectedTokenID}
@@ -348,81 +453,6 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
 
                 let mapSection = null;
                 if (this.props.combat.map) {
-                    let mapWindow = null;
-                    let button = null;
-                    if (this.state.showMapWindow) {
-                        let selection = this.props.combat.combatants.find(c => c.id === this.state.selectedTokenID);
-                        if (!selection) {
-                            selection = this.props.combat.combatants.find(c => c.current);
-                        }
-                        let controls = null;
-                        if (selection) {
-                            const token = selection as ((Combatant & PC) | (Combatant & Monster));
-                            controls = (
-                                <div>
-                                    <div className='heading'>controls</div>
-                                    <div className='section centered'>
-                                        <Radial
-                                            direction='eight'
-                                            click={dir => this.props.mapMove(token, dir)}
-                                        />
-                                    </div>
-                                    <div className='divider' />
-                                    <Spin
-                                        key='altitude'
-                                        source={token}
-                                        name='altitude'
-                                        label='altitude'
-                                        display={value => value + ' ft.'}
-                                        nudgeValue={delta => this.props.nudgeValue(token, 'altitude', delta * 5)}
-                                    />
-                                    <ControlRow
-                                        key='tags'
-                                        controls={COMBAT_TAGS.map(tag =>
-                                            <Checkbox
-                                                key={tag}
-                                                label={tag}
-                                                display='button'
-                                                checked={token.tags.includes(tag)}
-                                                changeValue={value => this.props.toggleTag(token, tag)}
-                                            />
-                                        )}
-                                    />
-                                </div>
-                            );
-                        }
-                        mapWindow = (
-                            <Popout title='Encounter' closeWindow={() => this.closeMapWindow()}>
-                                <div className='row'>
-                                    <div className='columns small-12 medium-6 large-8'>
-                                        <div className='heading'>encounter map</div>
-                                        <MapPanel
-                                            key='map'
-                                            map={this.props.combat.map}
-                                            mode='combat-player'
-                                            combatants={this.props.combat.combatants}
-                                            selectedItemID={this.state.selectedTokenID ? this.state.selectedTokenID : undefined}
-                                            setSelectedItemID={id => {
-                                                if (id) {
-                                                    this.setSelectedTokenID(id);
-                                                }
-                                            }}
-                                        />
-                                    </div>
-                                    <div className='columns small-12 medium-6 large-4'>
-                                        {controls}
-                                        <div className='heading'>initiative order</div>
-                                        {popout}
-                                    </div>
-                                </div>
-                            </Popout>
-                        );
-                    } else {
-                        button = (
-                            <button onClick={() => this.toggleMapWindow()}>open popout map</button>
-                        );
-                    }
-
                     mapSection = (
                         <div key='map'>
                             <MapPanel
@@ -431,18 +461,33 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                                 showOverlay={this.state.addingToMapID !== null}
                                 combatants={this.props.combat.combatants}
                                 selectedItemID={this.state.selectedTokenID ? this.state.selectedTokenID : undefined}
-                                setSelectedItemID={id => {
-                                    if (id) {
-                                        this.setSelectedTokenID(id);
-                                    }
-                                }}
+                                setSelectedItemID={id => this.setSelectedTokenID(id)}
                                 gridSquareClicked={(x, y) => this.addCombatantToMap(x, y)}
                             />
-                            {button}
-                            {mapWindow}
                         </div>
                     );
                 }
+
+                const playerViewSection = (
+                    <CardGroup
+                        heading='player view'
+                        content={[
+                            <Checkbox
+                                key='show'
+                                label='show player view'
+                                checked={this.state.playerView.open}
+                                changeValue={value => this.setPlayerViewOpen(value)}
+                            />,
+                            <Checkbox
+                                key='controls'
+                                label='show map controls'
+                                checked={this.state.playerView.showControls}
+                                changeValue={value => this.setPlayerViewShowControls(value)}
+                            />
+                        ]}
+                        showToggle={true}
+                    />
+                );
 
                 const special: JSX.Element[] = [];
                 this.props.combat.combatants.forEach(c => {
@@ -521,6 +566,8 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                             />
                         </div>
                         <div className='columns small-4 medium-4 large-4 scrollable'>
+                            {playerViewSection}
+                            {this.getPlayerView(this.props.combat)}
                             <CardGroup
                                 heading={'don\'t forget'}
                                 content={special}

@@ -31,6 +31,7 @@ import Navbar from './panels/navbar';
 import Titlebar from './panels/titlebar';
 
 import Checkbox from './controls/checkbox';
+import Menu from './controls/menu';
 
 import close from '../resources/images/close-black.svg';
 
@@ -1523,12 +1524,14 @@ export default class Dojo extends React.Component<Props, State> {
                 const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
                 if (combat) {
                     let xp = 0;
+                    let allowWave = false;
                     const encounter = this.state.encounters.find(e => e.id === combat.encounterID);
                     if (encounter) {
                         combat.combatants.filter(c => c.type === 'monster')
                             .forEach(combatant => {
                                 xp += Utils.experience((combatant as Combatant & Monster).challenge);
                             });
+                        allowWave = (encounter.waves.length !== 0);
                     }
                     return (
                         <div className='actions'>
@@ -1538,11 +1541,16 @@ export default class Dojo extends React.Component<Props, State> {
                             <div className='section'>
                                 <div className='text'>xp: {xp}</div>
                             </div>
-                            <div className='section' style={{ display: encounter && (encounter.waves.length !== 0) ? '' : 'none'}}>
-                                <button onClick={() => this.openWaveModal()}>add wave</button>
-                            </div>
                             <div className='section'>
-                                <button onClick={() => this.addToEncounter()}>add combatants</button>
+                                <Menu
+                                    text='add'
+                                    content={(
+                                        <div>
+                                            <button onClick={() => this.addToEncounter()}>add combatants</button>
+                                            <button onClick={() => this.openWaveModal()} className={allowWave ? '' : 'disabled'}>add wave</button>
+                                        </div>
+                                    )}
+                                />
                             </div>
                             <div className='section'>
                                 <button onClick={() => this.pauseCombat()}>pause encounter</button>

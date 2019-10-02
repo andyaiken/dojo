@@ -131,8 +131,9 @@ export default class MapPanel extends React.Component<Props> {
                 return 5;
             case 'edit':
             case 'combat':
-            case 'combat-player':
                 return 25;
+            case 'combat-player':
+                return 50;
             default:
                 return 5;
         }
@@ -200,6 +201,7 @@ export default class MapPanel extends React.Component<Props> {
                             selectable={this.props.mode === 'edit'}
                             selected={this.props.selectedItemID === i.id}
                             thumbnail={this.props.mode === 'thumbnail'}
+                            large={this.props.mode === 'combat-player'}
                             select={id => this.props.mode === 'edit' ? this.props.setSelectedItemID(id) : null}
                         />
                     );
@@ -349,6 +351,7 @@ interface MapTileProps {
     tile: MapItem;
     style: StyleData;
     thumbnail: boolean;
+    large: boolean;
     selectable: boolean;
     selected: boolean;
     select: (tileID: string) => void;
@@ -369,6 +372,9 @@ class MapTile extends React.Component<MapTileProps> {
         }
         if (this.props.thumbnail) {
             style += ' thumbnail';
+        }
+        if (this.props.large) {
+            style += ' large';
         }
 
         return (
