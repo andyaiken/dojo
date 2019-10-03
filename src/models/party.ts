@@ -19,4 +19,10 @@ export interface PC {
     passivePerception: number;
     initiative: number;
     url: string;
+    companions: Companion[];
+}
+
+export interface Companion {
+    id: string;
+    name: string;
 }

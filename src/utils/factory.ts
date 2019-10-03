@@ -5,7 +5,7 @@ import { Condition, ConditionDurationCombatant, ConditionDurationRounds, Conditi
 import { Encounter, EncounterSlot, EncounterWave } from '../models/encounter';
 import { Map, MapFolio, MapItem } from '../models/map-folio';
 import { Monster, MonsterGroup, Trait } from '../models/monster-group';
-import { Party, PC } from '../models/party';
+import { Party, PC, Companion } from '../models/party';
 
 export default class Factory {
 
@@ -32,7 +32,15 @@ export default class Factory {
             passiveInvestigation: 10,
             passivePerception: 10,
             initiative: 10,
-            url: ''
+            url: '',
+            companions: []
+        };
+    }
+
+    public static createCompanion(): Companion {
+        return {
+            id: Utils.guid(),
+            name: ''
         };
     }
 

@@ -92,10 +92,19 @@ export default class Dojo extends React.Component<Props, State> {
             }
 
             if (data !== null) {
+                data.parties.forEach(p => {
+                    p.pcs.forEach(pc => {
+                        if (pc.companions === undefined) {
+                            pc.companions = [];
+                        }
+                    });
+                })
                 data.library.forEach(g => {
                     g.monsters.forEach(m => {
                         m.traits.forEach(t => {
-                            t.uses = 0;
+                            if (t.uses === undefined) {
+                                t.uses = 0;
+                            }
                         });
                     });
                 });
@@ -248,6 +257,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private savePC() {
+        Utils.sort(this.state.modal.pc.companions);
         const party = this.state.parties.find(p => p.id === this.state.selectedPartyID);
         if (party) {
             const original = party.pcs.find(pc => pc.id === this.state.modal.pc.id);

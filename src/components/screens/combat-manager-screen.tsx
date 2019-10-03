@@ -417,7 +417,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                                     <div>
                                         <div className='section'>these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right)</div>
                                         <div className='section'>they are listed in initiative order (with the highest initiative score at the top of the list, and the lowest at the bottom)</div>
-                                        <div className='section'>to begin the encounter, select the first combatant and press the <b>start turn</b> button on their stat block</div>
+                                        <div className='section'>when you're ready to begin the encounter, select the first combatant and press the <b>start turn</b> button on their stat block</div>
                                     </div>
                                 }
                             />
@@ -487,6 +487,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                                 key='controls'
                                 label='show map controls'
                                 checked={this.state.playerView.showControls}
+                                disabled={!this.props.combat.map}
                                 changeValue={value => this.setPlayerViewShowControls(value)}
                             />
                         ]}
@@ -909,6 +910,15 @@ class PCRow extends React.Component<PCRowProps> {
             );
         });
 
+        let companions = null;
+        if (this.props.combatant.companions.length > 0) {
+            companions = (
+                <div className='section'>
+                    <b>companions:</b> {this.props.combatant.companions.map(companion => companion.name).join(', ')}
+                </div>
+            );
+        }
+
         return (
             <div className={style} onClick={e => this.onClick(e)}>
                 <div className='name'>
@@ -920,6 +930,7 @@ class PCRow extends React.Component<PCRowProps> {
                     {desc}
                     {conditions}
                     {notes}
+                    {companions}
                 </div>
             </div>
         );

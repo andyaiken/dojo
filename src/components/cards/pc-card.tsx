@@ -305,6 +305,13 @@ export default class PCCard extends React.Component<Props, State> {
                 + ' ' + (this.props.combatant.classes || 'unknown class')
                 + ', level ' + this.props.combatant.level;
 
+            let companions = null;
+            if (this.props.combatant.companions.length > 0) {
+                companions = this.props.combatant.companions.map(companion => (
+                    <div key={companion.id}>{companion.name}</div>
+                ));
+            }
+
             const name = (this.props.combatant as Combatant ? (this.props.combatant as Combatant).displayName : null)
                 || this.props.combatant.name
                 || 'unnamed pc';
@@ -333,6 +340,12 @@ export default class PCCard extends React.Component<Props, State> {
                                 <div><b>insight</b> {this.props.combatant.passiveInsight}</div>
                                 <div><b>investigation</b> {this.props.combatant.passiveInvestigation}</div>
                                 <div><b>perception</b> {this.props.combatant.passivePerception}</div>
+                            </div>
+                        </div>
+                        <div style={{ display: this.props.combatant.companions.length > 0 ? '' : 'none' }}>
+                            <div className='section subheading'>companions</div>
+                            <div className='section'>
+                                {companions}
                             </div>
                         </div>
                         <div style={{ display: options.length > 0 ? '' : 'none' }}>

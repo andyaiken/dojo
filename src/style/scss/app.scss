@@ -656,6 +656,14 @@ body,
             background-color: #650000;
         }
     }
+
+    .companion {
+        border: 1px solid #2E86C1;
+        border-left-width: 5px;
+        font-weight: 600;
+        padding: 5px;
+        margin: 5px 3px;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -957,6 +965,13 @@ body,
             font-size: 15px;
             text-align: center;
             font-weight: 600;
+        }
+
+        .companion {
+            border: 1px solid $control-border;
+            background-color: #FAF7EA;
+            margin: 5px 0;
+            padding: 5px 0;
         }
 
         .monster-help {
