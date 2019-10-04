@@ -1,6 +1,6 @@
 import React from 'react';
 
-import TextGenerator from '../../utils/text-generation';
+import Shakespeare from '../../utils/shakespeare';
 
 // tslint:disable-next-line:no-empty-interface
 interface Props {
@@ -32,8 +32,8 @@ export default class NameModule extends React.Component<Props, State> {
         const response = await fetch('./data/names/' + type + '.txt');
         const input = await response.text();
 
-        TextGenerator.initModel([input]);
-        const names = TextGenerator.generate(10).map(n => n.line).sort();
+        Shakespeare.initModel([input]);
+        const names = Shakespeare.generate(10).map(n => n.line).sort();
 
         this.state.output[type] = names;
         this.setState({

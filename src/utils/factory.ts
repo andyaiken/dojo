@@ -5,7 +5,7 @@ import { Condition, ConditionDurationCombatant, ConditionDurationRounds, Conditi
 import { Encounter, EncounterSlot, EncounterWave } from '../models/encounter';
 import { Map, MapFolio, MapItem } from '../models/map-folio';
 import { Monster, MonsterGroup, Trait } from '../models/monster-group';
-import { Party, PC, Companion } from '../models/party';
+import { Companion, Party, PC } from '../models/party';
 
 export default class Factory {
 

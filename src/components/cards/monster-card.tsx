@@ -264,15 +264,17 @@ export default class MonsterCard extends React.Component<Props, State> {
                     options.push(<button key='makeActive' onClick={() => this.props.makeActive(combatant)}>mark as active</button>);
                 }
                 options.push(<div key='tag-sep' className='divider' />);
-                options.push(
-                    <Checkbox
-                        key='hidden'
-                        label='hidden'
-                        display='switch'
-                        checked={!combatant.showOnMap}
-                        changeValue={value => this.props.changeValue(combatant, 'showOnMap', !value)}
-                    />
-                );
+                if (this.props.mode.indexOf('tactical') !== -1) {
+                    options.push(
+                        <Checkbox
+                            key='hidden'
+                            label='hidden'
+                            display='switch'
+                            checked={!combatant.showOnMap}
+                            changeValue={value => this.props.changeValue(combatant, 'showOnMap', !value)}
+                        />
+                    );
+                }
                 options.push(
                     <ControlRow
                         key='tags'

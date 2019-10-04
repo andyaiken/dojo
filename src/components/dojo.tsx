@@ -2,6 +2,7 @@ import React from 'react';
 
 import Factory from '../utils/factory';
 import Frankenstein from '../utils/frankenstein';
+import Mercator from '../utils/mercator';
 import Utils from '../utils/utils';
 
 import { Combat, Combatant, CombatSetup, Notification } from '../models/combat';
@@ -98,7 +99,7 @@ export default class Dojo extends React.Component<Props, State> {
                             pc.companions = [];
                         }
                     });
-                })
+                });
                 data.library.forEach(g => {
                     g.monsters.forEach(m => {
                         m.traits.forEach(t => {
@@ -1354,6 +1355,17 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
+    private scatterMonsters() {
+        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+        if (combat && combat.map) {
+            Mercator.scatterCombatants(combat);
+
+            this.setState({
+                combats: this.state.combats
+            });
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private setView(view: string) {
@@ -1708,6 +1720,7 @@ export default class Dojo extends React.Component<Props, State> {
                         changeHP={(combatant, hp, temp) => this.changeHP(combatant, hp, temp)}
                         close={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
                         toggleTag={(combatant, tag) => this.toggleTag(combatant, tag)}
+                        scatterMonsters={() => this.scatterMonsters()}
                     />
                 );
         }

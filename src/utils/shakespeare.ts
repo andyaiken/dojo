@@ -10,7 +10,7 @@ interface ModelChar {
     count: number;
 }
 
-export default class TextGenerator {
+export default class Shakespeare {
 
     private static model: ModelLine[] = [];
     private static maxLength: number = 0;
@@ -23,14 +23,14 @@ export default class TextGenerator {
             const lines = source.split(/\r?\n/);
             lines.forEach(line => {
                 if (line) {
-                    TextGenerator.addLineToModel(line, model);
+                    Shakespeare.addLineToModel(line, model);
                     maxLength = Math.max(maxLength, line.length);
                 }
             });
         });
 
-        TextGenerator.model = model;
-        TextGenerator.maxLength = maxLength;
+        Shakespeare.model = model;
+        Shakespeare.maxLength = maxLength;
     }
 
     private static addLineToModel(line: string, model: ModelLine[]) {
@@ -68,9 +68,9 @@ export default class TextGenerator {
         let failures = 0;
 
         while ((lines.length < requiredResults) && (failures < allowedFailures)) {
-            const line = TextGenerator.extractLine();
-            if (line && !lines.map(l => l.line).includes(line) && line.length <= TextGenerator.maxLength) {
-                const fit = TextGenerator.fit(line);
+            const line = Shakespeare.extractLine();
+            if (line && !lines.map(l => l.line).includes(line) && line.length <= Shakespeare.maxLength) {
+                const fit = Shakespeare.fit(line);
                 lines.push({ line, fit });
             } else {
                 failures += 1;
@@ -86,7 +86,7 @@ export default class TextGenerator {
         while (true) {
             const prev = line.substr(line.length - 2, 2);
 
-            const item = TextGenerator.model.find(x => x.prev === prev);
+            const item = Shakespeare.model.find(x => x.prev === prev);
             if (item) {
                 let candidates = '';
                 item.freq.forEach(freq => {
@@ -125,7 +125,7 @@ export default class TextGenerator {
             const prev = text.substr(n - 2, 2);
             const ch = text[n];
 
-            const line = TextGenerator.model.find(m => m.prev === prev);
+            const line = Shakespeare.model.find(m => m.prev === prev);
             if (line) {
                 const mc = line.freq.find(f => f.char === ch);
                 if (mc) {

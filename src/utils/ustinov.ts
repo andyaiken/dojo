@@ -1,21 +1,21 @@
-export default class Speech {
+export default class Ustinov {
     public static async say(text: string, languages: string[]) {
         // If we're  already saying something, stop it
         window.speechSynthesis.cancel();
 
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.voice = await Speech.chooseVoice(languages);
-        utterance.rate = Speech.randomValue(0.5, 1.5);
-        utterance.pitch = Speech.randomValue(0.5, 1.5);
+        utterance.voice = await Ustinov.chooseVoice(languages);
+        utterance.rate = Ustinov.randomValue(0.5, 1.5);
+        utterance.pitch = Ustinov.randomValue(0.5, 1.5);
 
         window.speechSynthesis.speak(utterance);
     }
 
     private static async chooseVoice(languages: string[]) {
-        const voices = await Speech.getVoices();
+        const voices = await Ustinov.getVoices();
 
         // Get language codes for the selected languages
-        const langCodes = languages.map(lang => Speech.getLanguageCode(lang));
+        const langCodes = languages.map(lang => Ustinov.getLanguageCode(lang));
 
         // Filter voice list by these language codes
         let candidates = voices.filter(v => langCodes.includes(v.lang.substr(0, 2)));

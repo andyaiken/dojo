@@ -1,7 +1,7 @@
 import React from 'react';
 
-import Speech from '../../utils/speech';
-import TextGenerator from '../../utils/text-generation';
+import Shakespeare from '../../utils/shakespeare';
+import Ustinov from '../../utils/ustinov';
 
 import Checkbox from '../controls/checkbox';
 import ControlRow from '../controls/control-row';
@@ -175,9 +175,9 @@ export default class LanguageModule extends React.Component<Props, State> {
             const src = this.state.sources[key];
             sources.push(src);
         });
-        TextGenerator.initModel(sources);
+        Shakespeare.initModel(sources);
         this.setState({
-            output: TextGenerator.generate(5).map(l => l.line)
+            output: Shakespeare.generate(5).map(l => l.line)
         });
     }
 
@@ -290,7 +290,7 @@ class GeneratedText extends React.Component<GeneratedTextProps> {
 
     private say(e: React.MouseEvent) {
         e.preventDefault();
-        Speech.say(this.props.text, this.props.languages);
+        Ustinov.say(this.props.text, this.props.languages);
     }
 
     public render() {

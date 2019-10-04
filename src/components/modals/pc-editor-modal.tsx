@@ -3,6 +3,7 @@ import React from 'react';
 import { PC } from '../../models/party';
 
 import Spin from '../controls/spin';
+
 import Factory from '../../utils/factory';
 
 interface Props {
@@ -54,7 +55,7 @@ export default class PCEditorModal extends React.Component<Props, State> {
 
     public render() {
         try {
-            var companions = this.state.pc.companions.map(comp => (
+            const companions = this.state.pc.companions.map(comp => (
                 <div className='row companion' key={comp.id}>
                     <div className='columns small-12 medium-8 large-8'>
                         <input
