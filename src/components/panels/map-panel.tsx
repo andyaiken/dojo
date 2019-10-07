@@ -379,12 +379,21 @@ class MapTile extends React.Component<MapTileProps> {
             style += ' large';
         }
 
+        let content = null;
+        if ((this.props.tile.terrain === 'custom image') && (this.props.tile.customBackground !== null)) {
+            content = (
+                <img src={this.props.tile.customBackground} alt='map tile' style={{ width: '100%', height: '100%' }} />
+            );
+        }
+
         return (
             <div
                 className={style}
                 style={this.props.style}
                 onClick={e => this.select(e)}
-            />
+            >
+                {content}
+            </div>
         );
     }
 }

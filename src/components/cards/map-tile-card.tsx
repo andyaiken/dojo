@@ -8,7 +8,7 @@ import Selector from '../controls/selector';
 
 interface Props {
     tile: MapItem;
-    changeValue: (tile: MapItem, field: string, value: string) => void;
+    changeValue: (tile: MapItem, field: string, value: any) => void;
     moveMapItem: (tile: MapItem, dir: string) => void;
     resizeMapItem: (tile: MapItem, dir: string, dir2: 'in' | 'out' | null) => void;
     cloneMapItem: (tile: MapItem) => void;
@@ -25,6 +25,38 @@ export default class MapTileCard extends React.Component<Props> {
             const styleOptions = ['square', 'rounded', 'circle'].map(t => {
                 return { id: t, text: t };
             });
+
+            let customSection = null;
+            if (this.props.tile.terrain === 'custom image') {
+                const clear = (
+                    <button onClick={() => this.props.changeValue(this.props.tile, 'customBackground', null)}>clear image</button>
+                );
+                customSection = (
+                    <div>
+                        <div className='subheading'>custom image</div>
+                        <button onClick={() => (document.getElementById('file-upload') as HTMLElement).click()}>select image</button>
+                        <input
+                            type='file'
+                            id='file-upload'
+                            accept='image/*'
+                            style={{ display: 'none' }}
+                            onChange={e => {
+                                if (e.target.files) {
+                                    const reader = new FileReader();
+                                    reader.onload = readerEvent => {
+                                        if (readerEvent.target) {
+                                            const content = readerEvent.target.result as string;
+                                            this.props.changeValue(this.props.tile, 'customBackground', content);
+                                        }
+                                    };
+                                    reader.readAsDataURL(e.target.files[0]);
+                                }
+                            }}
+                        />
+                        {clear}
+                    </div>
+                );
+            }
 
             return (
                 <div className='card map-tile'>
@@ -43,6 +75,7 @@ export default class MapTileCard extends React.Component<Props> {
                             selectedID={this.props.tile.terrain ? this.props.tile.terrain : undefined}
                             select={optionID => this.props.changeValue(this.props.tile, 'terrain', optionID)}
                         />
+                        {customSection}
                         <div className='divider' />
                         <div className='subheading'>style</div>
                         <Selector

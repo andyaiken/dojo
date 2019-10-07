@@ -152,6 +152,7 @@ export default class Factory {
             width: 4,
             height: 4,
             terrain: null,
+            customBackground: null,
             style: null
         };
     }
