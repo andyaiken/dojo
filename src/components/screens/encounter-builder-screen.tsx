@@ -405,7 +405,7 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
                             text='build a random encounter'
                             content={(
                                 <div>
-                                    <p>add random monsters to this encounter until its xp value is at least the following value</p>
+                                    <p>add random monsters to this encounter until its adjusted xp value is at least the following value</p>
                                     <Spin
                                         source={this.state}
                                         name='randomEncounterXP'

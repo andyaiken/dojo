@@ -65,7 +65,7 @@ export default class Napoleon {
         encounter: Encounter, xp: number, filter: MonsterFilter, groups: MonsterGroup[],
         getMonster: (monsterName: string, groupName: string) => Monster | null) {
 
-        while (Napoleon.getEncounterXP(encounter, (monsterName, groupName) => getMonster(monsterName, groupName)) < xp) {
+        while (Napoleon.getAdjustedEncounterXP(encounter, (monsterName, groupName) => getMonster(monsterName, groupName)) < xp) {
             if ((encounter.slots.length > 0) && (Utils.dieRoll(3) > 1)) {
                 // Increment a slot
                 const index = Math.floor(Math.random() * encounter.slots.length);
