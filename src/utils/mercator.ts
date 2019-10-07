@@ -62,8 +62,8 @@ export default class Mercator {
             tiles.forEach(tile => {
                 minX = Math.min(minX, tile.x);
                 minY = Math.min(minY, tile.y);
-                maxX = Math.min(maxX, tile.x + tile.width - 1);
-                maxY = Math.min(maxY, tile.y + tile.height - 1);
+                maxX = Math.max(maxX, tile.x + tile.width - 1);
+                maxY = Math.max(maxY, tile.y + tile.height - 1);
             });
 
             return {
