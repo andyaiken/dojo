@@ -1,8 +1,11 @@
 import React from 'react';
 
+import Factory from '../../utils/factory';
 import Frankenstein from '../../utils/frankenstein';
+import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
+import { MonsterFilter } from '../../models/encounter';
 import { CATEGORY_TYPES, Monster, MonsterGroup, Trait, TRAIT_TYPES } from '../../models/monster-group';
 
 import MonsterCard from '../cards/monster-card';
@@ -13,9 +16,8 @@ import Selector from '../controls/selector';
 import Spin from '../controls/spin';
 import AbilityScorePanel from '../panels/ability-score-panel';
 import FilterPanel from '../panels/filter-panel';
-import TraitsPanel from '../panels/traits-panel';
-
 import Note from '../panels/note';
+import TraitsPanel from '../panels/traits-panel';
 
 interface Props {
     monster: Monster;
@@ -37,13 +39,7 @@ interface State {
         challenge: boolean,
         text: string
     };
-    scratchpadFilter: {
-        name: string,
-        challengeMin: number;
-        challengeMax: number;
-        category: string;
-        size: string;
-    };
+    scratchpadFilter: MonsterFilter;
     scratchpadList: Monster[];
 }
 
@@ -64,13 +60,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 challenge: true,
                 text: ''
             },
-            scratchpadFilter: {
-                name: '',
-                challengeMin: 0,
-                challengeMax: 5,
-                category: 'all types',
-                size: 'all sizes'
-            },
+            scratchpadFilter: Factory.createMonsterFilter(),
             scratchpadList: []
         };
     }
@@ -271,44 +261,12 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
     private resetFilter() {
         this.setState({
-            scratchpadFilter: {
-                name: '',
-                challengeMin: 0,
-                challengeMax: 5,
-                category: 'all types',
-                size: 'all sizes'
-            }
+            scratchpadFilter: Factory.createMonsterFilter()
         });
     }
 
     private matchMonster(monster: Monster) {
-        if (monster.challenge < this.state.scratchpadFilter.challengeMin) {
-            return false;
-        }
-
-        if (monster.challenge > this.state.scratchpadFilter.challengeMax) {
-            return false;
-        }
-
-        if (this.state.scratchpadFilter.name !== '') {
-            if (!Utils.match(this.state.scratchpadFilter.name, monster.name)) {
-                return false;
-            }
-        }
-
-        if (this.state.scratchpadFilter.category !== 'all types') {
-            if (monster.category !== this.state.scratchpadFilter.category) {
-                return false;
-            }
-        }
-
-        if (this.state.scratchpadFilter.size !== 'all sizes') {
-            if (monster.size !== this.state.scratchpadFilter.size) {
-                return false;
-            }
-        }
-
-        return true;
+        return Napoleon.matchMonster(monster, this.state.scratchpadFilter);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

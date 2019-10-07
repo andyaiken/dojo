@@ -3,11 +3,12 @@ import React from 'react';
 import Factory from '../utils/factory';
 import Frankenstein from '../utils/frankenstein';
 import Mercator from '../utils/mercator';
+import Napoleon from '../utils/napoleon';
 import Utils from '../utils/utils';
 
 import { Combat, Combatant, CombatSetup, Notification } from '../models/combat';
 import { Condition } from '../models/condition';
-import { Encounter, EncounterSlot, EncounterWave } from '../models/encounter';
+import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../models/encounter';
 import { Map, MapFolio } from '../models/map-folio';
 import { Monster, MonsterGroup } from '../models/monster-group';
 import { Party, PC } from '../models/party';
@@ -470,6 +471,18 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
+    private clearEncounter() {
+        const encounter = this.state.encounters.find(e => e.id === this.state.selectedEncounterID);
+        if (encounter) {
+            encounter.slots = [];
+            encounter.waves = [];
+
+            this.setState({
+                encounters: this.state.encounters
+            });
+        }
+    }
+
     private removeEncounter() {
         const encounter = this.state.encounters.find(e => e.id === this.state.selectedEncounterID);
         if (encounter) {
@@ -479,6 +492,21 @@ export default class Dojo extends React.Component<Props, State> {
             this.setState({
                 encounters: this.state.encounters,
                 selectedEncounterID: null
+            });
+        }
+    }
+
+    private buildEncounter(xp: number, filter: MonsterFilter) {
+        const encounter = this.state.encounters.find(e => e.id === this.state.selectedEncounterID);
+        if (encounter) {
+            encounter.slots = [];
+            encounter.waves = [];
+
+            Napoleon.buildEncounter(encounter, xp, filter, this.state.library, (monsterName, groupName) => this.getMonster(monsterName, groupName));
+            this.sortEncounterSlots(encounter);
+
+            this.setState({
+                encounters: this.state.encounters
             });
         }
     }
@@ -1432,10 +1460,13 @@ export default class Dojo extends React.Component<Props, State> {
     private getMonster(monsterName: string, groupName: string) {
         const group = this.state.library.find(p => p.name === groupName);
         if (group) {
-            return group.monsters.find(monster => monster.name === monsterName);
+            const monster = group.monsters.find(m => m.name === monsterName);
+            if (monster) {
+                return monster;
+            }
         }
 
-        return undefined;
+        return null;
     }
 
     private changeValue(combatant: any, type: string, value: any) {
@@ -1671,10 +1702,12 @@ export default class Dojo extends React.Component<Props, State> {
                         library={this.state.library}
                         selectEncounter={encounter => this.selectEncounter(encounter)}
                         addEncounter={() => this.addEncounter()}
+                        clearEncounter={() => this.clearEncounter()}
                         removeEncounter={() => this.removeEncounter()}
+                        buildEncounter={(xp, filter) => this.buildEncounter(xp, filter)}
                         addWave={() => this.addWaveToEncounter()}
                         removeWave={wave => this.removeWave(wave)}
-                        getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName) || null}
+                        getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
                         addEncounterSlot={(monster, waveID) => this.addEncounterSlot(monster, waveID)}
                         removeEncounterSlot={(slot, waveID) => this.removeEncounterSlot(slot, waveID)}
                         nudgeValue={(slot, type, delta) => this.nudgeValue(slot, type, delta)}
@@ -1820,7 +1853,7 @@ export default class Dojo extends React.Component<Props, State> {
                             parties={this.state.parties}
                             encounters={this.state.encounters}
                             mapFolios={this.state.mapFolios}
-                            getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName) || null}
+                            getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
                             notify={() => this.setState({modal: this.state.modal})}
                         />
                     );
@@ -1844,7 +1877,7 @@ export default class Dojo extends React.Component<Props, State> {
                         <CombatStartModal
                             combatSetup={this.state.modal.combatSetup}
                             encounters={this.state.encounters}
-                            getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName) || null}
+                            getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
                             notify={() => this.setState({modal: this.state.modal})}
                         />
                     );

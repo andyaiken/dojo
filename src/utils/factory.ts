@@ -2,7 +2,7 @@ import Utils from './utils';
 
 import { Combat, CombatSetup, Notification } from '../models/combat';
 import { Condition, ConditionDurationCombatant, ConditionDurationRounds, ConditionDurationSaves } from '../models/condition';
-import { Encounter, EncounterSlot, EncounterWave } from '../models/encounter';
+import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../models/encounter';
 import { Map, MapFolio, MapItem } from '../models/map-folio';
 import { Monster, MonsterGroup, Trait } from '../models/monster-group';
 import { Companion, Party, PC } from '../models/party';
@@ -124,6 +124,16 @@ export default class Factory {
             id: Utils.guid(),
             name: '',
             slots: []
+        };
+    }
+
+    public static createMonsterFilter(): MonsterFilter {
+        return {
+            name: '',
+            challengeMin: 0,
+            challengeMax: 5,
+            category: 'all types',
+            size: 'all sizes'
         };
     }
 

@@ -1,10 +1,12 @@
 import React from 'react';
 
+import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
-import { Encounter, EncounterSlot } from '../../models/encounter';
+import { Encounter } from '../../models/encounter';
 import { Monster } from '../../models/monster-group';
 import { Party } from '../../models/party';
+
 import Dropdown from '../controls/dropdown';
 
 interface Props {
@@ -37,22 +39,9 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
     }
 
     public render() {
-        let monsterCount = 0;
-        let monsterXp = 0;
-        let slots: EncounterSlot[] = [];
-        slots = slots.concat(this.props.encounter.slots);
-        this.props.encounter.waves.forEach(wave => {
-            slots = slots.concat(wave.slots);
-        });
-        slots.forEach(slot => {
-            monsterCount += slot.count;
-            const monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
-            if (monster) {
-                monsterXp += Utils.experience(monster.challenge) * slot.count;
-            }
-        });
-
-        const adjustedXp = monsterXp * Utils.experienceFactor(monsterCount);
+        const monsterCount = Napoleon.getMonsterCount(this.props.encounter);
+        const monsterXP = Napoleon.getEncounterXP(this.props.encounter, this.props.getMonster);
+        const adjustedXP = Napoleon.getAdjustedEncounterXP(this.props.encounter, this.props.getMonster);
 
         let xpThresholds;
         let diffSection;
@@ -73,18 +62,18 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
 
             let difficulty = null;
             let adjustedDifficulty = null;
-            if (adjustedXp > 0) {
+            if (adjustedXP > 0) {
                 difficulty = 'trivial';
-                if (adjustedXp >= xpEasy) {
+                if (adjustedXP >= xpEasy) {
                     difficulty = 'easy';
                 }
-                if (adjustedXp >= xpMedium) {
+                if (adjustedXP >= xpMedium) {
                     difficulty = 'medium';
                 }
-                if (adjustedXp >= xpHard) {
+                if (adjustedXP >= xpHard) {
                     difficulty = 'hard';
                 }
-                if (adjustedXp >= xpDeadly) {
+                if (adjustedXP >= xpDeadly) {
                     difficulty = 'deadly';
                 }
                 adjustedDifficulty = difficulty;
@@ -132,7 +121,7 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
             );
 
             const getLeft = (xp: number) => {
-                const max = Math.max(adjustedXp, (xpDeadly * 1.2));
+                const max = Math.max(adjustedXP, (xpDeadly * 1.2));
                 return (100 * xp) / max;
             };
 
@@ -159,7 +148,7 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
                             <div className='bar deadly' style={{ left: getLeft(xpDeadly) + '%', right: '0' }} />
                         </div>
                         <div className='encounter-container'>
-                            <div className='encounter' style={{ left: (getLeft(adjustedXp) - 0.5) + '%' }} />
+                            <div className='encounter' style={{ left: (getLeft(adjustedXP) - 0.5) + '%' }} />
                         </div>
                     </div>
                     <div className='section'>
@@ -202,11 +191,11 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
                 <div className='subheading'>xp value</div>
                 <div className='section'>
                     xp for this encounter
-                    <div className='right'>{monsterXp} xp</div>
+                    <div className='right'>{monsterXP} xp</div>
                 </div>
-                <div className='section' style={{ display: (adjustedXp === monsterXp) ? 'none' : ''}}>
+                <div className='section' style={{ display: (adjustedXP === monsterXP) ? 'none' : ''}}>
                     effective xp for {monsterCount} monster(s)
-                    <div className='right'>{adjustedXp} xp</div>
+                    <div className='right'>{adjustedXP} xp</div>
                 </div>
                 <div className='subheading'>difficulty</div>
                 {partySelection}

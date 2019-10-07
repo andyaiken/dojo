@@ -1,14 +1,18 @@
 import React from 'react';
 
+import Factory from '../../utils/factory';
+import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
-import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
+import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../../models/encounter';
 import { Monster, MonsterGroup } from '../../models/monster-group';
 import { Party } from '../../models/party';
 
 import MonsterCard from '../cards/monster-card';
 import WaveCard from '../cards/wave-card';
 import ConfirmButton from '../controls/confirm-button';
+import Expander from '../controls/expander';
+import Spin from '../controls/spin';
 import EncounterListItem from '../list-items/encounter-list-item';
 import CardGroup from '../panels/card-group';
 import DifficultyChartPanel from '../panels/difficulty-chart-panel';
@@ -23,7 +27,9 @@ interface Props {
     filter: string;
     selectEncounter: (encounter: Encounter | null) => void;
     addEncounter: () => void;
+    clearEncounter: () => void;
     removeEncounter: () => void;
+    buildEncounter: (xp: number, filter: MonsterFilter) => void;
     addEncounterSlot: (monster: Monster, waveID: string | null) => void;
     removeEncounterSlot: (encounterSlot: EncounterSlot, waveID: string | null) => void;
     addWave: () => void;
@@ -34,57 +40,19 @@ interface Props {
 }
 
 interface State {
-    filter: {
-        name: string,
-        challengeMin: number;
-        challengeMax: number;
-        category: string;
-        size: string;
-    };
+    filter: MonsterFilter;
 }
 
 export default class EncounterBuilderScreen extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            filter: {
-                name: '',
-                challengeMin: 0,
-                challengeMax: 5,
-                category: 'all types',
-                size: 'all sizes'
-            }
+            filter: Factory.createMonsterFilter()
         };
     }
 
     private matchMonster(monster: Monster) {
-        if (monster.challenge < this.state.filter.challengeMin) {
-            return false;
-        }
-
-        if (monster.challenge > this.state.filter.challengeMax) {
-            return false;
-        }
-
-        if (this.state.filter.name !== '') {
-            if (!Utils.match(this.state.filter.name, monster.name)) {
-                return false;
-            }
-        }
-
-        if (this.state.filter.category !== 'all types') {
-            if (monster.category !== this.state.filter.category) {
-                return false;
-            }
-        }
-
-        if (this.state.filter.size !== 'all sizes') {
-            if (monster.size !== this.state.filter.size) {
-                return false;
-            }
-        }
-
-        return true;
+        return Napoleon.matchMonster(monster, this.state.filter);
     }
 
     private changeFilterValue(type: 'name' | 'challengeMin' | 'challengeMax' | 'category' | 'size', value: any) {
@@ -102,13 +70,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
 
     private resetFilter() {
         this.setState({
-            filter: {
-                name: '',
-                challengeMin: 0,
-                challengeMax: 5,
-                category: 'all types',
-                size: 'all sizes'
-            }
+            filter: Factory.createMonsterFilter()
         });
     }
 
@@ -220,7 +182,9 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                             monsterFilter={this.state.filter}
                             changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
                             addWave={() => this.props.addWave()}
+                            clearEncounter={() => this.props.clearEncounter()}
                             removeEncounter={() => this.props.removeEncounter()}
+                            buildEncounter={xp => this.props.buildEncounter(xp, this.state.filter)}
                             getMonster={(monsterName, monsterGroupName) => this.props.getMonster(monsterName, monsterGroupName)}
                             changeFilterValue={(type, value) => this.changeFilterValue(type, value)}
                             nudgeFilterValue={(type, delta) => this.nudgeFilterValue(type, delta)}
@@ -376,23 +340,36 @@ interface EncounterInfoProps {
     selection: Encounter;
     parties: Party[];
     filter: string;
-    monsterFilter: {
-        name: string,
-        challengeMin: number;
-        challengeMax: number;
-        category: string;
-        size: string;
-    };
+    monsterFilter: MonsterFilter;
     changeValue: (field: string, value: string) => void;
     addWave: () => void;
+    clearEncounter: () => void;
     removeEncounter: () => void;
+    buildEncounter: (xp: number) => void;
     getMonster: (monsterName: string, groupName: string) => Monster | null;
     changeFilterValue: (type: 'name' | 'challengeMin' | 'challengeMax' | 'category' | 'size', value: any) => void;
     nudgeFilterValue: (type: 'challengeMin' | 'challengeMax', delta: number) => void;
     resetFilter: () => void;
 }
 
-class EncounterInfo extends React.Component<EncounterInfoProps> {
+interface EncounterInfoState {
+    randomEncounterXP: number;
+}
+
+class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoState> {
+    constructor(props: EncounterInfoProps) {
+        super(props);
+        this.state = {
+            randomEncounterXP: 100
+        };
+    }
+
+    private setRandomEncounterXP(value: number) {
+        this.setState({
+            randomEncounterXP: Math.max(0, value)
+        });
+    }
+
     public render() {
         try {
             return (
@@ -421,7 +398,26 @@ class EncounterInfo extends React.Component<EncounterInfoProps> {
                             nudgeValue={(type, delta) => this.props.nudgeFilterValue(type, delta)}
                             resetFilter={() => this.props.resetFilter()}
                         />
+                    </div>
+                    <div className='divider' />
+                    <div className='section'>
+                        <Expander
+                            text='build a random encounter'
+                            content={(
+                                <div>
+                                    <p>add random monsters to this encounter until its xp value is at least the following value</p>
+                                    <Spin
+                                        source={this.state}
+                                        name='randomEncounterXP'
+                                        label='xp'
+                                        nudgeValue={delta => this.setRandomEncounterXP(this.state.randomEncounterXP + (delta * 100))}
+                                    />
+                                    <button onClick={() => this.props.buildEncounter(this.state.randomEncounterXP)}>build encounter</button>
+                                </div>
+                            )}
+                        />
                         <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.addWave()}>add a new wave</button>
+                        <ConfirmButton text='clear encounter' callback={() => this.props.clearEncounter()} />
                         <ConfirmButton text='delete encounter' callback={() => this.props.removeEncounter()} />
                     </div>
                 </div>

@@ -2,21 +2,15 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
+import { MonsterFilter } from '../../models/encounter';
 import { CATEGORY_TYPES, SIZE_TYPES } from '../../models/monster-group';
 
 import Dropdown from '../controls/dropdown';
+import Expander from '../controls/expander';
 import Spin from '../controls/spin';
 
-import Expander from '../controls/expander';
-
 interface Props {
-    filter: {
-        name: string,
-        challengeMin: number;
-        challengeMax: number;
-        category: string;
-        size: string;
-    };
+    filter: MonsterFilter;
     changeValue: (type: 'name' | 'challengeMin' | 'challengeMax' | 'category' | 'size', value: any) => void;
     nudgeValue: (type: 'challengeMin' | 'challengeMax', delta: number) => void;
     resetFilter: () => void;

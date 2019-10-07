@@ -1,8 +1,9 @@
 import React from 'react';
 
+import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
-import { EncounterSlot } from '../../models/encounter';
+import { EncounterSlot, MonsterFilter } from '../../models/encounter';
 import { Monster, MonsterGroup } from '../../models/monster-group';
 
 import Factory from '../../utils/factory';
@@ -17,13 +18,7 @@ interface Props {
 
 interface State {
     combatantSlots: EncounterSlot[];
-    filter: {
-        name: string,
-        challengeMin: number;
-        challengeMax: number;
-        category: string;
-        size: string;
-    };
+    filter: MonsterFilter;
 }
 
 export default class AddCombatantsModal extends React.Component<Props, State> {
@@ -31,13 +26,7 @@ export default class AddCombatantsModal extends React.Component<Props, State> {
         super(props);
         this.state = {
             combatantSlots: props.combatantSlots,
-            filter: {
-                name: '',
-                challengeMin: 0,
-                challengeMax: 5,
-                category: 'all types',
-                size: 'all sizes'
-            }
+            filter: Factory.createMonsterFilter()
         };
     }
 
@@ -56,44 +45,12 @@ export default class AddCombatantsModal extends React.Component<Props, State> {
 
     private resetFilter() {
         this.setState({
-            filter: {
-                name: '',
-                challengeMin: 0,
-                challengeMax: 5,
-                category: 'all types',
-                size: 'all sizes'
-            }
+            filter: Factory.createMonsterFilter()
         });
     }
 
     private matchMonster(monster: Monster) {
-        if (monster.challenge < this.state.filter.challengeMin) {
-            return false;
-        }
-
-        if (monster.challenge > this.state.filter.challengeMax) {
-            return false;
-        }
-
-        if (this.state.filter.name !== '') {
-            if (!Utils.match(this.state.filter.name, monster.name)) {
-                return false;
-            }
-        }
-
-        if (this.state.filter.category !== 'all types') {
-            if (monster.category !== this.state.filter.category) {
-                return false;
-            }
-        }
-
-        if (this.state.filter.size !== 'all sizes') {
-            if (monster.size !== this.state.filter.size) {
-                return false;
-            }
-        }
-
-        return true;
+        return Napoleon.matchMonster(monster, this.state.filter);
     }
 
     private selectMonster(monster: Monster) {

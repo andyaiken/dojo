@@ -17,3 +17,11 @@ export interface EncounterWave {
     name: string;
     slots: EncounterSlot[];
 }
+
+export interface MonsterFilter {
+    name: string;
+    challengeMin: number;
+    challengeMax: number;
+    category: string;
+    size: string;
+}
