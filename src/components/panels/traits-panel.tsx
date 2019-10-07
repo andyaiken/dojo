@@ -65,7 +65,7 @@ export default class TraitsPanel extends React.Component<Props> {
                     /* tslint:disable:max-line-length */
                     info = (
                         <Note
-                            content={'one legendary action can be used at the end of each other combatant\'s turn; spent actions are refreshed at the start of the creature\'s turn'}
+                            content={'one legendary action can be used at the end of each other combatant\'s turn; spent actions are refreshed at the start of the monster\'s turn'}
                             white={true}
                         />
                     );

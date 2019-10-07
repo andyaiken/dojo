@@ -61,11 +61,26 @@ export default class Napoleon {
         return xp * Utils.experienceFactor(count);
     }
 
+    public static getFilterDescription(filter: MonsterFilter) {
+        let summary = '';
+        if (filter.size !== 'all sizes') {
+            summary += summary ? ' ' + filter.size : filter.size;
+        }
+        if (filter.category !== 'all types') {
+            summary += summary ? ' ' + filter.category : filter.category;
+        }
+        const min = Utils.challenge(filter.challengeMin);
+        const max = Utils.challenge(filter.challengeMax);
+        const cr =  (filter.challengeMin === filter.challengeMax) ? min : min + ' to ' + max;
+        summary += ' monsters of cr ' + cr;
+        return summary;
+    }
+
     public static buildEncounter(
         encounter: Encounter, xp: number, filter: MonsterFilter, groups: MonsterGroup[],
         getMonster: (monsterName: string, groupName: string) => Monster | null) {
 
-        while (Napoleon.getAdjustedEncounterXP(encounter, (monsterName, groupName) => getMonster(monsterName, groupName)) < xp) {
+        while (Napoleon.getAdjustedEncounterXP(encounter, (monsterName, groupName) => getMonster(monsterName, groupName)) <= xp) {
             if ((encounter.slots.length > 0) && (Utils.dieRoll(3) > 1)) {
                 // Increment a slot
                 const index = Math.floor(Math.random() * encounter.slots.length);
@@ -86,8 +101,23 @@ export default class Napoleon {
                     slot.monsterGroupName = candidates[index].groupName;
                     slot.monsterName = candidates[index].monsterName;
                     encounter.slots.push(slot);
+                } else {
+                    if (encounter.slots.length === 0) {
+                        break;
+                    }
                 }
             }
+        }
+
+        // Split into waves
+        while ((encounter.slots.length > 1) && (Utils.dieRoll(10) === 10)) {
+            const index = Math.floor(Math.random() * encounter.slots.length);
+            const slot = encounter.slots[index];
+            encounter.slots = encounter.slots.filter(s => s.id !== slot.id);
+            const wave = Factory.createEncounterWave();
+            wave.name = 'wave ' + (encounter.waves.length + 2);
+            wave.slots.push(slot);
+            encounter.waves.push(wave);
         }
     }
 

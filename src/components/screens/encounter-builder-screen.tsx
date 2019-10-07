@@ -9,7 +9,6 @@ import { Monster, MonsterGroup } from '../../models/monster-group';
 import { Party } from '../../models/party';
 
 import MonsterCard from '../cards/monster-card';
-import WaveCard from '../cards/wave-card';
 import ConfirmButton from '../controls/confirm-button';
 import Expander from '../controls/expander';
 import Spin from '../controls/spin';
@@ -110,11 +109,32 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
         });
 
         if (slots.length === 0) {
-            cards.push(
-                <div className='column' key='empty'>
-                    <Note content={<div className='section'>there are no monsters in this {waveID ? 'wave' : 'encounter'}</div>} />
-                </div>
-            );
+            if (waveID) {
+                cards.push(
+                    <div className='column' key='empty'>
+                        <Note
+                            content={
+                                <div>
+                                    <p>there are no monsters in this wave</p>
+                                </div>
+                            }
+                        />
+                    </div>
+                );
+            } else {
+                cards.push(
+                    <div className='column' key='empty'>
+                        <Note
+                            content={
+                                <div>
+                                    <p>there are no monsters in this encounter</p>
+                                    <p>you can add monsters from the list below, or try 'build a random encounter'</p>
+                                </div>
+                            }
+                        />
+                    </div>
+                );
+            }
         }
 
         return cards;
@@ -156,6 +176,20 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
             );
         });
 
+        if (libraryCards.length === 0) {
+            libraryCards.push(
+                <div className='column' key='empty'>
+                    <Note
+                        content={
+                            <div>
+                                <p>there are no monsters that meet the criteria <i>{Napoleon.getFilterDescription(this.state.filter)}</i></p>
+                            </div>
+                        }
+                    />
+                </div>
+            );
+        }
+
         return (
             <CardGroup
                 heading='monster library'
@@ -180,8 +214,9 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                             parties={this.props.parties}
                             filter={this.props.filter}
                             monsterFilter={this.state.filter}
-                            changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
+                            changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
                             addWave={() => this.props.addWave()}
+                            removeWave={wave => this.props.removeWave(wave)}
                             clearEncounter={() => this.props.clearEncounter()}
                             removeEncounter={() => this.props.removeEncounter()}
                             buildEncounter={xp => this.props.buildEncounter(xp, this.state.filter)}
@@ -234,25 +269,11 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                     .forEach(card => encounterCards.push(card));
 
                 waves = this.props.selection.waves.map(w => {
-                    const waveCards = [];
-                    waveCards.push(
-                        <div className='column' key='info'>
-                            <WaveCard
-                                wave={w}
-                                removeWave={wave => this.props.removeWave(wave)}
-                                changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
-                            />
-                        </div>
-                    );
-
-                    this.getMonsterCards(w.slots, w.id)
-                        .forEach(card => waveCards.push(card));
-
                     return (
                         <CardGroup
                             key={w.id}
                             heading={w.name || 'unnamed wave'}
-                            content={waveCards}
+                            content={this.getMonsterCards(w.slots, w.id)}
                             showToggle={true}
                         />
                     );
@@ -341,8 +362,9 @@ interface EncounterInfoProps {
     parties: Party[];
     filter: string;
     monsterFilter: MonsterFilter;
-    changeValue: (field: string, value: string) => void;
+    changeValue: (source: any, field: string, value: any) => void;
     addWave: () => void;
+    removeWave: (wave: EncounterWave) => void;
     clearEncounter: () => void;
     removeEncounter: () => void;
     buildEncounter: (xp: number) => void;
@@ -372,6 +394,20 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
 
     public render() {
         try {
+            const waves = this.props.selection.waves.map(wave => (
+                <div key={wave.id} className='list-item'>
+                    <div className='text'>
+                    <input
+                        type='text'
+                        placeholder='wave name'
+                        value={wave.name}
+                        onChange={event => this.props.changeValue(wave, 'name', event.target.value)}
+                    />
+                    <ConfirmButton text='delete wave' callback={() => this.props.removeWave(wave)} />
+                    </div>
+                </div>
+            ));
+
             return (
                 <div>
                     <div className='section'>
@@ -381,8 +417,13 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
                             placeholder='encounter name'
                             value={this.props.selection.name}
                             disabled={!!this.props.filter}
-                            onChange={event => this.props.changeValue('name', event.target.value)}
+                            onChange={event => this.props.changeValue(this.props.selection, 'name', event.target.value)}
                         />
+                    </div>
+                    <div className='section'>
+                        <div className='subheading'>waves</div>
+                        {waves}
+                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.addWave()}>add a new wave</button>
                     </div>
                     <div className='divider' />
                     <DifficultyChartPanel
@@ -416,7 +457,6 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
                                 </div>
                             )}
                         />
-                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.addWave()}>add a new wave</button>
                         <ConfirmButton text='clear encounter' callback={() => this.props.clearEncounter()} />
                         <ConfirmButton text='delete encounter' callback={() => this.props.removeEncounter()} />
                     </div>

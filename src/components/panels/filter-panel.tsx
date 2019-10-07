@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
 import { MonsterFilter } from '../../models/encounter';
@@ -66,14 +67,7 @@ export default class FilterPanel extends React.Component<Props> {
                 </div>
             );
 
-            let summary = 'showing';
-            if (this.props.filter.size !== 'all sizes') {
-                summary += summary ? ' ' + this.props.filter.size : this.props.filter.size;
-            }
-            if (this.props.filter.category !== 'all types') {
-                summary += summary ? ' ' + this.props.filter.category : this.props.filter.category;
-            }
-            summary += ' monsters of cr ' + Utils.challenge(this.props.filter.challengeMin) + ' to ' + Utils.challenge(this.props.filter.challengeMax);
+            const summary = 'showing ' + Napoleon.getFilterDescription(this.props.filter);
 
             return (
                 <Expander
