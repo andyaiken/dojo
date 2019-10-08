@@ -1,10 +1,12 @@
 import React from 'react';
 
+import clear from '../../resources/images/close-black.svg';
 import ellipsis from '../../resources/images/ellipsis.svg';
 
 interface Props {
     options: { id: string; text: string; disabled?: boolean }[];
     select: (optionID: string) => void;
+    clear: () => void;
     selectedID: string;
     placeholder: string;
     disabled: boolean;
@@ -18,7 +20,8 @@ export default class Dropdown extends React.Component<Props, State> {
     public static defaultProps = {
         selectedID: null,
         placeholder: 'select...',
-        disabled: false
+        disabled: false,
+        clear: null
     };
 
     constructor(props: Props) {
@@ -43,6 +46,11 @@ export default class Dropdown extends React.Component<Props, State> {
         this.props.select(optionID);
     }
 
+    private clear(e: React.MouseEvent) {
+        e.stopPropagation();
+        this.props.clear();
+    }
+
     public render() {
         try {
             if (this.props.options.length === 0) {
@@ -52,20 +60,20 @@ export default class Dropdown extends React.Component<Props, State> {
             let style = this.props.disabled ? 'dropdown disabled' : 'dropdown';
             const content = [];
 
-            let selectedText;
+            let option: { id: string; text: string; disabled?: boolean } | undefined = undefined;
             if (this.props.selectedID) {
-                const option: { id: string; text: string; disabled?: boolean } | undefined = this.props.options.find(o => o.id === this.props.selectedID);
-                if (option) {
-                    selectedText = option.text;
-                }
-            } else {
-                selectedText = /*this.props.text ||*/ this.props.placeholder;
+                option = this.props.options.find(o => o.id === this.props.selectedID);
             }
 
             content.push(
-                <div key='selection' className='dropdown-top' title={selectedText}>
-                    <div className='item-text'>{selectedText}</div>
-                    <img className='arrow' src={ellipsis} alt='arrow' />
+                <div key='selection' className='dropdown-top' title={option ? option.text : this.props.placeholder}>
+                    <div className='item-text'>{option ? option.text : this.props.placeholder}</div>
+                    <img
+                        className={option && this.props.clear ? 'clear' : 'arrow'}
+                        alt={option && this.props.clear ? 'clear' : 'arrow'}
+                        src={option && this.props.clear ? clear : ellipsis}
+                        onClick={e => option && this.props.clear ? this.clear(e) : null}
+                    />
                 </div>
             );
 

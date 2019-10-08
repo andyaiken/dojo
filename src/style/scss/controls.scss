@@ -128,11 +128,14 @@
             text-overflow: ellipsis;
         }
 
-        .arrow {
+        .arrow, .clear {
             display: inline-block;
             vertical-align: middle;
             height: 20px;
             width: 20px;
+        }
+
+        .arrow {
             transform: rotate(-90deg);
         }
     }

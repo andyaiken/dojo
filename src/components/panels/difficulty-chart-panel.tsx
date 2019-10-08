@@ -32,7 +32,7 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
         };
     }
 
-    private selectParty(partyID: string) {
+    private selectParty(partyID: string | null) {
         this.setState({
             selectedPartyID: partyID
         });
@@ -60,23 +60,25 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
                 xpDeadly += Utils.pcExperience(pc.level, 'deadly');
             });
 
-            let difficulty = null;
-            let adjustedDifficulty = null;
+            let difficulty = 'trivial';
+            let adjustedDifficulty = 'trivial';
             if (adjustedXP > 0) {
-                difficulty = 'trivial';
                 if (adjustedXP >= xpEasy) {
                     difficulty = 'easy';
+                    adjustedDifficulty = 'easy';
                 }
                 if (adjustedXP >= xpMedium) {
                     difficulty = 'medium';
+                    adjustedDifficulty = 'medium';
                 }
                 if (adjustedXP >= xpHard) {
                     difficulty = 'hard';
+                    adjustedDifficulty = 'hard';
                 }
                 if (adjustedXP >= xpDeadly) {
                     difficulty = 'deadly';
+                    adjustedDifficulty = 'deadly';
                 }
-                adjustedDifficulty = difficulty;
 
                 if ((pcs.length < 3) || (pcs.length > 5)) {
                     const small = pcs.length < 3;
@@ -182,12 +184,13 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
                     placeholder='select party...'
                     selectedID={this.state.selectedPartyID ? this.state.selectedPartyID : undefined}
                     select={optionID => this.selectParty(optionID)}
+                    clear={() => this.selectParty(null)}
                 />
             );
         }
 
         return (
-            <div>
+            <div className='list-item non-clickable'>
                 <div className='subheading'>xp value</div>
                 <div className='section'>
                     xp for this encounter

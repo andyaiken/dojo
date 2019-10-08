@@ -40,7 +40,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
         };
     }
 
-    private setParty(partyID: string) {
+    private setParty(partyID: string | null) {
         // eslint-disable-next-line
         this.state.combatSetup.partyID = partyID;
         this.setState({
@@ -48,7 +48,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
         }, () => this.props.notify());
     }
 
-    private setEncounter(encounterID: string) {
+    private setEncounter(encounterID: string | null) {
         // eslint-disable-next-line
         this.state.combatSetup.encounterID = encounterID;
         const enc = this.props.encounters.find(e => e.id === encounterID);
@@ -61,7 +61,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
         }, () => this.props.notify());
     }
 
-    private setFolioID(id: string) {
+    private setFolioID(id: string | null) {
         if (id && (id !== '')) {
             const folio = this.props.mapFolios.find(f => f.id === id);
             if (folio) {
@@ -89,7 +89,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
         });
     }
 
-    private setWave(waveID: string) {
+    private setWave(waveID: string | null) {
         // eslint-disable-next-line
         this.state.combatSetup.waveID = waveID;
         const enc = this.props.encounters.find(e => e.id === this.state.combatSetup.encounterID);
@@ -176,6 +176,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                     placeholder='select party...'
                     selectedID={this.state.combatSetup.partyID ? this.state.combatSetup.partyID : undefined}
                     select={optionID => this.setParty(optionID)}
+                    clear={() => this.setParty(null)}
                 />
                 {partyContent}
             </div>
@@ -257,6 +258,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                     placeholder='select encounter...'
                     selectedID={this.state.combatSetup.encounterID ? this.state.combatSetup.encounterID : undefined}
                     select={optionID => this.setEncounter(optionID)}
+                    clear={() => this.setEncounter(null)}
                 />
                 {encounterContent}
             </div>
@@ -324,6 +326,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                     placeholder='select map folio...'
                     selectedID={this.state.combatSetup.folioID ? this.state.combatSetup.folioID : undefined}
                     select={optionID => this.setFolioID(optionID)}
+                    clear={() => this.setFolioID(null)}
                 />
                 {selectMapSection}
                 {thumbnailSection}
@@ -390,6 +393,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                         placeholder='select wave...'
                         selectedID={this.state.combatSetup.waveID ? this.state.combatSetup.waveID : undefined}
                         select={optionID => this.setWave(optionID)}
+                        clear={() => this.setWave(null)}
                     />
                     {waveContent}
                 </div>
