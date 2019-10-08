@@ -286,6 +286,26 @@ button {
         &.four {
             width: calc((100% - 1px) / 4);
         }
+
+        &.easy {
+            padding-bottom: 4px;
+            border-bottom: 3px solid green;
+        }
+    
+        &.medium {
+            padding-bottom: 4px;
+            border-bottom: 3px solid orange;
+        }
+    
+        &.hard {
+            padding-bottom: 4px;
+            border-bottom: 3px solid red;
+        }
+    
+        &.deadly {
+            padding-bottom: 4px;
+            border-bottom: 3px solid black;
+        }
     }
 }
 
