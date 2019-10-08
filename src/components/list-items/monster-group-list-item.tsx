@@ -21,11 +21,11 @@ export default class MonsterGroupListItem extends React.Component<Props> {
                 const monster = this.props.group.monsters[n];
                 const name = monster.name || 'unnamed monster';
                 if (matchGroup || Utils.match(this.props.filter, name)) {
-                    monsters.push(<div key={monster.id} className='text'>{name}</div>);
+                    monsters.push(<div key={monster.id} className='section'>{name}</div>);
                 }
             }
             if (monsters.length === 0) {
-                monsters.push(<div key='empty' className='text'>no monsters</div>);
+                monsters.push(<div key='empty' className='section'>no monsters</div>);
             }
 
             return (

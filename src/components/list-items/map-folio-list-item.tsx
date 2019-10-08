@@ -21,11 +21,11 @@ export default class MapFolioListItem extends React.Component<Props> {
                 const map = this.props.mapFolio.maps[n];
                 const name = map.name || 'unnamed map';
                 if (matchFolio || Utils.match(this.props.filter, name)) {
-                    maps.push(<div key={map.id} className='text'>{name}</div>);
+                    maps.push(<div key={map.id} className='section'>{name}</div>);
                 }
             }
             if (maps.length === 0) {
-                maps.push(<div key='empty' className='text'>no maps</div>);
+                maps.push(<div key='empty' className='section'>no maps</div>);
             }
 
             return (

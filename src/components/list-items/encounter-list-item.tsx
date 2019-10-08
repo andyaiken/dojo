@@ -18,24 +18,24 @@ export default class EncounterListItem extends React.Component<Props> {
                 if (slot.count > 1) {
                     text += ' x' + slot.count;
                 }
-                slots.push(<div key={slot.id} className='text'>{text}</div>);
+                slots.push(<div key={slot.id} className='section'>{text}</div>);
             });
 
             if (slots.length === 0) {
-                slots.push(<div key='empty' className='text'>no monsters</div>);
+                slots.push(<div key='empty' className='section'>no monsters</div>);
             }
 
             this.props.encounter.waves.forEach(wave => {
-                slots.push(<div key={'name ' + wave.id} className='text subheading'>{wave.name || 'unnamed wave'}</div>);
+                slots.push(<div key={'name ' + wave.id} className='section subheading'>{wave.name || 'unnamed wave'}</div>);
                 wave.slots.forEach(slot => {
                     let text = slot.monsterName || 'unnamed monster';
                     if (slot.count > 1) {
                         text += ' x' + slot.count;
                     }
-                    slots.push(<div key={slot.id} className='text'>{text}</div>);
+                    slots.push(<div key={slot.id} className='section'>{text}</div>);
                 });
                 if (slots.length === 0) {
-                    slots.push(<div key={'empty ' + wave.id} className='text'>no monsters</div>);
+                    slots.push(<div key={'empty ' + wave.id} className='section'>no monsters</div>);
                 }
             });
 

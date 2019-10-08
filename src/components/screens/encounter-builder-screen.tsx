@@ -395,8 +395,7 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
     public render() {
         try {
             const waves = this.props.selection.waves.map(wave => (
-                <div key={wave.id} className='list-item'>
-                    <div className='text'>
+                <div key={wave.id} className='list-item non-clickable'>
                     <input
                         type='text'
                         placeholder='wave name'
@@ -404,7 +403,6 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
                         onChange={event => this.props.changeValue(wave, 'name', event.target.value)}
                     />
                     <ConfirmButton text='delete wave' callback={() => this.props.removeWave(wave)} />
-                    </div>
                 </div>
             ));
 

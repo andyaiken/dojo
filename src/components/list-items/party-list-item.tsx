@@ -24,11 +24,11 @@ export default class PartyListItem extends React.Component<Props> {
                     name += ' (' + pc.player + ')';
                 }
                 if (matchParty || Utils.match(this.props.filter, name)) {
-                    pcs.push(<div key={pc.id} className='text'>{name}</div>);
+                    pcs.push(<div key={pc.id} className='section'>{name}</div>);
                 }
             }
             if (pcs.length === 0) {
-                pcs.push(<div key='empty' className='text'>no pcs</div>);
+                pcs.push(<div key='empty' className='section'>no pcs</div>);
             }
 
             return (

@@ -228,84 +228,84 @@ interface PartyInfoProps {
 }
 
 class PartyInfo extends React.Component<PartyInfoProps> {
+    private getSummary() {
+        const activePCs = this.props.selection.pcs.filter(pc => pc.active);
+        if (activePCs.length === 0) {
+            return null;
+        }
+
+        let languages = '';
+        let insightSummary = '-';
+        let investigationSummary = '-';
+        let perceptionSummary = '-';
+
+        languages = activePCs
+            .map(pc => pc.languages)
+            .join(', ')
+            .split(/[ ,;]+/)
+            .reduce((array: string[], value) => {
+                if (array.indexOf(value) === -1) {
+                    array.push(value);
+                }
+                return array;
+            }, [])
+            .sort((a, b) => {
+                if (a === 'Common') {
+                    return -1;
+                }
+                if (b === 'Common') {
+                    return 1;
+                }
+                return a.localeCompare(b);
+            })
+            .join(', ');
+
+        const insight: { min: number | null, max: number | null } = { min: null, max: null };
+        const invest: { min: number | null, max: number | null } = { min: null, max: null };
+        const percep: { min: number | null, max: number | null } = { min: null, max: null };
+
+        activePCs.forEach(pc => {
+            insight.min = insight.min === null ? pc.passiveInsight : Math.min(insight.min, pc.passiveInsight);
+            insight.max = insight.max === null ? pc.passiveInsight : Math.max(insight.max, pc.passiveInsight);
+            invest.min = invest.min === null ? pc.passiveInvestigation : Math.min(invest.min, pc.passiveInvestigation);
+            invest.max = invest.max === null ? pc.passiveInvestigation : Math.max(invest.max, pc.passiveInvestigation);
+            percep.min = percep.min === null ? pc.passivePerception : Math.min(percep.min, pc.passivePerception);
+            percep.max = percep.max === null ? pc.passivePerception : Math.max(percep.max, pc.passivePerception);
+        });
+
+        insightSummary = insight.min === insight.max ? (insight.min as number).toString() : insight.min + ' - ' + insight.max;
+        investigationSummary = invest.min === invest.max ? (invest.min as number).toString() : invest.min + ' - ' + invest.max;
+        perceptionSummary = percep.min === percep.max ? (percep.min as number).toString() : percep.min + ' - ' + percep.max;
+
+        return (
+            <div className='list-item non-clickable'>
+                <div className='section' style={{ display: languages !== '' ? 'block' : 'none' }}>
+                    <div className='subheading'>party known languages</div>
+                </div>
+                <div className='section'>
+                    {languages}
+                </div>
+                <div className='section'>
+                    <div className='subheading'>party passive skills</div>
+                </div>
+                <div className='table'>
+                    <div>
+                        <div className='cell three'><b>insight</b></div>
+                        <div className='cell three'><b>invest.</b></div>
+                        <div className='cell three'><b>percep.</b></div>
+                    </div>
+                    <div>
+                        <div className='cell three'>{insightSummary}</div>
+                        <div className='cell three'>{investigationSummary}</div>
+                        <div className='cell three'>{perceptionSummary}</div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     public render() {
         try {
-            const activePCs = this.props.selection.pcs.filter(pc => pc.active);
-
-            let summary = null;
-
-            if (activePCs.length !== 0) {
-
-                let languages = '';
-                let insightSummary = '-';
-                let investigationSummary = '-';
-                let perceptionSummary = '-';
-
-                languages = activePCs
-                    .map(pc => pc.languages)
-                    .join(', ')
-                    .split(/[ ,;]+/)
-                    .reduce((array: string[], value) => {
-                        if (array.indexOf(value) === -1) {
-                            array.push(value);
-                        }
-                        return array;
-                    }, [])
-                    .sort((a, b) => {
-                        if (a === 'Common') {
-                            return -1;
-                        }
-                        if (b === 'Common') {
-                            return 1;
-                        }
-                        return a.localeCompare(b);
-                    })
-                    .join(', ');
-
-                const insight: { min: number | null, max: number | null } = { min: null, max: null };
-                const invest: { min: number | null, max: number | null } = { min: null, max: null };
-                const percep: { min: number | null, max: number | null } = { min: null, max: null };
-
-                activePCs.forEach(pc => {
-                    insight.min = insight.min === null ? pc.passiveInsight : Math.min(insight.min, pc.passiveInsight);
-                    insight.max = insight.max === null ? pc.passiveInsight : Math.max(insight.max, pc.passiveInsight);
-                    invest.min = invest.min === null ? pc.passiveInvestigation : Math.min(invest.min, pc.passiveInvestigation);
-                    invest.max = invest.max === null ? pc.passiveInvestigation : Math.max(invest.max, pc.passiveInvestigation);
-                    percep.min = percep.min === null ? pc.passivePerception : Math.min(percep.min, pc.passivePerception);
-                    percep.max = percep.max === null ? pc.passivePerception : Math.max(percep.max, pc.passivePerception);
-                });
-
-                insightSummary = insight.min === insight.max ? (insight.min as number).toString() : insight.min + ' - ' + insight.max;
-                investigationSummary = invest.min === invest.max ? (invest.min as number).toString() : invest.min + ' - ' + invest.max;
-                perceptionSummary = percep.min === percep.max ? (percep.min as number).toString() : percep.min + ' - ' + percep.max;
-
-                summary = (
-                    <div>
-                        <div className='section' style={{ display: languages !== '' ? 'block' : 'none' }}>
-                            <div className='subheading'>party known languages</div>
-                        </div>
-                        <div className='section'>
-                            {languages}
-                        </div>
-                        <div className='section'>
-                            <div className='subheading'>party passive skills</div>
-                        </div>
-                        <div className='table'>
-                            <div>
-                                <div className='cell three'><b>insight</b></div>
-                                <div className='cell three'><b>invest.</b></div>
-                                <div className='cell three'><b>percep.</b></div>
-                            </div>
-                            <div>
-                                <div className='cell three'>{insightSummary}</div>
-                                <div className='cell three'>{investigationSummary}</div>
-                                <div className='cell three'>{perceptionSummary}</div>
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
-
             return (
                 <div>
                     <div className='section'>
@@ -318,7 +318,7 @@ class PartyInfo extends React.Component<PartyInfoProps> {
                             onChange={event => this.props.changeValue('name', event.target.value)}
                         />
                     </div>
-                    {summary}
+                    {this.getSummary()}
                     <div className='divider' />
                     <div className='section'>
                         <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.addPC()}>add a new pc</button>

@@ -70,6 +70,14 @@ export default class PCEditorModal extends React.Component<Props, State> {
                 </div>
             ));
 
+            if (companions.length === 0) {
+                companions.push(
+                    <div className='section' key='empty'>
+                        <i>no companions (pets, retainers, mounts, etc)</i>
+                    </div>
+                );
+            }
+
             return (
                 <div className='pc-editor'>
                     <div className='row section'>
