@@ -23,7 +23,7 @@ import PartiesScreen from './screens/parties-screen';
 import AddCombatantsModal from './modals/add-combatants-modal';
 import CombatStartModal from './modals/combat-start-modal';
 import ConditionModal from './modals/condition-modal';
-import DemographicsModal from './modals/demographics-modal';
+import DemographicsSidebar from './modals/demographics-sidebar';
 import MapEditorModal from './modals/map-editor-modal';
 import MonsterEditorModal from './modals/monster-editor-modal';
 import PCEditorModal from './modals/pc-editor-modal';
@@ -1788,7 +1788,7 @@ export default class Dojo extends React.Component<Props, State> {
                 case 'demographics':
                     modalSidebar = true;
                     modalContent = (
-                        <DemographicsModal
+                        <DemographicsSidebar
                             library={this.state.library}
                         />
                     );

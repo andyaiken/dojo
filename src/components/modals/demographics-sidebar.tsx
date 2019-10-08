@@ -14,7 +14,7 @@ interface State {
     chart: string;
 }
 
-export default class DemographicsModal extends React.Component<Props, State> {
+export default class DemographicsSidebar extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
