@@ -60,7 +60,7 @@ export default class Dropdown extends React.Component<Props, State> {
             let style = this.props.disabled ? 'dropdown disabled' : 'dropdown';
             const content = [];
 
-            let option: { id: string; text: string; disabled?: boolean } | undefined = undefined;
+            let option: { id: string; text: string; disabled?: boolean } | undefined;
             if (this.props.selectedID) {
                 option = this.props.options.find(o => o.id === this.props.selectedID);
             }
@@ -80,15 +80,15 @@ export default class Dropdown extends React.Component<Props, State> {
             if (this.state.open) {
                 style += ' open';
 
-                const items = this.props.options.map(option => {
-                    if (option.text === null) {
-                        return <div key={option.id} className='divider' />;
+                const items = this.props.options.map(o => {
+                    if (o.text === null) {
+                        return <div key={o.id} className='divider' />;
                     } else {
                         return (
                             <DropdownOption
-                                key={option.id}
-                                option={option}
-                                selected={option.id === this.props.selectedID}
+                                key={o.id}
+                                option={o}
+                                selected={o.id === this.props.selectedID}
                                 select={optionID => this.select(optionID)}
                             />
                         );

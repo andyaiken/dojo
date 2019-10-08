@@ -11,6 +11,7 @@ import { Party } from '../../models/party';
 import MonsterCard from '../cards/monster-card';
 import ConfirmButton from '../controls/confirm-button';
 import Expander from '../controls/expander';
+import Selector from '../controls/selector';
 import Spin from '../controls/spin';
 import EncounterListItem from '../list-items/encounter-list-item';
 import CardGroup from '../panels/card-group';
@@ -377,19 +378,27 @@ interface EncounterInfoProps {
 
 interface EncounterInfoState {
     randomEncounterXP: number;
+    randomEncounterStep: number;
 }
 
 class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoState> {
     constructor(props: EncounterInfoProps) {
         super(props);
         this.state = {
-            randomEncounterXP: 100
+            randomEncounterXP: 100,
+            randomEncounterStep: 100
         };
     }
 
     private setRandomEncounterXP(value: number) {
         this.setState({
             randomEncounterXP: Math.max(0, value)
+        });
+    }
+
+    private setRandomEncounterStep(value: number) {
+        this.setState({
+            randomEncounterStep: value
         });
     }
 
@@ -450,7 +459,14 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
                                         source={this.state}
                                         name='randomEncounterXP'
                                         label='xp'
-                                        nudgeValue={delta => this.setRandomEncounterXP(this.state.randomEncounterXP + (delta * 100))}
+                                        nudgeValue={delta => this.setRandomEncounterXP(this.state.randomEncounterXP + (delta * this.state.randomEncounterStep))}
+                                    />
+                                    <Selector
+                                        options={['10', '100', '1000'].map(t => {
+                                            return { id: t, text: t };
+                                        })}
+                                        selectedID={this.state.randomEncounterStep.toString()}
+                                        select={optionID => this.setRandomEncounterStep(Number.parseInt(optionID, 10))}
                                     />
                                     <button onClick={() => this.props.buildEncounter(this.state.randomEncounterXP)}>build encounter</button>
                                 </div>
