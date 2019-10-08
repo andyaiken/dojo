@@ -1352,6 +1352,7 @@ body,
     border-width: 7px;
     border-image: url("../../resources/images/bookends.png") 12 stretch;
     border-image-outset: 4px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
 
     &.white {
         background-color: #FFFFFF;
