@@ -24,8 +24,8 @@ export default class AboutModal extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            view: 'dm',
-            module: 'reference'
+            view: 'reference',
+            module: null
         };
     }
 
@@ -48,16 +48,12 @@ export default class AboutModal extends React.Component<Props, State> {
 
         const modules = [
             {
-                id: 'reference',
-                text: 'd&d reference'
+                id: 'language',
+                text: 'language generator'
             },
             {
                 id: 'names',
                 text: 'name generator'
-            },
-            {
-                id: 'language',
-                text: 'language generator'
             },
             {
                 id: 'die-roller',
@@ -76,11 +72,6 @@ export default class AboutModal extends React.Component<Props, State> {
         );
 
         switch (this.state.module) {
-            case 'reference':
-                module = (
-                    <ReferenceModule />
-                );
-                break;
             case 'language':
                 module = (
                     <LanguageModule />
@@ -110,6 +101,16 @@ export default class AboutModal extends React.Component<Props, State> {
                     {module}
                 </div>
             </div>
+        );
+    }
+
+    private getReference() {
+        if (this.state.view !== 'reference') {
+            return null;
+        }
+
+        return (
+            <ReferenceModule />
         );
     }
 
@@ -155,6 +156,10 @@ export default class AboutModal extends React.Component<Props, State> {
         try {
             const viewOptions = [
                 {
+                    id: 'reference',
+                    text: 'reference'
+                },
+                {
                     id: 'dm',
                     text: 'dm tools'
                 },
@@ -172,6 +177,7 @@ export default class AboutModal extends React.Component<Props, State> {
                         selectedID={this.state.view}
                         select={optionID => this.setView(optionID)}
                     />
+                    {this.getReference()}
                     {this.getTools()}
                     {this.getAbout()}
                 </div>

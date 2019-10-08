@@ -345,6 +345,7 @@ class HelpCard extends React.Component<HelpCardProps> {
                             <div className='section'>
                                 when you have created an encounter you can add monsters to it, then gauge its difficulty for a party of pcs
                             </div>
+                            <div className='section'>when you have set up a party and an encounter you can run the encounter in the combat manager</div>
                             <div className='divider'/>
                             {action}
                         </div>

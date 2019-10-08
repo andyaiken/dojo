@@ -206,6 +206,7 @@ class HelpCard extends React.Component<HelpCardProps> {
                         <div>
                             <div className='section'>this page is where you can tell dojo all about your pcs</div>
                             <div className='section'>you can add a party for each of your gaming groups</div>
+                            <div className='section'>when you have set up a party and an encounter you can run the encounter in the combat manager</div>
                             <div className='divider'/>
                             {action}
                         </div>

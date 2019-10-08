@@ -172,7 +172,7 @@ class HelpCard extends React.Component<HelpCardProps> {
                     content={
                         <div>
                             <div className='section'>on this page you can set up folios containing tactical maps</div>
-                            <div className='section'>when you have created a map you can use it in encounters</div>
+                            <div className='section'>when you have created a map you can use it in the combat manager</div>
                             <div className='divider'/>
                             {action}
                         </div>

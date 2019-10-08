@@ -189,6 +189,7 @@ class HelpCard extends React.Component<HelpCardProps> {
                 content={
                     <div>
                         <div className='section'>you can maintain your menagerie of monsters here</div>
+                        <div className='section'>you can then use these monsters to design combat encounters in the encounter builder</div>
                         <div className='divider'/>
                         {action}
                     </div>

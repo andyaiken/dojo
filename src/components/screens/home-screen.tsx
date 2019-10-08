@@ -51,7 +51,8 @@ export default class HomeScreen extends React.Component<Props> {
                             {monsters}
                             <div className='divider' />
                             <div className='section'>
-                                use the buttons at the bottom of the screen to access the app's features
+                                use the buttons at the bottom of the screen to explore the app's main features,
+                                or press the tools button at the top right for additional dm tools
                             </div>
                         </div>
                     )}

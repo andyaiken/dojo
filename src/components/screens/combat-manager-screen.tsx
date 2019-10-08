@@ -658,7 +658,7 @@ class HelpCard extends React.Component<HelpCardProps> {
             <Note
                 content={
                     <div>
-                        <div className='section'>here you can run a combat encounter by specifying a party and an encounter</div>
+                        <div className='section'>here you can run a combat encounter by specifying a party and an encounter, and optionally a map</div>
                         <div className='divider' />
                         {action}
                     </div>
