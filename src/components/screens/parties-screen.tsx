@@ -281,7 +281,7 @@ class PartyInfo extends React.Component<PartyInfoProps> {
         return (
             <div className='list-item non-clickable'>
                 <div className='section' style={{ display: languages !== '' ? 'block' : 'none' }}>
-                    <div className='subheading'>party known languages</div>
+                    <div className='subheading'>party languages</div>
                 </div>
                 <div className='section'>
                     {languages}

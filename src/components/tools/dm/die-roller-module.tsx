@@ -106,7 +106,7 @@ export default class DieRollerModule extends React.Component<Props, State> {
         }
 
         return (
-            <div>
+            <div className='die-roller'>
                 <div className='subheading'>die type</div>
                 <Selector
                     options={options}

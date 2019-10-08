@@ -1113,6 +1113,14 @@ export default class Dojo extends React.Component<Props, State> {
             const index = combat.combatants.indexOf(combatant);
             combat.combatants.splice(index, 1);
 
+            if (combat.map) {
+                const item = combat.map.items.find(i => i.id === combatant.id);
+                if (item) {
+                    const n = combat.map.items.indexOf(item);
+                    combat.map.items.splice(n, 1);
+                }
+            }
+
             this.setState({
                 combats: this.state.combats
             });
