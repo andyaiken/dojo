@@ -20,7 +20,7 @@ import ConditionsPanel from '../panels/conditions-panel';
 import TraitsPanel from '../panels/traits-panel';
 import InfoCard from './info-card';
 
-import arrow from '../../resources/images/down-arrow.svg';
+import arrow from '../../resources/icons/down-arrow.svg';
 
 interface Props {
     combatant: Monster | (Monster & Combatant);

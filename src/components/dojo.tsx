@@ -20,7 +20,6 @@ import MapFoliosScreen from './screens/map-folios-screen';
 import MonsterLibraryScreen from './screens/monster-library-screen';
 import PartiesScreen from './screens/parties-screen';
 
-import AboutModal from './modals/about-modal';
 import AddCombatantsModal from './modals/add-combatants-modal';
 import CombatStartModal from './modals/combat-start-modal';
 import ConditionModal from './modals/condition-modal';
@@ -28,6 +27,7 @@ import DemographicsModal from './modals/demographics-modal';
 import MapEditorModal from './modals/map-editor-modal';
 import MonsterEditorModal from './modals/monster-editor-modal';
 import PCEditorModal from './modals/pc-editor-modal';
+import ToolsSidebar from './modals/tools-sidebar';
 
 import Navbar from './panels/navbar';
 import Titlebar from './panels/titlebar';
@@ -35,7 +35,7 @@ import Titlebar from './panels/titlebar';
 import Checkbox from './controls/checkbox';
 import Menu from './controls/menu';
 
-import close from '../resources/images/close-black.svg';
+import close from '../resources/icons/x.svg';
 
 // tslint:disable-next-line:no-empty-interface
 interface Props {
@@ -1402,10 +1402,10 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
-    private openAbout() {
+    private openToolsSidebar() {
         this.setState({
             modal: {
-                type: 'about'
+                type: 'tools-sidebar'
             }
         });
     }
@@ -1776,12 +1776,11 @@ export default class Dojo extends React.Component<Props, State> {
             };
 
             switch (this.state.modal.type) {
-                case 'about':
+                case 'tools-sidebar':
                     modalSidebar = true;
                     modalContent = (
-                        <AboutModal
+                        <ToolsSidebar
                             resetAll={() => this.resetAll()}
-                            changeValue={(source, type, value) => this.changeValue(source, type, value)}
                         />
                     );
                     modalButtons.right = [];
@@ -1984,7 +1983,7 @@ export default class Dojo extends React.Component<Props, State> {
                         actions={actions}
                         blur={modal !== null}
                         openHome={() => this.setView('home')}
-                        openAbout={() => this.openAbout()}
+                        openTools={() => this.openToolsSidebar()}
                     />
                     <div className={(modal === null) ? 'page-content' : 'page-content blur'}>
                         {content}

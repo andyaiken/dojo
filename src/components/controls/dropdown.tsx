@@ -1,7 +1,7 @@
 import React from 'react';
 
-import clear from '../../resources/images/close-black.svg';
-import ellipsis from '../../resources/images/ellipsis.svg';
+import ellipsis from '../../resources/icons/ellipsis.svg';
+import clear from '../../resources/icons/x.svg';
 
 interface Props {
     options: { id: string; text: string; disabled?: boolean }[];

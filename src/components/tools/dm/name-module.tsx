@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Shakespeare from '../../utils/shakespeare';
+import Shakespeare from '../../../utils/shakespeare';
 
 // tslint:disable-next-line:no-empty-interface
 interface Props {
@@ -70,7 +70,7 @@ export default class NameModule extends React.Component<Props, State> {
         }
 
         return (
-            <div className='name'>
+            <div>
                 <div className='name-output'>
                     <div className='row'>
                         <div className='columns small-4 medium-4 large-4'>

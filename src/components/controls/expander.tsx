@@ -1,6 +1,6 @@
 import React from 'react';
 
-import arrow from '../../resources/images/down-arrow-black.svg';
+import arrow from '../../resources/icons/down-arrow-black.svg';
 
 interface Props {
     text: string;

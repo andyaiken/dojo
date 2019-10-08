@@ -10,7 +10,7 @@ import ConfirmButton from '../controls/confirm-button';
 import Expander from '../controls/expander';
 import Note from '../panels/note';
 
-import arrow from '../../resources/images/down-arrow-black.svg';
+import arrow from '../../resources/icons/down-arrow-black.svg';
 
 const showdown = new Showdown.Converter();
 

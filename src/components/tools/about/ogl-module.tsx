@@ -1,133 +1,15 @@
 import React from 'react';
 
-import ConfirmButton from '../controls/confirm-button';
-import Selector from '../controls/selector';
-import DieRollerModule from '../dm-modules/die-roller-module';
-import LanguageModule from '../dm-modules/language-module';
-import NameModule from '../dm-modules/name-module';
-import ReferenceModule from '../dm-modules/reference-module';
-import Note from '../panels/note';
-
-import pkg from '../../../package.json';
-
+// tslint:disable-next-line:no-empty-interface
 interface Props {
-    resetAll: () => void;
-    changeValue: (source: {}, field: string, value: any) => void;
+    //
 }
 
-interface State {
-    view: string;
-    module: string | null;
-}
-
-export default class AboutModal extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            view: 'reference',
-            module: null
-        };
-    }
-
-    private setView(view: string) {
-        this.setState({
-            view: view
-        });
-    }
-
-    private setModule(module: string) {
-        this.setState({
-            module: module
-        });
-    }
-
-    private getTools() {
-        if (this.state.view !== 'dm') {
-            return null;
-        }
-
-        const modules = [
-            {
-                id: 'language',
-                text: 'language generator'
-            },
-            {
-                id: 'names',
-                text: 'name generator'
-            },
-            {
-                id: 'die-roller',
-                text: 'die roller'
-            }
-        ];
-
-        let module = (
-            <Note
-                content={(
-                    <div className='section'>
-                        <b>dojo</b> includes several dm tools; select one of them above
-                    </div>
-                )}
-            />
-        );
-
-        switch (this.state.module) {
-            case 'language':
-                module = (
-                    <LanguageModule />
-                );
-                break;
-            case 'names':
-                module = (
-                    <NameModule />
-                );
-                break;
-            case 'die-roller':
-                module = (
-                    <DieRollerModule />
-                );
-                break;
-        }
-
-        return (
-            <div className='dm-screen'>
-                <Selector
-                    options={modules}
-                    selectedID={this.state.module}
-                    select={moduleID => this.setModule(moduleID)}
-                />
-                <div className='divider' />
-                <div className='dm-module'>
-                    {module}
-                </div>
-            </div>
-        );
-    }
-
-    private getReference() {
-        if (this.state.view !== 'reference') {
-            return null;
-        }
-
-        return (
-            <ReferenceModule />
-        );
-    }
-
-    private getAbout() {
-        if (this.state.view !== 'about') {
-            return null;
-        }
-
+export default class OGLModule extends React.Component<Props> {
+    public render() {
         /* tslint:disable:max-line-length */
         return (
             <div>
-                <div className='section'>dojo by <a href='mailto:andy.aiken@live.co.uk'>andy aiken</a></div>
-                <div className='section'>version <b>{pkg.version}</b></div>
-                <div className='section'>if you would like to contribut to this project, you can do so <a href='https://github.com/andyaiken/dojo' target='_blank' rel='noopener noreferrer'>here</a></div>
-                <div className='section'>dungeons and dragons copyright wizards of the coast</div>
-                <div className='heading'>options</div>
-                <ConfirmButton text='clear all data' callback={() => this.props.resetAll()} />
                 <div className='heading'>open game license</div>
                 <div className='section'>The following text is the property of Wizards of the Coast, Inc. and is Copyright 2000 Wizards of the Coast, Inc ('Wizards'). All Rights Reserved.</div>
                 <ol>
@@ -150,40 +32,5 @@ export default class AboutModal extends React.Component<Props, State> {
             </div>
         );
         /* tslint:enable:max-line-length */
-    }
-
-    public render() {
-        try {
-            const viewOptions = [
-                {
-                    id: 'reference',
-                    text: 'reference'
-                },
-                {
-                    id: 'dm',
-                    text: 'dm tools'
-                },
-                {
-                    id: 'about',
-                    text: 'about'
-                }
-            ];
-
-            return (
-                <div className='about'>
-                    <Selector
-                        tabs={true}
-                        options={viewOptions}
-                        selectedID={this.state.view}
-                        select={optionID => this.setView(optionID)}
-                    />
-                    {this.getReference()}
-                    {this.getTools()}
-                    {this.getAbout()}
-                </div>
-            );
-        } catch (e) {
-            console.error(e);
-        }
     }
 }

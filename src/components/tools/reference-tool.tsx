@@ -1,10 +1,9 @@
 import React from 'react';
-import Showdown from 'showdown';
 
 import Selector from '../controls/selector';
-
-const showdown = new Showdown.Converter();
-showdown.setOption('tables', true);
+import ActionsModule from './reference/actions-module';
+import ConditionsModule from './reference/conditions-module';
+import SkillsModule from './reference/skills-module';
 
 // tslint:disable-next-line:no-empty-interface
 interface Props {
@@ -13,39 +12,24 @@ interface Props {
 
 interface State {
     view: string;
-    source: string | null;
 }
 
-export default class ReferenceModule extends React.Component<Props, State> {
+export default class ReferenceTool extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
         this.state = {
-            view: 'skills',
-            source: null
+            view: 'skills'
         };
     }
 
     private setView(view: string) {
         this.setState({
-            view: view,
-            source: null
-        });
-    }
-
-    private async fetchData() {
-        const response = await fetch('./data/' + this.state.view + '.md');
-        const text = await response.text();
-        this.setState({
-            source: text
+            view: view
         });
     }
 
     public render() {
-        if (this.state.view && !this.state.source) {
-            this.fetchData();
-        }
-
         const options = [
             {
                 id: 'skills',
@@ -61,6 +45,25 @@ export default class ReferenceModule extends React.Component<Props, State> {
             }
         ];
 
+        let content = null;
+        switch (this.state.view) {
+            case 'skills':
+                content = (
+                    <SkillsModule />
+                );
+                break;
+            case 'conditions':
+                content = (
+                    <ConditionsModule />
+                );
+                break;
+            case 'actions':
+                content = (
+                    <ActionsModule />
+                );
+                break;
+        }
+
         return (
             <div className='reference'>
                 <Selector
@@ -68,7 +71,8 @@ export default class ReferenceModule extends React.Component<Props, State> {
                     selectedID={this.state.view}
                     select={optionID => this.setView(optionID)}
                 />
-                <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.state.source || '') }} />
+                <div className='divider' />
+                {content}
             </div>
         );
     }

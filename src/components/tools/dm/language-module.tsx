@@ -1,12 +1,12 @@
 import React from 'react';
 
-import Shakespeare from '../../utils/shakespeare';
-import Ustinov from '../../utils/ustinov';
+import Shakespeare from '../../../utils/shakespeare';
+import Ustinov from '../../../utils/ustinov';
 
-import Checkbox from '../controls/checkbox';
-import ControlRow from '../controls/control-row';
-import Expander from '../controls/expander';
-import Selector from '../controls/selector';
+import Checkbox from '../../controls/checkbox';
+import ControlRow from '../../controls/control-row';
+import Expander from '../../controls/expander';
+import Selector from '../../controls/selector';
 
 // tslint:disable-next-line:no-empty-interface
 interface Props {
@@ -245,8 +245,8 @@ export default class LanguageModule extends React.Component<Props, State> {
         }
 
         return (
-            <div className='language'>
-                <div className='heading'>presets</div>
+            <div>
+                <div className='subheading'>presets</div>
                 <Selector
                     options={presetOptions}
                     selectedID={selectedPreset}

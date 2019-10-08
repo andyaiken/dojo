@@ -1,9 +1,9 @@
 import React from 'react';
 
-import Utils from '../../utils/utils';
+import Utils from '../../../utils/utils';
 
-import Selector from '../controls/selector';
-import Spin from '../controls/spin';
+import Selector from '../../controls/selector';
+import Spin from '../../controls/spin';
 
 // tslint:disable-next-line:no-empty-interface
 interface Props {
@@ -106,7 +106,7 @@ export default class DieRollerModule extends React.Component<Props, State> {
         }
 
         return (
-            <div className='die-roller'>
+            <div>
                 <div className='subheading'>die type</div>
                 <Selector
                     options={options}
