@@ -2,10 +2,10 @@ import React from 'react';
 
 import Utils from '../../../utils/utils';
 
+import Checkbox from '../../controls/checkbox';
+import ControlRow from '../../controls/control-row';
 import Selector from '../../controls/selector';
 import Spin from '../../controls/spin';
-import ControlRow from '../../controls/control-row';
-import Checkbox from '../../controls/checkbox';
 
 // tslint:disable-next-line:no-empty-interface
 interface Props {

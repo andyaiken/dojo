@@ -180,10 +180,10 @@ export default class MapEditorModal extends React.Component<Props, State> {
 
     private rotateMap() {
         this.state.map.items.forEach(item => {
-            var newX = (item.y + item.height - 1) * -1;
-            var newY = item.x;
-            var newWidth = item.height;
-            var newHeight = item.width;
+            const newX = (item.y + item.height - 1) * -1;
+            const newY = item.x;
+            const newWidth = item.height;
+            const newHeight = item.width;
 
             item.x = newX;
             item.y = newY;
