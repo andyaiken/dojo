@@ -21,17 +21,15 @@ export default class MapCard extends React.Component<Props> {
                         <div className='title'>{this.props.map.name || 'unnamed map'}</div>
                     </div>
                     <div className='card-content'>
-                        <div className='section centered'>
+                        <div className='section'>
                             <MapPanel
                                 map={this.props.map}
                                 mode='thumbnail'
                             />
                         </div>
                         <div className='divider' />
-                        <div className='section'>
-                            <button onClick={() => this.props.editMap(this.props.map)}>edit map</button>
-                            <ConfirmButton text='delete map' callback={() => this.props.removeMap(this.props.map)} />
-                        </div>
+                        <button onClick={() => this.props.editMap(this.props.map)}>edit map</button>
+                        <ConfirmButton text='delete map' callback={() => this.props.removeMap(this.props.map)} />
                     </div>
                 </div>
             );
