@@ -108,54 +108,6 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
             return null;
         }
 
-        let controls = null;
-        if (combat.map && this.state.playerView.showControls) {
-            let selection = combat.combatants
-                .filter(c => c.showOnMap)
-                .find(c => c.id === this.state.selectedTokenID);
-            if (!selection) {
-                selection = combat.combatants
-                    .filter(c => c.showOnMap)
-                    .find(c => c.current);
-            }
-
-            if (selection) {
-                const token = selection as ((Combatant & PC) | (Combatant & Monster));
-                controls = (
-                    <div>
-                        <div className='heading lowercase'>{token.displayName}</div>
-                        <div className='section centered'>
-                            <Radial
-                                direction='eight'
-                                click={dir => this.props.mapMove(token, dir)}
-                            />
-                        </div>
-                        <div className='divider' />
-                        <Spin
-                            key='altitude'
-                            source={token}
-                            name='altitude'
-                            label='altitude'
-                            display={value => value + ' ft.'}
-                            nudgeValue={delta => this.props.nudgeValue(token, 'altitude', delta * 5)}
-                        />
-                        <ControlRow
-                            key='tags'
-                            controls={COMBAT_TAGS.map(tag =>
-                                <Checkbox
-                                    key={tag}
-                                    label={tag}
-                                    display='button'
-                                    checked={token.tags.includes(tag)}
-                                    changeValue={value => this.props.toggleTag(token, tag)}
-                                />
-                            )}
-                        />
-                    </div>
-                );
-            }
-        }
-
         const init = combat.combatants
             .filter(c => c.showOnMap)
             .filter(combatant => !combatant.pending && combatant.active && !combatant.defeated)
@@ -189,6 +141,56 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
             });
 
         if (combat.map) {
+            let controls = null;
+            if (combat.map && this.state.playerView.showControls) {
+                let selection = combat.combatants
+                    .filter(c => combat.map !== null ? combat.map.items.find(item => item.id === c.id) : false)
+                    .filter(c => c.showOnMap)
+                    .find(c => c.id === this.state.selectedTokenID);
+                if (!selection) {
+                    selection = combat.combatants
+                        .filter(c => combat.map !== null ? combat.map.items.find(item => item.id === c.id) : false)
+                        .filter(c => c.showOnMap)
+                        .find(c => c.current);
+                }
+
+                if (selection) {
+                    const token = selection as ((Combatant & PC) | (Combatant & Monster));
+                    controls = (
+                        <div>
+                            <div className='heading lowercase'>{token.displayName}</div>
+                            <div className='section centered'>
+                                <Radial
+                                    direction='eight'
+                                    click={dir => this.props.mapMove(token, dir)}
+                                />
+                            </div>
+                            <div className='divider' />
+                            <Spin
+                                key='altitude'
+                                source={token}
+                                name='altitude'
+                                label='altitude'
+                                display={value => value + ' ft.'}
+                                nudgeValue={delta => this.props.nudgeValue(token, 'altitude', delta * 5)}
+                            />
+                            <ControlRow
+                                key='tags'
+                                controls={COMBAT_TAGS.map(tag =>
+                                    <Checkbox
+                                        key={tag}
+                                        label={tag}
+                                        display='button'
+                                        checked={token.tags.includes(tag)}
+                                        changeValue={value => this.props.toggleTag(token, tag)}
+                                    />
+                                )}
+                            />
+                        </div>
+                    );
+                }
+            }
+
             return (
                 <Popout title='Encounter' closeWindow={() => this.setPlayerViewOpen(false)}>
                     <div className='row'>

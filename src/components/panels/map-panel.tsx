@@ -7,6 +7,7 @@ import { Map, MapItem } from '../../models/map-folio';
 import { Monster } from '../../models/monster-group';
 import { PC } from '../../models/party';
 
+import Spin from '../controls/spin';
 import HitPointGauge from './hit-point-gauge';
 
 interface Props {
@@ -19,24 +20,35 @@ interface Props {
     gridSquareClicked: (x: number, y: number) => void;
 }
 
+interface State {
+    zoom: number;
+}
+
 interface MapDimensions {
     minX: number;
     maxX: number;
     minY: number;
     maxY: number;
-    width: number;
-    height: number;
 }
 
-interface StyleData {
+interface MapItemStyle {
     left: string;
     top: string;
     width: string;
     height: string;
+    borderRadius: string;
+    backgroundSize: string;
     backgroundColor?: string;
 }
 
-export default class MapPanel extends React.Component<Props> {
+export default class MapPanel extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            zoom: props.mode !== 'thumbnail' ? 25 : 10
+        };
+    }
+
     public static defaultProps = {
         combatants: null,
         showOverlay: false,
@@ -44,6 +56,12 @@ export default class MapPanel extends React.Component<Props> {
         setSelectedItemID: null,
         gridSquareClicked: null
     };
+
+    private setZoom(value: number) {
+        this.setState({
+            zoom: Math.max(5, value)
+        });
+    }
 
     private getMapDimensions(border: number): MapDimensions | null {
         let dimensions: MapDimensions | null = null;
@@ -59,9 +77,7 @@ export default class MapPanel extends React.Component<Props> {
                     minX: i.x,
                     maxX: i.x + i.width - 1,
                     minY: i.y,
-                    maxY: i.y + i.height - 1,
-                    width: 0,
-                    height: 0
+                    maxY: i.y + i.height - 1
                 };
             } else {
                 dimensions.minX = Math.min(dimensions.minX, i.x);
@@ -106,9 +122,7 @@ export default class MapPanel extends React.Component<Props> {
                 minX: 0,
                 maxX: 0,
                 minY: 0,
-                maxY: 0,
-                width: 0,
-                height: 0
+                maxY: 0
             };
         }
 
@@ -118,30 +132,10 @@ export default class MapPanel extends React.Component<Props> {
         dimensions.minY -= border;
         dimensions.maxY += border;
 
-        // Set width and height
-        dimensions.width = 1 + dimensions.maxX - dimensions.minX;
-        dimensions.height = 1 + dimensions.maxY - dimensions.minY;
-
         return dimensions;
     }
 
-    private getSideLength(): number {
-        switch (this.props.mode) {
-            case 'thumbnail':
-                return 5;
-            case 'edit':
-            case 'combat':
-                return 25;
-            case 'combat-player':
-                return 50;
-            default:
-                return 5;
-        }
-    }
-
-    private getStyle(x: number, y: number, width: number, height: number, mapDimensions: MapDimensions): StyleData {
-        const sideLength = this.getSideLength();
-
+    private getStyle(x: number, y: number, width: number, height: number, style: 'square' | 'rounded' | 'circle' | null, dim: MapDimensions): MapItemStyle {
         let offsetX = 0;
         let offsetY = 0;
         if (width < 1) {
@@ -151,11 +145,23 @@ export default class MapPanel extends React.Component<Props> {
             offsetY = (1 - height) / 2;
         }
 
+        let radius = '0';
+        switch (style) {
+            case 'rounded':
+                radius = this.state.zoom + 'px';
+                break;
+            case 'circle':
+                radius = '50%';
+                break;
+        }
+
         return {
-            left: 'calc(' + sideLength + 'px * ' + (x + offsetX - mapDimensions.minX) + ')',
-            top: 'calc(' + sideLength + 'px * ' + (y + offsetY - mapDimensions.minY) + ')',
-            width: 'calc((' + sideLength + 'px * ' + width + ') + 1px)',
-            height: 'calc((' + sideLength + 'px * ' + height + ') + 1px)'
+            left: 'calc(' + this.state.zoom + 'px * ' + (x + offsetX - dim.minX) + ')',
+            top: 'calc(' + this.state.zoom + 'px * ' + (y + offsetY - dim.minY) + ')',
+            width: 'calc((' + this.state.zoom + 'px * ' + width + ') + 1px)',
+            height: 'calc((' + this.state.zoom + 'px * ' + height + ') + 1px)',
+            borderRadius: radius,
+            backgroundSize: this.state.zoom + 'px'
         };
     }
 
@@ -174,7 +180,7 @@ export default class MapPanel extends React.Component<Props> {
             if (this.props.mode === 'edit') {
                 for (let y = mapDimensions.minY; y !== mapDimensions.maxY + 1; ++y) {
                     for (let x = mapDimensions.minX; x !== mapDimensions.maxX + 1; ++x) {
-                        const gridStyle = this.getStyle(x, y, 1, 1, mapDimensions);
+                        const gridStyle = this.getStyle(x, y, 1, 1, 'square', mapDimensions);
                         grid.push(
                             <GridSquare
                                 key={x + ',' + y}
@@ -192,7 +198,7 @@ export default class MapPanel extends React.Component<Props> {
             const tiles = this.props.map.items
                 .filter(i => i.type === 'tile')
                 .map(i => {
-                    const tileStyle = this.getStyle(i.x, i.y, i.width, i.height, mapDimensions as MapDimensions);
+                    const tileStyle = this.getStyle(i.x, i.y, i.width, i.height, i.style, mapDimensions);
                     return (
                         <MapTile
                             key={i.id}
@@ -200,8 +206,6 @@ export default class MapPanel extends React.Component<Props> {
                             style={tileStyle}
                             selectable={this.props.mode === 'edit'}
                             selected={this.props.selectedItemID === i.id}
-                            thumbnail={this.props.mode === 'thumbnail'}
-                            large={this.props.mode === 'combat-player'}
                             select={id => this.props.mode === 'edit' ? this.props.setSelectedItemID(id) : null}
                         />
                     );
@@ -219,12 +223,12 @@ export default class MapPanel extends React.Component<Props> {
                             const sizeInSquares = c.aura.radius / 5;
                             const miniSize = Utils.miniSize(c.displaySize);
                             const dim = (sizeInSquares * 2) + miniSize;
-                            const auraStyle = this.getStyle(mi.x - sizeInSquares, mi.y - sizeInSquares, dim, dim, mapDimensions as MapDimensions);
+                            const auraStyle = this.getStyle(mi.x - sizeInSquares, mi.y - sizeInSquares, dim, dim, c.aura.style, mapDimensions);
                             auraStyle.backgroundColor = c.aura.color;
                             return (
                                 <div
                                     key={c.id + ' aura'}
-                                    className={'aura ' + c.aura.style}
+                                    className={'aura'}
                                     style={auraStyle}
                                 />
                             );
@@ -243,7 +247,7 @@ export default class MapPanel extends React.Component<Props> {
                         const combatant = this.props.combatants.find(c => c.id === i.id);
                         if (combatant) {
                             const miniSize = Utils.miniSize(combatant.displaySize);
-                            const tokenStyle = this.getStyle(i.x, i.y, miniSize, miniSize, mapDimensions as MapDimensions);
+                            const tokenStyle = this.getStyle(i.x, i.y, miniSize, miniSize, 'circle', mapDimensions);
                             return (
                                 <MapToken
                                     key={i.id}
@@ -270,7 +274,7 @@ export default class MapPanel extends React.Component<Props> {
             if (this.props.showOverlay) {
                 for (let yOver = mapDimensions.minY; yOver !== mapDimensions.maxY + 1; ++yOver) {
                     for (let xOver = mapDimensions.minX; xOver !== mapDimensions.maxX + 1; ++xOver) {
-                        const overlayStyle = this.getStyle(xOver, yOver, 1, 1, mapDimensions);
+                        const overlayStyle = this.getStyle(xOver, yOver, 1, 1, 'square', mapDimensions);
                         dragOverlay.push(
                             <GridSquare
                                 key={xOver + ',' + yOver}
@@ -285,16 +289,32 @@ export default class MapPanel extends React.Component<Props> {
                 }
             }
 
+            let zoom = null;
+            if (this.props.mode !== 'thumbnail') {
+                zoom = (
+                    <div className='zoom'>
+                        <Spin
+                            source={this.state}
+                            name={'zoom'}
+                            display={value => ''}
+                            nudgeValue={delta => this.setZoom(this.state.zoom + (delta * 5))}
+                        />
+                    </div>
+                );
+            }
+
             const style = 'map-panel ' + this.props.mode;
+            const mapHeight = 1 + mapDimensions.maxY - mapDimensions.minY;
             return (
                 <div className={style} onClick={() => this.props.setSelectedItemID(null)}>
-                    <div className='grid' style={{ height: ((this.getSideLength() * mapDimensions.height) + 1) + 'px' }}>
+                    <div className='grid' style={{ height: ((this.state.zoom * mapHeight) + 1) + 'px' }}>
                         {grid}
                         {tiles}
                         {auras}
                         {tokens}
                         {dragOverlay}
                     </div>
+                    {zoom}
                 </div>
             );
         } catch (e) {
@@ -306,7 +326,7 @@ export default class MapPanel extends React.Component<Props> {
 interface GridSquareProps {
     x: number;
     y: number;
-    style: StyleData;
+    style: MapItemStyle;
     overlay: boolean;
     onClick: (x: number, y: number) => void;
     onDoubleClick: (x: number, y: number) => void;
@@ -351,9 +371,7 @@ class GridSquare extends React.Component<GridSquareProps> {
 
 interface MapTileProps {
     tile: MapItem;
-    style: StyleData;
-    thumbnail: boolean;
-    large: boolean;
+    style: MapItemStyle;
     selectable: boolean;
     selected: boolean;
     select: (tileID: string) => void;
@@ -368,15 +386,9 @@ class MapTile extends React.Component<MapTileProps> {
     }
 
     public render() {
-        let style = 'tile ' + this.props.tile.terrain + ' ' + this.props.tile.style;
+        let style = 'tile ' + this.props.tile.terrain;
         if (this.props.selected) {
             style += ' selected';
-        }
-        if (this.props.thumbnail) {
-            style += ' thumbnail';
-        }
-        if (this.props.large) {
-            style += ' large';
         }
 
         let content = null;
@@ -401,7 +413,7 @@ class MapTile extends React.Component<MapTileProps> {
 interface MapTokenProps {
     token: MapItem;
     combatant: (Combatant & PC) | (Combatant & Monster);
-    style: StyleData;
+    style: MapItemStyle;
     simple: boolean;
     showGauge: boolean;
     showHidden: boolean;
