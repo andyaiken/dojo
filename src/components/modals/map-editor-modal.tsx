@@ -178,6 +178,34 @@ export default class MapEditorModal extends React.Component<Props, State> {
         });
     }
 
+    private rotateMap() {
+        this.state.map.items.forEach(item => {
+            var newX = (item.y + item.height - 1) * -1;
+            var newY = item.x;
+            var newWidth = item.height;
+            var newHeight = item.width;
+
+            item.x = newX;
+            item.y = newY;
+            item.width = newWidth;
+            item.height = newHeight;
+        });
+
+        this.setState({
+            map: this.state.map
+        });
+    }
+
+    private clearMap() {
+        // eslint-disable-next-line
+        this.state.map.items = [];
+
+        this.setState({
+            map: this.state.map,
+            selectedTileID: null
+        });
+    }
+
     private changeValue(source: any, field: string, value: any) {
         source[field] = value;
 
@@ -188,11 +216,6 @@ export default class MapEditorModal extends React.Component<Props, State> {
 
     public render() {
         try {
-            const addBtn = (
-                <button onClick={() => this.toggleAddingTile()}>
-                    {this.state.addingTile ? 'click somewhere on the map to add your new tile, or click here to cancel' : 'add a new tile'}
-                </button>
-            );
             let tools = null;
             if (this.state.selectedTileID) {
                 const item = this.state.map.items.find(i => i.id === this.state.selectedTileID);
@@ -207,7 +230,6 @@ export default class MapEditorModal extends React.Component<Props, State> {
                                 removeMapItem={mapItem => this.removeMapItem(mapItem)}
                                 changeValue={(source, field, value) => this.changeValue(source, field, value)}
                             />
-                            {addBtn}
                         </div>
                     );
                 }
@@ -222,7 +244,11 @@ export default class MapEditorModal extends React.Component<Props, State> {
                                 </div>
                             }
                         />
-                        {addBtn}
+                        <button onClick={() => this.toggleAddingTile()}>
+                            {this.state.addingTile ? 'click somewhere on the map to add your new tile, or click here to cancel' : 'add a new tile'}
+                        </button>
+                        <button onClick={() => this.rotateMap()}>rotate the map</button>
+                        <button onClick={() => this.clearMap()}>clear all tiles</button>
                     </div>
                 );
             }
