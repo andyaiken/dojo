@@ -1139,6 +1139,7 @@ body,
 
     &.thumbnail {
         pointer-events: none;
+        overflow: hidden;
     }
 
     &.edit {
@@ -1158,7 +1159,7 @@ body,
 
     .zoom {
         position: absolute;
-        right: 0;
+        right: 5px;
         top: 0;
     }
 }

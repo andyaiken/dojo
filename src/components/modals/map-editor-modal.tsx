@@ -244,6 +244,15 @@ export default class MapEditorModal extends React.Component<Props, State> {
                                 </div>
                             }
                         />
+                        <div className='divider' />
+                        <div className='subheading'>map name</div>
+                        <input
+                            type='text'
+                            placeholder='map name'
+                            value={this.state.map.name}
+                            onChange={event => this.changeValue(this.state.map, 'name', event.target.value)}
+                        />
+                        <div className='divider' />
                         <button onClick={() => this.toggleAddingTile()}>
                             {this.state.addingTile ? 'click somewhere on the map to add your new tile, or click here to cancel' : 'add a new tile'}
                         </button>
