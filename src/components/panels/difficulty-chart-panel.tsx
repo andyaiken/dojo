@@ -43,6 +43,20 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
         const monsterXP = Napoleon.getEncounterXP(this.props.encounter, this.props.getMonster);
         const adjustedXP = Napoleon.getAdjustedEncounterXP(this.props.encounter, this.props.getMonster);
 
+        const basicData = (
+            <div>
+                <div className='divider' />
+                <div className='section'>
+                    xp for this encounter
+                    <div className='right'>{monsterXP} xp</div>
+                </div>
+                <div className='section' style={{ display: (adjustedXP === monsterXP) ? 'none' : ''}}>
+                    effective xp for {monsterCount} monster(s)
+                    <div className='right'>{adjustedXP} xp</div>
+                </div>
+            </div>
+        );
+
         let xpThresholds;
         let diffSection;
         const party = this.props.parties.find(p => p.id === this.state.selectedPartyID);
@@ -153,6 +167,7 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
                             <div className='encounter' style={{ left: (getLeft(adjustedXP) - 0.5) + '%' }} />
                         </div>
                     </div>
+                    {basicData}
                     <div className='section'>
                         difficulty for this party
                         <div className='right'>{difficulty}</div>
@@ -163,6 +178,8 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
                     </div>
                 </div>
             );
+        } else {
+            diffSection = basicData;
         }
 
         let partySelection = null;
@@ -191,15 +208,6 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
 
         return (
             <div className='list-item non-clickable'>
-                <div className='subheading'>xp value</div>
-                <div className='section'>
-                    xp for this encounter
-                    <div className='right'>{monsterXP} xp</div>
-                </div>
-                <div className='section' style={{ display: (adjustedXP === monsterXP) ? 'none' : ''}}>
-                    effective xp for {monsterCount} monster(s)
-                    <div className='right'>{adjustedXP} xp</div>
-                </div>
                 <div className='subheading'>difficulty</div>
                 {partySelection}
                 {xpThresholds}
