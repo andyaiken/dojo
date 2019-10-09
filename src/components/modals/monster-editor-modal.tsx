@@ -716,18 +716,21 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         };
                     });
                     selector = (
-                        <Selector
-                            tabs={false}
-                            options={options}
-                            selectedID={this.state.helpSection}
-                            select={optionID => this.setHelpSection(optionID)}
-                        />
+                        <div>
+                            <div className='subheading'>fields</div>
+                            <Selector
+                                tabs={false}
+                                options={options}
+                                selectedID={this.state.helpSection}
+                                select={optionID => this.setHelpSection(optionID)}
+                            />
+                            <div className='subheading'>values</div>
+                        </div>
                     );
                 }
 
                 help = (
-                    <div className='monster-help'>
-                        <div className='divider' />
+                    <div className='monster-help list-item non-clickable'>
                         <div className='heading'>information from sidebar monsters</div>
                         {selector}
                         {this.getHelpSection(monsters)}

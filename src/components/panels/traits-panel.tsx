@@ -8,6 +8,7 @@ import { Monster, Trait, TRAIT_TYPES } from '../../models/monster-group';
 
 import ConfirmButton from '../controls/confirm-button';
 import Expander from '../controls/expander';
+import Menu from '../controls/menu';
 import Note from '../panels/note';
 
 import arrow from '../../resources/icons/down-arrow-black.svg';
@@ -108,32 +109,32 @@ export default class TraitsPanel extends React.Component<Props> {
                     list.push(this.createTraitPanel(trait, prevTrait, nextTrait));
                 }
 
-                if (this.props.mode === 'edit') {
-                    list.push(
-                        <button key='add' onClick={() => this.props.addTrait(type as 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'lair')}>
-                            add a new {Utils.traitType(type, false)}
-                        </button>
-                    );
-                }
-
                 traitsByType[type] = list;
             });
 
             if (this.props.mode === 'edit') {
                 return (
-                    <div className='row collapse'>
-                        <div className='columns small-4 medium-4 large-4 wide-column'>
-                            {this.createSection(traitsByType, 'trait')}
-                        </div>
-                        <div className='columns small-4 medium-4 large-4 wide-column'>
-                            {this.createSection(traitsByType, 'action')}
-                        </div>
-                        <div className='columns small-4 medium-4 large-4 wide-column'>
-                            {this.createSection(traitsByType, 'bonus')}
-                            {this.createSection(traitsByType, 'reaction')}
-                            {this.createSection(traitsByType, 'legendary')}
-                            {this.createSection(traitsByType, 'lair')}
-                        </div>
+                    <div>
+                        <Menu
+                            text='add a new...'
+                            content={(
+                                <div>
+                                    <button key='trait' onClick={() => this.props.addTrait('trait')}>add a new trait</button>
+                                    <button key='action' onClick={() => this.props.addTrait('action')}>add a new action</button>
+                                    <button key='bonus' onClick={() => this.props.addTrait('bonus')}>add a new bonus action</button>
+                                    <button key='reaction' onClick={() => this.props.addTrait('reaction')}>add a new reaction</button>
+                                    <button key='legendary' onClick={() => this.props.addTrait('legendary')}>add a new legendary action</button>
+                                    <button key='lair' onClick={() => this.props.addTrait('lair')}>add a new lair action</button>
+                                </div>
+                            )}
+                        />
+                        <div className='divider' />
+                        {this.createSection(traitsByType, 'trait')}
+                        {this.createSection(traitsByType, 'action')}
+                        {this.createSection(traitsByType, 'bonus')}
+                        {this.createSection(traitsByType, 'reaction')}
+                        {this.createSection(traitsByType, 'legendary')}
+                        {this.createSection(traitsByType, 'lair')}
                     </div>
                 );
             }
@@ -230,8 +231,8 @@ class TraitPanel extends React.Component<TraitPanelProps> {
                 case 'edit':
                     const details = (
                         <div className='section'>
-                            <div className='row collapse'>
-                                <div className='columns small-6 medium-8 large-9'>
+                            <div className='row'>
+                                <div className='columns small-6 medium-8 large-8'>
                                     <input
                                         type='text'
                                         placeholder='name'
@@ -245,29 +246,22 @@ class TraitPanel extends React.Component<TraitPanelProps> {
                                         onChange={event => this.props.changeValue(this.props.trait, 'usage', event.target.value)}
                                     />
                                 </div>
-                                <div className='columns small-6 medium-4 large-3'>
+                                <div className='columns small-6 medium-4 large-4'>
                                     <div className='trait-ordering'>
-                                        <div className='vertical-center-outer'>
-                                            <div className='vertical-center-middle'>
-                                                <div>
-                                                    <img
-                                                        className={this.props.prevTrait ? 'rotate' : 'rotate disabled'}
-                                                        src={arrow}
-                                                        alt='move up'
-                                                        onClick={() => this.props.swapTraits(this.props.trait, this.props.prevTrait as Trait)}
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <img
-                                                        className={this.props.nextTrait ? '' : 'disabled'}
-                                                        src={arrow}
-                                                        alt='move down'
-                                                        onClick={() => this.props.swapTraits(this.props.trait, this.props.nextTrait as Trait)}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <img
+                                            className={this.props.prevTrait ? 'up' : 'up disabled'}
+                                            src={arrow}
+                                            alt='move up'
+                                            onClick={() => this.props.swapTraits(this.props.trait, this.props.prevTrait as Trait)}
+                                        />
+                                        <img
+                                            className={this.props.nextTrait ? '' : 'disabled'}
+                                            src={arrow}
+                                            alt='move down'
+                                            onClick={() => this.props.swapTraits(this.props.trait, this.props.nextTrait as Trait)}
+                                        />
                                     </div>
+                                    <ConfirmButton text='delete' callback={() => this.props.removeTrait(this.props.trait)} />
                                 </div>
                             </div>
                             <textarea
@@ -275,8 +269,6 @@ class TraitPanel extends React.Component<TraitPanelProps> {
                                 value={this.props.trait.text}
                                 onChange={event => this.props.changeValue(this.props.trait, 'text', event.target.value)}
                             />
-                            <div className='divider' />
-                            <ConfirmButton text='delete' callback={() => this.props.removeTrait(this.props.trait)} />
                         </div>
                     );
 

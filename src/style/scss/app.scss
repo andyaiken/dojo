@@ -52,7 +52,6 @@ input[type=color] {
 }
 
 textarea {
-    min-height: 100px;
     resize: vertical;
 }
 
@@ -1374,19 +1373,19 @@ body,
 }
 
 .trait-ordering {
-    height: 74px;
-    margin: 5px 0 5px 10px;
+    height: 32px;
+    margin: 5px 0 10px 0;
     border: 1px solid $control-border;
-    padding: 3px;
     text-align: center;
 
     img {
         border-radius: 50%;
-        max-height: 30px;
-        max-width: 30px;
+        height: 30px;
+        width: 30px;
 
-        &.rotate {
+        &.up {
             transform: rotate(-180deg);
+            margin-right: 20px;
         }
 
         &:hover {
