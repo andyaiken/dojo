@@ -18,7 +18,7 @@ export interface MapItem {
     width: number;
     height: number;
     terrain: string | null;
-    customBackground: string | null;
+    customBackground: string;
     style: 'square' | 'rounded' | 'circle' | null;
 }
 
@@ -32,5 +32,5 @@ export const TERRAIN_TYPES = [
     'sand',
     'snow',
     'water',
-    'custom image'
+    'custom'
 ];

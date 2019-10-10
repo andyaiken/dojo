@@ -43,7 +43,7 @@ interface Props {
     changeValue: (source: {}, type: string, value: any) => void;
     nudgeValue: (source: {}, type: string, delta: number) => void;
     toggleTag: (combatant: Combatant, tag: string) => void;
-    scatterMonsters: () => void;
+    scatterCombatants: (type: 'pc' | 'monster') => void;
 }
 
 interface State {
@@ -472,7 +472,8 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                                 setSelectedItemID={id => this.setSelectedTokenID(id)}
                                 gridSquareClicked={(x, y) => this.addCombatantToMap(x, y)}
                             />
-                            <button onClick={() => this.props.scatterMonsters()}>scatter monsters</button>
+                            <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
+                            <button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
                         </div>
                     );
                 }

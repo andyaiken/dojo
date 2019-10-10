@@ -17,6 +17,7 @@ import Selector from '../controls/selector';
 import Spin from '../controls/spin';
 import AbilityScorePanel from '../panels/ability-score-panel';
 import ConditionsPanel from '../panels/conditions-panel';
+import PortraitPanel from '../panels/portrait-panel';
 import TraitsPanel from '../panels/traits-panel';
 import InfoCard from './info-card';
 
@@ -684,6 +685,7 @@ export default class MonsterCard extends React.Component<Props, State> {
 
                 stats = (
                     <div className='stats'>
+                        <PortraitPanel source={this.props.combatant} />
                         <div className='section centered'>
                             <i>{this.description()}</i>
                         </div>
@@ -695,6 +697,7 @@ export default class MonsterCard extends React.Component<Props, State> {
             if (this.props.mode.indexOf('combat') !== -1) {
                 stats = (
                     <div className='stats'>
+                        <PortraitPanel source={this.props.combatant} />
                         <div className='section centered'>
                             <i>{this.description()}</i>
                         </div>
@@ -749,6 +752,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                 if (this.props.mode.indexOf('overview') !== -1) {
                     stats = (
                         <div>
+                        <PortraitPanel source={this.props.combatant} />
                             <div className='section centered'>
                                 <i>{this.description()}</i>
                             </div>
@@ -840,7 +844,9 @@ export default class MonsterCard extends React.Component<Props, State> {
             return (
                 <div className='card monster'>
                     <div className='heading'>
-                        <div className='title'>{name}</div>
+                        <div className='title'>
+                            {name}
+                        </div>
                         {toggle}
                     </div>
                     <div className='card-content'>

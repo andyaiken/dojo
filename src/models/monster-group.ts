@@ -38,6 +38,7 @@ export interface Monster {
     equipment: string;
     traits: Trait[];
     conditionImmunities: string;
+    portrait: string;
 }
 
 export interface Trait {

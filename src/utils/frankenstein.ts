@@ -97,7 +97,8 @@ export default class Frankenstein {
                     uses: 0
                 };
             }),
-            conditionImmunities: monster.conditionImmunities
+            conditionImmunities: monster.conditionImmunities,
+            portrait: monster.portrait
         };
     }
 

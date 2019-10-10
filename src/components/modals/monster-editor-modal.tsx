@@ -17,6 +17,7 @@ import Spin from '../controls/spin';
 import AbilityScorePanel from '../panels/ability-score-panel';
 import FilterPanel from '../panels/filter-panel';
 import Note from '../panels/note';
+import PortraitPanel from '../panels/portrait-panel';
 import TraitsPanel from '../panels/traits-panel';
 
 interface Props {
@@ -590,8 +591,6 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                 <input type='text' value={this.state.monster.tag} onChange={event => this.changeValue('tag', event.target.value)} />
                                 <div className='subheading'>alignment</div>
                                 <input type='text' value={this.state.monster.alignment} onChange={event => this.changeValue('alignment', event.target.value)} />
-                            </div>
-                            <div className='columns small-6 medium-6 large-6'>
                                 <div className='subheading'>challenge rating</div>
                                 <Spin
                                     source={this.state.monster}
@@ -599,6 +598,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                     display={value => Utils.challenge(value)}
                                     nudgeValue={delta => this.nudgeValue('challenge', delta)}
                                 />
+                            </div>
+                            <div className='columns small-6 medium-6 large-6'>
                                 <div className='subheading'>speed</div>
                                 <input type='text' value={this.state.monster.speed} onChange={event => this.changeValue('speed', event.target.value)} />
                                 <div className='subheading'>senses</div>
@@ -607,6 +608,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                 <input type='text' value={this.state.monster.languages} onChange={event => this.changeValue('languages', event.target.value)} />
                                 <div className='subheading'>equipment</div>
                                 <input type='text' value={this.state.monster.equipment} onChange={event => this.changeValue('equipment', event.target.value)} />
+                                <div className='subheading'>portrait</div>
+                                <PortraitPanel source={this.state.monster} setValue={value => this.changeValue('portrait', value)} />
                             </div>
                         </div>
                     );

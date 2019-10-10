@@ -31,7 +31,7 @@ export default class Factory {
             passiveInsight: 10,
             passiveInvestigation: 10,
             passivePerception: 10,
-            initiative: 10,
+            portrait: '',
             url: '',
             companions: []
         };
@@ -86,7 +86,8 @@ export default class Factory {
             languages: '',
             equipment: '',
             traits: [],
-            conditionImmunities: ''
+            conditionImmunities: '',
+            portrait: ''
         };
     }
 
@@ -162,7 +163,7 @@ export default class Factory {
             width: 4,
             height: 4,
             terrain: null,
-            customBackground: null,
+            customBackground: '',
             style: null
         };
     }

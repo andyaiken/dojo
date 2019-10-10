@@ -1391,10 +1391,10 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
-    private scatterMonsters() {
+    private scatterCombatants(type: 'pc' | 'monster') {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat && combat.map) {
-            Mercator.scatterCombatants(combat);
+            Mercator.scatterCombatants(combat, type);
 
             this.setState({
                 combats: this.state.combats
@@ -1761,7 +1761,7 @@ export default class Dojo extends React.Component<Props, State> {
                         changeHP={(combatant, hp, temp) => this.changeHP(combatant, hp, temp)}
                         close={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
                         toggleTag={(combatant, tag) => this.toggleTag(combatant, tag)}
-                        scatterMonsters={() => this.scatterMonsters()}
+                        scatterCombatants={type => this.scatterCombatants(type)}
                     />
                 );
         }

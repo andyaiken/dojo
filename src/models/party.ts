@@ -17,7 +17,7 @@ export interface PC {
     passiveInsight: number;
     passiveInvestigation: number;
     passivePerception: number;
-    initiative: number;
+    portrait: string;
     url: string;
     companions: Companion[];
 }

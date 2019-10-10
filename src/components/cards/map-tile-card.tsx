@@ -27,10 +27,7 @@ export default class MapTileCard extends React.Component<Props> {
             });
 
             let customSection = null;
-            if (this.props.tile.terrain === 'custom image') {
-                const clear = (
-                    <button onClick={() => this.props.changeValue(this.props.tile, 'customBackground', null)}>clear image</button>
-                );
+            if (this.props.tile.terrain === 'custom') {
                 customSection = (
                     <div>
                         <div className='subheading'>custom image</div>
@@ -53,7 +50,7 @@ export default class MapTileCard extends React.Component<Props> {
                                 }
                             }}
                         />
-                        {clear}
+                        <button onClick={() => this.props.changeValue(this.props.tile, 'customBackground', '')}>clear image</button>
                     </div>
                 );
             }

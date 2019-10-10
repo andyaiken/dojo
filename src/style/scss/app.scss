@@ -1204,6 +1204,11 @@ body,
     &.selected {
         border-color: $highlight;
     }
+
+    .custom-image {
+        width: 100%;
+        height: 100%;
+    }
 }
 
 .aura {
@@ -1228,6 +1233,7 @@ body,
 
     &.current {
         background-color: white;
+        box-shadow: 0 0 10px 3px black;
 
         & .initials {
             color: black;
@@ -1241,6 +1247,13 @@ body,
 
     &.hidden {
         opacity: 0.3;
+    }
+
+    .portrait {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
     }
 
     .initials {
@@ -1385,6 +1398,23 @@ body,
         &:hover {
             cursor: pointer;
             background-color: $highlight02;
+        }
+    }
+}
+
+.portrait {
+    img {
+        width: 50px;
+        height: 50px;
+        border: 1px solid $control-border;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    &.editing {
+        img {
+            width: 100px;
+            height: 100px;    
         }
     }
 }

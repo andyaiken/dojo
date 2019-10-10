@@ -10,6 +10,8 @@ import { PC } from '../../models/party';
 import Spin from '../controls/spin';
 import HitPointGauge from './hit-point-gauge';
 
+import none from '../../resources/images/no-portrait.png';
+
 interface Props {
     map: Map;
     mode: 'edit' | 'thumbnail' | 'combat' | 'combat-player';
@@ -392,9 +394,9 @@ class MapTile extends React.Component<MapTileProps> {
         }
 
         let content = null;
-        if ((this.props.tile.terrain === 'custom image') && (this.props.tile.customBackground !== null)) {
+        if (this.props.tile.terrain === 'custom') {
             content = (
-                <img src={this.props.tile.customBackground} alt='map tile' style={{ width: '100%', height: '100%' }} />
+                <img className='custom-image' src={this.props.tile.customBackground ? this.props.tile.customBackground : none} alt='map tile' />
             );
         }
 
@@ -431,6 +433,8 @@ class MapToken extends React.Component<MapTokenProps> {
     }
 
     public render() {
+        const name = this.props.combatant.displayName || this.props.combatant.name || 'combatant';
+
         let style = 'token ' + this.props.token.type;
         if (this.props.selected) {
             style += ' selected';
@@ -446,20 +450,29 @@ class MapToken extends React.Component<MapTokenProps> {
             }
         }
 
-        let initials = null;
+        let content = null;
         let hpGauge = null;
         let altitudeBadge = null;
         let conditionsBadge = null;
         if (!this.props.simple) {
-            const name = this.props.combatant.displayName || this.props.combatant.name || 'combatant';
-            initials = (
-                <div className='initials'>{name.split(' ').map(s => s[0])}</div>
-            );
+            if (this.props.combatant.portrait) {
+                content = (
+                    <img className='portrait' src={this.props.combatant.portrait} alt={name} />
+                );
+            } else {
+                content = (
+                    <div className='initials'>{name.split(' ').map(s => s[0])}</div>
+                );
+            }
 
             if (this.props.combatant.type === 'monster' && this.props.showGauge) {
-                hpGauge = (
-                    <HitPointGauge combatant={this.props.combatant as Combatant & Monster} />
-                );
+                const c = this.props.combatant as Combatant & Monster;
+                const current = c.hp || 0;
+                if (current < c.hpMax) {
+                    hpGauge = (
+                        <HitPointGauge combatant={this.props.combatant as Combatant & Monster} />
+                    );
+                }
             }
 
             if (this.props.combatant.altitude > 0) {
@@ -483,12 +496,12 @@ class MapToken extends React.Component<MapTokenProps> {
 
         return (
             <div
-                title={this.props.combatant.displayName || this.props.combatant.name}
                 className={style}
                 style={this.props.style}
+                title={name}
                 onClick={e => this.select(e)}
             >
-                {initials}
+                {content}
                 {hpGauge}
                 {altitudeBadge}
                 {conditionsBadge}

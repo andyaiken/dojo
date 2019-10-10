@@ -1,10 +1,11 @@
 import React from 'react';
 
+import Factory from '../../utils/factory';
+
 import { PC } from '../../models/party';
 
 import Spin from '../controls/spin';
-
-import Factory from '../../utils/factory';
+import PortraitPanel from '../panels/portrait-panel';
 
 interface Props {
     pc: PC;
@@ -146,6 +147,8 @@ export default class PCEditorModal extends React.Component<Props, State> {
                                 placeholder='https://ddb.ac/characters/...'
                                 onChange={event => this.changeValue(this.state.pc, 'url', event.target.value)}
                             />
+                            <div className='subheading'>portrait</div>
+                            <PortraitPanel source={this.state.pc} setValue={value => this.changeValue(this.state.pc, 'portrait', value)} />
                             <div className='subheading'>companions:</div>
                             {companions}
                             <button onClick={() => this.addCompanion()}>add a new companion</button>

@@ -5,20 +5,20 @@ import { Combat, Combatant } from '../models/combat';
 import { Map } from '../models/map-folio';
 
 export default class Mercator {
-    public static scatterCombatants(combat: Combat) {
+    public static scatterCombatants(combat: Combat, type: 'pc' | 'monster') {
         if (!combat.map) {
             return;
         }
 
         // Remove all monsters from the map
-        combat.map.items = combat.map.items.filter(item => item.type !== 'monster');
+        combat.map.items = combat.map.items.filter(item => item.type !== type);
 
         // Find map dimensions
         const tiles = combat.map.items.filter(item => item.type === 'tile');
         if (tiles.length > 0) {
             const dimensions = Mercator.mapDimensions(combat.map);
             if (dimensions) {
-                const monsters = combat.combatants.filter(combatant => combatant.type === 'monster');
+                const monsters = combat.combatants.filter(combatant => combatant.type === type);
                 monsters.forEach(combatant => {
                     const candidateSquares: {x: number, y: number}[] = [];
 
@@ -40,7 +40,7 @@ export default class Mercator {
 
                         const item = Factory.createMapItem();
                         item.id = combatant.id;
-                        item.type = 'monster';
+                        item.type = type;
                         item.x = square.x;
                         item.y = square.y;
                         item.height = size;

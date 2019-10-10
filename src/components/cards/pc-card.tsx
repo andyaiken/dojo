@@ -12,6 +12,7 @@ import Radial from '../controls/radial';
 import Selector from '../controls/selector';
 import Spin from '../controls/spin';
 import ConditionsPanel from '../panels/conditions-panel';
+import PortraitPanel from '../panels/portrait-panel';
 
 interface Props {
     combatant: PC | (PC & Combatant);
@@ -87,7 +88,7 @@ export default class PCCard extends React.Component<Props, State> {
         });
         if (this.props.mode.indexOf('tactical') === -1) {
             // No combat map, so remove the map option
-            combatModes.splice(1, 1);
+            combatModes.splice(2, 1);
         }
         options.push(
             <Selector
@@ -319,10 +320,13 @@ export default class PCCard extends React.Component<Props, State> {
             return (
                 <div className='card pc'>
                     <div className='heading'>
-                        <div className='title'>{name}</div>
+                        <div className='title'>
+                            {name}
+                        </div>
                     </div>
                     <div className='card-content'>
                         <div className='stats'>
+                            <PortraitPanel source={this.props.combatant} />
                             <div className='section centered lowercase'>
                                 <i>{desc}</i>
                                 <div style={{ display: this.props.combatant.url ? '' : 'none' }}>
