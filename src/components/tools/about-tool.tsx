@@ -33,7 +33,7 @@ export default class AboutTool extends React.Component<Props, State> {
         const options = [
             {
                 id: 'about',
-                text: 'about'
+                text: 'about dojo'
             },
             {
                 id: 'ogl',

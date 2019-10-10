@@ -1281,30 +1281,37 @@ body,
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-.dm-module {
-
-    .language {
-
-        .language-options {
-            .checkbox {
-                margin: 3px;
-            }
-        }
-
-        .language-output {
-            .expander-text {
-                font-size: 20px;
-            }
+.tools {
+    .language-options {
+        .checkbox {
+            margin: 3px;
         }
     }
 
-    .name {
-        .name-output {
-            .section {
-                font-size: 20px;
-                margin: 10px 0;
-            }
+    .language-output {
+        .expander-text {
+            font-size: 20px;
         }
+    }
+
+    .name-output {
+        .section {
+            font-size: 20px;
+            margin: 10px 0;
+        }
+    }
+
+    .die-rolls {
+        text-align: center;
+        font-weight: 600;
+        padding-top: 20px;
+    }
+
+    .die-result {
+        text-align: center;
+        font-size: 50px;
+        font-weight: 600;
+        padding-top: 20px;
     }
 }
 
@@ -1356,21 +1363,6 @@ body,
 
     .text {
         padding: 8px 0;
-    }
-}
-
-.die-roller {
-    .die-rolls {
-        text-align: center;
-        font-weight: 600;
-        padding-top: 20px;
-    }
-
-    .die-result {
-        text-align: center;
-        font-size: 50px;
-        font-weight: 600;
-        padding-top: 20px;
     }
 }
 

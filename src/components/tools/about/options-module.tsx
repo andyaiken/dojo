@@ -11,6 +11,8 @@ export default class OptionsModule extends React.Component<Props> {
     public render() {
         return (
             <div>
+                <div className='section'>this will reset the entire app and cannot be undone</div>
+                <div className='section'>use it at your own risk</div>
                 <ConfirmButton text='clear all data' callback={() => this.props.resetAll()} />
             </div>
         );
