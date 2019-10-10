@@ -311,6 +311,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                             <MapPanel
                                 map={map}
                                 mode='thumbnail'
+                                size={10}
                             />
                         );
                     }

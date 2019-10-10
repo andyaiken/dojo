@@ -104,4 +104,18 @@ export default class Mercator {
             return (x >= left) && (x <= right) && (y >= top) && (y <= bottom);
         });
     }
+
+    public static rotateMap(map: Map) {
+        map.items.forEach(item => {
+            const newX = (item.y + item.height - 1) * -1;
+            const newY = item.x;
+            const newWidth = item.height;
+            const newHeight = item.width;
+
+            item.x = newX;
+            item.y = newY;
+            item.width = newWidth;
+            item.height = newHeight;
+        });
+    }
 }

@@ -1112,7 +1112,6 @@ body,
 
 .map-panel {
     overflow: auto;
-    position: relative;
 
     .grid {
         position: relative;
@@ -1151,12 +1150,6 @@ body,
         .token:hover {
             border-color: $highlight;
         }
-    }
-
-    .zoom {
-        position: absolute;
-        right: 5px;
-        top: 0;
     }
 }
 
@@ -1243,6 +1236,7 @@ body,
 
     &.selected {
         border-color: $highlight;
+        box-shadow: 0 0 10px 3px black;
     }
 
     &.hidden {

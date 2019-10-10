@@ -1402,6 +1402,17 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
+    private rotateMap() {
+        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+        if (combat && combat.map) {
+            Mercator.rotateMap(combat.map);
+
+            this.setState({
+                combats: this.state.combats
+            });
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private setView(view: string) {
@@ -1762,6 +1773,7 @@ export default class Dojo extends React.Component<Props, State> {
                         close={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
                         toggleTag={(combatant, tag) => this.toggleTag(combatant, tag)}
                         scatterCombatants={type => this.scatterCombatants(type)}
+                        rotateMap={() => this.rotateMap()}
                     />
                 );
         }

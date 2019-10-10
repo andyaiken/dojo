@@ -44,14 +44,17 @@ interface Props {
     nudgeValue: (source: {}, type: string, delta: number) => void;
     toggleTag: (combatant: Combatant, tag: string) => void;
     scatterCombatants: (type: 'pc' | 'monster') => void;
+    rotateMap: () => void;
 }
 
 interface State {
     selectedTokenID: string | null;
     addingToMapID: string | null;
+    mapSize: number;
     playerView: {
         open: boolean;
         showControls: boolean;
+        mapSize: number;
     };
 }
 
@@ -62,9 +65,11 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
         this.state = {
             selectedTokenID: null,  // The ID of the combatant that's selected
             addingToMapID: null,    // The ID of the combatant we're adding to the map
+            mapSize: 30,
             playerView: {
                 open: false,
-                showControls: true
+                showControls: true,
+                mapSize: 30
             }
         };
     }
@@ -87,6 +92,12 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
         });
     }
 
+    private nudgeMapSize(value: number) {
+        this.setState({
+            mapSize: this.state.mapSize + value
+        });
+    }
+
     private setPlayerViewOpen(show: boolean) {
         // eslint-disable-next-line
         this.state.playerView.open = show;
@@ -98,6 +109,14 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
     private setPlayerViewShowControls(show: boolean) {
         // eslint-disable-next-line
         this.state.playerView.showControls = show;
+        this.setState({
+            playerView: this.state.playerView
+        });
+    }
+
+    private nudgePlayerViewMapSize(value: number) {
+        // eslint-disable-next-line
+        this.state.playerView.mapSize = this.state.playerView.mapSize + value;
         this.setState({
             playerView: this.state.playerView
         });
@@ -199,6 +218,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                                 key='map'
                                 map={combat.map}
                                 mode='combat-player'
+                                size={this.state.playerView.mapSize}
                                 combatants={combat.combatants}
                                 selectedItemID={this.state.selectedTokenID ? this.state.selectedTokenID : undefined}
                                 setSelectedItemID={id => this.setSelectedTokenID(id)}
@@ -307,10 +327,6 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
             }
             this.setAddingToMapID(null);
         }
-    }
-
-    private showCombat(combat: Combat) {
-        return Utils.match(this.props.filter, combat.name);
     }
 
     public render() {
@@ -466,35 +482,54 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                             <MapPanel
                                 map={this.props.combat.map}
                                 mode='combat'
+                                size={this.state.mapSize}
                                 showOverlay={this.state.addingToMapID !== null}
                                 combatants={this.props.combat.combatants}
                                 selectedItemID={this.state.selectedTokenID ? this.state.selectedTokenID : undefined}
                                 setSelectedItemID={id => this.setSelectedTokenID(id)}
                                 gridSquareClicked={(x, y) => this.addCombatantToMap(x, y)}
                             />
-                            <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
-                            <button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
                         </div>
                     );
                 }
 
-                const playerViewSection = (
+                const toolsSection = (
                     <CardGroup
-                        heading='player view'
+                        heading='tools'
                         content={[
-                            <Checkbox
-                                key='show'
-                                label='show player view'
-                                checked={this.state.playerView.open}
-                                changeValue={value => this.setPlayerViewOpen(value)}
-                            />,
-                            <Checkbox
-                                key='controls'
-                                label='show map controls'
-                                checked={this.state.playerView.showControls}
-                                disabled={!this.props.combat.map}
-                                changeValue={value => this.setPlayerViewShowControls(value)}
-                            />
+                            <div key='map' style={{ display: this.props.combat.map ? 'block' : 'none' }}>
+                                <div className='subheading'>map</div>
+                                <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
+                                <button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
+                                <button onClick={() => this.props.rotateMap()}>rotate</button>
+                                <Spin
+                                    source={this.state}
+                                    name={'mapSize'}
+                                    display={value => 'zoom'}
+                                    nudgeValue={delta => this.nudgeMapSize(delta * 5)}
+                                />
+                            </div>,
+                            <div key='playerview'>
+                                <div className='subheading'>player view</div>
+                                <Checkbox
+                                    label='show player view'
+                                    checked={this.state.playerView.open}
+                                    changeValue={value => this.setPlayerViewOpen(value)}
+                                />
+                                <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
+                                    <Checkbox
+                                        label='show map controls'
+                                        checked={this.state.playerView.showControls}
+                                        changeValue={value => this.setPlayerViewShowControls(value)}
+                                    />
+                                    <Spin
+                                        source={this.state.playerView}
+                                        name={'mapSize'}
+                                        display={value => 'zoom'}
+                                        nudgeValue={delta => this.nudgePlayerViewMapSize(delta * 5)}
+                                    />
+                                </div>
+                            </div>
                         ]}
                         showToggle={true}
                     />
@@ -577,7 +612,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                             />
                         </div>
                         <div className='columns small-4 medium-4 large-4 scrollable'>
-                            {playerViewSection}
+                            {toolsSection}
                             {this.getPlayerView(this.props.combat)}
                             <CardGroup
                                 heading={'don\'t forget'}
@@ -593,7 +628,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     </div>
                 );
             } else {
-                let listItems = this.props.combats.filter(c => this.showCombat(c)).map(c => {
+                let listItems = this.props.combats.filter(c => Utils.match(this.props.filter, c.name)).map(c => {
                     return (
                         <CombatListItem
                             key={c.id}

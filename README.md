@@ -50,25 +50,3 @@ Remember to update the app version number in `package.json` before pushing any c
 * Run `npm run deploy`
 
 This will build the app in the `build` folder and attempt to deploy it.
-
-## Code structure
-
-- docs
-- public
-- src
-  - components
-    - cards
-    - controls
-    - list-items
-    - modals
-    - panels
-    - screens
-  - models
-  - resources
-    - data
-    - images
-      - maptiles
-  - style
-    - css
-    - scss
-  - utils

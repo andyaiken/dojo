@@ -7,7 +7,6 @@ import { Map, MapItem } from '../../models/map-folio';
 import { Monster } from '../../models/monster-group';
 import { PC } from '../../models/party';
 
-import Spin from '../controls/spin';
 import HitPointGauge from './hit-point-gauge';
 
 import none from '../../resources/images/no-portrait.png';
@@ -15,15 +14,12 @@ import none from '../../resources/images/no-portrait.png';
 interface Props {
     map: Map;
     mode: 'edit' | 'thumbnail' | 'combat' | 'combat-player';
+    size: number;
     combatants: ((Combatant & PC) | (Combatant & Monster))[];
     showOverlay: boolean;
     selectedItemID: string;
     setSelectedItemID: (itemID: string | null) => void;
     gridSquareClicked: (x: number, y: number) => void;
-}
-
-interface State {
-    zoom: number;
 }
 
 interface MapDimensions {
@@ -43,14 +39,7 @@ interface MapItemStyle {
     backgroundColor?: string;
 }
 
-export default class MapPanel extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            zoom: props.mode !== 'thumbnail' ? 25 : 10
-        };
-    }
-
+export default class MapPanel extends React.Component<Props> {
     public static defaultProps = {
         combatants: null,
         showOverlay: false,
@@ -150,7 +139,7 @@ export default class MapPanel extends React.Component<Props, State> {
         let radius = '0';
         switch (style) {
             case 'rounded':
-                radius = this.state.zoom + 'px';
+                radius = this.props.size + 'px';
                 break;
             case 'circle':
                 radius = '50%';
@@ -158,12 +147,12 @@ export default class MapPanel extends React.Component<Props, State> {
         }
 
         return {
-            left: 'calc(' + this.state.zoom + 'px * ' + (x + offsetX - dim.minX) + ')',
-            top: 'calc(' + this.state.zoom + 'px * ' + (y + offsetY - dim.minY) + ')',
-            width: 'calc((' + this.state.zoom + 'px * ' + width + ') + 1px)',
-            height: 'calc((' + this.state.zoom + 'px * ' + height + ') + 1px)',
+            left: 'calc(' + this.props.size + 'px * ' + (x + offsetX - dim.minX) + ')',
+            top: 'calc(' + this.props.size + 'px * ' + (y + offsetY - dim.minY) + ')',
+            width: 'calc((' + this.props.size + 'px * ' + width + ') + 1px)',
+            height: 'calc((' + this.props.size + 'px * ' + height + ') + 1px)',
             borderRadius: radius,
-            backgroundSize: this.state.zoom + 'px'
+            backgroundSize: this.props.size + 'px'
         };
     }
 
@@ -291,32 +280,17 @@ export default class MapPanel extends React.Component<Props, State> {
                 }
             }
 
-            let zoom = null;
-            if (this.props.mode !== 'thumbnail') {
-                zoom = (
-                    <div className='zoom'>
-                        <Spin
-                            source={this.state}
-                            name={'zoom'}
-                            display={value => ''}
-                            nudgeValue={delta => this.setZoom(this.state.zoom + (delta * 5))}
-                        />
-                    </div>
-                );
-            }
-
             const style = 'map-panel ' + this.props.mode;
             const mapHeight = 1 + mapDimensions.maxY - mapDimensions.minY;
             return (
                 <div className={style} onClick={() => this.props.setSelectedItemID(null)}>
-                    <div className='grid' style={{ height: ((this.state.zoom * mapHeight) + 1) + 'px' }}>
+                    <div className='grid' style={{ height: ((this.props.size * mapHeight) + 1) + 'px' }}>
                         {grid}
                         {tiles}
                         {auras}
                         {tokens}
                         {dragOverlay}
                     </div>
-                    {zoom}
                 </div>
             );
         } catch (e) {

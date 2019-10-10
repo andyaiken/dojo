@@ -19,6 +19,7 @@ export default class CombatListItem extends React.Component<Props> {
                     <MapPanel
                         map={this.props.combat.map}
                         mode='thumbnail'
+                        size={10}
                         combatants={this.props.combat.combatants}
                     />
                 );

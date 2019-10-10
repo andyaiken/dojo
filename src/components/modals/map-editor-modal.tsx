@@ -1,11 +1,13 @@
 import React from 'react';
 
 import Factory from '../../utils/factory';
+import Mercator from '../../utils/mercator';
 import Utils from '../../utils/utils';
 
 import { Map, MapItem } from '../../models/map-folio';
 
 import MapTileCard from '../cards/map-tile-card';
+import Spin from '../controls/spin';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 
@@ -17,6 +19,7 @@ interface State {
     map: Map;
     selectedTileID: string | null;
     addingTile: boolean;
+    mapSize: number;
 }
 
 export default class MapEditorModal extends React.Component<Props, State> {
@@ -26,7 +29,8 @@ export default class MapEditorModal extends React.Component<Props, State> {
         this.state = {
             map: props.map,
             selectedTileID: null,
-            addingTile: false
+            addingTile: false,
+            mapSize: 30
         };
     }
 
@@ -39,6 +43,12 @@ export default class MapEditorModal extends React.Component<Props, State> {
     private toggleAddingTile() {
         this.setState({
             addingTile: !this.state.addingTile
+        });
+    }
+
+    private nudgeMapSize(value: number) {
+        this.setState({
+            mapSize: this.state.mapSize + value
         });
     }
 
@@ -179,17 +189,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
     }
 
     private rotateMap() {
-        this.state.map.items.forEach(item => {
-            const newX = (item.y + item.height - 1) * -1;
-            const newY = item.x;
-            const newWidth = item.height;
-            const newHeight = item.width;
-
-            item.x = newX;
-            item.y = newY;
-            item.width = newWidth;
-            item.height = newHeight;
-        });
+        Mercator.rotateMap(this.state.map);
 
         this.setState({
             map: this.state.map
@@ -256,6 +256,12 @@ export default class MapEditorModal extends React.Component<Props, State> {
                         <button onClick={() => this.toggleAddingTile()}>
                             {this.state.addingTile ? 'click somewhere on the map to add your new tile, or click here to cancel' : 'add a new tile'}
                         </button>
+                        <Spin
+                            source={this.state}
+                            name={'mapSize'}
+                            display={value => 'zoom'}
+                            nudgeValue={delta => this.nudgeMapSize(delta * 5)}
+                        />
                         <button onClick={() => this.rotateMap()}>rotate the map</button>
                         <button onClick={() => this.clearMap()}>clear all tiles</button>
                     </div>
@@ -268,6 +274,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
                     <MapPanel
                         map={this.state.map}
                         mode='edit'
+                        size={this.state.mapSize}
                         selectedItemID={this.state.selectedTileID ? this.state.selectedTileID : undefined}
                         showOverlay={this.state.addingTile}
                         setSelectedItemID={id => this.setSelectedTileID(id)}

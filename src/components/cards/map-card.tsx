@@ -25,6 +25,7 @@ export default class MapCard extends React.Component<Props> {
                             <MapPanel
                                 map={this.props.map}
                                 mode='thumbnail'
+                                size={10}
                             />
                         </div>
                         <div className='divider' />
