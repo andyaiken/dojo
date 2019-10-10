@@ -1,6 +1,6 @@
 {
     "name": "dojo",
-    "version": "3.16.5",
+    "version": "3.16.6",
     "license": "MIT",
     "repository": "https://github.com/andyaiken/dojo.git",
     "homepage": "https://andyaiken.github.io/dojo/",
@@ -18,7 +18,7 @@
         "showdown": "^1.9.0",
         "tslint": "^5.20.0",
         "tslint-react": "^3.6.0",
-        "typescript": "^3.6.3"
+        "typescript": "^3.6.4"
     },
     "scripts": {
         "start": "react-scripts start --display-error-details",

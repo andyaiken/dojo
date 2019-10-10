@@ -84,7 +84,7 @@ export default class TraitsPanel extends React.Component<Props> {
         }
 
         return (
-            <div>
+            <div className={this.props.mode === 'edit' ? 'group-panel' : 'section'}>
                 <div className='section subheading'>{Utils.traitType(type, true)}</div>
                 {info}
                 {traits}

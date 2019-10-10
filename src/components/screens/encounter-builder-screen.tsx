@@ -405,7 +405,7 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
     public render() {
         try {
             const waves = this.props.selection.waves.map(wave => (
-                <div key={wave.id} className='list-item non-clickable'>
+                <div key={wave.id} className='group-panel'>
                     <input
                         type='text'
                         placeholder='wave name'

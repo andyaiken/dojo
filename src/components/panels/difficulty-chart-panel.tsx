@@ -207,7 +207,7 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
         }
 
         return (
-            <div className='list-item non-clickable'>
+            <div className='group-panel'>
                 <div className='subheading'>difficulty</div>
                 {partySelection}
                 {xpThresholds}

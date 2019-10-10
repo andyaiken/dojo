@@ -485,7 +485,7 @@ export default class MonsterCard extends React.Component<Props, State> {
 
         return (
             <div>
-                <div className='combat-options-panel'>
+                <div className='group-panel'>
                     {options}
                 </div>
                 <div className='divider' />

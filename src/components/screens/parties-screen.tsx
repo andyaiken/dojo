@@ -279,7 +279,7 @@ class PartyInfo extends React.Component<PartyInfoProps> {
         perceptionSummary = percep.min === percep.max ? (percep.min as number).toString() : percep.min + ' - ' + percep.max;
 
         return (
-            <div className='list-item non-clickable'>
+            <div className='group-panel'>
                 <div className='section' style={{ display: languages !== '' ? 'block' : 'none' }}>
                     <div className='subheading'>party languages</div>
                 </div>

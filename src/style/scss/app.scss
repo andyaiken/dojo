@@ -800,10 +800,6 @@ body,
     cursor: pointer;
     border-left: 3px solid $control-border;
 
-    &.non-clickable {
-        cursor: default;
-    }
-
     &:hover {
         background-color: $highlight01;
     }
@@ -1107,8 +1103,9 @@ body,
 .notifications {
     position: sticky;
     top: 0;
-    background-color: white;
+    background-color: transparent;
     padding: 1px 5px 0 5px;
+    z-index: 5;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1311,10 +1308,15 @@ body,
     }
 }
 
-.combat-options-panel {
+.group-panel {
     border-left: 5px solid #c3c3c3;
     background: $background;
     padding: 5px 10px;
+    margin: 5px 0;
+
+    &:hover {
+        border-color: $highlight;
+    }
 }
 
 .readaloud {

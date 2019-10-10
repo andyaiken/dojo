@@ -730,7 +730,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 }
 
                 help = (
-                    <div className='monster-help list-item non-clickable'>
+                    <div className='monster-help group-panel'>
                         <div className='heading'>information from sidebar monsters</div>
                         {selector}
                         {this.getHelpSection(monsters)}
