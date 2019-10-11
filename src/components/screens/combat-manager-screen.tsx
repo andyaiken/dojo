@@ -535,11 +535,13 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                                         checked={this.state.playerView.open}
                                         changeValue={value => this.setPlayerViewOpen(value)}
                                     />
-                                    <Checkbox
-                                        label='show controls'
-                                        checked={this.state.playerView.showControls}
-                                        changeValue={value => this.setPlayerViewShowControls(value)}
-                                    />
+                                    <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
+                                        <Checkbox
+                                            label='show map controls'
+                                            checked={this.state.playerView.showControls}
+                                            changeValue={value => this.setPlayerViewShowControls(value)}
+                                        />
+                                    </div>
                                     <div style={{ display: (this.props.combat.map && this.state.playerView.open) ? 'block' : 'none' }}>
                                         <Spin
                                             source={this.state.playerView}

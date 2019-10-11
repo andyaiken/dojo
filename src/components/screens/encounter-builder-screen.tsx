@@ -88,20 +88,23 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                             encounter={this.props.selection as Encounter}
                             mode={'view encounter'}
                             nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
-                            removeEncounterSlot={source => this.props.removeEncounterSlot(source, waveID)}
+                            removeEncounterSlot={s => this.props.removeEncounterSlot(s, waveID)}
                         />
                     </div>
                 );
             } else {
                 const index = slots.indexOf(slot);
-                const error = 'unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName;
                 cards.push(
                     <div className='column' key={index}>
                         <div className='card error'>
                             <div className='card-content'>
+                                <div className='subheading'>unknown monster</div>
+                                <div className='divider' />
                                 <div className='section'>
-                                    {error}
+                                    could not find a monster called '<b>{slot.monsterName}</b>' in a group called '<b>{slot.monsterGroupName}'</b>
                                 </div>
+                                <div className='divider' />
+                                <button onClick={() => this.props.removeEncounterSlot(slot, waveID)}>remove</button>
                             </div>
                         </div>
                     </div>

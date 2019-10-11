@@ -615,7 +615,14 @@ body,
     &.error {
         background-color: red;
         color: $background;
-        font-weight: 600;
+
+        .subheading, b, strong {
+            color: $background;
+        }
+
+        .divider {
+            border-color: $background;
+        }
     }
 
     .card-content {
