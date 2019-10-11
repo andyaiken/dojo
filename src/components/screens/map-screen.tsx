@@ -44,7 +44,7 @@ export default class MapScreen extends React.Component<Props> {
             }
 
             return (
-                <div className='map-builder row collapse'>
+                <div className='screen row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable list-column'>
                         <MapFolioInfo
                             mapFolio={this.props.mapFolio}
