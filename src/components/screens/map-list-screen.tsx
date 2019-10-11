@@ -2,6 +2,7 @@ import React from 'react';
 
 import { MapFolio } from '../../models/map-folio';
 
+import CardGroup from '../panels/card-group';
 import Note from '../panels/note';
 
 interface Props {
@@ -21,73 +22,31 @@ export default class MapListScreen extends React.Component<Props> {
                     />
                 );
             });
-            if (listItems.length === 0) {
-                listItems.push(
-                    <Note
-                        key='empty'
-                        content={'you have not set up any tactical maps yet'}
-                    />
-                );
-            }
 
             return (
                 <div className='screen row collapse'>
-                    <div className='columns small-4 medium-4 large-3 scrollable list-column'>
-                        {listItems}
+                    <div className='columns small-4 medium-4 large-3 scrollable left-column'>
+                        <Note
+                            content={
+                                <div>
+                                    <div className='section'>on this page you can set up folios containing tactical maps</div>
+                                    <div className='section'>when you have created a map you can use it in the combat manager</div>
+                                    <div className='divider'/>
+                                    <div className='section'>on the right you will see a list of map folios</div>
+                                    <div className='section'>select a folio from the list to see the maps it contains</div>
+                                    <div className='divider'/>
+                                    <div className='section'>to start a new folio, press the <b>add a new map folio</b> button</div>
+                                </div>
+                            }
+                        />
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
-                        <div className='vertical-center-outer'>
-                            <div className='vertical-center-middle'>
-                                <div className='vertical-center-inner'>
-                                    <HelpCard mapFolios={this.props.mapFolios} />
-                                </div>
-                            </div>
-                        </div>
+                        <CardGroup heading='map folios' content={listItems} />
                     </div>
                 </div>
             );
         } catch (e) {
             console.error(e);
-            return <div className='render-error'/>;
-        }
-    }
-}
-
-interface HelpCardProps {
-    mapFolios: MapFolio[];
-}
-
-class HelpCard extends React.Component<HelpCardProps> {
-    public render() {
-        try {
-            let action: JSX.Element | null = null;
-            if (this.props.mapFolios.length === 0) {
-                action = (
-                    <div className='section'>to start a new folio, press the <b>add a new map folio</b> button</div>
-                );
-            } else {
-                action = (
-                    <div>
-                        <div className='section'>on the left you will see a list of map folios</div>
-                        <div className='section'>select a folio from the list to see the maps it contains</div>
-                    </div>
-                );
-            }
-
-            return (
-                <Note
-                    content={
-                        <div>
-                            <div className='section'>on this page you can set up folios containing tactical maps</div>
-                            <div className='section'>when you have created a map you can use it in the combat manager</div>
-                            <div className='divider'/>
-                            {action}
-                        </div>
-                    }
-                />
-            );
-        } catch (ex) {
-            console.error(ex);
             return <div className='render-error'/>;
         }
     }
@@ -111,9 +70,22 @@ class ListItem extends React.Component<ListItemProps> {
             }
 
             return (
-                <div className='list-item' onClick={() => this.props.setSelection(this.props.mapFolio)}>
-                    <div className='heading'>{this.props.mapFolio.name || 'unnamed folio'}</div>
-                    {maps}
+                <div className='column'>
+                    <div className='card map'>
+                        <div className='heading'>
+                            <div className='title'>
+                                {this.props.mapFolio.name || 'unnamed folio'}
+                            </div>
+                        </div>
+                        <div className='card-content'>
+                            <div className='grid'>
+                                <div className='subheading'>maps</div>
+                                {maps}
+                            </div>
+                            <div className='divider'/>
+                            <button onClick={() => this.props.setSelection(this.props.mapFolio)}>open</button>
+                        </div>
+                    </div>
                 </div>
             );
         } catch (e) {

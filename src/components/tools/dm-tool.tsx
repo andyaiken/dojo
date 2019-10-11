@@ -3,10 +3,10 @@ import React from 'react';
 import { MonsterGroup } from '../../models/monster-group';
 
 import Selector from '../controls/selector';
+import DemographicsModule from './dm/demographics-module';
 import DieRollerModule from './dm/die-roller-module';
 import LanguageModule from './dm/language-module';
 import NameModule from './dm/name-module';
-import DemographicsModule from './dm/demographics-module';
 
 interface Props {
     library: MonsterGroup[];

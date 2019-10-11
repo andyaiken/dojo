@@ -227,8 +227,8 @@ button {
     padding: 0 5px !important;
 }
 
-.list-column {
-    padding: 5px 10px !important;
+.left-column {
+    padding: 0 10px !important;
     background-color: $header-background-02;
     border-right: 1px solid $control-border;
 }
@@ -569,6 +569,23 @@ body,
         }
     }
 
+    &.encounter {
+        border: 1px solid #006565;
+        background-color: beige;
+
+        .heading {
+            background-color: #006565;
+        }
+
+        .subheading {
+            color: #006565;
+        }
+
+        .divider {
+            border-color: #006565;
+        }
+    }
+
     &.map {
         border: 1px solid #000065;
         background-color: beige;
@@ -586,7 +603,7 @@ body,
         }
     }
 
-    &.map-tile {
+    &.combat {
         border: 1px solid #650065;
         background-color: beige;
 
@@ -618,6 +635,11 @@ body,
 
     .card-content {
         padding: 5px 10px;
+
+        .grid {
+            height: 200px;
+            overflow-y: auto;
+        }
     }
 }
 
@@ -795,32 +817,6 @@ body,
             position: absolute;
             background-color: royalblue;
         }
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// List item
-
-.list-item {
-    margin: 5px 0;
-    padding: 3px 10px;
-    cursor: pointer;
-    border-left: 3px solid $control-border;
-
-    &:hover {
-        background-color: $highlight01;
-    }
-
-    &.selected {
-        border-color: $highlight;
-        background-color: $highlight02;
-        cursor: default;
-    }
-
-    .heading {
-        padding-left: 10px;
-        margin-left: -10px;
-        margin-top: -5px;
     }
 }
 

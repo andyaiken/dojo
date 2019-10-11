@@ -56,7 +56,7 @@ export default class MapTileCard extends React.Component<Props> {
             }
 
             return (
-                <div className='card map-tile'>
+                <div className='card map'>
                     <div className='heading'>
                         <div className='title'>map tile</div>
                     </div>

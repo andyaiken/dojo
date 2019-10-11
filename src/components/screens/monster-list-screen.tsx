@@ -2,6 +2,7 @@ import React from 'react';
 
 import { MonsterGroup } from '../../models/monster-group';
 
+import CardGroup from '../panels/card-group';
 import Note from '../panels/note';
 
 interface Props {
@@ -21,73 +22,31 @@ export default class MonsterListScreen extends React.Component<Props> {
                     />
                 );
             });
-            if (listItems.length === 0) {
-                listItems.push(
-                    <Note
-                        key='empty'
-                        content={'you do not have any monsters in your library'}
-                    />
-                );
-            }
 
             return (
                 <div className='screen row collapse'>
-                    <div className='columns small-4 medium-4 large-3 scrollable list-column'>
-                        {listItems}
+                    <div className='columns small-4 medium-4 large-3 scrollable left-column'>
+                        <Note
+                            content={
+                                <div>
+                                    <div className='section'>you can maintain your menagerie of monsters here</div>
+                                    <div className='section'>you can then use these monsters to design combat encounters in the encounter builder</div>
+                                    <div className='divider'/>
+                                    <div className='section'>on the right you will see a list of monster groups</div>
+                                    <div className='section'>select a monster group from the list to see stat blocks for monsters in that group</div>
+                                    <div className='divider'/>
+                                    <div className='section'>to start adding monsters, press the <b>add a new monster group</b> button</div>
+                                </div>
+                            }
+                        />
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
-                        <div className='vertical-center-outer'>
-                            <div className='vertical-center-middle'>
-                                <div className='vertical-center-inner'>
-                                    <HelpCard library={this.props.library} />
-                                </div>
-                            </div>
-                        </div>
+                        <CardGroup heading='monster groups' content={listItems} />
                     </div>
                 </div>
             );
         } catch (e) {
             console.error(e);
-            return <div className='render-error'/>;
-        }
-    }
-}
-
-interface HelpCardProps {
-    library: MonsterGroup[];
-}
-
-class HelpCard extends React.Component<HelpCardProps> {
-    public render() {
-        try {
-            let action: JSX.Element | null = null;
-            if (this.props.library.length === 0) {
-                action = (
-                    <div className='section'>to start adding monsters, press the <b>add a new monster group</b> button</div>
-                );
-            } else {
-                action = (
-                    <div>
-                        <div className='section'>on the left you will see a list of monster groups</div>
-                        <div className='section'>select a monster group from the list to see stat blocks for monsters in that group</div>
-                    </div>
-                );
-            }
-
-            return (
-                <Note
-                    content={
-                        <div>
-                            <div className='section'>you can maintain your menagerie of monsters here</div>
-                            <div className='section'>you can then use these monsters to design combat encounters in the encounter builder</div>
-                            <div className='divider'/>
-                            {action}
-                        </div>
-                    }
-                />
-            );
-        } catch (ex) {
-            console.error(ex);
             return <div className='render-error'/>;
         }
     }
@@ -111,9 +70,22 @@ class ListItem extends React.Component<ListItemProps> {
             }
 
             return (
-                <div className='list-item' onClick={() => this.props.setSelection(this.props.group)}>
-                    <div className='heading'>{this.props.group.name || 'unnamed group'}</div>
-                    {monsters}
+                <div className='column'>
+                    <div className='card monster'>
+                        <div className='heading'>
+                            <div className='title'>
+                                {this.props.group.name || 'unnamed group'}
+                            </div>
+                        </div>
+                        <div className='card-content'>
+                            <div className='grid'>
+                                <div className='subheading'>monsters</div>
+                                {monsters}
+                            </div>
+                            <div className='divider'/>
+                            <button onClick={() => this.props.setSelection(this.props.group)}>open</button>
+                        </div>
+                    </div>
                 </div>
             );
         } catch (e) {

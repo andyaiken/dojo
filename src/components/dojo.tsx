@@ -1588,7 +1588,7 @@ export default class Dojo extends React.Component<Props, State> {
                     return (
                         <div className='actions'>
                             <div className='section'>
-                                <button onClick={() => this.selectMapFolio(null)}>&larr; back to list</button>
+                                <button onClick={() => this.selectMonsterGroup(null)}>&larr; back to list</button>
                             </div>
                         </div>
                     );

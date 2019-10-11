@@ -54,7 +54,7 @@ export default class MonsterScreen extends React.Component<Props> {
 
             return (
                 <div className='screen row collapse'>
-                    <div className='columns small-4 medium-4 large-3 scrollable list-column'>
+                    <div className='columns small-4 medium-4 large-3 scrollable left-column'>
                         <MonsterInfo
                             monsterGroup={this.props.monsterGroup}
                             addMonster={() => this.props.addMonster()}
