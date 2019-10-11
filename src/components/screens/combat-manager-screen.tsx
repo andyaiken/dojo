@@ -4,6 +4,7 @@ import Utils from '../../utils/utils';
 
 import { Combat, COMBAT_TAGS, Combatant, Notification } from '../../models/combat';
 import { Condition, ConditionDurationSaves } from '../../models/condition';
+import { Encounter } from '../../models/encounter';
 import { Monster, Trait } from '../../models/monster-group';
 import { PC } from '../../models/party';
 
@@ -23,6 +24,7 @@ import Popout from '../portals/popout';
 
 interface Props {
     combats: Combat[];
+    encounters: Encounter[];
     combat: Combat | null;
     filter: string;
     createCombat: () => void;
@@ -497,46 +499,55 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     );
                 }
 
+                let wavesAvailable = false;
+                const encounterID = this.props.combat.encounterID;
+                const encounter = this.props.encounters.find(enc => enc.id === encounterID);
+                wavesAvailable = !!encounter && (encounter.waves.length > 0);
+
                 const toolsSection = (
                     <CardGroup
                         heading='tools'
                         content={[
-                            <div key='map' style={{ display: this.props.combat.map ? 'block' : 'none' }}>
-                                <div className='subheading'>encounter</div>
-                                <button onClick={() => this.props.pauseCombat()}>pause encounter</button>
-                                <button onClick={() => this.props.endCombat()}>end encounter</button>
-                                <button onClick={() => this.props.addCombatants()}>add combatants</button>
-                                <button onClick={() => this.props.addWave()}>add wave</button>
-                                <div className='subheading'>map</div>
-                                <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
-                                <button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
-                                <button onClick={() => this.props.rotateMap()}>rotate the map</button>
-                                <Spin
-                                    source={this.state}
-                                    name={'mapSize'}
-                                    display={value => 'zoom'}
-                                    nudgeValue={delta => this.nudgeMapSize(delta * 5)}
-                                />
-                            </div>,
-                            <div key='playerview'>
-                                <div className='subheading'>player view</div>
-                                <Checkbox
-                                    label='show player view'
-                                    checked={this.state.playerView.open}
-                                    changeValue={value => this.setPlayerViewOpen(value)}
-                                />
-                                <Checkbox
-                                    label='show controls'
-                                    checked={this.state.playerView.showControls}
-                                    changeValue={value => this.setPlayerViewShowControls(value)}
-                                />
-                                <div style={{ display: (this.props.combat.map && this.state.playerView.open) ? 'block' : 'none' }}>
+                            <div key='tools'>
+                                <div>
+                                    <div className='subheading'>encounter</div>
+                                    <button onClick={() => this.props.pauseCombat()}>pause encounter</button>
+                                    <button onClick={() => this.props.endCombat()}>end encounter</button>
+                                    <button onClick={() => this.props.addCombatants()}>add combatants</button>
+                                    <button onClick={() => this.props.addWave()} style={{ display: wavesAvailable ? 'block' : 'none' }}>add wave</button>
+                                </div>
+                                <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
+                                    <div className='subheading'>map</div>
+                                    <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
+                                    <button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
+                                    <button onClick={() => this.props.rotateMap()}>rotate the map</button>
                                     <Spin
-                                        source={this.state.playerView}
+                                        source={this.state}
                                         name={'mapSize'}
                                         display={value => 'zoom'}
-                                        nudgeValue={delta => this.nudgePlayerViewMapSize(delta * 5)}
+                                        nudgeValue={delta => this.nudgeMapSize(delta * 5)}
                                     />
+                                </div>
+                                <div>
+                                    <div className='subheading'>player view</div>
+                                    <Checkbox
+                                        label='show player view'
+                                        checked={this.state.playerView.open}
+                                        changeValue={value => this.setPlayerViewOpen(value)}
+                                    />
+                                    <Checkbox
+                                        label='show controls'
+                                        checked={this.state.playerView.showControls}
+                                        changeValue={value => this.setPlayerViewShowControls(value)}
+                                    />
+                                    <div style={{ display: (this.props.combat.map && this.state.playerView.open) ? 'block' : 'none' }}>
+                                        <Spin
+                                            source={this.state.playerView}
+                                            name={'mapSize'}
+                                            display={value => 'zoom'}
+                                            nudgeValue={delta => this.nudgePlayerViewMapSize(delta * 5)}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         ]}

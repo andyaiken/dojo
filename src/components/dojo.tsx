@@ -1730,6 +1730,7 @@ export default class Dojo extends React.Component<Props, State> {
                 return (
                     <CombatManagerScreen
                         combats={this.state.combats}
+                        encounters={this.state.encounters}
                         combat={this.state.combats.find(c => c.id === this.state.selectedCombatID) || null}
                         filter={this.state.filter}
                         createCombat={() => this.createCombat()}
