@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Party } from '../../models/party';
 
-import PartyListItem from '../list-items/party-list-item';
 import Note from '../panels/note';
 
 interface Props {
@@ -14,9 +13,9 @@ interface Props {
 export default class PartyListScreen extends React.Component<Props> {
     public render() {
         try {
-            let listItems = this.props.parties.map(p => {
+            const listItems = this.props.parties.map(p => {
                 return (
-                    <PartyListItem
+                    <ListItem
                         key={p.id}
                         party={p}
                         setSelection={party => this.props.selectParty(party)}
@@ -24,12 +23,12 @@ export default class PartyListScreen extends React.Component<Props> {
                 );
             });
             if (listItems.length === 0) {
-                listItems = [(
+                listItems.push(
                     <Note
                         key='empty'
                         content={'you have not set up any parties yet'}
                     />
-                )];
+                );
             }
 
             return (
@@ -93,6 +92,40 @@ class HelpCard extends React.Component<HelpCardProps> {
             );
         } catch (ex) {
             console.error(ex);
+            return <div className='render-error'/>;
+        }
+    }
+}
+
+interface ListItemProps {
+    party: Party;
+    setSelection: (party: Party) => void;
+}
+
+class ListItem extends React.Component<ListItemProps> {
+    public render() {
+        try {
+            const pcs = [];
+            for (let n = 0; n !== this.props.party.pcs.length; ++n) {
+                const pc = this.props.party.pcs[n];
+                let name = pc.name || 'unnamed pc';
+                if (pc.player) {
+                    name += ' (' + pc.player + ')';
+                }
+                pcs.push(<div key={pc.id} className='section'>{name}</div>);
+            }
+            if (pcs.length === 0) {
+                pcs.push(<div key='empty' className='section'>no pcs</div>);
+            }
+
+            return (
+                <div className='list-item' onClick={() => this.props.setSelection(this.props.party)}>
+                    <div className='heading'>{this.props.party.name || 'unnamed party'}</div>
+                    {pcs}
+                </div>
+            );
+        } catch (e) {
+            console.error(e);
             return <div className='render-error'/>;
         }
     }

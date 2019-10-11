@@ -2,7 +2,6 @@ import React from 'react';
 
 import { MapFolio } from '../../models/map-folio';
 
-import MapFolioListItem from '../list-items/map-folio-list-item';
 import Note from '../panels/note';
 
 interface Props {
@@ -14,9 +13,9 @@ interface Props {
 export default class MapListScreen extends React.Component<Props> {
     public render() {
         try {
-            let listItems = this.props.mapFolios.map(mapFolio => {
+            const listItems = this.props.mapFolios.map(mapFolio => {
                 return (
-                    <MapFolioListItem
+                    <ListItem
                         key={mapFolio.id}
                         mapFolio={mapFolio}
                         setSelection={f => this.props.selectMapFolio(f)}
@@ -24,12 +23,12 @@ export default class MapListScreen extends React.Component<Props> {
                 );
             });
             if (listItems.length === 0) {
-                listItems = [(
+                listItems.push(
                     <Note
                         key='empty'
                         content={'you have not set up any tactical maps yet'}
                     />
-                )];
+                );
             }
 
             return (
@@ -92,6 +91,36 @@ class HelpCard extends React.Component<HelpCardProps> {
             );
         } catch (ex) {
             console.error(ex);
+            return <div className='render-error'/>;
+        }
+    }
+}
+
+interface ListItemProps {
+    mapFolio: MapFolio;
+    setSelection: (mapFolio: MapFolio) => void;
+}
+
+class ListItem extends React.Component<ListItemProps> {
+    public render() {
+        try {
+            const maps = [];
+            for (let n = 0; n !== this.props.mapFolio.maps.length; ++n) {
+                const map = this.props.mapFolio.maps[n];
+                maps.push(<div key={map.id} className='section'>{map.name || 'unnamed map'}</div>);
+            }
+            if (maps.length === 0) {
+                maps.push(<div key='empty' className='section'>no maps</div>);
+            }
+
+            return (
+                <div className='list-item' onClick={() => this.props.setSelection(this.props.mapFolio)}>
+                    <div className='heading'>{this.props.mapFolio.name || 'unnamed folio'}</div>
+                    {maps}
+                </div>
+            );
+        } catch (e) {
+            console.error(e);
             return <div className='render-error'/>;
         }
     }

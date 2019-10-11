@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Combat } from '../../models/combat';
 
-import CombatListItem from '../list-items/combat-list-item';
+import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 
 interface Props {
@@ -14,9 +14,9 @@ interface Props {
 export default class CombatListScreen extends React.Component<Props> {
     public render() {
         try {
-            let listItems = this.props.combats.map(c => {
+            const listItems = this.props.combats.map(c => {
                 return (
-                    <CombatListItem
+                    <ListItem
                         key={c.id}
                         combat={c}
                         setSelection={combat => this.props.resumeCombat(combat)}
@@ -24,12 +24,12 @@ export default class CombatListScreen extends React.Component<Props> {
                 );
             });
             if (listItems.length === 0) {
-                listItems = [(
+                listItems.push(
                     <Note
                         key='empty'
                         content={'you have no in-progress encounters'}
                     />
-                )];
+                );
             }
 
             return (
@@ -91,6 +91,40 @@ class HelpCard extends React.Component<HelpCardProps> {
             );
         } catch (ex) {
             console.error(ex);
+            return <div className='render-error'/>;
+        }
+    }
+}
+
+interface ListItemProps {
+    combat: Combat;
+    setSelection: (combat: Combat) => void;
+}
+
+class ListItem extends React.Component<ListItemProps> {
+    public render() {
+        try {
+            let map = null;
+            if (this.props.combat.map) {
+                map = (
+                    <MapPanel
+                        map={this.props.combat.map}
+                        mode='thumbnail'
+                        size={10}
+                        combatants={this.props.combat.combatants}
+                    />
+                );
+            }
+
+            return (
+                <div className='list-item' onClick={() => this.props.setSelection(this.props.combat)}>
+                    <div className='heading'>{this.props.combat.name || 'unnamed combat'}</div>
+                    <div className='section'>paused at {this.props.combat.timestamp}</div>
+                    {map}
+                </div>
+            );
+        } catch (e) {
+            console.error(e);
             return <div className='render-error'/>;
         }
     }

@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Encounter } from '../../models/encounter';
 
-import EncounterListItem from '../list-items/encounter-list-item';
 import Note from '../panels/note';
 
 interface Props {
@@ -14,9 +13,9 @@ interface Props {
 export default class EncounterListScreen extends React.Component<Props> {
     public render() {
         try {
-            let listItems = this.props.encounters.map(e => {
+            const listItems = this.props.encounters.map(e => {
                 return (
-                    <EncounterListItem
+                    <ListItem
                         key={e.id}
                         encounter={e}
                         setSelection={encounter => this.props.selectEncounter(encounter)}
@@ -24,12 +23,12 @@ export default class EncounterListScreen extends React.Component<Props> {
                 );
             });
             if (listItems.length === 0) {
-                listItems = [(
+                listItems.push(
                     <Note
                         key='empty'
                         content={'you have not defined any encounters yet'}
                     />
-                )];
+                );
             }
 
             return (
@@ -95,6 +94,55 @@ class HelpCard extends React.Component<HelpCardProps> {
             );
         } catch (ex) {
             console.error(ex);
+            return <div className='render-error'/>;
+        }
+    }
+}
+
+interface ListItemProps {
+    encounter: Encounter;
+    setSelection: (encounter: Encounter) => void;
+}
+
+class ListItem extends React.Component<ListItemProps> {
+    public render() {
+        try {
+            const slots = [];
+
+            this.props.encounter.slots.forEach(slot => {
+                let text = slot.monsterName || 'unnamed monster';
+                if (slot.count > 1) {
+                    text += ' x' + slot.count;
+                }
+                slots.push(<div key={slot.id} className='section'>{text}</div>);
+            });
+
+            if (slots.length === 0) {
+                slots.push(<div key='empty' className='section'>no monsters</div>);
+            }
+
+            this.props.encounter.waves.forEach(wave => {
+                slots.push(<div key={'name ' + wave.id} className='section subheading'>{wave.name || 'unnamed wave'}</div>);
+                wave.slots.forEach(slot => {
+                    let text = slot.monsterName || 'unnamed monster';
+                    if (slot.count > 1) {
+                        text += ' x' + slot.count;
+                    }
+                    slots.push(<div key={slot.id} className='section'>{text}</div>);
+                });
+                if (slots.length === 0) {
+                    slots.push(<div key={'empty ' + wave.id} className='section'>no monsters</div>);
+                }
+            });
+
+            return (
+                <div className='list-item' onClick={() => this.props.setSelection(this.props.encounter)}>
+                    <div className='heading'>{this.props.encounter.name || 'unnamed encounter'}</div>
+                    {slots}
+                </div>
+            );
+        } catch (e) {
+            console.error(e);
             return <div className='render-error'/>;
         }
     }

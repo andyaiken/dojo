@@ -2,7 +2,6 @@ import React from 'react';
 
 import { MonsterGroup } from '../../models/monster-group';
 
-import MonsterGroupListItem from '../list-items/monster-group-list-item';
 import Note from '../panels/note';
 
 interface Props {
@@ -14,9 +13,9 @@ interface Props {
 export default class MonsterListScreen extends React.Component<Props> {
     public render() {
         try {
-            let listItems = this.props.library.map(group => {
+            const listItems = this.props.library.map(group => {
                 return (
-                    <MonsterGroupListItem
+                    <ListItem
                         key={group.id}
                         group={group}
                         setSelection={grp => this.props.selectMonsterGroup(grp)}
@@ -24,12 +23,12 @@ export default class MonsterListScreen extends React.Component<Props> {
                 );
             });
             if (listItems.length === 0) {
-                listItems = [(
+                listItems.push(
                     <Note
                         key='empty'
                         content={'you do not have any monsters in your library'}
                     />
-                )];
+                );
             }
 
             return (
@@ -92,6 +91,36 @@ class HelpCard extends React.Component<HelpCardProps> {
             );
         } catch (ex) {
             console.error(ex);
+            return <div className='render-error'/>;
+        }
+    }
+}
+
+interface ListItemProps {
+    group: MonsterGroup;
+    setSelection: (group: MonsterGroup) => void;
+}
+
+class ListItem extends React.Component<ListItemProps> {
+    public render() {
+        try {
+            const monsters = [];
+            for (let n = 0; n !== this.props.group.monsters.length; ++n) {
+                const monster = this.props.group.monsters[n];
+                monsters.push(<div key={monster.id} className='section'>{monster.name || 'unnamed monster'}</div>);
+            }
+            if (monsters.length === 0) {
+                monsters.push(<div key='empty' className='section'>no monsters</div>);
+            }
+
+            return (
+                <div className='list-item' onClick={() => this.props.setSelection(this.props.group)}>
+                    <div className='heading'>{this.props.group.name || 'unnamed group'}</div>
+                    {monsters}
+                </div>
+            );
+        } catch (e) {
+            console.error(e);
             return <div className='render-error'/>;
         }
     }
