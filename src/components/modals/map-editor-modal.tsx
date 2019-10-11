@@ -7,6 +7,7 @@ import Utils from '../../utils/utils';
 import { Map, MapItem } from '../../models/map-folio';
 
 import MapTileCard from '../cards/map-tile-card';
+import ConfirmButton from '../controls/confirm-button';
 import Spin from '../controls/spin';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
@@ -263,7 +264,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
                             nudgeValue={delta => this.nudgeMapSize(delta * 5)}
                         />
                         <button onClick={() => this.rotateMap()}>rotate the map</button>
-                        <button onClick={() => this.clearMap()}>clear all tiles</button>
+                        <ConfirmButton text='clear all tiles' callback={() => this.clearMap()} />
                     </div>
                 );
             }

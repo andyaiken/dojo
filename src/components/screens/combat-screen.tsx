@@ -11,10 +11,10 @@ import { PC } from '../../models/party';
 import MonsterCard from '../cards/monster-card';
 import PCCard from '../cards/pc-card';
 import Checkbox from '../controls/checkbox';
+import ConfirmButton from '../controls/confirm-button';
 import ControlRow from '../controls/control-row';
 import Radial from '../controls/radial';
 import Spin from '../controls/spin';
-import CombatListItem from '../list-items/combat-list-item';
 import CardGroup from '../panels/card-group';
 import HitPointGauge from '../panels/hit-point-gauge';
 import MapPanel from '../panels/map-panel';
@@ -23,12 +23,9 @@ import TraitsPanel from '../panels/traits-panel';
 import Popout from '../portals/popout';
 
 interface Props {
-    combats: Combat[];
+    combat: Combat;
     encounters: Encounter[];
-    combat: Combat | null;
-    createCombat: () => void;
     pauseCombat: () => void;
-    resumeCombat: (combat: Combat) => void;
     endCombat: () => void;
     closeNotification: (notification: Notification, removeCondition: boolean) => void;
     mapAdd: (combatant: (Combatant & PC) | (Combatant & Monster), x: number, y: number) => void;
@@ -63,7 +60,7 @@ interface State {
     };
 }
 
-export default class CombatManagerScreen extends React.Component<Props, State> {
+export default class CombatScreen extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
@@ -253,7 +250,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
 
     private createCard(combatant: (Combatant & PC) | (Combatant & Monster)) {
         let mode = 'combat';
-        if (this.props.combat && this.props.combat.map) {
+        if (this.props.combat.map) {
             mode += ' tactical';
             const onMap = this.props.combat.map.items.find(i => i.id === combatant.id);
             mode += onMap ? ' on-map' : ' off-map';
@@ -325,408 +322,328 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
     }
 
     private addCombatantToMap(x: number, y: number) {
-        if (this.props.combat) {
-            const combatant = this.props.combat.combatants.find(c => c.id === this.state.addingToMapID);
-            if (combatant) {
-                this.props.mapAdd(combatant, x, y);
-            }
-            this.setAddingToMapID(null);
+        const combatant = this.props.combat.combatants.find(c => c.id === this.state.addingToMapID);
+        if (combatant) {
+            this.props.mapAdd(combatant, x, y);
         }
+        this.setAddingToMapID(null);
     }
 
     public render() {
         try {
-            if (this.props.combat) {
-                const current: JSX.Element[] = [];
-                let pending: JSX.Element[] = [];
-                let active: JSX.Element[] = [];
-                const defeated: JSX.Element[] = [];
+            const current: JSX.Element[] = [];
+            let pending: JSX.Element[] = [];
+            let active: JSX.Element[] = [];
+            const defeated: JSX.Element[] = [];
 
-                this.props.combat.combatants.forEach(combatant => {
-                    if (combatant.current) {
-                        current.push(
-                            <div key={combatant.id}>
-                                {this.createCard(combatant)}
-                            </div>
-                        );
-                    }
-                    if (combatant.pending && !combatant.active && !combatant.defeated) {
-                        pending.push(
-                            <PendingCombatantRow
-                                key={combatant.id}
-                                combatant={combatant}
-                                select={c => this.setSelectedTokenID(c.id)}
-                                selected={combatant.id === this.state.selectedTokenID}
-                                nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
-                                makeActive={c => this.props.makeActive(c)}
-                            />
-                        );
-                    }
-                    if (!combatant.pending && combatant.active && !combatant.defeated) {
-                        switch (combatant.type) {
-                            case 'pc':
-                                active.push(
-                                    <PCRow
-                                        key={combatant.id}
-                                        combatant={combatant as Combatant & PC}
-                                        combat={this.props.combat as Combat}
-                                        select={c => this.setSelectedTokenID(c.id)}
-                                        selected={combatant.id === this.state.selectedTokenID}
-                                    />
-                                );
-                                break;
-                            case 'monster':
-                                active.push(
-                                    <MonsterRow
-                                        key={combatant.id}
-                                        combatant={combatant as Combatant & Monster}
-                                        combat={this.props.combat as Combat}
-                                        select={c => this.setSelectedTokenID(c.id)}
-                                        selected={combatant.id === this.state.selectedTokenID}
-                                    />
-                                );
-                                break;
-                        }
-                    }
-                    if (!combatant.pending && !combatant.active && combatant.defeated) {
-                        switch (combatant.type) {
-                            case 'pc':
-                                defeated.push(
-                                    <PCRow
-                                        key={combatant.id}
-                                        combatant={combatant as Combatant & PC}
-                                        combat={this.props.combat as Combat}
-                                        select={c => this.setSelectedTokenID(c.id)}
-                                        selected={combatant.id === this.state.selectedTokenID}
-                                    />
-                                );
-                                break;
-                            case 'monster':
-                                defeated.push(
-                                    <MonsterRow
-                                        key={combatant.id}
-                                        combatant={combatant as Combatant & Monster}
-                                        combat={this.props.combat as Combat}
-                                        select={c => this.setSelectedTokenID(c.id)}
-                                        selected={combatant.id === this.state.selectedTokenID}
-                                    />
-                                );
-                                break;
-                        }
-                    }
-                });
-
-                if (pending.length !== 0) {
-                    const pendingHelp = (
-                        <div key='pending-help'>
-                            <Note
-                                content={
-                                    <div>
-                                        <div className='section'>these combatants are not yet part of the encounter</div>
-                                        <div className='section'>set initiative on each of them, then add them to the encounter</div>
-                                    </div>
-                                }
-                            />
-                        </div>
-                    );
-                    pending = [pendingHelp].concat(pending);
-                }
-
-                if (current.length === 0) {
-                    const activeHelp = (
-                        /* tslint:disable:max-line-length */
-                        <div key='active-help'>
-                            <Note
-                                content={
-                                    <div>
-                                        <div className='section'>these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right)</div>
-                                        <div className='section'>they are listed in initiative order (with the highest initiative score at the top of the list, and the lowest at the bottom)</div>
-                                        <div className='section'>when you're ready to begin the encounter, select the first combatant and press the <b>start turn</b> button on their stat block</div>
-                                    </div>
-                                }
-                            />
-                        </div>
-                        /* tslint:enable:max-line-length */
-                    );
-                    active = [activeHelp].concat(active);
-                }
-
-                if (current.length === 0) {
+            this.props.combat.combatants.forEach(combatant => {
+                if (combatant.current) {
                     current.push(
+                        <div key={combatant.id}>
+                            {this.createCard(combatant)}
+                        </div>
+                    );
+                }
+                if (combatant.pending && !combatant.active && !combatant.defeated) {
+                    pending.push(
+                        <PendingCombatantRow
+                            key={combatant.id}
+                            combatant={combatant}
+                            select={c => this.setSelectedTokenID(c.id)}
+                            selected={combatant.id === this.state.selectedTokenID}
+                            nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
+                            makeActive={c => this.props.makeActive(c)}
+                        />
+                    );
+                }
+                if (!combatant.pending && combatant.active && !combatant.defeated) {
+                    switch (combatant.type) {
+                        case 'pc':
+                            active.push(
+                                <PCRow
+                                    key={combatant.id}
+                                    combatant={combatant as Combatant & PC}
+                                    combat={this.props.combat as Combat}
+                                    select={c => this.setSelectedTokenID(c.id)}
+                                    selected={combatant.id === this.state.selectedTokenID}
+                                />
+                            );
+                            break;
+                        case 'monster':
+                            active.push(
+                                <MonsterRow
+                                    key={combatant.id}
+                                    combatant={combatant as Combatant & Monster}
+                                    combat={this.props.combat as Combat}
+                                    select={c => this.setSelectedTokenID(c.id)}
+                                    selected={combatant.id === this.state.selectedTokenID}
+                                />
+                            );
+                            break;
+                    }
+                }
+                if (!combatant.pending && !combatant.active && combatant.defeated) {
+                    switch (combatant.type) {
+                        case 'pc':
+                            defeated.push(
+                                <PCRow
+                                    key={combatant.id}
+                                    combatant={combatant as Combatant & PC}
+                                    combat={this.props.combat as Combat}
+                                    select={c => this.setSelectedTokenID(c.id)}
+                                    selected={combatant.id === this.state.selectedTokenID}
+                                />
+                            );
+                            break;
+                        case 'monster':
+                            defeated.push(
+                                <MonsterRow
+                                    key={combatant.id}
+                                    combatant={combatant as Combatant & Monster}
+                                    combat={this.props.combat as Combat}
+                                    select={c => this.setSelectedTokenID(c.id)}
+                                    selected={combatant.id === this.state.selectedTokenID}
+                                />
+                            );
+                            break;
+                    }
+                }
+            });
+
+            if (pending.length !== 0) {
+                const pendingHelp = (
+                    <div key='pending-help'>
                         <Note
-                            key='current'
                             content={
-                                <div className='section'>
-                                    the current initiative holder will be displayed here
+                                <div>
+                                    <div className='section'>these combatants are not yet part of the encounter</div>
+                                    <div className='section'>set initiative on each of them, then add them to the encounter</div>
                                 </div>
                             }
                         />
-                    );
-                }
+                    </div>
+                );
+                pending = [pendingHelp].concat(pending);
+            }
 
-                let notificationSection = null;
-                if (this.props.combat.notifications.length > 0) {
-                    const notifications = this.props.combat.notifications.map(n => (
-                        <NotificationPanel
-                            key={n.id}
-                            notification={n}
-                            close={(notification, removeCondition) => this.props.closeNotification(notification, removeCondition)}
+            if (current.length === 0) {
+                const activeHelp = (
+                    /* tslint:disable:max-line-length */
+                    <div key='active-help'>
+                        <Note
+                            content={
+                                <div>
+                                    <div className='section'>these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right)</div>
+                                    <div className='section'>they are listed in initiative order (with the highest initiative score at the top of the list, and the lowest at the bottom)</div>
+                                    <div className='section'>when you're ready to begin the encounter, select the first combatant and press the <b>start turn</b> button on their stat block</div>
+                                </div>
+                            }
                         />
-                    ));
-                    notificationSection = (
-                        <div className='notifications'>
-                            {notifications}
-                        </div>
-                    );
-                }
+                    </div>
+                    /* tslint:enable:max-line-length */
+                );
+                active = [activeHelp].concat(active);
+            }
 
-                let mapSection = null;
-                if (this.props.combat.map) {
-                    mapSection = (
-                        <div key='map'>
-                            <MapPanel
-                                map={this.props.combat.map}
-                                mode='combat'
-                                size={this.state.mapSize}
-                                showOverlay={this.state.addingToMapID !== null}
-                                combatants={this.props.combat.combatants}
-                                selectedItemID={this.state.selectedTokenID ? this.state.selectedTokenID : undefined}
-                                setSelectedItemID={id => this.setSelectedTokenID(id)}
-                                gridSquareClicked={(x, y) => this.addCombatantToMap(x, y)}
-                            />
-                        </div>
-                    );
-                }
-
-                let wavesAvailable = false;
-                const encounterID = this.props.combat.encounterID;
-                const encounter = this.props.encounters.find(enc => enc.id === encounterID);
-                wavesAvailable = !!encounter && (encounter.waves.length > 0);
-
-                const toolsSection = (
-                    <CardGroup
-                        heading='tools'
-                        content={[
-                            <div key='tools'>
-                                <div>
-                                    <div className='subheading'>encounter</div>
-                                    <button onClick={() => this.props.pauseCombat()}>pause encounter</button>
-                                    <button onClick={() => this.props.endCombat()}>end encounter</button>
-                                    <button onClick={() => this.props.addCombatants()}>add combatants</button>
-                                    <button onClick={() => this.props.addWave()} style={{ display: wavesAvailable ? 'block' : 'none' }}>add wave</button>
-                                </div>
-                                <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
-                                    <div className='subheading'>map</div>
-                                    <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
-                                    <button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
-                                    <button onClick={() => this.props.rotateMap()}>rotate the map</button>
-                                    <Spin
-                                        source={this.state}
-                                        name={'mapSize'}
-                                        display={value => 'zoom'}
-                                        nudgeValue={delta => this.nudgeMapSize(delta * 5)}
-                                    />
-                                </div>
-                                <div>
-                                    <div className='subheading'>player view</div>
-                                    <Checkbox
-                                        label='show player view'
-                                        checked={this.state.playerView.open}
-                                        changeValue={value => this.setPlayerViewOpen(value)}
-                                    />
-                                    <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
-                                        <Checkbox
-                                            label='show map controls'
-                                            checked={this.state.playerView.showControls}
-                                            changeValue={value => this.setPlayerViewShowControls(value)}
-                                        />
-                                    </div>
-                                    <div style={{ display: (this.props.combat.map && this.state.playerView.open) ? 'block' : 'none' }}>
-                                        <Spin
-                                            source={this.state.playerView}
-                                            name={'mapSize'}
-                                            display={value => 'zoom'}
-                                            nudgeValue={delta => this.nudgePlayerViewMapSize(delta * 5)}
-                                        />
-                                    </div>
-                                </div>
+            if (current.length === 0) {
+                current.push(
+                    <Note
+                        key='current'
+                        content={
+                            <div className='section'>
+                                the current initiative holder will be displayed here
                             </div>
-                        ]}
-                        showToggle={true}
+                        }
                     />
                 );
+            }
 
-                const special: JSX.Element[] = [];
-                this.props.combat.combatants.forEach(c => {
-                    const monster = c as (Combatant & Monster);
-                    const legendary = monster && monster.traits && monster.traits.some(t => t.type === 'legendary') && !monster.current;
-                    const lair = monster && monster.traits && monster.traits.some(t => t.type === 'lair');
-                    if (legendary || lair) {
-                        special.push(
-                            <div className='card monster' key={monster.id}>
-                                <div className='heading'><div className='title'>{monster.name}</div></div>
-                                <div className='card-content'>
-                                    <TraitsPanel
-                                        combatant={monster}
-                                        mode='combat-special'
-                                        changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
-                                    />
-                                </div>
-                            </div>
-                        );
-                    }
-                });
-
-                let selectedCombatant = null;
-                if (this.state.selectedTokenID) {
-                    const combatant = this.props.combat.combatants.find(c => c.id === this.state.selectedTokenID);
-                    if (combatant && !combatant.current) {
-                        selectedCombatant = this.createCard(combatant);
-                    }
-                }
-                if (!selectedCombatant) {
-                    selectedCombatant = (
-                        <Note
-                            key='selected'
-                            content={
-                                <div className='section'>
-                                    select a pc or monster from the <b>initiative order</b> list to see its details here
-                                </div>
-                            }
-                        />
-                    );
-                }
-
-                return (
-                    <div className='combat-manager row collapse'>
-                        <div className='columns small-4 medium-4 large-4 scrollable'>
-                            <CardGroup
-                                heading='initiative holder'
-                                content={current}
-                            />
-                        </div>
-                        <div className='columns small-4 medium-4 large-4 scrollable'>
-                            {notificationSection}
-                            <CardGroup
-                                heading='waiting for intiative to be entered'
-                                content={pending}
-                                hidden={pending.length === 0}
-                                showToggle={true}
-                            />
-                            <CardGroup
-                                heading='encounter map'
-                                content={[mapSection]}
-                                hidden={mapSection === null}
-                                showToggle={true}
-                            />
-                            <CardGroup
-                                heading='initiative order'
-                                content={active}
-                                hidden={active.length === 0}
-                                showToggle={true}
-                            />
-                            <CardGroup
-                                heading='defeated'
-                                content={defeated}
-                                hidden={defeated.length === 0}
-                                showToggle={true}
-                            />
-                        </div>
-                        <div className='columns small-4 medium-4 large-4 scrollable'>
-                            {toolsSection}
-                            {this.getPlayerView(this.props.combat)}
-                            <CardGroup
-                                heading={'don\'t forget'}
-                                content={special}
-                                hidden={special.length === 0}
-                                showToggle={true}
-                            />
-                            <CardGroup
-                                heading='selected combatant'
-                                content={[selectedCombatant]}
-                            />
-                        </div>
-                    </div>
-                );
-            } else {
-                let listItems = this.props.combats.map(c => {
-                    return (
-                        <CombatListItem
-                            key={c.id}
-                            combat={c}
-                            setSelection={combat => this.props.resumeCombat(combat)}
-                        />
-                    );
-                });
-                if (listItems.length === 0) {
-                    listItems = [(
-                        <Note
-                            key='empty'
-                            content={'you have no in-progress encounters'}
-                        />
-                    )];
-                }
-
-                return (
-                    <div className='combat-manager row collapse'>
-                        <div className='columns small-4 medium-4 large-3 scrollable list-column'>
-                            <button onClick={() => this.props.createCombat()}>start a new combat</button>
-                            <div className='divider' />
-                            {listItems}
-                        </div>
-                        <div className='columns small-8 medium-8 large-9 scrollable'>
-                            <div className='vertical-center-outer'>
-                                <div className='vertical-center-middle'>
-                                    <div className='vertical-center-inner'>
-                                        <HelpCard combats={this.props.combats} />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            let notificationSection = null;
+            if (this.props.combat.notifications.length > 0) {
+                const notifications = this.props.combat.notifications.map(n => (
+                    <NotificationPanel
+                        key={n.id}
+                        notification={n}
+                        close={(notification, removeCondition) => this.props.closeNotification(notification, removeCondition)}
+                    />
+                ));
+                notificationSection = (
+                    <div className='notifications'>
+                        {notifications}
                     </div>
                 );
             }
-        } catch (e) {
-            console.error(e);
-            return <div className='render-error'/>;
-        }
-    }
-}
 
-interface HelpCardProps {
-    combats: Combat[];
-}
-
-class HelpCard extends React.Component<HelpCardProps> {
-    public render() {
-        try {
-            let action: JSX.Element | null = null;
-            if (this.props.combats.length === 0) {
-                action = (
-                    <div className='section'>to start a combat encounter, press the <b>start a new combat</b> button</div>
-                );
-            } else {
-                action = (
-                    <div>
-                        <div className='section'>on the left you will see a list of encounters that you have paused</div>
-                        <div className='section'>you can resume a paused combat by selecting it</div>
+            let mapSection = null;
+            if (this.props.combat.map) {
+                mapSection = (
+                    <div key='map'>
+                        <MapPanel
+                            map={this.props.combat.map}
+                            mode='combat'
+                            size={this.state.mapSize}
+                            showOverlay={this.state.addingToMapID !== null}
+                            combatants={this.props.combat.combatants}
+                            selectedItemID={this.state.selectedTokenID ? this.state.selectedTokenID : undefined}
+                            setSelectedItemID={id => this.setSelectedTokenID(id)}
+                            gridSquareClicked={(x, y) => this.addCombatantToMap(x, y)}
+                        />
                     </div>
+                );
+            }
+
+            let wavesAvailable = false;
+            const encounterID = this.props.combat.encounterID;
+            const encounter = this.props.encounters.find(enc => enc.id === encounterID);
+            wavesAvailable = !!encounter && (encounter.waves.length > 0);
+
+            const toolsSection = (
+                <CardGroup
+                    heading='tools'
+                    content={[
+                        <div key='tools'>
+                            <div>
+                                <div className='subheading'>encounter</div>
+                                <button onClick={() => this.props.pauseCombat()}>pause encounter</button>
+                                <ConfirmButton text='end encounter' callback={() => this.props.endCombat()} />
+                                <button onClick={() => this.props.addCombatants()}>add combatants</button>
+                                <button onClick={() => this.props.addWave()} style={{ display: wavesAvailable ? 'block' : 'none' }}>add wave</button>
+                            </div>
+                            <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
+                                <div className='subheading'>map</div>
+                                <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
+                                <button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
+                                <button onClick={() => this.props.rotateMap()}>rotate the map</button>
+                                <Spin
+                                    source={this.state}
+                                    name={'mapSize'}
+                                    display={value => 'zoom'}
+                                    nudgeValue={delta => this.nudgeMapSize(delta * 5)}
+                                />
+                            </div>
+                            <div>
+                                <div className='subheading'>player view</div>
+                                <Checkbox
+                                    label='show player view'
+                                    checked={this.state.playerView.open}
+                                    changeValue={value => this.setPlayerViewOpen(value)}
+                                />
+                                <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
+                                    <Checkbox
+                                        label='show map controls'
+                                        checked={this.state.playerView.showControls}
+                                        changeValue={value => this.setPlayerViewShowControls(value)}
+                                    />
+                                </div>
+                                <div style={{ display: (this.props.combat.map && this.state.playerView.open) ? 'block' : 'none' }}>
+                                    <Spin
+                                        source={this.state.playerView}
+                                        name={'mapSize'}
+                                        display={value => 'zoom'}
+                                        nudgeValue={delta => this.nudgePlayerViewMapSize(delta * 5)}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    ]}
+                    showToggle={true}
+                />
+            );
+
+            const special: JSX.Element[] = [];
+            this.props.combat.combatants.forEach(c => {
+                const monster = c as (Combatant & Monster);
+                const legendary = monster && monster.traits && monster.traits.some(t => t.type === 'legendary') && !monster.current;
+                const lair = monster && monster.traits && monster.traits.some(t => t.type === 'lair');
+                if (legendary || lair) {
+                    special.push(
+                        <div className='card monster' key={monster.id}>
+                            <div className='heading'><div className='title'>{monster.name}</div></div>
+                            <div className='card-content'>
+                                <TraitsPanel
+                                    combatant={monster}
+                                    mode='combat-special'
+                                    changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
+                                />
+                            </div>
+                        </div>
+                    );
+                }
+            });
+
+            let selectedCombatant = null;
+            if (this.state.selectedTokenID) {
+                const combatant = this.props.combat.combatants.find(c => c.id === this.state.selectedTokenID);
+                if (combatant && !combatant.current) {
+                    selectedCombatant = this.createCard(combatant);
+                }
+            }
+            if (!selectedCombatant) {
+                selectedCombatant = (
+                    <Note
+                        key='selected'
+                        content={
+                            <div className='section'>
+                                select a pc or monster from the <b>initiative order</b> list to see its details here
+                            </div>
+                        }
+                    />
                 );
             }
 
             return (
-                <Note
-                    content={
-                        <div>
-                            <div className='section'>here you can run a combat encounter by specifying a party and an encounter, and optionally a map</div>
-                            <div className='divider' />
-                            {action}
-                        </div>
-                    }
-                />
+                <div className='screen row collapse'>
+                    <div className='columns small-4 medium-4 large-4 scrollable'>
+                        <CardGroup
+                            heading='initiative holder'
+                            content={current}
+                        />
+                    </div>
+                    <div className='columns small-4 medium-4 large-4 scrollable'>
+                        {notificationSection}
+                        <CardGroup
+                            heading='waiting for intiative to be entered'
+                            content={pending}
+                            hidden={pending.length === 0}
+                            showToggle={true}
+                        />
+                        <CardGroup
+                            heading='encounter map'
+                            content={[mapSection]}
+                            hidden={mapSection === null}
+                            showToggle={true}
+                        />
+                        <CardGroup
+                            heading='initiative order'
+                            content={active}
+                            hidden={active.length === 0}
+                            showToggle={true}
+                        />
+                        <CardGroup
+                            heading='defeated'
+                            content={defeated}
+                            hidden={defeated.length === 0}
+                            showToggle={true}
+                        />
+                    </div>
+                    <div className='columns small-4 medium-4 large-4 scrollable'>
+                        {toolsSection}
+                        {this.getPlayerView(this.props.combat)}
+                        <CardGroup
+                            heading={'don\'t forget'}
+                            content={special}
+                            hidden={special.length === 0}
+                            showToggle={true}
+                        />
+                        <CardGroup
+                            heading='selected combatant'
+                            content={[selectedCombatant]}
+                        />
+                    </div>
+                </div>
             );
-        } catch (ex) {
-            console.error(ex);
+        } catch (e) {
+            console.error(e);
             return <div className='render-error'/>;
         }
     }

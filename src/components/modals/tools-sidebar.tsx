@@ -58,7 +58,7 @@ export default class ToolsSidebar extends React.Component<Props, State> {
             }
 
             return (
-                <div className='about'>
+                <div>
                     <Selector
                         tabs={true}
                         options={options}

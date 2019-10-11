@@ -4,15 +4,12 @@ import { Party, PC } from '../../models/party';
 
 import PCCard from '../cards/pc-card';
 import ConfirmButton from '../controls/confirm-button';
-import PartyListItem from '../list-items/party-list-item';
 import CardGroup from '../panels/card-group';
 import Note from '../panels/note';
 
 interface Props {
-    parties: Party[];
-    selection: Party | null;
-    selectParty: (party: Party | null) => void;
-    addParty: () => void;
+    selection: Party;
+    goBack: () => void;
     removeParty: () => void;
     addPC: () => void;
     editPC: (pc: PC) => void;
@@ -22,13 +19,54 @@ interface Props {
     nudgeValue: (source: any, field: string, value: number) => void;
 }
 
-export default class PartiesScreen extends React.Component<Props> {
+export default class PartyScreen extends React.Component<Props> {
     public render() {
         try {
-            let leftColumn = null;
-            if (this.props.selection) {
-                leftColumn = (
-                    <div>
+            const activePCs = this.props.selection.pcs.filter(pc => pc.active);
+            const activeCards: JSX.Element[] = [];
+            activePCs.forEach(activePC => {
+                activeCards.push(
+                    <div className='column' key={activePC.id}>
+                        <PCCard
+                            combatant={activePC}
+                            mode={'edit'}
+                            changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
+                            nudgeValue={(pc, type, delta) => this.props.nudgeValue(pc, type, delta)}
+                            editPC={pc => this.props.editPC(pc)}
+                            removePC={pc => this.props.removePC(pc)}
+                        />
+                    </div>
+                );
+            });
+
+            const inactivePCs = this.props.selection.pcs.filter(pc => !pc.active);
+            const inactiveCards: JSX.Element[] = [];
+            inactivePCs.forEach(inactivePC => {
+                inactiveCards.push(
+                    <div className='column' key={inactivePC.id}>
+                        <PCCard
+                            combatant={inactivePC}
+                            mode={'edit'}
+                            changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
+                            nudgeValue={(pc, type, delta) => this.props.nudgeValue(pc, type, delta)}
+                            editPC={pc => this.props.editPC(pc)}
+                            removePC={pc => this.props.removePC(pc)}
+                        />
+                    </div>
+                );
+            });
+
+            if (activePCs.length === 0) {
+                activeCards.push(
+                    <div className='column' key='empty'>
+                        <Note content={<div className='section'>there are no pcs in this party</div>} />
+                    </div>
+                );
+            }
+
+            return (
+                <div className='screen row collapse'>
+                    <div className='columns small-4 medium-4 large-3 scrollable list-column'>
                         <PartyInfo
                             selection={this.props.selection}
                             addPC={() => this.props.addPC()}
@@ -37,163 +75,23 @@ export default class PartiesScreen extends React.Component<Props> {
                             removeParty={() => this.props.removeParty()}
                         />
                         <div className='divider' />
-                        <button onClick={() => this.props.selectParty(null)}>&larr; back to list</button>
-                    </div>
-                );
-            } else {
-                let listItems = this.props.parties.map(p => {
-                    return (
-                        <PartyListItem
-                            key={p.id}
-                            party={p}
-                            setSelection={party => this.props.selectParty(party)}
-                        />
-                    );
-                });
-                if (listItems.length === 0) {
-                    listItems = [(
-                        <Note
-                            key='empty'
-                            content={'you have not set up any parties yet'}
-                        />
-                    )];
-                }
-
-                leftColumn = (
-                    <div>
-                        <button onClick={() => this.props.addParty()}>add a new party</button>
-                        <div className='divider' />
-                        {listItems}
-                    </div>
-                );
-            }
-
-            const activeCards: JSX.Element[] = [];
-            const inactiveCards: JSX.Element[] = [];
-
-            if (this.props.selection) {
-                const activePCs = this.props.selection.pcs.filter(pc => pc.active);
-                activePCs.forEach(activePC => {
-                    activeCards.push(
-                        <div className='column' key={activePC.id}>
-                            <PCCard
-                                combatant={activePC}
-                                mode={'edit'}
-                                changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
-                                nudgeValue={(pc, type, delta) => this.props.nudgeValue(pc, type, delta)}
-                                editPC={pc => this.props.editPC(pc)}
-                                removePC={pc => this.props.removePC(pc)}
-                            />
-                        </div>
-                    );
-                });
-
-                const inactivePCs = this.props.selection.pcs.filter(pc => !pc.active);
-                inactivePCs.forEach(inactivePC => {
-                    inactiveCards.push(
-                        <div className='column' key={inactivePC.id}>
-                            <PCCard
-                                combatant={inactivePC}
-                                mode={'edit'}
-                                changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
-                                nudgeValue={(pc, type, delta) => this.props.nudgeValue(pc, type, delta)}
-                                editPC={pc => this.props.editPC(pc)}
-                                removePC={pc => this.props.removePC(pc)}
-                            />
-                        </div>
-                    );
-                });
-
-                if (activePCs.length === 0) {
-                    activeCards.push(
-                        <div className='column' key='empty'>
-                            <Note content={<div className='section'>there are no pcs in this party</div>} />
-                        </div>
-                    );
-                }
-            }
-
-            let name;
-            if (this.props.selection) {
-                name = this.props.selection.name || 'unnamed party';
-            }
-
-            let watermark;
-            if (!this.props.selection) {
-                watermark = (
-                    <div className='vertical-center-outer'>
-                        <div className='vertical-center-middle'>
-                            <div className='vertical-center-inner'>
-                                <HelpCard parties={this.props.parties} />
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
-
-            return (
-                <div className='parties row collapse'>
-                    <div className='columns small-4 medium-4 large-3 scrollable list-column'>
-                        {leftColumn}
+                        <button onClick={() => this.props.goBack()}>&larr; back to list</button>
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup
                             content={activeCards}
-                            heading={name}
-                            hidden={!this.props.selection}
+                            heading={this.props.selection.name || 'unnamed party'}
                         />
                         <CardGroup
                             content={inactiveCards}
                             heading='inactive pcs'
                             hidden={inactiveCards.length === 0}
                         />
-                        {watermark}
                     </div>
                 </div>
             );
         } catch (e) {
             console.error(e);
-            return <div className='render-error'/>;
-        }
-    }
-}
-
-interface HelpCardProps {
-    parties: Party[];
-}
-
-class HelpCard extends React.Component<HelpCardProps> {
-    public render() {
-        try {
-            let action: JSX.Element | null = null;
-            if (this.props.parties.length === 0) {
-                action = (
-                    <div className='section'>to start adding a party, press the <b>add a new party</b> button</div>
-                );
-            } else {
-                action = (
-                    <div>
-                        <div className='section'>on the left you will see a list of parties that you have created</div>
-                        <div className='section'>select a party from the list to see pc details</div>
-                    </div>
-                );
-            }
-
-            return (
-                <Note
-                    content={
-                        <div>
-                            <div className='section'>this page is where you can tell dojo all about your pcs</div>
-                            <div className='section'>you can add a party for each of your gaming groups</div>
-                            <div className='section'>when you have set up a party and an encounter you can run the encounter in the combat manager</div>
-                            <div className='divider'/>
-                            {action}
-                        </div>
-                    }
-                />
-            );
-        } catch (ex) {
-            console.error(ex);
             return <div className='render-error'/>;
         }
     }

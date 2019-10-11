@@ -13,19 +13,16 @@ import ConfirmButton from '../controls/confirm-button';
 import Expander from '../controls/expander';
 import Selector from '../controls/selector';
 import Spin from '../controls/spin';
-import EncounterListItem from '../list-items/encounter-list-item';
 import CardGroup from '../panels/card-group';
 import DifficultyChartPanel from '../panels/difficulty-chart-panel';
 import FilterPanel from '../panels/filter-panel';
 import Note from '../panels/note';
 
 interface Props {
-    encounters: Encounter[];
-    selection: Encounter | null;
+    selection: Encounter;
     parties: Party[];
     library: MonsterGroup[];
-    selectEncounter: (encounter: Encounter | null) => void;
-    addEncounter: () => void;
+    goBack: () => void;
     clearEncounter: () => void;
     removeEncounter: () => void;
     buildEncounter: (xp: number, filter: MonsterFilter) => void;
@@ -42,7 +39,7 @@ interface State {
     filter: MonsterFilter;
 }
 
-export default class EncounterBuilderScreen extends React.Component<Props, State> {
+export default class EncounterScreen extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -204,10 +201,19 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
 
     public render() {
         try {
-            let leftColumn = null;
-            if (this.props.selection) {
-                leftColumn = (
-                    <div>
+            const waves = this.props.selection.waves.map(w => {
+                return (
+                    <CardGroup
+                        key={w.id}
+                        heading={w.name || 'unnamed wave'}
+                        content={this.getMonsterCards(w.slots, w.id)}
+                    />
+                );
+            });
+
+            return (
+                <div className='screen row collapse'>
+                    <div className='columns small-4 medium-4 large-3 scrollable list-column'>
                         <EncounterInfo
                             selection={this.props.selection}
                             parties={this.props.parties}
@@ -224,134 +230,21 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                             resetFilter={() => this.resetFilter()}
                         />
                         <div className='divider' />
-                        <button onClick={() => this.props.selectEncounter(null)}>&larr; back to list</button>
-                    </div>
-                );
-            } else {
-                let listItems = this.props.encounters.map(e => {
-                    return (
-                        <EncounterListItem
-                            key={e.id}
-                            encounter={e}
-                            setSelection={encounter => this.props.selectEncounter(encounter)}
-                        />
-                    );
-                });
-                if (listItems.length === 0) {
-                    listItems = [(
-                        <Note
-                            key='empty'
-                            content={'you have not defined any encounters yet'}
-                        />
-                    )];
-                }
-
-                leftColumn = (
-                    <div>
-                        <button onClick={() => this.props.addEncounter()}>add a new encounter</button>
-                        <div className='divider' />
-                        {listItems}
-                    </div>
-                );
-            }
-
-            let encounterName;
-            const encounterCards: JSX.Element[] = [];
-            let waves: JSX.Element[] = [];
-
-            if (this.props.selection) {
-                encounterName = this.props.selection.name || 'unnamed encounter';
-
-                this.getMonsterCards(this.props.selection.slots, null)
-                    .forEach(card => encounterCards.push(card));
-
-                waves = this.props.selection.waves.map(w => {
-                    return (
-                        <CardGroup
-                            key={w.id}
-                            heading={w.name || 'unnamed wave'}
-                            content={this.getMonsterCards(w.slots, w.id)}
-                            showToggle={true}
-                        />
-                    );
-                });
-            }
-
-            let watermark;
-            if (!this.props.selection) {
-                watermark = (
-                    <div className='vertical-center-outer'>
-                        <div className='vertical-center-middle'>
-                            <div className='vertical-center-inner'>
-                                <HelpCard encounters={this.props.encounters} />
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
-
-            return (
-                <div className='encounter-builder row collapse'>
-                    <div className='columns small-4 medium-4 large-3 scrollable list-column'>
-                        {leftColumn}
+                        <button onClick={() => this.props.goBack()}>&larr; back to list</button>
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup
-                            content={encounterCards}
-                            heading={encounterName}
+                            content={this.getMonsterCards(this.props.selection.slots, null)}
+                            heading={this.props.selection.name || 'unnamed encounter'}
                             hidden={!this.props.selection}
                         />
                         {waves}
                         {this.getLibrarySection()}
-                        {watermark}
                     </div>
                 </div>
             );
         } catch (e) {
             console.error(e);
-            return <div className='render-error'/>;
-        }
-    }
-}
-
-interface HelpCardProps {
-    encounters: Encounter[];
-}
-
-class HelpCard extends React.Component<HelpCardProps> {
-    public render() {
-        try {
-            let action: JSX.Element | null = null;
-            if (this.props.encounters.length === 0) {
-                action = (
-                    <div className='section'>to start building an encounter, press the <b>add a new encounter</b> button</div>
-                );
-            } else {
-                action = (
-                    <div>
-                        <div className='section'>on the left you will see a list of encounters that you have created</div>
-                        <div className='section'>select an encounter from the list to add monsters to it</div>
-                    </div>
-                );
-            }
-
-            return (
-                <Note
-                    content={
-                        <div>
-                            <div className='section'>on this page you can set up encounters</div>
-                            <div className='section'>
-                                when you have created an encounter you can add monsters to it, then gauge its difficulty for a party of pcs
-                            </div>
-                            <div className='section'>when you have set up a party and an encounter you can run the encounter in the combat manager</div>
-                            <div className='divider'/>
-                            {action}
-                        </div>
-                    }
-                />
-            );
-        } catch (ex) {
-            console.error(ex);
             return <div className='render-error'/>;
         }
     }

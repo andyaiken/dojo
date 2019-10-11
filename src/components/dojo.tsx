@@ -24,12 +24,17 @@ import PCEditorModal from './modals/pc-editor-modal';
 import ToolsSidebar from './modals/tools-sidebar';
 import Navbar from './panels/navbar';
 import Titlebar from './panels/titlebar';
-import CombatManagerScreen from './screens/combat-manager-screen';
-import EncounterBuilderScreen from './screens/encounter-builder-screen';
+import CombatListScreen from './screens/combat-list-screen';
+import CombatScreen from './screens/combat-screen';
+import EncounterListScreen from './screens/encounter-list-screen';
+import EncounterScreen from './screens/encounter-screen';
 import HomeScreen from './screens/home-screen';
-import MapFoliosScreen from './screens/map-folios-screen';
-import MonsterLibraryScreen from './screens/monster-library-screen';
-import PartiesScreen from './screens/parties-screen';
+import MapListScreen from './screens/map-list-screen';
+import MapScreen from './screens/map-screen';
+import MonsterListScreen from './screens/monster-list-screen';
+import MonsterScreen from './screens/monster-screen';
+import PartyListScreen from './screens/party-list-screen';
+import PartyScreen from './screens/party-screen';
 
 import close from '../resources/icons/x.svg';
 
@@ -1615,106 +1620,146 @@ export default class Dojo extends React.Component<Props, State> {
                     />
                 );
             case 'parties':
-                return (
-                    <PartiesScreen
-                        parties={this.state.parties}
-                        selection={this.state.parties.find(p => p.id === this.state.selectedPartyID) || null}
-                        selectParty={party => this.selectParty(party)}
-                        addParty={() => this.addParty()}
-                        removeParty={() => this.removeParty()}
-                        addPC={() => this.addPC()}
-                        editPC={pc => this.editPC(pc)}
-                        removePC={pc => this.removePC(pc)}
-                        sortPCs={() => this.sortPCs()}
-                        changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
-                        nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
-                    />
-                );
+                if (this.state.selectedPartyID) {
+                    return (
+                        <PartyScreen
+                            selection={this.state.parties.find(p => p.id === this.state.selectedPartyID) as Party}
+                            goBack={() => this.selectParty(null)}
+                            removeParty={() => this.removeParty()}
+                            addPC={() => this.addPC()}
+                            editPC={pc => this.editPC(pc)}
+                            removePC={pc => this.removePC(pc)}
+                            sortPCs={() => this.sortPCs()}
+                            changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
+                            nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
+                        />
+                    );
+                } else {
+                    return (
+                        <PartyListScreen
+                            parties={this.state.parties}
+                            selectParty={party => this.selectParty(party)}
+                            addParty={() => this.addParty()}
+                        />
+                    );
+                }
             case 'library':
-                return (
-                    <MonsterLibraryScreen
-                        library={this.state.library}
-                        selection={this.state.library.find(g => g.id === this.state.selectedMonsterGroupID) || null}
-                        selectMonsterGroup={group => this.selectMonsterGroup(group)}
-                        addMonsterGroup={() => this.addMonsterGroup()}
-                        removeMonsterGroup={() => this.removeMonsterGroup()}
-                        addMonster={() => this.addMonster()}
-                        removeMonster={monster => this.removeMonster(monster)}
-                        sortMonsters={() => this.sortMonsters()}
-                        changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
-                        nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
-                        editMonster={combatant => this.editMonster(combatant)}
-                        cloneMonster={(combatant, name) => this.cloneMonster(combatant, name)}
-                        moveToGroup={(combatant, groupID) => this.moveToGroup(combatant, groupID)}
-                    />
-                );
+                if (this.state.selectedMonsterGroupID) {
+                    return (
+                        <MonsterScreen
+                            selection={this.state.library.find(g => g.id === this.state.selectedMonsterGroupID) as MonsterGroup}
+                            library={this.state.library}
+                            goBack={() => this.selectMonsterGroup(null)}
+                            removeMonsterGroup={() => this.removeMonsterGroup()}
+                            addMonster={() => this.addMonster()}
+                            removeMonster={monster => this.removeMonster(monster)}
+                            sortMonsters={() => this.sortMonsters()}
+                            changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
+                            nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
+                            editMonster={combatant => this.editMonster(combatant)}
+                            cloneMonster={(combatant, name) => this.cloneMonster(combatant, name)}
+                            moveToGroup={(combatant, groupID) => this.moveToGroup(combatant, groupID)}
+                        />
+                    );
+                } else {
+                    return (
+                        <MonsterListScreen
+                            library={this.state.library}
+                            selectMonsterGroup={group => this.selectMonsterGroup(group)}
+                            addMonsterGroup={() => this.addMonsterGroup()}
+                        />
+                    );
+                }
             case 'encounter':
-                return (
-                    <EncounterBuilderScreen
-                        encounters={this.state.encounters}
-                        selection={this.state.encounters.find(e => e.id === this.state.selectedEncounterID) || null}
-                        parties={this.state.parties}
-                        library={this.state.library}
-                        selectEncounter={encounter => this.selectEncounter(encounter)}
-                        addEncounter={() => this.addEncounter()}
-                        clearEncounter={() => this.clearEncounter()}
-                        removeEncounter={() => this.removeEncounter()}
-                        buildEncounter={(xp, filter) => this.buildEncounter(xp, filter)}
-                        addWave={() => this.addWaveToEncounter()}
-                        removeWave={wave => this.removeWave(wave)}
-                        getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
-                        addEncounterSlot={(monster, waveID) => this.addEncounterSlot(monster, waveID)}
-                        removeEncounterSlot={(slot, waveID) => this.removeEncounterSlot(slot, waveID)}
-                        nudgeValue={(slot, type, delta) => this.nudgeValue(slot, type, delta)}
-                        changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
-                    />
-                );
+                if (this.state.selectedEncounterID) {
+                    return (
+                        <EncounterScreen
+                            selection={this.state.encounters.find(e => e.id === this.state.selectedEncounterID) as Encounter}
+                            parties={this.state.parties}
+                            library={this.state.library}
+                            goBack={() => this.selectEncounter(null)}
+                            clearEncounter={() => this.clearEncounter()}
+                            removeEncounter={() => this.removeEncounter()}
+                            buildEncounter={(xp, filter) => this.buildEncounter(xp, filter)}
+                            addWave={() => this.addWaveToEncounter()}
+                            removeWave={wave => this.removeWave(wave)}
+                            getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
+                            addEncounterSlot={(monster, waveID) => this.addEncounterSlot(monster, waveID)}
+                            removeEncounterSlot={(slot, waveID) => this.removeEncounterSlot(slot, waveID)}
+                            nudgeValue={(slot, type, delta) => this.nudgeValue(slot, type, delta)}
+                            changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
+                        />
+                    );
+                } else {
+                    return (
+                        <EncounterListScreen
+                            encounters={this.state.encounters}
+                            selectEncounter={encounter => this.selectEncounter(encounter)}
+                            addEncounter={() => this.addEncounter()}
+                        />
+                    );
+                }
             case 'maps':
-                return (
-                    <MapFoliosScreen
-                        mapFolios={this.state.mapFolios}
-                        selection={this.state.mapFolios.find(f => f.id === this.state.selectedMapFolioID) || null}
-                        selectMapFolio={folio => this.selectMapFolio(folio)}
-                        addMapFolio={() => this.addMapFolio()}
-                        removeMapFolio={() => this.removeMapFolio()}
-                        addMap={() => this.addMap()}
-                        editMap={map => this.editMap(map)}
-                        removeMap={map => this.removeMap(map)}
-                        changeValue={(source, type, value) => this.changeValue(source, type, value)}
-                    />
-                );
+                if (this.state.selectedMapFolioID) {
+                    return (
+                        <MapScreen
+                            selection={this.state.mapFolios.find(f => f.id === this.state.selectedMapFolioID) as MapFolio}
+                            goBack={() => this.selectMapFolio(null)}
+                            removeMapFolio={() => this.removeMapFolio()}
+                            addMap={() => this.addMap()}
+                            editMap={map => this.editMap(map)}
+                            removeMap={map => this.removeMap(map)}
+                            changeValue={(source, type, value) => this.changeValue(source, type, value)}
+                        />
+                    );
+                } else {
+                    return (
+                        <MapListScreen
+                            mapFolios={this.state.mapFolios}
+                            selectMapFolio={folio => this.selectMapFolio(folio)}
+                            addMapFolio={() => this.addMapFolio()}
+                        />
+                    );
+                }
             case 'combat':
-                return (
-                    <CombatManagerScreen
-                        combats={this.state.combats}
-                        encounters={this.state.encounters}
-                        combat={this.state.combats.find(c => c.id === this.state.selectedCombatID) || null}
-                        createCombat={() => this.createCombat()}
-                        pauseCombat={() => this.pauseCombat()}
-                        resumeCombat={pausedCombat => this.resumeCombat(pausedCombat)}
-                        endCombat={() => this.endCombat()}
-                        nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
-                        changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
-                        makeCurrent={(combatant) => this.makeCurrent(combatant, false)}
-                        makeActive={(combatant) => this.makeActive(combatant)}
-                        makeDefeated={(combatant) => this.makeDefeated(combatant)}
-                        removeCombatant={(combatant) => this.removeCombatant(combatant)}
-                        addCombatants={() => this.addToEncounter()}
-                        addWave={() => this.openWaveModal()}
-                        addCondition={(combatant) => this.addCondition(combatant)}
-                        editCondition={(combatant, condition) => this.editCondition(combatant, condition)}
-                        removeCondition={(combatant, conditionID) => this.removeCondition(combatant, conditionID)}
-                        mapAdd={(combatant, x, y) => this.mapAdd(combatant, x, y)}
-                        mapMove={(combatant, dir) => this.mapMove(combatant, dir)}
-                        mapRemove={combatant => this.mapRemove(combatant)}
-                        endTurn={(combatant) => this.endTurn(combatant)}
-                        changeHP={(combatant, hp, temp) => this.changeHP(combatant, hp, temp)}
-                        closeNotification={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
-                        toggleTag={(combatant, tag) => this.toggleTag(combatant, tag)}
-                        scatterCombatants={type => this.scatterCombatants(type)}
-                        rotateMap={() => this.rotateMap()}
-                    />
-                );
+                if (this.state.selectedCombatID) {
+                    return (
+                        <CombatScreen
+                            combat={this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat}
+                            encounters={this.state.encounters}
+                            pauseCombat={() => this.pauseCombat()}
+                            endCombat={() => this.endCombat()}
+                            nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
+                            changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
+                            makeCurrent={(combatant) => this.makeCurrent(combatant, false)}
+                            makeActive={(combatant) => this.makeActive(combatant)}
+                            makeDefeated={(combatant) => this.makeDefeated(combatant)}
+                            removeCombatant={(combatant) => this.removeCombatant(combatant)}
+                            addCombatants={() => this.addToEncounter()}
+                            addWave={() => this.openWaveModal()}
+                            addCondition={(combatant) => this.addCondition(combatant)}
+                            editCondition={(combatant, condition) => this.editCondition(combatant, condition)}
+                            removeCondition={(combatant, conditionID) => this.removeCondition(combatant, conditionID)}
+                            mapAdd={(combatant, x, y) => this.mapAdd(combatant, x, y)}
+                            mapMove={(combatant, dir) => this.mapMove(combatant, dir)}
+                            mapRemove={combatant => this.mapRemove(combatant)}
+                            endTurn={(combatant) => this.endTurn(combatant)}
+                            changeHP={(combatant, hp, temp) => this.changeHP(combatant, hp, temp)}
+                            closeNotification={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
+                            toggleTag={(combatant, tag) => this.toggleTag(combatant, tag)}
+                            scatterCombatants={type => this.scatterCombatants(type)}
+                            rotateMap={() => this.rotateMap()}
+                        />
+                    );
+                } else {
+                    return (
+                        <CombatListScreen
+                            combats={this.state.combats}
+                            createCombat={() => this.createCombat()}
+                            resumeCombat={pausedCombat => this.resumeCombat(pausedCombat)}
+                        />
+                    );
+                }
         }
 
         return null;

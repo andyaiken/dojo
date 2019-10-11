@@ -60,7 +60,7 @@ export default class HomeScreen extends React.Component<Props> {
             );
 
             return (
-                <div className='home scrollable'>
+                <div className='screen scrollable'>
                     <div className='vertical-center-outer'>
                         <div className='vertical-center-middle'>
                             <div className='vertical-center-inner'>
