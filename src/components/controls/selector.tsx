@@ -57,7 +57,7 @@ export default class Selector extends React.Component<Props> {
             );
         } catch (ex) {
             console.error(ex);
-            return null;
+            return <div className='render-error'/>;
         }
     }
 }
@@ -96,7 +96,7 @@ class SelectorOption extends React.Component<SelectorOptionInterface> {
             );
         } catch (ex) {
             console.error(ex);
-            return null;
+            return <div className='render-error'/>;
         }
     }
 }

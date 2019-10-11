@@ -163,7 +163,7 @@ export default class AddCombatantsModal extends React.Component<Props, State> {
                 <div className='add-combatants-modal'>
                     <div className='row' style={{ height: '100%' }}>
                         <div className='columns small-6 medium-6 large-6 scrollable'>
-                            <div className='heading'>all combatants</div>
+                            <div className='heading'>monsters in library</div>
                             <FilterPanel
                                 filter={this.state.filter}
                                 changeValue={(type, value) => this.changeFilterValue(type, value)}
@@ -174,7 +174,7 @@ export default class AddCombatantsModal extends React.Component<Props, State> {
                             {allCombatants}
                         </div>
                         <div className='columns small-6 medium-6 large-6 scrollable'>
-                            <div className='heading'>selected combatants</div>
+                            <div className='heading'>selected monsters</div>
                             {selectedCombatants}
                         </div>
                     </div>
@@ -182,6 +182,7 @@ export default class AddCombatantsModal extends React.Component<Props, State> {
             );
         } catch (e) {
             console.error(e);
+            return <div className='render-error'/>;
         }
     }
 }

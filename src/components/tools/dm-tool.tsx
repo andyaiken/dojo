@@ -30,50 +30,55 @@ export default class DMTool extends React.Component<Props, State> {
     }
 
     public render() {
-        const options = [
-            {
-                id: 'die',
-                text: 'die roller'
-            },
-            {
-                id: 'language',
-                text: 'language generator'
-            },
-            {
-                id: 'name',
-                text: 'name generator'
+        try {
+            const options = [
+                {
+                    id: 'die',
+                    text: 'die roller'
+                },
+                {
+                    id: 'language',
+                    text: 'language generator'
+                },
+                {
+                    id: 'name',
+                    text: 'name generator'
+                }
+            ];
+
+            let content = null;
+            switch (this.state.view) {
+                case 'die':
+                    content = (
+                        <DieRollerModule />
+                    );
+                    break;
+                case 'language':
+                    content = (
+                        <LanguageModule />
+                    );
+                    break;
+                case 'name':
+                    content = (
+                        <NameModule />
+                    );
+                    break;
             }
-        ];
 
-        let content = null;
-        switch (this.state.view) {
-            case 'die':
-                content = (
-                    <DieRollerModule />
-                );
-                break;
-            case 'language':
-                content = (
-                    <LanguageModule />
-                );
-                break;
-            case 'name':
-                content = (
-                    <NameModule />
-                );
-                break;
+            return (
+                <div className='tools'>
+                    <Selector
+                        options={options}
+                        selectedID={this.state.view}
+                        select={optionID => this.setView(optionID)}
+                    />
+                    <div className='divider' />
+                    {content}
+                </div>
+            );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
         }
-
-        return (
-            <div className='tools'>
-                <Selector
-                    options={options}
-                    selectedID={this.state.view}
-                    select={optionID => this.setView(optionID)}
-                />
-                <div className='divider' />
-                {content}
-            </div>
-        );
     }
 }

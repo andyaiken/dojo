@@ -499,25 +499,24 @@
     }
 
     .spin-button {
-        height: 30px;
-        width: 30px;
+        height: 20px;
+        width: 20px;
         cursor: pointer;
         background-color: transparent;
-        padding: 5px;
         margin: 0 5px;
         border-radius: 50%;
 
         &.factor {
             border: 2px solid $control-border;
             margin: 5px;
-            font-size: 10px;
-            line-height: 16px;
+            font-size: 22px;
+            line-height: 10px;
             letter-spacing: -0.5px;
             font-weight: 600;
 
-            &.single {
-                font-size: 22px;
-                line-height: 12px;
+            &.multiple {
+                font-size: 8px;
+                line-height: 15px;
             }
         }
 

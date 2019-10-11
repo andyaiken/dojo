@@ -142,6 +142,7 @@ export default class MapFoliosScreen extends React.Component<Props> {
             );
         } catch (e) {
             console.error(e);
+            return <div className='render-error'/>;
         }
     }
 }
@@ -181,6 +182,7 @@ class HelpCard extends React.Component<HelpCardProps> {
             );
         } catch (ex) {
             console.error(ex);
+            return <div className='render-error'/>;
         }
     }
 }
@@ -217,6 +219,7 @@ class MapFolioInfo extends React.Component<MapFolioInfoProps> {
             );
         } catch (e) {
             console.error(e);
+            return <div className='render-error'/>;
         }
     }
 }

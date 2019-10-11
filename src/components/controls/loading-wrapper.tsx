@@ -20,7 +20,7 @@ export default class LoadingWrapper extends React.Component<Props> {
             );
         } catch (ex) {
             console.error(ex);
-            return null;
+            return <div className='render-error'/>;
         }
     }
 }

@@ -47,7 +47,7 @@ export default class Checkbox extends React.Component<Props> {
 
         } catch (ex) {
             console.error(ex);
-            return null;
+            return <div className='render-error'/>;
         }
     }
 }

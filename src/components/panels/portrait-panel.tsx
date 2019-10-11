@@ -73,6 +73,7 @@ export default class PortraitPanel extends React.Component<Props> {
             return this.props.setValue ? this.getEditor() : this.getDisplay();
         } catch (e) {
             console.error(e);
+            return <div className='render-error'/>;
         }
     }
 }

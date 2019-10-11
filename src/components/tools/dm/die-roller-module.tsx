@@ -99,114 +99,119 @@ export default class DieRollerModule extends React.Component<Props, State> {
     }
 
     public render() {
-        const options = [
-            {
-                id: '4',
-                text: 'd4'
-            },
-            {
-                id: '6',
-                text: 'd6'
-            },
-            {
-                id: '8',
-                text: 'd8'
-            },
-            {
-                id: '10',
-                text: 'd10'
-            },
-            {
-                id: '12',
-                text: 'd12'
-            },
-            {
-                id: '20',
-                text: 'd20'
-            },
-            {
-                id: '100',
-                text: 'd100'
+        try {
+            const options = [
+                {
+                    id: '4',
+                    text: 'd4'
+                },
+                {
+                    id: '6',
+                    text: 'd6'
+                },
+                {
+                    id: '8',
+                    text: 'd8'
+                },
+                {
+                    id: '10',
+                    text: 'd10'
+                },
+                {
+                    id: '12',
+                    text: 'd12'
+                },
+                {
+                    id: '20',
+                    text: 'd20'
+                },
+                {
+                    id: '100',
+                    text: 'd100'
+                }
+            ];
+
+            let optionsSection = null;
+            if ((this.state.dice === '20') && (this.state.count === 1)) {
+                optionsSection = (
+                    <ControlRow
+                        controls={[
+                            <Checkbox
+                                key='advantage'
+                                label='advantage'
+                                checked={this.state.options.includes('advantage')}
+                                changeValue={value => this.toggleOption('advantage')}
+                            />,
+                            <Checkbox
+                                key='disadvantage'
+                                label='disadvantage'
+                                checked={this.state.options.includes('disadvantage')}
+                                changeValue={value => this.toggleOption('disadvantage')}
+                            />
+                        ]}
+                    />
+                );
+            } else if (this.state.count > 1) {
+                optionsSection = (
+                    <ControlRow
+                        controls={[
+                            <Checkbox
+                                key='drop-lowest'
+                                label='drop lowest'
+                                checked={this.state.options.includes('drop lowest')}
+                                changeValue={value => this.toggleOption('drop lowest')}
+                            />,
+                            <Checkbox
+                                key='drop-highest'
+                                label='drop highest'
+                                checked={this.state.options.includes('drop highest')}
+                                changeValue={value => this.toggleOption('drop highest')}
+                            />
+                        ]}
+                    />
+                );
             }
-        ];
 
-        let optionsSection = null;
-        if ((this.state.dice === '20') && (this.state.count === 1)) {
-            optionsSection = (
-                <ControlRow
-                    controls={[
-                        <Checkbox
-                            key='advantage'
-                            label='advantage'
-                            checked={this.state.options.includes('advantage')}
-                            changeValue={value => this.toggleOption('advantage')}
-                        />,
-                        <Checkbox
-                            key='disadvantage'
-                            label='disadvantage'
-                            checked={this.state.options.includes('disadvantage')}
-                            changeValue={value => this.toggleOption('disadvantage')}
-                        />
-                    ]}
-                />
+            let rollsSection = null;
+            if ((this.state.rolls !== null) && (this.state.rolls.length > 1)) {
+                rollsSection = (
+                    <div className='section die-rolls'>{this.state.rolls.join(', ')}</div>
+                );
+            }
+
+            let resultSection = null;
+            if (this.state.result !== null) {
+                resultSection = (
+                    <div className='section die-result'>{this.state.result}</div>
+                );
+            }
+
+            return (
+                <div>
+                    <div className='subheading'>die type</div>
+                    <Selector
+                        options={options}
+                        selectedID={this.state.dice}
+                        select={optionID => this.setDice(optionID)}
+                    />
+                    <div className='subheading'>number of dice to roll</div>
+                    <Spin
+                        source={this.state}
+                        name='count'
+                        display={count => count + 'd' + this.state.dice}
+                        nudgeValue={delta => this.nudgeCount(delta)}
+                    />
+                    {optionsSection ? <div className='subheading'>options</div> : null}
+                    {optionsSection}
+                    <div className='divider' />
+                    <button onClick={() => this.roll()}>roll dice</button>
+                    {rollsSection}
+                    {resultSection}
+                </div>
             );
-        } else if (this.state.count > 1) {
-            optionsSection = (
-                <ControlRow
-                    controls={[
-                        <Checkbox
-                            key='drop-lowest'
-                            label='drop lowest'
-                            checked={this.state.options.includes('drop lowest')}
-                            changeValue={value => this.toggleOption('drop lowest')}
-                        />,
-                        <Checkbox
-                            key='drop-highest'
-                            label='drop highest'
-                            checked={this.state.options.includes('drop highest')}
-                            changeValue={value => this.toggleOption('drop highest')}
-                        />
-                    ]}
-                />
-            );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
         }
-
-        let rollsSection = null;
-        if ((this.state.rolls !== null) && (this.state.rolls.length > 1)) {
-            rollsSection = (
-                <div className='section die-rolls'>{this.state.rolls.join(', ')}</div>
-            );
-        }
-
-        let resultSection = null;
-        if (this.state.result !== null) {
-            resultSection = (
-                <div className='section die-result'>{this.state.result}</div>
-            );
-        }
-
-        return (
-            <div>
-                <div className='subheading'>die type</div>
-                <Selector
-                    options={options}
-                    selectedID={this.state.dice}
-                    select={optionID => this.setDice(optionID)}
-                />
-                <div className='subheading'>number of dice to roll</div>
-                <Spin
-                    source={this.state}
-                    name='count'
-                    display={count => count + 'd' + this.state.dice}
-                    nudgeValue={delta => this.nudgeCount(delta)}
-                />
-                {optionsSection ? <div className='subheading'>options</div> : null}
-                {optionsSection}
-                <div className='divider' />
-                <button onClick={() => this.roll()}>roll dice</button>
-                {rollsSection}
-                {resultSection}
-            </div>
-        );
     }
 }

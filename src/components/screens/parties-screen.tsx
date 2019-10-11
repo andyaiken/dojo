@@ -175,6 +175,7 @@ export default class PartiesScreen extends React.Component<Props> {
             );
         } catch (e) {
             console.error(e);
+            return <div className='render-error'/>;
         }
     }
 }
@@ -215,6 +216,7 @@ class HelpCard extends React.Component<HelpCardProps> {
             );
         } catch (ex) {
             console.error(ex);
+            return <div className='render-error'/>;
         }
     }
 }
@@ -330,6 +332,7 @@ class PartyInfo extends React.Component<PartyInfoProps> {
             );
         } catch (e) {
             console.error(e);
+            return <div className='render-error'/>;
         }
     }
 }

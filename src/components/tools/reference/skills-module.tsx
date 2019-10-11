@@ -33,14 +33,19 @@ export default class SkillsModule extends React.Component<Props, State> {
     }
 
     public render() {
-        if (!this.state.source) {
-            this.fetchData();
-        }
+        try {
+            if (!this.state.source) {
+                this.fetchData();
+            }
 
-        return (
-            <LoadingWrapper loaded={this.state.source !== null}>
-                <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.state.source || '') }} />
-            </LoadingWrapper>
-        );
+            return (
+                <LoadingWrapper loaded={this.state.source !== null}>
+                    <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.state.source || '') }} />
+                </LoadingWrapper>
+            );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
+        }
     }
 }

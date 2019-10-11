@@ -72,6 +72,7 @@ export default class HomeScreen extends React.Component<Props> {
             );
         } catch (ex) {
             console.error(ex);
+            return <div className='render-error'/>;
         }
     }
 }

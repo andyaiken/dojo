@@ -13,13 +13,7 @@ import { Map, MapFolio } from '../models/map-folio';
 import { Monster, MonsterGroup } from '../models/monster-group';
 import { Party, PC } from '../models/party';
 
-import CombatManagerScreen from './screens/combat-manager-screen';
-import EncounterBuilderScreen from './screens/encounter-builder-screen';
-import HomeScreen from './screens/home-screen';
-import MapFoliosScreen from './screens/map-folios-screen';
-import MonsterLibraryScreen from './screens/monster-library-screen';
-import PartiesScreen from './screens/parties-screen';
-
+import Checkbox from './controls/checkbox';
 import AddCombatantsModal from './modals/add-combatants-modal';
 import CombatStartModal from './modals/combat-start-modal';
 import ConditionModal from './modals/condition-modal';
@@ -28,12 +22,14 @@ import MapEditorModal from './modals/map-editor-modal';
 import MonsterEditorModal from './modals/monster-editor-modal';
 import PCEditorModal from './modals/pc-editor-modal';
 import ToolsSidebar from './modals/tools-sidebar';
-
 import Navbar from './panels/navbar';
 import Titlebar from './panels/titlebar';
-
-import Checkbox from './controls/checkbox';
-import Menu from './controls/menu';
+import CombatManagerScreen from './screens/combat-manager-screen';
+import EncounterBuilderScreen from './screens/encounter-builder-screen';
+import HomeScreen from './screens/home-screen';
+import MapFoliosScreen from './screens/map-folios-screen';
+import MonsterLibraryScreen from './screens/monster-library-screen';
+import PartiesScreen from './screens/parties-screen';
 
 import close from '../resources/icons/x.svg';
 
@@ -1611,14 +1607,13 @@ export default class Dojo extends React.Component<Props, State> {
                 const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
                 if (combat) {
                     let xp = 0;
-                    let allowWave = false;
                     const encounter = this.state.encounters.find(e => e.id === combat.encounterID);
                     if (encounter) {
-                        combat.combatants.filter(c => c.type === 'monster')
+                        combat.combatants
+                            .filter(c => c.type === 'monster')
                             .forEach(combatant => {
                                 xp += Utils.experience((combatant as Combatant & Monster).challenge);
                             });
-                        allowWave = (encounter.waves.length !== 0);
                     }
                     return (
                         <div className='actions'>
@@ -1627,23 +1622,6 @@ export default class Dojo extends React.Component<Props, State> {
                             </div>
                             <div className='section'>
                                 <div className='text'>xp: {xp}</div>
-                            </div>
-                            <div className='section'>
-                                <Menu
-                                    text='add'
-                                    content={(
-                                        <div>
-                                            <button onClick={() => this.addToEncounter()}>add combatants</button>
-                                            <button onClick={() => this.openWaveModal()} className={allowWave ? '' : 'disabled'}>add wave</button>
-                                        </div>
-                                    )}
-                                />
-                            </div>
-                            <div className='section'>
-                                <button onClick={() => this.pauseCombat()}>pause encounter</button>
-                            </div>
-                            <div className='section'>
-                                <button onClick={() => this.endCombat()}>end encounter</button>
                             </div>
                         </div>
                     );
@@ -1755,13 +1733,17 @@ export default class Dojo extends React.Component<Props, State> {
                         combat={this.state.combats.find(c => c.id === this.state.selectedCombatID) || null}
                         filter={this.state.filter}
                         createCombat={() => this.createCombat()}
-                        resumeEncounter={pausedCombat => this.resumeCombat(pausedCombat)}
+                        pauseCombat={() => this.pauseCombat()}
+                        resumeCombat={pausedCombat => this.resumeCombat(pausedCombat)}
+                        endCombat={() => this.endCombat()}
                         nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
                         changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                         makeCurrent={(combatant) => this.makeCurrent(combatant, false)}
                         makeActive={(combatant) => this.makeActive(combatant)}
                         makeDefeated={(combatant) => this.makeDefeated(combatant)}
                         removeCombatant={(combatant) => this.removeCombatant(combatant)}
+                        addCombatants={() => this.addToEncounter()}
+                        addWave={() => this.openWaveModal()}
                         addCondition={(combatant) => this.addCondition(combatant)}
                         editCondition={(combatant, condition) => this.editCondition(combatant, condition)}
                         removeCondition={(combatant, conditionID) => this.removeCondition(combatant, conditionID)}
@@ -1770,7 +1752,7 @@ export default class Dojo extends React.Component<Props, State> {
                         mapRemove={combatant => this.mapRemove(combatant)}
                         endTurn={(combatant) => this.endTurn(combatant)}
                         changeHP={(combatant, hp, temp) => this.changeHP(combatant, hp, temp)}
-                        close={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
+                        closeNotification={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
                         toggleTag={(combatant, tag) => this.toggleTag(combatant, tag)}
                         scatterCombatants={type => this.scatterCombatants(type)}
                         rotateMap={() => this.rotateMap()}
@@ -2021,6 +2003,7 @@ export default class Dojo extends React.Component<Props, State> {
             );
         } catch (e) {
             console.error(e);
+            return <div className='render-error'/>;
         }
     }
 }

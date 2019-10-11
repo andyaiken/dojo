@@ -31,7 +31,7 @@ export default class RadioGroup extends React.Component<Props> {
             );
         } catch (ex) {
             console.error(ex);
-            return null;
+            return <div className='render-error'/>;
         }
     }
 }
@@ -44,27 +44,32 @@ interface RadioGroupItemProps {
 
 class RadioGroupItem extends React.Component<RadioGroupItemProps> {
     public render() {
-        let style = 'radio-item';
-        let details = null;
+        try {
+            let style = 'radio-item';
+            let details = null;
 
-        if (this.props.selected) {
-            style += ' selected';
-            details = (
-                <div className='radio-item-details'>
-                    {this.props.item.details}
+            if (this.props.selected) {
+                style += ' selected';
+                details = (
+                    <div className='radio-item-details'>
+                        {this.props.item.details}
+                    </div>
+                );
+            }
+
+            if (this.props.item.disabled) {
+                style += ' disabled';
+            }
+
+            return (
+                <div className={style} onClick={() => this.props.select(this.props.item.id)}>
+                    <div className='radio-item-text'>{this.props.item.text}</div>
+                    {details}
                 </div>
             );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
         }
-
-        if (this.props.item.disabled) {
-            style += ' disabled';
-        }
-
-        return (
-            <div className={style} onClick={() => this.props.select(this.props.item.id)}>
-                <div className='radio-item-text'>{this.props.item.text}</div>
-                {details}
-            </div>
-        );
     }
 }

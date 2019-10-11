@@ -45,6 +45,7 @@ export default class ConditionsPanel extends React.Component<Props> {
             );
         } catch (e) {
             console.error(e);
+            return <div className='render-error'/>;
         }
     }
 }
@@ -105,6 +106,7 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
             );
         } catch (e) {
             console.error(e);
+            return <div className='render-error'/>;
         }
     }
 }

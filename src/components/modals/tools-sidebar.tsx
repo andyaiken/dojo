@@ -70,6 +70,7 @@ export default class ToolsSidebar extends React.Component<Props, State> {
             );
         } catch (e) {
             console.error(e);
+            return <div className='render-error'/>;
         }
     }
 }

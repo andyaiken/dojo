@@ -295,6 +295,7 @@ export default class MapPanel extends React.Component<Props> {
             );
         } catch (e) {
             console.error(e);
+            return <div className='render-error'/>;
         }
     }
 }
@@ -329,19 +330,24 @@ class GridSquare extends React.Component<GridSquareProps> {
     }
 
     public render() {
-        let style = 'grid-square';
-        if (this.props.overlay) {
-            style += ' grid-overlay';
-        }
+        try {
+            let style = 'grid-square';
+            if (this.props.overlay) {
+                style += ' grid-overlay';
+            }
 
-        return (
-            <div
-                className={style}
-                style={this.props.style}
-                onClick={e => this.click(e)}
-                onDoubleClick={e => this.doubleClick(e)}
-            />
-        );
+            return (
+                <div
+                    className={style}
+                    style={this.props.style}
+                    onClick={e => this.click(e)}
+                    onDoubleClick={e => this.doubleClick(e)}
+                />
+            );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
+        }
     }
 }
 
@@ -362,27 +368,32 @@ class MapTile extends React.Component<MapTileProps> {
     }
 
     public render() {
-        let style = 'tile ' + this.props.tile.terrain;
-        if (this.props.selected) {
-            style += ' selected';
-        }
+        try {
+            let style = 'tile ' + this.props.tile.terrain;
+            if (this.props.selected) {
+                style += ' selected';
+            }
 
-        let content = null;
-        if (this.props.tile.terrain === 'custom') {
-            content = (
-                <img className='custom-image' src={this.props.tile.customBackground ? this.props.tile.customBackground : none} alt='map tile' />
+            let content = null;
+            if (this.props.tile.terrain === 'custom') {
+                content = (
+                    <img className='custom-image' src={this.props.tile.customBackground ? this.props.tile.customBackground : none} alt='map tile' />
+                );
+            }
+
+            return (
+                <div
+                    className={style}
+                    style={this.props.style}
+                    onClick={e => this.select(e)}
+                >
+                    {content}
+                </div>
             );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
         }
-
-        return (
-            <div
-                className={style}
-                style={this.props.style}
-                onClick={e => this.select(e)}
-            >
-                {content}
-            </div>
-        );
     }
 }
 
@@ -407,79 +418,84 @@ class MapToken extends React.Component<MapTokenProps> {
     }
 
     public render() {
-        const name = this.props.combatant.displayName || this.props.combatant.name || 'combatant';
+        try {
+            const name = this.props.combatant.displayName || this.props.combatant.name || 'combatant';
 
-        let style = 'token ' + this.props.token.type;
-        if (this.props.selected) {
-            style += ' selected';
-        }
-        if (this.props.combatant.current) {
-            style += ' current';
-        }
-        if (!this.props.combatant.showOnMap) {
-            if (this.props.showHidden) {
-                style += ' hidden';
-            } else {
-                return null;
+            let style = 'token ' + this.props.token.type;
+            if (this.props.selected) {
+                style += ' selected';
             }
-        }
-
-        let content = null;
-        let hpGauge = null;
-        let altitudeBadge = null;
-        let conditionsBadge = null;
-        if (!this.props.simple) {
-            if (this.props.combatant.portrait) {
-                content = (
-                    <img className='portrait' src={this.props.combatant.portrait} alt={name} />
-                );
-            } else {
-                content = (
-                    <div className='initials'>{name.split(' ').map(s => s[0])}</div>
-                );
+            if (this.props.combatant.current) {
+                style += ' current';
+            }
+            if (!this.props.combatant.showOnMap) {
+                if (this.props.showHidden) {
+                    style += ' hidden';
+                } else {
+                    return null;
+                }
             }
 
-            if (this.props.combatant.type === 'monster' && this.props.showGauge) {
-                const c = this.props.combatant as Combatant & Monster;
-                const current = c.hp || 0;
-                if (current < c.hpMax) {
-                    hpGauge = (
-                        <HitPointGauge combatant={this.props.combatant as Combatant & Monster} />
+            let content = null;
+            let hpGauge = null;
+            let altitudeBadge = null;
+            let conditionsBadge = null;
+            if (!this.props.simple) {
+                if (this.props.combatant.portrait) {
+                    content = (
+                        <img className='portrait' src={this.props.combatant.portrait} alt={name} />
+                    );
+                } else {
+                    content = (
+                        <div className='initials'>{name.split(' ').map(s => s[0])}</div>
+                    );
+                }
+
+                if (this.props.combatant.type === 'monster' && this.props.showGauge) {
+                    const c = this.props.combatant as Combatant & Monster;
+                    const current = c.hp || 0;
+                    if (current < c.hpMax) {
+                        hpGauge = (
+                            <HitPointGauge combatant={this.props.combatant as Combatant & Monster} />
+                        );
+                    }
+                }
+
+                if (this.props.combatant.altitude > 0) {
+                    altitudeBadge = (
+                        <div className='badge altitude' title='above the map'>&#9206;</div>
+                    );
+                }
+
+                if (this.props.combatant.altitude < 0) {
+                    altitudeBadge = (
+                        <div className='badge altitude' title='below the map'>&#9207;</div>
+                    );
+                }
+
+                if ((this.props.combatant.conditions) && (this.props.combatant.conditions.length > 0)) {
+                    conditionsBadge = (
+                        <div className='badge' title='affected by conditions'>&#9670;</div>
                     );
                 }
             }
 
-            if (this.props.combatant.altitude > 0) {
-                altitudeBadge = (
-                    <div className='badge altitude' title='above the map'>&#9206;</div>
-                );
-            }
-
-            if (this.props.combatant.altitude < 0) {
-                altitudeBadge = (
-                    <div className='badge altitude' title='below the map'>&#9207;</div>
-                );
-            }
-
-            if ((this.props.combatant.conditions) && (this.props.combatant.conditions.length > 0)) {
-                conditionsBadge = (
-                    <div className='badge' title='affected by conditions'>&#9670;</div>
-                );
-            }
+            return (
+                <div
+                    className={style}
+                    style={this.props.style}
+                    title={name}
+                    onClick={e => this.select(e)}
+                >
+                    {content}
+                    {hpGauge}
+                    {altitudeBadge}
+                    {conditionsBadge}
+                </div>
+            );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
         }
-
-        return (
-            <div
-                className={style}
-                style={this.props.style}
-                title={name}
-                onClick={e => this.select(e)}
-            >
-                {content}
-                {hpGauge}
-                {altitudeBadge}
-                {conditionsBadge}
-            </div>
-        );
     }
 }

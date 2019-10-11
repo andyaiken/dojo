@@ -26,13 +26,17 @@ interface Props {
     combat: Combat | null;
     filter: string;
     createCombat: () => void;
-    resumeEncounter: (combat: Combat) => void;
-    close: (notification: Notification, removeCondition: boolean) => void;
+    pauseCombat: () => void;
+    resumeCombat: (combat: Combat) => void;
+    endCombat: () => void;
+    closeNotification: (notification: Notification, removeCondition: boolean) => void;
     mapAdd: (combatant: (Combatant & PC) | (Combatant & Monster), x: number, y: number) => void;
     makeCurrent: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
     makeActive: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
     makeDefeated: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
     removeCombatant: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
+    addCombatants: () => void;
+    addWave: () => void;
     addCondition: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
     editCondition: (combatant: (Combatant & PC) | (Combatant & Monster), condition: Condition) => void;
     removeCondition: (combatant: (Combatant & PC) | (Combatant & Monster), conditionID: string) => void;
@@ -465,7 +469,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                         <NotificationPanel
                             key={n.id}
                             notification={n}
-                            close={(notification, removeCondition) => this.props.close(notification, removeCondition)}
+                            close={(notification, removeCondition) => this.props.closeNotification(notification, removeCondition)}
                         />
                     ));
                     notificationSection = (
@@ -498,10 +502,15 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                         heading='tools'
                         content={[
                             <div key='map' style={{ display: this.props.combat.map ? 'block' : 'none' }}>
+                                <div className='subheading'>encounter</div>
+                                <button onClick={() => this.props.pauseCombat()}>pause encounter</button>
+                                <button onClick={() => this.props.endCombat()}>end encounter</button>
+                                <button onClick={() => this.props.addCombatants()}>add combatants</button>
+                                <button onClick={() => this.props.addWave()}>add wave</button>
                                 <div className='subheading'>map</div>
                                 <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
                                 <button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
-                                <button onClick={() => this.props.rotateMap()}>rotate</button>
+                                <button onClick={() => this.props.rotateMap()}>rotate the map</button>
                                 <Spin
                                     source={this.state}
                                     name={'mapSize'}
@@ -516,12 +525,12 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                                     checked={this.state.playerView.open}
                                     changeValue={value => this.setPlayerViewOpen(value)}
                                 />
-                                <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
-                                    <Checkbox
-                                        label='show map controls'
-                                        checked={this.state.playerView.showControls}
-                                        changeValue={value => this.setPlayerViewShowControls(value)}
-                                    />
+                                <Checkbox
+                                    label='show controls'
+                                    checked={this.state.playerView.showControls}
+                                    changeValue={value => this.setPlayerViewShowControls(value)}
+                                />
+                                <div style={{ display: (this.props.combat.map && this.state.playerView.open) ? 'block' : 'none' }}>
                                     <Spin
                                         source={this.state.playerView}
                                         name={'mapSize'}
@@ -634,7 +643,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                             key={c.id}
                             combat={c}
                             selected={false}
-                            setSelection={combat => this.props.resumeEncounter(combat)}
+                            setSelection={combat => this.props.resumeCombat(combat)}
                         />
                     );
                 });
@@ -668,6 +677,7 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
             }
         } catch (e) {
             console.error(e);
+            return <div className='render-error'/>;
         }
     }
 }
@@ -678,31 +688,36 @@ interface HelpCardProps {
 
 class HelpCard extends React.Component<HelpCardProps> {
     public render() {
-        let action: JSX.Element | null = null;
-        if (this.props.combats.length === 0) {
-            action = (
-                <div className='section'>to start a combat encounter, press the <b>start a new combat</b> button</div>
-            );
-        } else {
-            action = (
-                <div>
-                    <div className='section'>on the left you will see a list of encounters that you have paused</div>
-                    <div className='section'>you can resume a paused combat by selecting it</div>
-                </div>
-            );
-        }
-
-        return (
-            <Note
-                content={
+        try {
+            let action: JSX.Element | null = null;
+            if (this.props.combats.length === 0) {
+                action = (
+                    <div className='section'>to start a combat encounter, press the <b>start a new combat</b> button</div>
+                );
+            } else {
+                action = (
                     <div>
-                        <div className='section'>here you can run a combat encounter by specifying a party and an encounter, and optionally a map</div>
-                        <div className='divider' />
-                        {action}
+                        <div className='section'>on the left you will see a list of encounters that you have paused</div>
+                        <div className='section'>you can resume a paused combat by selecting it</div>
                     </div>
-                }
-            />
-        );
+                );
+            }
+
+            return (
+                <Note
+                    content={
+                        <div>
+                            <div className='section'>here you can run a combat encounter by specifying a party and an encounter, and optionally a map</div>
+                            <div className='divider' />
+                            {action}
+                        </div>
+                    }
+                />
+            );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
+        }
     }
 }
 
@@ -744,60 +759,65 @@ class NotificationPanel extends React.Component<NotificationProps> {
     }
 
     public render() {
-        const combatant = this.props.notification.combatant as (Combatant & Monster);
-        const condition = this.props.notification.data as Condition;
-        const trait = this.props.notification.data as Trait;
+        try {
+            const combatant = this.props.notification.combatant as (Combatant & Monster);
+            const condition = this.props.notification.data as Condition;
+            const trait = this.props.notification.data as Trait;
 
-        const name = combatant.displayName || combatant.name || 'unnamed monster';
-        switch (this.props.notification.type) {
-            case 'condition-save':
-                const duration = condition.duration as ConditionDurationSaves;
-                let saveType = duration.saveType.toString();
-                if (saveType !== 'death') {
-                    saveType = saveType.toUpperCase();
-                }
-                return (
-                    <div key={this.props.notification.id} className='descriptive'>
-                        <div className='text'>
-                            {name} must make a {saveType} save against dc {duration.saveDC}
+            const name = combatant.displayName || combatant.name || 'unnamed monster';
+            switch (this.props.notification.type) {
+                case 'condition-save':
+                    const duration = condition.duration as ConditionDurationSaves;
+                    let saveType = duration.saveType.toString();
+                    if (saveType !== 'death') {
+                        saveType = saveType.toUpperCase();
+                    }
+                    return (
+                        <div key={this.props.notification.id} className='descriptive'>
+                            <div className='text'>
+                                {name} must make a {saveType} save against dc {duration.saveDC}
+                            </div>
+                            <ControlRow
+                                controls={[
+                                    <button key='success' onClick={() => this.success()}>success</button>,
+                                    <button key='close' onClick={() => this.close()}>close</button>
+                                ]}
+                            />
                         </div>
-                        <ControlRow
-                            controls={[
-                                <button key='success' onClick={() => this.success()}>success</button>,
-                                <button key='close' onClick={() => this.close()}>close</button>
-                            ]}
-                        />
-                    </div>
-                );
-            case 'condition-end':
-                return (
-                    <div key={this.props.notification.id} className='descriptive'>
-                        <div className='text'>
-                            {name} is no longer affected by condition {condition.name}
+                    );
+                case 'condition-end':
+                    return (
+                        <div key={this.props.notification.id} className='descriptive'>
+                            <div className='text'>
+                                {name} is no longer affected by condition {condition.name}
+                            </div>
+                            <ControlRow
+                                controls={[
+                                    <button key='close' onClick={() => this.close()}>close</button>
+                                ]}
+                            />
                         </div>
-                        <ControlRow
-                            controls={[
-                                <button key='close' onClick={() => this.close()}>close</button>
-                            ]}
-                        />
-                    </div>
-                );
-            case 'trait-recharge':
-                return (
-                    <div key={this.props.notification.id} className='descriptive'>
-                        <div className='text'>
-                            {name} can attempt to recharge {trait.name} ({trait.usage})
+                    );
+                case 'trait-recharge':
+                    return (
+                        <div key={this.props.notification.id} className='descriptive'>
+                            <div className='text'>
+                                {name} can attempt to recharge {trait.name} ({trait.usage})
+                            </div>
+                            <ControlRow
+                                controls={[
+                                    <button key='recharge' onClick={() => this.success()}>recharge</button>,
+                                    <button key='close' onClick={() => this.close()}>close</button>
+                                ]}
+                            />
                         </div>
-                        <ControlRow
-                            controls={[
-                                <button key='recharge' onClick={() => this.success()}>recharge</button>,
-                                <button key='close' onClick={() => this.close()}>close</button>
-                            ]}
-                        />
-                    </div>
-                );
-            default:
-                return null;
+                    );
+                default:
+                    return null;
+            }
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
         }
     }
 }
@@ -827,28 +847,33 @@ class PendingCombatantRow extends React.Component<PendingCombatantRowProps> {
     }
 
     public render() {
-        let style = 'combatant-row ' + this.props.combatant.type;
-        if (this.props.combatant.current || this.props.selected) {
-            style += ' highlight';
-        }
+        try {
+            let style = 'combatant-row ' + this.props.combatant.type;
+            if (this.props.combatant.current || this.props.selected) {
+                style += ' highlight';
+            }
 
-        return (
-            <div className={style} onClick={e => this.onClick(e)}>
-                <div className='name'>
-                    {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
-                    <span className='info'>{this.getInformationText()}</span>
+            return (
+                <div className={style} onClick={e => this.onClick(e)}>
+                    <div className='name'>
+                        {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
+                        <span className='info'>{this.getInformationText()}</span>
+                    </div>
+                    <div className='content'>
+                        <Spin
+                            source={this.props.combatant}
+                            name='initiative'
+                            label='initiative'
+                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
+                        />
+                        <button onClick={e => { e.stopPropagation(); this.props.makeActive(this.props.combatant); }}>add to encounter</button>
+                    </div>
                 </div>
-                <div className='content'>
-                    <Spin
-                        source={this.props.combatant}
-                        name='initiative'
-                        label='initiative'
-                        nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
-                    />
-                    <button onClick={e => { e.stopPropagation(); this.props.makeActive(this.props.combatant); }}>add to encounter</button>
-                </div>
-            </div>
-        );
+            );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
+        }
     }
 }
 
@@ -885,95 +910,100 @@ class PCRow extends React.Component<PCRowProps> {
     }
 
     public render() {
-        let style = 'combatant-row ' + this.props.combatant.type;
-        if (this.props.selected) {
-            style += ' highlight';
-        }
+        try {
+            let style = 'combatant-row ' + this.props.combatant.type;
+            if (this.props.selected) {
+                style += ' highlight';
+            }
 
-        let desc = null;
-        if (!this.props.minimal) {
-            const race = this.props.combatant.race || 'unknown race';
-            const cls = this.props.combatant.classes || 'unknown class';
-            desc = (
-                <div className='section lowercase'>
-                    {race + ' ' + cls + ', level ' + this.props.combatant.level}
-                </div>
-            );
-        }
-
-        let conditions = null;
-        if (this.props.combatant.conditions) {
-            conditions = this.props.combatant.conditions.map(c => {
-                let name = c.name;
-                if (c.name === 'exhaustion') {
-                    name += ' (' + c.level + ')';
-                }
-                if ((c.name === 'custom') && (c.text)) {
-                    name = c.text;
-                }
-                if (c.duration) {
-                    name += ' ' + Utils.conditionDurationText(c, this.props.combat);
-                }
-                const description = [];
-                const text = Utils.conditionText(c);
-                for (let n = 0; n !== text.length; ++n) {
-                    description.push(<li key={n} className='condition-text'>{text[n]}</li>);
-                }
-                return (
-                    <Note
-                        key={c.id}
-                        white={true}
-                        content={
-                            <div className='condition'>
-                                <div className='condition-name'>{name}</div>
-                                <ul>
-                                    {description}
-                                </ul>
-                            </div>
-                        }
-                    />
-                );
-            });
-        }
-
-        const notes = [];
-        if (this.props.combat.map) {
-            if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
-                notes.push(
-                    <Note key='not-on-map' white={true} content='not on the map' />
+            let desc = null;
+            if (!this.props.minimal) {
+                const race = this.props.combatant.race || 'unknown race';
+                const cls = this.props.combatant.classes || 'unknown class';
+                desc = (
+                    <div className='section lowercase'>
+                        {race + ' ' + cls + ', level ' + this.props.combatant.level}
+                    </div>
                 );
             }
-        }
-        this.props.combatant.tags.forEach(tag => {
-            notes.push(
-                <Note key={tag} white={true} content={Utils.getTagDescription(tag)} />
-            );
-        });
 
-        let companions = null;
-        if (this.props.combatant.companions.length > 0) {
-            companions = (
-                <div className='section'>
-                    <b>companions:</b> {this.props.combatant.companions.map(companion => companion.name).join(', ')}
+            let conditions = null;
+            if (this.props.combatant.conditions) {
+                conditions = this.props.combatant.conditions.map(c => {
+                    let name = c.name;
+                    if (c.name === 'exhaustion') {
+                        name += ' (' + c.level + ')';
+                    }
+                    if ((c.name === 'custom') && (c.text)) {
+                        name = c.text;
+                    }
+                    if (c.duration) {
+                        name += ' ' + Utils.conditionDurationText(c, this.props.combat);
+                    }
+                    const description = [];
+                    const text = Utils.conditionText(c);
+                    for (let n = 0; n !== text.length; ++n) {
+                        description.push(<li key={n} className='condition-text'>{text[n]}</li>);
+                    }
+                    return (
+                        <Note
+                            key={c.id}
+                            white={true}
+                            content={
+                                <div className='condition'>
+                                    <div className='condition-name'>{name}</div>
+                                    <ul>
+                                        {description}
+                                    </ul>
+                                </div>
+                            }
+                        />
+                    );
+                });
+            }
+
+            const notes = [];
+            if (this.props.combat.map) {
+                if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
+                    notes.push(
+                        <Note key='not-on-map' white={true} content='not on the map' />
+                    );
+                }
+            }
+            this.props.combatant.tags.forEach(tag => {
+                notes.push(
+                    <Note key={tag} white={true} content={Utils.getTagDescription(tag)} />
+                );
+            });
+
+            let companions = null;
+            if (this.props.combatant.companions.length > 0) {
+                companions = (
+                    <div className='section'>
+                        <b>companions:</b> {this.props.combatant.companions.map(companion => companion.name).join(', ')}
+                    </div>
+                );
+            }
+
+            return (
+                <div className={style} onClick={e => this.onClick(e)}>
+                    <div className='name'>
+                        {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
+                        {this.props.combatant.player ? ' | ' + this.props.combatant.player : ''}
+                        <span className='info'>{this.getInformationText()}</span>
+                    </div>
+                    <div className='content'>
+                        {desc}
+                        {conditions}
+                        {notes}
+                        {companions}
+                    </div>
                 </div>
             );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
         }
-
-        return (
-            <div className={style} onClick={e => this.onClick(e)}>
-                <div className='name'>
-                    {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
-                    {this.props.combatant.player ? ' | ' + this.props.combatant.player : ''}
-                    <span className='info'>{this.getInformationText()}</span>
-                </div>
-                <div className='content'>
-                    {desc}
-                    {conditions}
-                    {notes}
-                    {companions}
-                </div>
-            </div>
-        );
     }
 }
 
@@ -1010,103 +1040,108 @@ class MonsterRow extends React.Component<MonsterRowProps> {
     }
 
     public render() {
-        let style = 'combatant-row ' + this.props.combatant.type;
-        if (this.props.selected) {
-            style += ' highlight';
-        }
+        try {
+            let style = 'combatant-row ' + this.props.combatant.type;
+            if (this.props.selected) {
+                style += ' highlight';
+            }
 
-        let hp = (this.props.combatant.hp ? this.props.combatant.hp : 0).toString();
-        if (this.props.combatant.hpTemp > 0) {
-            hp += '+' + this.props.combatant.hpTemp;
-        }
+            let hp = (this.props.combatant.hp ? this.props.combatant.hp : 0).toString();
+            if (this.props.combatant.hpTemp > 0) {
+                hp += '+' + this.props.combatant.hpTemp;
+            }
 
-        let gauge = null;
-        if (!this.props.combatant.pending) {
-            gauge = (
-                <HitPointGauge combatant={this.props.combatant} />
-            );
-        }
-
-        let conditions = null;
-        if (this.props.combatant.conditions) {
-            conditions = this.props.combatant.conditions.map(c => {
-                let name = c.name;
-                if (c.name === 'exhaustion') {
-                    name += ' (' + c.level + ')';
-                }
-                if ((c.name === 'custom') && (c.text)) {
-                    name = c.text;
-                }
-                if (c.duration) {
-                    name += ' ' + Utils.conditionDurationText(c, this.props.combat);
-                }
-                const description = [];
-                const text = Utils.conditionText(c);
-                for (let n = 0; n !== text.length; ++n) {
-                    description.push(<li key={n} className='condition-text'>{text[n]}</li>);
-                }
-                return (
-                    <Note
-                        key={c.id}
-                        white={true}
-                        content={
-                            <div className='condition'>
-                                <div className='condition-name'>{name}</div>
-                                <ul>
-                                    {description}
-                                </ul>
-                            </div>
-                        }
-                    />
-                );
-            });
-        }
-
-        const notes = [];
-        if (this.props.combat.map) {
-            if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
-                notes.push(
-                    <Note key='not-on-map' white={true} content='not on the map' />
+            let gauge = null;
+            if (!this.props.combatant.pending) {
+                gauge = (
+                    <HitPointGauge combatant={this.props.combatant} />
                 );
             }
-        }
-        this.props.combatant.tags.forEach(tag => {
-            notes.push(
-                <Note key={tag} white={true} content={Utils.getTagDescription(tag)} />
-            );
-        });
 
-        let dmInfo = null;
-        if (!this.props.minimal) {
-            dmInfo = (
-                <div>
-                    <div className='section key-stats'>
-                        <div className='key-stat'>
-                            <div className='stat-label'>ac</div>
-                            <div className='stat-value'>{this.props.combatant.ac}</div>
+            let conditions = null;
+            if (this.props.combatant.conditions) {
+                conditions = this.props.combatant.conditions.map(c => {
+                    let name = c.name;
+                    if (c.name === 'exhaustion') {
+                        name += ' (' + c.level + ')';
+                    }
+                    if ((c.name === 'custom') && (c.text)) {
+                        name = c.text;
+                    }
+                    if (c.duration) {
+                        name += ' ' + Utils.conditionDurationText(c, this.props.combat);
+                    }
+                    const description = [];
+                    const text = Utils.conditionText(c);
+                    for (let n = 0; n !== text.length; ++n) {
+                        description.push(<li key={n} className='condition-text'>{text[n]}</li>);
+                    }
+                    return (
+                        <Note
+                            key={c.id}
+                            white={true}
+                            content={
+                                <div className='condition'>
+                                    <div className='condition-name'>{name}</div>
+                                    <ul>
+                                        {description}
+                                    </ul>
+                                </div>
+                            }
+                        />
+                    );
+                });
+            }
+
+            const notes = [];
+            if (this.props.combat.map) {
+                if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
+                    notes.push(
+                        <Note key='not-on-map' white={true} content='not on the map' />
+                    );
+                }
+            }
+            this.props.combatant.tags.forEach(tag => {
+                notes.push(
+                    <Note key={tag} white={true} content={Utils.getTagDescription(tag)} />
+                );
+            });
+
+            let dmInfo = null;
+            if (!this.props.minimal) {
+                dmInfo = (
+                    <div>
+                        <div className='section key-stats'>
+                            <div className='key-stat'>
+                                <div className='stat-label'>ac</div>
+                                <div className='stat-value'>{this.props.combatant.ac}</div>
+                            </div>
+                            <div className='key-stat'>
+                                <div className='stat-value'>{hp}</div>
+                                <div className='stat-label'>hp</div>
+                            </div>
                         </div>
-                        <div className='key-stat'>
-                            <div className='stat-value'>{hp}</div>
-                            <div className='stat-label'>hp</div>
-                        </div>
+                        {gauge}
                     </div>
-                    {gauge}
+                );
+            }
+
+            return (
+                <div className={style} onClick={e => this.onClick(e)}>
+                    <div className='name'>
+                        {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
+                        <span className='info'>{this.getInformationText()}</span>
+                    </div>
+                    <div className='content'>
+                        {dmInfo}
+                        {conditions}
+                        {notes}
+                    </div>
                 </div>
             );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
         }
-
-        return (
-            <div className={style} onClick={e => this.onClick(e)}>
-                <div className='name'>
-                    {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
-                    <span className='info'>{this.getInformationText()}</span>
-                </div>
-                <div className='content'>
-                    {dmInfo}
-                    {conditions}
-                    {notes}
-                </div>
-            </div>
-        );
     }
 }

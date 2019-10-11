@@ -49,22 +49,22 @@ export default class Spin extends React.Component<Props> {
                 minusBtns.push(
                     <div
                         key={'minus' + factor}
-                        className={factors.length > 1 ? 'spin-button factor' : 'spin-button factor single'}
+                        className={factor === 1 ? 'spin-button factor' : 'spin-button factor multiple'}
                         onTouchEnd={e => this.touchEnd(e, -1 * factor)}
                         onClick={e => this.click(e, -1 * factor)}
                     >
-                        {factors.length > 1 ? '-' + factor : '-'}
+                        {factor === 1 ? '-' : factor}
                     </div>
                 );
 
                 plusBtns.push(
                     <div
                         key={'plus' + factor}
-                        className={factors.length > 1 ? 'spin-button factor' : 'spin-button factor single'}
+                        className={factor === 1 ? 'spin-button factor' : 'spin-button factor multiple'}
                         onTouchEnd={e => this.touchEnd(e, +1 * factor)}
                         onClick={e => this.click(e, +1 * factor)}
                     >
-                        {factors.length > 1 ? '+' + factor : '+'}
+                        {factor === 1 ? '+' : factor}
                     </div>
                 );
             });
@@ -76,7 +76,7 @@ export default class Spin extends React.Component<Props> {
                     <div className='minus'>
                         {minusBtns}
                     </div>
-                    <div className='info' style={{ width: 'calc(100% - ' + (80 * factors.length) + 'px)' }}>
+                    <div className='info' style={{ width: 'calc(100% - ' + (60 * factors.length) + 'px)' }}>
                         <div className='info-label'>{this.props.label}</div>
                         <div className={style}>{value}</div>
                     </div>
@@ -87,7 +87,7 @@ export default class Spin extends React.Component<Props> {
             );
         } catch (ex) {
             console.error(ex);
-            return null;
+            return <div className='render-error'/>;
         }
     }
 }

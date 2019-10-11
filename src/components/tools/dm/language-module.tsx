@@ -189,91 +189,96 @@ export default class LanguageModule extends React.Component<Props, State> {
     }
 
     public render() {
-        const presetOptions = this.getPresets().map(p => {
-            return {
-                id: p.name,
-                text: p.name
-            };
-        });
-
-        let selectedPreset = '';
-        this.getPresets().forEach(p => {
-            const selected = Object.keys(this.state.sources).sort().join(', ');
-            const setting = p.languages.sort().join(', ');
-            if (selected === setting) {
-                selectedPreset = p.name;
-            }
-        });
-
-        let selectedLanguages = Object.keys(this.state.sources).sort().join(', ');
-        if (selectedLanguages === '') {
-            selectedLanguages = 'none';
-        }
-
-        const languages = this.getLanguages()
-            .map(lang => {
-                const isSelected = Object.keys(this.state.sources).includes(lang);
-                return (
-                    <div className='column' key={lang}>
-                        <Checkbox
-                            label={lang}
-                            display='button'
-                            checked={isSelected}
-                            changeValue={value => value ? this.addLanguage(lang) : this.removeLanguage(lang)}
-                        />
-                    </div>
-                );
+        try {
+            const presetOptions = this.getPresets().map(p => {
+                return {
+                    id: p.name,
+                    text: p.name
+                };
             });
 
-        const allowGenerate = Object.keys(this.state.sources).length > 0;
-        const allowReset = allowGenerate || this.state.output.length > 0;
+            let selectedPreset = '';
+            this.getPresets().forEach(p => {
+                const selected = Object.keys(this.state.sources).sort().join(', ');
+                const setting = p.languages.sort().join(', ');
+                if (selected === setting) {
+                    selectedPreset = p.name;
+                }
+            });
 
-        const output = [];
-        if (this.state.output.length > 0) {
-            output.push(
-                <div key='div' className='divider' />
-            );
-        }
-        for (let n = 0; n !== this.state.output.length; ++n) {
-            output.push(
-                <GeneratedText
-                    key={n}
-                    text={this.state.output[n]}
-                    languages={Object.keys(this.state.sources)}
-                />
-            );
-        }
+            let selectedLanguages = Object.keys(this.state.sources).sort().join(', ');
+            if (selectedLanguages === '') {
+                selectedLanguages = 'none';
+            }
 
-        return (
-            <div>
-                <div className='subheading'>presets</div>
-                <Selector
-                    options={presetOptions}
-                    selectedID={selectedPreset}
-                    select={optionID => this.usePreset(optionID)}
-                />
-                <div className='divider' />
-                <Expander
-                    text={'selected languages: ' + selectedLanguages}
-                    content={
-                        <div className='row collapse small-up-1 medium-up-2 large-up-3 language-options'>
-                            {languages}
+            const languages = this.getLanguages()
+                .map(lang => {
+                    const isSelected = Object.keys(this.state.sources).includes(lang);
+                    return (
+                        <div className='column' key={lang}>
+                            <Checkbox
+                                label={lang}
+                                display='button'
+                                checked={isSelected}
+                                changeValue={value => value ? this.addLanguage(lang) : this.removeLanguage(lang)}
+                            />
                         </div>
-                    }
-                />
-                <div className='divider' />
-                <ControlRow
-                    controls={[
-                        <button key='generate' className={allowGenerate ? '' : 'disabled'} onClick={() => this.generate()}>generate text</button>,
-                        <button key='reset' className={allowReset ? '' : 'disabled'} onClick={() => this.reset()}>reset</button>,
-                        <button key='random' onClick={() => this.random()}>random sources</button>
-                    ]}
-                />
-                <div className='language-output'>
-                    {output}
+                    );
+                });
+
+            const allowGenerate = Object.keys(this.state.sources).length > 0;
+            const allowReset = allowGenerate || this.state.output.length > 0;
+
+            const output = [];
+            if (this.state.output.length > 0) {
+                output.push(
+                    <div key='div' className='divider' />
+                );
+            }
+            for (let n = 0; n !== this.state.output.length; ++n) {
+                output.push(
+                    <GeneratedText
+                        key={n}
+                        text={this.state.output[n]}
+                        languages={Object.keys(this.state.sources)}
+                    />
+                );
+            }
+
+            return (
+                <div>
+                    <div className='subheading'>presets</div>
+                    <Selector
+                        options={presetOptions}
+                        selectedID={selectedPreset}
+                        select={optionID => this.usePreset(optionID)}
+                    />
+                    <div className='divider' />
+                    <Expander
+                        text={'selected languages: ' + selectedLanguages}
+                        content={
+                            <div className='row collapse small-up-1 medium-up-2 large-up-3 language-options'>
+                                {languages}
+                            </div>
+                        }
+                    />
+                    <div className='divider' />
+                    <ControlRow
+                        controls={[
+                            <button key='generate' className={allowGenerate ? '' : 'disabled'} onClick={() => this.generate()}>generate text</button>,
+                            <button key='reset' className={allowReset ? '' : 'disabled'} onClick={() => this.reset()}>reset</button>,
+                            <button key='random' onClick={() => this.random()}>random sources</button>
+                        ]}
+                    />
+                    <div className='language-output'>
+                        {output}
+                    </div>
                 </div>
-            </div>
-        );
+            );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
+        }
     }
 }
 
@@ -294,19 +299,24 @@ class GeneratedText extends React.Component<GeneratedTextProps> {
     }
 
     public render() {
-        return (
-            <Expander
-                text={this.props.text.toLowerCase()}
-                content={
-                    <div>
-                        <button onClick={e => this.copy(e)}>copy to clipboard</button>
-                        <button onClick={e => this.say(e)}>say</button>
-                        <div className='section'>
-                            <b>note:</b> speech may not work consistently on all platforms
+        try {
+            return (
+                <Expander
+                    text={this.props.text.toLowerCase()}
+                    content={
+                        <div>
+                            <button onClick={e => this.copy(e)}>copy to clipboard</button>
+                            <button onClick={e => this.say(e)}>say</button>
+                            <div className='section'>
+                                <b>note:</b> speech may not work consistently on all platforms
+                            </div>
                         </div>
-                    </div>
-                }
-            />
-        );
+                    }
+                />
+            );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
+        }
     }
 }

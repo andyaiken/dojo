@@ -66,10 +66,15 @@ export default class Popout extends React.Component<Props, State> {
     }
 
     public render() {
-        if (!this.state.containerElement) {
-            return null;
-        }
+        try {
+            if (!this.state.containerElement) {
+                return null;
+            }
 
-        return ReactDOM.createPortal(this.props.children, this.state.containerElement);
+            return ReactDOM.createPortal(this.props.children, this.state.containerElement);
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
+        }
     }
 }

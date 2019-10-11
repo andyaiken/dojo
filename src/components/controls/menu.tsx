@@ -61,7 +61,7 @@ export default class Menu extends React.Component<Props, State> {
             );
         } catch (ex) {
             console.error(ex);
-            return null;
+            return <div className='render-error'/>;
         }
     }
 }

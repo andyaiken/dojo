@@ -313,6 +313,7 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
             );
         } catch (e) {
             console.error(e);
+            return <div className='render-error'/>;
         }
     }
 }
@@ -355,6 +356,7 @@ class HelpCard extends React.Component<HelpCardProps> {
             );
         } catch (ex) {
             console.error(ex);
+            return <div className='render-error'/>;
         }
     }
 }
@@ -479,6 +481,7 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
             );
         } catch (e) {
             console.error(e);
+            return <div className='render-error'/>;
         }
     }
 }

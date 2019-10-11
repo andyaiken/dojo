@@ -150,6 +150,7 @@ export default class AbilityScorePanel extends React.Component<Props, State> {
             return result;
         } catch (e) {
             console.error(e);
+            return <div className='render-error'/>;
         }
     }
 }

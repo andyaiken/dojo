@@ -58,7 +58,7 @@ export default class Expander extends React.Component<Props, State> {
             );
         } catch (ex) {
             console.error(ex);
-            return null;
+            return <div className='render-error'/>;
         }
     }
 }

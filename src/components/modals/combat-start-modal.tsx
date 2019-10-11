@@ -574,6 +574,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
             );
         } catch (e) {
             console.error(e);
+            return <div className='render-error'/>;
         }
     }
 }
@@ -587,8 +588,17 @@ interface MonsterNameProps {
 
 class MonsterName extends React.Component<MonsterNameProps> {
     public render() {
-        return (
-            <input type='text' value={this.props.value} onChange={event => this.props.changeName(this.props.slotID, this.props.index, event.target.value)} />
-        );
+        try {
+            return (
+                <input
+                    type='text'
+                    value={this.props.value}
+                    onChange={event => this.props.changeName(this.props.slotID, this.props.index, event.target.value)}
+                />
+            );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
+        }
     }
 }

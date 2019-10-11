@@ -36,6 +36,7 @@ export default class MonsterGroupListItem extends React.Component<Props> {
             );
         } catch (e) {
             console.error(e);
+            return <div className='render-error'/>;
         }
     }
 }

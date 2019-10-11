@@ -109,7 +109,7 @@ export default class Dropdown extends React.Component<Props, State> {
             );
         } catch (ex) {
             console.error(ex);
-            return null;
+            return <div className='render-error'/>;
         }
     }
 }
@@ -145,7 +145,7 @@ class DropdownOption extends React.Component<DropdownOptionProps> {
             );
         } catch (ex) {
             console.error(ex);
-            return null;
+            return <div className='render-error'/>;
         }
     }
 }

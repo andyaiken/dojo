@@ -34,6 +34,7 @@ export default class CombatListItem extends React.Component<Props> {
             );
         } catch (e) {
             console.error(e);
+            return <div className='render-error'/>;
         }
     }
 }

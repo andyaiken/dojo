@@ -42,55 +42,60 @@ export default class NameModule extends React.Component<Props, State> {
     }
 
     public render() {
-        const male = [];
-        for (let n = 0; n !== this.state.output.male.length; ++n) {
-            male.push(
-                <div key={n} className='section'>
-                    {this.state.output.male[n].toLowerCase()}
-                </div>
-            );
-        }
+        try {
+            const male = [];
+            for (let n = 0; n !== this.state.output.male.length; ++n) {
+                male.push(
+                    <div key={n} className='section'>
+                        {this.state.output.male[n].toLowerCase()}
+                    </div>
+                );
+            }
 
-        const female = [];
-        for (let n = 0; n !== this.state.output.female.length; ++n) {
-            female.push(
-                <div key={n} className='section'>
-                    {this.state.output.female[n].toLowerCase()}
-                </div>
-            );
-        }
+            const female = [];
+            for (let n = 0; n !== this.state.output.female.length; ++n) {
+                female.push(
+                    <div key={n} className='section'>
+                        {this.state.output.female[n].toLowerCase()}
+                    </div>
+                );
+            }
 
-        const surname = [];
-        for (let n = 0; n !== this.state.output.surname.length; ++n) {
-            surname.push(
-                <div key={n} className='section'>
-                    {this.state.output.surname[n].toLowerCase()}
-                </div>
-            );
-        }
+            const surname = [];
+            for (let n = 0; n !== this.state.output.surname.length; ++n) {
+                surname.push(
+                    <div key={n} className='section'>
+                        {this.state.output.surname[n].toLowerCase()}
+                    </div>
+                );
+            }
 
-        return (
-            <div>
-                <div className='name-output'>
-                    <div className='row'>
-                        <div className='columns small-4 medium-4 large-4'>
-                            <div className='heading'>male names</div>
-                            <button onClick={() => this.generate('male')}>generate</button>
-                            {male}
-                        </div>
-                        <div className='columns small-4 medium-4 large-4'>
-                            <div className='heading'>female names</div>
-                            <button onClick={() => this.generate('female')}>generate</button>
-                            {female}
-                        </div>
-                        <div className='columns small-4 medium-4 large-4'>
-                            <div className='heading'>surnames</div>
-                            <button onClick={() => this.generate('surname')}>generate</button>
-                            {surname}
+            return (
+                <div>
+                    <div className='name-output'>
+                        <div className='row'>
+                            <div className='columns small-4 medium-4 large-4'>
+                                <div className='heading'>male names</div>
+                                <button onClick={() => this.generate('male')}>generate</button>
+                                {male}
+                            </div>
+                            <div className='columns small-4 medium-4 large-4'>
+                                <div className='heading'>female names</div>
+                                <button onClick={() => this.generate('female')}>generate</button>
+                                {female}
+                            </div>
+                            <div className='columns small-4 medium-4 large-4'>
+                                <div className='heading'>surnames</div>
+                                <button onClick={() => this.generate('surname')}>generate</button>
+                                {surname}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        );
+            );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
+        }
     }
 }

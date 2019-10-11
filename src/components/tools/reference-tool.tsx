@@ -30,50 +30,55 @@ export default class ReferenceTool extends React.Component<Props, State> {
     }
 
     public render() {
-        const options = [
-            {
-                id: 'skills',
-                text: 'skills'
-            },
-            {
-                id: 'conditions',
-                text: 'conditions'
-            },
-            {
-                id: 'actions',
-                text: 'actions'
+        try {
+            const options = [
+                {
+                    id: 'skills',
+                    text: 'skills'
+                },
+                {
+                    id: 'conditions',
+                    text: 'conditions'
+                },
+                {
+                    id: 'actions',
+                    text: 'actions'
+                }
+            ];
+
+            let content = null;
+            switch (this.state.view) {
+                case 'skills':
+                    content = (
+                        <SkillsModule />
+                    );
+                    break;
+                case 'conditions':
+                    content = (
+                        <ConditionsModule />
+                    );
+                    break;
+                case 'actions':
+                    content = (
+                        <ActionsModule />
+                    );
+                    break;
             }
-        ];
 
-        let content = null;
-        switch (this.state.view) {
-            case 'skills':
-                content = (
-                    <SkillsModule />
-                );
-                break;
-            case 'conditions':
-                content = (
-                    <ConditionsModule />
-                );
-                break;
-            case 'actions':
-                content = (
-                    <ActionsModule />
-                );
-                break;
+            return (
+                <div className='reference'>
+                    <Selector
+                        options={options}
+                        selectedID={this.state.view}
+                        select={optionID => this.setView(optionID)}
+                    />
+                    <div className='divider' />
+                    {content}
+                </div>
+            );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
         }
-
-        return (
-            <div className='reference'>
-                <Selector
-                    options={options}
-                    selectedID={this.state.view}
-                    select={optionID => this.setView(optionID)}
-                />
-                <div className='divider' />
-                {content}
-            </div>
-        );
     }
 }

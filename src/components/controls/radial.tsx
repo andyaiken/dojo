@@ -92,7 +92,7 @@ export default class Radial extends React.Component<Props> {
 
         } catch (ex) {
             console.error(ex);
-            return null;
+            return <div className='render-error'/>;
         }
     }
 }

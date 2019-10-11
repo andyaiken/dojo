@@ -160,6 +160,7 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
             );
         } catch (e) {
             console.error(e);
+            return <div className='render-error'/>;
         }
     }
 }
@@ -170,32 +171,37 @@ interface HelpCardProps {
 
 class HelpCard extends React.Component<HelpCardProps> {
     public render() {
-        let action: JSX.Element | null = null;
-        if (this.props.library.length === 0) {
-            action = (
-                <div className='section'>to start adding monsters, press the <b>add a new monster group</b> button</div>
-            );
-        } else {
-            action = (
-                <div>
-                    <div className='section'>on the left you will see a list of monster groups</div>
-                    <div className='section'>select a monster group from the list to see stat blocks for monsters in that group</div>
-                </div>
-            );
-        }
-
-        return (
-            <Note
-                content={
+        try {
+            let action: JSX.Element | null = null;
+            if (this.props.library.length === 0) {
+                action = (
+                    <div className='section'>to start adding monsters, press the <b>add a new monster group</b> button</div>
+                );
+            } else {
+                action = (
                     <div>
-                        <div className='section'>you can maintain your menagerie of monsters here</div>
-                        <div className='section'>you can then use these monsters to design combat encounters in the encounter builder</div>
-                        <div className='divider'/>
-                        {action}
+                        <div className='section'>on the left you will see a list of monster groups</div>
+                        <div className='section'>select a monster group from the list to see stat blocks for monsters in that group</div>
                     </div>
-                }
-            />
-        );
+                );
+            }
+
+            return (
+                <Note
+                    content={
+                        <div>
+                            <div className='section'>you can maintain your menagerie of monsters here</div>
+                            <div className='section'>you can then use these monsters to design combat encounters in the encounter builder</div>
+                            <div className='divider'/>
+                            {action}
+                        </div>
+                    }
+                />
+            );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
+        }
     }
 }
 
@@ -233,6 +239,7 @@ class MonsterInfo extends React.Component<MonsterInfoProps> {
             );
         } catch (e) {
             console.error(e);
+            return <div className='render-error'/>;
         }
     }
 }
