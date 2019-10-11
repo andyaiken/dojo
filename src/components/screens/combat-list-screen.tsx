@@ -7,7 +7,6 @@ import Note from '../panels/note';
 
 interface Props {
     combats: Combat[];
-    createCombat: () => void;
     resumeCombat: (combat: Combat) => void;
 }
 
@@ -27,7 +26,7 @@ export default class CombatListScreen extends React.Component<Props> {
                 listItems.push(
                     <Note
                         key='empty'
-                        content={'you have no in-progress encounters'}
+                        content={'you have no in-progress combat encounters'}
                     />
                 );
             }
@@ -35,8 +34,6 @@ export default class CombatListScreen extends React.Component<Props> {
             return (
                 <div className='screen row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable list-column'>
-                        <button onClick={() => this.props.createCombat()}>start a new combat</button>
-                        <div className='divider' />
                         {listItems}
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>

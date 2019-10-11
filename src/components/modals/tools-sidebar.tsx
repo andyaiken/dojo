@@ -1,11 +1,14 @@
 import React from 'react';
 
+import { MonsterGroup } from '../../models/monster-group';
+
 import Selector from '../controls/selector';
 import AboutTool from '../tools/about-tool';
 import DMTool from '../tools/dm-tool';
 import ReferenceTool from '../tools/reference-tool';
 
 interface Props {
+    library: MonsterGroup[];
     resetAll: () => void;
 }
 
@@ -50,7 +53,7 @@ export default class ToolsSidebar extends React.Component<Props, State> {
                     content = <ReferenceTool />;
                     break;
                 case 'dm':
-                    content = <DMTool />;
+                    content = <DMTool library={this.props.library} />;
                     break;
                 case 'about':
                     content = <AboutTool resetAll={() => this.props.resetAll()} />;

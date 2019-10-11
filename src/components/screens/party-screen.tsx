@@ -9,7 +9,6 @@ import Note from '../panels/note';
 
 interface Props {
     party: Party;
-    goBack: () => void;
     removeParty: () => void;
     addPC: () => void;
     editPC: (pc: PC) => void;
@@ -74,8 +73,6 @@ export default class PartyScreen extends React.Component<Props> {
                             changeValue={(type, value) => this.props.changeValue(this.props.party, type, value)}
                             removeParty={() => this.props.removeParty()}
                         />
-                        <div className='divider' />
-                        <button onClick={() => this.props.goBack()}>&larr; back to list</button>
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup

@@ -430,16 +430,13 @@ body,
         top: 4px;
         vertical-align: middle;
 
-        > .section {
+        .section {
             display: inline-block;
             margin: 0 5px;
-            color: $header-foreground;
             vertical-align: top;
 
-            > button,
-            > .menu,
-            > .selector {
-                width: 150px;
+            button {
+                width: 200px;
             }
 
             .text {

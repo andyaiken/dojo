@@ -5,12 +5,12 @@ import { MonsterGroup } from '../../models/monster-group';
 import { Party } from '../../models/party';
 
 interface Props {
-    view: string;
+    view: 'home' | 'parties' | 'library' | 'encounters' | 'maps' | 'combat';
     blur: boolean;
     library: MonsterGroup[];
     parties: Party[];
     encounters: Encounter[];
-    setView: (view: string) => void;
+    setView: (view: 'home' | 'parties' | 'library' | 'encounters' | 'maps' | 'combat') => void;
 }
 
 export default class Navbar extends React.Component<Props> {
@@ -18,7 +18,7 @@ export default class Navbar extends React.Component<Props> {
         try {
             const partiesStyle = this.props.view === 'parties' ? 'navigator-item selected' : 'navigator-item';
             const libraryStyle = this.props.view === 'library' ? 'navigator-item selected' : 'navigator-item';
-            let encounterStyle = this.props.view === 'encounter' ? 'navigator-item selected' : 'navigator-item';
+            let encounterStyle = this.props.view === 'encounters' ? 'navigator-item selected' : 'navigator-item';
             const mapStyle = this.props.view === 'maps' ? 'navigator-item selected' : 'navigator-item';
             let combatStyle = this.props.view === 'combat' ? 'navigator-item selected' : 'navigator-item';
 
@@ -35,7 +35,7 @@ export default class Navbar extends React.Component<Props> {
                 <div className={this.props.blur ? 'navbar blur' : 'navbar'}>
                     <div className={partiesStyle} onClick={() => this.props.setView('parties')}>player characters</div>
                     <div className={libraryStyle} onClick={() => this.props.setView('library')}>monster library</div>
-                    <div className={encounterStyle} onClick={() => encountersEnabled ? this.props.setView('encounter') : null}>encounter builder</div>
+                    <div className={encounterStyle} onClick={() => encountersEnabled ? this.props.setView('encounters') : null}>encounter builder</div>
                     <div className={mapStyle} onClick={() => this.props.setView('maps')}>map folios</div>
                     <div className={combatStyle} onClick={() => combatEnabled ? this.props.setView('combat') : null}>combat manager</div>
                 </div>

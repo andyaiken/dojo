@@ -22,7 +22,6 @@ interface Props {
     encounter: Encounter;
     parties: Party[];
     library: MonsterGroup[];
-    goBack: () => void;
     clearEncounter: () => void;
     removeEncounter: () => void;
     buildEncounter: (xp: number, filter: MonsterFilter) => void;
@@ -223,8 +222,6 @@ export default class EncounterScreen extends React.Component<Props, State> {
                             nudgeFilterValue={(type, delta) => this.nudgeFilterValue(type, delta)}
                             resetFilter={() => this.resetFilter()}
                         />
-                        <div className='divider' />
-                        <button onClick={() => this.props.goBack()}>&larr; back to list</button>
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup

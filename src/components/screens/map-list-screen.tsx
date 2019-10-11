@@ -7,7 +7,6 @@ import Note from '../panels/note';
 interface Props {
     mapFolios: MapFolio[];
     selectMapFolio: (mapFolio: MapFolio) => void;
-    addMapFolio: () => void;
 }
 
 export default class MapListScreen extends React.Component<Props> {
@@ -34,8 +33,6 @@ export default class MapListScreen extends React.Component<Props> {
             return (
                 <div className='screen row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable list-column'>
-                        <button onClick={() => this.props.addMapFolio()}>add a new map folio</button>
-                        <div className='divider' />
                         {listItems}
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>

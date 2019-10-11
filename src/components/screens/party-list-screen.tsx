@@ -7,7 +7,6 @@ import Note from '../panels/note';
 interface Props {
     parties: Party[];
     selectParty: (party: Party) => void;
-    addParty: () => void;
 }
 
 export default class PartyListScreen extends React.Component<Props> {
@@ -34,8 +33,6 @@ export default class PartyListScreen extends React.Component<Props> {
             return (
                 <div className='screen row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable list-column'>
-                        <button onClick={() => this.props.addParty()}>add a new party</button>
-                        <div className='divider' />
                         {listItems}
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>

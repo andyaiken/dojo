@@ -17,7 +17,6 @@ import Checkbox from './controls/checkbox';
 import AddCombatantsModal from './modals/add-combatants-modal';
 import CombatStartModal from './modals/combat-start-modal';
 import ConditionModal from './modals/condition-modal';
-import DemographicsSidebar from './modals/demographics-sidebar';
 import MapEditorModal from './modals/map-editor-modal';
 import MonsterEditorModal from './modals/monster-editor-modal';
 import PCEditorModal from './modals/pc-editor-modal';
@@ -44,7 +43,7 @@ interface Props {
 }
 
 interface State {
-    view: string;
+    view: 'home' | 'parties' | 'library' | 'encounters' | 'maps' | 'combat';
     modal: any;
 
     parties: Party[];
@@ -388,14 +387,6 @@ export default class Dojo extends React.Component<Props, State> {
         this.state.modal.showSidebar = !this.state.modal.showSidebar;
         this.setState({
             modal: this.state.modal
-        });
-    }
-
-    private openDemographics() {
-        this.setState({
-            modal: {
-                type: 'demographics'
-            }
         });
     }
 
@@ -1413,7 +1404,7 @@ export default class Dojo extends React.Component<Props, State> {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private setView(view: string) {
+    private setView(view: 'home' | 'parties' | 'library' | 'encounters' | 'maps' | 'combat') {
         this.setState({
             view: view
         });
@@ -1574,33 +1565,96 @@ export default class Dojo extends React.Component<Props, State> {
 
     private getActions() {
         switch (this.state.view) {
-            case 'library':
-                return (
-                    <div className='actions'>
-                        <div className='section'>
-                            <button onClick={() => this.openDemographics()}>demographics</button>
-                        </div>
-                    </div>
-                );
-            case 'combat':
-                const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-                if (combat) {
-                    let xp = 0;
-                    const encounter = this.state.encounters.find(e => e.id === combat.encounterID);
-                    if (encounter) {
-                        combat.combatants
-                            .filter(c => c.type === 'monster')
-                            .forEach(combatant => {
-                                xp += Utils.experience((combatant as Combatant & Monster).challenge);
-                            });
-                    }
+            case 'parties':
+                if (this.state.selectedPartyID) {
                     return (
                         <div className='actions'>
                             <div className='section'>
-                                <div className='text'>round: {combat.round}</div>
+                                <button onClick={() => this.selectParty(null)}>&larr; back to list</button>
+                            </div>
+                        </div>
+                    );
+                } else {
+                    return (
+                        <div className='actions'>
+                            <div className='section'>
+                                <button onClick={() => this.addParty()}>create a new party</button>
+                            </div>
+                        </div>
+                    );
+                }
+            case 'library':
+                if (this.state.selectedMonsterGroupID) {
+                    return (
+                        <div className='actions'>
+                            <div className='section'>
+                                <button onClick={() => this.selectMapFolio(null)}>&larr; back to list</button>
+                            </div>
+                        </div>
+                    );
+                } else {
+                    return (
+                        <div className='actions'>
+                            <div className='section'>
+                                <button onClick={() => this.addMonsterGroup()}>create a new monster group</button>
+                            </div>
+                        </div>
+                    );
+                }
+            case 'encounters':
+                if (this.state.selectedEncounterID) {
+                    return (
+                        <div className='actions'>
+                            <div className='section'>
+                                <button onClick={() => this.selectEncounter(null)}>&larr; back to list</button>
+                            </div>
+                        </div>
+                    );
+                } else {
+                    return (
+                        <div className='actions'>
+                            <div className='section'>
+                                <button onClick={() => this.addEncounter()}>create a new encounter</button>
+                            </div>
+                        </div>
+                    );
+                }
+            case 'maps':
+                if (this.state.selectedMapFolioID) {
+                    return (
+                        <div className='actions'>
+                            <div className='section'>
+                                <button onClick={() => this.selectMapFolio(null)}>&larr; back to list</button>
+                            </div>
+                        </div>
+                    );
+                } else {
+                    return (
+                        <div className='actions'>
+                            <div className='section'>
+                                <button onClick={() => this.addMapFolio()}>create a new map folio</button>
+                            </div>
+                        </div>
+                    );
+                }
+            case 'combat':
+                if (this.state.selectedCombatID) {
+                    const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+                    return (
+                        <div className='actions'>
+                            <div className='section'>
+                                <div className='text'>round: {combat ? combat.round : 0}</div>
                             </div>
                             <div className='section'>
-                                <div className='text'>xp: {xp}</div>
+                                <button onClick={() => this.endCombat()}>end combat</button>
+                            </div>
+                        </div>
+                    );
+                } else {
+                    return (
+                        <div className='actions'>
+                            <div className='section'>
+                                <button onClick={() => this.createCombat()}>start a new combat</button>
                             </div>
                         </div>
                     );
@@ -1624,7 +1678,6 @@ export default class Dojo extends React.Component<Props, State> {
                     return (
                         <PartyScreen
                             party={this.state.parties.find(p => p.id === this.state.selectedPartyID) as Party}
-                            goBack={() => this.selectParty(null)}
                             removeParty={() => this.removeParty()}
                             addPC={() => this.addPC()}
                             editPC={pc => this.editPC(pc)}
@@ -1639,7 +1692,6 @@ export default class Dojo extends React.Component<Props, State> {
                         <PartyListScreen
                             parties={this.state.parties}
                             selectParty={party => this.selectParty(party)}
-                            addParty={() => this.addParty()}
                         />
                     );
                 }
@@ -1649,7 +1701,6 @@ export default class Dojo extends React.Component<Props, State> {
                         <MonsterScreen
                             monsterGroup={this.state.library.find(g => g.id === this.state.selectedMonsterGroupID) as MonsterGroup}
                             library={this.state.library}
-                            goBack={() => this.selectMonsterGroup(null)}
                             removeMonsterGroup={() => this.removeMonsterGroup()}
                             addMonster={() => this.addMonster()}
                             removeMonster={monster => this.removeMonster(monster)}
@@ -1666,18 +1717,16 @@ export default class Dojo extends React.Component<Props, State> {
                         <MonsterListScreen
                             library={this.state.library}
                             selectMonsterGroup={group => this.selectMonsterGroup(group)}
-                            addMonsterGroup={() => this.addMonsterGroup()}
                         />
                     );
                 }
-            case 'encounter':
+            case 'encounters':
                 if (this.state.selectedEncounterID) {
                     return (
                         <EncounterScreen
                             encounter={this.state.encounters.find(e => e.id === this.state.selectedEncounterID) as Encounter}
                             parties={this.state.parties}
                             library={this.state.library}
-                            goBack={() => this.selectEncounter(null)}
                             clearEncounter={() => this.clearEncounter()}
                             removeEncounter={() => this.removeEncounter()}
                             buildEncounter={(xp, filter) => this.buildEncounter(xp, filter)}
@@ -1695,7 +1744,6 @@ export default class Dojo extends React.Component<Props, State> {
                         <EncounterListScreen
                             encounters={this.state.encounters}
                             selectEncounter={encounter => this.selectEncounter(encounter)}
-                            addEncounter={() => this.addEncounter()}
                         />
                     );
                 }
@@ -1704,7 +1752,6 @@ export default class Dojo extends React.Component<Props, State> {
                     return (
                         <MapScreen
                             mapFolio={this.state.mapFolios.find(f => f.id === this.state.selectedMapFolioID) as MapFolio}
-                            goBack={() => this.selectMapFolio(null)}
                             removeMapFolio={() => this.removeMapFolio()}
                             addMap={() => this.addMap()}
                             editMap={map => this.editMap(map)}
@@ -1717,7 +1764,6 @@ export default class Dojo extends React.Component<Props, State> {
                         <MapListScreen
                             mapFolios={this.state.mapFolios}
                             selectMapFolio={folio => this.selectMapFolio(folio)}
-                            addMapFolio={() => this.addMapFolio()}
                         />
                     );
                 }
@@ -1728,7 +1774,6 @@ export default class Dojo extends React.Component<Props, State> {
                             combat={this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat}
                             encounters={this.state.encounters}
                             pauseCombat={() => this.pauseCombat()}
-                            endCombat={() => this.endCombat()}
                             nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                             makeCurrent={(combatant) => this.makeCurrent(combatant, false)}
@@ -1755,7 +1800,6 @@ export default class Dojo extends React.Component<Props, State> {
                     return (
                         <CombatListScreen
                             combats={this.state.combats}
-                            createCombat={() => this.createCombat()}
                             resumeCombat={pausedCombat => this.resumeCombat(pausedCombat)}
                         />
                     );
@@ -1784,16 +1828,8 @@ export default class Dojo extends React.Component<Props, State> {
                     modalSidebar = true;
                     modalContent = (
                         <ToolsSidebar
-                            resetAll={() => this.resetAll()}
-                        />
-                    );
-                    modalButtons.right = [];
-                    break;
-                case 'demographics':
-                    modalSidebar = true;
-                    modalContent = (
-                        <DemographicsSidebar
                             library={this.state.library}
+                            resetAll={() => this.resetAll()}
                         />
                     );
                     modalButtons.right = [];

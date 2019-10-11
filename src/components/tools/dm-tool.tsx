@@ -1,13 +1,15 @@
 import React from 'react';
 
+import { MonsterGroup } from '../../models/monster-group';
+
 import Selector from '../controls/selector';
 import DieRollerModule from './dm/die-roller-module';
 import LanguageModule from './dm/language-module';
 import NameModule from './dm/name-module';
+import DemographicsModule from './dm/demographics-module';
 
-// tslint:disable-next-line:no-empty-interface
 interface Props {
-    //
+    library: MonsterGroup[];
 }
 
 interface State {
@@ -43,6 +45,10 @@ export default class DMTool extends React.Component<Props, State> {
                 {
                     id: 'name',
                     text: 'name generator'
+                },
+                {
+                    id: 'demographics',
+                    text: 'monster demographics'
                 }
             ];
 
@@ -63,6 +69,10 @@ export default class DMTool extends React.Component<Props, State> {
                         <NameModule />
                     );
                     break;
+                case 'demographics':
+                    content = (
+                        <DemographicsModule library={this.props.library} />
+                    );
             }
 
             return (
@@ -70,6 +80,7 @@ export default class DMTool extends React.Component<Props, State> {
                     <Selector
                         options={options}
                         selectedID={this.state.view}
+                        itemsPerRow={2}
                         select={optionID => this.setView(optionID)}
                     />
                     <div className='divider' />

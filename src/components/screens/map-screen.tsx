@@ -9,7 +9,6 @@ import Note from '../panels/note';
 
 interface Props {
     mapFolio: MapFolio;
-    goBack: () => void;
     removeMapFolio: () => void;
     addMap: () => void;
     editMap: (map: Map) => void;
@@ -52,8 +51,6 @@ export default class MapScreen extends React.Component<Props> {
                             removeMapFolio={() => this.props.removeMapFolio()}
                             changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
                         />
-                        <div className='divider' />
-                        <button onClick={() => this.props.goBack()}>&larr; back to list</button>
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup

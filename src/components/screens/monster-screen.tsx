@@ -10,7 +10,6 @@ import Note from '../panels/note';
 interface Props {
     monsterGroup: MonsterGroup;
     library: MonsterGroup[];
-    goBack: () => void;
     removeMonsterGroup: () => void;
     addMonster: () => void;
     removeMonster: (monster: Monster) => void;
@@ -63,8 +62,6 @@ export default class MonsterScreen extends React.Component<Props> {
                             changeValue={(type, value) => this.props.changeValue(this.props.monsterGroup, type, value)}
                             removeMonsterGroup={() => this.props.removeMonsterGroup()}
                         />
-                        <div className='divider' />
-                        <button onClick={() => this.props.goBack()}>&larr; back to list</button>
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup

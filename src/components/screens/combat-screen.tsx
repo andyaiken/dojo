@@ -11,7 +11,6 @@ import { PC } from '../../models/party';
 import MonsterCard from '../cards/monster-card';
 import PCCard from '../cards/pc-card';
 import Checkbox from '../controls/checkbox';
-import ConfirmButton from '../controls/confirm-button';
 import ControlRow from '../controls/control-row';
 import Radial from '../controls/radial';
 import Spin from '../controls/spin';
@@ -26,7 +25,6 @@ interface Props {
     combat: Combat;
     encounters: Encounter[];
     pauseCombat: () => void;
-    endCombat: () => void;
     closeNotification: (notification: Notification, removeCondition: boolean) => void;
     mapAdd: (combatant: (Combatant & PC) | (Combatant & Monster), x: number, y: number) => void;
     makeCurrent: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
@@ -504,8 +502,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                         <div key='tools'>
                             <div>
                                 <div className='subheading'>encounter</div>
-                                <button onClick={() => this.props.pauseCombat()}>pause encounter</button>
-                                <ConfirmButton text='end encounter' callback={() => this.props.endCombat()} />
+                                <button onClick={() => this.props.pauseCombat()}>pause this encounter</button>
                                 <button onClick={() => this.props.addCombatants()}>add combatants</button>
                                 <button onClick={() => this.props.addWave()} style={{ display: wavesAvailable ? 'block' : 'none' }}>add wave</button>
                             </div>
