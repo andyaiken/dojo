@@ -1623,7 +1623,7 @@ export default class Dojo extends React.Component<Props, State> {
                 if (this.state.selectedPartyID) {
                     return (
                         <PartyScreen
-                            selection={this.state.parties.find(p => p.id === this.state.selectedPartyID) as Party}
+                            party={this.state.parties.find(p => p.id === this.state.selectedPartyID) as Party}
                             goBack={() => this.selectParty(null)}
                             removeParty={() => this.removeParty()}
                             addPC={() => this.addPC()}
@@ -1647,7 +1647,7 @@ export default class Dojo extends React.Component<Props, State> {
                 if (this.state.selectedMonsterGroupID) {
                     return (
                         <MonsterScreen
-                            selection={this.state.library.find(g => g.id === this.state.selectedMonsterGroupID) as MonsterGroup}
+                            monsterGroup={this.state.library.find(g => g.id === this.state.selectedMonsterGroupID) as MonsterGroup}
                             library={this.state.library}
                             goBack={() => this.selectMonsterGroup(null)}
                             removeMonsterGroup={() => this.removeMonsterGroup()}
@@ -1674,7 +1674,7 @@ export default class Dojo extends React.Component<Props, State> {
                 if (this.state.selectedEncounterID) {
                     return (
                         <EncounterScreen
-                            selection={this.state.encounters.find(e => e.id === this.state.selectedEncounterID) as Encounter}
+                            encounter={this.state.encounters.find(e => e.id === this.state.selectedEncounterID) as Encounter}
                             parties={this.state.parties}
                             library={this.state.library}
                             goBack={() => this.selectEncounter(null)}
@@ -1703,7 +1703,7 @@ export default class Dojo extends React.Component<Props, State> {
                 if (this.state.selectedMapFolioID) {
                     return (
                         <MapScreen
-                            selection={this.state.mapFolios.find(f => f.id === this.state.selectedMapFolioID) as MapFolio}
+                            mapFolio={this.state.mapFolios.find(f => f.id === this.state.selectedMapFolioID) as MapFolio}
                             goBack={() => this.selectMapFolio(null)}
                             removeMapFolio={() => this.removeMapFolio()}
                             addMap={() => this.addMap()}

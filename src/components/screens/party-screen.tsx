@@ -8,7 +8,7 @@ import CardGroup from '../panels/card-group';
 import Note from '../panels/note';
 
 interface Props {
-    selection: Party;
+    party: Party;
     goBack: () => void;
     removeParty: () => void;
     addPC: () => void;
@@ -22,7 +22,7 @@ interface Props {
 export default class PartyScreen extends React.Component<Props> {
     public render() {
         try {
-            const activePCs = this.props.selection.pcs.filter(pc => pc.active);
+            const activePCs = this.props.party.pcs.filter(pc => pc.active);
             const activeCards: JSX.Element[] = [];
             activePCs.forEach(activePC => {
                 activeCards.push(
@@ -39,7 +39,7 @@ export default class PartyScreen extends React.Component<Props> {
                 );
             });
 
-            const inactivePCs = this.props.selection.pcs.filter(pc => !pc.active);
+            const inactivePCs = this.props.party.pcs.filter(pc => !pc.active);
             const inactiveCards: JSX.Element[] = [];
             inactivePCs.forEach(inactivePC => {
                 inactiveCards.push(
@@ -68,10 +68,10 @@ export default class PartyScreen extends React.Component<Props> {
                 <div className='screen row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable list-column'>
                         <PartyInfo
-                            selection={this.props.selection}
+                            party={this.props.party}
                             addPC={() => this.props.addPC()}
                             sortPCs={() => this.props.sortPCs()}
-                            changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
+                            changeValue={(type, value) => this.props.changeValue(this.props.party, type, value)}
                             removeParty={() => this.props.removeParty()}
                         />
                         <div className='divider' />
@@ -80,7 +80,7 @@ export default class PartyScreen extends React.Component<Props> {
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup
                             content={activeCards}
-                            heading={this.props.selection.name || 'unnamed party'}
+                            heading={this.props.party.name || 'unnamed party'}
                         />
                         <CardGroup
                             content={inactiveCards}
@@ -98,7 +98,7 @@ export default class PartyScreen extends React.Component<Props> {
 }
 
 interface PartyInfoProps {
-    selection: Party;
+    party: Party;
     changeValue: (field: string, value: string) => void;
     addPC: () => void;
     sortPCs: () => void;
@@ -107,7 +107,7 @@ interface PartyInfoProps {
 
 class PartyInfo extends React.Component<PartyInfoProps> {
     private getSummary() {
-        const activePCs = this.props.selection.pcs.filter(pc => pc.active);
+        const activePCs = this.props.party.pcs.filter(pc => pc.active);
         if (activePCs.length === 0) {
             return null;
         }
@@ -191,7 +191,7 @@ class PartyInfo extends React.Component<PartyInfoProps> {
                         <input
                             type='text'
                             placeholder='party name'
-                            value={this.props.selection.name}
+                            value={this.props.party.name}
                             onChange={event => this.props.changeValue('name', event.target.value)}
                         />
                     </div>

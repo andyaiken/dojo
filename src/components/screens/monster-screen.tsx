@@ -8,7 +8,7 @@ import CardGroup from '../panels/card-group';
 import Note from '../panels/note';
 
 interface Props {
-    selection: MonsterGroup;
+    monsterGroup: MonsterGroup;
     library: MonsterGroup[];
     goBack: () => void;
     removeMonsterGroup: () => void;
@@ -27,8 +27,8 @@ export default class MonsterScreen extends React.Component<Props> {
         try {
             const cards: JSX.Element[] = [];
 
-            if (this.props.selection.monsters.length !== 0) {
-                this.props.selection.monsters.forEach(m => {
+            if (this.props.monsterGroup.monsters.length !== 0) {
+                this.props.monsterGroup.monsters.forEach(m => {
                     cards.push(
                         <div className='column' key={m.id}>
                             <MonsterCard
@@ -57,10 +57,10 @@ export default class MonsterScreen extends React.Component<Props> {
                 <div className='screen row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable list-column'>
                         <MonsterInfo
-                            selection={this.props.selection}
+                            monsterGroup={this.props.monsterGroup}
                             addMonster={() => this.props.addMonster()}
                             sortMonsters={() => this.props.sortMonsters()}
-                            changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
+                            changeValue={(type, value) => this.props.changeValue(this.props.monsterGroup, type, value)}
                             removeMonsterGroup={() => this.props.removeMonsterGroup()}
                         />
                         <div className='divider' />
@@ -69,7 +69,7 @@ export default class MonsterScreen extends React.Component<Props> {
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup
                             content={cards}
-                            heading={this.props.selection.name || 'unnamed group'}
+                            heading={this.props.monsterGroup.name || 'unnamed group'}
                         />
                     </div>
                 </div>
@@ -82,7 +82,7 @@ export default class MonsterScreen extends React.Component<Props> {
 }
 
 interface MonsterInfoProps {
-    selection: MonsterGroup;
+    monsterGroup: MonsterGroup;
     changeValue: (field: string, value: string) => void;
     addMonster: () => void;
     sortMonsters: () => void;
@@ -99,7 +99,7 @@ class MonsterInfo extends React.Component<MonsterInfoProps> {
                         <input
                             type='text'
                             placeholder='monster group name'
-                            value={this.props.selection.name}
+                            value={this.props.monsterGroup.name}
                             onChange={event => this.props.changeValue('name', event.target.value)}
                         />
                     </div>

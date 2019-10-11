@@ -8,7 +8,7 @@ import CardGroup from '../panels/card-group';
 import Note from '../panels/note';
 
 interface Props {
-    selection: MapFolio;
+    mapFolio: MapFolio;
     goBack: () => void;
     removeMapFolio: () => void;
     addMap: () => void;
@@ -22,7 +22,7 @@ export default class MapScreen extends React.Component<Props> {
         try {
             const folioCards = [];
 
-            this.props.selection.maps.forEach(m => {
+            this.props.mapFolio.maps.forEach(m => {
                 folioCards.push(
                     <div className='column' key={m.id}>
                         <MapCard
@@ -47,7 +47,7 @@ export default class MapScreen extends React.Component<Props> {
                 <div className='map-builder row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable list-column'>
                         <MapFolioInfo
-                            selection={this.props.selection}
+                            mapFolio={this.props.mapFolio}
                             addMap={() => this.props.addMap()}
                             removeMapFolio={() => this.props.removeMapFolio()}
                             changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
@@ -58,7 +58,7 @@ export default class MapScreen extends React.Component<Props> {
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup
                             content={folioCards}
-                            heading={this.props.selection.name || 'unnamed folio'}
+                            heading={this.props.mapFolio.name || 'unnamed folio'}
                         />
                     </div>
                 </div>
@@ -71,7 +71,7 @@ export default class MapScreen extends React.Component<Props> {
 }
 
 interface MapFolioInfoProps {
-    selection: MapFolio;
+    mapFolio: MapFolio;
     changeValue: (source: MapFolio, field: string, value: string) => void;
     addMap: () => void;
     removeMapFolio: () => void;
@@ -87,8 +87,8 @@ class MapFolioInfo extends React.Component<MapFolioInfoProps> {
                         <input
                             type='text'
                             placeholder='map folio name'
-                            value={this.props.selection.name}
-                            onChange={event => this.props.changeValue(this.props.selection, 'name', event.target.value)}
+                            value={this.props.mapFolio.name}
+                            onChange={event => this.props.changeValue(this.props.mapFolio, 'name', event.target.value)}
                         />
                     </div>
                     <div className='divider' />

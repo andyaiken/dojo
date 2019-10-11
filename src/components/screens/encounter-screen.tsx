@@ -19,7 +19,7 @@ import FilterPanel from '../panels/filter-panel';
 import Note from '../panels/note';
 
 interface Props {
-    selection: Encounter;
+    encounter: Encounter;
     parties: Party[];
     library: MonsterGroup[];
     goBack: () => void;
@@ -81,7 +81,7 @@ export default class EncounterScreen extends React.Component<Props, State> {
                         <MonsterCard
                             combatant={monster}
                             slot={slot}
-                            encounter={this.props.selection as Encounter}
+                            encounter={this.props.encounter}
                             mode={'view encounter'}
                             nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
                             removeEncounterSlot={s => this.props.removeEncounterSlot(s, waveID)}
@@ -141,25 +141,19 @@ export default class EncounterScreen extends React.Component<Props, State> {
     }
 
     private getLibrarySection() {
-        if (!this.props.selection) {
-            return null;
-        }
-
         const monsters: Monster[] = [];
-        if (this.props.selection) {
-            this.props.library.forEach(group => {
-                group.monsters.forEach(monster => {
-                    if (this.matchMonster(monster)) {
-                        monsters.push(monster);
-                    }
-                });
+        this.props.library.forEach(group => {
+            group.monsters.forEach(monster => {
+                if (this.matchMonster(monster)) {
+                    monsters.push(monster);
+                }
             });
-            monsters.sort((a, b) => {
-                if (a.name < b.name) { return -1; }
-                if (a.name > b.name) { return 1; }
-                return 0;
-            });
-        }
+        });
+        monsters.sort((a, b) => {
+            if (a.name < b.name) { return -1; }
+            if (a.name > b.name) { return 1; }
+            return 0;
+        });
 
         const libraryCards = monsters.map(monster => {
             return (
@@ -167,7 +161,7 @@ export default class EncounterScreen extends React.Component<Props, State> {
                     <MonsterCard
                         key={monster.id}
                         combatant={monster}
-                        encounter={this.props.selection as Encounter}
+                        encounter={this.props.encounter}
                         library={this.props.library}
                         mode={'view encounter'}
                         addEncounterSlot={(combatant, waveID) => this.props.addEncounterSlot(combatant, waveID)}
@@ -201,7 +195,7 @@ export default class EncounterScreen extends React.Component<Props, State> {
 
     public render() {
         try {
-            const waves = this.props.selection.waves.map(w => {
+            const waves = this.props.encounter.waves.map(w => {
                 return (
                     <CardGroup
                         key={w.id}
@@ -215,7 +209,7 @@ export default class EncounterScreen extends React.Component<Props, State> {
                 <div className='screen row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable list-column'>
                         <EncounterInfo
-                            selection={this.props.selection}
+                            encounter={this.props.encounter}
                             parties={this.props.parties}
                             monsterFilter={this.state.filter}
                             changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
@@ -234,9 +228,8 @@ export default class EncounterScreen extends React.Component<Props, State> {
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup
-                            content={this.getMonsterCards(this.props.selection.slots, null)}
-                            heading={this.props.selection.name || 'unnamed encounter'}
-                            hidden={!this.props.selection}
+                            content={this.getMonsterCards(this.props.encounter.slots, null)}
+                            heading={this.props.encounter.name || 'unnamed encounter'}
                         />
                         {waves}
                         {this.getLibrarySection()}
@@ -251,7 +244,7 @@ export default class EncounterScreen extends React.Component<Props, State> {
 }
 
 interface EncounterInfoProps {
-    selection: Encounter;
+    encounter: Encounter;
     parties: Party[];
     monsterFilter: MonsterFilter;
     changeValue: (source: any, field: string, value: any) => void;
@@ -294,7 +287,7 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
 
     public render() {
         try {
-            const waves = this.props.selection.waves.map(wave => (
+            const waves = this.props.encounter.waves.map(wave => (
                 <div key={wave.id} className='group-panel'>
                     <input
                         type='text'
@@ -313,8 +306,8 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
                         <input
                             type='text'
                             placeholder='encounter name'
-                            value={this.props.selection.name}
-                            onChange={event => this.props.changeValue(this.props.selection, 'name', event.target.value)}
+                            value={this.props.encounter.name}
+                            onChange={event => this.props.changeValue(this.props.encounter, 'name', event.target.value)}
                         />
                     </div>
                     <div className='section'>
@@ -324,7 +317,7 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
                     </div>
                     <div className='divider' />
                     <DifficultyChartPanel
-                        encounter={this.props.selection}
+                        encounter={this.props.encounter}
                         parties={this.props.parties}
                         getMonster={(monsterName, monsterGroupName) => this.props.getMonster(monsterName, monsterGroupName)}
                     />
