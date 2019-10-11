@@ -41,7 +41,6 @@ interface Props {
 interface State {
     view: string;
     modal: any;
-    filter: string;
 
     parties: Party[];
     library: MonsterGroup[];
@@ -63,7 +62,6 @@ export default class Dojo extends React.Component<Props, State> {
         this.state = {
             view: 'home',
             modal: null,
-            filter: '',
             parties: [],
             library: [],
             encounters: [],
@@ -162,7 +160,6 @@ export default class Dojo extends React.Component<Props, State> {
 
                 data.view = 'home';
                 data.modal = null;
-                data.filter = '';
 
                 this.state = data;
             }
@@ -1572,34 +1569,11 @@ export default class Dojo extends React.Component<Props, State> {
 
     private getActions() {
         switch (this.state.view) {
-            case 'parties':
-            case 'encounter':
-            case 'maps':
-                return (
-                    <div className='actions'>
-                        <div className='section'>
-                            <input
-                                type='text'
-                                placeholder='search'
-                                value={this.state.filter}
-                                onChange={event => this.changeValue(this.state, 'filter', event.target.value)}
-                            />
-                        </div>
-                    </div>
-                );
             case 'library':
                 return (
                     <div className='actions'>
                         <div className='section'>
                             <button onClick={() => this.openDemographics()}>demographics</button>
-                        </div>
-                        <div className='section'>
-                            <input
-                                type='text'
-                                placeholder='search'
-                                value={this.state.filter}
-                                onChange={event => this.changeValue(this.state, 'filter', event.target.value)}
-                            />
                         </div>
                     </div>
                 );
@@ -1625,19 +1599,6 @@ export default class Dojo extends React.Component<Props, State> {
                             </div>
                         </div>
                     );
-                } else {
-                    return (
-                        <div className='actions'>
-                            <div className='section'>
-                                <input
-                                    type='text'
-                                    placeholder='search'
-                                    value={this.state.filter}
-                                    onChange={event => this.changeValue(this.state, 'filter', event.target.value)}
-                                />
-                            </div>
-                        </div>
-                    );
                 }
         }
 
@@ -1658,7 +1619,6 @@ export default class Dojo extends React.Component<Props, State> {
                     <PartiesScreen
                         parties={this.state.parties}
                         selection={this.state.parties.find(p => p.id === this.state.selectedPartyID) || null}
-                        filter={this.state.filter}
                         selectParty={party => this.selectParty(party)}
                         addParty={() => this.addParty()}
                         removeParty={() => this.removeParty()}
@@ -1675,7 +1635,6 @@ export default class Dojo extends React.Component<Props, State> {
                     <MonsterLibraryScreen
                         library={this.state.library}
                         selection={this.state.library.find(g => g.id === this.state.selectedMonsterGroupID) || null}
-                        filter={this.state.filter}
                         selectMonsterGroup={group => this.selectMonsterGroup(group)}
                         addMonsterGroup={() => this.addMonsterGroup()}
                         removeMonsterGroup={() => this.removeMonsterGroup()}
@@ -1694,7 +1653,6 @@ export default class Dojo extends React.Component<Props, State> {
                     <EncounterBuilderScreen
                         encounters={this.state.encounters}
                         selection={this.state.encounters.find(e => e.id === this.state.selectedEncounterID) || null}
-                        filter={this.state.filter}
                         parties={this.state.parties}
                         library={this.state.library}
                         selectEncounter={encounter => this.selectEncounter(encounter)}
@@ -1716,7 +1674,6 @@ export default class Dojo extends React.Component<Props, State> {
                     <MapFoliosScreen
                         mapFolios={this.state.mapFolios}
                         selection={this.state.mapFolios.find(f => f.id === this.state.selectedMapFolioID) || null}
-                        filter={this.state.filter}
                         selectMapFolio={folio => this.selectMapFolio(folio)}
                         addMapFolio={() => this.addMapFolio()}
                         removeMapFolio={() => this.removeMapFolio()}
@@ -1732,7 +1689,6 @@ export default class Dojo extends React.Component<Props, State> {
                         combats={this.state.combats}
                         encounters={this.state.encounters}
                         combat={this.state.combats.find(c => c.id === this.state.selectedCombatID) || null}
-                        filter={this.state.filter}
                         createCombat={() => this.createCombat()}
                         pauseCombat={() => this.pauseCombat()}
                         resumeCombat={pausedCombat => this.resumeCombat(pausedCombat)}

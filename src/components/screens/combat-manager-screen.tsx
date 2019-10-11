@@ -26,7 +26,6 @@ interface Props {
     combats: Combat[];
     encounters: Encounter[];
     combat: Combat | null;
-    filter: string;
     createCombat: () => void;
     pauseCombat: () => void;
     resumeCombat: (combat: Combat) => void;
@@ -650,12 +649,11 @@ export default class CombatManagerScreen extends React.Component<Props, State> {
                     </div>
                 );
             } else {
-                let listItems = this.props.combats.filter(c => Utils.match(this.props.filter, c.name)).map(c => {
+                let listItems = this.props.combats.map(c => {
                     return (
                         <CombatListItem
                             key={c.id}
                             combat={c}
-                            selected={false}
                             setSelection={combat => this.props.resumeCombat(combat)}
                         />
                     );

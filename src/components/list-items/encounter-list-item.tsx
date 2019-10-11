@@ -4,7 +4,6 @@ import { Encounter } from '../../models/encounter';
 
 interface Props {
     encounter: Encounter;
-    selected: boolean;
     setSelection: (encounter: Encounter) => void;
 }
 
@@ -40,7 +39,7 @@ export default class EncounterListItem extends React.Component<Props> {
             });
 
             return (
-                <div className={this.props.selected ? 'list-item selected' : 'list-item'} onClick={() => this.props.setSelection(this.props.encounter)}>
+                <div className='list-item' onClick={() => this.props.setSelection(this.props.encounter)}>
                     <div className='heading'>{this.props.encounter.name || 'unnamed encounter'}</div>
                     {slots}
                 </div>

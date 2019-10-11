@@ -1,7 +1,5 @@
 import React from 'react';
 
-import Utils from '../../utils/utils';
-
 import { Party, PC } from '../../models/party';
 
 import PCCard from '../cards/pc-card';
@@ -13,7 +11,6 @@ import Note from '../panels/note';
 interface Props {
     parties: Party[];
     selection: Party | null;
-    filter: string;
     selectParty: (party: Party | null) => void;
     addParty: () => void;
     removeParty: () => void;
@@ -26,18 +23,6 @@ interface Props {
 }
 
 export default class PartiesScreen extends React.Component<Props> {
-    private showParty(party: Party) {
-        let result = Utils.match(this.props.filter, party.name);
-
-        if (!result) {
-            party.pcs.forEach(pc => {
-                result = Utils.match(this.props.filter, pc.name) || result;
-            });
-        }
-
-        return result;
-    }
-
     public render() {
         try {
             let leftColumn = null;
@@ -46,7 +31,6 @@ export default class PartiesScreen extends React.Component<Props> {
                     <div>
                         <PartyInfo
                             selection={this.props.selection}
-                            filter={this.props.filter}
                             addPC={() => this.props.addPC()}
                             sortPCs={() => this.props.sortPCs()}
                             changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
@@ -57,13 +41,11 @@ export default class PartiesScreen extends React.Component<Props> {
                     </div>
                 );
             } else {
-                let listItems = this.props.parties.filter(p => this.showParty(p)).map(p => {
+                let listItems = this.props.parties.map(p => {
                     return (
                         <PartyListItem
                             key={p.id}
                             party={p}
-                            filter={this.props.filter}
-                            selected={p === this.props.selection}
                             setSelection={party => this.props.selectParty(party)}
                         />
                     );
@@ -90,11 +72,7 @@ export default class PartiesScreen extends React.Component<Props> {
             const inactiveCards: JSX.Element[] = [];
 
             if (this.props.selection) {
-                const pcs = this.props.selection.pcs.filter(pc => {
-                    return Utils.match(this.props.filter, pc.name);
-                });
-
-                const activePCs = pcs.filter(pc => pc.active);
+                const activePCs = this.props.selection.pcs.filter(pc => pc.active);
                 activePCs.forEach(activePC => {
                     activeCards.push(
                         <div className='column' key={activePC.id}>
@@ -110,7 +88,7 @@ export default class PartiesScreen extends React.Component<Props> {
                     );
                 });
 
-                const inactivePCs = pcs.filter(pc => !pc.active);
+                const inactivePCs = this.props.selection.pcs.filter(pc => !pc.active);
                 inactivePCs.forEach(inactivePC => {
                     inactiveCards.push(
                         <div className='column' key={inactivePC.id}>
@@ -223,7 +201,6 @@ class HelpCard extends React.Component<HelpCardProps> {
 
 interface PartyInfoProps {
     selection: Party;
-    filter: string | null;
     changeValue: (field: string, value: string) => void;
     addPC: () => void;
     sortPCs: () => void;
@@ -317,15 +294,15 @@ class PartyInfo extends React.Component<PartyInfoProps> {
                             type='text'
                             placeholder='party name'
                             value={this.props.selection.name}
-                            disabled={!!this.props.filter}
                             onChange={event => this.props.changeValue('name', event.target.value)}
                         />
                     </div>
+                    <div className='divider' />
                     {this.getSummary()}
                     <div className='divider' />
                     <div className='section'>
-                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.addPC()}>add a new pc</button>
-                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.sortPCs()}>sort pcs</button>
+                        <button onClick={() => this.props.addPC()}>add a new pc</button>
+                        <button onClick={() => this.props.sortPCs()}>sort pcs</button>
                         <ConfirmButton text='delete party' callback={() => this.props.removeParty()} />
                     </div>
                 </div>

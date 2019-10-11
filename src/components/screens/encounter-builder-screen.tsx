@@ -24,7 +24,6 @@ interface Props {
     selection: Encounter | null;
     parties: Party[];
     library: MonsterGroup[];
-    filter: string;
     selectEncounter: (encounter: Encounter | null) => void;
     addEncounter: () => void;
     clearEncounter: () => void;
@@ -203,10 +202,6 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
         );
     }
 
-    private showEncounter(enc: Encounter) {
-        return Utils.match(this.props.filter, enc.name);
-    }
-
     public render() {
         try {
             let leftColumn = null;
@@ -216,7 +211,6 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                         <EncounterInfo
                             selection={this.props.selection}
                             parties={this.props.parties}
-                            filter={this.props.filter}
                             monsterFilter={this.state.filter}
                             changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
                             addWave={() => this.props.addWave()}
@@ -234,12 +228,11 @@ export default class EncounterBuilderScreen extends React.Component<Props, State
                     </div>
                 );
             } else {
-                let listItems = this.props.encounters.filter(e => this.showEncounter(e)).map(e => {
+                let listItems = this.props.encounters.map(e => {
                     return (
                         <EncounterListItem
                             key={e.id}
                             encounter={e}
-                            selected={e === this.props.selection}
                             setSelection={encounter => this.props.selectEncounter(encounter)}
                         />
                     );
@@ -367,7 +360,6 @@ class HelpCard extends React.Component<HelpCardProps> {
 interface EncounterInfoProps {
     selection: Encounter;
     parties: Party[];
-    filter: string;
     monsterFilter: MonsterFilter;
     changeValue: (source: any, field: string, value: any) => void;
     addWave: () => void;
@@ -429,14 +421,13 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
                             type='text'
                             placeholder='encounter name'
                             value={this.props.selection.name}
-                            disabled={!!this.props.filter}
                             onChange={event => this.props.changeValue(this.props.selection, 'name', event.target.value)}
                         />
                     </div>
                     <div className='section'>
                         <div className='subheading'>waves</div>
                         {waves}
-                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.addWave()}>add a new wave</button>
+                        <button onClick={() => this.props.addWave()}>add a new wave</button>
                     </div>
                     <div className='divider' />
                     <DifficultyChartPanel

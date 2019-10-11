@@ -1,7 +1,5 @@
 import React from 'react';
 
-import Utils from '../../utils/utils';
-
 import { Monster, MonsterGroup } from '../../models/monster-group';
 
 import MonsterCard from '../cards/monster-card';
@@ -13,7 +11,6 @@ import Note from '../panels/note';
 interface Props {
     library: MonsterGroup[];
     selection: MonsterGroup | null;
-    filter: string;
     selectMonsterGroup: (group: MonsterGroup | null) => void;
     addMonsterGroup: () => void;
     removeMonsterGroup: () => void;
@@ -28,18 +25,6 @@ interface Props {
 }
 
 export default class MonsterLibraryScreen extends React.Component<Props> {
-    private showMonsterGroup(group: MonsterGroup) {
-        let result = Utils.match(this.props.filter, group.name);
-
-        if (!result) {
-            group.monsters.forEach(monster => {
-                result = Utils.match(this.props.filter, monster.name) || result;
-            });
-        }
-
-        return result;
-    }
-
     public render() {
         try {
             let leftColumn = null;
@@ -48,7 +33,6 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                     <div>
                         <MonsterInfo
                             selection={this.props.selection}
-                            filter={this.props.filter}
                             addMonster={() => this.props.addMonster()}
                             sortMonsters={() => this.props.sortMonsters()}
                             changeValue={(type, value) => this.props.changeValue(this.props.selection, type, value)}
@@ -59,13 +43,11 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
                     </div>
                 );
             } else {
-                let listItems = this.props.library.filter(group => this.showMonsterGroup(group)).map(group => {
+                let listItems = this.props.library.map(group => {
                     return (
                         <MonsterGroupListItem
                             key={group.id}
                             group={group}
-                            filter={this.props.filter}
-                            selected={group === this.props.selection}
                             setSelection={grp => this.props.selectMonsterGroup(grp)}
                         />
                     );
@@ -91,12 +73,8 @@ export default class MonsterLibraryScreen extends React.Component<Props> {
             const cards: JSX.Element[] = [];
 
             if (this.props.selection) {
-                const monsters = this.props.selection.monsters.filter(monster => {
-                    return Utils.match(this.props.filter, monster.name);
-                });
-
-                if (monsters.length !== 0) {
-                    monsters.forEach(m => {
+                if (this.props.selection.monsters.length !== 0) {
+                    this.props.selection.monsters.forEach(m => {
                         cards.push(
                             <div className='column' key={m.id}>
                                 <MonsterCard
@@ -207,7 +185,6 @@ class HelpCard extends React.Component<HelpCardProps> {
 
 interface MonsterInfoProps {
     selection: MonsterGroup;
-    filter: string | null;
     changeValue: (field: string, value: string) => void;
     addMonster: () => void;
     sortMonsters: () => void;
@@ -225,14 +202,13 @@ class MonsterInfo extends React.Component<MonsterInfoProps> {
                             type='text'
                             placeholder='monster group name'
                             value={this.props.selection.name}
-                            disabled={!!this.props.filter}
                             onChange={event => this.props.changeValue('name', event.target.value)}
                         />
                     </div>
                     <div className='divider' />
                     <div className='section'>
-                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.addMonster()}>add a new monster</button>
-                        <button className={this.props.filter ? 'disabled' : ''} onClick={() => this.props.sortMonsters()}>sort monsters</button>
+                        <button onClick={() => this.props.addMonster()}>add a new monster</button>
+                        <button onClick={() => this.props.sortMonsters()}>sort monsters</button>
                         <ConfirmButton text='delete group' callback={() => this.props.removeMonsterGroup()} />
                     </div>
                 </div>
