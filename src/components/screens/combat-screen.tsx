@@ -18,6 +18,7 @@ import CardGroup from '../panels/card-group';
 import HitPointGauge from '../panels/hit-point-gauge';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
+import PortraitPanel from '../panels/portrait-panel';
 import TraitsPanel from '../panels/traits-panel';
 import Popout from '../portals/popout';
 
@@ -781,6 +782,7 @@ class PendingCombatantRow extends React.Component<PendingCombatantRowProps> {
             return (
                 <div className={style} onClick={e => this.onClick(e)}>
                     <div className='name'>
+                        <PortraitPanel source={this.props.combatant} inline={true} />
                         {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
                         <span className='info'>{this.getInformationText()}</span>
                     </div>
@@ -913,6 +915,7 @@ class PCRow extends React.Component<PCRowProps> {
             return (
                 <div className={style} onClick={e => this.onClick(e)}>
                     <div className='name'>
+                        <PortraitPanel source={this.props.combatant} inline={true} />
                         {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
                         {this.props.combatant.player ? ' | ' + this.props.combatant.player : ''}
                         <span className='info'>{this.getInformationText()}</span>
@@ -1054,6 +1057,7 @@ class MonsterRow extends React.Component<MonsterRowProps> {
             return (
                 <div className={style} onClick={e => this.onClick(e)}>
                     <div className='name'>
+                        <PortraitPanel source={this.props.combatant} inline={true} />
                         {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
                         <span className='info'>{this.getInformationText()}</span>
                     </div>

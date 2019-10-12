@@ -7,11 +7,13 @@ import none from '../../resources/images/no-portrait.png';
 
 interface Props {
     source: PC | Monster;
+    inline: boolean;
     setValue: (value: string) => void;
 }
 
 export default class PortraitPanel extends React.Component<Props> {
     public static defaultProps = {
+        inline: false,
         setValue: null
     };
 
@@ -59,8 +61,16 @@ export default class PortraitPanel extends React.Component<Props> {
             return null;
         }
 
+        if (this.props.inline) {
+            return (
+                <div className='portrait inline'>
+                    <img src={this.props.source.portrait} alt='portrait' />
+                </div>
+            );
+        }
+
         return (
-            <div className='portrait'>
+            <div className={this.props.inline ? 'portrait inline' : 'portrait'}>
                 <div className='section centered'>
                     <img src={this.props.source.portrait} alt='portrait' />
                 </div>

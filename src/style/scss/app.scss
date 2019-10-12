@@ -1411,4 +1411,17 @@ body,
             height: 100px;    
         }
     }
+
+    &.inline {
+        display: inline-block;
+        vertical-align: middle;
+        width: 20px;
+        height: 20px;
+        margin-right: 5px;
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
+    }
 }
