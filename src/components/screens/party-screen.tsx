@@ -30,7 +30,6 @@ export default class PartyScreen extends React.Component<Props> {
                             pc={activePC}
                             mode={'edit'}
                             changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
-                            nudgeValue={(pc, type, delta) => this.props.nudgeValue(pc, type, delta)}
                             editPC={pc => this.props.editPC(pc)}
                             removePC={pc => this.props.removePC(pc)}
                         />
@@ -47,7 +46,6 @@ export default class PartyScreen extends React.Component<Props> {
                             pc={inactivePC}
                             mode={'edit'}
                             changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
-                            nudgeValue={(pc, type, delta) => this.props.nudgeValue(pc, type, delta)}
                             editPC={pc => this.props.editPC(pc)}
                             removePC={pc => this.props.removePC(pc)}
                         />

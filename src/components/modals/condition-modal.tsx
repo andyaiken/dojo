@@ -266,24 +266,22 @@ export default class ConditionModal extends React.Component<Props, State> {
             ];
 
             return (
-                <div className='condition-modal'>
-                    <div className='row' style={{ height: '100%' }}>
-                        <div className='columns small-6 medium-6 large-6 scrollable'>
-                            <div className='heading'>condition</div>
-                            <RadioGroup
-                                items={conditions}
-                                selectedItemID={this.state.condition.name}
-                                select={itemID => this.setCondition(itemID)}
-                            />
-                        </div>
-                        <div className='columns small-6 medium-6 large-6 scrollable'>
-                            <div className='heading'>duration</div>
-                            <RadioGroup
-                                items={durations}
-                                selectedItemID={this.state.condition.duration ? this.state.condition.duration.type : 'none'}
-                                select={itemID => this.setDuration(itemID as 'saves' | 'combatant' | 'rounds')}
-                            />
-                        </div>
+                <div className='row' style={{ height: '100%' }}>
+                    <div className='columns small-6 medium-6 large-6 scrollable'>
+                        <div className='heading'>condition</div>
+                        <RadioGroup
+                            items={conditions}
+                            selectedItemID={this.state.condition.name}
+                            select={itemID => this.setCondition(itemID)}
+                        />
+                    </div>
+                    <div className='columns small-6 medium-6 large-6 scrollable'>
+                        <div className='heading'>duration</div>
+                        <RadioGroup
+                            items={durations}
+                            selectedItemID={this.state.condition.duration ? this.state.condition.duration.type : 'none'}
+                            select={itemID => this.setDuration(itemID as 'saves' | 'combatant' | 'rounds')}
+                        />
                     </div>
                 </div>
             );

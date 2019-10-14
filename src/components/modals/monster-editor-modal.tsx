@@ -852,7 +852,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                     }
                 ];
                 sidebar = (
-                    <div className='columns small-4 medium-4 large-4 scrollable wide-column'>
+                    <div className='columns small-4 medium-4 large-4 scrollable'>
                         <Selector
                             tabs={true}
                             options={sidebarOptions}
@@ -868,28 +868,28 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         {this.getMonsterCards(monsters)}
                     </div>
                 );
+            } else {
+                sidebar = (
+                    <div className='columns small-4 medium-4 large-4 scrollable' style={{ paddingTop: '15px', paddingBottom: '15px' }}>
+                        <MonsterCard
+                            monster={this.state.monster}
+                            mode='view full'
+                        />
+                    </div>
+                );
             }
 
             return (
-                <div className='row' style={{ height: '100%', margin: '0 -5px' }}>
-                    <div
-                        className={
-                            this.props.showSidebar
-                            ? 'columns small-8 medium-8 large-8 scrollable wide-column'
-                            : 'columns small-12 medium-12 large-12 scrollable wide-column'
-                        }
-                        style={{ transition: 'none' }}
-                    >
-                        <div className='section'>
-                            <Selector
-                                tabs={true}
-                                options={pages}
-                                selectedID={this.state.page}
-                                select={optionID => this.setPage(optionID as 'overview' | 'abilities' | 'cbt-stats' | 'actions')}
-                            />
-                            {content}
-                            {help}
-                        </div>
+                <div className='row' style={{ height: '100%' }}>
+                    <div className='columns small-8 medium-8 large-8 scrollable'>
+                        <Selector
+                            tabs={true}
+                            options={pages}
+                            selectedID={this.state.page}
+                            select={optionID => this.setPage(optionID as 'overview' | 'abilities' | 'cbt-stats' | 'actions')}
+                        />
+                        {content}
+                        {help}
                     </div>
                     {sidebar}
                 </div>

@@ -563,7 +563,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
             }
 
             return (
-                <div className='row' style={{ height: '100%', margin: '0 -15px' }}>
+                <div className='row' style={{ height: '100%' }}>
                     <div className='column small-6 medium-6 large-6 scrollable'>
                         {leftSection}
                     </div>

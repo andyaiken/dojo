@@ -659,7 +659,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                 }
 
                 let details = null;
-                if (this.state.showDetails || (this.props.mode.indexOf('generated') !== -1)) {
+                if (this.state.showDetails || (this.props.mode.indexOf('full') !== -1)) {
                     details = (
                         <div>
                             <div className='divider' />
@@ -853,8 +853,8 @@ export default class MonsterCard extends React.Component<Props, State> {
                 // Don't show toggle button for combatant
             } else if (this.props.mode.indexOf('template') !== -1) {
                 // Don't show toggle button for template
-            } else if (this.props.mode.indexOf('view generated') !== -1) {
-                // Don't show toggle button for generated monster
+            } else if (this.props.mode.indexOf('view full') !== -1) {
+                // Don't show toggle button if we're in 'full' mode
             } else {
                 const imageStyle = this.state.showDetails ? 'image rotate' : 'image';
                 toggle = (

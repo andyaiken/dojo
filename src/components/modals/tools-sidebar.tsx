@@ -61,7 +61,7 @@ export default class ToolsSidebar extends React.Component<Props, State> {
             }
 
             return (
-                <div>
+                <div className='scrollable'>
                     <Selector
                         tabs={true}
                         options={options}

@@ -44,6 +44,8 @@ interface State {
 
 export default class PCCard extends React.Component<Props, State> {
     public static defaultProps = {
+        changeValue: null,
+        nudgeValue: null,
         removePC: null,
         editPC: null,
         combat: null,
