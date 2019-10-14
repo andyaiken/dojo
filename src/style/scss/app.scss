@@ -50,6 +50,7 @@ input[type=color] {
 }
 
 textarea {
+    min-height: 250px;
     resize: vertical;
 }
 
@@ -1357,29 +1358,6 @@ body,
     }
 }
 
-.trait-ordering {
-    height: 32px;
-    margin: 5px 0 10px 0;
-    border: 1px solid $control-border;
-    text-align: center;
-
-    img {
-        border-radius: 50%;
-        height: 30px;
-        width: 30px;
-
-        &.up {
-            transform: rotate(-180deg);
-            margin-right: 20px;
-        }
-
-        &:hover {
-            cursor: pointer;
-            background-color: $highlight02;
-        }
-    }
-}
-
 .portrait {
     img {
         width: 50px;
@@ -1406,6 +1384,57 @@ body,
         img {
             width: 100%;
             height: 100%;
+        }
+    }
+}
+
+.trait-bar {
+    border-left: 5px solid $control-border;
+    padding-left: 5px;
+    margin: 5px 0;
+    cursor: pointer;
+
+    &:hover {
+        background-color: $highlight01;
+        border-color: $highlight;
+
+        .icons {
+            opacity: 1;
+        }
+    }
+
+    &.selected {
+        background-color: $highlight01;
+        border-color: $highlight;
+        font-weight: 600;
+        cursor: default;
+    }
+
+    .text {
+        width: calc(100% - 90px);
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .icons {
+        display: inline-block;
+        vertical-align: middle;
+        opacity: 0;
+
+        .up, .down, .delete {
+            border-radius: 50%;
+            height: 20px;
+            width: 20px;
+            margin: 5px;
+
+            &:hover {
+                cursor: pointer;
+                background-color: $highlight02;
+            }
+        }
+
+        .up {
+            transform: rotate(-180deg);
         }
     }
 }

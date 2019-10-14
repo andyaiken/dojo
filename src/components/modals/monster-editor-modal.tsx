@@ -18,7 +18,7 @@ import AbilityScorePanel from '../panels/ability-score-panel';
 import FilterPanel from '../panels/filter-panel';
 import Note from '../panels/note';
 import PortraitPanel from '../panels/portrait-panel';
-import TraitsPanel from '../panels/traits-panel';
+import TraitEditorPanel from '../panels/trait-editor-panel';
 
 interface Props {
     monster: Monster;
@@ -37,8 +37,7 @@ interface State {
         type: boolean,
         subtype: boolean,
         alignment: boolean,
-        challenge: boolean,
-        text: string
+        challenge: boolean
     };
     scratchpadFilter: MonsterFilter;
     scratchpadList: Monster[];
@@ -58,8 +57,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 type: true,
                 subtype: false,
                 alignment: false,
-                challenge: true,
-                text: ''
+                challenge: true
             },
             scratchpadFilter: Factory.createMonsterFilter(),
             scratchpadList: []
@@ -74,12 +72,6 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         });
     }
 
-    private toggleFilter() {
-        this.setState({
-            showFilter: !this.state.showFilter
-        });
-    }
-
     private setHelpSection(section: string) {
         this.setState({
             helpSection: section
@@ -89,14 +81,6 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     private toggleMatch(type: 'size' | 'type' | 'subtype' | 'alignment' | 'challenge') {
         // eslint-disable-next-line
         this.state.similarFilter[type] = !this.state.similarFilter[type];
-        this.setState({
-            similarFilter: this.state.similarFilter
-        });
-    }
-
-    private setFilterText(value: string) {
-        // eslint-disable-next-line
-        this.state.similarFilter.text = value;
         this.setState({
             similarFilter: this.state.similarFilter
         });
@@ -494,21 +478,15 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     private getMonsterCards(monsters: Monster[]) {
         const sorted = Utils.sort(monsters);
         const monsterCards = sorted.map(m => {
-            const showMonster = m.traits.some((t: Trait) => Utils.match(this.state.similarFilter.text, t.name));
-            if (showMonster) {
-                return (
-                    <div className='section' key={m.id}>
-                        <MonsterCard
-                            monster={m}
-                            mode={'template ' + this.state.page}
-                            filter={this.state.similarFilter.text}
-                            copyTrait={trait => this.copyTrait(trait)}
-                        />
-                    </div>
-                );
-            } else {
-                return null;
-            }
+            return (
+                <div className='section' key={m.id}>
+                    <MonsterCard
+                        monster={m}
+                        mode={'template ' + this.state.page}
+                        copyTrait={trait => this.copyTrait(trait)}
+                    />
+                </div>
+            );
         }).filter(m => !!m);
 
         if (monsterCards.length === 0) {
@@ -693,9 +671,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                     break;
                 case 'actions':
                     content = (
-                        <TraitsPanel
+                        <TraitEditorPanel
                             combatant={this.state.monster}
-                            mode='edit'
                             addTrait={type => this.addTrait(type)}
                             removeTrait={trait => this.removeTrait(trait)}
                             swapTraits={(t1, t2) => this.swapTraits(t1, t2)}
