@@ -4,7 +4,7 @@ import ellipsis from '../../resources/icons/ellipsis.svg';
 
 interface Props {
     text: string;
-    content: JSX.Element;
+    content: JSX.Element | JSX.Element[] | string;
     disabled: boolean;
 }
 

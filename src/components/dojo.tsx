@@ -546,6 +546,27 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
+    private swapEncounterSlot(slot: EncounterSlot, waveID: string | null, groupName: string, monsterName: string) {
+        const encounter = this.state.encounters.find(e => e.id === this.state.selectedEncounterID);
+        if (encounter) {
+            slot.monsterGroupName = groupName;
+            slot.monsterName = monsterName;
+
+            if (waveID) {
+                const wave = encounter.waves.find(w => w.id === waveID);
+                if (wave) {
+                    this.sortEncounterSlots(wave);
+                }
+            } else {
+                this.sortEncounterSlots(encounter);
+            }
+
+            this.setState({
+                encounters: this.state.encounters
+            });
+        }
+    }
+
     private sortEncounterSlots(slotContainer: { slots: EncounterSlot[] }) {
         slotContainer.slots.sort((a, b) => {
             const aName = a.monsterName.toLowerCase();
@@ -1735,6 +1756,7 @@ export default class Dojo extends React.Component<Props, State> {
                             getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
                             addEncounterSlot={(monster, waveID) => this.addEncounterSlot(monster, waveID)}
                             removeEncounterSlot={(slot, waveID) => this.removeEncounterSlot(slot, waveID)}
+                            swapEncounterSlot={(s, waveID, groupID, monsterID) => this.swapEncounterSlot(s, waveID, groupID, monsterID)}
                             nudgeValue={(slot, type, delta) => this.nudgeValue(slot, type, delta)}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                         />

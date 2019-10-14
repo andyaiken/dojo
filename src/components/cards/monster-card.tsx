@@ -43,6 +43,7 @@ interface Props {
     slot: EncounterSlot;
     addEncounterSlot: (monster: Monster, waveID: string | null) => void;
     removeEncounterSlot: (slot: EncounterSlot) => void;
+    swapEncounterSlot: (slot: EncounterSlot, groupName: string, monsterName: string) => void;
     // Combat
     combat: Combat;
     makeCurrent: (combatant: Combatant) => void;
@@ -85,6 +86,7 @@ export default class MonsterCard extends React.Component<Props, State> {
         slot: null,
         addEncounterSlot: null,
         removeEncounterSlot: null,
+        swapEncounterSlot: null,
         combat: null,
         makeCurrent: null,
         makeActive: null,
@@ -544,7 +546,30 @@ export default class MonsterCard extends React.Component<Props, State> {
                     }
                     if (this.props.mode.indexOf('encounter') !== -1) {
                         if (this.props.slot) {
-                            // This card is in an encounter or a wave
+                            // This card is in an encounter (or a wave)
+                            const candidates: {id: string, text: string, group: string}[] = [];
+                            this.props.library.forEach(group => {
+                                group.monsters
+                                    .filter(m => m.challenge === this.props.monster.challenge)
+                                    .filter(m => m.id !== this.props.monster.id)
+                                    .forEach(m => candidates.push({ id: m.id, text: m.name, group: group.name }));
+                            });
+                            Utils.sort(candidates, [{ field: 'text', dir: 'asc' }]);
+                            if (candidates.length > 0) {
+                                options.push(
+                                    <Dropdown
+                                        key='replace'
+                                        placeholder='replace with...'
+                                        options={candidates}
+                                        select={id => {
+                                            const candidate = candidates.find(c => c.id === id);
+                                            if (candidate) {
+                                                this.props.swapEncounterSlot(this.props.slot, candidate.group, candidate.text);
+                                            }
+                                        }}
+                                    />
+                                );
+                            }
                             options.push(
                                 <button key='remove' onClick={() => this.props.removeEncounterSlot(this.props.slot)}>
                                     remove from encounter
@@ -584,7 +609,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                                         }
                                         content={
                                             (
-                                                <div className='section centered'>
+                                                <div className='section'>
                                                     <i>this monster is already part of this encounter</i>
                                                 </div>
                                             )

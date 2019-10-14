@@ -538,7 +538,7 @@ export default class Utils {
                 ];
             case 'prone':
                 return [
-                    'a prone creature’s only movement option is to crawl, unless it stands up and thereby ends the condition',
+                    'a prone creature’s only movement option is to crawl, unless it stands up (using half its speed) and thereby ends the condition',
                     'the creature has disadvantage on attack rolls',
                     /* tslint:disable-next-line:max-line-length */
                     'an attack roll against the creature has advantage if the attacker is Within 5 feet of the creature; otherwise, the attack roll has disadvantage'

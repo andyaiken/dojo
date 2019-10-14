@@ -27,6 +27,7 @@ interface Props {
     buildEncounter: (xp: number, filter: MonsterFilter) => void;
     addEncounterSlot: (monster: Monster, waveID: string | null) => void;
     removeEncounterSlot: (encounterSlot: EncounterSlot, waveID: string | null) => void;
+    swapEncounterSlot: (encounterSlot: EncounterSlot, waveID: string | null, groupName: string, monsterName: string) => void;
     addWave: () => void;
     removeWave: (wave: EncounterWave) => void;
     changeValue: (source: any, field: string, value: any) => void;
@@ -82,8 +83,10 @@ export default class EncounterScreen extends React.Component<Props, State> {
                             slot={slot}
                             encounter={this.props.encounter}
                             mode={'view encounter'}
+                            library={this.props.library}
                             nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
                             removeEncounterSlot={s => this.props.removeEncounterSlot(s, waveID)}
+                            swapEncounterSlot={(s, groupName, monsterName) => this.props.swapEncounterSlot(s, waveID, groupName, monsterName)}
                         />
                     </div>
                 );
