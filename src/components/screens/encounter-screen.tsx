@@ -78,7 +78,7 @@ export default class EncounterScreen extends React.Component<Props, State> {
                 cards.push(
                     <div className='column' key={monster.id}>
                         <MonsterCard
-                            combatant={monster}
+                            monster={monster}
                             slot={slot}
                             encounter={this.props.encounter}
                             mode={'view encounter'}
@@ -159,7 +159,7 @@ export default class EncounterScreen extends React.Component<Props, State> {
                 <div className='column' key={monster.id}>
                     <MonsterCard
                         key={monster.id}
-                        combatant={monster}
+                        monster={monster}
                         encounter={this.props.encounter}
                         library={this.props.library}
                         mode={'view encounter'}

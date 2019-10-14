@@ -15,7 +15,7 @@ import ConditionsPanel from '../panels/conditions-panel';
 import PortraitPanel from '../panels/portrait-panel';
 
 interface Props {
-    combatant: PC | (PC & Combatant);
+    pc: PC | (PC & Combatant);
     mode: string;
     changeValue: (pc: any, field: string, value: any) => void;
     nudgeValue: (pc: any, field: string, delta: number) => void;
@@ -76,7 +76,7 @@ export default class PCCard extends React.Component<Props, State> {
     }
 
     private getCombatControls() {
-        const combatant = this.props.combatant as Combatant;
+        const combatant = this.props.pc as Combatant;
 
         const options = [];
 
@@ -139,11 +139,11 @@ export default class PCCard extends React.Component<Props, State> {
                 options.push(
                     <div key='conditions'>
                         <ConditionsPanel
-                            combatant={this.props.combatant as Combatant}
+                            combatant={this.props.pc as Combatant}
                             combat={this.props.combat}
-                            addCondition={() => this.props.addCondition(this.props.combatant as Combatant)}
-                            editCondition={condition => this.props.editCondition(this.props.combatant as Combatant, condition)}
-                            removeCondition={conditionID => this.props.removeCondition(this.props.combatant as Combatant, conditionID)}
+                            addCondition={() => this.props.addCondition(this.props.pc as Combatant)}
+                            editCondition={condition => this.props.editCondition(this.props.pc as Combatant, condition)}
+                            removeCondition={conditionID => this.props.removeCondition(this.props.pc as Combatant, conditionID)}
                             nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
                         />
                     </div>
@@ -163,11 +163,11 @@ export default class PCCard extends React.Component<Props, State> {
                     options.push(
                         <Spin
                             key='altitude'
-                            source={this.props.combatant}
+                            source={this.props.pc}
                             name='altitude'
                             label='altitude'
                             display={value => value + ' ft.'}
-                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'altitude', delta * 5)}
+                            nudgeValue={delta => this.props.nudgeValue(this.props.pc, 'altitude', delta * 5)}
                         />
                     );
                     let auraDetails = null;
@@ -237,10 +237,10 @@ export default class PCCard extends React.Component<Props, State> {
                             content={(
                                 <div>
                                     <Spin
-                                        source={this.props.combatant}
+                                        source={this.props.pc}
                                         name='initiative'
                                         label='initiative'
-                                        nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
+                                        nudgeValue={delta => this.props.nudgeValue(this.props.pc, 'initiative', delta)}
                                     />
                                 </div>
                             )}
@@ -254,10 +254,10 @@ export default class PCCard extends React.Component<Props, State> {
                         content={(
                             <div>
                                 <Spin
-                                    source={this.props.combatant}
+                                    source={this.props.pc}
                                     name='displaySize'
                                     label='size'
-                                    nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'displaySize', delta)}
+                                    nudgeValue={delta => this.props.nudgeValue(this.props.pc, 'displaySize', delta)}
                                 />
                             </div>
                         )}
@@ -280,21 +280,21 @@ export default class PCCard extends React.Component<Props, State> {
         try {
             const options = [];
             if (this.props.mode.indexOf('edit') !== -1) {
-                options.push(<button key='edit' onClick={() => this.props.editPC(this.props.combatant)}>edit pc</button>);
-                if (this.props.combatant.active) {
+                options.push(<button key='edit' onClick={() => this.props.editPC(this.props.pc)}>edit pc</button>);
+                if (this.props.pc.active) {
                     options.push(
-                        <button key='toggle-active' onClick={() => this.props.changeValue(this.props.combatant, 'active', false)}>
+                        <button key='toggle-active' onClick={() => this.props.changeValue(this.props.pc, 'active', false)}>
                             mark pc as inactive
                         </button>
                     );
                 } else {
                     options.push(
-                        <button key='toggle-active' onClick={() => this.props.changeValue(this.props.combatant, 'active', true)}>
+                        <button key='toggle-active' onClick={() => this.props.changeValue(this.props.pc, 'active', true)}>
                             mark pc as active
                         </button>
                     );
                 }
-                options.push(<ConfirmButton key='remove' text='delete pc' callback={() => this.props.removePC(this.props.combatant)} />);
+                options.push(<ConfirmButton key='remove' text='delete pc' callback={() => this.props.removePC(this.props.pc)} />);
             }
 
             let combat = null;
@@ -302,19 +302,19 @@ export default class PCCard extends React.Component<Props, State> {
                 combat = this.getCombatControls();
             }
 
-            const desc = (this.props.combatant.race || 'unknown race')
-                + ' ' + (this.props.combatant.classes || 'unknown class')
-                + ', level ' + this.props.combatant.level;
+            const desc = (this.props.pc.race || 'unknown race')
+                + ' ' + (this.props.pc.classes || 'unknown class')
+                + ', level ' + this.props.pc.level;
 
             let companions = null;
-            if (this.props.combatant.companions.length > 0) {
-                companions = this.props.combatant.companions.map(companion => (
+            if (this.props.pc.companions.length > 0) {
+                companions = this.props.pc.companions.map(companion => (
                     <div key={companion.id}>{companion.name}</div>
                 ));
             }
 
-            const name = (this.props.combatant as Combatant ? (this.props.combatant as Combatant).displayName : null)
-                || this.props.combatant.name
+            const name = (this.props.pc as Combatant ? (this.props.pc as Combatant).displayName : null)
+                || this.props.pc.name
                 || 'unnamed pc';
 
             return (
@@ -326,27 +326,27 @@ export default class PCCard extends React.Component<Props, State> {
                     </div>
                     <div className='card-content'>
                         <div className='stats'>
-                            <PortraitPanel source={this.props.combatant} />
+                            <PortraitPanel source={this.props.pc} />
                             <div className='section centered lowercase'>
                                 <i>{desc}</i>
-                                <div style={{ display: this.props.combatant.url ? '' : 'none' }}>
-                                    <a href={this.props.combatant.url} target='_blank' rel='noopener noreferrer'>d&d beyond sheet</a>
+                                <div style={{ display: this.props.pc.url ? '' : 'none' }}>
+                                    <a href={this.props.pc.url} target='_blank' rel='noopener noreferrer'>d&d beyond sheet</a>
                                 </div>
                             </div>
                             <div className='divider' />
                             {combat}
                             <div className='section subheading'>languages</div>
                             <div className='section'>
-                                {this.props.combatant.languages || '-'}
+                                {this.props.pc.languages || '-'}
                             </div>
                             <div className='section subheading'>passive skills</div>
                             <div className='section'>
-                                <div><b>insight</b> {this.props.combatant.passiveInsight}</div>
-                                <div><b>investigation</b> {this.props.combatant.passiveInvestigation}</div>
-                                <div><b>perception</b> {this.props.combatant.passivePerception}</div>
+                                <div><b>insight</b> {this.props.pc.passiveInsight}</div>
+                                <div><b>investigation</b> {this.props.pc.passiveInvestigation}</div>
+                                <div><b>perception</b> {this.props.pc.passivePerception}</div>
                             </div>
                         </div>
-                        <div style={{ display: this.props.combatant.companions.length > 0 ? '' : 'none' }}>
+                        <div style={{ display: this.props.pc.companions.length > 0 ? '' : 'none' }}>
                             <div className='section subheading'>companions</div>
                             <div className='section'>
                                 {companions}

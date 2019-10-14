@@ -31,7 +31,7 @@ export default class MonsterScreen extends React.Component<Props> {
                     cards.push(
                         <div className='column' key={m.id}>
                             <MonsterCard
-                                combatant={m}
+                                monster={m}
                                 mode={'view editable'}
                                 library={this.props.library}
                                 changeValue={(source, type, value) => this.props.changeValue(source, type, value)}

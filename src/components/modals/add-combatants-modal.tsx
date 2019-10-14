@@ -124,7 +124,7 @@ export default class AddCombatantsModal extends React.Component<Props, State> {
             }).filter(id => !!id);
             let allCombatants: JSX.Element | JSX.Element[] = monsters.filter(m => !currentIDs.includes(m.id)).map(m => {
                 return (
-                    <MonsterCard key={m.id} combatant={m} mode='view candidate' selectMonster={monster => this.selectMonster(monster)} />
+                    <MonsterCard key={m.id} monster={m} mode='view candidate' selectMonster={monster => this.selectMonster(monster)} />
                 );
             });
             if (allCombatants.length === 0) {
@@ -147,7 +147,7 @@ export default class AddCombatantsModal extends React.Component<Props, State> {
                         return (
                             <MonsterCard
                                 key={monster.id}
-                                combatant={monster}
+                                monster={monster}
                                 slot={slot}
                                 mode='view candidate selected'
                                 deselectMonster={m => this.deselectMonster(m)}

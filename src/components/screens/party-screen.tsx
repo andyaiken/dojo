@@ -27,7 +27,7 @@ export default class PartyScreen extends React.Component<Props> {
                 activeCards.push(
                     <div className='column' key={activePC.id}>
                         <PCCard
-                            combatant={activePC}
+                            pc={activePC}
                             mode={'edit'}
                             changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
                             nudgeValue={(pc, type, delta) => this.props.nudgeValue(pc, type, delta)}
@@ -44,7 +44,7 @@ export default class PartyScreen extends React.Component<Props> {
                 inactiveCards.push(
                     <div className='column' key={inactivePC.id}>
                         <PCCard
-                            combatant={inactivePC}
+                            pc={inactivePC}
                             mode={'edit'}
                             changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
                             nudgeValue={(pc, type, delta) => this.props.nudgeValue(pc, type, delta)}

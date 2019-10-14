@@ -24,7 +24,7 @@ import InfoCard from './info-card';
 import arrow from '../../resources/icons/down-arrow.svg';
 
 interface Props {
-    combatant: Monster | (Monster & Combatant);
+    monster: Monster | (Monster & Combatant);
     mode: string;
     library: MonsterGroup[];
     changeValue: (monster: any, field: string, value: any) => void;
@@ -106,7 +106,7 @@ export default class MonsterCard extends React.Component<Props, State> {
         super(props);
         this.state = {
             showDetails: false,
-            cloneName: props.combatant.name + ' copy',
+            cloneName: props.monster.name + ' copy',
             combatMode: 'main',
             damageOrHealing: 0
         };
@@ -143,23 +143,23 @@ export default class MonsterCard extends React.Component<Props, State> {
     }
 
     private heal() {
-        const combatant = this.props.combatant as Combatant;
+        const combatant = this.props.monster as Combatant;
 
         let hp = (combatant.hp ? combatant.hp : 0) + this.state.damageOrHealing;
-        hp = Math.min(hp, this.props.combatant.hpMax);
+        hp = Math.min(hp, this.props.monster.hpMax);
 
         this.setState({
             damageOrHealing: 0
         }, () => {
-            this.props.changeHP(combatant, hp, this.props.combatant.hpTemp);
+            this.props.changeHP(combatant, hp, this.props.monster.hpTemp);
         });
     }
 
     private damage() {
-        const combatant = this.props.combatant as Combatant;
+        const combatant = this.props.monster as Combatant;
 
         let hp = (combatant.hp ? combatant.hp : 0);
-        let temp = this.props.combatant.hpTemp;
+        let temp = this.props.monster.hpTemp;
 
         let damage = this.state.damageOrHealing;
 
@@ -180,41 +180,41 @@ export default class MonsterCard extends React.Component<Props, State> {
     }
 
     private description() {
-        let size = this.props.combatant.size;
-        const combatant = this.props.combatant as (Monster & Combatant);
+        let size = this.props.monster.size;
+        const combatant = this.props.monster as Combatant;
         if (combatant) {
             size = combatant.displaySize || size;
         }
-        let sizeAndType = (size + ' ' + this.props.combatant.category).toLowerCase();
-        if (this.props.combatant.tag) {
-            sizeAndType += ' (' + this.props.combatant.tag.toLowerCase() + ')';
+        let sizeAndType = (size + ' ' + this.props.monster.category).toLowerCase();
+        if (this.props.monster.tag) {
+            sizeAndType += ' (' + this.props.monster.tag.toLowerCase() + ')';
         }
         sizeAndType += ', ';
 
         let align = '';
-        if (this.props.combatant.alignment) {
-            align = this.props.combatant.alignment.toLowerCase() + ', ';
+        if (this.props.monster.alignment) {
+            align = this.props.monster.alignment.toLowerCase() + ', ';
         }
 
-        const cr = 'cr ' + Utils.challenge(this.props.combatant.challenge);
+        const cr = 'cr ' + Utils.challenge(this.props.monster.challenge);
 
         return sizeAndType + align + cr;
     }
 
     private monsterIsInWave(wave: EncounterWave) {
         return wave.slots.some(s => {
-            const group = this.props.library.find(g => g.monsters.includes(this.props.combatant));
-            return !!group && (s.monsterGroupName === group.name) && (s.monsterName === this.props.combatant.name);
+            const group = this.props.library.find(g => g.monsters.includes(this.props.monster));
+            return !!group && (s.monsterGroupName === group.name) && (s.monsterName === this.props.monster.name);
         });
     }
 
     private getHP() {
-        if (this.props.combatant.hitDice === 0) {
-            return this.props.combatant.hpMax;
+        if (this.props.monster.hitDice === 0) {
+            return this.props.monster.hpMax;
         }
 
-        const die = Utils.hitDieType(this.props.combatant.size);
-        const conMod = Utils.modifierValue(this.props.combatant.abilityScores.con) * this.props.combatant.hitDice;
+        const die = Utils.hitDieType(this.props.monster.size);
+        const conMod = Utils.modifierValue(this.props.monster.abilityScores.con) * this.props.monster.hitDice;
         let conModStr = '';
         if (conMod > 0) {
             conModStr = ' +' + conMod;
@@ -222,11 +222,11 @@ export default class MonsterCard extends React.Component<Props, State> {
         if (conMod < 0) {
             conModStr = ' ' + conMod;
         }
-        return this.props.combatant.hpMax + ' (' + this.props.combatant.hitDice + 'd' + die + conModStr + ')';
+        return this.props.monster.hpMax + ' (' + this.props.monster.hitDice + 'd' + die + conModStr + ')';
     }
 
     private getCombatControls() {
-        const combatant = this.props.combatant as Combatant;
+        const combatant = this.props.monster as Combatant;
 
         const options = [];
 
@@ -295,28 +295,28 @@ export default class MonsterCard extends React.Component<Props, State> {
                 options.push(
                     <div key='hp'>
                         <Spin
-                            source={this.props.combatant}
+                            source={this.props.monster}
                             name='hp'
                             label='hit points'
                             factors={[1, 10]}
-                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'hp', delta)}
+                            nudgeValue={delta => this.props.nudgeValue(this.props.monster, 'hp', delta)}
                         />
                         <Spin
-                            source={this.props.combatant}
+                            source={this.props.monster}
                             name='hpTemp'
                             label='temp hp'
                             factors={[1, 10]}
-                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'hpTemp', delta)}
+                            nudgeValue={delta => this.props.nudgeValue(this.props.monster, 'hpTemp', delta)}
                         />
                         <div className='divider' />
-                        <div className='section' style={{ display: this.props.combatant.damage.resist !== '' ? '' : 'none' }}>
-                            <b>damage resistances</b> {this.props.combatant.damage.resist}
+                        <div className='section' style={{ display: this.props.monster.damage.resist !== '' ? '' : 'none' }}>
+                            <b>damage resistances</b> {this.props.monster.damage.resist}
                         </div>
-                        <div className='section' style={{ display: this.props.combatant.damage.vulnerable !== '' ? '' : 'none' }}>
-                            <b>damage vulnerabilities</b> {this.props.combatant.damage.vulnerable}
+                        <div className='section' style={{ display: this.props.monster.damage.vulnerable !== '' ? '' : 'none' }}>
+                            <b>damage vulnerabilities</b> {this.props.monster.damage.vulnerable}
                         </div>
-                        <div className='section' style={{ display: this.props.combatant.damage.immune !== '' ? '' : 'none' }}>
-                            <b>damage immunities</b> {this.props.combatant.damage.immune}
+                        <div className='section' style={{ display: this.props.monster.damage.immune !== '' ? '' : 'none' }}>
+                            <b>damage immunities</b> {this.props.monster.damage.immune}
                         </div>
                         <Spin
                             source={this.state}
@@ -338,15 +338,15 @@ export default class MonsterCard extends React.Component<Props, State> {
             case 'cond':
                 options.push(
                     <div key='conditions'>
-                        <div className='section' style={{ display: this.props.combatant.conditionImmunities !== '' ? '' : 'none' }}>
-                            <b>condition immunities</b> {this.props.combatant.conditionImmunities}
+                        <div className='section' style={{ display: this.props.monster.conditionImmunities !== '' ? '' : 'none' }}>
+                            <b>condition immunities</b> {this.props.monster.conditionImmunities}
                         </div>
                         <ConditionsPanel
-                            combatant={this.props.combatant as Combatant}
+                            combatant={this.props.monster as Combatant}
                             combat={this.props.combat}
-                            addCondition={() => this.props.addCondition(this.props.combatant as Combatant)}
-                            editCondition={condition => this.props.editCondition(this.props.combatant as Combatant, condition)}
-                            removeCondition={conditionID => this.props.removeCondition(this.props.combatant as Combatant, conditionID)}
+                            addCondition={() => this.props.addCondition(this.props.monster as Combatant)}
+                            editCondition={condition => this.props.editCondition(this.props.monster as Combatant, condition)}
+                            removeCondition={conditionID => this.props.removeCondition(this.props.monster as Combatant, conditionID)}
                             nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
                         />
                     </div>
@@ -440,10 +440,10 @@ export default class MonsterCard extends React.Component<Props, State> {
                             content={(
                                 <div>
                                     <Spin
-                                        source={this.props.combatant}
+                                        source={this.props.monster}
                                         name='initiative'
                                         label='initiative'
-                                        nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
+                                        nudgeValue={delta => this.props.nudgeValue(this.props.monster, 'initiative', delta)}
                                     />
                                 </div>
                             )}
@@ -457,10 +457,10 @@ export default class MonsterCard extends React.Component<Props, State> {
                         content={(
                             <div>
                                 <Spin
-                                    source={this.props.combatant}
+                                    source={this.props.monster}
                                     name='displaySize'
                                     label='size'
-                                    nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'displaySize', delta)}
+                                    nudgeValue={delta => this.props.nudgeValue(this.props.monster, 'displaySize', delta)}
                                 />
                             </div>
                         )}
@@ -475,7 +475,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                                 <input
                                     type='text'
                                     value={combatant.displayName}
-                                    onChange={event => this.props.changeValue(this.props.combatant, 'displayName', event.target.value)}
+                                    onChange={event => this.props.changeValue(this.props.monster, 'displayName', event.target.value)}
                                 />
                             </div>
                         )}
@@ -501,7 +501,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                 if (this.props.mode.indexOf('view') !== -1) {
                     if (this.props.mode.indexOf('editable') !== -1) {
                         options.push(
-                            <button key='edit' onClick={() => this.props.editMonster(this.props.combatant)}>edit monster</button>
+                            <button key='edit' onClick={() => this.props.editMonster(this.props.monster)}>edit monster</button>
                         );
 
                         options.push(
@@ -516,7 +516,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                                             value={this.state.cloneName}
                                             onChange={event => this.setCloneName(event.target.value)}
                                         />
-                                        <button onClick={() => this.props.cloneMonster(this.props.combatant, this.state.cloneName)}>create copy</button>
+                                        <button onClick={() => this.props.cloneMonster(this.props.monster, this.state.cloneName)}>create copy</button>
                                     </div>
                                 }
                             />
@@ -524,7 +524,7 @@ export default class MonsterCard extends React.Component<Props, State> {
 
                         const groupOptions: { id: string, text: string }[] = [];
                         this.props.library.forEach(group => {
-                            if (group.monsters.indexOf(this.props.combatant) === -1) {
+                            if (group.monsters.indexOf(this.props.monster) === -1) {
                                 groupOptions.push({
                                     id: group.id,
                                     text: group.name
@@ -536,11 +536,11 @@ export default class MonsterCard extends React.Component<Props, State> {
                                 key='move'
                                 options={groupOptions}
                                 placeholder='move to group...'
-                                select={optionID => this.props.moveToGroup(this.props.combatant, optionID)}
+                                select={optionID => this.props.moveToGroup(this.props.monster, optionID)}
                             />
                         );
 
-                        options.push(<ConfirmButton key='remove' text='delete monster' callback={() => this.props.removeMonster(this.props.combatant)} />);
+                        options.push(<ConfirmButton key='remove' text='delete monster' callback={() => this.props.removeMonster(this.props.monster)} />);
                     }
                     if (this.props.mode.indexOf('encounter') !== -1) {
                         if (this.props.slot) {
@@ -555,7 +555,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                             // This card is in the library list
                             if (!this.monsterIsInWave(this.props.encounter)) {
                                 options.push(
-                                    <button key='add encounter' onClick={() => this.props.addEncounterSlot(this.props.combatant, null)}>
+                                    <button key='add encounter' onClick={() => this.props.addEncounterSlot(this.props.monster, null)}>
                                         add to encounter
                                     </button>
                                 );
@@ -564,7 +564,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                             this.props.encounter.waves.forEach(wave => {
                                 if (!this.monsterIsInWave(wave)) {
                                     options.push(
-                                        <button key={'add ' + wave.id} onClick={() => this.props.addEncounterSlot(this.props.combatant, wave.id)}>
+                                        <button key={'add ' + wave.id} onClick={() => this.props.addEncounterSlot(this.props.monster, wave.id)}>
                                             add to {wave.name}
                                         </button>
                                     );
@@ -578,7 +578,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                                         heading={
                                             (
                                                 <div className='heading'>
-                                                    <div className='title'>{this.props.combatant.name}</div>
+                                                    <div className='title'>{this.props.monster.name}</div>
                                                 </div>
                                             )
                                         }
@@ -597,11 +597,11 @@ export default class MonsterCard extends React.Component<Props, State> {
                     if (this.props.mode.indexOf('candidate') !== -1) {
                         if (this.props.mode.indexOf('selected') === -1) {
                             options.push(
-                                <button key='select' onClick={() => this.props.selectMonster(this.props.combatant)}>select monster</button>
+                                <button key='select' onClick={() => this.props.selectMonster(this.props.monster)}>select monster</button>
                             );
                         } else {
                             options.push(
-                                <button key='deselect' onClick={() => this.props.deselectMonster(this.props.combatant)}>deselect monster</button>
+                                <button key='deselect' onClick={() => this.props.deselectMonster(this.props.monster)}>deselect monster</button>
                             );
                         }
                     }
@@ -639,53 +639,53 @@ export default class MonsterCard extends React.Component<Props, State> {
                         <div>
                             <div className='divider' />
                             <div className='section'>
-                                <b>ac</b> {this.props.combatant.ac}
+                                <b>ac</b> {this.props.monster.ac}
                             </div>
-                            <div className='section' style={{ display: this.props.combatant.hpMax !== 0 ? '' : 'none' }}>
+                            <div className='section' style={{ display: this.props.monster.hpMax !== 0 ? '' : 'none' }}>
                                 <b>hp</b> {this.getHP()}
                             </div>
-                            <div className='section' style={{ display: this.props.combatant.speed !== '' ? '' : 'none' }}>
-                                <b>speed</b> {this.props.combatant.speed}
+                            <div className='section' style={{ display: this.props.monster.speed !== '' ? '' : 'none' }}>
+                                <b>speed</b> {this.props.monster.speed}
                             </div>
                             <div className='section'>
-                                <AbilityScorePanel combatant={this.props.combatant} />
+                                <AbilityScorePanel combatant={this.props.monster} />
                             </div>
-                            <div className='section' style={{ display: this.props.combatant.savingThrows !== '' ? '' : 'none' }}>
-                                <b>saving throws</b> {this.props.combatant.savingThrows}
+                            <div className='section' style={{ display: this.props.monster.savingThrows !== '' ? '' : 'none' }}>
+                                <b>saving throws</b> {this.props.monster.savingThrows}
                             </div>
-                            <div className='section' style={{ display: this.props.combatant.skills !== '' ? '' : 'none' }}>
-                                <b>skills</b> {this.props.combatant.skills}
+                            <div className='section' style={{ display: this.props.monster.skills !== '' ? '' : 'none' }}>
+                                <b>skills</b> {this.props.monster.skills}
                             </div>
-                            <div className='section' style={{ display: this.props.combatant.damage.resist !== '' ? '' : 'none' }}>
-                                <b>damage resistances</b> {this.props.combatant.damage.resist}
+                            <div className='section' style={{ display: this.props.monster.damage.resist !== '' ? '' : 'none' }}>
+                                <b>damage resistances</b> {this.props.monster.damage.resist}
                             </div>
-                            <div className='section' style={{ display: this.props.combatant.damage.vulnerable !== '' ? '' : 'none' }}>
-                                <b>damage vulnerabilities</b> {this.props.combatant.damage.vulnerable}
+                            <div className='section' style={{ display: this.props.monster.damage.vulnerable !== '' ? '' : 'none' }}>
+                                <b>damage vulnerabilities</b> {this.props.monster.damage.vulnerable}
                             </div>
-                            <div className='section' style={{ display: this.props.combatant.damage.immune !== '' ? '' : 'none' }}>
-                                <b>damage immunities</b> {this.props.combatant.damage.immune}
+                            <div className='section' style={{ display: this.props.monster.damage.immune !== '' ? '' : 'none' }}>
+                                <b>damage immunities</b> {this.props.monster.damage.immune}
                             </div>
-                            <div className='section' style={{ display: this.props.combatant.conditionImmunities !== '' ? '' : 'none' }}>
-                                <b>condition immunities</b> {this.props.combatant.conditionImmunities}
+                            <div className='section' style={{ display: this.props.monster.conditionImmunities !== '' ? '' : 'none' }}>
+                                <b>condition immunities</b> {this.props.monster.conditionImmunities}
                             </div>
-                            <div className='section' style={{ display: this.props.combatant.senses !== '' ? '' : 'none' }}>
-                                <b>senses</b> {this.props.combatant.senses}
+                            <div className='section' style={{ display: this.props.monster.senses !== '' ? '' : 'none' }}>
+                                <b>senses</b> {this.props.monster.senses}
                             </div>
-                            <div className='section' style={{ display: this.props.combatant.languages !== '' ? '' : 'none' }}>
-                                <b>languages</b> {this.props.combatant.languages}
+                            <div className='section' style={{ display: this.props.monster.languages !== '' ? '' : 'none' }}>
+                                <b>languages</b> {this.props.monster.languages}
                             </div>
-                            <div className='section' style={{ display: this.props.combatant.equipment !== '' ? '' : 'none' }}>
-                                <b>equipment</b> {this.props.combatant.equipment}
+                            <div className='section' style={{ display: this.props.monster.equipment !== '' ? '' : 'none' }}>
+                                <b>equipment</b> {this.props.monster.equipment}
                             </div>
                             <div className='divider' />
-                            <TraitsPanel combatant={this.props.combatant} />
+                            <TraitsPanel combatant={this.props.monster} />
                         </div>
                     );
                 }
 
                 stats = (
                     <div className='stats'>
-                        <PortraitPanel source={this.props.combatant} />
+                        <PortraitPanel source={this.props.monster} />
                         <div className='section centered'>
                             <i>{this.description()}</i>
                         </div>
@@ -697,51 +697,51 @@ export default class MonsterCard extends React.Component<Props, State> {
             if (this.props.mode.indexOf('combat') !== -1) {
                 stats = (
                     <div className='stats'>
-                        <PortraitPanel source={this.props.combatant} />
+                        <PortraitPanel source={this.props.monster} />
                         <div className='section centered'>
                             <i>{this.description()}</i>
                         </div>
                         <div className='divider' />
                         {combat}
                         <div className='section'>
-                            <AbilityScorePanel combatant={this.props.combatant} />
+                            <AbilityScorePanel combatant={this.props.monster} />
                         </div>
-                        <div className='section' style={{ display: this.props.combatant.ac !== 0 ? '' : 'none' }}>
-                            <b>ac</b> {this.props.combatant.ac}
+                        <div className='section' style={{ display: this.props.monster.ac !== 0 ? '' : 'none' }}>
+                            <b>ac</b> {this.props.monster.ac}
                         </div>
-                        <div className='section' style={{ display: this.props.combatant.savingThrows !== '' ? '' : 'none' }}>
-                            <b>saving throws</b> {this.props.combatant.savingThrows}
+                        <div className='section' style={{ display: this.props.monster.savingThrows !== '' ? '' : 'none' }}>
+                            <b>saving throws</b> {this.props.monster.savingThrows}
                         </div>
-                        <div className='section' style={{ display: this.props.combatant.skills !== '' ? '' : 'none' }}>
-                            <b>skills</b> {this.props.combatant.skills}
+                        <div className='section' style={{ display: this.props.monster.skills !== '' ? '' : 'none' }}>
+                            <b>skills</b> {this.props.monster.skills}
                         </div>
-                        <div className='section' style={{ display: this.props.combatant.speed !== '' ? '' : 'none' }}>
-                            <b>speed</b> {this.props.combatant.speed}
+                        <div className='section' style={{ display: this.props.monster.speed !== '' ? '' : 'none' }}>
+                            <b>speed</b> {this.props.monster.speed}
                         </div>
-                        <div className='section' style={{ display: this.props.combatant.senses !== '' ? '' : 'none' }}>
-                            <b>senses</b> {this.props.combatant.senses}
+                        <div className='section' style={{ display: this.props.monster.senses !== '' ? '' : 'none' }}>
+                            <b>senses</b> {this.props.monster.senses}
                         </div>
-                        <div className='section' style={{ display: this.props.combatant.damage.resist !== '' ? '' : 'none' }}>
-                            <b>damage resistances</b> {this.props.combatant.damage.resist}
+                        <div className='section' style={{ display: this.props.monster.damage.resist !== '' ? '' : 'none' }}>
+                            <b>damage resistances</b> {this.props.monster.damage.resist}
                         </div>
-                        <div className='section' style={{ display: this.props.combatant.damage.vulnerable !== '' ? '' : 'none' }}>
-                            <b>damage vulnerabilities</b> {this.props.combatant.damage.vulnerable}
+                        <div className='section' style={{ display: this.props.monster.damage.vulnerable !== '' ? '' : 'none' }}>
+                            <b>damage vulnerabilities</b> {this.props.monster.damage.vulnerable}
                         </div>
-                        <div className='section' style={{ display: this.props.combatant.damage.immune !== '' ? '' : 'none' }}>
-                            <b>damage immunities</b> {this.props.combatant.damage.immune}
+                        <div className='section' style={{ display: this.props.monster.damage.immune !== '' ? '' : 'none' }}>
+                            <b>damage immunities</b> {this.props.monster.damage.immune}
                         </div>
-                        <div className='section' style={{ display: this.props.combatant.conditionImmunities !== '' ? '' : 'none' }}>
-                            <b>condition immunities</b> {this.props.combatant.conditionImmunities}
+                        <div className='section' style={{ display: this.props.monster.conditionImmunities !== '' ? '' : 'none' }}>
+                            <b>condition immunities</b> {this.props.monster.conditionImmunities}
                         </div>
-                        <div className='section' style={{ display: this.props.combatant.languages !== '' ? '' : 'none' }}>
-                            <b>languages</b> {this.props.combatant.languages}
+                        <div className='section' style={{ display: this.props.monster.languages !== '' ? '' : 'none' }}>
+                            <b>languages</b> {this.props.monster.languages}
                         </div>
-                        <div className='section' style={{ display: this.props.combatant.equipment !== '' ? '' : 'none' }}>
-                            <b>equipment</b> {this.props.combatant.equipment}
+                        <div className='section' style={{ display: this.props.monster.equipment !== '' ? '' : 'none' }}>
+                            <b>equipment</b> {this.props.monster.equipment}
                         </div>
                         <div className='divider' />
                         <TraitsPanel
-                            combatant={this.props.combatant}
+                            combatant={this.props.monster}
                             mode='combat'
                             changeValue={(trait, field, value) => this.props.changeValue(trait, field, value)}
                         />
@@ -752,22 +752,22 @@ export default class MonsterCard extends React.Component<Props, State> {
                 if (this.props.mode.indexOf('overview') !== -1) {
                     stats = (
                         <div>
-                        <PortraitPanel source={this.props.combatant} />
+                        <PortraitPanel source={this.props.monster} />
                             <div className='section centered'>
                                 <i>{this.description()}</i>
                             </div>
                             <div className='divider' />
                             <div className='section'>
-                                <b>speed</b> {this.props.combatant.speed || '-'}
+                                <b>speed</b> {this.props.monster.speed || '-'}
                             </div>
                             <div className='section'>
-                                <b>senses</b> {this.props.combatant.senses || '-'}
+                                <b>senses</b> {this.props.monster.senses || '-'}
                             </div>
                             <div className='section'>
-                                <b>languages</b> {this.props.combatant.languages || '-'}
+                                <b>languages</b> {this.props.monster.languages || '-'}
                             </div>
                             <div className='section'>
-                                <b>equipment</b> {this.props.combatant.equipment || '-'}
+                                <b>equipment</b> {this.props.monster.equipment || '-'}
                             </div>
                         </div>
                     );
@@ -776,13 +776,13 @@ export default class MonsterCard extends React.Component<Props, State> {
                     stats = (
                         <div>
                             <div className='section'>
-                                <AbilityScorePanel combatant={this.props.combatant} />
+                                <AbilityScorePanel combatant={this.props.monster} />
                             </div>
                             <div className='section'>
-                                <b>saving throws</b> {this.props.combatant.savingThrows || '-'}
+                                <b>saving throws</b> {this.props.monster.savingThrows || '-'}
                             </div>
                             <div className='section'>
-                                <b>skills</b> {this.props.combatant.skills || '-'}
+                                <b>skills</b> {this.props.monster.skills || '-'}
                             </div>
                         </div>
                     );
@@ -791,22 +791,22 @@ export default class MonsterCard extends React.Component<Props, State> {
                     stats = (
                         <div>
                             <div className='section'>
-                                <b>ac</b> {this.props.combatant.ac}
+                                <b>ac</b> {this.props.monster.ac}
                             </div>
                             <div className='section'>
                                 <b>hp</b> {this.getHP()}
                             </div>
                             <div className='section'>
-                                <b>damage immunity</b> {this.props.combatant.damage.immune || '-'}
+                                <b>damage immunity</b> {this.props.monster.damage.immune || '-'}
                             </div>
                             <div className='section'>
-                                <b>damage resistance</b> {this.props.combatant.damage.resist || '-'}
+                                <b>damage resistance</b> {this.props.monster.damage.resist || '-'}
                             </div>
                             <div className='section'>
-                                <b>damage vulnerability</b> {this.props.combatant.damage.vulnerable || '-'}
+                                <b>damage vulnerability</b> {this.props.monster.damage.vulnerable || '-'}
                             </div>
                             <div className='section'>
-                                <b>condition immunities</b> {this.props.combatant.conditionImmunities || '-'}
+                                <b>condition immunities</b> {this.props.monster.conditionImmunities || '-'}
                             </div>
                         </div>
                     );
@@ -814,7 +814,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                 if (this.props.mode.indexOf('actions') !== -1) {
                     stats = (
                         <TraitsPanel
-                            combatant={this.props.combatant}
+                            combatant={this.props.monster}
                             mode='template'
                             filter={this.props.filter}
                             copyTrait={trait => this.props.copyTrait(trait)}
@@ -837,8 +837,8 @@ export default class MonsterCard extends React.Component<Props, State> {
                 );
             }
 
-            const name = (this.props.combatant as Combatant ? (this.props.combatant as Combatant).displayName : null)
-                || this.props.combatant.name
+            const name = (this.props.monster as Combatant ? (this.props.monster as Combatant).displayName : null)
+                || this.props.monster.name
                 || 'unnamed monster';
 
             return (

@@ -499,7 +499,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 return (
                     <div className='section' key={m.id}>
                         <MonsterCard
-                            combatant={m}
+                            monster={m}
                             mode={'template ' + this.state.page}
                             filter={this.state.similarFilter.text}
                             copyTrait={trait => this.copyTrait(trait)}

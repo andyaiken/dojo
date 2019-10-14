@@ -260,7 +260,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                 return (
                     <PCCard
                         key='selected'
-                        combatant={combatant as Combatant & PC}
+                        pc={combatant as Combatant & PC}
                         mode={mode}
                         combat={this.props.combat as Combat}
                         changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
@@ -284,7 +284,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                 return (
                     <MonsterCard
                         key='selected'
-                        combatant={combatant as Combatant & Monster}
+                        monster={combatant as Combatant & Monster}
                         mode={mode}
                         combat={this.props.combat as Combat}
                         changeValue={(c, type, value) => this.props.changeValue(c, type, value)}

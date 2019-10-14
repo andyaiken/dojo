@@ -4,10 +4,12 @@ import Factory from '../../utils/factory';
 import Mercator from '../../utils/mercator';
 import Utils from '../../utils/utils';
 
-import { Map, MapItem } from '../../models/map-folio';
+import { Map, MapItem, TERRAIN_TYPES } from '../../models/map-folio';
 
-import MapTileCard from '../cards/map-tile-card';
 import ConfirmButton from '../controls/confirm-button';
+import Dropdown from '../controls/dropdown';
+import Radial from '../controls/radial';
+import Selector from '../controls/selector';
 import Spin from '../controls/spin';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
@@ -221,22 +223,93 @@ export default class MapEditorModal extends React.Component<Props, State> {
             if (this.state.selectedTileID) {
                 const item = this.state.map.items.find(i => i.id === this.state.selectedTileID);
                 if (item) {
+                    const terrainOptions = TERRAIN_TYPES.map(t => {
+                        return { id: t, text: t };
+                    });
+
+                    const styleOptions = ['square', 'rounded', 'circle'].map(t => {
+                        return { id: t, text: t };
+                    });
+
+                    let customSection = null;
+                    if (item.terrain === 'custom') {
+                        customSection = (
+                            <div>
+                                <div className='subheading'>custom image</div>
+                                <button onClick={() => (document.getElementById('file-upload') as HTMLElement).click()}>select image</button>
+                                <input
+                                    type='file'
+                                    id='file-upload'
+                                    accept='image/*'
+                                    style={{ display: 'none' }}
+                                    onChange={e => {
+                                        if (e.target.files) {
+                                            const reader = new FileReader();
+                                            reader.onload = readerEvent => {
+                                                if (readerEvent.target) {
+                                                    const content = readerEvent.target.result as string;
+                                                    this.changeValue(item, 'customBackground', content);
+                                                }
+                                            };
+                                            reader.readAsDataURL(e.target.files[0]);
+                                        }
+                                    }}
+                                />
+                                <button onClick={() => this.changeValue(item, 'customBackground', '')}>clear image</button>
+                            </div>
+                        );
+                    }
+
                     tools = (
                         <div className='tools'>
-                            <MapTileCard
-                                tile={item}
-                                moveMapItem={(mapItem, dir) => this.moveMapItem(mapItem, dir)}
-                                resizeMapItem={(mapItem, dir, dir2) => this.resizeMapItem(mapItem, dir, dir2 as 'in' | 'out')}
-                                cloneMapItem={mapItem => this.cloneMapItem(mapItem)}
-                                removeMapItem={mapItem => this.removeMapItem(mapItem)}
-                                changeValue={(source, field, value) => this.changeValue(source, field, value)}
+                            <div className='subheading'>size</div>
+                            <div className='section'>{item.width} sq x {item.height} sq</div>
+                            <div className='section'>{item.width * 5} ft x {item.height * 5} ft</div>
+                            <div className='divider' />
+                            <div className='subheading'>terrain</div>
+                            <Dropdown
+                                options={terrainOptions}
+                                placeholder='select terrain'
+                                selectedID={item.terrain ? item.terrain : undefined}
+                                select={optionID => this.changeValue(item, 'terrain', optionID)}
                             />
+                            {customSection}
+                            <div className='divider' />
+                            <div className='subheading'>style</div>
+                            <Selector
+                                options={styleOptions}
+                                selectedID={item.style}
+                                select={optionID => this.changeValue(item, 'style', optionID)}
+                            />
+                            <div className='divider' />
+                            <div className='subheading'>move</div>
+                            <div className='section centered'>
+                                <Radial direction='out' click={dir => this.moveMapItem(item, dir)} />
+                            </div>
+                            <div className='divider' />
+                            <div className='subheading'>resize</div>
+                            <div className='section centered'>
+                                <Radial direction='both' click={(dir, dir2) => this.resizeMapItem(item, dir, dir2 as 'in' | 'out')} />
+                            </div>
+                            <div className='divider' />
+                            <div className='section'>
+                                <button onClick={() => this.cloneMapItem(item)}>clone tile</button>
+                                <button onClick={() => this.removeMapItem(item)}>remove tile</button>
+                            </div>
                         </div>
                     );
                 }
             } else {
                 tools = (
                     <div className='tools'>
+                        <div className='subheading'>map name</div>
+                        <input
+                            type='text'
+                            placeholder='map name'
+                            value={this.state.map.name}
+                            onChange={event => this.changeValue(this.state.map, 'name', event.target.value)}
+                        />
+                        <div className='divider' />
                         <Note
                             content={
                                 <div>
@@ -246,23 +319,15 @@ export default class MapEditorModal extends React.Component<Props, State> {
                             }
                         />
                         <div className='divider' />
-                        <div className='subheading'>map name</div>
-                        <input
-                            type='text'
-                            placeholder='map name'
-                            value={this.state.map.name}
-                            onChange={event => this.changeValue(this.state.map, 'name', event.target.value)}
-                        />
-                        <div className='divider' />
-                        <button onClick={() => this.toggleAddingTile()}>
-                            {this.state.addingTile ? 'click somewhere on the map to add your new tile, or click here to cancel' : 'add a new tile'}
-                        </button>
                         <Spin
                             source={this.state}
                             name={'mapSize'}
                             display={value => 'zoom'}
                             nudgeValue={delta => this.nudgeMapSize(delta * 5)}
                         />
+                        <button onClick={() => this.toggleAddingTile()}>
+                            {this.state.addingTile ? 'click somewhere on the map to add your new tile, or click here to cancel' : 'add a new tile'}
+                        </button>
                         <button onClick={() => this.rotateMap()}>rotate the map</button>
                         <ConfirmButton text='clear all tiles' callback={() => this.clearMap()} />
                     </div>
