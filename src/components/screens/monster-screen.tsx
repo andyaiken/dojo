@@ -47,7 +47,7 @@ export default class MonsterScreen extends React.Component<Props> {
             } else {
                 cards.push(
                     <div className='column' key='empty'>
-                        <Note content={<div className='section'>there are no monsters in this group</div>} />
+                        <Note><div className='section'>there are no monsters in this group</div></Note>
                     </div>
                 );
             }

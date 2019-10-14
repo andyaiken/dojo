@@ -114,26 +114,16 @@ export default class EncounterScreen extends React.Component<Props, State> {
             if (waveID) {
                 cards.push(
                     <div className='column' key='empty'>
-                        <Note
-                            content={
-                                <div>
-                                    <p>there are no monsters in this wave</p>
-                                </div>
-                            }
-                        />
+                        <Note>there are no monsters in this wave</Note>
                     </div>
                 );
             } else {
                 cards.push(
                     <div className='column' key='empty'>
-                        <Note
-                            content={
-                                <div>
-                                    <p>there are no monsters in this encounter</p>
-                                    <p>you can add monsters from the list below, or try 'build a random encounter'</p>
-                                </div>
-                            }
-                        />
+                        <Note>
+                            <p>there are no monsters in this encounter</p>
+                            <p>you can add monsters from the list below, or try 'build a random encounter'</p>
+                        </Note>
                     </div>
                 );
             }
@@ -175,13 +165,7 @@ export default class EncounterScreen extends React.Component<Props, State> {
         if (libraryCards.length === 0) {
             libraryCards.push(
                 <div className='column' key='empty'>
-                    <Note
-                        content={
-                            <div>
-                                <p>there are no monsters that meet the criteria <i>{Napoleon.getFilterDescription(this.state.filter)}</i></p>
-                            </div>
-                        }
-                    />
+                    <Note><p>there are no monsters that meet the criteria <i>{Napoleon.getFilterDescription(this.state.filter)}</i></p></Note>
                 </div>
             );
         }

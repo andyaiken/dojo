@@ -103,30 +103,21 @@ export default class TraitsPanel extends React.Component<Props, State> {
                 );
             } else {
                 selection = (
-                    <Note
-                        content={(
-                            <div>select one of the traits or actions from the column to the left to edit its details here</div>
-                        )}
-                    />
+                    <Note>select one of the traits or actions from the column to the left to edit its details here</Note>
                 );
             }
 
             return (
                 <div className='row'>
                     <div className='columns small-6 medium-6 large-6'>
-                        <Menu
-                            text='add a new...'
-                            content={(
-                                <div>
-                                    <button key='trait' onClick={() => this.props.addTrait('trait')}>add a new trait</button>
-                                    <button key='action' onClick={() => this.props.addTrait('action')}>add a new action</button>
-                                    <button key='bonus' onClick={() => this.props.addTrait('bonus')}>add a new bonus action</button>
-                                    <button key='reaction' onClick={() => this.props.addTrait('reaction')}>add a new reaction</button>
-                                    <button key='legendary' onClick={() => this.props.addTrait('legendary')}>add a new legendary action</button>
-                                    <button key='lair' onClick={() => this.props.addTrait('lair')}>add a new lair action</button>
-                                </div>
-                            )}
-                        />
+                        <Menu text='add a new...'>
+                            <button key='trait' onClick={() => this.props.addTrait('trait')}>add a new trait</button>
+                            <button key='action' onClick={() => this.props.addTrait('action')}>add a new action</button>
+                            <button key='bonus' onClick={() => this.props.addTrait('bonus')}>add a new bonus action</button>
+                            <button key='reaction' onClick={() => this.props.addTrait('reaction')}>add a new reaction</button>
+                            <button key='legendary' onClick={() => this.props.addTrait('legendary')}>add a new legendary action</button>
+                            <button key='lair' onClick={() => this.props.addTrait('lair')}>add a new lair action</button>
+                        </Menu>
                         {this.createSection(traitsByType, 'trait')}
                         {this.createSection(traitsByType, 'action')}
                         {this.createSection(traitsByType, 'bonus')}

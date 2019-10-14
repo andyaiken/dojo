@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Frankenstein from '../../utils/frankenstein';
 import Utils from '../../utils/utils';
 
 import { Combat, COMBAT_TAGS, Combatant } from '../../models/combat';
@@ -180,25 +181,7 @@ export default class MonsterCard extends React.Component<Props, State> {
     }
 
     private description() {
-        let size = this.props.monster.size;
-        const combatant = this.props.monster as Combatant;
-        if (combatant) {
-            size = combatant.displaySize || size;
-        }
-        let sizeAndType = (size + ' ' + this.props.monster.category).toLowerCase();
-        if (this.props.monster.tag) {
-            sizeAndType += ' (' + this.props.monster.tag.toLowerCase() + ')';
-        }
-        sizeAndType += ', ';
-
-        let align = '';
-        if (this.props.monster.alignment) {
-            align = this.props.monster.alignment.toLowerCase() + ', ';
-        }
-
-        const cr = 'cr ' + Utils.challenge(this.props.monster.challenge);
-
-        return sizeAndType + align + cr;
+        return Frankenstein.getDescription(this.props.monster);
     }
 
     private monsterIsInWave(wave: EncounterWave) {

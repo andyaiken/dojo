@@ -48,7 +48,7 @@ export default class MapScreen extends React.Component<Props> {
             if (folioCards.length === 0) {
                 folioCards.push(
                     <div className='column' key='empty'>
-                        <Note content={<div className='section'>there are no maps in this folio</div>} />
+                        <Note><div className='section'>there are no maps in this folio</div></Note>
                     </div>
                 );
             }

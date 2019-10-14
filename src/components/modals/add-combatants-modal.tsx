@@ -129,13 +129,11 @@ export default class AddCombatantsModal extends React.Component<Props, State> {
             });
             if (allCombatants.length === 0) {
                 allCombatants = (
-                    <Note
-                        content={(
-                            <div className='section'>
-                                there are no monsters that match the above criteria (or you have already selected them all)
-                            </div>
-                        )}
-                    />
+                    <Note>
+                        <div className='section'>
+                            there are no monsters that match the above criteria (or you have already selected them all)
+                        </div>
+                    </Note>
                 );
             }
 

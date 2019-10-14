@@ -501,7 +501,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             }
 
             return (
-                <Note content={info} />
+                <Note>{info}</Note>
             );
         }
 
@@ -776,7 +776,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                             );
                             if (searchResults.length === 0) {
                                 resultsRows = [(
-                                    <Note key='none' content='no monsters found' />
+                                    <Note key='none'>no monsters found</Note>
                                 )];
                             }
                             let removeSection = null;

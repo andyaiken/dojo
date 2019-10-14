@@ -3,6 +3,7 @@ import React from 'react';
 import { Monster } from '../../models/monster-group';
 import { PC } from '../../models/party';
 
+import clear from '../../resources/icons/x.svg';
 import none from '../../resources/images/no-portrait.png';
 
 interface Props {
@@ -31,19 +32,23 @@ export default class PortraitPanel extends React.Component<Props> {
     }
 
     private getEditor() {
-        let clear = null;
+        let clearBtn = null;
         if (this.props.source.portrait) {
-            clear = (
-                <button onClick={() => this.props.setValue('')}>clear image</button>
+            clearBtn = (
+                <img className='clear' src={clear} onClick={() => this.props.setValue('')} alt='clear' />
             );
         }
 
         return (
             <div className='portrait editing'>
                 <div className='section centered'>
-                    <img src={this.props.source.portrait ? this.props.source.portrait : none} alt='portrait' />
+                    <img
+                        src={this.props.source.portrait ? this.props.source.portrait : none}
+                        onClick={() => (document.getElementById('file-upload') as HTMLInputElement).click()}
+                        alt='portrait'
+                    />
+                    {clearBtn}
                 </div>
-                <button onClick={() => (document.getElementById('file-upload') as HTMLInputElement).click()}>select image</button>
                 <input
                     type='file'
                     id='file-upload'
@@ -51,7 +56,6 @@ export default class PortraitPanel extends React.Component<Props> {
                     style={{ display: 'none' }}
                     onChange={e => this.onFileSelected(e)}
                 />
-                {clear}
             </div>
         );
     }

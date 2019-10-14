@@ -4,7 +4,6 @@ import ellipsis from '../../resources/icons/ellipsis.svg';
 
 interface Props {
     text: string;
-    content: JSX.Element | JSX.Element[] | string;
     disabled: boolean;
 }
 
@@ -49,7 +48,7 @@ export default class Menu extends React.Component<Props, State> {
 
                 content.push(
                     <div key='options' className='menu-content'>
-                        {this.props.content}
+                        {this.props.children}
                     </div>
                 );
             }

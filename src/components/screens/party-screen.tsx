@@ -56,7 +56,7 @@ export default class PartyScreen extends React.Component<Props> {
             if (activePCs.length === 0) {
                 activeCards.push(
                     <div className='column' key='empty'>
-                        <Note content={<div className='section'>there are no pcs in this party</div>} />
+                        <Note><div className='section'>there are no pcs in this party</div></Note>
                     </div>
                 );
             }

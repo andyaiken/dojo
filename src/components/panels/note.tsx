@@ -1,7 +1,6 @@
 import React from 'react';
 
 interface Props {
-    content: string | JSX.Element | JSX.Element[];
     white: boolean;
 }
 
@@ -19,7 +18,7 @@ export default class Note extends React.Component<Props> {
 
             return (
                 <div className={style}>
-                    {this.props.content}
+                    {this.props.children}
                 </div>
             );
         } catch (e) {

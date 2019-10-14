@@ -1,9 +1,32 @@
 import Factory from './factory';
 import Utils from './utils';
 
+import { Combatant } from '../models/combat';
 import { Monster, Trait, TRAIT_TYPES } from '../models/monster-group';
 
 export default class Frankenstein {
+    public static getDescription(monster: Monster | (Monster & Combatant)) {
+        let size = monster.size;
+        const combatant = monster as Combatant;
+        if (combatant) {
+            size = combatant.displaySize || size;
+        }
+        let sizeAndType = (size + ' ' + monster.category).toLowerCase();
+        if (monster.tag) {
+            sizeAndType += ' (' + monster.tag.toLowerCase() + ')';
+        }
+        sizeAndType += ', ';
+
+        let align = '';
+        if (monster.alignment) {
+            align = monster.alignment.toLowerCase() + ', ';
+        }
+
+        const cr = 'cr ' + Utils.challenge(monster.challenge);
+
+        return sizeAndType + align + cr;
+    }
+
     public static nudgeValue(target: Monster, field: string, delta: number) {
         let source: any = target;
         let value: any = null;

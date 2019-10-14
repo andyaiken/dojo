@@ -1766,6 +1766,7 @@ export default class Dojo extends React.Component<Props, State> {
                         <EncounterListScreen
                             encounters={this.state.encounters}
                             selectEncounter={encounter => this.selectEncounter(encounter)}
+                            getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
                         />
                     );
                 }

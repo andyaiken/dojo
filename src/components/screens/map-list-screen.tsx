@@ -14,32 +14,26 @@ interface Props {
 export default class MapListScreen extends React.Component<Props> {
     public render() {
         try {
-            const listItems = this.props.mapFolios.map(mapFolio => {
-                return (
-                    <ListItem
-                        key={mapFolio.id}
-                        mapFolio={mapFolio}
-                        setSelection={f => this.props.selectMapFolio(f)}
-                    />
-                );
-            });
+            const listItems = this.props.mapFolios.map(mapFolio => (
+                <ListItem
+                    key={mapFolio.id}
+                    mapFolio={mapFolio}
+                    setSelection={f => this.props.selectMapFolio(f)}
+                />
+            ));
 
             return (
                 <div className='screen row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable left-column'>
-                        <Note
-                            content={
-                                <div>
-                                    <div className='section'>on this page you can set up folios containing tactical maps</div>
-                                    <div className='section'>when you have created a map you can use it in the combat manager</div>
-                                    <div className='divider'/>
-                                    <div className='section'>on the right you will see a list of map folios</div>
-                                    <div className='section'>select a folio from the list to see the maps it contains</div>
-                                    <div className='divider'/>
-                                    <div className='section'>to start a new folio, press the <b>add a new map folio</b> button</div>
-                                </div>
-                            }
-                        />
+                        <Note>
+                            <div className='section'>on this page you can set up folios containing tactical maps</div>
+                            <div className='section'>when you have created a map you can use it in the combat manager</div>
+                            <div className='divider'/>
+                            <div className='section'>on the right you will see a list of map folios</div>
+                            <div className='section'>select a folio from the list to see the maps it contains</div>
+                            <div className='divider'/>
+                            <div className='section'>to start a new folio, press the <b>create a new map folio</b> button</div>
+                        </Note>
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup heading='map folios' content={listItems} />

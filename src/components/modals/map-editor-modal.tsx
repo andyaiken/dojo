@@ -310,14 +310,10 @@ export default class MapEditorModal extends React.Component<Props, State> {
                             onChange={event => this.changeValue(this.state.map, 'name', event.target.value)}
                         />
                         <div className='divider' />
-                        <Note
-                            content={
-                                <div>
-                                    <p>to add a new tile to the map, click on the button below</p>
-                                    <p>to edit an existing tile, click on it to select it</p>
-                                </div>
-                            }
-                        />
+                        <Note>
+                            <p>to add a new tile to the map, click on the button below</p>
+                            <p>to edit an existing tile, click on it to select it</p>
+                        </Note>
                         <div className='divider' />
                         <Spin
                             source={this.state}

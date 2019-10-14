@@ -411,16 +411,10 @@ export default class CombatScreen extends React.Component<Props, State> {
 
             if (pending.length !== 0) {
                 const pendingHelp = (
-                    <div key='pending-help'>
-                        <Note
-                            content={
-                                <div>
-                                    <div className='section'>these combatants are not yet part of the encounter</div>
-                                    <div className='section'>set initiative on each of them, then add them to the encounter</div>
-                                </div>
-                            }
-                        />
-                    </div>
+                    <Note key='pending-help'>
+                        <div className='section'>these combatants are not yet part of the encounter</div>
+                        <div className='section'>set initiative on each of them, then add them to the encounter</div>
+                    </Note>
                 );
                 pending = [pendingHelp].concat(pending);
             }
@@ -428,17 +422,11 @@ export default class CombatScreen extends React.Component<Props, State> {
             if (current.length === 0) {
                 const activeHelp = (
                     /* tslint:disable:max-line-length */
-                    <div key='active-help'>
-                        <Note
-                            content={
-                                <div>
-                                    <div className='section'>these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right)</div>
-                                    <div className='section'>they are listed in initiative order (with the highest initiative score at the top of the list, and the lowest at the bottom)</div>
-                                    <div className='section'>when you're ready to begin the encounter, select the first combatant and press the <b>start turn</b> button on their stat block</div>
-                                </div>
-                            }
-                        />
-                    </div>
+                    <Note key='active-help'>
+                        <div className='section'>these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right)</div>
+                        <div className='section'>they are listed in initiative order (with the highest initiative score at the top of the list, and the lowest at the bottom)</div>
+                        <div className='section'>when you're ready to begin the encounter, select the first combatant and press the <b>start turn</b> button on their stat block</div>
+                    </Note>
                     /* tslint:enable:max-line-length */
                 );
                 active = [activeHelp].concat(active);
@@ -446,14 +434,9 @@ export default class CombatScreen extends React.Component<Props, State> {
 
             if (current.length === 0) {
                 current.push(
-                    <Note
-                        key='current'
-                        content={
-                            <div className='section'>
-                                the current initiative holder will be displayed here
-                            </div>
-                        }
-                    />
+                    <Note key='current'>
+                        <div className='section'>the current initiative holder will be displayed here</div>
+                    </Note>
                 );
             }
 
@@ -578,14 +561,11 @@ export default class CombatScreen extends React.Component<Props, State> {
             }
             if (!selectedCombatant) {
                 selectedCombatant = (
-                    <Note
-                        key='selected'
-                        content={
-                            <div className='section'>
-                                select a pc or monster from the <b>initiative order</b> list to see its details here
-                            </div>
-                        }
-                    />
+                    <Note key='selected'>
+                        <div className='section'>
+                            select a pc or monster from the <b>initiative order</b> list to see its details here
+                        </div>
+                    </Note>
                 );
             }
 
@@ -873,18 +853,14 @@ class PCRow extends React.Component<PCRowProps> {
                         description.push(<li key={n} className='condition-text'>{text[n]}</li>);
                     }
                     return (
-                        <Note
-                            key={c.id}
-                            white={true}
-                            content={
-                                <div className='condition'>
-                                    <div className='condition-name'>{name}</div>
-                                    <ul>
-                                        {description}
-                                    </ul>
-                                </div>
-                            }
-                        />
+                        <Note key={c.id} white={true}>
+                            <div className='condition'>
+                                <div className='condition-name'>{name}</div>
+                                <ul>
+                                    {description}
+                                </ul>
+                            </div>
+                        </Note>
                     );
                 });
             }
@@ -893,13 +869,13 @@ class PCRow extends React.Component<PCRowProps> {
             if (this.props.combat.map) {
                 if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
                     notes.push(
-                        <Note key='not-on-map' white={true} content='not on the map' />
+                        <Note key='not-on-map' white={true}>not on the map</Note>
                     );
                 }
             }
             this.props.combatant.tags.forEach(tag => {
                 notes.push(
-                    <Note key={tag} white={true} content={Utils.getTagDescription(tag)} />
+                    <Note key={tag} white={true}>{Utils.getTagDescription(tag)}</Note>
                 );
             });
 
@@ -1005,18 +981,14 @@ class MonsterRow extends React.Component<MonsterRowProps> {
                         description.push(<li key={n} className='condition-text'>{text[n]}</li>);
                     }
                     return (
-                        <Note
-                            key={c.id}
-                            white={true}
-                            content={
-                                <div className='condition'>
-                                    <div className='condition-name'>{name}</div>
-                                    <ul>
-                                        {description}
-                                    </ul>
-                                </div>
-                            }
-                        />
+                        <Note key={c.id} white={true}>
+                            <div className='condition'>
+                                <div className='condition-name'>{name}</div>
+                                <ul>
+                                    {description}
+                                </ul>
+                            </div>
+                        </Note>
                     );
                 });
             }
@@ -1025,13 +997,13 @@ class MonsterRow extends React.Component<MonsterRowProps> {
             if (this.props.combat.map) {
                 if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
                     notes.push(
-                        <Note key='not-on-map' white={true} content='not on the map' />
+                        <Note key='not-on-map' white={true}>not on the map</Note>
                     );
                 }
             }
             this.props.combatant.tags.forEach(tag => {
                 notes.push(
-                    <Note key={tag} white={true} content={Utils.getTagDescription(tag)} />
+                    <Note key={tag} white={true}>{Utils.getTagDescription(tag)}</Note>
                 );
             });
 

@@ -1,15 +1,11 @@
 import React from 'react';
 
-interface Props {
-    content: string | JSX.Element | JSX.Element[];
-}
-
-export default class Readaloud extends React.Component<Props> {
+export default class Readaloud extends React.Component {
     public render() {
         try {
             return (
                 <div className='readaloud'>
-                    {this.props.content}
+                    {this.props.children}
                 </div>
             );
         } catch (e) {

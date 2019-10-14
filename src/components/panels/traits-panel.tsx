@@ -48,19 +48,15 @@ export default class TraitsPanel extends React.Component<Props> {
                 case 'legendary':
                     /* tslint:disable:max-line-length */
                     info = (
-                        <Note
-                            content={'one legendary action can be used at the end of each other combatant\'s turn; spent actions are refreshed at the start of the monster\'s turn'}
-                            white={true}
-                        />
+                        <Note white={true}>
+                            one legendary action can be used at the end of each other combatant's turn; spent actions are refreshed at the start of the monster's turn
+                        </Note>
                     );
                     /* tslint:enable:max-line-length */
                     break;
                 case 'lair':
                     info = (
-                        <Note
-                            content={'one lair action can be taken each round on initiative 20'}
-                            white={true}
-                        />
+                        <Note white={true}>one lair action can be taken each round on initiative 20</Note>
                     );
                     break;
             }

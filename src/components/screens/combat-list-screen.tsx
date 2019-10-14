@@ -14,33 +14,27 @@ interface Props {
 export default class CombatListScreen extends React.Component<Props> {
     public render() {
         try {
-            const listItems = this.props.combats.map(c => {
-                return (
-                    <ListItem
-                        key={c.id}
-                        combat={c}
-                        setSelection={combat => this.props.resumeCombat(combat)}
-                    />
-                );
-            });
+            const listItems = this.props.combats.map(c => (
+                <ListItem
+                    key={c.id}
+                    combat={c}
+                    setSelection={combat => this.props.resumeCombat(combat)}
+                />
+            ));
 
             return (
                 <div className='screen row collapse'>
                     <div className='columns small-4 medium-4 large-3 scrollable left-column'>
-                        <Note
-                            content={
-                                <div>
-                                    <div className='section'>
-                                        here you can run a combat encounter by specifying a party and an encounter, and optionally a tactical map
-                                    </div>
-                                    <div className='divider' />
-                                    <div className='section'>on the right you will see a list of combats that you have paused</div>
-                                    <div className='section'>you can resume a paused combat by selecting it</div>
-                                    <div className='divider' />
-                                    <div className='section'>to start a combat encounter, press the <b>start a new combat</b> button</div>
-                                </div>
-                            }
-                        />
+                        <Note>
+                            <div className='section'>
+                                here you can run a combat encounter by specifying a party and an encounter, and optionally a tactical map
+                            </div>
+                            <div className='divider' />
+                            <div className='section'>on the right you will see a list of combats that you have paused</div>
+                            <div className='section'>you can resume a paused combat by selecting it</div>
+                            <div className='divider' />
+                            <div className='section'>to start a combat encounter, press the <b>start a new combat</b> button</div>
+                        </Note>
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup heading='combats' content={listItems} />

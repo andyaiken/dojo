@@ -134,14 +134,14 @@ export default class PCEditorModal extends React.Component<Props, State> {
                                     label='perception'
                                     nudgeValue={delta => this.nudgeValue(this.state.pc, 'passivePerception', delta)}
                                 />
+                            </div>
+                            <div className='columns small-12 medium-6 large-6 scrollable'>
                                 <div className='subheading'>languages:</div>
                                 <input
                                     type='text'
                                     value={this.state.pc.languages}
                                     onChange={event => this.changeValue(this.state.pc, 'languages', event.target.value)}
                                 />
-                            </div>
-                            <div className='columns small-12 medium-6 large-6 scrollable'>
                                 <div className='subheading'>d&d beyond link:</div>
                                 <input
                                     type='text'
