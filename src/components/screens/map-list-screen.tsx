@@ -3,6 +3,7 @@ import React from 'react';
 import { MapFolio } from '../../models/map-folio';
 
 import CardGroup from '../panels/card-group';
+import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 
 interface Props {
@@ -60,11 +61,16 @@ interface ListItemProps {
 class ListItem extends React.Component<ListItemProps> {
     public render() {
         try {
-            const maps = [];
-            for (let n = 0; n !== this.props.mapFolio.maps.length; ++n) {
-                const map = this.props.mapFolio.maps[n];
-                maps.push(<div key={map.id} className='section'>{map.name || 'unnamed map'}</div>);
-            }
+            const maps = this.props.mapFolio.maps.map(map => (
+                <div key={map.id}>
+                    <div className='section'>{map.name || 'unnamed map'}</div>
+                    <MapPanel
+                        map={map}
+                        mode='thumbnail'
+                        size={5}
+                    />
+                </div>
+            ));
             if (maps.length === 0) {
                 maps.push(<div key='empty' className='section'>no maps</div>);
             }

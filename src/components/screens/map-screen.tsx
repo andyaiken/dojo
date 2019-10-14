@@ -2,9 +2,9 @@ import React from 'react';
 
 import { Map, MapFolio } from '../../models/map-folio';
 
-import MapCard from '../cards/map-card';
 import ConfirmButton from '../controls/confirm-button';
 import CardGroup from '../panels/card-group';
+import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 
 interface Props {
@@ -24,12 +24,23 @@ export default class MapScreen extends React.Component<Props> {
             this.props.mapFolio.maps.forEach(m => {
                 folioCards.push(
                     <div className='column' key={m.id}>
-                        <MapCard
-                            map={m}
-                            editMap={map => this.props.editMap(map)}
-                            removeMap={map => this.props.removeMap(map)}
-                            changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
-                        />
+                        <div className='card map'>
+                            <div className='heading'>
+                                <div className='title'>{m.name || 'unnamed map'}</div>
+                            </div>
+                            <div className='card-content'>
+                                <div className='section'>
+                                    <MapPanel
+                                        map={m}
+                                        mode='thumbnail'
+                                        size={10}
+                                    />
+                                </div>
+                                <div className='divider' />
+                                <button onClick={() => this.props.editMap(m)}>edit map</button>
+                                <ConfirmButton text='delete map' callback={() => this.props.removeMap(m)} />
+                            </div>
+                        </div>
                     </div>
                 );
             });
