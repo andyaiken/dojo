@@ -26,7 +26,7 @@ export default class MonsterListScreen extends React.Component<Props> {
 
             return (
                 <div className='screen row collapse'>
-                    <div className='columns small-4 medium-4 large-3 scrollable left-column'>
+                    <div className='columns small-4 medium-4 large-3 scrollable sidebar'>
                         <Note>
                             <div className='section'>you can maintain your menagerie of monsters here</div>
                             <div className='section'>you can then use these monsters to design combat encounters in the encounter builder</div>
@@ -148,7 +148,7 @@ class ListItem extends React.Component<ListItemProps, ListItemState> {
             <div key={text} className='breakdown-bar'>
                 <div className='bar-text'>{text}</div>
                 <div className='bar-value-container'>
-                    <div className='bar-value' style={{ width: width }}></div>
+                    <div className='bar-value' style={{ width: width }} />
                 </div>
             </div>
         );

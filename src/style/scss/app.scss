@@ -225,7 +225,7 @@ button {
     padding: 0 5px !important;
 }
 
-.left-column {
+.sidebar {
     padding: 0 10px !important;
     background-color: $header-background-02;
     border-right: 1px solid $control-border;
@@ -1029,16 +1029,13 @@ body,
 
             .tools {
                 display: inline-block;
-                vertical-align: top;
                 overflow-y: auto;
                 height: 100%;
                 width: 300px;
-                padding: 10px;
             }
 
             .map-panel {
                 display: inline-block;
-                vertical-align: top;
                 width: calc(100% - 300px);
                 height: 100%;
             }

@@ -261,7 +261,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
                     }
 
                     tools = (
-                        <div className='tools'>
+                        <div className='tools sidebar'>
                             <div className='subheading'>size</div>
                             <div className='section'>{item.width} sq x {item.height} sq</div>
                             <div className='section'>{item.width * 5} ft x {item.height * 5} ft</div>
@@ -301,7 +301,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
                 }
             } else {
                 tools = (
-                    <div className='tools'>
+                    <div className='tools sidebar'>
                         <div className='subheading'>map name</div>
                         <input
                             type='text'

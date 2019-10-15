@@ -193,7 +193,7 @@ export default class EncounterScreen extends React.Component<Props, State> {
 
             return (
                 <div className='screen row collapse'>
-                    <div className='columns small-4 medium-4 large-3 scrollable left-column'>
+                    <div className='columns small-4 medium-4 large-3 scrollable sidebar'>
                         <EncounterInfo
                             encounter={this.props.encounter}
                             parties={this.props.parties}
