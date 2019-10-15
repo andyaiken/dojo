@@ -1,6 +1,6 @@
 import React from 'react';
 
-import cog from '../../resources/icons/down-arrow-black.svg';
+import arrow from '../../resources/icons/down-arrow-black.svg';
 
 interface Props {
     breadcrumbs: {id: string, text: string}[];
@@ -24,7 +24,7 @@ export default class Titlebar extends React.Component<Props> {
                 <div className={this.props.blur ? 'titlebar blur' : 'titlebar'}>
                     {breadcrumbs}
                     {this.props.actions}
-                    <img className='drawer-icon' src={cog} title='tools' alt='tools' onClick={() => this.props.openDrawer()} />
+                    <img className='drawer-icon' src={arrow} title='tools' alt='tools' onClick={() => this.props.openDrawer()} />
                 </div>
             );
         } catch (e) {

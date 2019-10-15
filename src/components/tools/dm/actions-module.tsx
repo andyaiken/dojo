@@ -38,7 +38,7 @@ export default class ActionsModule extends React.Component<Props, State> {
                 this.fetchData();
             }
 
-            const icon = <Icon type='loading' style={{ fontSize: 20 }} spin={true} />;
+            const icon = <Icon type='loading' style={{ fontSize: 20, marginTop: 100 }} spin={true} />;
 
             return (
                 <Spin spinning={this.state.source === null} indicator={icon}>
