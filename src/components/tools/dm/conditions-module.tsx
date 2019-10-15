@@ -1,7 +1,7 @@
 import React from 'react';
-import Showdown from 'showdown';
 
-import LoadingWrapper from '../../controls/loading-wrapper';
+import { Icon, Spin } from 'antd';
+import Showdown from 'showdown';
 
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);
@@ -38,10 +38,12 @@ export default class ConditionsModule extends React.Component<Props, State> {
                 this.fetchData();
             }
 
+            const icon = <Icon type='loading' style={{ fontSize: 20 }} spin={true} />;
+
             return (
-                <LoadingWrapper loaded={this.state.source !== null}>
+                <Spin spinning={this.state.source === null} indicator={icon}>
                     <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.state.source || '') }} />
-                </LoadingWrapper>
+                </Spin>
             );
         } catch (ex) {
             console.error(ex);

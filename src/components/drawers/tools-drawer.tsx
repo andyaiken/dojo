@@ -5,7 +5,6 @@ import { MonsterGroup } from '../../models/monster-group';
 import Selector from '../controls/selector';
 import AboutTool from '../tools/about-tool';
 import DMTool from '../tools/dm-tool';
-import ReferenceTool from '../tools/reference-tool';
 
 interface Props {
     library: MonsterGroup[];
@@ -16,11 +15,11 @@ interface State {
     view: string;
 }
 
-export default class ToolsSidebar extends React.Component<Props, State> {
+export default class ToolsDrawer extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            view: 'ref'
+            view: 'dm'
         };
     }
 
@@ -34,10 +33,6 @@ export default class ToolsSidebar extends React.Component<Props, State> {
         try {
             const options = [
                 {
-                    id: 'ref',
-                    text: 'reference'
-                },
-                {
                     id: 'dm',
                     text: 'dm tools'
                 },
@@ -49,9 +44,6 @@ export default class ToolsSidebar extends React.Component<Props, State> {
 
             let content = null;
             switch (this.state.view) {
-                case 'ref':
-                    content = <ReferenceTool />;
-                    break;
                 case 'dm':
                     content = <DMTool library={this.props.library} />;
                     break;
@@ -61,7 +53,7 @@ export default class ToolsSidebar extends React.Component<Props, State> {
             }
 
             return (
-                <div className='scrollable'>
+                <div>
                     <Selector
                         tabs={true}
                         options={options}

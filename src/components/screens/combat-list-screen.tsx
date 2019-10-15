@@ -8,6 +8,7 @@ import Note from '../panels/note';
 
 interface Props {
     combats: Combat[];
+    createCombat: () => void;
     resumeCombat: (combat: Combat) => void;
 }
 
@@ -35,6 +36,7 @@ export default class CombatListScreen extends React.Component<Props> {
                             <div className='divider' />
                             <div className='section'>to start a combat encounter, press the <b>start a new combat</b> button</div>
                         </Note>
+                        <button onClick={() => this.props.createCombat()}>start a new combat</button>
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup heading='combats' content={listItems} />

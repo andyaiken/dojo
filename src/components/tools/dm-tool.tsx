@@ -3,10 +3,13 @@ import React from 'react';
 import { MonsterGroup } from '../../models/monster-group';
 
 import Selector from '../controls/selector';
+import ActionsModule from './dm/actions-module';
+import ConditionsModule from './dm/conditions-module';
 import DemographicsModule from './dm/demographics-module';
 import DieRollerModule from './dm/die-roller-module';
 import LanguageModule from './dm/language-module';
 import NameModule from './dm/name-module';
+import SkillsModule from './dm/skills-module';
 
 interface Props {
     library: MonsterGroup[];
@@ -21,7 +24,7 @@ export default class DMTool extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            view: 'die'
+            view: 'skills'
         };
     }
 
@@ -34,6 +37,18 @@ export default class DMTool extends React.Component<Props, State> {
     public render() {
         try {
             const options = [
+                {
+                    id: 'skills',
+                    text: 'skills reference'
+                },
+                {
+                    id: 'conditions',
+                    text: 'conditions reference'
+                },
+                {
+                    id: 'actions',
+                    text: 'actions reference'
+                },
                 {
                     id: 'die',
                     text: 'die roller'
@@ -54,6 +69,21 @@ export default class DMTool extends React.Component<Props, State> {
 
             let content = null;
             switch (this.state.view) {
+                case 'skills':
+                    content = (
+                        <SkillsModule />
+                    );
+                    break;
+                case 'conditions':
+                    content = (
+                        <ConditionsModule />
+                    );
+                    break;
+                case 'actions':
+                    content = (
+                        <ActionsModule />
+                    );
+                    break;
                 case 'die':
                     content = (
                         <DieRollerModule />
@@ -80,7 +110,7 @@ export default class DMTool extends React.Component<Props, State> {
                     <Selector
                         options={options}
                         selectedID={this.state.view}
-                        itemsPerRow={2}
+                        itemsPerRow={3}
                         select={optionID => this.setView(optionID)}
                     />
                     <div className='divider' />

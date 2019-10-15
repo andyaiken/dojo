@@ -7,6 +7,7 @@ import Note from '../panels/note';
 
 interface Props {
     parties: Party[];
+    addParty: () => void;
     selectParty: (party: Party) => void;
 }
 
@@ -34,6 +35,7 @@ export default class PartyListScreen extends React.Component<Props> {
                             <div className='divider'/>
                             <div className='section'>to start adding a party, press the <b>create a new party</b> button</div>
                         </Note>
+                        <button onClick={() => this.props.addParty()}>create a new party</button>
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup heading='parties' content={listItems} />

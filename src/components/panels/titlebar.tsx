@@ -1,22 +1,30 @@
 import React from 'react';
 
-import cog from '../../resources/icons/settings.svg';
+import cog from '../../resources/icons/down-arrow-black.svg';
 
 interface Props {
+    breadcrumbs: {id: string, text: string}[];
     actions: JSX.Element | null;
     blur: boolean;
-    openHome: () => void;
-    openTools: () => void;
+    breadcrumbClicked: (id: string) => void;
+    openDrawer: () => void;
 }
 
 export default class Titlebar extends React.Component<Props> {
     public render() {
         try {
+            const breadcrumbs = this.props.breadcrumbs.map(bc => {
+                if (bc === this.props.breadcrumbs[this.props.breadcrumbs.length - 1]) {
+                    return <div key={bc.id} className='breadcrumb non-clickable'>{bc.text}</div>;
+                } else {
+                    return <div key={bc.id} className='breadcrumb' onClick={() => this.props.breadcrumbClicked(bc.id)}>{bc.text}</div>;
+                }
+            });
             return (
                 <div className={this.props.blur ? 'titlebar blur' : 'titlebar'}>
-                    <div className='app-name' onClick={() => this.props.openHome()}>dojo</div>
+                    {breadcrumbs}
                     {this.props.actions}
-                    <img className='tools-icon' src={cog} title='tools' alt='tools' onClick={() => this.props.openTools()} />
+                    <img className='drawer-icon' src={cog} title='tools' alt='tools' onClick={() => this.props.openDrawer()} />
                 </div>
             );
         } catch (e) {

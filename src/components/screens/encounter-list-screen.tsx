@@ -10,6 +10,7 @@ import Note from '../panels/note';
 
 interface Props {
     encounters: Encounter[];
+    addEncounter: () => void;
     selectEncounter: (encounter: Encounter) => void;
     getMonster: (monsterName: string, groupName: string) => Monster | null;
 }
@@ -43,6 +44,7 @@ export default class EncounterListScreen extends React.Component<Props> {
                             <div className='divider'/>
                             <div className='section'>to start building an encounter, press the <b>create a new encounter</b> button</div>
                         </Note>
+                        <button onClick={() => this.props.addEncounter()}>create a new encounter</button>
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup heading='encounters' content={listItems} />

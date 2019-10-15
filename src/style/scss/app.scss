@@ -1,3 +1,4 @@
+@import '~antd/dist/antd.css';
 @import 'theme.scss';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -405,7 +406,7 @@ body,
     background-color: $header-background;
     border-bottom: 1px solid $control-border;
 
-    .app-name {
+    .breadcrumb {
         display: inline-block;
         padding: 4px 6px 8px 6px;
         margin: 0 5px;
@@ -416,6 +417,10 @@ body,
         color: $header-foreground;
         border-left: 3px solid $header-foreground;
         cursor: pointer;
+
+        &.non-clickable {
+            pointer-events: none;
+        }
 
         &:hover {
             background-color: $header-foreground-03;
@@ -446,7 +451,7 @@ body,
         }
     }
 
-    .tools-icon {
+    .drawer-icon {
         position: absolute;
         right: 0;
         top: 0;
@@ -456,6 +461,7 @@ body,
         margin: 5px;
         border-radius: 50%;
         cursor: pointer;
+        transform: rotate(90deg);
 
         &:hover {
             background-color: $highlight02;
@@ -926,12 +932,6 @@ body,
     height: calc(100% - 100px);
     width: calc(100% - 100px);
     margin: 50px;
-
-    &.sidebar {
-        height: 100%;
-        width: 50%;
-        margin: 0 0 0 50%;
-    }
 
     .modal-header {
         height: 50px;

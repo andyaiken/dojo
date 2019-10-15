@@ -8,6 +8,7 @@ import Note from '../panels/note';
 
 interface Props {
     mapFolios: MapFolio[];
+    addMapFolio: () => void;
     selectMapFolio: (mapFolio: MapFolio) => void;
 }
 
@@ -34,6 +35,7 @@ export default class MapListScreen extends React.Component<Props> {
                             <div className='divider'/>
                             <div className='section'>to start a new folio, press the <b>create a new map folio</b> button</div>
                         </Note>
+                        <button onClick={() => this.props.addMapFolio()}>create a new map folio</button>
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup heading='map folios' content={listItems} />

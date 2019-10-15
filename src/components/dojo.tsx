@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Drawer } from 'antd';
+
 import Factory from '../utils/factory';
 import Frankenstein from '../utils/frankenstein';
 import Mercator from '../utils/mercator';
@@ -14,13 +16,13 @@ import { Monster, MonsterGroup } from '../models/monster-group';
 import { Party, PC } from '../models/party';
 
 import Checkbox from './controls/checkbox';
+import ToolsDrawer from './drawers/tools-drawer';
 import AddCombatantsModal from './modals/add-combatants-modal';
 import CombatStartModal from './modals/combat-start-modal';
 import ConditionModal from './modals/condition-modal';
 import MapEditorModal from './modals/map-editor-modal';
 import MonsterEditorModal from './modals/monster-editor-modal';
 import PCEditorModal from './modals/pc-editor-modal';
-import ToolsSidebar from './modals/tools-sidebar';
 import Navbar from './panels/navbar';
 import Titlebar from './panels/titlebar';
 import CombatListScreen from './screens/combat-list-screen';
@@ -35,8 +37,6 @@ import MonsterScreen from './screens/monster-screen';
 import PartyListScreen from './screens/party-list-screen';
 import PartyScreen from './screens/party-screen';
 
-import close from '../resources/icons/x.svg';
-
 // tslint:disable-next-line:no-empty-interface
 interface Props {
     // No props; this is the root component
@@ -45,6 +45,7 @@ interface Props {
 interface State {
     view: 'home' | 'parties' | 'library' | 'encounters' | 'maps' | 'combat';
     modal: any;
+    drawer: any;
 
     parties: Party[];
     library: MonsterGroup[];
@@ -66,6 +67,7 @@ export default class Dojo extends React.Component<Props, State> {
         this.state = {
             view: 'home',
             modal: null,
+            drawer: null,
             parties: [],
             library: [],
             encounters: [],
@@ -164,6 +166,7 @@ export default class Dojo extends React.Component<Props, State> {
 
                 data.view = 'home';
                 data.modal = null;
+                data.drawer = null;
 
                 this.state = data;
             }
@@ -1431,9 +1434,43 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
-    private openToolsSidebar() {
+    private breadcrumbClicked(view: string) {
+        switch (view) {
+            case 'home':
+                this.setState({
+                    view: 'home'
+                });
+                break;
+            case 'parties':
+                this.setState({
+                    view: 'parties',
+                    selectedPartyID: null
+                });
+                break;
+            case 'library':
+                this.setState({
+                    view: 'library',
+                    selectedMonsterGroupID: null
+                });
+                break;
+            case 'encounters':
+                this.setState({
+                    view: 'encounters',
+                    selectedEncounterID: null
+                });
+                break;
+            case 'maps':
+                this.setState({
+                    view: 'maps',
+                    selectedMapFolioID: null
+                });
+                break;
+        }
+    }
+
+    private openToolsDrawer() {
         this.setState({
-            modal: {
+            drawer: {
                 type: 'tools-sidebar'
             }
         });
@@ -1442,6 +1479,12 @@ export default class Dojo extends React.Component<Props, State> {
     private closeModal() {
         this.setState({
             modal: null
+        });
+    }
+
+    private closeDrawer() {
+        this.setState({
+            drawer: null
         });
     }
 
@@ -1584,80 +1627,46 @@ export default class Dojo extends React.Component<Props, State> {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private getActions() {
+    private getBreadcrumbs() {
+        const breadcrumbs = [];
+
+        breadcrumbs.push({ id: 'home', text: 'dojo' });
+
         switch (this.state.view) {
             case 'parties':
+                breadcrumbs.push({ id: 'parties', text: 'player characters' });
                 if (this.state.selectedPartyID) {
-                    return (
-                        <div className='actions'>
-                            <div className='section'>
-                                <button onClick={() => this.selectParty(null)}>&larr; back to list</button>
-                            </div>
-                        </div>
-                    );
-                } else {
-                    return (
-                        <div className='actions'>
-                            <div className='section'>
-                                <button onClick={() => this.addParty()}>create a new party</button>
-                            </div>
-                        </div>
-                    );
+                    breadcrumbs.push({ id: this.state.selectedPartyID, text: 'party' });
                 }
+                break;
             case 'library':
+                breadcrumbs.push({ id: 'library', text: 'monster library' });
                 if (this.state.selectedMonsterGroupID) {
-                    return (
-                        <div className='actions'>
-                            <div className='section'>
-                                <button onClick={() => this.selectMonsterGroup(null)}>&larr; back to list</button>
-                            </div>
-                        </div>
-                    );
-                } else {
-                    return (
-                        <div className='actions'>
-                            <div className='section'>
-                                <button onClick={() => this.addMonsterGroup()}>create a new monster group</button>
-                            </div>
-                        </div>
-                    );
+                    breadcrumbs.push({ id: this.state.selectedMonsterGroupID, text: 'monster group' });
                 }
+                break;
             case 'encounters':
+                breadcrumbs.push({ id: 'encounters', text: 'encounter builder' });
                 if (this.state.selectedEncounterID) {
-                    return (
-                        <div className='actions'>
-                            <div className='section'>
-                                <button onClick={() => this.selectEncounter(null)}>&larr; back to list</button>
-                            </div>
-                        </div>
-                    );
-                } else {
-                    return (
-                        <div className='actions'>
-                            <div className='section'>
-                                <button onClick={() => this.addEncounter()}>create a new encounter</button>
-                            </div>
-                        </div>
-                    );
+                    breadcrumbs.push({ id: this.state.selectedEncounterID, text: 'encounter' });
                 }
+                break;
             case 'maps':
+                breadcrumbs.push({ id: 'maps', text: 'map folios' });
                 if (this.state.selectedMapFolioID) {
-                    return (
-                        <div className='actions'>
-                            <div className='section'>
-                                <button onClick={() => this.selectMapFolio(null)}>&larr; back to list</button>
-                            </div>
-                        </div>
-                    );
-                } else {
-                    return (
-                        <div className='actions'>
-                            <div className='section'>
-                                <button onClick={() => this.addMapFolio()}>create a new map folio</button>
-                            </div>
-                        </div>
-                    );
+                    breadcrumbs.push({ id: this.state.selectedMapFolioID, text: 'map folio' });
                 }
+                break;
+            case 'combat':
+                breadcrumbs.push({ id: 'combat', text: 'combat manager' });
+                break;
+        }
+
+        return breadcrumbs;
+    }
+
+    private getActions() {
+        switch (this.state.view) {
             case 'combat':
                 if (this.state.selectedCombatID) {
                     const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
@@ -1668,14 +1677,6 @@ export default class Dojo extends React.Component<Props, State> {
                             </div>
                             <div className='section'>
                                 <button onClick={() => this.endCombat()}>end combat</button>
-                            </div>
-                        </div>
-                    );
-                } else {
-                    return (
-                        <div className='actions'>
-                            <div className='section'>
-                                <button onClick={() => this.createCombat()}>start a new combat</button>
                             </div>
                         </div>
                     );
@@ -1712,6 +1713,7 @@ export default class Dojo extends React.Component<Props, State> {
                     return (
                         <PartyListScreen
                             parties={this.state.parties}
+                            addParty={() => this.addParty()}
                             selectParty={party => this.selectParty(party)}
                         />
                     );
@@ -1737,6 +1739,7 @@ export default class Dojo extends React.Component<Props, State> {
                     return (
                         <MonsterListScreen
                             library={this.state.library}
+                            addMonsterGroup={() => this.addMonsterGroup()}
                             selectMonsterGroup={group => this.selectMonsterGroup(group)}
                         />
                     );
@@ -1765,6 +1768,7 @@ export default class Dojo extends React.Component<Props, State> {
                     return (
                         <EncounterListScreen
                             encounters={this.state.encounters}
+                            addEncounter={() => this.addEncounter()}
                             selectEncounter={encounter => this.selectEncounter(encounter)}
                             getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
                         />
@@ -1786,6 +1790,7 @@ export default class Dojo extends React.Component<Props, State> {
                     return (
                         <MapListScreen
                             mapFolios={this.state.mapFolios}
+                            addMapFolio={() => this.addMapFolio()}
                             selectMapFolio={folio => this.selectMapFolio(folio)}
                         />
                     );
@@ -1823,6 +1828,7 @@ export default class Dojo extends React.Component<Props, State> {
                     return (
                         <CombatListScreen
                             combats={this.state.combats}
+                            createCombat={() => this.createCombat()}
                             resumeCombat={pausedCombat => this.resumeCombat(pausedCombat)}
                         />
                     );
@@ -1832,9 +1838,27 @@ export default class Dojo extends React.Component<Props, State> {
         return null;
     }
 
+    private getDrawer() {
+        let content = null;
+
+        if (this.state.drawer) {
+            switch (this.state.drawer.type) {
+                case 'tools-sidebar':
+                    content = (
+                        <ToolsDrawer
+                            library={this.state.library}
+                            resetAll={() => this.resetAll()}
+                        />
+                    );
+                    break;
+            }
+        }
+
+        return content;
+    }
+
     private getModal() {
         if (this.state.modal) {
-            let modalSidebar = false;
             let modalTitle = null;
             let modalContent = null;
 
@@ -1846,16 +1870,6 @@ export default class Dojo extends React.Component<Props, State> {
             };
 
             switch (this.state.modal.type) {
-                case 'tools-sidebar':
-                    modalSidebar = true;
-                    modalContent = (
-                        <ToolsSidebar
-                            library={this.state.library}
-                            resetAll={() => this.resetAll()}
-                        />
-                    );
-                    modalButtons.right = [];
-                    break;
                 case 'pc':
                         modalTitle = 'pc editor';
                         modalContent = (
@@ -2006,11 +2020,10 @@ export default class Dojo extends React.Component<Props, State> {
             }
 
             return (
-                <div className='overlay' onClick={() => modalSidebar ? this.closeModal() : null}>
-                    <div className={modalSidebar ? 'modal sidebar' : 'modal'} onClick={e => e.stopPropagation()}>
+                <div className='overlay'>
+                    <div className='modal' onClick={e => e.stopPropagation()}>
                         <div className='modal-header'>
                             <div className='title'>{modalTitle}</div>
-                            {modalSidebar ? <img className='image' src={close} alt='close' onClick={() => this.closeModal()} /> : null}
                         </div>
                         <div className='modal-content'>
                             {modalContent}
@@ -2030,16 +2043,19 @@ export default class Dojo extends React.Component<Props, State> {
     public render() {
         try {
             const content = this.getContent();
+            const breadcrumbs = this.getBreadcrumbs();
             const actions = this.getActions();
+            const drawer = this.getDrawer();
             const modal = this.getModal();
 
             return (
                 <div className='dojo'>
                     <Titlebar
+                        breadcrumbs={breadcrumbs}
                         actions={actions}
                         blur={modal !== null}
-                        openHome={() => this.setView('home')}
-                        openTools={() => this.openToolsSidebar()}
+                        breadcrumbClicked={bc => this.breadcrumbClicked(bc)}
+                        openDrawer={() => this.openToolsDrawer()}
                     />
                     <div className={(modal === null) ? 'page-content' : 'page-content blur'}>
                         {content}
@@ -2052,6 +2068,14 @@ export default class Dojo extends React.Component<Props, State> {
                         blur={modal !== null}
                         setView={view => this.setView(view)}
                     />
+                    <Drawer
+                        closable={false}
+                        width={'50%'}
+                        onClose={() => this.closeDrawer()}
+                        visible={drawer !== null}
+                    >
+                        {drawer}
+                    </Drawer>
                     {modal}
                 </div>
             );

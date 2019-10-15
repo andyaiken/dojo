@@ -1,7 +1,7 @@
 import React from 'react';
-import Showdown from 'showdown';
 
-import LoadingWrapper from '../../controls/loading-wrapper';
+import { Icon, Spin } from 'antd';
+import Showdown from 'showdown';
 
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);
@@ -15,7 +15,7 @@ interface State {
     source: string | null;
 }
 
-export default class ActionsModule extends React.Component<Props, State> {
+export default class SkillsModule extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
@@ -25,7 +25,7 @@ export default class ActionsModule extends React.Component<Props, State> {
     }
 
     private async fetchData() {
-        const response = await fetch('./data/actions.md');
+        const response = await fetch('./data/skills.md');
         const text = await response.text();
         this.setState({
             source: text
@@ -38,10 +38,12 @@ export default class ActionsModule extends React.Component<Props, State> {
                 this.fetchData();
             }
 
+            const icon = <Icon type='loading' style={{ fontSize: 20 }} spin={true} />;
+
             return (
-                <LoadingWrapper loaded={this.state.source !== null}>
+                <Spin spinning={this.state.source === null} indicator={icon}>
                     <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.state.source || '') }} />
-                </LoadingWrapper>
+                </Spin>
             );
         } catch (ex) {
             console.error(ex);

@@ -10,6 +10,7 @@ import Note from '../panels/note';
 
 interface Props {
     library: MonsterGroup[];
+    addMonsterGroup: () => void;
     selectMonsterGroup: (group: MonsterGroup) => void;
 }
 
@@ -36,6 +37,7 @@ export default class MonsterListScreen extends React.Component<Props> {
                             <div className='divider'/>
                             <div className='section'>to start adding monsters, press the <b>create a new monster group</b> button</div>
                         </Note>
+                        <button onClick={() => this.props.addMonsterGroup()}>create a new monster group</button>
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
                         <CardGroup heading='monster groups' content={listItems} />
