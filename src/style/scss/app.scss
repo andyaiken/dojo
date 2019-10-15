@@ -725,7 +725,7 @@ body,
             .bar {
                 background-color: lightsteelblue;
                 border-right: 1px solid steelblue;
-                height: 20px;
+                height: 22px;
             }
 
             &:hover {
@@ -1000,10 +1000,10 @@ body,
                 }
 
                 .column {
-                    min-height: 38px;
+                    min-height: 42px;
 
                     .text-container {
-                        margin: 10px 0;
+                        line-height: 42px;
 
                         &.number {
                             text-align: right;
@@ -1011,7 +1011,7 @@ body,
                     }
 
                     .bar-container {
-                        height: 18px;
+                        height: 22px;
                         margin: 10px 0;
                         border-bottom: 1px solid $highlight02;
 
@@ -1449,6 +1449,31 @@ body,
 
         .up {
             transform: rotate(-180deg);
+        }
+    }
+}
+
+.breakdown-bar {
+    padding-right: 5px;
+
+    .bar-text {
+        width: 60%;
+        height: 22px;
+        line-height: 22px;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .bar-value-container {
+        width: 40%;
+        height: 22px;
+        display: inline-block;
+        vertical-align: middle;
+
+        .bar-value {
+            height: 22px;
+            background-color: lightsteelblue;
+            border-right: 1px solid steelblue;
         }
     }
 }

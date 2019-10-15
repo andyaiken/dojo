@@ -1,6 +1,8 @@
 import React from 'react';
 
-import { MonsterGroup } from '../../models/monster-group';
+import Utils from '../../utils/utils';
+
+import { CATEGORY_TYPES, MonsterGroup, SIZE_TYPES } from '../../models/monster-group';
 
 import Selector from '../controls/selector';
 import CardGroup from '../panels/card-group';
@@ -89,10 +91,67 @@ class ListItem extends React.Component<ListItemProps, ListItemState> {
     }
 
     private getBreakdown() {
-        // sizes
-        // category
-        // challenge range
-        return '';
+        const sizes: JSX.Element[] = [];
+        SIZE_TYPES.forEach(size => {
+            const count = this.props.group.monsters.filter(m => m.size === size).length;
+            if (count > 0) {
+                const pc = Math.round(100 * count / this.props.group.monsters.length);
+                sizes.push(this.getBar(size, pc));
+            }
+        });
+        if (sizes.length === 0) {
+            sizes.push(<div key='empty'>none</div>);
+        }
+
+        const categories: JSX.Element[] = [];
+        CATEGORY_TYPES.forEach(cat => {
+            const count = this.props.group.monsters.filter(m => m.category === cat).length;
+            if (count > 0) {
+                const pc = Math.round(100 * count / this.props.group.monsters.length);
+                categories.push(this.getBar(cat, pc));
+            }
+        });
+        if (categories.length === 0) {
+            categories.push(<div key='empty'>none</div>);
+        }
+
+        const challengeRatings = [
+            0, 0.125, 0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
+        ];
+        const crs: JSX.Element[] = [];
+        challengeRatings.forEach(rating => {
+            const count = this.props.group.monsters.filter(m => m.challenge === rating).length;
+            if (count > 0) {
+                const pc = Math.round(100 * count / this.props.group.monsters.length);
+                crs.push(this.getBar(Utils.challenge(rating), pc));
+            }
+        });
+        if (crs.length === 0) {
+            crs.push(<div key='empty'>none</div>);
+        }
+
+        return (
+            <div>
+                <div className='subheading'>size</div>
+                {sizes}
+                <div className='subheading'>category</div>
+                {categories}
+                <div className='subheading'>challenge rating</div>
+                {crs}
+            </div>
+        );
+    }
+
+    private getBar(text: string, value: number) {
+        const width = value + '%';
+        return (
+            <div key={text} className='breakdown-bar'>
+                <div className='bar-text'>{text}</div>
+                <div className='bar-value-container'>
+                    <div className='bar-value' style={{ width: width }}></div>
+                </div>
+            </div>
+        );
     }
 
     public render() {
