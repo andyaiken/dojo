@@ -1,23 +1,24 @@
 {
   "files": {
-    "main.css": "/dojo/static/css/main.f16f021e.chunk.css",
-    "main.js": "/dojo/static/js/main.908c7c97.chunk.js",
+    "main.css": "/dojo/static/css/main.276233fe.chunk.css",
+    "main.js": "/dojo/static/js/main.20725096.chunk.js",
     "runtime-main.js": "/dojo/static/js/runtime-main.f6a12998.js",
-    "static/js/2.a62c1ac0.chunk.js": "/dojo/static/js/2.a62c1ac0.chunk.js",
+    "static/css/2.b30123e2.chunk.css": "/dojo/static/css/2.b30123e2.chunk.css",
+    "static/js/2.530c5f55.chunk.js": "/dojo/static/js/2.530c5f55.chunk.js",
     "index.html": "/dojo/index.html",
-    "precache-manifest.a976d47c41a23030acea84bc1ac43922.js": "/dojo/precache-manifest.a976d47c41a23030acea84bc1ac43922.js",
+    "precache-manifest.82c34bc28ac235ab864b46a9a1b19aa0.js": "/dojo/precache-manifest.82c34bc28ac235ab864b46a9a1b19aa0.js",
     "service-worker.js": "/dojo/service-worker.js",
     "static/media/down-arrow-black.svg": "/dojo/static/media/down-arrow-black.a2fc7a1f.svg",
     "static/media/down-arrow.svg": "/dojo/static/media/down-arrow.697dc1af.svg",
     "static/media/ellipsis.svg": "/dojo/static/media/ellipsis.9650a20f.svg",
-    "static/media/settings.svg": "/dojo/static/media/settings.c258e612.svg",
     "static/media/warning.svg": "/dojo/static/media/warning.67a11a95.svg",
     "static/media/x.svg": "/dojo/static/media/x.7645a5b9.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.f6a12998.js",
-    "static/js/2.a62c1ac0.chunk.js",
-    "static/css/main.f16f021e.chunk.css",
-    "static/js/main.908c7c97.chunk.js"
+    "static/css/2.b30123e2.chunk.css",
+    "static/js/2.530c5f55.chunk.js",
+    "static/css/main.276233fe.chunk.css",
+    "static/js/main.20725096.chunk.js"
   ]
 }
