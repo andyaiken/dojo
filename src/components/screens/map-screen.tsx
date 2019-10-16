@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Input } from 'antd';
+
 import { Map, MapFolio } from '../../models/map-folio';
 
 import ConfirmButton from '../controls/confirm-button';
@@ -92,10 +94,10 @@ class MapFolioInfo extends React.Component<MapFolioInfoProps> {
                 <div>
                     <div className='section'>
                         <div className='subheading'>map folio name</div>
-                        <input
-                            type='text'
+                        <Input
                             placeholder='map folio name'
                             value={this.props.mapFolio.name}
+                            allowClear={true}
                             onChange={event => this.props.changeValue(this.props.mapFolio, 'name', event.target.value)}
                         />
                     </div>

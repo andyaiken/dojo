@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Input } from 'antd';
+
 import Factory from '../../utils/factory';
 import Utils from '../../utils/utils';
 
@@ -104,10 +106,10 @@ export default class ConditionModal extends React.Component<Props, State> {
                 if (condition === this.state.condition.name) {
                     if (condition === 'custom') {
                         controls.push(
-                            <input
-                                type='text'
+                            <Input
                                 placeholder='custom condition'
                                 value={this.state.condition.text ? this.state.condition.text : ''}
+                                allowClear={true}
                                 onChange={event => this.changeValue(this.state.condition, 'text', event.target.value)}
                             />
                         );
@@ -266,7 +268,7 @@ export default class ConditionModal extends React.Component<Props, State> {
             ];
 
             return (
-                <div className='row' style={{ height: '100%' }}>
+                <div className='row'>
                     <div className='columns small-6 medium-6 large-6 scrollable'>
                         <div className='heading'>condition</div>
                         <RadioGroup

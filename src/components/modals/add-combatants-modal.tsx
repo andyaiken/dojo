@@ -158,7 +158,7 @@ export default class AddCombatantsModal extends React.Component<Props, State> {
             });
 
             return (
-                    <div className='row' style={{ height: '100%' }}>
+                    <div className='row'>
                         <div className='columns small-6 medium-6 large-6 scrollable'>
                             <div className='heading'>monsters in library</div>
                             <FilterPanel

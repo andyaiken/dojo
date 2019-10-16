@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Input } from 'antd';
+
 import Utils from '../../utils/utils';
 
 import { CombatSetup } from '../../models/combat';
@@ -563,7 +565,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
             }
 
             return (
-                <div className='row' style={{ height: '100%' }}>
+                <div className='row'>
                     <div className='column small-6 medium-6 large-6 scrollable'>
                         {leftSection}
                     </div>
@@ -590,9 +592,9 @@ class MonsterName extends React.Component<MonsterNameProps> {
     public render() {
         try {
             return (
-                <input
-                    type='text'
+                <Input
                     value={this.props.value}
+                    allowClear={true}
                     onChange={event => this.props.changeName(this.props.slotID, this.props.index, event.target.value)}
                 />
             );

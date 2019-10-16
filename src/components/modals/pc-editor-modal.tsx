@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Input } from 'antd';
+
 import Factory from '../../utils/factory';
 
 import { PC } from '../../models/party';
@@ -60,9 +62,9 @@ export default class PCEditorModal extends React.Component<Props, State> {
             const companions = this.state.pc.companions.map(comp => (
                 <div className='row companion' key={comp.id}>
                     <div className='columns small-12 medium-8 large-8'>
-                        <input
-                            type='text'
+                        <Input
                             value={comp.name}
+                            allowClear={true}
                             onChange={event => this.changeValue(comp, 'name', event.target.value)}
                         />
                     </div>
@@ -81,83 +83,77 @@ export default class PCEditorModal extends React.Component<Props, State> {
             }
 
             return (
-                <div className='row' style={{ height: '100%' }}>
-                    <div className='columns small-8 medium-8 large-8 scrollable'>
-                        <div className='row section'>
-                            <div className='columns small-12 medium-6 large-6'>
-                                <div className='subheading'>character name:</div>
-                                <input
-                                    type='text'
-                                    value={this.state.pc.name}
-                                    onChange={event => this.changeValue(this.state.pc, 'name', event.target.value)}
-                                />
-                                <div className='subheading'>player name:</div>
-                                <input
-                                    type='text'
-                                    value={this.state.pc.player}
-                                    onChange={event => this.changeValue(this.state.pc, 'player', event.target.value)}
-                                />
-                                <div className='subheading'>race:</div>
-                                <input
-                                    type='text'
-                                    value={this.state.pc.race}
-                                    onChange={event => this.changeValue(this.state.pc, 'race', event.target.value)}
-                                />
-                                <div className='subheading'>class:</div>
-                                <input
-                                    type='text'
-                                    value={this.state.pc.classes}
-                                    onChange={event => this.changeValue(this.state.pc, 'classes', event.target.value)}
-                                />
-                                <div className='subheading'>level:</div>
-                                <Spin
-                                    source={this.state.pc}
-                                    name='level'
-                                    nudgeValue={delta => this.nudgeValue(this.state.pc, 'level', delta)}
-                                />
-                                <div className='subheading'>passive skills</div>
-                                <Spin
-                                    source={this.state.pc}
-                                    name='passiveInsight'
-                                    label='insight'
-                                    nudgeValue={delta => this.nudgeValue(this.state.pc, 'passiveInsight', delta)}
-                                />
-                                <Spin
-                                    source={this.state.pc}
-                                    name='passiveInvestigation'
-                                    label='investigation'
-                                    nudgeValue={delta => this.nudgeValue(this.state.pc, 'passiveInvestigation', delta)}
-                                />
-                                <Spin
-                                    source={this.state.pc}
-                                    name='passivePerception'
-                                    label='perception'
-                                    nudgeValue={delta => this.nudgeValue(this.state.pc, 'passivePerception', delta)}
-                                />
-                            </div>
-                            <div className='columns small-12 medium-6 large-6 scrollable'>
-                                <div className='subheading'>languages:</div>
-                                <input
-                                    type='text'
-                                    value={this.state.pc.languages}
-                                    onChange={event => this.changeValue(this.state.pc, 'languages', event.target.value)}
-                                />
-                                <div className='subheading'>d&d beyond link:</div>
-                                <input
-                                    type='text'
-                                    value={this.state.pc.url}
-                                    placeholder='https://ddb.ac/characters/...'
-                                    onChange={event => this.changeValue(this.state.pc, 'url', event.target.value)}
-                                />
-                                <div className='subheading'>portrait</div>
-                                <PortraitPanel source={this.state.pc} setValue={value => this.changeValue(this.state.pc, 'portrait', value)} />
-                                <div className='subheading'>companions:</div>
-                                {companions}
-                                <button onClick={() => this.addCompanion()}>add a new companion</button>
-                            </div>
-                        </div>
+                <div className='row'>
+                    <div className='columns small-6 medium-6 large-6 scrollable'>
+                        <div className='subheading'>character name:</div>
+                        <Input
+                            value={this.state.pc.name}
+                            allowClear={true}
+                            onChange={event => this.changeValue(this.state.pc, 'name', event.target.value)}
+                        />
+                        <div className='subheading'>player name:</div>
+                        <Input
+                            value={this.state.pc.player}
+                            allowClear={true}
+                            onChange={event => this.changeValue(this.state.pc, 'player', event.target.value)}
+                        />
+                        <div className='subheading'>race:</div>
+                        <Input
+                            value={this.state.pc.race}
+                            allowClear={true}
+                            onChange={event => this.changeValue(this.state.pc, 'race', event.target.value)}
+                        />
+                        <div className='subheading'>class:</div>
+                        <Input
+                            value={this.state.pc.classes}
+                            allowClear={true}
+                            onChange={event => this.changeValue(this.state.pc, 'classes', event.target.value)}
+                        />
+                        <div className='subheading'>level:</div>
+                        <Spin
+                            source={this.state.pc}
+                            name='level'
+                            nudgeValue={delta => this.nudgeValue(this.state.pc, 'level', delta)}
+                        />
+                        <div className='subheading'>passive skills</div>
+                        <Spin
+                            source={this.state.pc}
+                            name='passiveInsight'
+                            label='insight'
+                            nudgeValue={delta => this.nudgeValue(this.state.pc, 'passiveInsight', delta)}
+                        />
+                        <Spin
+                            source={this.state.pc}
+                            name='passiveInvestigation'
+                            label='investigation'
+                            nudgeValue={delta => this.nudgeValue(this.state.pc, 'passiveInvestigation', delta)}
+                        />
+                        <Spin
+                            source={this.state.pc}
+                            name='passivePerception'
+                            label='perception'
+                            nudgeValue={delta => this.nudgeValue(this.state.pc, 'passivePerception', delta)}
+                        />
+                        <div className='subheading'>languages:</div>
+                        <Input
+                            value={this.state.pc.languages}
+                            allowClear={true}
+                            onChange={event => this.changeValue(this.state.pc, 'languages', event.target.value)}
+                        />
+                        <div className='subheading'>d&d beyond link:</div>
+                        <Input
+                            value={this.state.pc.url}
+                            placeholder='https://ddb.ac/characters/...'
+                            allowClear={true}
+                            onChange={event => this.changeValue(this.state.pc, 'url', event.target.value)}
+                        />
+                        <div className='subheading'>portrait</div>
+                        <PortraitPanel source={this.state.pc} setValue={value => this.changeValue(this.state.pc, 'portrait', value)} />
+                        <div className='subheading'>companions:</div>
+                        {companions}
+                        <button onClick={() => this.addCompanion()}>add a new companion</button>
                     </div>
-                    <div className='columns small-4 medium-4 large-4 scrollable' style={{ paddingTop: '15px', paddingBottom: '15px' }}>
+                    <div className='columns small-6 medium-6 large-6 scrollable' style={{ paddingTop: '15px', paddingBottom: '15px' }}>
                         <PCCard
                             pc={this.state.pc}
                             mode='view'

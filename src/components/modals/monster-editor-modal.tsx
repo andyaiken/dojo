@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Input } from 'antd';
+
 import Factory from '../../utils/factory';
 import Frankenstein from '../../utils/frankenstein';
 import Napoleon from '../../utils/napoleon';
@@ -552,7 +554,11 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         <div className='row'>
                             <div className='columns small-6 medium-6 large-6'>
                                 <div className='subheading'>name</div>
-                                <input type='text' value={this.state.monster.name} onChange={event => this.changeValue('name', event.target.value)} />
+                                <Input
+                                    value={this.state.monster.name}
+                                    allowClear={true}
+                                    onChange={event => this.changeValue('name', event.target.value)}
+                                />
                                 <div className='subheading'>size</div>
                                 <Spin
                                     source={this.state.monster}
@@ -566,9 +572,17 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                     select={optionID => this.changeValue('category', optionID)}
                                 />
                                 <div className='subheading'>subtype</div>
-                                <input type='text' value={this.state.monster.tag} onChange={event => this.changeValue('tag', event.target.value)} />
+                                <Input
+                                    value={this.state.monster.tag}
+                                    allowClear={true}
+                                    onChange={event => this.changeValue('tag', event.target.value)}
+                                />
                                 <div className='subheading'>alignment</div>
-                                <input type='text' value={this.state.monster.alignment} onChange={event => this.changeValue('alignment', event.target.value)} />
+                                <Input
+                                    value={this.state.monster.alignment}
+                                    allowClear={true}
+                                    onChange={event => this.changeValue('alignment', event.target.value)}
+                                />
                                 <div className='subheading'>challenge rating</div>
                                 <Spin
                                     source={this.state.monster}
@@ -579,13 +593,29 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                             </div>
                             <div className='columns small-6 medium-6 large-6'>
                                 <div className='subheading'>speed</div>
-                                <input type='text' value={this.state.monster.speed} onChange={event => this.changeValue('speed', event.target.value)} />
+                                <Input
+                                    value={this.state.monster.speed}
+                                    allowClear={true}
+                                    onChange={event => this.changeValue('speed', event.target.value)}
+                                />
                                 <div className='subheading'>senses</div>
-                                <input type='text' value={this.state.monster.senses} onChange={event => this.changeValue('senses', event.target.value)} />
+                                <Input
+                                    value={this.state.monster.senses}
+                                    allowClear={true}
+                                    onChange={event => this.changeValue('senses', event.target.value)}
+                                />
                                 <div className='subheading'>languages</div>
-                                <input type='text' value={this.state.monster.languages} onChange={event => this.changeValue('languages', event.target.value)} />
+                                <Input
+                                    value={this.state.monster.languages}
+                                    allowClear={true}
+                                    onChange={event => this.changeValue('languages', event.target.value)}
+                                />
                                 <div className='subheading'>equipment</div>
-                                <input type='text' value={this.state.monster.equipment} onChange={event => this.changeValue('equipment', event.target.value)} />
+                                <Input
+                                    value={this.state.monster.equipment}
+                                    allowClear={true}
+                                    onChange={event => this.changeValue('equipment', event.target.value)}
+                                />
                                 <div className='subheading'>portrait</div>
                                 <PortraitPanel source={this.state.monster} setValue={value => this.changeValue('portrait', value)} />
                             </div>
@@ -605,15 +635,15 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                             </div>
                             <div className='columns small-6 medium-6 large-6'>
                                 <div className='subheading'>saving throws</div>
-                                <input
-                                    type='text'
+                                <Input
                                     value={this.state.monster.savingThrows}
+                                    allowClear={true}
                                     onChange={event => this.changeValue('savingThrows', event.target.value)}
                                 />
                                 <div className='subheading'>skills</div>
-                                <input
-                                    type='text'
+                                <Input
                                     value={this.state.monster.skills}
+                                    allowClear={true}
                                     onChange={event => this.changeValue('skills', event.target.value)}
                                 />
                             </div>
@@ -642,27 +672,27 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                             </div>
                             <div className='columns small-6 medium-6 large-6'>
                                 <div className='subheading'>damage resistances</div>
-                                <input
-                                    type='text'
+                                <Input
                                     value={this.state.monster.damage.resist}
+                                    allowClear={true}
                                     onChange={event => this.changeValue('damage.resist', event.target.value)}
                                 />
                                 <div className='subheading'>damage vulnerabilities</div>
-                                <input
-                                    type='text'
+                                <Input
                                     value={this.state.monster.damage.vulnerable}
+                                    allowClear={true}
                                     onChange={event => this.changeValue('damage.vulnerable', event.target.value)}
                                 />
                                 <div className='subheading'>damage immunities</div>
-                                <input
-                                    type='text'
+                                <Input
                                     value={this.state.monster.damage.immune}
+                                    allowClear={true}
                                     onChange={event => this.changeValue('damage.immune', event.target.value)}
                                 />
                                 <div className='subheading'>condition immunities</div>
-                                <input
-                                    type='text'
+                                <Input
                                     value={this.state.monster.conditionImmunities}
+                                    allowClear={true}
                                     onChange={event => this.changeValue('conditionImmunities', event.target.value)}
                                 />
                             </div>
@@ -857,7 +887,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             }
 
             return (
-                <div className='row' style={{ height: '100%' }}>
+                <div className='row'>
                     <div className='columns small-8 medium-8 large-8 scrollable'>
                         <Selector
                             tabs={true}

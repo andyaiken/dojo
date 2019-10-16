@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Input } from 'antd';
+
 import { Party, PC } from '../../models/party';
 
 import PCCard from '../cards/pc-card';
@@ -183,10 +185,10 @@ class PartyInfo extends React.Component<PartyInfoProps> {
                 <div>
                     <div className='section'>
                         <div className='subheading'>party name</div>
-                        <input
-                            type='text'
+                        <Input
                             placeholder='party name'
                             value={this.props.party.name}
+                            allowClear={true}
                             onChange={event => this.props.changeValue('name', event.target.value)}
                         />
                     </div>

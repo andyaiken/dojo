@@ -15,7 +15,7 @@ interface State {
     view: string;
 }
 
-export default class ToolsDrawer extends React.Component<Props, State> {
+export default class ToolsModal extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {

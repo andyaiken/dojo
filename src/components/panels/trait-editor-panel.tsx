@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Input } from 'antd';
+
 import Utils from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
@@ -208,22 +210,21 @@ class TraitPanel extends React.Component<TraitPanelProps> {
             return (
                 <div className='section'>
                     <div className='subheading'>trait name</div>
-                    <input
-                        type='text'
-                        placeholder='name'
+                    <Input
                         value={this.props.trait.name}
+                        allowClear={true}
                         onChange={event => this.props.changeValue(this.props.trait, 'name', event.target.value)}
                     />
                     <div className='subheading'>usage</div>
-                    <input
-                        type='text'
-                        placeholder='usage'
+                    <Input
                         value={this.props.trait.usage}
+                        allowClear={true}
                         onChange={event => this.props.changeValue(this.props.trait, 'usage', event.target.value)}
                     />
                     <div className='subheading'>details</div>
-                    <textarea
+                    <Input.TextArea
                         placeholder='details'
+                        autoSize={{ minRows: 5 }}
                         value={this.props.trait.text}
                         onChange={event => this.props.changeValue(this.props.trait, 'text', event.target.value)}
                     />

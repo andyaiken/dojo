@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Input } from 'antd';
+
 import Factory from '../../utils/factory';
 import Mercator from '../../utils/mercator';
 import Utils from '../../utils/utils';
@@ -261,7 +263,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
                     }
 
                     tools = (
-                        <div className='tools sidebar'>
+                        <div className='map-tools'>
                             <div className='subheading'>size</div>
                             <div className='section'>{item.width} sq x {item.height} sq</div>
                             <div className='section'>{item.width * 5} ft x {item.height * 5} ft</div>
@@ -301,12 +303,12 @@ export default class MapEditorModal extends React.Component<Props, State> {
                 }
             } else {
                 tools = (
-                    <div className='tools sidebar'>
+                    <div className='map-tools'>
                         <div className='subheading'>map name</div>
-                        <input
-                            type='text'
+                        <Input
                             placeholder='map name'
                             value={this.state.map.name}
+                            allowClear={true}
                             onChange={event => this.changeValue(this.state.map, 'name', event.target.value)}
                         />
                         <div className='divider' />
@@ -331,7 +333,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
             }
 
             return (
-                <div className='map-editor'>
+                <div>
                     {tools}
                     <MapPanel
                         map={this.state.map}

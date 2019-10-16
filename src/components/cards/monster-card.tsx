@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Input } from 'antd';
+
 import Frankenstein from '../../utils/frankenstein';
 import Utils from '../../utils/utils';
 
@@ -455,9 +457,9 @@ export default class MonsterCard extends React.Component<Props, State> {
                         text='change name'
                         content={(
                             <div>
-                                <input
-                                    type='text'
+                                <Input
                                     value={combatant.displayName}
+                                    allowClear={true}
                                     onChange={event => this.props.changeValue(this.props.monster, 'displayName', event.target.value)}
                                 />
                             </div>
@@ -493,10 +495,10 @@ export default class MonsterCard extends React.Component<Props, State> {
                                 text='clone monster'
                                 content={
                                     <div>
-                                        <input
-                                            type='text'
+                                        <Input
                                             placeholder='monster name'
                                             value={this.state.cloneName}
+                                            allowClear={true}
                                             onChange={event => this.setCloneName(event.target.value)}
                                         />
                                         <button onClick={() => this.props.cloneMonster(this.props.monster, this.state.cloneName)}>create copy</button>

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Input } from 'antd';
+
 import Factory from '../../utils/factory';
 import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
@@ -273,10 +275,10 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
         try {
             const waves = this.props.encounter.waves.map(wave => (
                 <div key={wave.id} className='group-panel'>
-                    <input
-                        type='text'
+                    <Input
                         placeholder='wave name'
                         value={wave.name}
+                        allowClear={true}
                         onChange={event => this.props.changeValue(wave, 'name', event.target.value)}
                     />
                     <ConfirmButton text='delete wave' callback={() => this.props.removeWave(wave)} />
@@ -287,10 +289,10 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
                 <div>
                     <div className='section'>
                         <div className='subheading'>encounter name</div>
-                        <input
-                            type='text'
+                        <Input
                             placeholder='encounter name'
                             value={this.props.encounter.name}
+                            allowClear={true}
                             onChange={event => this.props.changeValue(this.props.encounter, 'name', event.target.value)}
                         />
                     </div>

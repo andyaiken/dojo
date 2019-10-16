@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Input } from 'antd';
+
 import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
@@ -28,10 +30,10 @@ export default class FilterPanel extends React.Component<Props> {
 
             const content = (
                 <div>
-                    <input
-                        type='text'
+                    <Input
                         placeholder='name'
                         value={this.props.filter.name}
+                        allowClear={true}
                         onChange={event => this.props.changeValue('name', event.target.value)}
                     />
                     <Spin

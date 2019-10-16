@@ -24,8 +24,7 @@ p {
 }
 
 input[type=text],
-input[type=color],
-textarea {
+input[type=color] {
     -webkit-appearance: none;
     -webkit-user-select: text;
     margin: 5px 0;
@@ -48,11 +47,6 @@ input[type=color] {
 
 input[type=color] {
     padding: 0 2px;
-}
-
-textarea {
-    min-height: 250px;
-    resize: vertical;
 }
 
 ul, ol {
@@ -179,8 +173,29 @@ button {
 }
 
 .ant-drawer-body {
-    padding: 20px;
+    padding: 0;
     font-size: 12px;
+    height: 100%;
+}
+
+.ant-input {
+    font-size: 12px;
+    border-radius: 0;
+    border-color: $control-border;
+    margin: 5px 0;
+
+    &:hover {
+        border-color: $highlight;
+    }
+
+    &:focus {
+        border-color: $highlight;
+        box-shadow: none;
+    }
+}
+
+.ant-input-affix-wrapper:hover .ant-input:not(.ant-input-disabled) {
+    border-color: $highlight;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -233,7 +248,7 @@ button {
 
 .sidebar {
     padding: 0 10px !important;
-    background-color: $header-background-02;
+    background-color: $control;
     border-right: 1px solid $control-border;
 }
 
@@ -244,6 +259,15 @@ button {
 .disabled {
     pointer-events: none;
     opacity: 0.5;
+}
+
+.blur {
+    -webkit-filter: blur(1px);
+    -moz-filter: blur(1px);
+    -ms-filter: blur(1px);
+    filter: blur(1px);
+    touch-action: none;
+    pointer-events: none;
 }
 
 .strikethrough {
@@ -911,181 +935,6 @@ body,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Modal
-
-.overlay {
-    position: fixed;
-    overflow: hidden;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    z-index: 10;
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
-.blur {
-    -webkit-filter: blur(1px);
-    -moz-filter: blur(1px);
-    -ms-filter: blur(1px);
-    filter: blur(1px);
-    touch-action: none;
-    pointer-events: none;
-}
-
-.modal {
-    height: calc(100% - 100px);
-    width: calc(100% - 100px);
-    margin: 50px;
-
-    .modal-header {
-        height: 50px;
-        background-color: $header-background;
-        border-top: 1px solid $control-border;
-        border-bottom: 1px solid $control-border;
-
-        .title {
-            display: inline-block;
-            vertical-align: middle;
-            width: calc(100% - 70px);
-            padding-left: 5px;
-            line-height: 30px;
-            font-size: 20px;
-            font-weight: 600;
-            color: $header-foreground;
-            border-left: 3px solid black;
-            margin: 10px;
-        }
-
-        .image {
-            display: inline-block;
-            vertical-align: middle;
-            width: 40px;
-            height: 40px;
-            padding: 2px;
-            margin: 5px;
-            border-radius: 50%;
-            cursor: pointer;
-
-            &:hover {
-                background-color: $highlight02;
-            }
-        }
-    }
-
-    .modal-content {
-        height: calc(100% - 100px);
-        background-color: $background;
-
-        .hp-value {
-            height: 32px;
-            margin: 5px 0;
-            padding: 5px 8px;
-            border: 1px solid $control-border;
-            font-size: 15px;
-            text-align: center;
-            font-weight: 600;
-        }
-
-        .companion {
-            border: 1px solid $control-border;
-            background-color: #FAF7EA;
-            margin: 5px 0;
-            padding: 5px 0;
-        }
-
-        .monster-help {
-            margin-top: 20px;
-
-            .value-list {
-                margin: 0;
-
-                &:nth-child(odd) {
-                    background-color: $highlight01;
-                }
-
-                .column {
-                    min-height: 42px;
-
-                    .text-container {
-                        line-height: 42px;
-
-                        &.number {
-                            text-align: right;
-                        }
-                    }
-
-                    .bar-container {
-                        height: 22px;
-                        margin: 10px 0;
-                        border-bottom: 1px solid $highlight02;
-
-                        .bar {
-                            height: 100%;
-                            background-color: $highlight;
-                        }
-                    }
-                }
-            }
-        }
-
-        .map-editor {
-            height: 100%;
-
-            .tools {
-                display: inline-block;
-                overflow-y: auto;
-                height: 100%;
-                width: 300px;
-            }
-
-            .map-panel {
-                display: inline-block;
-                width: calc(100% - 300px);
-                height: 100%;
-            }
-        }
-    }
-    
-    .modal-footer {
-        height: 50px;
-        background-color: $header-background;
-        border-top: 1px solid $control-border;
-        border-bottom: 1px solid $control-border;
-        padding: 9px 4px;
-
-        button,
-        .checkbox {
-            display: inline-block;
-            width: 150px;
-            margin: 0 4px;
-        }
-    }
-}
-
-.name-row {
-    margin: 5px 0;
-    border-left: 3px solid $foreground;
-
-    &:hover {
-        border-color: $highlight;
-    }
-
-    .name-label {
-        display: inline-block;
-        vertical-align: middle;
-        width: 50%;
-        padding-left: 8px;
-    }
-
-    .name-inputs {
-        display: inline-block;
-        vertical-align: middle;
-        width: 50%;
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 .notifications {
     position: sticky;
@@ -1392,7 +1241,6 @@ body,
 
     &.inline {
         display: inline-block;
-        vertical-align: middle;
         width: 20px;
         height: 20px;
         margin-right: 5px;
@@ -1478,4 +1326,116 @@ body,
             border-right: 1px solid steelblue;
         }
     }
+}
+
+.drawer-content {
+    .hp-value {
+        height: 32px;
+        margin: 5px 0;
+        padding: 5px 8px;
+        border: 1px solid $control-border;
+        font-size: 15px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .companion {
+        border: 1px solid $control-border;
+        background-color: #FAF7EA;
+        margin: 5px 0;
+        padding: 5px 0;
+    }
+
+    .monster-help {
+        margin-top: 20px;
+
+        .value-list {
+            margin: 0;
+
+            &:nth-child(odd) {
+                background-color: $highlight01;
+            }
+
+            .column {
+                min-height: 42px;
+
+                .text-container {
+                    line-height: 42px;
+
+                    &.number {
+                        text-align: right;
+                    }
+                }
+
+                .bar-container {
+                    height: 22px;
+                    margin: 10px 0;
+                    border-bottom: 1px solid $highlight02;
+
+                    .bar {
+                        height: 100%;
+                        background-color: $highlight;
+                    }
+                }
+            }
+        }
+    }
+
+    .map-tools {
+        display: inline-block;
+        vertical-align: top;
+        overflow-y: auto;
+        height: 100%;
+        width: 300px;
+        padding-right: 15px;
+    }
+
+    .map-panel {
+        display: inline-block;
+        vertical-align: top;
+        width: calc(100% - 300px);
+        height: 100%;
+    }
+
+    .name-row {
+        margin: 5px 0;
+        border-left: 3px solid $foreground;
+    
+        &:hover {
+            border-color: $highlight;
+        }
+    
+        .name-label {
+            display: inline-block;
+            vertical-align: middle;
+            width: 50%;
+            padding-left: 8px;
+        }
+    
+        .name-inputs {
+            display: inline-block;
+            vertical-align: middle;
+            width: 50%;
+        }
+    }
+}
+
+.drawer-header {
+    height: 50px;
+    background-color: $header-background;
+    border-top: 1px solid $control-border;
+    padding: 4px 20px;
+}
+
+.drawer-content {
+    height: calc(100% - 100px);
+    overflow-y: auto;
+    padding: 10px 20px;
+}
+
+.drawer-footer {
+    height: 50px;
+    background-color: $header-background;
+    border-top: 1px solid $control-border;
+    padding: 4px 20px;
 }

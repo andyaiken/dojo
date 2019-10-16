@@ -16,13 +16,14 @@ import { Monster, MonsterGroup } from '../models/monster-group';
 import { Party, PC } from '../models/party';
 
 import Checkbox from './controls/checkbox';
-import ToolsDrawer from './drawers/tools-drawer';
+import ControlRow from './controls/control-row';
 import AddCombatantsModal from './modals/add-combatants-modal';
 import CombatStartModal from './modals/combat-start-modal';
 import ConditionModal from './modals/condition-modal';
 import MapEditorModal from './modals/map-editor-modal';
 import MonsterEditorModal from './modals/monster-editor-modal';
 import PCEditorModal from './modals/pc-editor-modal';
+import ToolsModal from './modals/tools-modal';
 import Navbar from './panels/navbar';
 import Titlebar from './panels/titlebar';
 import CombatListScreen from './screens/combat-list-screen';
@@ -44,7 +45,6 @@ interface Props {
 
 interface State {
     view: 'home' | 'parties' | 'library' | 'encounters' | 'maps' | 'combat';
-    modal: any;
     drawer: any;
 
     parties: Party[];
@@ -66,7 +66,6 @@ export default class Dojo extends React.Component<Props, State> {
 
         this.state = {
             view: 'home',
-            modal: null,
             drawer: null,
             parties: [],
             library: [],
@@ -165,7 +164,6 @@ export default class Dojo extends React.Component<Props, State> {
                 });
 
                 data.view = 'home';
-                data.modal = null;
                 data.drawer = null;
 
                 this.state = data;
@@ -251,7 +249,7 @@ export default class Dojo extends React.Component<Props, State> {
     private editPC(pc: PC) {
         const copy = JSON.parse(JSON.stringify(pc));
         this.setState({
-            modal: {
+            drawer: {
                 type: 'pc',
                 pc: copy
             }
@@ -259,16 +257,16 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private savePC() {
-        Utils.sort(this.state.modal.pc.companions);
+        Utils.sort(this.state.drawer.pc.companions);
         const party = this.state.parties.find(p => p.id === this.state.selectedPartyID);
         if (party) {
-            const original = party.pcs.find(pc => pc.id === this.state.modal.pc.id);
+            const original = party.pcs.find(pc => pc.id === this.state.drawer.pc.id);
             if (original) {
                 const index = party.pcs.indexOf(original);
-                party.pcs[index] = this.state.modal.pc;
+                party.pcs[index] = this.state.drawer.pc;
                 this.setState({
                     parties: this.state.parties,
-                    modal: null
+                    drawer: null
                 });
             }
         }
@@ -354,7 +352,7 @@ export default class Dojo extends React.Component<Props, State> {
     private editMonster(monster: Monster) {
         const copy = JSON.parse(JSON.stringify(monster));
         this.setState({
-            modal: {
+            drawer: {
                 type: 'monster',
                 monster: copy,
                 showSidebar: false
@@ -365,21 +363,21 @@ export default class Dojo extends React.Component<Props, State> {
     private saveMonster() {
         const group = this.state.library.find(g => g.id === this.state.selectedMonsterGroupID);
         if (group) {
-            const original = group.monsters.find(m => m.id === this.state.modal.monster.id);
+            const original = group.monsters.find(m => m.id === this.state.drawer.monster.id);
             if (original) {
                 // We are editing a monster
                 const index = group.monsters.indexOf(original);
-                group.monsters[index] = this.state.modal.monster;
+                group.monsters[index] = this.state.drawer.monster;
                 this.setState({
                     library: this.state.library,
-                    modal: null
+                    drawer: null
                 });
             } else {
                 // We are adding a new monster
-                group.monsters.push(this.state.modal.monster);
+                group.monsters.push(this.state.drawer.monster);
                 this.setState({
                     library: this.state.library,
-                    modal: null
+                    drawer: null
                 });
             }
         }
@@ -387,9 +385,9 @@ export default class Dojo extends React.Component<Props, State> {
 
     private toggleShowSidebar() {
         // eslint-disable-next-line
-        this.state.modal.showSidebar = !this.state.modal.showSidebar;
+        this.state.drawer.showSidebar = !this.state.drawer.showSidebar;
         this.setState({
-            modal: this.state.modal
+            drawer: this.state.drawer
         });
     }
 
@@ -649,7 +647,7 @@ export default class Dojo extends React.Component<Props, State> {
     private editMap(map: Map) {
         const copy = JSON.parse(JSON.stringify(map));
         this.setState({
-            modal: {
+            drawer: {
                 type: 'map',
                 map: copy
             }
@@ -659,13 +657,13 @@ export default class Dojo extends React.Component<Props, State> {
     private saveMap() {
         const folio = this.state.mapFolios.find(f => f.id === this.state.selectedMapFolioID);
         if (folio) {
-            const original = folio.maps.find(m => m.id === this.state.modal.map.id);
+            const original = folio.maps.find(m => m.id === this.state.drawer.map.id);
             if (original) {
                 const index = folio.maps.indexOf(original);
-                folio.maps[index] = this.state.modal.map;
+                folio.maps[index] = this.state.drawer.map;
                 this.setState({
                     mapFolios: this.state.mapFolios,
-                    modal: null
+                    drawer: null
                 });
             }
         }
@@ -697,7 +695,7 @@ export default class Dojo extends React.Component<Props, State> {
         }
 
         this.setState({
-            modal: {
+            drawer: {
                 type: 'combat-start',
                 combatSetup: setup
             }
@@ -705,7 +703,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private startCombat() {
-        const combatSetup: CombatSetup = this.state.modal.combatSetup;
+        const combatSetup: CombatSetup = this.state.drawer.combatSetup;
         const party = this.state.parties.find(p => p.id === combatSetup.partyID);
         const encounter = this.state.encounters.find(e => e.id === combatSetup.encounterID);
         if (party && encounter) {
@@ -757,7 +755,7 @@ export default class Dojo extends React.Component<Props, State> {
             this.setState({
                 combats: ([] as Combat[]).concat(this.state.combats, [combat]),
                 selectedCombatID: combat.id,
-                modal: null
+                drawer: null
             });
         }
     }
@@ -831,7 +829,7 @@ export default class Dojo extends React.Component<Props, State> {
                 setup.monsterNames = Utils.getMonsterNames(encounter);
 
                 this.setState({
-                    modal: {
+                    drawer: {
                         type: 'combat-wave',
                         combatSetup: setup
                     }
@@ -844,7 +842,7 @@ export default class Dojo extends React.Component<Props, State> {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
             this.setState({
-                modal: {
+                drawer: {
                     type: 'combat-add-combatants',
                     combatantSlots: [],
                     combat: combat
@@ -856,7 +854,7 @@ export default class Dojo extends React.Component<Props, State> {
     private addCombatantsFromModal() {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
-            this.state.modal.combatantSlots.forEach((slot: EncounterSlot) => {
+            this.state.drawer.combatantSlots.forEach((slot: EncounterSlot) => {
                 const m = this.getMonster(slot.monsterName, slot.monsterGroupName);
                 if (m) {
                     const roll = Utils.dieRoll();
@@ -874,7 +872,7 @@ export default class Dojo extends React.Component<Props, State> {
 
             this.setState({
                 combats: this.state.combats,
-                modal: null
+                drawer: null
             });
         }
     }
@@ -1043,7 +1041,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private addWaveToCombat() {
-        const combatSetup: CombatSetup = this.state.modal.combatSetup;
+        const combatSetup: CombatSetup = this.state.drawer.combatSetup;
         const encounter = this.state.encounters.find(e => e.id === combatSetup.encounterID);
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combatSetup && encounter && combat) {
@@ -1088,8 +1086,8 @@ export default class Dojo extends React.Component<Props, State> {
 
                             combatant.showOnMap = true;
                             combatant.current = false;
-                            combatant.pending = (this.state.modal.combatSetup.encounterInitMode === 'manual');
-                            combatant.active = (this.state.modal.combatSetup.encounterInitMode !== 'manual');
+                            combatant.pending = (this.state.drawer.combatSetup.encounterInitMode === 'manual');
+                            combatant.active = (this.state.drawer.combatSetup.encounterInitMode !== 'manual');
                             combatant.defeated = false;
 
                             combatant.hp = combatant.hpMax;
@@ -1114,7 +1112,7 @@ export default class Dojo extends React.Component<Props, State> {
 
                 this.setState({
                     combats: this.state.combats,
-                    modal: null
+                    drawer: null
                 });
             }
         }
@@ -1303,7 +1301,7 @@ export default class Dojo extends React.Component<Props, State> {
             condition.name = 'blinded';
 
             this.setState({
-                modal: {
+                drawer: {
                     type: 'condition-add',
                     condition: condition,
                     combatant: combatant,
@@ -1314,11 +1312,11 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private addConditionFromModal() {
-        this.state.modal.combatant.conditions.push(this.state.modal.condition);
+        this.state.drawer.combatant.conditions.push(this.state.drawer.condition);
 
         this.setState({
             combats: this.state.combats,
-            modal: null
+            drawer: null
         });
     }
 
@@ -1326,7 +1324,7 @@ export default class Dojo extends React.Component<Props, State> {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
             this.setState({
-                modal: {
+                drawer: {
                     type: 'condition-edit',
                     condition: condition,
                     combatant: combatant,
@@ -1337,16 +1335,16 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private editConditionFromModal() {
-        const conditions: Condition[] = this.state.modal.combatant.conditions;
-        const original = conditions.find(c => c.id === this.state.modal.condition.id);
+        const conditions: Condition[] = this.state.drawer.combatant.conditions;
+        const original = conditions.find(c => c.id === this.state.drawer.condition.id);
         if (original) {
             const index = conditions.indexOf(original);
             // eslint-disable-next-line
-            conditions[index] = this.state.modal.condition;
+            conditions[index] = this.state.drawer.condition;
 
             this.setState({
                 combats: this.state.combats,
-                modal: null
+                drawer: null
             });
         }
     }
@@ -1471,14 +1469,14 @@ export default class Dojo extends React.Component<Props, State> {
     private openToolsDrawer() {
         this.setState({
             drawer: {
-                type: 'tools-sidebar'
+                type: 'tools'
             }
         });
     }
 
     private closeModal() {
         this.setState({
-            modal: null
+            drawer: null
         });
     }
 
@@ -1596,7 +1594,7 @@ export default class Dojo extends React.Component<Props, State> {
             selectedMonsterGroupID: this.state.selectedMonsterGroupID,
             selectedEncounterID: this.state.selectedEncounterID,
             selectedCombatID: this.state.selectedCombatID,
-            modal: this.state.modal
+            drawer: this.state.drawer
         });
     }
 
@@ -1626,65 +1624,6 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private getBreadcrumbs() {
-        const breadcrumbs = [];
-
-        breadcrumbs.push({ id: 'home', text: 'dojo' });
-
-        switch (this.state.view) {
-            case 'parties':
-                breadcrumbs.push({ id: 'parties', text: 'player characters' });
-                if (this.state.selectedPartyID) {
-                    breadcrumbs.push({ id: this.state.selectedPartyID, text: 'party' });
-                }
-                break;
-            case 'library':
-                breadcrumbs.push({ id: 'library', text: 'monster library' });
-                if (this.state.selectedMonsterGroupID) {
-                    breadcrumbs.push({ id: this.state.selectedMonsterGroupID, text: 'monster group' });
-                }
-                break;
-            case 'encounters':
-                breadcrumbs.push({ id: 'encounters', text: 'encounter builder' });
-                if (this.state.selectedEncounterID) {
-                    breadcrumbs.push({ id: this.state.selectedEncounterID, text: 'encounter' });
-                }
-                break;
-            case 'maps':
-                breadcrumbs.push({ id: 'maps', text: 'map folios' });
-                if (this.state.selectedMapFolioID) {
-                    breadcrumbs.push({ id: this.state.selectedMapFolioID, text: 'map folio' });
-                }
-                break;
-            case 'combat':
-                breadcrumbs.push({ id: 'combat', text: 'combat manager' });
-                break;
-        }
-
-        return breadcrumbs;
-    }
-
-    private getActions() {
-        switch (this.state.view) {
-            case 'combat':
-                if (this.state.selectedCombatID) {
-                    const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-                    return (
-                        <div className='actions'>
-                            <div className='section'>
-                                <div className='text'>round: {combat ? combat.round : 0}</div>
-                            </div>
-                            <div className='section'>
-                                <button onClick={() => this.endCombat()}>end combat</button>
-                            </div>
-                        </div>
-                    );
-                }
-        }
-
-        return null;
-    }
 
     private getContent() {
         switch (this.state.view) {
@@ -1838,206 +1777,232 @@ export default class Dojo extends React.Component<Props, State> {
         return null;
     }
 
+    private getBreadcrumbs() {
+        const breadcrumbs = [];
+
+        breadcrumbs.push({ id: 'home', text: 'dojo' });
+
+        switch (this.state.view) {
+            case 'parties':
+                breadcrumbs.push({ id: 'parties', text: 'player characters' });
+                if (this.state.selectedPartyID) {
+                    breadcrumbs.push({ id: this.state.selectedPartyID, text: 'party' });
+                }
+                break;
+            case 'library':
+                breadcrumbs.push({ id: 'library', text: 'monster library' });
+                if (this.state.selectedMonsterGroupID) {
+                    breadcrumbs.push({ id: this.state.selectedMonsterGroupID, text: 'monster group' });
+                }
+                break;
+            case 'encounters':
+                breadcrumbs.push({ id: 'encounters', text: 'encounter builder' });
+                if (this.state.selectedEncounterID) {
+                    breadcrumbs.push({ id: this.state.selectedEncounterID, text: 'encounter' });
+                }
+                break;
+            case 'maps':
+                breadcrumbs.push({ id: 'maps', text: 'map folios' });
+                if (this.state.selectedMapFolioID) {
+                    breadcrumbs.push({ id: this.state.selectedMapFolioID, text: 'map folio' });
+                }
+                break;
+            case 'combat':
+                breadcrumbs.push({ id: 'combat', text: 'combat manager' });
+                break;
+        }
+
+        return breadcrumbs;
+    }
+
+    private getActions() {
+        switch (this.state.view) {
+            case 'combat':
+                if (this.state.selectedCombatID) {
+                    const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+                    return (
+                        <div className='actions'>
+                            <div className='section'>
+                                <div className='text'>round: {combat ? combat.round : 0}</div>
+                            </div>
+                            <div className='section'>
+                                <button onClick={() => this.endCombat()}>end combat</button>
+                            </div>
+                        </div>
+                    );
+                }
+        }
+
+        return null;
+    }
+
     private getDrawer() {
         let content = null;
+        let footer = null;
+        let width = '50%';
+        let closable = false;
 
         if (this.state.drawer) {
             switch (this.state.drawer.type) {
-                case 'tools-sidebar':
+                case 'pc':
                     content = (
-                        <ToolsDrawer
-                            library={this.state.library}
-                            resetAll={() => this.resetAll()}
+                        <PCEditorModal
+                            pc={this.state.drawer.pc}
                         />
+                    );
+                    footer = (
+                        <div>
+                            <ControlRow
+                                controls={[
+                                    <button key='save' onClick={() => this.savePC()}>save changes</button>,
+                                    <button key='cancel' onClick={() => this.closeDrawer()}>discard changes</button>
+                                ]}
+                            />
+                        </div>
                     );
                     break;
-            }
-        }
-
-        return content;
-    }
-
-    private getModal() {
-        if (this.state.modal) {
-            let modalTitle = null;
-            let modalContent = null;
-
-            const modalButtons = {
-                left: [] as JSX.Element[],
-                right: [
-                    <button key='close' onClick={() => this.closeModal()}>close</button>
-                ] as JSX.Element[]
-            };
-
-            switch (this.state.modal.type) {
-                case 'pc':
-                        modalTitle = 'pc editor';
-                        modalContent = (
-                            <PCEditorModal
-                                pc={this.state.modal.pc}
-                            />
-                        );
-                        modalButtons.right = [
-                            <button key='save' onClick={() => this.savePC()}>save</button>,
-                            <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
-                        ];
-                        break;
                 case 'monster':
-                    modalTitle = 'monster editor';
-                    modalContent = (
+                    content = (
                         <MonsterEditorModal
-                            monster={this.state.modal.monster}
+                            monster={this.state.drawer.monster}
                             library={this.state.library}
-                            showSidebar={this.state.modal.showSidebar}
+                            showSidebar={this.state.drawer.showSidebar}
                         />
                     );
-                    modalButtons.left = [
-                        (
-                            <Checkbox
-                                key='sidebar'
-                                label='advanced tools'
-                                checked={this.state.modal.showSidebar}
-                                changeValue={() => this.toggleShowSidebar()}
-                            />
-                        )
-                    ];
-                    modalButtons.right = [
-                        <button key='save' onClick={() => this.saveMonster()}>save</button>,
-                        <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
-                    ];
+                    footer = (
+                        <ControlRow
+                            controls={[
+                                <Checkbox
+                                    key='sidebar'
+                                    label='advanced tools'
+                                    checked={this.state.drawer.showSidebar}
+                                    changeValue={() => this.toggleShowSidebar()}
+                                />,
+                                <button key='save' onClick={() => this.saveMonster()}>save changes</button>,
+                                <button key='cancel' onClick={() => this.closeModal()}>discard changes</button>
+                            ]}
+                        />
+                    );
+                    width = '75%';
                     break;
                 case 'map':
-                    modalTitle = 'map editor';
-                    modalContent = (
+                    content = (
                         <MapEditorModal
-                            map={this.state.modal.map}
+                            map={this.state.drawer.map}
                         />
                     );
-                    modalButtons.right = [
-                        <button key='save' onClick={() => this.saveMap()}>save</button>,
-                        <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
-                    ];
+                    footer = (
+                        <ControlRow
+                            controls={[
+                                <button key='save' onClick={() => this.saveMap()}>save changes</button>,
+                                <button key='cancel' onClick={() => this.closeModal()}>discard changes</button>
+                            ]}
+                        />
+                    );
+                    width = '75%';
                     break;
                 case 'combat-start':
-                    modalTitle = 'start a new encounter';
-                    modalContent = (
+                    content = (
                         <CombatStartModal
-                            combatSetup={this.state.modal.combatSetup}
+                            combatSetup={this.state.drawer.combatSetup}
                             parties={this.state.parties}
                             encounters={this.state.encounters}
                             mapFolios={this.state.mapFolios}
                             getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
-                            notify={() => this.setState({modal: this.state.modal})}
+                            notify={() => this.setState({drawer: this.state.drawer})}
                         />
                     );
-                    modalButtons.right = [
-                        (
-                            <button
-                                key='start encounter'
-                                className={this.state.modal.combatSetup.partyID && this.state.modal.combatSetup.encounterID ? '' : 'disabled'}
-                                onClick={() => this.startCombat()}
-                            >
-                                start encounter
-                            </button>
-                        ),
-                        <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
-                    ];
+                    footer = (
+                        <button
+                            className={this.state.drawer.combatSetup.partyID && this.state.drawer.combatSetup.encounterID ? '' : 'disabled'}
+                            onClick={() => this.startCombat()}
+                        >
+                            start encounter
+                        </button>
+                    );
+                    width = '75%';
+                    closable = true;
                     break;
                 case 'combat-wave':
-                    modalTitle = 'encounter waves';
-                    modalContent = (
+                    content = (
                         <CombatStartModal
-                            combatSetup={this.state.modal.combatSetup}
+                            combatSetup={this.state.drawer.combatSetup}
                             encounters={this.state.encounters}
                             getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
-                            notify={() => this.setState({modal: this.state.modal})}
+                            notify={() => this.setState({drawer: this.state.drawer})}
                         />
                     );
-                    modalButtons.right = [
-                        (
-                            <button
-                                key='add wave'
-                                className={this.state.modal.combatSetup.waveID !== null ? '' : 'disabled'}
-                                onClick={() => this.addWaveToCombat()}
-                            >
-                                add wave
-                            </button>
-                        ),
-                        <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
-                    ];
+                    footer = (
+                        <button
+                            className={this.state.drawer.combatSetup.waveID !== null ? '' : 'disabled'}
+                            onClick={() => this.addWaveToCombat()}
+                        >
+                            add wave
+                        </button>
+                    );
+                    width = '75%';
+                    closable = true;
                     break;
                 case 'combat-add-combatants':
-                        modalTitle = 'add combatants';
-                        modalContent = (
-                            <AddCombatantsModal
-                                combatantSlots={this.state.modal.combatantSlots}
-                                library={this.state.library}
-                            />
-                        );
-                        modalButtons.right = [
-                            (
-                                <button
-                                    key='add combatants'
-                                    onClick={() => this.addCombatantsFromModal()}
-                                >
-                                    add combatants
-                                </button>
-                            ),
-                            <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
-                        ];
-                        break;
-                case 'condition-add':
-                    modalTitle = 'add a condition';
-                    modalContent = (
-                        <ConditionModal
-                            condition={this.state.modal.condition}
-                            combatant={this.state.modal.combatant}
-                            combat={this.state.modal.combat}
+                    content = (
+                        <AddCombatantsModal
+                            combatantSlots={this.state.drawer.combatantSlots}
+                            library={this.state.library}
                         />
                     );
-                    modalButtons.right = [
-                        <button key='add' onClick={() => this.addConditionFromModal()}>add</button>,
-                        <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
-                    ];
+                    footer = (
+                        <button onClick={() => this.addCombatantsFromModal()}>add combatants</button>
+                    );
+                    closable = true;
+                    break;
+                case 'condition-add':
+                    content = (
+                        <ConditionModal
+                            condition={this.state.drawer.condition}
+                            combatant={this.state.drawer.combatant}
+                            combat={this.state.drawer.combat}
+                        />
+                    );
+                    footer = (
+                        <button onClick={() => this.addConditionFromModal()}>add</button>
+                    );
+                    closable = true;
                     break;
                 case 'condition-edit':
-                    modalTitle = 'edit condition';
-                    modalContent = (
+                    content = (
                         <ConditionModal
-                            condition={this.state.modal.condition}
-                            combatant={this.state.modal.combatant}
-                            combat={this.state.modal.combat}
+                            condition={this.state.drawer.condition}
+                            combatant={this.state.drawer.combatant}
+                            combat={this.state.drawer.combat}
                         />
                     );
-                    modalButtons.right = [
-                        <button key='save' onClick={() => this.editConditionFromModal()}>save</button>,
-                        <button key='cancel' onClick={() => this.closeModal()}>cancel</button>
-                    ];
+                    footer = (
+                        <ControlRow
+                            controls={[
+                                <button key='save' onClick={() => this.editConditionFromModal()}>save changes</button>,
+                                <button key='cancel' onClick={() => this.closeModal()}>discard changes</button>
+                            ]}
+                        />
+                    );
                     break;
-                default:
-                    // Do nothing
+                case 'tools':
+                    content = (
+                        <ToolsModal
+                            library={this.state.library}
+                            resetAll={() => this.resetAll()}
+                        />
+                    );
+                    closable = true;
                     break;
             }
-
-            return (
-                <div className='overlay'>
-                    <div className='modal' onClick={e => e.stopPropagation()}>
-                        <div className='modal-header'>
-                            <div className='title'>{modalTitle}</div>
-                        </div>
-                        <div className='modal-content'>
-                            {modalContent}
-                        </div>
-                        <div className='modal-footer'>
-                            <div className='left'>{modalButtons.left}</div>
-                            <div className='right'>{modalButtons.right}</div>
-                        </div>
-                    </div>
-                </div>
-            );
         }
 
-        return null;
+        return {
+            content: content,
+            footer: footer,
+            width: width,
+            closable: closable
+        };
     }
 
     public render() {
@@ -2046,18 +2011,17 @@ export default class Dojo extends React.Component<Props, State> {
             const breadcrumbs = this.getBreadcrumbs();
             const actions = this.getActions();
             const drawer = this.getDrawer();
-            const modal = this.getModal();
 
             return (
                 <div className='dojo'>
                     <Titlebar
                         breadcrumbs={breadcrumbs}
                         actions={actions}
-                        blur={modal !== null}
+                        blur={drawer.content !== null}
                         breadcrumbClicked={bc => this.breadcrumbClicked(bc)}
                         openDrawer={() => this.openToolsDrawer()}
                     />
-                    <div className={(modal === null) ? 'page-content' : 'page-content blur'}>
+                    <div className={drawer.content === null ? 'page-content' : 'page-content blur'}>
                         {content}
                     </div>
                     <Navbar
@@ -2065,18 +2029,20 @@ export default class Dojo extends React.Component<Props, State> {
                         parties={this.state.parties}
                         library={this.state.library}
                         encounters={this.state.encounters}
-                        blur={modal !== null}
+                        blur={drawer.content !== null}
                         setView={view => this.setView(view)}
                     />
                     <Drawer
                         closable={false}
-                        width={'50%'}
+                        maskClosable={drawer.closable}
+                        width={drawer.width}
+                        visible={drawer.content !== null}
                         onClose={() => this.closeDrawer()}
-                        visible={drawer !== null}
                     >
-                        {drawer}
+                        <div className='drawer-header' />
+                        <div className='drawer-content'>{drawer.content}</div>
+                        <div className='drawer-footer'>{drawer.footer}</div>
                     </Drawer>
-                    {modal}
                 </div>
             );
         } catch (e) {

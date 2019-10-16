@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Input } from 'antd';
+
 import { Monster, MonsterGroup } from '../../models/monster-group';
 
 import MonsterCard from '../cards/monster-card';
@@ -93,10 +95,10 @@ class MonsterInfo extends React.Component<MonsterInfoProps> {
                 <div>
                     <div className='section'>
                         <div className='subheading'>monster group name</div>
-                        <input
-                            type='text'
+                        <Input
                             placeholder='monster group name'
                             value={this.props.monsterGroup.name}
+                            allowClear={true}
                             onChange={event => this.props.changeValue('name', event.target.value)}
                         />
                     </div>
