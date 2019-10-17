@@ -31,7 +31,7 @@ export default class EncounterListScreen extends React.Component<Props> {
 
             return (
                 <Row className='full-height'>
-                    <Col span={6} className='scrollable sidebar'>
+                    <Col span={6} className='scrollable sidebar left'>
                         <Note>
                             <div className='section'>on this page you can set up encounters</div>
                             <div className='section'>

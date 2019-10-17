@@ -53,7 +53,7 @@ export default class MapScreen extends React.Component<Props> {
 
             return (
                 <Row className='full-height'>
-                    <Col span={6} className='scrollable sidebar'>
+                    <Col span={6} className='scrollable sidebar left'>
                         <MapFolioInfo
                             mapFolio={this.props.mapFolio}
                             addMap={() => this.props.addMap()}

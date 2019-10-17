@@ -182,7 +182,7 @@ export default class EncounterScreen extends React.Component<Props, State> {
 
             return (
                 <Row className='full-height'>
-                    <Col span={6} className='scrollable sidebar'>
+                    <Col span={6} className='scrollable sidebar left'>
                         <EncounterInfo
                             encounter={this.props.encounter}
                             parties={this.props.parties}

@@ -52,7 +52,7 @@ export default class MonsterScreen extends React.Component<Props> {
 
             return (
                 <Row className='full-height'>
-                    <Col span={6} className='scrollable sidebar'>
+                    <Col span={6} className='scrollable sidebar left'>
                         <MonsterInfo
                             monsterGroup={this.props.monsterGroup}
                             addMonster={() => this.props.addMonster()}

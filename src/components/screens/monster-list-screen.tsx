@@ -29,7 +29,7 @@ export default class MonsterListScreen extends React.Component<Props> {
 
             return (
                 <Row className='full-height'>
-                    <Col span={6} className='scrollable sidebar'>
+                    <Col span={6} className='scrollable sidebar left'>
                         <Note>
                             <div className='section'>you can maintain your menagerie of monsters here</div>
                             <div className='section'>you can then use these monsters to design combat encounters in the encounter builder</div>

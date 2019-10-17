@@ -176,12 +176,14 @@ button {
     padding: 0;
     font-size: 12px;
     height: 100%;
+    color: $foreground;
 }
 
 .ant-input {
     font-size: 12px;
     border-radius: 0;
     border-color: $control-border;
+    color: $foreground;
     margin: 5px 0;
 
     &:hover {
@@ -207,7 +209,7 @@ button {
 
 .scrollable {
     height: 100%;
-    padding: 0 15px;
+    padding: 0 10px;
     overflow-x: hidden;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
@@ -248,7 +250,14 @@ button {
 
 .sidebar {
     background-color: $control;
-    border-right: 1px solid $control-border;
+
+    &.left {
+        border-right: 1px solid $control-border;
+    }
+
+    &.right {
+        border-left: 1px solid $control-border;
+    }
 }
 
 .lowercase {

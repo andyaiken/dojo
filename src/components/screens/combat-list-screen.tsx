@@ -27,7 +27,7 @@ export default class CombatListScreen extends React.Component<Props> {
 
             return (
                 <Row className='full-height'>
-                    <Col span={6} className='scrollable sidebar'>
+                    <Col span={6} className='scrollable sidebar left'>
                         <Note>
                             <div className='section'>
                                 here you can run a combat encounter by specifying a party and an encounter, and optionally a tactical map

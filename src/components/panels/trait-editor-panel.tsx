@@ -7,7 +7,7 @@ import Utils from '../../utils/utils';
 import { Combatant } from '../../models/combat';
 import { Monster, Trait, TRAIT_TYPES } from '../../models/monster-group';
 
-import Menu from '../controls/menu';
+import Dropdown from '../controls/dropdown';
 import Note from './note';
 
 import arrow from '../../resources/icons/down-arrow-black.svg';
@@ -79,9 +79,12 @@ export default class TraitsPanel extends React.Component<Props, State> {
 
     public render() {
         try {
+            const options: { id: string, text: string }[] = [];
             const traitsByType: { [id: string]: JSX.Element[] } = {};
 
             TRAIT_TYPES.forEach(type => {
+                options.push({ id: type, text: Utils.traitType(type, false) });
+
                 const list: JSX.Element[] = [];
                 const traits = this.props.combatant.traits.filter(t => t.type === type);
                 for (let n = 0; n !== traits.length; ++n) {
@@ -112,14 +115,11 @@ export default class TraitsPanel extends React.Component<Props, State> {
             return (
                 <Row gutter={10}>
                     <Col span={12}>
-                        <Menu text='add a new...'>
-                            <button key='trait' onClick={() => this.props.addTrait('trait')}>add a new trait</button>
-                            <button key='action' onClick={() => this.props.addTrait('action')}>add a new action</button>
-                            <button key='bonus' onClick={() => this.props.addTrait('bonus')}>add a new bonus action</button>
-                            <button key='reaction' onClick={() => this.props.addTrait('reaction')}>add a new reaction</button>
-                            <button key='legendary' onClick={() => this.props.addTrait('legendary')}>add a new legendary action</button>
-                            <button key='lair' onClick={() => this.props.addTrait('lair')}>add a new lair action</button>
-                        </Menu>
+                        <Dropdown
+                            options={options}
+                            placeholder='add a new...'
+                            select={id => this.props.addTrait(id as 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'lair')}
+                        />
                         {this.createSection(traitsByType, 'trait')}
                         {this.createSection(traitsByType, 'action')}
                         {this.createSection(traitsByType, 'bonus')}

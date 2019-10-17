@@ -78,16 +78,16 @@ export default class DieRollerModule extends React.Component<Props, State> {
         rolls.sort((a, b) => a - b);
 
         let result = 0;
-        if (this.state.options.includes('advantage')) {
+        if ((this.state.count === 1) && (this.state.dice === '20') && this.state.options.includes('advantage')) {
             result = Math.max(...rolls);
-        } else if (this.state.options.includes('disadvantage')) {
+        } else if ((this.state.count === 1) && (this.state.dice === '20') && this.state.options.includes('disadvantage')) {
             result = Math.min(...rolls);
         } else {
             rolls.forEach(roll => result += roll);
-            if (this.state.options.includes('drop lowest')) {
+            if ((this.state.count > 1) && this.state.options.includes('drop lowest')) {
                 result -= Math.min(...rolls);
             }
-            if (this.state.options.includes('drop highest')) {
+            if ((this.state.count > 1) && this.state.options.includes('drop highest')) {
                 result -= Math.max(...rolls);
             }
         }

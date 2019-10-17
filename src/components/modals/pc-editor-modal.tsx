@@ -6,7 +6,6 @@ import Factory from '../../utils/factory';
 
 import { PC } from '../../models/party';
 
-import PCCard from '../cards/pc-card';
 import Spin from '../controls/spin';
 import PortraitPanel from '../panels/portrait-panel';
 
@@ -84,7 +83,7 @@ export default class PCEditorModal extends React.Component<Props, State> {
 
             return (
                 <Row className='full-height'>
-                    <Col span={8} className='scrollable'>
+                    <Col span={12} className='scrollable'>
                         <div className='subheading'>character name:</div>
                         <Input
                             value={this.state.pc.name}
@@ -135,7 +134,7 @@ export default class PCEditorModal extends React.Component<Props, State> {
                             nudgeValue={delta => this.nudgeValue(this.state.pc, 'passivePerception', delta)}
                         />
                     </Col>
-                    <Col span={8} className='scrollable'>
+                    <Col span={12} className='scrollable'>
                         <div className='subheading'>languages:</div>
                         <Input
                             value={this.state.pc.languages}
@@ -154,12 +153,6 @@ export default class PCEditorModal extends React.Component<Props, State> {
                         <div className='subheading'>companions:</div>
                         {companions}
                         <button onClick={() => this.addCompanion()}>add a new companion</button>
-                    </Col>
-                    <Col span={8} className='scrollable' style={{ padding: '15px' }}>
-                        <PCCard
-                            pc={this.state.pc}
-                            mode='view'
-                        />
                     </Col>
                 </Row>
             );

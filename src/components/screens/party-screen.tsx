@@ -59,7 +59,7 @@ export default class PartyScreen extends React.Component<Props> {
 
             return (
                 <Row className='full-height'>
-                    <Col span={6} className='scrollable sidebar'>
+                    <Col span={6} className='scrollable sidebar left'>
                         <PartyInfo
                             party={this.props.party}
                             addPC={() => this.props.addPC()}
