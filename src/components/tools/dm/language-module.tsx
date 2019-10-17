@@ -254,14 +254,11 @@ export default class LanguageModule extends React.Component<Props, State> {
                         select={optionID => this.usePreset(optionID)}
                     />
                     <div className='divider' />
-                    <Expander
-                        text={'selected languages: ' + selectedLanguages}
-                        content={
-                            <div className='row collapse small-up-1 medium-up-2 large-up-3 language-options'>
-                                {languages}
-                            </div>
-                        }
-                    />
+                    <Expander text={'selected languages: ' + selectedLanguages}>
+                        <div className='row collapse small-up-1 medium-up-2 large-up-3 language-options'>
+                            {languages}
+                        </div>
+                    </Expander>
                     <div className='divider' />
                     <ControlRow
                         controls={[
@@ -301,18 +298,13 @@ class GeneratedText extends React.Component<GeneratedTextProps> {
     public render() {
         try {
             return (
-                <Expander
-                    text={this.props.text.toLowerCase()}
-                    content={
-                        <div>
-                            <button onClick={e => this.copy(e)}>copy to clipboard</button>
-                            <button onClick={e => this.say(e)}>say</button>
-                            <div className='section'>
-                                <b>note:</b> speech may not work consistently on all platforms
-                            </div>
-                        </div>
-                    }
-                />
+                <Expander text={this.props.text.toLowerCase()}>
+                    <button onClick={e => this.copy(e)}>copy to clipboard</button>
+                    <button onClick={e => this.say(e)}>say</button>
+                    <div className='section'>
+                        <b>note:</b> speech may not work consistently on all platforms
+                    </div>
+                </Expander>
             );
         } catch (ex) {
             console.error(ex);

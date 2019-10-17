@@ -204,22 +204,16 @@ export default class PCCard extends React.Component<Props, State> {
                         );
                     }
                     options.push(
-                        <Expander
-                            key='aura'
-                            text='aura'
-                            content={(
-                                <div>
-                                    <Spin
-                                        source={combatant.aura}
-                                        name='radius'
-                                        label='size'
-                                        display={value => value + ' ft.'}
-                                        nudgeValue={delta => this.props.nudgeValue(combatant.aura, 'radius', delta * 5)}
-                                    />
-                                    {auraDetails}
-                                </div>
-                            )}
-                        />
+                        <Expander key='aura' text='aura'>
+                            <Spin
+                                source={combatant.aura}
+                                name='radius'
+                                label='size'
+                                display={value => value + ' ft.'}
+                                nudgeValue={delta => this.props.nudgeValue(combatant.aura, 'radius', delta * 5)}
+                            />
+                            {auraDetails}
+                        </Expander>
                     );
                     options.push(<button key='mapRemove' onClick={() => this.props.mapRemove(combatant)}>remove from map</button>);
                 }
@@ -233,37 +227,25 @@ export default class PCCard extends React.Component<Props, State> {
                 }
                 if (!combatant.pending) {
                     options.push(
-                        <Expander
-                            key='init'
-                            text='change initiative score'
-                            content={(
-                                <div>
-                                    <Spin
-                                        source={this.props.pc}
-                                        name='initiative'
-                                        label='initiative'
-                                        nudgeValue={delta => this.props.nudgeValue(this.props.pc, 'initiative', delta)}
-                                    />
-                                </div>
-                            )}
-                        />
+                        <Expander key='init' text='change initiative score'>
+                            <Spin
+                                source={this.props.pc}
+                                name='initiative'
+                                label='initiative'
+                                nudgeValue={delta => this.props.nudgeValue(this.props.pc, 'initiative', delta)}
+                            />
+                        </Expander>
                     );
                 }
                 options.push(
-                    <Expander
-                        key='size'
-                        text='change size'
-                        content={(
-                            <div>
-                                <Spin
-                                    source={this.props.pc}
-                                    name='displaySize'
-                                    label='size'
-                                    nudgeValue={delta => this.props.nudgeValue(this.props.pc, 'displaySize', delta)}
-                                />
-                            </div>
-                        )}
-                    />
+                    <Expander key='size' text='change size'>
+                        <Spin
+                            source={this.props.pc}
+                            name='displaySize'
+                            label='size'
+                            nudgeValue={delta => this.props.nudgeValue(this.props.pc, 'displaySize', delta)}
+                        />
+                    </Expander>
                 );
                 break;
         }

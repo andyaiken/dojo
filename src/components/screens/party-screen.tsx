@@ -6,7 +6,7 @@ import { Party, PC } from '../../models/party';
 
 import PCCard from '../cards/pc-card';
 import ConfirmButton from '../controls/confirm-button';
-import CardGroup from '../panels/card-group';
+import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
 
 interface Props {
@@ -75,14 +75,13 @@ export default class PartyScreen extends React.Component<Props> {
                         />
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
-                        <CardGroup
+                        <GridPanel
                             content={activeCards}
                             heading={this.props.party.name || 'unnamed party'}
                         />
-                        <CardGroup
+                        <GridPanel
                             content={inactiveCards}
                             heading='inactive pcs'
-                            hidden={inactiveCards.length === 0}
                         />
                     </div>
                 </div>

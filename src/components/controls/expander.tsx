@@ -4,7 +4,6 @@ import arrow from '../../resources/icons/down-arrow-black.svg';
 
 interface Props {
     text: string;
-    content: string | JSX.Element;
     disabled: boolean;
 }
 
@@ -38,22 +37,13 @@ export default class Expander extends React.Component<Props, State> {
                 style += ' expanded';
             }
 
-            let content = null;
-            if (this.state.expanded) {
-                content = (
-                    <div className='expander-content'>
-                        {this.props.content}
-                    </div>
-                );
-            }
-
             return (
                 <div className={style}>
                     <div className='expander-header' onClick={() => this.toggle()}>
                         <div className='expander-text'>{this.props.text}</div>
                         <img className='expander-button' src={arrow} alt='arrow' />
                     </div>
-                    {content}
+                    {this.state.expanded ? <div className='expander-content'>{this.props.children}</div> : null}
                 </div>
             );
         } catch (ex) {

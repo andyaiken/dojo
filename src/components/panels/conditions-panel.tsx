@@ -92,17 +92,12 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
             }
 
             return (
-                <Expander
-                    text={name}
-                    content={(
-                        <div>
-                            {description}
-                            <div className='divider' />
-                            <button onClick={() => this.props.editCondition(this.props.condition)}>edit</button>
-                            <button onClick={() => this.props.removeCondition(this.props.condition.id)}>remove</button>
-                        </div>
-                    )}
-                />
+                <Expander text={name}>
+                    {description}
+                    <div className='divider' />
+                    <button onClick={() => this.props.editCondition(this.props.condition)}>edit</button>
+                    <button onClick={() => this.props.removeCondition(this.props.condition.id)}>remove</button>
+                </Expander>
             );
         } catch (e) {
             console.error(e);

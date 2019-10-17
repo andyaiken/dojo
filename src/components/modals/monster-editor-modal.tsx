@@ -754,40 +754,35 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 switch (this.state.sidebar) {
                     case 'similar':
                         sidebarContent = (
-                            <Expander
-                                text='similarity criteria'
-                                content={
-                                    <div>
-                                        <Checkbox
-                                            label={'size ' + this.state.monster.size}
-                                            checked={this.state.similarFilter.size}
-                                            changeValue={value => this.toggleMatch('size')}
-                                        />
-                                        <Checkbox
-                                            label={'type ' + this.state.monster.category}
-                                            checked={this.state.similarFilter.type}
-                                            changeValue={value => this.toggleMatch('type')}
-                                        />
-                                        <Checkbox
-                                            label={this.state.monster.tag ? 'subtype ' + this.state.monster.tag : 'subtype'}
-                                            checked={this.state.similarFilter.subtype}
-                                            disabled={!this.state.monster.tag}
-                                            changeValue={value => this.toggleMatch('subtype')}
-                                        />
-                                        <Checkbox
-                                            label={this.state.monster.alignment ? 'alignment ' + this.state.monster.alignment : 'alignment'}
-                                            checked={this.state.similarFilter.alignment}
-                                            disabled={!this.state.monster.alignment}
-                                            changeValue={value => this.toggleMatch('alignment')}
-                                        />
-                                        <Checkbox
-                                            label={'challenge rating ' + Utils.challenge(this.state.monster.challenge)}
-                                            checked={this.state.similarFilter.challenge}
-                                            changeValue={value => this.toggleMatch('challenge')}
-                                        />
-                                    </div>
-                                }
-                            />
+                            <Expander text='similarity criteria'>
+                                <Checkbox
+                                    label={'size ' + this.state.monster.size}
+                                    checked={this.state.similarFilter.size}
+                                    changeValue={value => this.toggleMatch('size')}
+                                />
+                                <Checkbox
+                                    label={'type ' + this.state.monster.category}
+                                    checked={this.state.similarFilter.type}
+                                    changeValue={value => this.toggleMatch('type')}
+                                />
+                                <Checkbox
+                                    label={this.state.monster.tag ? 'subtype ' + this.state.monster.tag : 'subtype'}
+                                    checked={this.state.similarFilter.subtype}
+                                    disabled={!this.state.monster.tag}
+                                    changeValue={value => this.toggleMatch('subtype')}
+                                />
+                                <Checkbox
+                                    label={this.state.monster.alignment ? 'alignment ' + this.state.monster.alignment : 'alignment'}
+                                    checked={this.state.similarFilter.alignment}
+                                    disabled={!this.state.monster.alignment}
+                                    changeValue={value => this.toggleMatch('alignment')}
+                                />
+                                <Checkbox
+                                    label={'challenge rating ' + Utils.challenge(this.state.monster.challenge)}
+                                    checked={this.state.similarFilter.challenge}
+                                    changeValue={value => this.toggleMatch('challenge')}
+                                />
+                            </Expander>
                         );
                         break;
                     case 'scratchpad':
@@ -815,33 +810,23 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                     <button key={m.id} onClick={() => this.removeFromScratchpadList(m)}>{m.name}</button>
                                 );
                                 removeSection = (
-                                    <Expander
-                                        text='remove monsters from the list'
-                                        content={
-                                            <div>
-                                                {deleteRows}
-                                            </div>
-                                        }
-                                    />
+                                    <Expander text='remove monsters from the list'>
+                                        {deleteRows}
+                                    </Expander>
                                 );
                             }
                             sidebarContent = (
                                 <div>
-                                    <Expander
-                                        text='add monsters to the list'
-                                        content={
-                                            <div>
-                                                <FilterPanel
-                                                    filter={this.state.scratchpadFilter}
-                                                    changeValue={(type, value) => this.changeFilterValue(type, value)}
-                                                    nudgeValue={(type, delta) => this.nudgeFilterValue(type, delta)}
-                                                    resetFilter={() => this.resetFilter()}
-                                                />
-                                                <div className='divider' />
-                                                {resultsRows}
-                                            </div>
-                                        }
-                                    />
+                                    <Expander text='add monsters to the list'>
+                                        <FilterPanel
+                                            filter={this.state.scratchpadFilter}
+                                            changeValue={(type, value) => this.changeFilterValue(type, value)}
+                                            nudgeValue={(type, delta) => this.nudgeFilterValue(type, delta)}
+                                            resetFilter={() => this.resetFilter()}
+                                        />
+                                        <div className='divider' />
+                                        {resultsRows}
+                                    </Expander>
                                     {removeSection}
                                 </div>
                             );

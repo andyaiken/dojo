@@ -6,7 +6,7 @@ import { Monster, MonsterGroup } from '../../models/monster-group';
 
 import MonsterCard from '../cards/monster-card';
 import ConfirmButton from '../controls/confirm-button';
-import CardGroup from '../panels/card-group';
+import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
 
 interface Props {
@@ -66,7 +66,7 @@ export default class MonsterScreen extends React.Component<Props> {
                         />
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
-                        <CardGroup
+                        <GridPanel
                             content={cards}
                             heading={this.props.monsterGroup.name || 'unnamed group'}
                         />

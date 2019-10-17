@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Party, PC } from '../../models/party';
 
-import CardGroup from '../panels/card-group';
+import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
 
 interface Props {
@@ -38,7 +38,7 @@ export default class PartyListScreen extends React.Component<Props> {
                         <button onClick={() => this.props.addParty()}>create a new party</button>
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
-                        <CardGroup heading='parties' content={listItems} />
+                        <GridPanel heading='parties' content={listItems} />
                     </div>
                 </div>
             );

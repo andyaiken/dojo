@@ -5,7 +5,7 @@ import { Input } from 'antd';
 import { Map, MapFolio } from '../../models/map-folio';
 
 import ConfirmButton from '../controls/confirm-button';
-import CardGroup from '../panels/card-group';
+import GridPanel from '../panels/grid-panel';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 
@@ -66,7 +66,7 @@ export default class MapScreen extends React.Component<Props> {
                         />
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
-                        <CardGroup
+                        <GridPanel
                             content={folioCards}
                             heading={this.props.mapFolio.name || 'unnamed folio'}
                         />

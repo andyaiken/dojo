@@ -15,9 +15,9 @@ import ConfirmButton from '../controls/confirm-button';
 import Expander from '../controls/expander';
 import Selector from '../controls/selector';
 import Spin from '../controls/spin';
-import CardGroup from '../panels/card-group';
 import DifficultyChartPanel from '../panels/difficulty-chart-panel';
 import FilterPanel from '../panels/filter-panel';
+import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
 
 interface Props {
@@ -173,7 +173,7 @@ export default class EncounterScreen extends React.Component<Props, State> {
         }
 
         return (
-            <CardGroup
+            <GridPanel
                 heading='monster library'
                 content={libraryCards}
                 showToggle={true}
@@ -185,7 +185,7 @@ export default class EncounterScreen extends React.Component<Props, State> {
         try {
             const waves = this.props.encounter.waves.map(w => {
                 return (
-                    <CardGroup
+                    <GridPanel
                         key={w.id}
                         heading={w.name || 'unnamed wave'}
                         content={this.getMonsterCards(w.slots, w.id)}
@@ -213,7 +213,7 @@ export default class EncounterScreen extends React.Component<Props, State> {
                         />
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
-                        <CardGroup
+                        <GridPanel
                             content={this.getMonsterCards(this.props.encounter.slots, null)}
                             heading={this.props.encounter.name || 'unnamed encounter'}
                         />
@@ -318,28 +318,23 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
                     </div>
                     <div className='divider' />
                     <div className='section'>
-                        <Expander
-                            text='build a random encounter'
-                            content={(
-                                <div>
-                                    <p>add random monsters to this encounter until its adjusted xp value is at least the following value</p>
-                                    <Spin
-                                        source={this.state}
-                                        name='randomEncounterXP'
-                                        label='xp'
-                                        nudgeValue={delta => this.setRandomEncounterXP(this.state.randomEncounterXP + (delta * this.state.randomEncounterStep))}
-                                    />
-                                    <Selector
-                                        options={['10', '100', '1000'].map(t => {
-                                            return { id: t, text: t };
-                                        })}
-                                        selectedID={this.state.randomEncounterStep.toString()}
-                                        select={optionID => this.setRandomEncounterStep(Number.parseInt(optionID, 10))}
-                                    />
-                                    <button onClick={() => this.props.buildEncounter(this.state.randomEncounterXP)}>build encounter</button>
-                                </div>
-                            )}
-                        />
+                        <Expander text='build a random encounter'>
+                            <p>add random monsters to this encounter until its adjusted xp value is at least the following value</p>
+                            <Spin
+                                source={this.state}
+                                name='randomEncounterXP'
+                                label='xp'
+                                nudgeValue={delta => this.setRandomEncounterXP(this.state.randomEncounterXP + (delta * this.state.randomEncounterStep))}
+                            />
+                            <Selector
+                                options={['10', '100', '1000'].map(t => {
+                                    return { id: t, text: t };
+                                })}
+                                selectedID={this.state.randomEncounterStep.toString()}
+                                select={optionID => this.setRandomEncounterStep(Number.parseInt(optionID, 10))}
+                            />
+                            <button onClick={() => this.props.buildEncounter(this.state.randomEncounterXP)}>build encounter</button>
+                        </Expander>
                         <ConfirmButton text='clear encounter' callback={() => this.props.clearEncounter()} />
                         <ConfirmButton text='delete encounter' callback={() => this.props.removeEncounter()} />
                     </div>

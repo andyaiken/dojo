@@ -72,10 +72,7 @@ export default class FilterPanel extends React.Component<Props> {
             const summary = 'showing ' + Napoleon.getFilterDescription(this.props.filter);
 
             return (
-                <Expander
-                    text={summary}
-                    content={content}
-                />
+                <Expander text={summary}>{content}</Expander>
             );
         } catch (e) {
             console.error(e);

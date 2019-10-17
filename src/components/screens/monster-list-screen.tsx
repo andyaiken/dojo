@@ -5,7 +5,7 @@ import Utils from '../../utils/utils';
 import { CATEGORY_TYPES, MonsterGroup, SIZE_TYPES } from '../../models/monster-group';
 
 import Selector from '../controls/selector';
-import CardGroup from '../panels/card-group';
+import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
 
 interface Props {
@@ -40,7 +40,7 @@ export default class MonsterListScreen extends React.Component<Props> {
                         <button onClick={() => this.props.addMonsterGroup()}>create a new monster group</button>
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
-                        <CardGroup heading='monster groups' content={listItems} />
+                        <GridPanel heading='monster groups' content={listItems} />
                     </div>
                 </div>
             );

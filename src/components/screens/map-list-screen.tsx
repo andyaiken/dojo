@@ -2,7 +2,7 @@ import React from 'react';
 
 import { MapFolio } from '../../models/map-folio';
 
-import CardGroup from '../panels/card-group';
+import GridPanel from '../panels/grid-panel';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 
@@ -38,7 +38,7 @@ export default class MapListScreen extends React.Component<Props> {
                         <button onClick={() => this.props.addMapFolio()}>create a new map folio</button>
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
-                        <CardGroup heading='map folios' content={listItems} />
+                        <GridPanel heading='map folios' content={listItems} />
                     </div>
                 </div>
             );

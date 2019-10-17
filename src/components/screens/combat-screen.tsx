@@ -14,7 +14,7 @@ import Checkbox from '../controls/checkbox';
 import ControlRow from '../controls/control-row';
 import Radial from '../controls/radial';
 import Spin from '../controls/spin';
-import CardGroup from '../panels/card-group';
+import GridPanel from '../panels/grid-panel';
 import HitPointGauge from '../panels/hit-point-gauge';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
@@ -480,7 +480,7 @@ export default class CombatScreen extends React.Component<Props, State> {
             wavesAvailable = !!encounter && (encounter.waves.length > 0);
 
             const toolsSection = (
-                <CardGroup
+                <GridPanel
                     heading='tools'
                     content={[
                         <div key='tools'>
@@ -572,48 +572,43 @@ export default class CombatScreen extends React.Component<Props, State> {
             return (
                 <div className='screen row collapse'>
                     <div className='columns small-4 medium-4 large-4 scrollable'>
-                        <CardGroup
+                        <GridPanel
                             heading='initiative holder'
                             content={current}
                         />
                     </div>
                     <div className='columns small-4 medium-4 large-4 scrollable'>
                         {notificationSection}
-                        <CardGroup
+                        <GridPanel
                             heading='waiting for intiative to be entered'
                             content={pending}
-                            hidden={pending.length === 0}
                             showToggle={true}
                         />
-                        <CardGroup
+                        <GridPanel
                             heading='encounter map'
                             content={[mapSection]}
-                            hidden={mapSection === null}
                             showToggle={true}
                         />
-                        <CardGroup
+                        <GridPanel
                             heading='initiative order'
                             content={active}
-                            hidden={active.length === 0}
                             showToggle={true}
                         />
-                        <CardGroup
+                        <GridPanel
                             heading='defeated'
                             content={defeated}
-                            hidden={defeated.length === 0}
                             showToggle={true}
                         />
                     </div>
                     <div className='columns small-4 medium-4 large-4 scrollable'>
                         {toolsSection}
                         {this.getPlayerView(this.props.combat)}
-                        <CardGroup
+                        <GridPanel
                             heading={'don\'t forget'}
                             content={special}
-                            hidden={special.length === 0}
                             showToggle={true}
                         />
-                        <CardGroup
+                        <GridPanel
                             heading='selected combatant'
                             content={[selectedCombatant]}
                         />

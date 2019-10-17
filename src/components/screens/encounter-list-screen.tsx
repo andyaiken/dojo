@@ -5,7 +5,7 @@ import Napoleon from '../../utils/napoleon';
 import { Encounter, EncounterSlot } from '../../models/encounter';
 import { Monster } from '../../models/monster-group';
 
-import CardGroup from '../panels/card-group';
+import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
 
 interface Props {
@@ -47,7 +47,7 @@ export default class EncounterListScreen extends React.Component<Props> {
                         <button onClick={() => this.props.addEncounter()}>create a new encounter</button>
                     </div>
                     <div className='columns small-8 medium-8 large-9 scrollable'>
-                        <CardGroup heading='encounters' content={listItems} />
+                        <GridPanel heading='encounters' content={listItems} />
                     </div>
                 </div>
             );

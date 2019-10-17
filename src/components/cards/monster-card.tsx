@@ -390,22 +390,16 @@ export default class MonsterCard extends React.Component<Props, State> {
                         );
                     }
                     options.push(
-                        <Expander
-                            key='aura'
-                            text='aura'
-                            content={(
-                                <div>
-                                    <Spin
-                                        source={combatant.aura}
-                                        name='radius'
-                                        label='size'
-                                        display={value => value + ' ft.'}
-                                        nudgeValue={delta => this.props.nudgeValue(combatant.aura, 'radius', delta * 5)}
-                                    />
-                                    {auraDetails}
-                                </div>
-                            )}
-                        />
+                        <Expander key='aura' text='aura'>
+                            <Spin
+                                source={combatant.aura}
+                                name='radius'
+                                label='size'
+                                display={value => value + ' ft.'}
+                                nudgeValue={delta => this.props.nudgeValue(combatant.aura, 'radius', delta * 5)}
+                            />
+                            {auraDetails}
+                        </Expander>
                     );
                     options.push(<button key='mapRemove' onClick={() => this.props.mapRemove(combatant)}>remove from map</button>);
                 }
@@ -419,52 +413,34 @@ export default class MonsterCard extends React.Component<Props, State> {
                 }
                 if (!combatant.pending) {
                     options.push(
-                        <Expander
-                            key='init'
-                            text='change initiative score'
-                            content={(
-                                <div>
-                                    <Spin
-                                        source={this.props.monster}
-                                        name='initiative'
-                                        label='initiative'
-                                        nudgeValue={delta => this.props.nudgeValue(this.props.monster, 'initiative', delta)}
-                                    />
-                                </div>
-                            )}
-                        />
+                        <Expander key='init' text='change initiative score'>
+                            <Spin
+                                source={this.props.monster}
+                                name='initiative'
+                                label='initiative'
+                                nudgeValue={delta => this.props.nudgeValue(this.props.monster, 'initiative', delta)}
+                            />
+                        </Expander>
                     );
                 }
                 options.push(
-                    <Expander
-                        key='size'
-                        text='change size'
-                        content={(
-                            <div>
-                                <Spin
-                                    source={this.props.monster}
-                                    name='displaySize'
-                                    label='size'
-                                    nudgeValue={delta => this.props.nudgeValue(this.props.monster, 'displaySize', delta)}
-                                />
-                            </div>
-                        )}
-                    />
+                    <Expander key='size' text='change size' >
+                        <Spin
+                            source={this.props.monster}
+                            name='displaySize'
+                            label='size'
+                            nudgeValue={delta => this.props.nudgeValue(this.props.monster, 'displaySize', delta)}
+                        />
+                    </Expander>
                 );
                 options.push(
-                    <Expander
-                        key='rename'
-                        text='change name'
-                        content={(
-                            <div>
-                                <Input
-                                    value={combatant.displayName}
-                                    allowClear={true}
-                                    onChange={event => this.props.changeValue(this.props.monster, 'displayName', event.target.value)}
-                                />
-                            </div>
-                        )}
-                    />
+                    <Expander key='rename' text='change name' >
+                        <Input
+                            value={combatant.displayName}
+                            allowClear={true}
+                            onChange={event => this.props.changeValue(this.props.monster, 'displayName', event.target.value)}
+                        />
+                    </Expander>
                 );
                 break;
         }
@@ -490,21 +466,15 @@ export default class MonsterCard extends React.Component<Props, State> {
                         );
 
                         options.push(
-                            <Expander
-                                key='clone'
-                                text='clone monster'
-                                content={
-                                    <div>
-                                        <Input
-                                            placeholder='monster name'
-                                            value={this.state.cloneName}
-                                            allowClear={true}
-                                            onChange={event => this.setCloneName(event.target.value)}
-                                        />
-                                        <button onClick={() => this.props.cloneMonster(this.props.monster, this.state.cloneName)}>create copy</button>
-                                    </div>
-                                }
-                            />
+                            <Expander key='clone' text='clone monster'>
+                                <Input
+                                    placeholder='monster name'
+                                    value={this.state.cloneName}
+                                    allowClear={true}
+                                    onChange={event => this.setCloneName(event.target.value)}
+                                />
+                                <button onClick={() => this.props.cloneMonster(this.props.monster, this.state.cloneName)}>create copy</button>
+                            </Expander>
                         );
 
                         const groupOptions: { id: string, text: string }[] = [];
@@ -583,21 +553,16 @@ export default class MonsterCard extends React.Component<Props, State> {
                             if (!canAdd) {
                                 return (
                                     <InfoCard
-                                        heading={
-                                            (
-                                                <div className='heading'>
-                                                    <div className='title'>{this.props.monster.name}</div>
-                                                </div>
-                                            )
-                                        }
-                                        content={
-                                            (
-                                                <div className='section'>
-                                                    <i>this monster is already part of this encounter</i>
-                                                </div>
-                                            )
-                                        }
-                                    />
+                                        heading={(
+                                            <div className='heading'>
+                                                <div className='title'>{this.props.monster.name}</div>
+                                            </div>
+                                        )}
+                                    >
+                                        <div className='section'>
+                                            <i>this monster is already part of this encounter</i>
+                                        </div>
+                                    </InfoCard>
                                 );
                             }
                         }
