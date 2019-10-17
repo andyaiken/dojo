@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Col, Row } from 'antd';
+
 import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
@@ -158,23 +160,23 @@ export default class AddCombatantsModal extends React.Component<Props, State> {
             });
 
             return (
-                    <div className='row'>
-                        <div className='columns small-6 medium-6 large-6 scrollable'>
-                            <div className='heading'>monsters in library</div>
-                            <FilterPanel
-                                filter={this.state.filter}
-                                changeValue={(type, value) => this.changeFilterValue(type, value)}
-                                nudgeValue={(type, delta) => this.nudgeFilterValue(type, delta)}
-                                resetFilter={() => this.resetFilter()}
-                            />
-                            <div className='divider' />
-                            {allCombatants}
-                        </div>
-                        <div className='columns small-6 medium-6 large-6 scrollable'>
-                            <div className='heading'>selected monsters</div>
-                            {selectedCombatants}
-                        </div>
-                    </div>
+                <Row className='full-height'>
+                    <Col span={12} className='scrollable'>
+                        <div className='heading'>monsters in library</div>
+                        <FilterPanel
+                            filter={this.state.filter}
+                            changeValue={(type, value) => this.changeFilterValue(type, value)}
+                            nudgeValue={(type, delta) => this.nudgeFilterValue(type, delta)}
+                            resetFilter={() => this.resetFilter()}
+                        />
+                        <div className='divider' />
+                        {allCombatants}
+                    </Col>
+                    <Col span={12} className='scrollable'>
+                        <div className='heading'>selected monsters</div>
+                        {selectedCombatants}
+                    </Col>
+                </Row>
             );
         } catch (e) {
             console.error(e);

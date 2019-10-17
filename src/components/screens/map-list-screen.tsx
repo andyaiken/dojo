@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Col, Row } from 'antd';
+
 import { MapFolio } from '../../models/map-folio';
 
 import GridPanel from '../panels/grid-panel';
@@ -24,8 +26,8 @@ export default class MapListScreen extends React.Component<Props> {
             ));
 
             return (
-                <div className='screen row collapse'>
-                    <div className='columns small-4 medium-4 large-3 scrollable sidebar'>
+                <Row className='full-height'>
+                    <Col span={6} className='scrollable sidebar'>
                         <Note>
                             <div className='section'>on this page you can set up folios containing tactical maps</div>
                             <div className='section'>when you have created a map you can use it in the combat manager</div>
@@ -36,11 +38,11 @@ export default class MapListScreen extends React.Component<Props> {
                             <div className='section'>to start a new folio, press the <b>create a new map folio</b> button</div>
                         </Note>
                         <button onClick={() => this.props.addMapFolio()}>create a new map folio</button>
-                    </div>
-                    <div className='columns small-8 medium-8 large-9 scrollable'>
+                    </Col>
+                    <Col span={18} className='scrollable'>
                         <GridPanel heading='map folios' content={listItems} />
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             );
         } catch (e) {
             console.error(e);
@@ -72,21 +74,19 @@ class ListItem extends React.Component<ListItemProps> {
             }
 
             return (
-                <div className='column'>
-                    <div className='card map'>
-                        <div className='heading'>
-                            <div className='title'>
-                                {this.props.mapFolio.name || 'unnamed folio'}
-                            </div>
+                <div className='card map'>
+                    <div className='heading'>
+                        <div className='title'>
+                            {this.props.mapFolio.name || 'unnamed folio'}
                         </div>
-                        <div className='card-content'>
-                            <div className='grid'>
-                                <div className='subheading'>maps</div>
-                                {maps}
-                            </div>
-                            <div className='divider'/>
-                            <button onClick={() => this.props.setSelection(this.props.mapFolio)}>open</button>
+                    </div>
+                    <div className='card-content'>
+                        <div className='grid'>
+                            <div className='subheading'>maps</div>
+                            {maps}
                         </div>
+                        <div className='divider'/>
+                        <button onClick={() => this.props.setSelection(this.props.mapFolio)}>open</button>
                     </div>
                 </div>
             );

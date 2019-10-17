@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Input } from 'antd';
+import { Col, Input, Row } from 'antd';
 
 import Factory from '../../utils/factory';
 import Mercator from '../../utils/mercator';
@@ -263,7 +263,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
                     }
 
                     tools = (
-                        <div className='map-tools'>
+                        <div>
                             <div className='subheading'>size</div>
                             <div className='section'>{item.width} sq x {item.height} sq</div>
                             <div className='section'>{item.width * 5} ft x {item.height * 5} ft</div>
@@ -303,7 +303,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
                 }
             } else {
                 tools = (
-                    <div className='map-tools'>
+                    <div>
                         <div className='subheading'>map name</div>
                         <Input
                             placeholder='map name'
@@ -333,18 +333,22 @@ export default class MapEditorModal extends React.Component<Props, State> {
             }
 
             return (
-                <div>
-                    {tools}
-                    <MapPanel
-                        map={this.state.map}
-                        mode='edit'
-                        size={this.state.mapSize}
-                        selectedItemID={this.state.selectedTileID ? this.state.selectedTileID : undefined}
-                        showOverlay={this.state.addingTile}
-                        setSelectedItemID={id => this.setSelectedTileID(id)}
-                        gridSquareClicked={(x, y) => this.addMapTile(x, y)}
-                    />
-                </div>
+                <Row className='full-height'>
+                    <Col span={8} className='scrollable'>
+                        {tools}
+                    </Col>
+                    <Col span={16} className='scrollable'>
+                        <MapPanel
+                            map={this.state.map}
+                            mode='edit'
+                            size={this.state.mapSize}
+                            selectedItemID={this.state.selectedTileID ? this.state.selectedTileID : undefined}
+                            showOverlay={this.state.addingTile}
+                            setSelectedItemID={id => this.setSelectedTileID(id)}
+                            gridSquareClicked={(x, y) => this.addMapTile(x, y)}
+                        />
+                    </Col>
+                </Row>
             );
         } catch (e) {
             console.error(e);

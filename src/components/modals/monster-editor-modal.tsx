@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Input } from 'antd';
+import { Col, Input, Row } from 'antd';
 
 import Factory from '../../utils/factory';
 import Frankenstein from '../../utils/frankenstein';
@@ -116,7 +116,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             case 'abilities':
                 return ['str', 'dex', 'con', 'int', 'wis', 'cha', 'saves', 'skills'];
             case 'cbt-stats':
-                return ['armor class', 'hit dice', 'resistances', 'vulnerabilities', 'immunities', 'conditions'];
+                return ['armor class', 'hit dice', 'resist', 'vulnerable', 'immune', 'conditions'];
             case 'actions':
                 return ['actions'];
             default:
@@ -289,11 +289,11 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 return this.getValueSection('ac', 'number', monsters);
             case 'hit dice':
                 return this.getValueSection('hitDice', 'number', monsters);
-            case 'resistances':
+            case 'resist':
                 return this.getValueSection('damage.resist', 'text', monsters);
-            case 'vulnerabilities':
+            case 'vulnerable':
                 return this.getValueSection('damage.vulnerable', 'text', monsters);
-            case 'immunities':
+            case 'immune':
                 return this.getValueSection('damage.immune', 'text', monsters);
             case 'conditions':
                 return this.getValueSection('conditionImmunities', 'text', monsters);
@@ -382,21 +382,17 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         const valueSections = distinct.map(d => {
             const width = 100 * d.count / monsters.length;
             return (
-                <div className='row small-up-3 medium-up-3 large-up-3 value-list' key={distinct.indexOf(d)}>
-                    <div className='column'>
-                        <div className='text-container'>
-                            {d.value || '(none specified)'}
-                        </div>
-                    </div>
-                    <div className='column'>
-                        <div className='bar-container'>
-                            <div className='bar' style={{ width: width + '%' }} />
-                        </div>
-                    </div>
-                    <div className='column'>
+                <Row gutter={10} className='value-list' key={distinct.indexOf(d)}>
+                    <Col span={8} className='text-container'>
+                        {d.value || '(none specified)'}
+                    </Col>
+                    <Col span={8} className='bar-container'>
+                        <div className='bar' style={{ width: width + '%' }} />
+                    </Col>
+                    <Col span={8}>
                         <button onClick={() => this.changeValue(field, d.value)}>use this value</button>
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             );
         });
 
@@ -411,23 +407,17 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     private getActionsSection(monsters: Monster[]) {
         const rows = [];
         rows.push(
-            <div className='row small-up-4 medium-up-4 large-up-4 value-list' key='header'>
-                <div className='column'>
-                    <div className='text-container'>
-                        <b>type</b>
-                    </div>
-                </div>
-                <div className='column'>
-                    <div className='text-container number'>
-                        <b>average number</b>
-                    </div>
-                </div>
-                <div className='column'>
-                    <div className='text-container number'>
-                        <b>min - max</b>
-                    </div>
-                </div>
-            </div>
+            <Row gutter={10} className='value-list' key='header'>
+                <Col span={8} className='text-container'>
+                    <b>type</b>
+                </Col>
+                <Col span={12} className='text-container number'>
+                    <b>average number</b>
+                </Col>
+                <Col span={8} className='text-container number'>
+                    <b>min - max</b>
+                </Col>
+            </Row>
         );
 
         TRAIT_TYPES.forEach(type => {
@@ -447,26 +437,20 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             const avg = Math.round(count / monsters.length);
 
             rows.push(
-                <div className='row small-up-4 medium-up-4 large-up-4 value-list' key={type}>
-                    <div className='column'>
-                        <div className={count === 0 ? 'text-container disabled' : 'text-container'}>
-                            {Utils.traitType(type, true)}
-                        </div>
-                    </div>
-                    <div className='column'>
-                        <div className={count === 0 ? 'text-container number disabled' : 'text-container number'}>
-                            {avg}
-                        </div>
-                    </div>
-                    <div className='column'>
-                        <div className={count === 0 ? 'text-container number disabled' : 'text-container number'}>
-                            {min} - {max}
-                        </div>
-                    </div>
-                    <div className='column'>
+                <Row gutter={10} className='value-list' key={type}>
+                    <Col span={8} className={count === 0 ? 'text-container disabled' : 'text-container'}>
+                        {Utils.traitType(type, true)}
+                    </Col>
+                    <Col span={4} className={count === 0 ? 'text-container number disabled' : 'text-container number'}>
+                        {avg}
+                    </Col>
+                    <Col span={4} className={count === 0 ? 'text-container number disabled' : 'text-container number'}>
+                        {min} - {max}
+                    </Col>
+                    <Col span={8}>
                         <button className={count === 0 ? 'disabled' : ''} onClick={() => this.addRandomTrait(type, monsters)}>add random</button>
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             );
         });
 
@@ -551,8 +535,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                     const catOptions = CATEGORY_TYPES.map(cat => ({ id: cat, text: cat }));
 
                     content = (
-                        <div className='row'>
-                            <div className='columns small-6 medium-6 large-6'>
+                        <Row gutter={10}>
+                            <Col span={12}>
                                 <div className='subheading'>name</div>
                                 <Input
                                     value={this.state.monster.name}
@@ -590,8 +574,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                     display={value => Utils.challenge(value)}
                                     nudgeValue={delta => this.nudgeValue('challenge', delta)}
                                 />
-                            </div>
-                            <div className='columns small-6 medium-6 large-6'>
+                            </Col>
+                            <Col span={12}>
                                 <div className='subheading'>speed</div>
                                 <Input
                                     value={this.state.monster.speed}
@@ -618,22 +602,22 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                 />
                                 <div className='subheading'>portrait</div>
                                 <PortraitPanel source={this.state.monster} setValue={value => this.changeValue('portrait', value)} />
-                            </div>
-                        </div>
+                            </Col>
+                        </Row>
                     );
                     break;
                 case 'abilities':
                     content = (
-                        <div className='row'>
-                            <div className='columns small-6 medium-6 large-6'>
+                        <Row gutter={10}>
+                            <Col span={12}>
                                 <div className='subheading'>ability scores</div>
                                 <AbilityScorePanel
                                     edit={true}
                                     combatant={this.state.monster}
                                     nudgeValue={(source, type, delta) => this.nudgeValue(type, delta)}
                                 />
-                            </div>
-                            <div className='columns small-6 medium-6 large-6'>
+                            </Col>
+                            <Col span={12}>
                                 <div className='subheading'>saving throws</div>
                                 <Input
                                     value={this.state.monster.savingThrows}
@@ -646,14 +630,14 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                     allowClear={true}
                                     onChange={event => this.changeValue('skills', event.target.value)}
                                 />
-                            </div>
-                        </div>
+                            </Col>
+                        </Row>
                     );
                     break;
                 case 'cbt-stats':
                     content = (
-                        <div className='row'>
-                            <div className='columns small-6 medium-6 large-6'>
+                        <Row gutter={10}>
+                            <Col span={12}>
                                 <div className='subheading'>armor class</div>
                                 <Spin
                                     source={this.state.monster}
@@ -669,8 +653,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                 />
                                 <div className='subheading'>hit points</div>
                                 <div className='hp-value'>{this.state.monster.hpMax} hp</div>
-                            </div>
-                            <div className='columns small-6 medium-6 large-6'>
+                            </Col>
+                            <Col span={12}>
                                 <div className='subheading'>damage resistances</div>
                                 <Input
                                     value={this.state.monster.damage.resist}
@@ -695,8 +679,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                     allowClear={true}
                                     onChange={event => this.changeValue('conditionImmunities', event.target.value)}
                                 />
-                            </div>
-                        </div>
+                            </Col>
+                        </Row>
                     );
                     break;
                 case 'actions':
@@ -844,7 +828,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                     }
                 ];
                 sidebar = (
-                    <div className='columns small-4 medium-4 large-4 scrollable'>
+                    <Col span={8} className='scrollable'>
                         <Selector
                             tabs={true}
                             options={sidebarOptions}
@@ -858,22 +842,22 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         </button>
                         <div className='divider'/>
                         {this.getMonsterCards(monsters)}
-                    </div>
+                    </Col>
                 );
             } else {
                 sidebar = (
-                    <div className='columns small-4 medium-4 large-4 scrollable' style={{ paddingTop: '15px', paddingBottom: '15px' }}>
+                    <Col span={8} className='scrollable' style={{ padding: '15px' }}>
                         <MonsterCard
                             monster={this.state.monster}
                             mode='view full'
                         />
-                    </div>
+                    </Col>
                 );
             }
 
             return (
-                <div className='row'>
-                    <div className='columns small-8 medium-8 large-8 scrollable'>
+                <Row className='full-height'>
+                    <Col span={16} className='scrollable'>
                         <Selector
                             tabs={true}
                             options={pages}
@@ -882,9 +866,9 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         />
                         {content}
                         {help}
-                    </div>
+                    </Col>
                     {sidebar}
-                </div>
+                </Row>
             );
         } catch (e) {
             console.error(e);

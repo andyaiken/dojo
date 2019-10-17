@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Col, Row } from 'antd';
+
 import Utils from '../../utils/utils';
 
 import { Combat, COMBAT_TAGS, Combatant, Notification } from '../../models/combat';
@@ -18,9 +20,9 @@ import GridPanel from '../panels/grid-panel';
 import HitPointGauge from '../panels/hit-point-gauge';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
+import Popout from '../panels/popout';
 import PortraitPanel from '../panels/portrait-panel';
 import TraitsPanel from '../panels/traits-panel';
-import Popout from '../portals/popout';
 
 interface Props {
     combat: Combat;
@@ -213,8 +215,8 @@ export default class CombatScreen extends React.Component<Props, State> {
 
             return (
                 <Popout title='Encounter' closeWindow={() => this.setPlayerViewOpen(false)}>
-                    <div className='row'>
-                        <div className='columns small-12 medium-6 large-8 scrollable scrollable-both'>
+                    <Row>
+                        <Col xs={24} sm={24} md={12} lg={16} xl={18} className='scrollable both-ways'>
                             <MapPanel
                                 key='map'
                                 map={combat.map}
@@ -224,23 +226,21 @@ export default class CombatScreen extends React.Component<Props, State> {
                                 selectedItemID={this.state.selectedTokenID ? this.state.selectedTokenID : undefined}
                                 setSelectedItemID={id => this.setSelectedTokenID(id)}
                             />
-                        </div>
-                        <div className='columns small-12 medium-6 large-4 scrollable'>
+                        </Col>
+                        <Col xs={24} sm={24} md={12} lg={8} xl={6} className='scrollable'>
                             {controls}
                             <div className='heading'>initiative order</div>
                             {init}
-                        </div>
-                    </div>
+                        </Col>
+                    </Row>
                 </Popout>
             );
         } else {
             return (
                 <Popout title='Encounter' closeWindow={() => this.setPlayerViewOpen(false)}>
-                    <div className='row'>
-                        <div className='columns small-12 medium-12 large-12 scrollable'>
-                            <div className='heading'>initiative order</div>
-                            {init}
-                        </div>
+                    <div className='scrollable'>
+                        <div className='heading'>initiative order</div>
+                        {init}
                     </div>
                 </Popout>
             );
@@ -527,6 +527,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                             </div>
                         </div>
                     ]}
+                    columns={1}
                     showToggle={true}
                 />
             );
@@ -570,50 +571,57 @@ export default class CombatScreen extends React.Component<Props, State> {
             }
 
             return (
-                <div className='screen row collapse'>
-                    <div className='columns small-4 medium-4 large-4 scrollable'>
+                <Row className='full-height'>
+                    <Col span={8} className='scrollable'>
                         <GridPanel
                             heading='initiative holder'
                             content={current}
+                            columns={1}
                         />
-                    </div>
-                    <div className='columns small-4 medium-4 large-4 scrollable'>
+                    </Col>
+                    <Col span={8} className='scrollable'>
                         {notificationSection}
                         <GridPanel
                             heading='waiting for intiative to be entered'
                             content={pending}
+                            columns={1}
                             showToggle={true}
                         />
                         <GridPanel
                             heading='encounter map'
                             content={[mapSection]}
+                            columns={1}
                             showToggle={true}
                         />
                         <GridPanel
                             heading='initiative order'
                             content={active}
+                            columns={1}
                             showToggle={true}
                         />
                         <GridPanel
                             heading='defeated'
                             content={defeated}
+                            columns={1}
                             showToggle={true}
                         />
-                    </div>
-                    <div className='columns small-4 medium-4 large-4 scrollable'>
+                    </Col>
+                    <Col span={8} className='scrollable'>
                         {toolsSection}
                         {this.getPlayerView(this.props.combat)}
                         <GridPanel
                             heading={'don\'t forget'}
                             content={special}
+                            columns={1}
                             showToggle={true}
                         />
                         <GridPanel
                             heading='selected combatant'
                             content={[selectedCombatant]}
+                            columns={1}
                         />
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             );
         } catch (e) {
             console.error(e);

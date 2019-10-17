@@ -7,6 +7,7 @@ import Checkbox from '../../controls/checkbox';
 import ControlRow from '../../controls/control-row';
 import Expander from '../../controls/expander';
 import Selector from '../../controls/selector';
+import GridPanel from '../../panels/grid-panel';
 
 // tslint:disable-next-line:no-empty-interface
 interface Props {
@@ -215,14 +216,12 @@ export default class LanguageModule extends React.Component<Props, State> {
                 .map(lang => {
                     const isSelected = Object.keys(this.state.sources).includes(lang);
                     return (
-                        <div className='column' key={lang}>
-                            <Checkbox
-                                label={lang}
-                                display='button'
-                                checked={isSelected}
-                                changeValue={value => value ? this.addLanguage(lang) : this.removeLanguage(lang)}
-                            />
-                        </div>
+                        <Checkbox
+                            key={lang}
+                            label={lang}
+                            checked={isSelected}
+                            changeValue={value => value ? this.addLanguage(lang) : this.removeLanguage(lang)}
+                        />
                     );
                 });
 
@@ -255,9 +254,7 @@ export default class LanguageModule extends React.Component<Props, State> {
                     />
                     <div className='divider' />
                     <Expander text={'selected languages: ' + selectedLanguages}>
-                        <div className='row collapse small-up-1 medium-up-2 large-up-3 language-options'>
-                            {languages}
-                        </div>
+                        <GridPanel content={languages} />
                     </Expander>
                     <div className='divider' />
                     <ControlRow

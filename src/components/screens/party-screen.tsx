@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Input } from 'antd';
+import { Col, Input, Row } from 'antd';
 
 import { Party, PC } from '../../models/party';
 
@@ -27,15 +27,13 @@ export default class PartyScreen extends React.Component<Props> {
             const activeCards: JSX.Element[] = [];
             activePCs.forEach(activePC => {
                 activeCards.push(
-                    <div className='column' key={activePC.id}>
-                        <PCCard
-                            pc={activePC}
-                            mode={'edit'}
-                            changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
-                            editPC={pc => this.props.editPC(pc)}
-                            removePC={pc => this.props.removePC(pc)}
-                        />
-                    </div>
+                    <PCCard
+                        pc={activePC}
+                        mode={'edit'}
+                        changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
+                        editPC={pc => this.props.editPC(pc)}
+                        removePC={pc => this.props.removePC(pc)}
+                    />
                 );
             });
 
@@ -43,29 +41,25 @@ export default class PartyScreen extends React.Component<Props> {
             const inactiveCards: JSX.Element[] = [];
             inactivePCs.forEach(inactivePC => {
                 inactiveCards.push(
-                    <div className='column' key={inactivePC.id}>
-                        <PCCard
-                            pc={inactivePC}
-                            mode={'edit'}
-                            changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
-                            editPC={pc => this.props.editPC(pc)}
-                            removePC={pc => this.props.removePC(pc)}
-                        />
-                    </div>
+                    <PCCard
+                        pc={inactivePC}
+                        mode={'edit'}
+                        changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
+                        editPC={pc => this.props.editPC(pc)}
+                        removePC={pc => this.props.removePC(pc)}
+                    />
                 );
             });
 
             if (activePCs.length === 0) {
                 activeCards.push(
-                    <div className='column' key='empty'>
-                        <Note><div className='section'>there are no pcs in this party</div></Note>
-                    </div>
+                    <Note><div className='section'>there are no pcs in this party</div></Note>
                 );
             }
 
             return (
-                <div className='screen row collapse'>
-                    <div className='columns small-4 medium-4 large-3 scrollable sidebar'>
+                <Row className='full-height'>
+                    <Col span={6} className='scrollable sidebar'>
                         <PartyInfo
                             party={this.props.party}
                             addPC={() => this.props.addPC()}
@@ -73,8 +67,8 @@ export default class PartyScreen extends React.Component<Props> {
                             changeValue={(type, value) => this.props.changeValue(this.props.party, type, value)}
                             removeParty={() => this.props.removeParty()}
                         />
-                    </div>
-                    <div className='columns small-8 medium-8 large-9 scrollable'>
+                    </Col>
+                    <Col span={18} className='scrollable'>
                         <GridPanel
                             content={activeCards}
                             heading={this.props.party.name || 'unnamed party'}
@@ -83,8 +77,8 @@ export default class PartyScreen extends React.Component<Props> {
                             content={inactiveCards}
                             heading='inactive pcs'
                         />
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             );
         } catch (e) {
             console.error(e);

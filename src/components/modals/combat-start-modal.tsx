@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Input } from 'antd';
+import { Col, Input, Row } from 'antd';
 
 import Utils from '../../utils/utils';
 
@@ -565,14 +565,14 @@ export default class CombatStartModal extends React.Component<Props, State> {
             }
 
             return (
-                <div className='row'>
-                    <div className='column small-6 medium-6 large-6 scrollable'>
+                <Row className='full-height'>
+                    <Col span={12} className='scrollable'>
                         {leftSection}
-                    </div>
-                    <div className='column small-6 medium-6 large-6 scrollable'>
+                    </Col>
+                    <Col span={12} className='scrollable'>
                         {rightSection}
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             );
         } catch (e) {
             console.error(e);

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Input } from 'antd';
+import { Col, Input, Row } from 'antd';
 
 import { Monster, MonsterGroup } from '../../models/monster-group';
 
@@ -31,32 +31,28 @@ export default class MonsterScreen extends React.Component<Props> {
             if (this.props.monsterGroup.monsters.length !== 0) {
                 this.props.monsterGroup.monsters.forEach(m => {
                     cards.push(
-                        <div className='column' key={m.id}>
-                            <MonsterCard
-                                monster={m}
-                                mode={'view editable'}
-                                library={this.props.library}
-                                changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
-                                nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
-                                moveToGroup={(monster, groupID) => this.props.moveToGroup(monster, groupID)}
-                                removeMonster={monster => this.props.removeMonster(monster)}
-                                editMonster={monster => this.props.editMonster(monster)}
-                                cloneMonster={(monster, monsterName) => this.props.cloneMonster(monster, monsterName)}
-                            />
-                        </div>
+                        <MonsterCard
+                            monster={m}
+                            mode={'view editable'}
+                            library={this.props.library}
+                            changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
+                            nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
+                            moveToGroup={(monster, groupID) => this.props.moveToGroup(monster, groupID)}
+                            removeMonster={monster => this.props.removeMonster(monster)}
+                            editMonster={monster => this.props.editMonster(monster)}
+                            cloneMonster={(monster, monsterName) => this.props.cloneMonster(monster, monsterName)}
+                        />
                     );
                 });
             } else {
                 cards.push(
-                    <div className='column' key='empty'>
-                        <Note><div className='section'>there are no monsters in this group</div></Note>
-                    </div>
+                    <Note><div className='section'>there are no monsters in this group</div></Note>
                 );
             }
 
             return (
-                <div className='screen row collapse'>
-                    <div className='columns small-4 medium-4 large-3 scrollable sidebar'>
+                <Row className='full-height'>
+                    <Col span={6} className='scrollable sidebar'>
                         <MonsterInfo
                             monsterGroup={this.props.monsterGroup}
                             addMonster={() => this.props.addMonster()}
@@ -64,14 +60,14 @@ export default class MonsterScreen extends React.Component<Props> {
                             changeValue={(type, value) => this.props.changeValue(this.props.monsterGroup, type, value)}
                             removeMonsterGroup={() => this.props.removeMonsterGroup()}
                         />
-                    </div>
-                    <div className='columns small-8 medium-8 large-9 scrollable'>
+                    </Col>
+                    <Col span={18} className='scrollable'>
                         <GridPanel
                             content={cards}
                             heading={this.props.monsterGroup.name || 'unnamed group'}
                         />
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             );
         } catch (e) {
             console.error(e);

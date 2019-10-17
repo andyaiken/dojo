@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Col, Row } from 'antd';
+
 import Utils from '../../utils/utils';
 
 import { CATEGORY_TYPES, MonsterGroup, SIZE_TYPES } from '../../models/monster-group';
@@ -26,8 +28,8 @@ export default class MonsterListScreen extends React.Component<Props> {
             ));
 
             return (
-                <div className='screen row collapse'>
-                    <div className='columns small-4 medium-4 large-3 scrollable sidebar'>
+                <Row className='full-height'>
+                    <Col span={6} className='scrollable sidebar'>
                         <Note>
                             <div className='section'>you can maintain your menagerie of monsters here</div>
                             <div className='section'>you can then use these monsters to design combat encounters in the encounter builder</div>
@@ -38,11 +40,11 @@ export default class MonsterListScreen extends React.Component<Props> {
                             <div className='section'>to start adding monsters, press the <b>create a new monster group</b> button</div>
                         </Note>
                         <button onClick={() => this.props.addMonsterGroup()}>create a new monster group</button>
-                    </div>
-                    <div className='columns small-8 medium-8 large-9 scrollable'>
+                    </Col>
+                    <Col span={18} className='scrollable'>
                         <GridPanel heading='monster groups' content={listItems} />
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             );
         } catch (e) {
             console.error(e);
@@ -173,25 +175,23 @@ class ListItem extends React.Component<ListItemProps, ListItemState> {
             }
 
             return (
-                <div className='column'>
-                    <div className='card monster'>
-                        <div className='heading'>
-                            <div className='title'>
-                                {this.props.group.name || 'unnamed group'}
-                            </div>
+                <div className='card monster'>
+                    <div className='heading'>
+                        <div className='title'>
+                            {this.props.group.name || 'unnamed group'}
                         </div>
-                        <div className='card-content'>
-                            <div className='grid'>
-                                <Selector
-                                    options={options}
-                                    selectedID={this.state.view}
-                                    select={view => this.setView(view)}
-                                />
-                                {content}
-                            </div>
-                            <div className='divider'/>
-                            <button onClick={() => this.props.setSelection(this.props.group)}>open</button>
+                    </div>
+                    <div className='card-content'>
+                        <div className='grid'>
+                            <Selector
+                                options={options}
+                                selectedID={this.state.view}
+                                select={view => this.setView(view)}
+                            />
+                            {content}
                         </div>
+                        <div className='divider'/>
+                        <button onClick={() => this.props.setSelection(this.props.group)}>open</button>
                     </div>
                 </div>
             );

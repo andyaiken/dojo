@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Input } from 'antd';
+import { Col, Input, Row } from 'antd';
 
 import Utils from '../../utils/utils';
 
@@ -110,8 +110,8 @@ export default class TraitsPanel extends React.Component<Props, State> {
             }
 
             return (
-                <div className='row'>
-                    <div className='columns small-6 medium-6 large-6'>
+                <Row gutter={10}>
+                    <Col span={12}>
                         <Menu text='add a new...'>
                             <button key='trait' onClick={() => this.props.addTrait('trait')}>add a new trait</button>
                             <button key='action' onClick={() => this.props.addTrait('action')}>add a new action</button>
@@ -126,11 +126,11 @@ export default class TraitsPanel extends React.Component<Props, State> {
                         {this.createSection(traitsByType, 'reaction')}
                         {this.createSection(traitsByType, 'legendary')}
                         {this.createSection(traitsByType, 'lair')}
-                    </div>
-                    <div className='columns small-6 medium-6 large-6'>
+                    </Col>
+                    <Col span={12}>
                         {selection}
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             );
         } catch (e) {
             console.error(e);

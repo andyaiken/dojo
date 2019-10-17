@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Input } from 'antd';
+import { Col, Input, Row } from 'antd';
 
 import Factory from '../../utils/factory';
 
@@ -60,18 +60,18 @@ export default class PCEditorModal extends React.Component<Props, State> {
     public render() {
         try {
             const companions = this.state.pc.companions.map(comp => (
-                <div className='row companion' key={comp.id}>
-                    <div className='columns small-12 medium-8 large-8'>
+                <Row gutter={10} className='companion' key={comp.id}>
+                    <Col span={16}>
                         <Input
                             value={comp.name}
                             allowClear={true}
                             onChange={event => this.changeValue(comp, 'name', event.target.value)}
                         />
-                    </div>
-                    <div className='columns small-12 medium-4 large-4'>
+                    </Col>
+                    <Col span={8}>
                         <button onClick={() => this.removeCompanion(comp.id)}>delete</button>
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             ));
 
             if (companions.length === 0) {
@@ -83,8 +83,8 @@ export default class PCEditorModal extends React.Component<Props, State> {
             }
 
             return (
-                <div className='row'>
-                    <div className='columns small-6 medium-6 large-6 scrollable'>
+                <Row className='full-height'>
+                    <Col span={8} className='scrollable'>
                         <div className='subheading'>character name:</div>
                         <Input
                             value={this.state.pc.name}
@@ -134,6 +134,8 @@ export default class PCEditorModal extends React.Component<Props, State> {
                             label='perception'
                             nudgeValue={delta => this.nudgeValue(this.state.pc, 'passivePerception', delta)}
                         />
+                    </Col>
+                    <Col span={8} className='scrollable'>
                         <div className='subheading'>languages:</div>
                         <Input
                             value={this.state.pc.languages}
@@ -152,14 +154,14 @@ export default class PCEditorModal extends React.Component<Props, State> {
                         <div className='subheading'>companions:</div>
                         {companions}
                         <button onClick={() => this.addCompanion()}>add a new companion</button>
-                    </div>
-                    <div className='columns small-6 medium-6 large-6 scrollable' style={{ paddingTop: '15px', paddingBottom: '15px' }}>
+                    </Col>
+                    <Col span={8} className='scrollable' style={{ padding: '15px' }}>
                         <PCCard
                             pc={this.state.pc}
                             mode='view'
                         />
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             );
         } catch (e) {
             console.error(e);

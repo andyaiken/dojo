@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Col, Row } from 'antd';
+
 import Shakespeare from '../../../utils/shakespeare';
 
 // tslint:disable-next-line:no-empty-interface
@@ -71,26 +73,24 @@ export default class NameModule extends React.Component<Props, State> {
             }
 
             return (
-                <div>
-                    <div className='name-output'>
-                        <div className='row'>
-                            <div className='columns small-4 medium-4 large-4'>
-                                <div className='heading'>male names</div>
-                                <button onClick={() => this.generate('male')}>generate</button>
-                                {male}
-                            </div>
-                            <div className='columns small-4 medium-4 large-4'>
-                                <div className='heading'>female names</div>
-                                <button onClick={() => this.generate('female')}>generate</button>
-                                {female}
-                            </div>
-                            <div className='columns small-4 medium-4 large-4'>
-                                <div className='heading'>surnames</div>
-                                <button onClick={() => this.generate('surname')}>generate</button>
-                                {surname}
-                            </div>
-                        </div>
-                    </div>
+                <div className='name-output'>
+                    <Row gutter={10}>
+                        <Col span={8}>
+                            <div className='heading'>male names</div>
+                            <button onClick={() => this.generate('male')}>generate</button>
+                            {male}
+                        </Col>
+                        <Col span={8}>
+                            <div className='heading'>female names</div>
+                            <button onClick={() => this.generate('female')}>generate</button>
+                            {female}
+                        </Col>
+                        <Col span={8}>
+                            <div className='heading'>surnames</div>
+                            <button onClick={() => this.generate('surname')}>generate</button>
+                            {surname}
+                        </Col>
+                    </Row>
                 </div>
             );
         } catch (ex) {

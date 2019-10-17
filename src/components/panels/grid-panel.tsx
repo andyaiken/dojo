@@ -4,16 +4,18 @@ import arrow from '../../resources/icons/down-arrow-black.svg';
 
 interface Props {
     content: (JSX.Element | null)[];
+    columns: number;
     heading: string;
     showToggle: boolean;
 }
 
 interface State {
-    showCards: boolean;
+    showContent: boolean;
 }
 
 export default class GridPanel extends React.Component<Props, State> {
     public static defaultProps = {
+        columns: 3,
         heading: null,
         showToggle: false
     };
@@ -22,13 +24,13 @@ export default class GridPanel extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            showCards: true
+            showContent: true
         };
     }
 
-    private toggleCards() {
+    private toggleContentVisible() {
         this.setState({
-            showCards: !this.state.showCards
+            showContent: !this.state.showContent
         });
     }
 
@@ -42,9 +44,9 @@ export default class GridPanel extends React.Component<Props, State> {
             if (this.props.heading) {
                 let toggle = null;
                 if (this.props.showToggle) {
-                    const style = this.state.showCards ? 'image rotate' : 'image';
+                    const style = this.state.showContent ? 'image rotate' : 'image';
                     toggle = (
-                        <img className={style} src={arrow} alt='arrow' onClick={() => this.toggleCards()} />
+                        <img className={style} src={arrow} alt='arrow' onClick={() => this.toggleContentVisible()} />
                     );
                 }
 
@@ -56,12 +58,25 @@ export default class GridPanel extends React.Component<Props, State> {
                 );
             }
 
-            return (
-                <div className='card-group'>
-                    {heading}
-                    <div className='row small-up-1 medium-up-2 large-up-3 collapse'>
-                        {(this.props.content.length > 0) && this.state.showCards ? this.props.content : null}
+            let content = null;
+            if (this.state.showContent) {
+                const items = this.props.content.map(item => (
+                    <div key={this.props.content.indexOf(item)}>
+                        {item}
                     </div>
+                ));
+
+                content = (
+                    <div className={'grid columns-' + this.props.columns}>
+                        {items}
+                    </div>
+                );
+            }
+
+            return (
+                <div className='grid-panel'>
+                    {heading}
+                    {content}
                 </div>
             );
         } catch (e) {

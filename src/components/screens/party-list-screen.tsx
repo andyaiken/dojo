@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Col, Row } from 'antd';
+
 import { Party, PC } from '../../models/party';
 
 import GridPanel from '../panels/grid-panel';
@@ -23,8 +25,8 @@ export default class PartyListScreen extends React.Component<Props> {
             ));
 
             return (
-                <div className='screen row collapse'>
-                    <div className='columns small-4 medium-4 large-3 scrollable sidebar'>
+                <Row className='full-height'>
+                    <Col span={6} className='scrollable sidebar'>
                         <Note>
                             <div className='section'>this page is where you can tell dojo all about your pcs</div>
                             <div className='section'>you can add a party for each of your gaming groups</div>
@@ -36,11 +38,11 @@ export default class PartyListScreen extends React.Component<Props> {
                             <div className='section'>to start adding a party, press the <b>create a new party</b> button</div>
                         </Note>
                         <button onClick={() => this.props.addParty()}>create a new party</button>
-                    </div>
-                    <div className='columns small-8 medium-8 large-9 scrollable'>
+                    </Col>
+                    <Col span={18} className='scrollable'>
                         <GridPanel heading='parties' content={listItems} />
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             );
         } catch (e) {
             console.error(e);
@@ -83,21 +85,19 @@ class ListItem extends React.Component<ListItemProps> {
             }
 
             return (
-                <div className='column'>
-                    <div className='card pc'>
-                        <div className='heading'>
-                            <div className='title'>
-                                {this.props.party.name || 'unnamed party'}
-                            </div>
+                <div className='card pc'>
+                    <div className='heading'>
+                        <div className='title'>
+                            {this.props.party.name || 'unnamed party'}
                         </div>
-                        <div className='card-content'>
-                            <div className='grid'>
-                                <div className='subheading'>pcs</div>
-                                {pcs}
-                            </div>
-                            <div className='divider'/>
-                            <button onClick={() => this.props.setSelection(this.props.party)}>open</button>
+                    </div>
+                    <div className='card-content'>
+                        <div className='grid'>
+                            <div className='subheading'>pcs</div>
+                            {pcs}
                         </div>
+                        <div className='divider'/>
+                        <button onClick={() => this.props.setSelection(this.props.party)}>open</button>
                     </div>
                 </div>
             );

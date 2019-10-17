@@ -1860,6 +1860,7 @@ export default class Dojo extends React.Component<Props, State> {
                             />
                         </div>
                     );
+                    width = '75%';
                     break;
                 case 'monster':
                     content = (

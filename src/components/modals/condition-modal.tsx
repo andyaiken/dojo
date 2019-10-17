@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Input } from 'antd';
+import { Col, Input, Row } from 'antd';
 
 import Factory from '../../utils/factory';
 import Utils from '../../utils/utils';
@@ -268,24 +268,24 @@ export default class ConditionModal extends React.Component<Props, State> {
             ];
 
             return (
-                <div className='row'>
-                    <div className='columns small-6 medium-6 large-6 scrollable'>
+                <Row className='full-height'>
+                    <Col span={12} className='scrollable'>
                         <div className='heading'>condition</div>
                         <RadioGroup
                             items={conditions}
                             selectedItemID={this.state.condition.name}
                             select={itemID => this.setCondition(itemID)}
                         />
-                    </div>
-                    <div className='columns small-6 medium-6 large-6 scrollable'>
+                    </Col>
+                    <Col span={12} className='scrollable'>
                         <div className='heading'>duration</div>
                         <RadioGroup
                             items={durations}
                             selectedItemID={this.state.condition.duration ? this.state.condition.duration.type : 'none'}
                             select={itemID => this.setDuration(itemID as 'saves' | 'combatant' | 'rounds')}
                         />
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             );
         } catch (e) {
             console.error(e);

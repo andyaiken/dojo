@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Input } from 'antd';
+import {  Col, Input, Row } from 'antd';
 
 import Factory from '../../utils/factory';
 import Napoleon from '../../utils/napoleon';
@@ -79,33 +79,28 @@ export default class EncounterScreen extends React.Component<Props, State> {
             const monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
             if (monster) {
                 cards.push(
-                    <div className='column' key={monster.id}>
-                        <MonsterCard
-                            monster={monster}
-                            slot={slot}
-                            encounter={this.props.encounter}
-                            mode={'view encounter'}
-                            library={this.props.library}
-                            nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
-                            removeEncounterSlot={s => this.props.removeEncounterSlot(s, waveID)}
-                            swapEncounterSlot={(s, groupName, monsterName) => this.props.swapEncounterSlot(s, waveID, groupName, monsterName)}
-                        />
-                    </div>
+                    <MonsterCard
+                        monster={monster}
+                        slot={slot}
+                        encounter={this.props.encounter}
+                        mode={'view encounter'}
+                        library={this.props.library}
+                        nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
+                        removeEncounterSlot={s => this.props.removeEncounterSlot(s, waveID)}
+                        swapEncounterSlot={(s, groupName, monsterName) => this.props.swapEncounterSlot(s, waveID, groupName, monsterName)}
+                    />
                 );
             } else {
-                const index = slots.indexOf(slot);
                 cards.push(
-                    <div className='column' key={index}>
-                        <div className='card error'>
-                            <div className='card-content'>
-                                <div className='subheading'>unknown monster</div>
-                                <div className='divider' />
-                                <div className='section'>
-                                    could not find a monster called '<b>{slot.monsterName}</b>' in a group called '<b>{slot.monsterGroupName}'</b>
-                                </div>
-                                <div className='divider' />
-                                <button onClick={() => this.props.removeEncounterSlot(slot, waveID)}>remove</button>
+                    <div className='card error'>
+                        <div className='card-content'>
+                            <div className='subheading'>unknown monster</div>
+                            <div className='divider' />
+                            <div className='section'>
+                                could not find a monster called '<b>{slot.monsterName}</b>' in a group called '<b>{slot.monsterGroupName}'</b>
                             </div>
+                            <div className='divider' />
+                            <button onClick={() => this.props.removeEncounterSlot(slot, waveID)}>remove</button>
                         </div>
                     </div>
                 );
@@ -115,18 +110,14 @@ export default class EncounterScreen extends React.Component<Props, State> {
         if (slots.length === 0) {
             if (waveID) {
                 cards.push(
-                    <div className='column' key='empty'>
-                        <Note>there are no monsters in this wave</Note>
-                    </div>
+                    <Note>there are no monsters in this wave</Note>
                 );
             } else {
                 cards.push(
-                    <div className='column' key='empty'>
-                        <Note>
-                            <p>there are no monsters in this encounter</p>
-                            <p>you can add monsters from the list below, or try 'build a random encounter'</p>
-                        </Note>
-                    </div>
+                    <Note>
+                        <p>there are no monsters in this encounter</p>
+                        <p>you can add monsters from the list below, or try 'build a random encounter'</p>
+                    </Note>
                 );
             }
         }
@@ -151,24 +142,20 @@ export default class EncounterScreen extends React.Component<Props, State> {
 
         const libraryCards = monsters.map(monster => {
             return (
-                <div className='column' key={monster.id}>
-                    <MonsterCard
-                        key={monster.id}
-                        monster={monster}
-                        encounter={this.props.encounter}
-                        library={this.props.library}
-                        mode={'view encounter'}
-                        addEncounterSlot={(combatant, waveID) => this.props.addEncounterSlot(combatant, waveID)}
-                    />
-                </div>
+                <MonsterCard
+                    key={monster.id}
+                    monster={monster}
+                    encounter={this.props.encounter}
+                    library={this.props.library}
+                    mode={'view encounter'}
+                    addEncounterSlot={(combatant, waveID) => this.props.addEncounterSlot(combatant, waveID)}
+                />
             );
         });
 
         if (libraryCards.length === 0) {
             libraryCards.push(
-                <div className='column' key='empty'>
-                    <Note><p>there are no monsters that meet the criteria <i>{Napoleon.getFilterDescription(this.state.filter)}</i></p></Note>
-                </div>
+                <Note><p>there are no monsters that meet the criteria <i>{Napoleon.getFilterDescription(this.state.filter)}</i></p></Note>
             );
         }
 
@@ -194,8 +181,8 @@ export default class EncounterScreen extends React.Component<Props, State> {
             });
 
             return (
-                <div className='screen row collapse'>
-                    <div className='columns small-4 medium-4 large-3 scrollable sidebar'>
+                <Row className='full-height'>
+                    <Col span={6} className='scrollable sidebar'>
                         <EncounterInfo
                             encounter={this.props.encounter}
                             parties={this.props.parties}
@@ -211,16 +198,16 @@ export default class EncounterScreen extends React.Component<Props, State> {
                             nudgeFilterValue={(type, delta) => this.nudgeFilterValue(type, delta)}
                             resetFilter={() => this.resetFilter()}
                         />
-                    </div>
-                    <div className='columns small-8 medium-8 large-9 scrollable'>
+                    </Col>
+                    <Col span={18} className='scrollable'>
                         <GridPanel
                             content={this.getMonsterCards(this.props.encounter.slots, null)}
                             heading={this.props.encounter.name || 'unnamed encounter'}
                         />
                         {waves}
                         {this.getLibrarySection()}
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             );
         } catch (e) {
             console.error(e);

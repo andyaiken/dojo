@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Col, Row } from 'antd';
+
 import Napoleon from '../../utils/napoleon';
 
 import { Encounter, EncounterSlot } from '../../models/encounter';
@@ -28,8 +30,8 @@ export default class EncounterListScreen extends React.Component<Props> {
             ));
 
             return (
-                <div className='screen row collapse'>
-                    <div className='columns small-4 medium-4 large-3 scrollable sidebar'>
+                <Row className='full-height'>
+                    <Col span={6} className='scrollable sidebar'>
                         <Note>
                             <div className='section'>on this page you can set up encounters</div>
                             <div className='section'>
@@ -45,11 +47,11 @@ export default class EncounterListScreen extends React.Component<Props> {
                             <div className='section'>to start building an encounter, press the <b>create a new encounter</b> button</div>
                         </Note>
                         <button onClick={() => this.props.addEncounter()}>create a new encounter</button>
-                    </div>
-                    <div className='columns small-8 medium-8 large-9 scrollable'>
+                    </Col>
+                    <Col span={18} className='scrollable'>
                         <GridPanel heading='encounters' content={listItems} />
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             );
         } catch (e) {
             console.error(e);
@@ -93,23 +95,21 @@ class ListItem extends React.Component<ListItemProps> {
             });
 
             return (
-                <div className='column'>
-                    <div className='card encounter'>
-                        <div className='heading'>
-                            <div className='title'>
-                                {this.props.encounter.name || 'unnamed encounter'}
-                            </div>
+                <div className='card encounter'>
+                    <div className='heading'>
+                        <div className='title'>
+                            {this.props.encounter.name || 'unnamed encounter'}
                         </div>
-                        <div className='card-content'>
-                            <div className='grid'>
-                                <div className='subheading'>monsters</div>
-                                {slots}
-                                <div className='subheading'>xp</div>
-                                {Napoleon.getEncounterXP(this.props.encounter, this.props.getMonster)}
-                            </div>
-                            <div className='divider'/>
-                            <button onClick={() => this.props.setSelection(this.props.encounter)}>open</button>
+                    </div>
+                    <div className='card-content'>
+                        <div className='grid'>
+                            <div className='subheading'>monsters</div>
+                            {slots}
+                            <div className='subheading'>xp</div>
+                            {Napoleon.getEncounterXP(this.props.encounter, this.props.getMonster)}
                         </div>
+                        <div className='divider'/>
+                        <button onClick={() => this.props.setSelection(this.props.encounter)}>open</button>
                     </div>
                 </div>
             );

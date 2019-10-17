@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Col, Row } from 'antd';
+
 import { Combat } from '../../models/combat';
 
 import GridPanel from '../panels/grid-panel';
@@ -24,8 +26,8 @@ export default class CombatListScreen extends React.Component<Props> {
             ));
 
             return (
-                <div className='screen row collapse'>
-                    <div className='columns small-4 medium-4 large-3 scrollable sidebar'>
+                <Row className='full-height'>
+                    <Col span={6} className='scrollable sidebar'>
                         <Note>
                             <div className='section'>
                                 here you can run a combat encounter by specifying a party and an encounter, and optionally a tactical map
@@ -37,11 +39,11 @@ export default class CombatListScreen extends React.Component<Props> {
                             <div className='section'>to start a combat encounter, press the <b>start a new combat</b> button</div>
                         </Note>
                         <button onClick={() => this.props.createCombat()}>start a new combat</button>
-                    </div>
-                    <div className='columns small-8 medium-8 large-9 scrollable'>
+                    </Col>
+                    <Col span={18} className='scrollable'>
                         <GridPanel heading='combats' content={listItems} />
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             );
         } catch (e) {
             console.error(e);
@@ -71,21 +73,19 @@ class ListItem extends React.Component<ListItemProps> {
             }
 
             return (
-                <div className='column'>
-                    <div className='card combat'>
-                        <div className='heading'>
-                            <div className='title'>
-                                {this.props.combat.name || 'unnamed combat'}
-                            </div>
+                <div className='card combat'>
+                    <div className='heading'>
+                        <div className='title'>
+                            {this.props.combat.name || 'unnamed combat'}
                         </div>
-                        <div className='card-content'>
-                            <div className='grid'>
-                                <div className='section'>paused at {this.props.combat.timestamp}</div>
-                                {map}
-                            </div>
-                            <div className='divider'/>
-                            <button onClick={() => this.props.setSelection(this.props.combat)}>resume</button>
+                    </div>
+                    <div className='card-content'>
+                        <div className='grid'>
+                            <div className='section'>paused at {this.props.combat.timestamp}</div>
+                            {map}
                         </div>
+                        <div className='divider'/>
+                        <button onClick={() => this.props.setSelection(this.props.combat)}>resume</button>
                     </div>
                 </div>
             );

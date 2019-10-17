@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Input } from 'antd';
+import {  Col, Input, Row } from 'antd';
 
 import { Map, MapFolio } from '../../models/map-folio';
 
@@ -25,23 +25,21 @@ export default class MapScreen extends React.Component<Props> {
 
             this.props.mapFolio.maps.forEach(m => {
                 folioCards.push(
-                    <div className='column' key={m.id}>
-                        <div className='card map'>
-                            <div className='heading'>
-                                <div className='title'>{m.name || 'unnamed map'}</div>
+                    <div className='card map'>
+                        <div className='heading'>
+                            <div className='title'>{m.name || 'unnamed map'}</div>
+                        </div>
+                        <div className='card-content'>
+                            <div className='section'>
+                                <MapPanel
+                                    map={m}
+                                    mode='thumbnail'
+                                    size={10}
+                                />
                             </div>
-                            <div className='card-content'>
-                                <div className='section'>
-                                    <MapPanel
-                                        map={m}
-                                        mode='thumbnail'
-                                        size={10}
-                                    />
-                                </div>
-                                <div className='divider' />
-                                <button onClick={() => this.props.editMap(m)}>edit map</button>
-                                <ConfirmButton text='delete map' callback={() => this.props.removeMap(m)} />
-                            </div>
+                            <div className='divider' />
+                            <button onClick={() => this.props.editMap(m)}>edit map</button>
+                            <ConfirmButton text='delete map' callback={() => this.props.removeMap(m)} />
                         </div>
                     </div>
                 );
@@ -49,29 +47,27 @@ export default class MapScreen extends React.Component<Props> {
 
             if (folioCards.length === 0) {
                 folioCards.push(
-                    <div className='column' key='empty'>
-                        <Note><div className='section'>there are no maps in this folio</div></Note>
-                    </div>
+                    <Note><div className='section'>there are no maps in this folio</div></Note>
                 );
             }
 
             return (
-                <div className='screen row collapse'>
-                    <div className='columns small-4 medium-4 large-3 scrollable sidebar'>
+                <Row className='full-height'>
+                    <Col span={6} className='scrollable sidebar'>
                         <MapFolioInfo
                             mapFolio={this.props.mapFolio}
                             addMap={() => this.props.addMap()}
                             removeMapFolio={() => this.props.removeMapFolio()}
                             changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
                         />
-                    </div>
-                    <div className='columns small-8 medium-8 large-9 scrollable'>
+                    </Col>
+                    <Col span={18} className='scrollable'>
                         <GridPanel
                             content={folioCards}
                             heading={this.props.mapFolio.name || 'unnamed folio'}
                         />
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             );
         } catch (e) {
             console.error(e);
