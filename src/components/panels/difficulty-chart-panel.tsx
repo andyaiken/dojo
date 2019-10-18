@@ -100,15 +100,15 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
                         difficulty = 'deadly';
                         adjustedDifficulty = 'deadly';
                     }
-                    if (adjustedXP >= (xpDeadly * 10)) {
+                    if ((xpDeadly > 0) && (adjustedXP >= (xpDeadly * 10))) {
                         difficulty = 'tpk';
                         adjustedDifficulty = 'tpk';
                     }
-                    if (adjustedXP >= (xpDeadly * 100)) {
+                    if ((xpDeadly > 0) && (adjustedXP >= (xpDeadly * 100))) {
                         difficulty = 'dm with a grudge';
                         adjustedDifficulty = 'dm with a grudge';
                     }
-                    if (adjustedXP >= (xpDeadly * 1000)) {
+                    if ((xpDeadly > 0) && (adjustedXP >= (xpDeadly * 1000))) {
                         difficulty = 'now you\'re just being silly';
                         adjustedDifficulty = 'now you\'re just being silly';
                     }

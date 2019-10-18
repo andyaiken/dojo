@@ -1796,6 +1796,7 @@ export default class Dojo extends React.Component<Props, State> {
                             combat={this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat}
                             encounters={this.state.encounters}
                             pauseCombat={() => this.pauseCombat()}
+                            endCombat={() => this.endCombat()}
                             nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                             makeCurrent={(combatant) => this.makeCurrent(combatant, false)}
@@ -1825,27 +1826,6 @@ export default class Dojo extends React.Component<Props, State> {
                             createCombat={() => this.createCombat()}
                             resumeCombat={pausedCombat => this.resumeCombat(pausedCombat)}
                         />
-                    );
-                }
-        }
-
-        return null;
-    }
-
-    private getActions() {
-        switch (this.state.view) {
-            case 'combat':
-                if (this.state.selectedCombatID) {
-                    const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-                    return (
-                        <div className='actions'>
-                            <div className='section'>
-                                <div className='text'>round: {combat ? combat.round : 0}</div>
-                            </div>
-                            <div className='section'>
-                                <button onClick={() => this.endCombat()}>end combat</button>
-                            </div>
-                        </div>
                     );
                 }
         }
@@ -2047,13 +2027,11 @@ export default class Dojo extends React.Component<Props, State> {
     public render() {
         try {
             const content = this.getContent();
-            const actions = this.getActions();
             const drawer = this.getDrawer();
 
             return (
                 <div className='dojo'>
                     <Titlebar
-                        actions={actions}
                         blur={this.state.navigation || (drawer.content !== null)}
                         openMenu={() => this.toggleNavigation()}
                         openDrawer={type => this.openToolsDrawer(type)}
@@ -2078,7 +2056,7 @@ export default class Dojo extends React.Component<Props, State> {
                         onClose={() => this.toggleNavigation()}
                     >
                         <div className='drawer-header' />
-                        <div className='drawer-content scrollable'>
+                        <div className='drawer-content drawer-left scrollable'>
                             <div className='nav-item' onClick={() => this.selectPartyByID(null)}>player characters</div>
                             <div className='nav-item' onClick={() => this.selectMonsterGroupByID(null)}>monster library</div>
                             <div className='nav-item' onClick={() => this.selectEncounterByID(null)}>encounter builder</div>
@@ -2095,7 +2073,7 @@ export default class Dojo extends React.Component<Props, State> {
                         onClose={() => this.closeDrawer()}
                     >
                         <div className='drawer-header' />
-                        <div className='drawer-content'>{drawer.content}</div>
+                        <div className='drawer-content drawer-right'>{drawer.content}</div>
                         <div className='drawer-footer'>{drawer.footer}</div>
                     </Drawer>
                 </div>

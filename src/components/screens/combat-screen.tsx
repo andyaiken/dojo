@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { Col, Row } from 'antd';
+import { Col, Row, Statistic } from 'antd';
 
+import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
 import { Combat, COMBAT_TAGS, Combatant, Notification } from '../../models/combat';
@@ -13,6 +14,7 @@ import { PC } from '../../models/party';
 import MonsterCard from '../cards/monster-card';
 import PCCard from '../cards/pc-card';
 import Checkbox from '../controls/checkbox';
+import ConfirmButton from '../controls/confirm-button';
 import ControlRow from '../controls/control-row';
 import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
@@ -28,6 +30,7 @@ interface Props {
     combat: Combat;
     encounters: Encounter[];
     pauseCombat: () => void;
+    endCombat: () => void;
     closeNotification: (notification: Notification, removeCondition: boolean) => void;
     mapAdd: (combatant: (Combatant & PC) | (Combatant & Monster), x: number, y: number) => void;
     makeCurrent: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
@@ -485,8 +488,23 @@ export default class CombatScreen extends React.Component<Props, State> {
                     content={[
                         <div key='tools'>
                             <div>
-                                <div className='subheading'>encounter</div>
+                                <Row>
+                                    <Col span={12}>
+                                        <div className='section centered'>
+                                            <Statistic title='round' value={this.props.combat.round} />
+                                        </div>
+                                    </Col>
+                                    <Col span={12}>
+                                        <div className='section centered'>
+                                            <Statistic title='xp' value={Napoleon.getCombatXP(this.props.combat)} />
+                                        </div>
+                                    </Col>
+                                </Row>
+                                <div className='divider' />
+                                <div className='subheading'>combat</div>
                                 <button onClick={() => this.props.pauseCombat()}>pause this encounter</button>
+                                <ConfirmButton text='end combat' callback={() => this.props.endCombat()} />
+                                <div className='subheading'>encounter</div>
                                 <button onClick={() => this.props.addCombatants()}>add combatants</button>
                                 <button onClick={() => this.props.addWave()} style={{ display: wavesAvailable ? 'block' : 'none' }}>add wave</button>
                             </div>

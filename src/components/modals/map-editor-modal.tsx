@@ -170,6 +170,26 @@ export default class MapEditorModal extends React.Component<Props, State> {
         }
     }
 
+    private sendToBack(item: MapItem) {
+        const index = this.state.map.items.indexOf(item);
+        this.state.map.items.splice(index, 1);
+        this.state.map.items.unshift(item);
+
+        this.setState({
+            map: this.state.map
+        });
+    }
+
+    private bringToFront(item: MapItem) {
+        const index = this.state.map.items.indexOf(item);
+        this.state.map.items.splice(index, 1);
+        this.state.map.items.push(item);
+
+        this.setState({
+            map: this.state.map
+        });
+    }
+
     private cloneMapItem(item: MapItem) {
         const copy = JSON.parse(JSON.stringify(item));
         copy.id = Utils.guid();
@@ -292,6 +312,11 @@ export default class MapEditorModal extends React.Component<Props, State> {
                             <div className='subheading'>resize</div>
                             <div className='section centered'>
                                 <Radial direction='both' click={(dir, dir2) => this.resizeMapItem(item, dir, dir2 as 'in' | 'out')} />
+                            </div>
+                            <div className='divider' />
+                            <div className='section'>
+                                <button onClick={() => this.sendToBack(item)}>send to back</button>
+                                <button onClick={() => this.bringToFront(item)}>bring to front</button>
                             </div>
                             <div className='divider' />
                             <div className='section'>

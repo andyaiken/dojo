@@ -211,7 +211,7 @@ button {
 
 .scrollable {
     height: 100%;
-    padding: 0 10px;
+    padding: 0 5px;
     overflow-x: hidden;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
@@ -507,30 +507,6 @@ body,
         font-weight: 600;
         color: $header-foreground;
         border-left: 3px solid $header-foreground;
-    }
-
-    .actions {
-        position: absolute;
-        right: 120px;
-        top: 4px;
-        vertical-align: middle;
-
-        .section {
-            display: inline-block;
-            margin: 0 5px;
-            vertical-align: top;
-
-            button {
-                width: 200px;
-            }
-
-            .text {
-                margin: 5px;
-                height: 32px;
-                line-height: 32px;
-                font-size: 20px;
-            }
-        }
     }
 
     .drawer-icons {
@@ -1372,7 +1348,24 @@ body,
     }
 }
 
+.drawer-header {
+    height: 50px;
+    background-color: $header-background;
+    border-top: 1px solid $control-border;
+    padding: 4px 20px;
+}
+
 .drawer-content {
+    height: calc(100% - 100px);
+
+    &.drawer-left {
+        padding-right: 5px;
+    }
+
+    &.drawer-right {
+        padding-left: 5px;
+    }
+
     .nav-item {
         margin: 10px 0;
         border-left: 5px solid $control-border;
@@ -1458,17 +1451,6 @@ body,
             width: 50%;
         }
     }
-}
-
-.drawer-header {
-    height: 50px;
-    background-color: $header-background;
-    border-top: 1px solid $control-border;
-    padding: 4px 20px;
-}
-
-.drawer-content {
-    height: calc(100% - 100px);
 }
 
 .drawer-footer {

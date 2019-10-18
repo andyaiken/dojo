@@ -152,14 +152,14 @@ export default class SearchModal extends React.Component<Props, State> {
                 if (results.length === 0) {
                     results.push(
                         <Note key='empty'>
-                            no results
+                            nothing found
                         </Note>
                     );
                 }
             } else {
                 results.push(
                     <Note key='empty'>
-                        search
+                        enter your search term above
                     </Note>
                 );
             }

@@ -2,6 +2,7 @@ import Factory from './factory';
 import Sherlock from './sherlock';
 import Utils from './utils';
 
+import { Combat } from '../models/combat';
 import { Encounter, EncounterSlot, MonsterFilter } from '../models/encounter';
 import { Monster, MonsterGroup } from '../models/monster-group';
 
@@ -60,6 +61,19 @@ export default class Napoleon {
         });
 
         return xp * Utils.experienceFactor(count);
+    }
+
+    public static getCombatXP(combat: Combat) {
+        let xp = 0;
+
+        combat.combatants
+            .filter(combatant => combatant.type === 'monster')
+            .forEach(combatant => {
+                const monster = combatant as Monster;
+                xp += Utils.experience(monster.challenge);
+            });
+
+        return xp;
     }
 
     public static getFilterDescription(filter: MonsterFilter) {
