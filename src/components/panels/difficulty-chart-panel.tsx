@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Col, Row } from 'antd';
+
 import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
@@ -48,12 +50,16 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
                 <div>
                     <div className='divider' />
                     <div className='section'>
-                        xp for this encounter
-                        <div className='right'>{monsterXP} xp</div>
+                        <Row>
+                            <Col span={16}>xp for this encounter</Col>
+                            <Col span={8} className='statistic-value'>{monsterXP} xp</Col>
+                        </Row>
                     </div>
                     <div className='section' style={{ display: (adjustedXP === monsterXP) ? 'none' : ''}}>
-                        effective xp for {monsterCount} monster(s)
-                        <div className='right'>{adjustedXP} xp</div>
+                        <Row>
+                            <Col span={16}>effective xp for {monsterCount} monster(s)</Col>
+                            <Col span={8} className='statistic-value'>{adjustedXP} xp</Col>
+                        </Row>
                     </div>
                 </div>
             );
@@ -93,6 +99,18 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
                     if (adjustedXP >= xpDeadly) {
                         difficulty = 'deadly';
                         adjustedDifficulty = 'deadly';
+                    }
+                    if (adjustedXP >= (xpDeadly * 10)) {
+                        difficulty = 'tpk';
+                        adjustedDifficulty = 'tpk';
+                    }
+                    if (adjustedXP >= (xpDeadly * 100)) {
+                        difficulty = 'dm with a grudge';
+                        adjustedDifficulty = 'dm with a grudge';
+                    }
+                    if (adjustedXP >= (xpDeadly * 1000)) {
+                        difficulty = 'now you\'re just being silly';
+                        adjustedDifficulty = 'now you\'re just being silly';
                     }
 
                     if ((pcs.length < 3) || (pcs.length > 5)) {
@@ -170,12 +188,16 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
                         </div>
                         {basicData}
                         <div className='section'>
-                            difficulty for this party
-                            <div className='right'>{difficulty}</div>
+                            <Row>
+                                <Col span={16}>difficulty for this party</Col>
+                                <Col span={8} className='statistic-value'>{difficulty}</Col>
+                            </Row>
                         </div>
                         <div className='section' style={{ display: (adjustedDifficulty === difficulty) ? 'none' : ''}}>
-                            effective difficulty for {pcs.length} pc(s)
-                            <div className='right'><b>{adjustedDifficulty}</b></div>
+                            <Row>
+                                <Col span={16}>effective difficulty for {pcs.length} pc(s)</Col>
+                                <Col span={8} className='statistic-value'>{adjustedDifficulty}</Col>
+                            </Row>
                         </div>
                     </div>
                 );

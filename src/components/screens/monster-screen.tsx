@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Input, Row } from 'antd';
+import { Col, Icon, Input, Row } from 'antd';
 
 import { Monster, MonsterGroup } from '../../models/monster-group';
 
@@ -12,6 +12,7 @@ import Note from '../panels/note';
 interface Props {
     monsterGroup: MonsterGroup;
     library: MonsterGroup[];
+    goBack: () => void;
     removeMonsterGroup: () => void;
     addMonster: () => void;
     removeMonster: (monster: Monster) => void;
@@ -55,6 +56,7 @@ export default class MonsterScreen extends React.Component<Props> {
                     <Col span={6} className='scrollable sidebar left'>
                         <MonsterInfo
                             monsterGroup={this.props.monsterGroup}
+                            goBack={() => this.props.goBack()}
                             addMonster={() => this.props.addMonster()}
                             sortMonsters={() => this.props.sortMonsters()}
                             changeValue={(type, value) => this.props.changeValue(this.props.monsterGroup, type, value)}
@@ -78,6 +80,7 @@ export default class MonsterScreen extends React.Component<Props> {
 
 interface MonsterInfoProps {
     monsterGroup: MonsterGroup;
+    goBack: () => void;
     changeValue: (field: string, value: string) => void;
     addMonster: () => void;
     sortMonsters: () => void;
@@ -103,6 +106,8 @@ class MonsterInfo extends React.Component<MonsterInfoProps> {
                         <button onClick={() => this.props.addMonster()}>add a new monster</button>
                         <button onClick={() => this.props.sortMonsters()}>sort monsters</button>
                         <ConfirmButton text='delete group' callback={() => this.props.removeMonsterGroup()} />
+                        <div className='divider' />
+                        <button onClick={() => this.props.goBack()}><Icon type='caret-left' style={{ fontSize: '14px' }} /> back to the list</button>
                     </div>
                 </div>
             );

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {  Col, Input, Row } from 'antd';
+import { Col, Icon, Input, Row } from 'antd';
 
 import Factory from '../../utils/factory';
 import Napoleon from '../../utils/napoleon';
@@ -24,6 +24,7 @@ interface Props {
     encounter: Encounter;
     parties: Party[];
     library: MonsterGroup[];
+    goBack: () => void;
     clearEncounter: () => void;
     removeEncounter: () => void;
     buildEncounter: (xp: number, filter: MonsterFilter) => void;
@@ -187,6 +188,7 @@ export default class EncounterScreen extends React.Component<Props, State> {
                             encounter={this.props.encounter}
                             parties={this.props.parties}
                             monsterFilter={this.state.filter}
+                            goBack={() => this.props.goBack()}
                             changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
                             addWave={() => this.props.addWave()}
                             removeWave={wave => this.props.removeWave(wave)}
@@ -220,6 +222,7 @@ interface EncounterInfoProps {
     encounter: Encounter;
     parties: Party[];
     monsterFilter: MonsterFilter;
+    goBack: () => void;
     changeValue: (source: any, field: string, value: any) => void;
     addWave: () => void;
     removeWave: (wave: EncounterWave) => void;
@@ -324,6 +327,8 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
                         </Expander>
                         <ConfirmButton text='clear encounter' callback={() => this.props.clearEncounter()} />
                         <ConfirmButton text='delete encounter' callback={() => this.props.removeEncounter()} />
+                        <div className='divider' />
+                        <button onClick={() => this.props.goBack()}><Icon type='caret-left' style={{ fontSize: '14px' }} /> back to the list</button>
                     </div>
                 </div>
             );

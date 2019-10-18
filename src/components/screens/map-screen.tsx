@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {  Col, Input, Row } from 'antd';
+import { Col, Icon, Input, Row } from 'antd';
 
 import { Map, MapFolio } from '../../models/map-folio';
 
@@ -11,6 +11,7 @@ import Note from '../panels/note';
 
 interface Props {
     mapFolio: MapFolio;
+    goBack: () => void;
     removeMapFolio: () => void;
     addMap: () => void;
     editMap: (map: Map) => void;
@@ -56,6 +57,7 @@ export default class MapScreen extends React.Component<Props> {
                     <Col span={6} className='scrollable sidebar left'>
                         <MapFolioInfo
                             mapFolio={this.props.mapFolio}
+                            goBack={() => this.props.goBack()}
                             addMap={() => this.props.addMap()}
                             removeMapFolio={() => this.props.removeMapFolio()}
                             changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
@@ -78,6 +80,7 @@ export default class MapScreen extends React.Component<Props> {
 
 interface MapFolioInfoProps {
     mapFolio: MapFolio;
+    goBack: () => void;
     changeValue: (source: MapFolio, field: string, value: string) => void;
     addMap: () => void;
     removeMapFolio: () => void;
@@ -101,6 +104,8 @@ class MapFolioInfo extends React.Component<MapFolioInfoProps> {
                     <div className='section'>
                         <button onClick={() => this.props.addMap()}>add a new map</button>
                         <ConfirmButton text='delete folio' callback={() => this.props.removeMapFolio()} />
+                        <div className='divider' />
+                        <button onClick={() => this.props.goBack()}><Icon type='caret-left' style={{ fontSize: '14px' }} /> back to the list</button>
                     </div>
                 </div>
             );

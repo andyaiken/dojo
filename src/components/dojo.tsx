@@ -1690,6 +1690,7 @@ export default class Dojo extends React.Component<Props, State> {
                     return (
                         <PartyScreen
                             party={this.state.parties.find(p => p.id === this.state.selectedPartyID) as Party}
+                            goBack={() => this.selectParty(null)}
                             removeParty={() => this.removeParty()}
                             addPC={() => this.addPC()}
                             editPC={pc => this.editPC(pc)}
@@ -1714,6 +1715,7 @@ export default class Dojo extends React.Component<Props, State> {
                         <MonsterScreen
                             monsterGroup={this.state.library.find(g => g.id === this.state.selectedMonsterGroupID) as MonsterGroup}
                             library={this.state.library}
+                            goBack={() => this.selectMonsterGroup(null)}
                             removeMonsterGroup={() => this.removeMonsterGroup()}
                             addMonster={() => this.addMonster()}
                             removeMonster={monster => this.removeMonster(monster)}
@@ -1741,6 +1743,7 @@ export default class Dojo extends React.Component<Props, State> {
                             encounter={this.state.encounters.find(e => e.id === this.state.selectedEncounterID) as Encounter}
                             parties={this.state.parties}
                             library={this.state.library}
+                            goBack={() => this.selectEncounter(null)}
                             clearEncounter={() => this.clearEncounter()}
                             removeEncounter={() => this.removeEncounter()}
                             buildEncounter={(xp, filter) => this.buildEncounter(xp, filter)}
@@ -1769,6 +1772,7 @@ export default class Dojo extends React.Component<Props, State> {
                     return (
                         <MapScreen
                             mapFolio={this.state.mapFolios.find(f => f.id === this.state.selectedMapFolioID) as MapFolio}
+                            goBack={() => this.selectMapFolio(null)}
                             removeMapFolio={() => this.removeMapFolio()}
                             addMap={() => this.addMap()}
                             editMap={map => this.editMap(map)}

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Input, Row } from 'antd';
+import { Col, Icon, Input, Row } from 'antd';
 
 import { Party, PC } from '../../models/party';
 
@@ -11,6 +11,7 @@ import Note from '../panels/note';
 
 interface Props {
     party: Party;
+    goBack: () => void;
     removeParty: () => void;
     addPC: () => void;
     editPC: (pc: PC) => void;
@@ -62,6 +63,7 @@ export default class PartyScreen extends React.Component<Props> {
                     <Col span={6} className='scrollable sidebar left'>
                         <PartyInfo
                             party={this.props.party}
+                            goBack={() => this.props.goBack()}
                             addPC={() => this.props.addPC()}
                             sortPCs={() => this.props.sortPCs()}
                             changeValue={(type, value) => this.props.changeValue(this.props.party, type, value)}
@@ -89,6 +91,7 @@ export default class PartyScreen extends React.Component<Props> {
 
 interface PartyInfoProps {
     party: Party;
+    goBack: () => void;
     changeValue: (field: string, value: string) => void;
     addPC: () => void;
     sortPCs: () => void;
@@ -192,6 +195,8 @@ class PartyInfo extends React.Component<PartyInfoProps> {
                         <button onClick={() => this.props.addPC()}>add a new pc</button>
                         <button onClick={() => this.props.sortPCs()}>sort pcs</button>
                         <ConfirmButton text='delete party' callback={() => this.props.removeParty()} />
+                        <div className='divider' />
+                        <button onClick={() => this.props.goBack()}><Icon type='caret-left' style={{ fontSize: '14px' }} /> back to the list</button>
                     </div>
                 </div>
             );
