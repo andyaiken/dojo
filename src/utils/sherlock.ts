@@ -1,7 +1,7 @@
-import { Encounter, EncounterWave, EncounterSlot } from '../models/encounter';
+import { Encounter, EncounterSlot, EncounterWave } from '../models/encounter';
+import { Map, MapFolio } from '../models/map-folio';
 import { Monster, MonsterGroup, Trait } from '../models/monster-group';
 import { Companion, Party, PC } from '../models/party';
-import { MapFolio, Map } from '../models/map-folio';
 
 export default class Sherlock {
     public static matchParty(filter: string, party: Party) {

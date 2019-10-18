@@ -2081,7 +2081,7 @@ export default class Dojo extends React.Component<Props, State> {
                             <div className='nav-item' onClick={() => this.selectMapFolioByID(null)}>map folios</div>
                             <div className='nav-item' onClick={() => this.selectCombatByID(null)}>combat tracker</div>
                         </div>
-                        <div className='drawer-footer'></div>
+                        <div className='drawer-footer' />
                     </Drawer>
                     <Drawer
                         closable={false}
