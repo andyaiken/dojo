@@ -1,4 +1,5 @@
 import Factory from './factory';
+import Sherlock from './sherlock';
 import Utils from './utils';
 
 import { Encounter, EncounterSlot, MonsterFilter } from '../models/encounter';
@@ -131,7 +132,7 @@ export default class Napoleon {
         }
 
         if (filter.name !== '') {
-            if (!Utils.match(filter.name, monster.name)) {
+            if (!Sherlock.match(filter.name, monster.name)) {
                 return false;
             }
         }

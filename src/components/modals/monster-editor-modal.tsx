@@ -14,8 +14,8 @@ import MonsterCard from '../cards/monster-card';
 import Checkbox from '../controls/checkbox';
 import Dropdown from '../controls/dropdown';
 import Expander from '../controls/expander';
+import NumberSpin from '../controls/number-spin';
 import Selector from '../controls/selector';
-import Spin from '../controls/spin';
 import AbilityScorePanel from '../panels/ability-score-panel';
 import FilterPanel from '../panels/filter-panel';
 import Note from '../panels/note';
@@ -544,7 +544,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                     onChange={event => this.changeValue('name', event.target.value)}
                                 />
                                 <div className='subheading'>size</div>
-                                <Spin
+                                <NumberSpin
                                     source={this.state.monster}
                                     name='size'
                                     nudgeValue={delta => this.nudgeValue('size', delta)}
@@ -568,7 +568,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                     onChange={event => this.changeValue('alignment', event.target.value)}
                                 />
                                 <div className='subheading'>challenge rating</div>
-                                <Spin
+                                <NumberSpin
                                     source={this.state.monster}
                                     name='challenge'
                                     display={value => Utils.challenge(value)}
@@ -639,13 +639,13 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         <Row gutter={10}>
                             <Col span={12}>
                                 <div className='subheading'>armor class</div>
-                                <Spin
+                                <NumberSpin
                                     source={this.state.monster}
                                     name='ac'
                                     nudgeValue={delta => this.nudgeValue('ac', delta)}
                                 />
                                 <div className='subheading'>hit dice</div>
-                                <Spin
+                                <NumberSpin
                                     source={this.state.monster}
                                     name='hitDice'
                                     display={value => value + 'd' + Utils.hitDieType(this.state.monster.size)}
@@ -846,7 +846,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 );
             } else {
                 sidebar = (
-                    <Col span={8} className='scrollable sidebar right' style={{ padding: '10px 5px' }}>
+                    <Col span={8} className='scrollable sidebar right' style={{ padding: '5px' }}>
                         <MonsterCard
                             monster={this.state.monster}
                             mode='view full'

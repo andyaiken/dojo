@@ -43,6 +43,7 @@ input[type=color] {
 input[type=text],
 input[type=color] {
     height: 32px;
+    border-left-width: 5px;
 }
 
 input[type=color] {
@@ -183,6 +184,7 @@ button {
     font-size: 12px;
     border-radius: 0;
     border-color: $control-border;
+    border-left-width: 5px;
     color: $foreground;
     margin: 5px 0;
 
@@ -525,20 +527,22 @@ body,
         }
     }
 
-    .drawer-icon {
+    .drawer-icons {
         position: absolute;
         right: 0;
         top: 0;
-        height: 40px;
-        width: 40px;
-        padding: 5px;
-        margin: 5px;
-        border-radius: 50%;
-        cursor: pointer;
-        transform: rotate(90deg);
+        height: 50px;
 
-        &:hover {
-            background-color: $highlight02;
+        .drawer-icon {
+            padding: 5px;
+            margin: 10px 5px;
+            font-size: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+
+            &:hover {
+                background-color: $highlight02;
+            }
         }
     }
 }
@@ -1182,6 +1186,18 @@ body,
     padding: 5px 10px;
     margin: 5px 0;
 
+    &.clickable {
+        cursor: pointer;
+
+        .group-panel {
+            background-color: transparent;
+        }
+
+        &:hover {
+            background-color: $highlight01;
+        }
+    }
+
     &:hover {
         border-color: $highlight;
     }
@@ -1276,7 +1292,7 @@ body,
     margin: 5px 0;
     cursor: pointer;
 
-    &:hover {
+    &:hover, &.selected {
         background-color: $highlight01;
         border-color: $highlight;
 
@@ -1286,8 +1302,6 @@ body,
     }
 
     &.selected {
-        background-color: $highlight01;
-        border-color: $highlight;
         font-weight: 600;
         cursor: default;
     }

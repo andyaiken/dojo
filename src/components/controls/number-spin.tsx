@@ -10,7 +10,7 @@ interface Props {
     display: ((value: number) => string) | null;
 }
 
-export default class Spin extends React.Component<Props> {
+export default class NumberSpin extends React.Component<Props> {
     public static defaultProps = {
         label: null,
         disabled: false,

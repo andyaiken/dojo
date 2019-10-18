@@ -10,7 +10,7 @@ import { CATEGORY_TYPES, SIZE_TYPES } from '../../models/monster-group';
 
 import Dropdown from '../controls/dropdown';
 import Expander from '../controls/expander';
-import Spin from '../controls/spin';
+import NumberSpin from '../controls/number-spin';
 
 interface Props {
     filter: MonsterFilter;
@@ -36,14 +36,14 @@ export default class FilterPanel extends React.Component<Props> {
                         allowClear={true}
                         onChange={event => this.props.changeValue('name', event.target.value)}
                     />
-                    <Spin
+                    <NumberSpin
                         source={this.props.filter}
                         name='challengeMin'
                         label='min cr'
                         display={value => Utils.challenge(value)}
                         nudgeValue={delta => this.props.nudgeValue('challengeMin', delta)}
                     />
-                    <Spin
+                    <NumberSpin
                         source={this.props.filter}
                         name='challengeMax'
                         label='max cr'

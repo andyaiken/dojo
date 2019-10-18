@@ -1,13 +1,13 @@
 import React from 'react';
 
-import arrow from '../../resources/icons/down-arrow-black.svg';
+import { Icon } from 'antd';
 
 interface Props {
     breadcrumbs: {id: string, text: string}[];
     actions: JSX.Element | null;
     blur: boolean;
     breadcrumbClicked: (id: string) => void;
-    openDrawer: () => void;
+    openDrawer: (type: string) => void;
 }
 
 export default class Titlebar extends React.Component<Props> {
@@ -24,7 +24,11 @@ export default class Titlebar extends React.Component<Props> {
                 <div className={this.props.blur ? 'titlebar blur' : 'titlebar'}>
                     {breadcrumbs}
                     {this.props.actions}
-                    <img className='drawer-icon' src={arrow} title='tools' alt='tools' onClick={() => this.props.openDrawer()} />
+                    <div className='drawer-icons'>
+                        <Icon type='search' className='drawer-icon' onClick={() => this.props.openDrawer('search')} title='search' />
+                        <Icon type='setting' className='drawer-icon' onClick={() => this.props.openDrawer('tools')} title='dm tools' />
+                        <Icon type='info-circle' className='drawer-icon' onClick={() => this.props.openDrawer('about')} title='about' />
+                    </div>
                 </div>
             );
         } catch (e) {

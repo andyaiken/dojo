@@ -10,9 +10,9 @@ import { Condition, CONDITION_TYPES, ConditionDurationCombatant, ConditionDurati
 import { Monster } from '../../models/monster-group';
 
 import Dropdown from '../controls/dropdown';
+import NumberSpin from '../controls/number-spin';
 import RadioGroup from '../controls/radio-group';
 import Selector from '../controls/selector';
-import Spin from '../controls/spin';
 
 interface Props {
     condition: Condition;
@@ -116,7 +116,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                     }
                     if (condition === 'exhaustion') {
                         controls.push(
-                            <Spin
+                            <NumberSpin
                                 key='exhaustion-spin'
                                 source={this.props.condition}
                                 name='level'
@@ -176,7 +176,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                         <div>
                             <div className='section'>
                                 <div className='subheading'>number of saves required</div>
-                                <Spin
+                                <NumberSpin
                                     source={this.props.condition.duration}
                                     name='count'
                                     nudgeValue={delta => this.nudgeValue(this.props.condition.duration, 'count', delta)}
@@ -184,7 +184,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                             </div>
                             <div className='section'>
                                 <div className='subheading'>save dc</div>
-                                <Spin
+                                <NumberSpin
                                     source={this.props.condition.duration}
                                     name='saveDC'
                                     nudgeValue={delta => this.nudgeValue(this.props.condition.duration, 'saveDC', delta)}
@@ -256,7 +256,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                         <div>
                             <div className='section'>
                                 <div className='subheading'>number of rounds</div>
-                                <Spin
+                                <NumberSpin
                                     source={this.props.condition.duration}
                                     name='count'
                                     nudgeValue={delta => this.nudgeValue(this.props.condition.duration, 'count', delta)}

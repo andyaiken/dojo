@@ -22,23 +22,6 @@ export default class Utils {
         return group;
     }
 
-    public static match(filter: string, text: string): boolean {
-        if (!filter) {
-            return true;
-        }
-
-        let result = true;
-
-        const tokens = filter.toLowerCase().split(' ');
-        tokens.forEach(token => {
-            if (text.toLowerCase().indexOf(token) === -1) {
-                result = false;
-            }
-        });
-
-        return result;
-    }
-
     public static guid(): string {
         const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
         return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();

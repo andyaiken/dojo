@@ -8,9 +8,9 @@ import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
 import ControlRow from '../controls/control-row';
 import Expander from '../controls/expander';
+import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
 import Selector from '../controls/selector';
-import Spin from '../controls/spin';
 import ConditionsPanel from '../panels/conditions-panel';
 import PortraitPanel from '../panels/portrait-panel';
 
@@ -163,7 +163,7 @@ export default class PCCard extends React.Component<Props, State> {
                     );
                     options.push(<div key='move-sep' className='divider' />);
                     options.push(
-                        <Spin
+                        <NumberSpin
                             key='altitude'
                             source={this.props.pc}
                             name='altitude'
@@ -205,7 +205,7 @@ export default class PCCard extends React.Component<Props, State> {
                     }
                     options.push(
                         <Expander key='aura' text='aura'>
-                            <Spin
+                            <NumberSpin
                                 source={combatant.aura}
                                 name='radius'
                                 label='size'
@@ -228,7 +228,7 @@ export default class PCCard extends React.Component<Props, State> {
                 if (!combatant.pending) {
                     options.push(
                         <Expander key='init' text='change initiative score'>
-                            <Spin
+                            <NumberSpin
                                 source={this.props.pc}
                                 name='initiative'
                                 label='initiative'
@@ -239,7 +239,7 @@ export default class PCCard extends React.Component<Props, State> {
                 }
                 options.push(
                     <Expander key='size' text='change size'>
-                        <Spin
+                        <NumberSpin
                             source={this.props.pc}
                             name='displaySize'
                             label='size'

@@ -10,9 +10,9 @@ import { Map, MapItem, TERRAIN_TYPES } from '../../models/map-folio';
 
 import ConfirmButton from '../controls/confirm-button';
 import Dropdown from '../controls/dropdown';
+import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
 import Selector from '../controls/selector';
-import Spin from '../controls/spin';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 
@@ -317,7 +317,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
                             <p>to edit an existing tile, click on it to select it</p>
                         </Note>
                         <div className='divider' />
-                        <Spin
+                        <NumberSpin
                             source={this.state}
                             name={'mapSize'}
                             display={value => 'zoom'}

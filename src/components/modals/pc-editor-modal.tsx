@@ -6,7 +6,7 @@ import Factory from '../../utils/factory';
 
 import { PC } from '../../models/party';
 
-import Spin from '../controls/spin';
+import NumberSpin from '../controls/number-spin';
 import PortraitPanel from '../panels/portrait-panel';
 
 interface Props {
@@ -109,25 +109,25 @@ export default class PCEditorModal extends React.Component<Props, State> {
                             onChange={event => this.changeValue(this.state.pc, 'classes', event.target.value)}
                         />
                         <div className='subheading'>level:</div>
-                        <Spin
+                        <NumberSpin
                             source={this.state.pc}
                             name='level'
                             nudgeValue={delta => this.nudgeValue(this.state.pc, 'level', delta)}
                         />
                         <div className='subheading'>passive skills</div>
-                        <Spin
+                        <NumberSpin
                             source={this.state.pc}
                             name='passiveInsight'
                             label='insight'
                             nudgeValue={delta => this.nudgeValue(this.state.pc, 'passiveInsight', delta)}
                         />
-                        <Spin
+                        <NumberSpin
                             source={this.state.pc}
                             name='passiveInvestigation'
                             label='investigation'
                             nudgeValue={delta => this.nudgeValue(this.state.pc, 'passiveInvestigation', delta)}
                         />
-                        <Spin
+                        <NumberSpin
                             source={this.state.pc}
                             name='passivePerception'
                             label='perception'

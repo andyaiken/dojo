@@ -13,8 +13,8 @@ import { Party } from '../../models/party';
 import MonsterCard from '../cards/monster-card';
 import ConfirmButton from '../controls/confirm-button';
 import Expander from '../controls/expander';
+import NumberSpin from '../controls/number-spin';
 import Selector from '../controls/selector';
-import Spin from '../controls/spin';
 import DifficultyChartPanel from '../panels/difficulty-chart-panel';
 import FilterPanel from '../panels/filter-panel';
 import GridPanel from '../panels/grid-panel';
@@ -307,7 +307,7 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
                     <div className='section'>
                         <Expander text='build a random encounter'>
                             <p>add random monsters to this encounter until its adjusted xp value is at least the following value</p>
-                            <Spin
+                            <NumberSpin
                                 source={this.state}
                                 name='randomEncounterXP'
                                 label='xp'

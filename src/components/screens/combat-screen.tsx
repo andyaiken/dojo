@@ -14,8 +14,8 @@ import MonsterCard from '../cards/monster-card';
 import PCCard from '../cards/pc-card';
 import Checkbox from '../controls/checkbox';
 import ControlRow from '../controls/control-row';
+import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
-import Spin from '../controls/spin';
 import GridPanel from '../panels/grid-panel';
 import HitPointGauge from '../panels/hit-point-gauge';
 import MapPanel from '../panels/map-panel';
@@ -188,7 +188,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                                 />
                             </div>
                             <div className='divider' />
-                            <Spin
+                            <NumberSpin
                                 key='altitude'
                                 source={token}
                                 name='altitude'
@@ -495,7 +495,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                                 <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
                                 <button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
                                 <button onClick={() => this.props.rotateMap()}>rotate the map</button>
-                                <Spin
+                                <NumberSpin
                                     source={this.state}
                                     name={'mapSize'}
                                     display={value => 'zoom'}
@@ -517,7 +517,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                                     />
                                 </div>
                                 <div style={{ display: (this.props.combat.map && this.state.playerView.open) ? 'block' : 'none' }}>
-                                    <Spin
+                                    <NumberSpin
                                         source={this.state.playerView}
                                         name={'mapSize'}
                                         display={value => 'zoom'}
@@ -770,7 +770,7 @@ class PendingCombatantRow extends React.Component<PendingCombatantRowProps> {
                         <span className='info'>{this.getInformationText()}</span>
                     </div>
                     <div className='content'>
-                        <Spin
+                        <NumberSpin
                             source={this.props.combatant}
                             name='initiative'
                             label='initiative'

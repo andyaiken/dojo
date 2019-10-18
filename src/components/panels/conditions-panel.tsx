@@ -6,7 +6,7 @@ import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 
 import Expander from '../controls/expander';
-import Spin from '../controls/spin';
+import NumberSpin from '../controls/number-spin';
 
 interface Props {
     combatant: Combatant;
@@ -77,7 +77,7 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
             if (this.props.condition.name === 'exhaustion') {
                 description.push(
                     <div key='level' className='section'>
-                        <Spin
+                        <NumberSpin
                             source={this.props.condition}
                             name='level'
                             label='level'

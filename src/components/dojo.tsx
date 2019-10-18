@@ -17,12 +17,14 @@ import { Party, PC } from '../models/party';
 
 import Checkbox from './controls/checkbox';
 import ControlRow from './controls/control-row';
+import AboutModal from './modals/about-modal';
 import AddCombatantsModal from './modals/add-combatants-modal';
 import CombatStartModal from './modals/combat-start-modal';
 import ConditionModal from './modals/condition-modal';
 import MapEditorModal from './modals/map-editor-modal';
 import MonsterEditorModal from './modals/monster-editor-modal';
 import PCEditorModal from './modals/pc-editor-modal';
+import SearchModal from './modals/search-modal';
 import ToolsModal from './modals/tools-modal';
 import Navbar from './panels/navbar';
 import Titlebar from './panels/titlebar';
@@ -1466,10 +1468,10 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
-    private openToolsDrawer() {
+    private openToolsDrawer(type: string) {
         this.setState({
             drawer: {
-                type: 'tools'
+                type: type
             }
         });
     }
@@ -1492,9 +1494,23 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
+    private selectPartyByID(id: string) {
+        this.setState({
+            view: 'parties',
+            selectedPartyID: id
+        });
+    }
+
     private selectMonsterGroup(group: MonsterGroup | null) {
         this.setState({
             selectedMonsterGroupID: group ? group.id : null
+        });
+    }
+
+    private selectMonsterGroupByID(id: string) {
+        this.setState({
+            view: 'library',
+            selectedMonsterGroupID: id
         });
     }
 
@@ -1989,6 +2005,24 @@ export default class Dojo extends React.Component<Props, State> {
                     content = (
                         <ToolsModal
                             library={this.state.library}
+                        />
+                    );
+                    closable = true;
+                    break;
+                case 'search':
+                    content = (
+                        <SearchModal
+                            parties={this.state.parties}
+                            library={this.state.library}
+                            openParty={id => this.selectPartyByID(id)}
+                            openGroup={id => this.selectMonsterGroupByID(id)}
+                        />
+                    );
+                    closable = true;
+                    break;
+                case 'about':
+                    content = (
+                        <AboutModal
                             resetAll={() => this.resetAll()}
                         />
                     );
@@ -2019,7 +2053,7 @@ export default class Dojo extends React.Component<Props, State> {
                         actions={actions}
                         blur={drawer.content !== null}
                         breadcrumbClicked={bc => this.breadcrumbClicked(bc)}
-                        openDrawer={() => this.openToolsDrawer()}
+                        openDrawer={type => this.openToolsDrawer(type)}
                     />
                     <div className={drawer.content === null ? 'page-content' : 'page-content blur'}>
                         {content}
