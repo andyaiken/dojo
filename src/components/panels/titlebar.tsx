@@ -3,16 +3,17 @@ import React from 'react';
 import { Icon } from 'antd';
 
 interface Props {
-    blur: boolean;
     openMenu: () => void;
     openDrawer: (type: string) => void;
 }
 
 export default class Titlebar extends React.Component<Props> {
     public render() {
+        /*
         try {
+        */
             return (
-                <div className={this.props.blur ? 'titlebar blur' : 'titlebar'}>
+                <div className='titlebar'>
                     <Icon type='menu' className='menu-icon' onClick={() => this.props.openMenu()} title='menu' />
                     <div className='app-title'>dojo</div>
                     <div className='drawer-icons'>
@@ -22,9 +23,11 @@ export default class Titlebar extends React.Component<Props> {
                     </div>
                 </div>
             );
+        /*
         } catch (e) {
             console.error(e);
             return <div className='render-error'/>;
         }
+        */
     }
 }

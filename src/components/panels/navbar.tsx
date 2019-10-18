@@ -6,7 +6,6 @@ import { Party } from '../../models/party';
 
 interface Props {
     view: 'home' | 'parties' | 'library' | 'encounters' | 'maps' | 'combat';
-    blur: boolean;
     library: MonsterGroup[];
     parties: Party[];
     encounters: Encounter[];
@@ -32,7 +31,7 @@ export default class Navbar extends React.Component<Props> {
             }
 
             return (
-                <div className={this.props.blur ? 'navbar blur' : 'navbar'}>
+                <div className='navbar'>
                     <div className={partiesStyle} onClick={() => this.props.setView('parties')}>player characters</div>
                     <div className={libraryStyle} onClick={() => this.props.setView('library')}>monster library</div>
                     <div className={encounterStyle} onClick={() => encountersEnabled ? this.props.setView('encounters') : null}>encounter builder</div>

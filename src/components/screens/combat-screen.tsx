@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Row, Statistic } from 'antd';
+import { Col, Drawer, Icon, Row, Statistic } from 'antd';
 
 import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
@@ -54,6 +54,7 @@ interface Props {
 }
 
 interface State {
+    toolsVisible: boolean;
     selectedTokenID: string | null;
     addingToMapID: string | null;
     mapSize: number;
@@ -69,12 +70,13 @@ export default class CombatScreen extends React.Component<Props, State> {
         super(props);
 
         this.state = {
+            toolsVisible: false,
             selectedTokenID: null,  // The ID of the combatant that's selected
             addingToMapID: null,    // The ID of the combatant we're adding to the map
             mapSize: 30,
             playerView: {
                 open: false,
-                showControls: true,
+                showControls: false,
                 mapSize: 30
             }
         };
@@ -83,6 +85,12 @@ export default class CombatScreen extends React.Component<Props, State> {
     public componentDidMount() {
         window.addEventListener('beforeunload', () => {
             this.setPlayerViewOpen(false);
+        });
+    }
+
+    private toggleTools() {
+        this.setState({
+            toolsVisible: !this.state.toolsVisible
         });
     }
 
@@ -248,6 +256,70 @@ export default class CombatScreen extends React.Component<Props, State> {
                 </Popout>
             );
         }
+    }
+
+    private getTools() {
+        let wavesAvailable = false;
+        const encounterID = this.props.combat.encounterID;
+        const encounter = this.props.encounters.find(enc => enc.id === encounterID);
+        wavesAvailable = !!encounter && (encounter.waves.length > 0);
+
+        return (
+            <div>
+                <Row>
+                    <Col span={12}>
+                        <div className='section centered'>
+                            <Statistic title='round' value={this.props.combat.round} />
+                        </div>
+                    </Col>
+                    <Col span={12}>
+                        <div className='section centered'>
+                            <Statistic title='xp' value={Napoleon.getCombatXP(this.props.combat)} />
+                        </div>
+                    </Col>
+                </Row>
+                <div className='divider' />
+                <div className='subheading'>combat</div>
+                <button onClick={() => this.props.pauseCombat()}>pause this encounter</button>
+                <ConfirmButton text='end combat' callback={() => this.props.endCombat()} />
+                <div className='subheading'>encounter</div>
+                <button onClick={() => this.props.addCombatants()}>add combatants</button>
+                <button onClick={() => this.props.addWave()} style={{ display: wavesAvailable ? 'block' : 'none' }}>add wave</button>
+                <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
+                    <div className='subheading'>map</div>
+                    <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
+                    <button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
+                    <button onClick={() => this.props.rotateMap()}>rotate the map</button>
+                    <NumberSpin
+                        source={this.state}
+                        name={'mapSize'}
+                        display={value => 'zoom'}
+                        nudgeValue={delta => this.nudgeMapSize(delta * 5)}
+                    />
+                </div>
+                <div className='subheading'>player view</div>
+                <Checkbox
+                    label='show player view'
+                    checked={this.state.playerView.open}
+                    changeValue={value => this.setPlayerViewOpen(value)}
+                />
+                <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
+                    <Checkbox
+                        label='show map controls'
+                        checked={this.state.playerView.showControls}
+                        changeValue={value => this.setPlayerViewShowControls(value)}
+                    />
+                </div>
+                <div style={{ display: (this.props.combat.map && this.state.playerView.open) ? 'block' : 'none' }}>
+                    <NumberSpin
+                        source={this.state.playerView}
+                        name={'mapSize'}
+                        display={value => 'zoom'}
+                        nudgeValue={delta => this.nudgePlayerViewMapSize(delta * 5)}
+                    />
+                </div>
+            </div>
+        );
     }
 
     private createCard(combatant: (Combatant & PC) | (Combatant & Monster)) {
@@ -477,79 +549,6 @@ export default class CombatScreen extends React.Component<Props, State> {
                 );
             }
 
-            let wavesAvailable = false;
-            const encounterID = this.props.combat.encounterID;
-            const encounter = this.props.encounters.find(enc => enc.id === encounterID);
-            wavesAvailable = !!encounter && (encounter.waves.length > 0);
-
-            const toolsSection = (
-                <GridPanel
-                    heading='tools'
-                    content={[
-                        <div key='tools'>
-                            <div>
-                                <Row>
-                                    <Col span={12}>
-                                        <div className='section centered'>
-                                            <Statistic title='round' value={this.props.combat.round} />
-                                        </div>
-                                    </Col>
-                                    <Col span={12}>
-                                        <div className='section centered'>
-                                            <Statistic title='xp' value={Napoleon.getCombatXP(this.props.combat)} />
-                                        </div>
-                                    </Col>
-                                </Row>
-                                <div className='divider' />
-                                <div className='subheading'>combat</div>
-                                <button onClick={() => this.props.pauseCombat()}>pause this encounter</button>
-                                <ConfirmButton text='end combat' callback={() => this.props.endCombat()} />
-                                <div className='subheading'>encounter</div>
-                                <button onClick={() => this.props.addCombatants()}>add combatants</button>
-                                <button onClick={() => this.props.addWave()} style={{ display: wavesAvailable ? 'block' : 'none' }}>add wave</button>
-                            </div>
-                            <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
-                                <div className='subheading'>map</div>
-                                <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
-                                <button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
-                                <button onClick={() => this.props.rotateMap()}>rotate the map</button>
-                                <NumberSpin
-                                    source={this.state}
-                                    name={'mapSize'}
-                                    display={value => 'zoom'}
-                                    nudgeValue={delta => this.nudgeMapSize(delta * 5)}
-                                />
-                            </div>
-                            <div>
-                                <div className='subheading'>player view</div>
-                                <Checkbox
-                                    label='show player view'
-                                    checked={this.state.playerView.open}
-                                    changeValue={value => this.setPlayerViewOpen(value)}
-                                />
-                                <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
-                                    <Checkbox
-                                        label='show map controls'
-                                        checked={this.state.playerView.showControls}
-                                        changeValue={value => this.setPlayerViewShowControls(value)}
-                                    />
-                                </div>
-                                <div style={{ display: (this.props.combat.map && this.state.playerView.open) ? 'block' : 'none' }}>
-                                    <NumberSpin
-                                        source={this.state.playerView}
-                                        name={'mapSize'}
-                                        display={value => 'zoom'}
-                                        nudgeValue={delta => this.nudgePlayerViewMapSize(delta * 5)}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    ]}
-                    columns={1}
-                    showToggle={true}
-                />
-            );
-
             const special: JSX.Element[] = [];
             this.props.combat.combatants.forEach(c => {
                 const monster = c as (Combatant & Monster);
@@ -625,8 +624,6 @@ export default class CombatScreen extends React.Component<Props, State> {
                         />
                     </Col>
                     <Col span={8} className='scrollable'>
-                        {toolsSection}
-                        {this.getPlayerView(this.props.combat)}
                         <GridPanel
                             heading={'don\'t forget'}
                             content={special}
@@ -639,6 +636,19 @@ export default class CombatScreen extends React.Component<Props, State> {
                             columns={1}
                         />
                     </Col>
+                    {this.getPlayerView(this.props.combat)}
+                    <Icon type='control' className='floating-button' onClick={() => this.toggleTools()} />
+                    <Drawer
+                        closable={false}
+                        maskClosable={true}
+                        width={'33.3%'}
+                        visible={this.state.toolsVisible}
+                        onClose={() => this.toggleTools()}
+                    >
+                        <div className='drawer-header' />
+                        <div className='drawer-content scrollable'>{this.getTools()}</div>
+                        <div className='drawer-footer' />
+                    </Drawer>
                 </Row>
             );
         } catch (e) {

@@ -271,15 +271,6 @@ button {
     opacity: 0.5;
 }
 
-.blur {
-    -webkit-filter: blur(1px);
-    -moz-filter: blur(1px);
-    -ms-filter: blur(1px);
-    filter: blur(1px);
-    touch-action: none;
-    pointer-events: none;
-}
-
 .strikethrough {
     text-decoration: line-through;
     opacity: 0.8;
@@ -1094,6 +1085,7 @@ body,
         height: 100%;
         border-radius: 50%;
         object-fit: cover;
+        vertical-align: unset;
     }
 
     .initials {
@@ -1458,4 +1450,17 @@ body,
     background-color: $header-background;
     border-top: 1px solid $control-border;
     padding: 4px 20px;
+}
+
+.floating-button {
+    position: fixed;
+    top: 10px;
+    left: calc(50% - 15px);
+    font-size: 20px;
+    padding: 5px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: $highlight02;
+    }
 }

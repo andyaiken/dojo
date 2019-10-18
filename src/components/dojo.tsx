@@ -887,6 +887,7 @@ export default class Dojo extends React.Component<Props, State> {
         if (combat) {
             combat.timestamp = new Date().toLocaleString();
             this.setState({
+                view: 'combat',
                 combats: this.state.combats,
                 selectedCombatID: null
             });
@@ -1554,11 +1555,15 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private selectCombatByID(id: string | null) {
-        this.setState({
-            view: 'combat',
-            navigation: false,
-            selectedCombatID: id
-        });
+        if ((this.state.selectedCombatID !== null) && (id === null)) {
+            this.pauseCombat();
+        } else {
+            this.setState({
+                view: 'combat',
+                navigation: false,
+                selectedCombatID: id
+            });
+        }
     }
 
     private resetAll() {
@@ -2032,11 +2037,10 @@ export default class Dojo extends React.Component<Props, State> {
             return (
                 <div className='dojo'>
                     <Titlebar
-                        blur={this.state.navigation || (drawer.content !== null)}
                         openMenu={() => this.toggleNavigation()}
                         openDrawer={type => this.openToolsDrawer(type)}
                     />
-                    <div className={this.state.navigation || (drawer.content !== null) ? 'page-content blur' : 'page-content'}>
+                    <div className='page-content'>
                         {content}
                     </div>
                     <Navbar
@@ -2044,7 +2048,6 @@ export default class Dojo extends React.Component<Props, State> {
                         parties={this.state.parties}
                         library={this.state.library}
                         encounters={this.state.encounters}
-                        blur={this.state.navigation || (drawer.content !== null)}
                         setView={view => this.setView(view)}
                     />
                     <Drawer
