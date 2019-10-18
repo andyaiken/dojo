@@ -1,5 +1,7 @@
+import { Encounter, EncounterWave, EncounterSlot } from '../models/encounter';
 import { Monster, MonsterGroup, Trait } from '../models/monster-group';
 import { Companion, Party, PC } from '../models/party';
+import { MapFolio, Map } from '../models/map-folio';
 
 export default class Sherlock {
     public static matchParty(filter: string, party: Party) {
@@ -84,6 +86,50 @@ export default class Sherlock {
         }
 
         if (Sherlock.match(filter, trait.text)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static matchEncounter(filter: string, encounter: Encounter) {
+        if (Sherlock.match(filter, encounter.name)) {
+            return true;
+        }
+
+        if (encounter.waves.some(wave => Sherlock.matchEncounterWave(filter, wave))) {
+            return true;
+        }
+
+        return encounter.slots.some(slot => Sherlock.matchEncounterSlot(filter, slot));
+    }
+
+    public static matchEncounterWave(filter: string, wave: EncounterWave) {
+        if (Sherlock.match(filter, wave.name)) {
+            return true;
+        }
+
+        return wave.slots.some(slot => Sherlock.matchEncounterSlot(filter, slot));
+    }
+
+    public static matchEncounterSlot(filter: string, slot: EncounterSlot) {
+        if (Sherlock.match(filter, slot.monsterName)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static matchFolio(filter: string, folio: MapFolio) {
+        if (Sherlock.match(filter, folio.name)) {
+            return true;
+        }
+
+        return folio.maps.some(map => Sherlock.matchMap(filter, map));
+    }
+
+    public static matchMap(filter: string, map: Map) {
+        if (Sherlock.match(filter, map.name)) {
             return true;
         }
 

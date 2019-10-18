@@ -4,6 +4,8 @@ import { Input } from 'antd';
 
 import Sherlock from '../../utils/sherlock';
 
+import { Encounter } from '../../models/encounter';
+import { MapFolio } from '../../models/map-folio';
 import { MonsterGroup } from '../../models/monster-group';
 import { Party } from '../../models/party';
 
@@ -12,8 +14,12 @@ import Note from '../panels/note';
 interface Props {
     parties: Party[];
     library: MonsterGroup[];
+    encounters: Encounter[];
+    folios: MapFolio[];
     openParty: (id: string) => void;
     openGroup: (id: string) => void;
+    openEncounter: (id: string) => void;
+    openFolio: (id: string) => void;
 }
 
 interface State {
@@ -87,6 +93,58 @@ export default class SearchModal extends React.Component<Props, State> {
                         <div key={group.id} className='group-panel clickable' onClick={() => this.props.openGroup(group.id)}>
                             <div className='section'>{group.name}</div>
                             {monsters}
+                        </div>
+                    );
+                });
+
+                this.props.encounters.filter(encounter => Sherlock.matchEncounter(this.state.text, encounter)).forEach(encounter => {
+                    const slots: JSX.Element[] = [];
+                    encounter.slots.filter(slot => Sherlock.matchEncounterSlot(this.state.text, slot)).forEach(slot => {
+                        slots.push(
+                            <div key={slot.id} className='group-panel'>
+                                <div className='section'>{slot.monsterName}</div>
+                            </div>
+                        );
+                    });
+                    const waves: JSX.Element[] = [];
+                    encounter.waves.filter(wave => Sherlock.matchEncounterWave(this.state.text, wave)).forEach(wave => {
+                        const waveSlots: JSX.Element[] = [];
+                        wave.slots.filter(slot => Sherlock.matchEncounterSlot(this.state.text, slot)).forEach(slot => {
+                            waveSlots.push(
+                                <div key={slot.id} className='group-panel'>
+                                    <div className='section'>{slot.monsterName}</div>
+                                </div>
+                            );
+                        });
+                        waves.push(
+                            <div key={wave.id} className='group-panel'>
+                                <div className='section'>{wave.name}</div>
+                                {waveSlots}
+                            </div>
+                        );
+                    });
+                    results.push(
+                        <div key={encounter.id} className='group-panel clickable' onClick={() => this.props.openEncounter(encounter.id)}>
+                            <div className='section'>{encounter.name}</div>
+                            {slots}
+                            {waves}
+                        </div>
+                    );
+                });
+
+                this.props.folios.filter(folio => Sherlock.matchFolio(this.state.text, folio)).forEach(folio => {
+                    const maps: JSX.Element[] = [];
+                    folio.maps.filter(map => Sherlock.matchMap(this.state.text, map)).forEach(map => {
+                        maps.push(
+                            <div key={map.id} className='group-panel'>
+                                <div className='section'>{map.name}</div>
+                            </div>
+                        );
+                    });
+                    results.push(
+                        <div key={folio.id} className='group-panel clickable' onClick={() => this.props.openFolio(folio.id)}>
+                            <div className='section'>{folio.name}</div>
+                            {maps}
                         </div>
                     );
                 });

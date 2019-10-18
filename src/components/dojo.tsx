@@ -47,6 +47,7 @@ interface Props {
 
 interface State {
     view: 'home' | 'parties' | 'library' | 'encounters' | 'maps' | 'combat';
+    navigation: boolean;
     drawer: any;
 
     parties: Party[];
@@ -68,6 +69,7 @@ export default class Dojo extends React.Component<Props, State> {
 
         this.state = {
             view: 'home',
+            navigation: false,
             drawer: null,
             parties: [],
             library: [],
@@ -166,6 +168,7 @@ export default class Dojo extends React.Component<Props, State> {
                 });
 
                 data.view = 'home';
+                data.navigation = false;
                 data.drawer = null;
 
                 this.state = data;
@@ -1482,6 +1485,12 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
+    private toggleNavigation() {
+        this.setState({
+            navigation: !this.state.navigation
+        });
+    }
+
     private closeDrawer() {
         this.setState({
             drawer: null
@@ -1494,23 +1503,9 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
-    private selectPartyByID(id: string) {
-        this.setState({
-            view: 'parties',
-            selectedPartyID: id
-        });
-    }
-
     private selectMonsterGroup(group: MonsterGroup | null) {
         this.setState({
             selectedMonsterGroupID: group ? group.id : null
-        });
-    }
-
-    private selectMonsterGroupByID(id: string) {
-        this.setState({
-            view: 'library',
-            selectedMonsterGroupID: id
         });
     }
 
@@ -1523,6 +1518,46 @@ export default class Dojo extends React.Component<Props, State> {
     private selectMapFolio(mapFolio: MapFolio | null) {
         this.setState({
             selectedMapFolioID: mapFolio ? mapFolio.id : null
+        });
+    }
+
+    private selectPartyByID(id: string | null) {
+        this.setState({
+            view: 'parties',
+            navigation: false,
+            selectedPartyID: id
+        });
+    }
+
+    private selectMonsterGroupByID(id: string | null) {
+        this.setState({
+            view: 'library',
+            navigation: false,
+            selectedMonsterGroupID: id
+        });
+    }
+
+    private selectEncounterByID(id: string | null) {
+        this.setState({
+            view: 'encounters',
+            navigation: false,
+            selectedEncounterID: id
+        });
+    }
+
+    private selectMapFolioByID(id: string | null) {
+        this.setState({
+            view: 'maps',
+            navigation: false,
+            selectedMapFolioID: id
+        });
+    }
+
+    private selectCombatByID(id: string | null) {
+        this.setState({
+            view: 'combat',
+            navigation: false,
+            selectedCombatID: id
         });
     }
 
@@ -1793,44 +1828,6 @@ export default class Dojo extends React.Component<Props, State> {
         return null;
     }
 
-    private getBreadcrumbs() {
-        const breadcrumbs = [];
-
-        breadcrumbs.push({ id: 'home', text: 'dojo' });
-
-        switch (this.state.view) {
-            case 'parties':
-                breadcrumbs.push({ id: 'parties', text: 'player characters' });
-                if (this.state.selectedPartyID) {
-                    breadcrumbs.push({ id: this.state.selectedPartyID, text: 'party' });
-                }
-                break;
-            case 'library':
-                breadcrumbs.push({ id: 'library', text: 'monster library' });
-                if (this.state.selectedMonsterGroupID) {
-                    breadcrumbs.push({ id: this.state.selectedMonsterGroupID, text: 'monster group' });
-                }
-                break;
-            case 'encounters':
-                breadcrumbs.push({ id: 'encounters', text: 'encounter builder' });
-                if (this.state.selectedEncounterID) {
-                    breadcrumbs.push({ id: this.state.selectedEncounterID, text: 'encounter' });
-                }
-                break;
-            case 'maps':
-                breadcrumbs.push({ id: 'maps', text: 'map folios' });
-                if (this.state.selectedMapFolioID) {
-                    breadcrumbs.push({ id: this.state.selectedMapFolioID, text: 'map folio' });
-                }
-                break;
-            case 'combat':
-                breadcrumbs.push({ id: 'combat', text: 'combat manager' });
-                break;
-        }
-
-        return breadcrumbs;
-    }
-
     private getActions() {
         switch (this.state.view) {
             case 'combat':
@@ -2014,8 +2011,12 @@ export default class Dojo extends React.Component<Props, State> {
                         <SearchModal
                             parties={this.state.parties}
                             library={this.state.library}
+                            encounters={this.state.encounters}
+                            folios={this.state.mapFolios}
                             openParty={id => this.selectPartyByID(id)}
                             openGroup={id => this.selectMonsterGroupByID(id)}
+                            openEncounter={id => this.selectEncounterByID(id)}
+                            openFolio={id => this.selectMapFolioByID(id)}
                         />
                     );
                     closable = true;
@@ -2042,20 +2043,18 @@ export default class Dojo extends React.Component<Props, State> {
     public render() {
         try {
             const content = this.getContent();
-            const breadcrumbs = this.getBreadcrumbs();
             const actions = this.getActions();
             const drawer = this.getDrawer();
 
             return (
                 <div className='dojo'>
                     <Titlebar
-                        breadcrumbs={breadcrumbs}
                         actions={actions}
-                        blur={drawer.content !== null}
-                        breadcrumbClicked={bc => this.breadcrumbClicked(bc)}
+                        blur={this.state.navigation || (drawer.content !== null)}
+                        openMenu={() => this.toggleNavigation()}
                         openDrawer={type => this.openToolsDrawer(type)}
                     />
-                    <div className={drawer.content === null ? 'page-content' : 'page-content blur'}>
+                    <div className={this.state.navigation || (drawer.content !== null) ? 'page-content blur' : 'page-content'}>
                         {content}
                     </div>
                     <Navbar
@@ -2063,9 +2062,27 @@ export default class Dojo extends React.Component<Props, State> {
                         parties={this.state.parties}
                         library={this.state.library}
                         encounters={this.state.encounters}
-                        blur={drawer.content !== null}
+                        blur={this.state.navigation || (drawer.content !== null)}
                         setView={view => this.setView(view)}
                     />
+                    <Drawer
+                        placement={'left'}
+                        closable={false}
+                        maskClosable={true}
+                        width={'25%'}
+                        visible={this.state.navigation}
+                        onClose={() => this.toggleNavigation()}
+                    >
+                        <div className='drawer-header' />
+                        <div className='drawer-content scrollable'>
+                            <div className='nav-item' onClick={() => this.selectPartyByID(null)}>player characters</div>
+                            <div className='nav-item' onClick={() => this.selectMonsterGroupByID(null)}>monster library</div>
+                            <div className='nav-item' onClick={() => this.selectEncounterByID(null)}>encounter builder</div>
+                            <div className='nav-item' onClick={() => this.selectMapFolioByID(null)}>map folios</div>
+                            <div className='nav-item' onClick={() => this.selectCombatByID(null)}>combat tracker</div>
+                        </div>
+                        <div className='drawer-footer'></div>
+                    </Drawer>
                     <Drawer
                         closable={false}
                         maskClosable={drawer.closable}

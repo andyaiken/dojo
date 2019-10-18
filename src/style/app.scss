@@ -482,30 +482,36 @@ body,
     background-color: $header-background;
     border-bottom: 1px solid $control-border;
 
-    .breadcrumb {
-        display: inline-block;
+    .menu-icon {
+        position: absolute;
+        left: 5px;
+        top: 0;
+        padding: 5px;
+        margin: 10px 5px;
+        font-size: 20px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $highlight02;
+        }
+    }
+
+    .app-title {
+        position: absolute;
+        left: 50px;
+        top: 10px;
         padding: 4px 6px 8px 6px;
-        margin: 0 5px;
         height: 30px;
         line-height: 20px;
         font-size: 20px;
         font-weight: 600;
         color: $header-foreground;
         border-left: 3px solid $header-foreground;
-        cursor: pointer;
-
-        &.non-clickable {
-            pointer-events: none;
-        }
-
-        &:hover {
-            background-color: $header-foreground-03;
-        }
     }
 
     .actions {
         position: absolute;
-        right: 50px;
+        right: 120px;
         top: 4px;
         vertical-align: middle;
 
@@ -532,17 +538,17 @@ body,
         right: 0;
         top: 0;
         height: 50px;
+    }
 
-        .drawer-icon {
-            padding: 5px;
-            margin: 10px 5px;
-            font-size: 20px;
-            border-radius: 50%;
-            cursor: pointer;
+    .title-bar-icon {
+        padding: 5px;
+        margin: 10px 5px;
+        font-size: 20px;
+        border-radius: 50%;
+        cursor: pointer;
 
-            &:hover {
-                background-color: $highlight02;
-            }
+        &:hover {
+            background-color: $highlight02;
         }
     }
 }
@@ -1361,6 +1367,20 @@ body,
 }
 
 .drawer-content {
+    .nav-item {
+        margin: 10px 0;
+        border-left: 5px solid $control-border;
+        padding-left: 10px;
+        padding-bottom: 5px;
+        font-size: 20px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $highlight01;
+            border-color: $highlight;
+        }
+    }
+
     .hp-value {
         height: 32px;
         margin: 5px 0;
