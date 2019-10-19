@@ -2034,6 +2034,9 @@ export default class Dojo extends React.Component<Props, State> {
             const content = this.getContent();
             const drawer = this.getDrawer();
 
+            const encountersEnabled = this.state.library.length !== 0;
+            const combatEnabled = (this.state.parties.length !== 0) && (this.state.encounters.length !== 0);
+
             return (
                 <div className='dojo'>
                     <Titlebar
@@ -2060,11 +2063,21 @@ export default class Dojo extends React.Component<Props, State> {
                     >
                         <div className='drawer-header' />
                         <div className='drawer-content drawer-left scrollable'>
-                            <div className='nav-item' onClick={() => this.selectPartyByID(null)}>player characters</div>
-                            <div className='nav-item' onClick={() => this.selectMonsterGroupByID(null)}>monster library</div>
-                            <div className='nav-item' onClick={() => this.selectEncounterByID(null)}>encounter builder</div>
-                            <div className='nav-item' onClick={() => this.selectMapFolioByID(null)}>map folios</div>
-                            <div className='nav-item' onClick={() => this.selectCombatByID(null)}>combat tracker</div>
+                            <div className='nav-item' onClick={() => this.selectPartyByID(null)}>
+                                player characters
+                            </div>
+                            <div className='nav-item' onClick={() => this.selectMonsterGroupByID(null)}>
+                                monster library
+                            </div>
+                            <div className={encountersEnabled ? 'nav-item' : 'nav-item disabled'} onClick={() => this.selectEncounterByID(null)}>
+                                encounter builder
+                            </div>
+                            <div className='nav-item' onClick={() => this.selectMapFolioByID(null)}>
+                                map folios
+                            </div>
+                            <div className={combatEnabled ? 'nav-item' : 'nav-item disabled'} onClick={() => this.selectCombatByID(null)}>
+                                combat tracker
+                            </div>
                         </div>
                         <div className='drawer-footer' />
                     </Drawer>
