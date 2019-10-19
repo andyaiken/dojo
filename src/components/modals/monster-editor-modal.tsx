@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Input, Row } from 'antd';
+import { Col, Collapse, Icon, Input, Row } from 'antd';
 
 import Factory from '../../utils/factory';
 import Frankenstein from '../../utils/frankenstein';
@@ -13,7 +13,6 @@ import { CATEGORY_TYPES, Monster, MonsterGroup, Trait, TRAIT_TYPES } from '../..
 import MonsterCard from '../cards/monster-card';
 import Checkbox from '../controls/checkbox';
 import Dropdown from '../controls/dropdown';
-import Expander from '../controls/expander';
 import NumberSpin from '../controls/number-spin';
 import Selector from '../controls/selector';
 import AbilityScorePanel from '../panels/ability-score-panel';
@@ -713,7 +712,6 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         <div>
                             <div className='subheading'>fields</div>
                             <Selector
-                                tabs={false}
                                 options={options}
                                 selectedID={this.state.helpSection}
                                 select={optionID => this.setHelpSection(optionID)}
@@ -738,35 +736,41 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 switch (this.state.sidebar) {
                     case 'similar':
                         sidebarContent = (
-                            <Expander text='similarity criteria'>
-                                <Checkbox
-                                    label={'size ' + this.state.monster.size}
-                                    checked={this.state.similarFilter.size}
-                                    changeValue={value => this.toggleMatch('size')}
-                                />
-                                <Checkbox
-                                    label={'type ' + this.state.monster.category}
-                                    checked={this.state.similarFilter.type}
-                                    changeValue={value => this.toggleMatch('type')}
-                                />
-                                <Checkbox
-                                    label={this.state.monster.tag ? 'subtype ' + this.state.monster.tag : 'subtype'}
-                                    checked={this.state.similarFilter.subtype}
-                                    disabled={!this.state.monster.tag}
-                                    changeValue={value => this.toggleMatch('subtype')}
-                                />
-                                <Checkbox
-                                    label={this.state.monster.alignment ? 'alignment ' + this.state.monster.alignment : 'alignment'}
-                                    checked={this.state.similarFilter.alignment}
-                                    disabled={!this.state.monster.alignment}
-                                    changeValue={value => this.toggleMatch('alignment')}
-                                />
-                                <Checkbox
-                                    label={'challenge rating ' + Utils.challenge(this.state.monster.challenge)}
-                                    checked={this.state.similarFilter.challenge}
-                                    changeValue={value => this.toggleMatch('challenge')}
-                                />
-                            </Expander>
+                            <Collapse
+                                bordered={false}
+                                expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
+                                expandIconPosition={'right'}
+                            >
+                                <Collapse.Panel key='one' header='similarity criteria'>
+                                    <Checkbox
+                                        label={'size ' + this.state.monster.size}
+                                        checked={this.state.similarFilter.size}
+                                        changeValue={value => this.toggleMatch('size')}
+                                    />
+                                    <Checkbox
+                                        label={'type ' + this.state.monster.category}
+                                        checked={this.state.similarFilter.type}
+                                        changeValue={value => this.toggleMatch('type')}
+                                    />
+                                    <Checkbox
+                                        label={this.state.monster.tag ? 'subtype ' + this.state.monster.tag : 'subtype'}
+                                        checked={this.state.similarFilter.subtype}
+                                        disabled={!this.state.monster.tag}
+                                        changeValue={value => this.toggleMatch('subtype')}
+                                    />
+                                    <Checkbox
+                                        label={this.state.monster.alignment ? 'alignment ' + this.state.monster.alignment : 'alignment'}
+                                        checked={this.state.similarFilter.alignment}
+                                        disabled={!this.state.monster.alignment}
+                                        changeValue={value => this.toggleMatch('alignment')}
+                                    />
+                                    <Checkbox
+                                        label={'challenge rating ' + Utils.challenge(this.state.monster.challenge)}
+                                        checked={this.state.similarFilter.challenge}
+                                        changeValue={value => this.toggleMatch('challenge')}
+                                    />
+                                </Collapse.Panel>
+                            </Collapse>
                         );
                         break;
                     case 'scratchpad':
@@ -794,23 +798,35 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                     <button key={m.id} onClick={() => this.removeFromScratchpadList(m)}>{m.name}</button>
                                 );
                                 removeSection = (
-                                    <Expander text='remove monsters from the list'>
-                                        {deleteRows}
-                                    </Expander>
+                                    <Collapse
+                                        bordered={false}
+                                        expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
+                                        expandIconPosition={'right'}
+                                    >
+                                        <Collapse.Panel key='one' header='remove monsters from the list'>
+                                            {deleteRows}
+                                        </Collapse.Panel>
+                                    </Collapse>
                                 );
                             }
                             sidebarContent = (
                                 <div>
-                                    <Expander text='add monsters to the list'>
-                                        <FilterPanel
-                                            filter={this.state.scratchpadFilter}
-                                            changeValue={(type, value) => this.changeFilterValue(type, value)}
-                                            nudgeValue={(type, delta) => this.nudgeFilterValue(type, delta)}
-                                            resetFilter={() => this.resetFilter()}
-                                        />
-                                        <div className='divider' />
-                                        {resultsRows}
-                                    </Expander>
+                                    <Collapse
+                                        bordered={false}
+                                        expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
+                                        expandIconPosition={'right'}
+                                    >
+                                        <Collapse.Panel key='one' header='add monsters to the list'>
+                                            <FilterPanel
+                                                filter={this.state.scratchpadFilter}
+                                                changeValue={(type, value) => this.changeFilterValue(type, value)}
+                                                nudgeValue={(type, delta) => this.nudgeFilterValue(type, delta)}
+                                                resetFilter={() => this.resetFilter()}
+                                            />
+                                            <div className='divider' />
+                                            {resultsRows}
+                                        </Collapse.Panel>
+                                    </Collapse>
                                     {removeSection}
                                 </div>
                             );

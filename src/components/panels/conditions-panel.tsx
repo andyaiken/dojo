@@ -1,11 +1,12 @@
 import React from 'react';
 
+import { Collapse, Icon } from 'antd';
+
 import Utils from '../../utils/utils';
 
 import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 
-import Expander from '../controls/expander';
 import NumberSpin from '../controls/number-spin';
 
 interface Props {
@@ -92,12 +93,18 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
             }
 
             return (
-                <Expander text={name}>
-                    {description}
-                    <div className='divider' />
-                    <button onClick={() => this.props.editCondition(this.props.condition)}>edit</button>
-                    <button onClick={() => this.props.removeCondition(this.props.condition.id)}>remove</button>
-                </Expander>
+                <Collapse
+                    bordered={false}
+                    expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
+                    expandIconPosition={'right'}
+                >
+                    <Collapse.Panel key='one' header={name}>
+                        {description}
+                        <div className='divider' />
+                        <button onClick={() => this.props.editCondition(this.props.condition)}>edit</button>
+                        <button onClick={() => this.props.removeCondition(this.props.condition.id)}>remove</button>
+                    </Collapse.Panel>
+                </Collapse>
             );
         } catch (e) {
             console.error(e);

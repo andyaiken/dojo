@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Input } from 'antd';
+import { Collapse, Icon, Input } from 'antd';
 
 import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
@@ -9,7 +9,6 @@ import { MonsterFilter } from '../../models/encounter';
 import { CATEGORY_TYPES, SIZE_TYPES } from '../../models/monster-group';
 
 import Dropdown from '../controls/dropdown';
-import Expander from '../controls/expander';
 import NumberSpin from '../controls/number-spin';
 
 interface Props {
@@ -72,7 +71,15 @@ export default class FilterPanel extends React.Component<Props> {
             const summary = 'showing ' + Napoleon.getFilterDescription(this.props.filter);
 
             return (
-                <Expander text={summary}>{content}</Expander>
+                <Collapse
+                    bordered={false}
+                    expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
+                    expandIconPosition={'right'}
+                >
+                    <Collapse.Panel key='one' header={summary}>
+                        {content}
+                    </Collapse.Panel>
+                </Collapse>
             );
         } catch (e) {
             console.error(e);

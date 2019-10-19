@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Row, Statistic } from 'antd';
+import { Col, Collapse, Icon, Row, Statistic } from 'antd';
 
 import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
@@ -16,7 +16,6 @@ import PCCard from '../cards/pc-card';
 import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
 import ControlRow from '../controls/control-row';
-import Expander from '../controls/expander';
 import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
 import GridPanel from '../panels/grid-panel';
@@ -289,44 +288,50 @@ export default class CombatScreen extends React.Component<Props, State> {
                 <button className={pending ? 'disabled' : ''} onClick={() => this.nextTurn()}>{current ? 'next turn' : 'start combat'}</button>
                 <button onClick={() => this.props.pauseCombat()}>pause combat</button>
                 <ConfirmButton text='end combat' callback={() => this.props.endCombat()} />
-                <Expander text='tools'>
-                    <div className='subheading'>encounter</div>
-                    <button onClick={() => this.props.addCombatants()}>add combatants</button>
-                    <button onClick={() => this.props.addWave()} style={{ display: wavesAvailable ? 'block' : 'none' }}>add wave</button>
-                    <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
-                        <div className='subheading'>map</div>
-                        <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
-                        <button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
-                        <button onClick={() => this.props.rotateMap()}>rotate the map</button>
-                        <NumberSpin
-                            source={this.state}
-                            name={'mapSize'}
-                            display={value => 'zoom'}
-                            nudgeValue={delta => this.nudgeMapSize(delta * 5)}
-                        />
-                    </div>
-                    <div className='subheading'>player view</div>
-                    <Checkbox
-                        label='show player view'
-                        checked={this.state.playerView.open}
-                        changeValue={value => this.setPlayerViewOpen(value)}
-                    />
-                    <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
+                <Collapse
+                    bordered={false}
+                    expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
+                    expandIconPosition={'right'}
+                >
+                    <Collapse.Panel key='one' header='tools'>
+                        <div className='subheading'>encounter</div>
+                        <button onClick={() => this.props.addCombatants()}>add combatants</button>
+                        <button onClick={() => this.props.addWave()} style={{ display: wavesAvailable ? 'block' : 'none' }}>add wave</button>
+                        <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
+                            <div className='subheading'>map</div>
+                            <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
+                            <button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
+                            <button onClick={() => this.props.rotateMap()}>rotate the map</button>
+                            <NumberSpin
+                                source={this.state}
+                                name={'mapSize'}
+                                display={value => 'zoom'}
+                                nudgeValue={delta => this.nudgeMapSize(delta * 5)}
+                            />
+                        </div>
+                        <div className='subheading'>player view</div>
                         <Checkbox
-                            label='show map controls'
-                            checked={this.state.playerView.showControls}
-                            changeValue={value => this.setPlayerViewShowControls(value)}
+                            label='show player view'
+                            checked={this.state.playerView.open}
+                            changeValue={value => this.setPlayerViewOpen(value)}
                         />
-                    </div>
-                    <div style={{ display: (this.props.combat.map && this.state.playerView.open) ? 'block' : 'none' }}>
-                        <NumberSpin
-                            source={this.state.playerView}
-                            name={'mapSize'}
-                            display={value => 'zoom'}
-                            nudgeValue={delta => this.nudgePlayerViewMapSize(delta * 5)}
-                        />
-                    </div>
-                </Expander>
+                        <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
+                            <Checkbox
+                                label='show map controls'
+                                checked={this.state.playerView.showControls}
+                                changeValue={value => this.setPlayerViewShowControls(value)}
+                            />
+                        </div>
+                        <div style={{ display: (this.props.combat.map && this.state.playerView.open) ? 'block' : 'none' }}>
+                            <NumberSpin
+                                source={this.state.playerView}
+                                name={'mapSize'}
+                                display={value => 'zoom'}
+                                nudgeValue={delta => this.nudgePlayerViewMapSize(delta * 5)}
+                            />
+                        </div>
+                    </Collapse.Panel>
+                </Collapse>
             </div>
         );
     }

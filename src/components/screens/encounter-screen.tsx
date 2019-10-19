@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Icon, Input, Row } from 'antd';
+import { Col, Collapse, Icon, Input, Row } from 'antd';
 
 import Factory from '../../utils/factory';
 import Napoleon from '../../utils/napoleon';
@@ -12,7 +12,6 @@ import { Party } from '../../models/party';
 
 import MonsterCard from '../cards/monster-card';
 import ConfirmButton from '../controls/confirm-button';
-import Expander from '../controls/expander';
 import NumberSpin from '../controls/number-spin';
 import Selector from '../controls/selector';
 import DifficultyChartPanel from '../panels/difficulty-chart-panel';
@@ -308,23 +307,30 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
                     </div>
                     <div className='divider' />
                     <div className='section'>
-                        <Expander text='build a random encounter'>
-                            <p>add random monsters to this encounter until its adjusted xp value is at least the following value</p>
-                            <NumberSpin
-                                source={this.state}
-                                name='randomEncounterXP'
-                                label='xp'
-                                nudgeValue={delta => this.setRandomEncounterXP(this.state.randomEncounterXP + (delta * this.state.randomEncounterStep))}
-                            />
-                            <Selector
-                                options={['10', '100', '1000'].map(t => {
-                                    return { id: t, text: t };
-                                })}
-                                selectedID={this.state.randomEncounterStep.toString()}
-                                select={optionID => this.setRandomEncounterStep(Number.parseInt(optionID, 10))}
-                            />
-                            <button onClick={() => this.props.buildEncounter(this.state.randomEncounterXP)}>build encounter</button>
-                        </Expander>
+                        <Collapse
+                            bordered={false}
+                            expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
+                            expandIconPosition={'right'}
+                        >
+                            <Collapse.Panel key='one' header='build a random encounter'>
+                                <p>add random monsters to this encounter until its adjusted xp value is at least the following value</p>
+                                <NumberSpin
+                                    source={this.state}
+                                    name='randomEncounterXP'
+                                    label='xp'
+                                    nudgeValue={delta => this.setRandomEncounterXP(this.state.randomEncounterXP + (delta * this.state.randomEncounterStep))}
+                                />
+                                <Selector
+                                    options={['10', '100', '1000'].map(t => {
+                                        return { id: t, text: t };
+                                    })}
+                                    selectedID={this.state.randomEncounterStep.toString()}
+                                    select={optionID => this.setRandomEncounterStep(Number.parseInt(optionID, 10))}
+                                />
+                                <button onClick={() => this.props.buildEncounter(this.state.randomEncounterXP)}>build encounter</button>
+                            </Collapse.Panel>
+                        </Collapse>
+
                         <ConfirmButton text='clear encounter' callback={() => this.props.clearEncounter()} />
                         <ConfirmButton text='delete encounter' callback={() => this.props.removeEncounter()} />
                         <div className='divider' />

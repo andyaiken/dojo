@@ -202,6 +202,36 @@ button {
     border-color: $highlight;
 }
 
+.ant-collapse {
+    font-size: 12px;
+}
+
+.ant-collapse-borderless > .ant-collapse-item {
+    margin: 5px 0;
+    background-color: $background;
+    border: 1px solid $control-border;
+    border-radius: 0;
+    border-left-width: 5px;
+
+    &:hover {
+        border-color: $highlight;
+    }
+}
+
+.ant-collapse > .ant-collapse-item > .ant-collapse-header {
+    padding: 5px 10px;
+    font-weight: 600;
+}
+
+.ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
+    padding: 0 10px 5px 10px;
+}
+
+.ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow {
+    font-size: 16px;
+    right: 13px;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Helper classes
 
@@ -359,6 +389,7 @@ button {
     -webkit-user-select: none;
     user-select: none;
     font-family: 'Source Sans Pro', sans-serif;
+    letter-spacing: 0.25px;
 }
 
 html,

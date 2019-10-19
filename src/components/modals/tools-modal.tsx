@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Icon, Row, Spin } from 'antd';
+import { Col, Collapse, Icon, Row, Spin } from 'antd';
 import Showdown from 'showdown';
 
 import Shakespeare from '../../utils/shakespeare';
@@ -11,7 +11,6 @@ import { CATEGORY_TYPES, Monster, MonsterGroup, SIZE_TYPES } from '../../models/
 
 import Checkbox from '../controls/checkbox';
 import ControlRow from '../controls/control-row';
-import Expander from '../controls/expander';
 import NumberSpin from '../controls/number-spin';
 import Selector from '../controls/selector';
 import GridPanel from '../panels/grid-panel';
@@ -830,9 +829,15 @@ class LanguageModule extends React.Component<LanguageModuleProps, LanguageModule
                         select={optionID => this.usePreset(optionID)}
                     />
                     <div className='divider' />
-                    <Expander text={'selected languages: ' + selectedLanguages}>
-                        <GridPanel content={languages} />
-                    </Expander>
+                    <Collapse
+                        bordered={false}
+                        expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
+                        expandIconPosition={'right'}
+                    >
+                        <Collapse.Panel key='one' header={'selected languages: ' + selectedLanguages}>
+                            <GridPanel content={languages} />
+                        </Collapse.Panel>
+                    </Collapse>
                     <div className='divider' />
                     <ControlRow
                         controls={[
@@ -872,13 +877,19 @@ class GeneratedText extends React.Component<GeneratedTextProps> {
     public render() {
         try {
             return (
-                <Expander text={this.props.text.toLowerCase()}>
-                    <button onClick={e => this.copy(e)}>copy to clipboard</button>
-                    <button onClick={e => this.say(e)}>say</button>
-                    <div className='section'>
-                        <b>note:</b> speech may not work consistently on all platforms
-                    </div>
-                </Expander>
+                <Collapse
+                    bordered={false}
+                    expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
+                    expandIconPosition={'right'}
+                >
+                    <Collapse.Panel key='one' header={this.props.text.toLowerCase()}>
+                        <button onClick={e => this.copy(e)}>copy to clipboard</button>
+                        <button onClick={e => this.say(e)}>say</button>
+                        <div className='section'>
+                            <b>note:</b> speech may not work consistently on all platforms
+                        </div>
+                    </Collapse.Panel>
+                </Collapse>
             );
         } catch (ex) {
             console.error(ex);

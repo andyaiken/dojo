@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Collapse, Icon } from 'antd';
+
 import { Combat, COMBAT_TAGS, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { PC } from '../../models/party';
@@ -7,7 +9,6 @@ import { PC } from '../../models/party';
 import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
 import ControlRow from '../controls/control-row';
-import Expander from '../controls/expander';
 import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
 import Selector from '../controls/selector';
@@ -204,16 +205,23 @@ export default class PCCard extends React.Component<Props, State> {
                         );
                     }
                     options.push(
-                        <Expander key='aura' text='aura'>
-                            <NumberSpin
-                                source={combatant.aura}
-                                name='radius'
-                                label='size'
-                                display={value => value + ' ft.'}
-                                nudgeValue={delta => this.props.nudgeValue(combatant.aura, 'radius', delta * 5)}
-                            />
-                            {auraDetails}
-                        </Expander>
+                        <Collapse
+                            key='aura'
+                            bordered={false}
+                            expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
+                            expandIconPosition={'right'}
+                        >
+                            <Collapse.Panel key='one' header='aura'>
+                                <NumberSpin
+                                    source={combatant.aura}
+                                    name='radius'
+                                    label='size'
+                                    display={value => value + ' ft.'}
+                                    nudgeValue={delta => this.props.nudgeValue(combatant.aura, 'radius', delta * 5)}
+                                />
+                                {auraDetails}
+                            </Collapse.Panel>
+                        </Collapse>
                     );
                     options.push(<button key='mapRemove' onClick={() => this.props.mapRemove(combatant)}>remove from map</button>);
                 }
@@ -227,25 +235,38 @@ export default class PCCard extends React.Component<Props, State> {
                 }
                 if (!combatant.pending) {
                     options.push(
-                        <Expander key='init' text='change initiative score'>
-                            <NumberSpin
-                                source={this.props.pc}
-                                name='initiative'
-                                label='initiative'
-                                nudgeValue={delta => this.props.nudgeValue(this.props.pc, 'initiative', delta)}
-                            />
-                        </Expander>
+                        <Collapse
+                            bordered={false}
+                            expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
+                            expandIconPosition={'right'}
+                        >
+                            <Collapse.Panel key='one' header='change initiative score'>
+                                <NumberSpin
+                                    source={this.props.pc}
+                                    name='initiative'
+                                    label='initiative'
+                                    nudgeValue={delta => this.props.nudgeValue(this.props.pc, 'initiative', delta)}
+                                />
+                            </Collapse.Panel>
+                        </Collapse>
                     );
                 }
                 options.push(
-                    <Expander key='size' text='change size'>
-                        <NumberSpin
-                            source={this.props.pc}
-                            name='displaySize'
-                            label='size'
-                            nudgeValue={delta => this.props.nudgeValue(this.props.pc, 'displaySize', delta)}
-                        />
-                    </Expander>
+                    <Collapse
+                        key='size'
+                        bordered={false}
+                        expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
+                        expandIconPosition={'right'}
+                    >
+                        <Collapse.Panel key='one' header='change size'>
+                            <NumberSpin
+                                source={this.props.pc}
+                                name='displaySize'
+                                label='size'
+                                nudgeValue={delta => this.props.nudgeValue(this.props.pc, 'displaySize', delta)}
+                            />
+                        </Collapse.Panel>
+                    </Collapse>
                 );
                 break;
         }

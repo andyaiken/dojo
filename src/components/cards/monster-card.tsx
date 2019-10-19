@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Input } from 'antd';
+import { Collapse, Icon, Input } from 'antd';
 
 import Frankenstein from '../../utils/frankenstein';
 import Utils from '../../utils/utils';
@@ -14,7 +14,6 @@ import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
 import ControlRow from '../controls/control-row';
 import Dropdown from '../controls/dropdown';
-import Expander from '../controls/expander';
 import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
 import Selector from '../controls/selector';
@@ -390,16 +389,23 @@ export default class MonsterCard extends React.Component<Props, State> {
                         );
                     }
                     options.push(
-                        <Expander key='aura' text='aura'>
-                            <NumberSpin
-                                source={combatant.aura}
-                                name='radius'
-                                label='size'
-                                display={value => value + ' ft.'}
-                                nudgeValue={delta => this.props.nudgeValue(combatant.aura, 'radius', delta * 5)}
-                            />
-                            {auraDetails}
-                        </Expander>
+                        <Collapse
+                            key='aura'
+                            bordered={false}
+                            expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
+                            expandIconPosition={'right'}
+                        >
+                            <Collapse.Panel key='one' header='aura'>
+                                <NumberSpin
+                                    source={combatant.aura}
+                                    name='radius'
+                                    label='size'
+                                    display={value => value + ' ft.'}
+                                    nudgeValue={delta => this.props.nudgeValue(combatant.aura, 'radius', delta * 5)}
+                                />
+                                {auraDetails}
+                            </Collapse.Panel>
+                        </Collapse>
                     );
                     options.push(<button key='mapRemove' onClick={() => this.props.mapRemove(combatant)}>remove from map</button>);
                 }
@@ -413,34 +419,55 @@ export default class MonsterCard extends React.Component<Props, State> {
                 }
                 if (!combatant.pending) {
                     options.push(
-                        <Expander key='init' text='change initiative score'>
-                            <NumberSpin
-                                source={this.props.monster}
-                                name='initiative'
-                                label='initiative'
-                                nudgeValue={delta => this.props.nudgeValue(this.props.monster, 'initiative', delta)}
-                            />
-                        </Expander>
+                        <Collapse
+                            key='init'
+                            bordered={false}
+                            expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
+                            expandIconPosition={'right'}
+                        >
+                            <Collapse.Panel key='one' header='change initiative score'>
+                                <NumberSpin
+                                    source={this.props.monster}
+                                    name='initiative'
+                                    label='initiative'
+                                    nudgeValue={delta => this.props.nudgeValue(this.props.monster, 'initiative', delta)}
+                                />
+                            </Collapse.Panel>
+                        </Collapse>
                     );
                 }
                 options.push(
-                    <Expander key='size' text='change size' >
-                        <NumberSpin
-                            source={this.props.monster}
-                            name='displaySize'
-                            label='size'
-                            nudgeValue={delta => this.props.nudgeValue(this.props.monster, 'displaySize', delta)}
-                        />
-                    </Expander>
+                    <Collapse
+                        key='size'
+                        bordered={false}
+                        expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
+                        expandIconPosition={'right'}
+                    >
+                        <Collapse.Panel key='one' header='change size'>
+                            <NumberSpin
+                                source={this.props.monster}
+                                name='displaySize'
+                                label='size'
+                                nudgeValue={delta => this.props.nudgeValue(this.props.monster, 'displaySize', delta)}
+                            />
+                        </Collapse.Panel>
+                    </Collapse>
                 );
                 options.push(
-                    <Expander key='rename' text='change name' >
-                        <Input
-                            value={combatant.displayName}
-                            allowClear={true}
-                            onChange={event => this.props.changeValue(this.props.monster, 'displayName', event.target.value)}
-                        />
-                    </Expander>
+                    <Collapse
+                        key='rename'
+                        bordered={false}
+                        expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
+                        expandIconPosition={'right'}
+                    >
+                        <Collapse.Panel key='one' header='change name'>
+                            <Input
+                                value={combatant.displayName}
+                                allowClear={true}
+                                onChange={event => this.props.changeValue(this.props.monster, 'displayName', event.target.value)}
+                            />
+                        </Collapse.Panel>
+                    </Collapse>
                 );
                 break;
         }
@@ -466,15 +493,22 @@ export default class MonsterCard extends React.Component<Props, State> {
                         );
 
                         options.push(
-                            <Expander key='clone' text='clone monster'>
-                                <Input
-                                    placeholder='monster name'
-                                    value={this.state.cloneName}
-                                    allowClear={true}
-                                    onChange={event => this.setCloneName(event.target.value)}
-                                />
-                                <button onClick={() => this.props.cloneMonster(this.props.monster, this.state.cloneName)}>create copy</button>
-                            </Expander>
+                            <Collapse
+                                key='clone'
+                                bordered={false}
+                                expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
+                                expandIconPosition={'right'}
+                            >
+                                <Collapse.Panel key='one' header='clone monster'>
+                                    <Input
+                                        placeholder='monster name'
+                                        value={this.state.cloneName}
+                                        allowClear={true}
+                                        onChange={event => this.setCloneName(event.target.value)}
+                                    />
+                                    <button onClick={() => this.props.cloneMonster(this.props.monster, this.state.cloneName)}>create copy</button>
+                                </Collapse.Panel>
+                            </Collapse>
                         );
 
                         const groupOptions: { id: string, text: string }[] = [];

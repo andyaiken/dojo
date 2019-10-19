@@ -177,34 +177,6 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Expander
-
-.ant-collapse {
-    font-size: 12px;
-}
-
-.ant-collapse-borderless > .ant-collapse-item {
-    margin: 5px 0;
-    background-color: $background;
-    border: 1px solid $control-border;
-    border-radius: 0;
-    border-left-width: 5px;
-
-    &:hover {
-        border-color: $highlight;
-    }
-}
-
-.ant-collapse > .ant-collapse-item > .ant-collapse-header {
-    padding: 5px 10px;
-    font-weight: 600;
-}
-
-.ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
-    padding: 0 10px 5px 10px;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Radial
 
 .radial {
@@ -423,21 +395,6 @@
                 opacity: 0.25;
             }
         }
-    }
-
-    .spin-expander {
-        text-align: center;
-        cursor: pointer;
-        height: 15px;
-        line-height: 12px;
-
-        &:hover {
-            background-color: $highlight01;
-        }
-    }
-
-    .factor-selector {
-        margin: 0 5px;
     }
 }
 
