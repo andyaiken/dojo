@@ -36,7 +36,7 @@ export default class HomeScreen extends React.Component<Props> {
                         <div className='vertical-center-middle'>
                             <div className='vertical-center-inner'>
                                 <Readaloud>
-                                    <div className='heading'>welcome to <b>dojo</b></div>
+                                    <div className='heading'>welcome to <span className='app-name'>dojo</span></div>
                                     <div className='divider' />
                                     <div className='section'>
                                         <b>dojo</b> is an app for dms of dungeons and dragons fifth edition

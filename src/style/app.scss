@@ -229,17 +229,28 @@ button {
     float: right;
 }
 
+.fixed-top {
+    position: sticky;
+    top: 0;
+    background-color: $background;
+}
+
+.app-name {
+    text-transform: uppercase;
+    color: black;
+}
+
 .heading {
     padding: 5px 0;
     border-bottom: 1px solid $control-border;
     margin-bottom: 10px;
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 600;
 }
 
 .subheading {
     font-weight: 600;
-    font-size: 14px;
+    font-size: 16px;
     padding-top: 3px;
     color: #656565;
 }
@@ -345,7 +356,7 @@ button {
     transition: all 0.2s ease-in-out;
     -webkit-user-select: none;
     user-select: none;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    font-family: 'Source Sans Pro', sans-serif;
 }
 
 html,
@@ -491,13 +502,14 @@ body,
         position: absolute;
         left: 50px;
         top: 10px;
-        padding: 4px 6px 8px 6px;
+        padding: 5px;
         height: 30px;
         line-height: 20px;
         font-size: 20px;
         font-weight: 600;
         color: $header-foreground;
         border-left: 3px solid $header-foreground;
+        letter-spacing: 3px;
     }
 
     .drawer-icons {
@@ -1362,7 +1374,7 @@ body,
         margin: 10px 0;
         border-left: 5px solid $control-border;
         padding-left: 10px;
-        padding-bottom: 5px;
+        padding-bottom: 3px;
         font-size: 20px;
         cursor: pointer;
 
