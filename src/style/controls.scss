@@ -179,56 +179,29 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Expander
 
-.expander {
+.ant-collapse {
+    font-size: 12px;
+}
+
+.ant-collapse-borderless > .ant-collapse-item {
     margin: 5px 0;
     background-color: $background;
     border: 1px solid $control-border;
+    border-radius: 0;
     border-left-width: 5px;
-
-    .expander-header {
-        min-height: 32px;
-        padding-left: 10px;
-        padding-right: 6px;
-        cursor: pointer;
-
-        .expander-text {
-            display: inline-block;
-            width: calc(100% - 40px);
-            vertical-align: middle;
-            padding: 8px 0;
-            color: $foreground;
-            font-weight: 600;
-        }
-
-        .expander-button {
-            display: inline-block;
-            height: 30px;
-            width: 30px;
-            padding: 5px;
-            margin-left: 10px;
-            vertical-align: middle;
-            border-radius: 50%;
-        }
-    }
-
-    .expander-content {
-        padding: 5px 10px;
-    }
 
     &:hover {
         border-color: $highlight;
     }
+}
 
-    &.expanded {
+.ant-collapse > .ant-collapse-item > .ant-collapse-header {
+    padding: 5px 10px;
+    font-weight: 600;
+}
 
-        &>.expander-header {
-            background-color: $highlight01;
-
-            .expander-button {
-                transform: rotate(-180deg);
-            }
-        }
-    }
+.ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
+    padding: 0 10px 5px 10px;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -476,22 +449,18 @@
     .spin-button {
         height: 20px;
         width: 20px;
+        margin: 5px;
         cursor: pointer;
         background-color: transparent;
-        margin: 0 5px;
+        border: 2px solid $control-border;
         border-radius: 50%;
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 15px;
 
-        &.factor {
-            border: 2px solid $control-border;
-            margin: 5px;
-            font-size: 20px;
-            line-height: 15px;
+        &.multiple {
+            font-size: 8px;
             letter-spacing: -0.5px;
-            font-weight: 600;
-
-            &.multiple {
-                font-size: 8px;
-            }
         }
 
         &:hover {

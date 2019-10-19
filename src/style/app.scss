@@ -231,6 +231,7 @@ button {
 
 .fixed-top {
     position: sticky;
+    z-index: 5;
     top: 0;
     background-color: $background;
 }
@@ -238,6 +239,7 @@ button {
 .app-name {
     text-transform: uppercase;
     color: black;
+    font-weight: 600;
 }
 
 .heading {
@@ -951,10 +953,10 @@ body,
 
 .notifications {
     position: sticky;
+    z-index: 10;
     top: 0;
     background-color: transparent;
     padding: 1px 5px 0 5px;
-    z-index: 5;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

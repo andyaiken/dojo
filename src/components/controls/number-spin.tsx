@@ -3,10 +3,10 @@ import React from 'react';
 interface Props {
     source: any;
     name: string;
-    nudgeValue: (delta: number) => void;
     label: string;
     disabled: boolean;
     factors: number[];
+    nudgeValue: (delta: number) => void;
     display: ((value: number) => string) | null;
 }
 
@@ -49,7 +49,7 @@ export default class NumberSpin extends React.Component<Props> {
                 minusBtns.push(
                     <div
                         key={'minus' + factor}
-                        className={factor === 1 ? 'spin-button factor' : 'spin-button factor multiple'}
+                        className={factor === 1 ? 'spin-button' : 'spin-button multiple'}
                         onTouchEnd={e => this.touchEnd(e, -1 * factor)}
                         onClick={e => this.click(e, -1 * factor)}
                     >
@@ -60,7 +60,7 @@ export default class NumberSpin extends React.Component<Props> {
                 plusBtns.push(
                     <div
                         key={'plus' + factor}
-                        className={factor === 1 ? 'spin-button factor' : 'spin-button factor multiple'}
+                        className={factor === 1 ? 'spin-button' : 'spin-button multiple'}
                         onTouchEnd={e => this.touchEnd(e, +1 * factor)}
                         onClick={e => this.click(e, +1 * factor)}
                     >

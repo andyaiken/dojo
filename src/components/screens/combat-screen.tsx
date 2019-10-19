@@ -129,6 +129,18 @@ export default class CombatScreen extends React.Component<Props, State> {
         });
     }
 
+    private nextTurn() {
+        const current = this.props.combat.combatants.find(c => c.current);
+        if (current) {
+            this.props.endTurn(current);
+        } else {
+            const first = this.props.combat.combatants.find(c => c.active);
+            if (first) {
+                this.props.makeCurrent(first);
+            }
+        }
+    }
+
     private getPlayerView(combat: Combat) {
         if (!this.state.playerView.open) {
             return null;
@@ -252,6 +264,9 @@ export default class CombatScreen extends React.Component<Props, State> {
     }
 
     private getTools() {
+        const pending = this.props.combat.combatants.some(c => c.pending);
+        const current = this.props.combat.combatants.find(c => c.current);
+
         let wavesAvailable = false;
         const encounterID = this.props.combat.encounterID;
         const encounter = this.props.encounters.find(enc => enc.id === encounterID);
@@ -271,6 +286,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                         </div>
                     </Col>
                 </Row>
+                <button className={pending ? 'disabled' : ''} onClick={() => this.nextTurn()}>{current ? 'next turn' : 'start combat'}</button>
                 <button onClick={() => this.props.pauseCombat()}>pause combat</button>
                 <ConfirmButton text='end combat' callback={() => this.props.endCombat()} />
                 <Expander text='tools'>
@@ -398,18 +414,14 @@ export default class CombatScreen extends React.Component<Props, State> {
 
     public render() {
         try {
-            const current: JSX.Element[] = [];
+            let current: JSX.Element | null = null;
             let pending: JSX.Element[] = [];
             let active: JSX.Element[] = [];
             const defeated: JSX.Element[] = [];
 
             this.props.combat.combatants.forEach(combatant => {
                 if (combatant.current) {
-                    current.push(
-                        <div key={combatant.id}>
-                            {this.createCard(combatant)}
-                        </div>
-                    );
+                    current = this.createCard(combatant);
                 }
                 if (combatant.pending && !combatant.active && !combatant.defeated) {
                     pending.push(
@@ -487,7 +499,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                 pending = [pendingHelp].concat(pending);
             }
 
-            if (current.length === 0) {
+            if (!current) {
                 const activeHelp = (
                     /* tslint:disable:max-line-length */
                     <Note key='active-help'>
@@ -500,9 +512,9 @@ export default class CombatScreen extends React.Component<Props, State> {
                 active = [activeHelp].concat(active);
             }
 
-            if (current.length === 0) {
-                current.push(
-                    <Note key='current'>
+            if (!current) {
+                current = (
+                    <Note>
                         <div className='section'>the current initiative holder will be displayed here</div>
                     </Note>
                 );
