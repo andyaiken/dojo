@@ -5,7 +5,7 @@ import { Col, Collapse, Icon, Row, Statistic } from 'antd';
 import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
-import { Combat, COMBAT_TAGS, Combatant, Notification } from '../../models/combat';
+import { Combat, Combatant, Notification } from '../../models/combat';
 import { Condition, ConditionDurationSaves } from '../../models/condition';
 import { Encounter } from '../../models/encounter';
 import { Monster, Trait } from '../../models/monster-group';
@@ -15,7 +15,6 @@ import MonsterCard from '../cards/monster-card';
 import PCCard from '../cards/pc-card';
 import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
-import ControlRow from '../controls/control-row';
 import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
 import GridPanel from '../panels/grid-panel';
@@ -211,18 +210,40 @@ export default class CombatScreen extends React.Component<Props, State> {
                                 display={value => value + ' ft.'}
                                 nudgeValue={delta => this.props.nudgeValue(token, 'altitude', delta * 5)}
                             />
-                            <ControlRow
-                                key='tags'
-                                controls={COMBAT_TAGS.map(tag =>
+                            <Row key='tags' gutter={10}>
+                                <Col span={6}>
                                     <Checkbox
-                                        key={tag}
-                                        label={tag}
+                                        label='conc'
                                         display='button'
-                                        checked={token.tags.includes(tag)}
-                                        changeValue={value => this.props.toggleTag(token, tag)}
+                                        checked={token.tags.includes('conc')}
+                                        changeValue={value => this.props.toggleTag(token, 'conc')}
                                     />
-                                )}
-                            />
+                                </Col>
+                                <Col span={6}>
+                                    <Checkbox
+                                        label='bane'
+                                        display='button'
+                                        checked={token.tags.includes('bane')}
+                                        changeValue={value => this.props.toggleTag(token, 'bane')}
+                                    />
+                                </Col>
+                                <Col span={6}>
+                                    <Checkbox
+                                        label='bless'
+                                        display='button'
+                                        checked={token.tags.includes('bless')}
+                                        changeValue={value => this.props.toggleTag(token, 'bless')}
+                                    />
+                                </Col>
+                                <Col span={6}>
+                                    <Checkbox
+                                        label='hex'
+                                        display='button'
+                                        checked={token.tags.includes('hex')}
+                                        changeValue={value => this.props.toggleTag(token, 'hex')}
+                                    />
+                                </Col>
+                            </Row>
                         </div>
                     );
                 }
@@ -707,12 +728,14 @@ class NotificationPanel extends React.Component<NotificationProps> {
                             <div className='text'>
                                 {name} must make a {saveType} save against dc {duration.saveDC}
                             </div>
-                            <ControlRow
-                                controls={[
-                                    <button key='success' onClick={() => this.success()}>success</button>,
+                            <Row gutter={10}>
+                                <Col span={12}>
+                                    <button key='success' onClick={() => this.success()}>success</button>
+                                </Col>
+                                <Col span={12}>
                                     <button key='close' onClick={() => this.close()}>close</button>
-                                ]}
-                            />
+                                </Col>
+                            </Row>
                         </div>
                     );
                 case 'condition-end':
@@ -721,11 +744,7 @@ class NotificationPanel extends React.Component<NotificationProps> {
                             <div className='text'>
                                 {name} is no longer affected by condition {condition.name}
                             </div>
-                            <ControlRow
-                                controls={[
-                                    <button key='close' onClick={() => this.close()}>close</button>
-                                ]}
-                            />
+                            <button onClick={() => this.close()}>close</button>
                         </div>
                     );
                 case 'trait-recharge':
@@ -734,12 +753,14 @@ class NotificationPanel extends React.Component<NotificationProps> {
                             <div className='text'>
                                 {name} can attempt to recharge {trait.name} ({trait.usage})
                             </div>
-                            <ControlRow
-                                controls={[
-                                    <button key='recharge' onClick={() => this.success()}>recharge</button>,
+                            <Row gutter={10}>
+                                <Col span={12}>
+                                    <button key='recharge' onClick={() => this.success()}>recharge</button>
+                                </Col>
+                                <Col span={12}>
                                     <button key='close' onClick={() => this.close()}>close</button>
-                                ]}
-                            />
+                                </Col>
+                            </Row>
                         </div>
                     );
                 default:

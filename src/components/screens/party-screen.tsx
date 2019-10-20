@@ -196,7 +196,7 @@ class PartyInfo extends React.Component<PartyInfoProps> {
                         <button onClick={() => this.props.sortPCs()}>sort pcs</button>
                         <ConfirmButton text='delete party' callback={() => this.props.removeParty()} />
                         <div className='divider' />
-                        <button onClick={() => this.props.goBack()}><Icon type='caret-left' style={{ fontSize: '14px' }} /> back to the list</button>
+                        <button onClick={() => this.props.goBack()}><Icon type='caret-left' style={{ fontSize: '10px' }} /> back to the list</button>
                     </div>
                 </div>
             );

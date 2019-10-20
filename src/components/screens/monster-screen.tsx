@@ -107,7 +107,7 @@ class MonsterInfo extends React.Component<MonsterInfoProps> {
                         <button onClick={() => this.props.sortMonsters()}>sort monsters</button>
                         <ConfirmButton text='delete group' callback={() => this.props.removeMonsterGroup()} />
                         <div className='divider' />
-                        <button onClick={() => this.props.goBack()}><Icon type='caret-left' style={{ fontSize: '14px' }} /> back to the list</button>
+                        <button onClick={() => this.props.goBack()}><Icon type='caret-left' style={{ fontSize: '10px' }} /> back to the list</button>
                     </div>
                 </div>
             );

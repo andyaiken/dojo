@@ -334,7 +334,7 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
                         <ConfirmButton text='clear encounter' callback={() => this.props.clearEncounter()} />
                         <ConfirmButton text='delete encounter' callback={() => this.props.removeEncounter()} />
                         <div className='divider' />
-                        <button onClick={() => this.props.goBack()}><Icon type='caret-left' style={{ fontSize: '14px' }} /> back to the list</button>
+                        <button onClick={() => this.props.goBack()}><Icon type='caret-left' style={{ fontSize: '10px' }} /> back to the list</button>
                     </div>
                 </div>
             );

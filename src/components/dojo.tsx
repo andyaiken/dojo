@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Drawer } from 'antd';
+import { Col, Drawer, Row } from 'antd';
 
 import Factory from '../utils/factory';
 import Frankenstein from '../utils/frankenstein';
@@ -16,7 +16,6 @@ import { Monster, MonsterGroup } from '../models/monster-group';
 import { Party, PC } from '../models/party';
 
 import Checkbox from './controls/checkbox';
-import ControlRow from './controls/control-row';
 import AboutModal from './modals/about-modal';
 import AddCombatantsModal from './modals/add-combatants-modal';
 import CombatStartModal from './modals/combat-start-modal';
@@ -1853,14 +1852,14 @@ export default class Dojo extends React.Component<Props, State> {
                         />
                     );
                     footer = (
-                        <div>
-                            <ControlRow
-                                controls={[
-                                    <button key='save' onClick={() => this.savePC()}>save changes</button>,
-                                    <button key='cancel' onClick={() => this.closeDrawer()}>discard changes</button>
-                                ]}
-                            />
-                        </div>
+                        <Row gutter={10}>
+                            <Col span={12}>
+                                <button onClick={() => this.savePC()}>save changes</button>
+                            </Col>
+                            <Col span={12}>
+                                <button onClick={() => this.closeDrawer()}>discard changes</button>
+                            </Col>
+                        </Row>
                     );
                     break;
                 case 'monster':
@@ -1872,18 +1871,21 @@ export default class Dojo extends React.Component<Props, State> {
                         />
                     );
                     footer = (
-                        <ControlRow
-                            controls={[
+                        <Row gutter={10}>
+                            <Col span={8}>
                                 <Checkbox
-                                    key='sidebar'
                                     label='advanced tools'
                                     checked={this.state.drawer.showSidebar}
                                     changeValue={() => this.toggleShowSidebar()}
-                                />,
-                                <button key='save' onClick={() => this.saveMonster()}>save changes</button>,
-                                <button key='cancel' onClick={() => this.closeModal()}>discard changes</button>
-                            ]}
-                        />
+                                />
+                            </Col>
+                            <Col span={8}>
+                                <button onClick={() => this.saveMonster()}>save changes</button>
+                            </Col>
+                            <Col span={8}>
+                                <button onClick={() => this.closeDrawer()}>discard changes</button>
+                            </Col>
+                        </Row>
                     );
                     width = '75%';
                     break;
@@ -1894,12 +1896,14 @@ export default class Dojo extends React.Component<Props, State> {
                         />
                     );
                     footer = (
-                        <ControlRow
-                            controls={[
-                                <button key='save' onClick={() => this.saveMap()}>save changes</button>,
-                                <button key='cancel' onClick={() => this.closeModal()}>discard changes</button>
-                            ]}
-                        />
+                        <Row gutter={10}>
+                            <Col span={12}>
+                                <button onClick={() => this.saveMap()}>save changes</button>
+                            </Col>
+                            <Col span={12}>
+                                <button onClick={() => this.closeDrawer()}>discard changes</button>
+                            </Col>
+                        </Row>
                     );
                     width = '75%';
                     break;
@@ -1979,12 +1983,14 @@ export default class Dojo extends React.Component<Props, State> {
                         />
                     );
                     footer = (
-                        <ControlRow
-                            controls={[
-                                <button key='save' onClick={() => this.editConditionFromModal()}>save changes</button>,
-                                <button key='cancel' onClick={() => this.closeModal()}>discard changes</button>
-                            ]}
-                        />
+                        <Row gutter={10}>
+                            <Col span={12}>
+                                <button onClick={() => this.editConditionFromModal()}>save changes</button>
+                            </Col>
+                            <Col span={12}>
+                                <button onClick={() => this.closeDrawer()}>discard changes</button>
+                            </Col>
+                        </Row>
                     );
                     break;
                 case 'tools':
@@ -2062,7 +2068,7 @@ export default class Dojo extends React.Component<Props, State> {
                         onClose={() => this.toggleNavigation()}
                     >
                         <div className='drawer-header' />
-                        <div className='drawer-content drawer-left scrollable'>
+                        <div className='drawer-content scrollable'>
                             <div className='nav-item' onClick={() => this.selectPartyByID(null)}>
                                 player characters
                             </div>
@@ -2089,7 +2095,7 @@ export default class Dojo extends React.Component<Props, State> {
                         onClose={() => this.closeDrawer()}
                     >
                         <div className='drawer-header' />
-                        <div className='drawer-content drawer-right'>{drawer.content}</div>
+                        <div className='drawer-content'>{drawer.content}</div>
                         <div className='drawer-footer'>{drawer.footer}</div>
                     </Drawer>
                 </div>

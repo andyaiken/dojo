@@ -52,10 +52,3 @@ export interface Notification {
     data: Condition | Trait | null;
     combatant: (Combatant & Monster) | null;
 }
-
-export const COMBAT_TAGS = [
-    'conc',
-    'bane',
-    'bless',
-    'hex'
-];

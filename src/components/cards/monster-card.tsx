@@ -1,18 +1,17 @@
 import React from 'react';
 
-import { Collapse, Icon, Input } from 'antd';
+import { Col, Collapse, Icon, Input, Row } from 'antd';
 
 import Frankenstein from '../../utils/frankenstein';
 import Utils from '../../utils/utils';
 
-import { Combat, COMBAT_TAGS, Combatant } from '../../models/combat';
+import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
 import { Monster, MonsterGroup, Trait } from '../../models/monster-group';
 
 import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
-import ControlRow from '../controls/control-row';
 import Dropdown from '../controls/dropdown';
 import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
@@ -261,18 +260,40 @@ export default class MonsterCard extends React.Component<Props, State> {
                     );
                 }
                 options.push(
-                    <ControlRow
-                        key='tags'
-                        controls={COMBAT_TAGS.map(tag =>
+                    <Row key='tags' gutter={10}>
+                        <Col span={6}>
                             <Checkbox
-                                key={tag}
-                                label={tag}
+                                label='conc'
                                 display='button'
-                                checked={combatant.tags.includes(tag)}
-                                changeValue={value => this.props.toggleTag(combatant, tag)}
+                                checked={combatant.tags.includes('conc')}
+                                changeValue={value => this.props.toggleTag(combatant, 'conc')}
                             />
-                        )}
-                    />
+                        </Col>
+                        <Col span={6}>
+                            <Checkbox
+                                label='bane'
+                                display='button'
+                                checked={combatant.tags.includes('bane')}
+                                changeValue={value => this.props.toggleTag(combatant, 'bane')}
+                            />
+                        </Col>
+                        <Col span={6}>
+                            <Checkbox
+                                label='bless'
+                                display='button'
+                                checked={combatant.tags.includes('bless')}
+                                changeValue={value => this.props.toggleTag(combatant, 'bless')}
+                            />
+                        </Col>
+                        <Col span={6}>
+                            <Checkbox
+                                label='hex'
+                                display='button'
+                                checked={combatant.tags.includes('hex')}
+                                changeValue={value => this.props.toggleTag(combatant, 'hex')}
+                            />
+                        </Col>
+                    </Row>
                 );
                 break;
             case 'hp':
@@ -308,14 +329,17 @@ export default class MonsterCard extends React.Component<Props, State> {
                             factors={[1, 10]}
                             nudgeValue={delta => this.nudgeDamage(delta)}
                         />
-                        <ControlRow
-                            controls={[
-                                <button key='heal' onClick={() => this.heal()}>heal</button>,
-                                <button key='reset' onClick={() => this.setDamage(0)}>reset</button>,
-                                <button key='damage' onClick={() => this.damage()}>damage</button>
-                            ]}
-                            disabled={this.state.damageOrHealing === 0}
-                        />
+                        <Row gutter={10}>
+                            <Col span={8}>
+                                <button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.heal()}>heal</button>
+                            </Col>
+                            <Col span={8}>
+                                <button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.setDamage(0)}>reset</button>
+                            </Col>
+                            <Col span={8}>
+                                <button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.damage()}>damage</button>
+                            </Col>
+                        </Row>
                     </div>
                 );
                 break;

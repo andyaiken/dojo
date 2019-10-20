@@ -105,7 +105,7 @@ class MapFolioInfo extends React.Component<MapFolioInfoProps> {
                         <button onClick={() => this.props.addMap()}>add a new map</button>
                         <ConfirmButton text='delete folio' callback={() => this.props.removeMapFolio()} />
                         <div className='divider' />
-                        <button onClick={() => this.props.goBack()}><Icon type='caret-left' style={{ fontSize: '14px' }} /> back to the list</button>
+                        <button onClick={() => this.props.goBack()}><Icon type='caret-left' style={{ fontSize: '10px' }} /> back to the list</button>
                     </div>
                 </div>
             );

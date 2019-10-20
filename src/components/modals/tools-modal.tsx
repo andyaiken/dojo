@@ -10,7 +10,6 @@ import Utils from '../../utils/utils';
 import { CATEGORY_TYPES, Monster, MonsterGroup, SIZE_TYPES } from '../../models/monster-group';
 
 import Checkbox from '../controls/checkbox';
-import ControlRow from '../controls/control-row';
 import NumberSpin from '../controls/number-spin';
 import Selector from '../controls/selector';
 import GridPanel from '../panels/grid-panel';
@@ -503,41 +502,41 @@ class DieRollerModule extends React.Component<DieRollerModuleProps, DieRollerMod
             let optionsSection = null;
             if ((this.state.dice === '20') && (this.state.count === 1)) {
                 optionsSection = (
-                    <ControlRow
-                        controls={[
+                    <Row gutter={10}>
+                        <Col span={12}>
                             <Checkbox
-                                key='advantage'
                                 label='advantage'
                                 checked={this.state.options.includes('advantage')}
                                 changeValue={value => this.toggleOption('advantage')}
-                            />,
+                            />
+                        </Col>
+                        <Col span={12}>
                             <Checkbox
-                                key='disadvantage'
                                 label='disadvantage'
                                 checked={this.state.options.includes('disadvantage')}
                                 changeValue={value => this.toggleOption('disadvantage')}
                             />
-                        ]}
-                    />
+                        </Col>
+                    </Row>
                 );
             } else if (this.state.count > 1) {
                 optionsSection = (
-                    <ControlRow
-                        controls={[
+                    <Row gutter={10}>
+                        <Col span={12}>
                             <Checkbox
-                                key='drop-lowest'
                                 label='drop lowest'
                                 checked={this.state.options.includes('drop lowest')}
                                 changeValue={value => this.toggleOption('drop lowest')}
-                            />,
+                            />
+                        </Col>
+                        <Col span={12}>
                             <Checkbox
-                                key='drop-highest'
                                 label='drop highest'
                                 checked={this.state.options.includes('drop highest')}
                                 changeValue={value => this.toggleOption('drop highest')}
                             />
-                        ]}
-                    />
+                        </Col>
+                    </Row>
                 );
             }
 
@@ -839,13 +838,17 @@ class LanguageModule extends React.Component<LanguageModuleProps, LanguageModule
                         </Collapse.Panel>
                     </Collapse>
                     <div className='divider' />
-                    <ControlRow
-                        controls={[
-                            <button key='generate' className={allowGenerate ? '' : 'disabled'} onClick={() => this.generate()}>generate text</button>,
-                            <button key='reset' className={allowReset ? '' : 'disabled'} onClick={() => this.reset()}>reset</button>,
-                            <button key='random' onClick={() => this.random()}>random sources</button>
-                        ]}
-                    />
+                    <Row gutter={10}>
+                        <Col span={8}>
+                            <button className={allowGenerate ? '' : 'disabled'} onClick={() => this.generate()}>generate text</button>
+                        </Col>
+                        <Col span={8}>
+                            <button className={allowReset ? '' : 'disabled'} onClick={() => this.reset()}>reset</button>
+                        </Col>
+                        <Col span={8}>
+                            <button onClick={() => this.random()}>random sources</button>
+                        </Col>
+                    </Row>
                     <div className='language-output'>
                         {output}
                     </div>

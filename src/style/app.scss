@@ -1394,14 +1394,8 @@ body,
 
 .drawer-content {
     height: calc(100% - 100px);
-
-    &.drawer-left {
-        padding-right: 5px;
-    }
-
-    &.drawer-right {
-        padding-left: 5px;
-    }
+    padding-left: 5px;
+    padding-right: 5px;
 
     .nav-item {
         margin: 10px 0;
@@ -1430,7 +1424,7 @@ body,
     .companion {
         border: 1px solid $control-border;
         background-color: #FAF7EA;
-        margin: 5px 0;
+        margin: 5px 0 !important;
         padding: 5px 0;
     }
 

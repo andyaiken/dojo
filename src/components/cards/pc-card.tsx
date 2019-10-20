@@ -1,14 +1,13 @@
 import React from 'react';
 
-import { Collapse, Icon } from 'antd';
+import { Col, Collapse, Icon, Row } from 'antd';
 
-import { Combat, COMBAT_TAGS, Combatant } from '../../models/combat';
+import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { PC } from '../../models/party';
 
 import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
-import ControlRow from '../controls/control-row';
 import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
 import Selector from '../controls/selector';
@@ -123,18 +122,40 @@ export default class PCCard extends React.Component<Props, State> {
                 if (!combatant.pending && combatant.active && !combatant.defeated) {
                     options.push(<div key='tag-sep' className='divider' />);
                     options.push(
-                        <ControlRow
-                            key='tags'
-                            controls={COMBAT_TAGS.map(tag =>
+                        <Row key='tags' gutter={10}>
+                            <Col span={6}>
                                 <Checkbox
-                                    key={tag}
-                                    label={tag}
+                                    label='conc'
                                     display='button'
-                                    checked={combatant.tags.includes(tag)}
-                                    changeValue={value => this.props.toggleTag(combatant, tag)}
+                                    checked={combatant.tags.includes('conc')}
+                                    changeValue={value => this.props.toggleTag(combatant, 'conc')}
                                 />
-                            )}
-                        />
+                            </Col>
+                            <Col span={6}>
+                                <Checkbox
+                                    label='bane'
+                                    display='button'
+                                    checked={combatant.tags.includes('bane')}
+                                    changeValue={value => this.props.toggleTag(combatant, 'bane')}
+                                />
+                            </Col>
+                            <Col span={6}>
+                                <Checkbox
+                                    label='bless'
+                                    display='button'
+                                    checked={combatant.tags.includes('bless')}
+                                    changeValue={value => this.props.toggleTag(combatant, 'bless')}
+                                />
+                            </Col>
+                            <Col span={6}>
+                                <Checkbox
+                                    label='hex'
+                                    display='button'
+                                    checked={combatant.tags.includes('hex')}
+                                    changeValue={value => this.props.toggleTag(combatant, 'hex')}
+                                />
+                            </Col>
+                        </Row>
                     );
                 }
                 break;
