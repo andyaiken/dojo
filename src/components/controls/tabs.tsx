@@ -9,7 +9,7 @@ interface Props {
 
 export default class Tabs extends React.Component<Props> {
     public static defaultProps = {
-        disabled: false,
+        disabled: false
     };
 
     public render() {
