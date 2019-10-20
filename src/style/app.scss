@@ -469,13 +469,11 @@ body,
 
 .grid-panel {
     .heading {
-        font-size: 18px;
-        padding-left: 5px;
+        font-size: 20px;
 
         .title {
             width: calc(100% - 20px);
             display: inline-block;
-            vertical-align: middle;
         }
     
         .image {
@@ -483,7 +481,7 @@ body,
             height: 20px;
             cursor: pointer;
             display: inline-block;
-            vertical-align: middle;
+            margin-bottom: 3px;
         }
     }
 

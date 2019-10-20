@@ -51,7 +51,7 @@ export default class GridPanel extends React.Component<Props, State> {
                 }
 
                 heading = (
-                    <div className='heading'>
+                    <div className='heading fixed-top'>
                         <div className='title'>{this.props.heading}</div>
                         {toggle}
                     </div>
