@@ -15,6 +15,7 @@ import Checkbox from '../controls/checkbox';
 import Dropdown from '../controls/dropdown';
 import NumberSpin from '../controls/number-spin';
 import Selector from '../controls/selector';
+import Tabs from '../controls/tabs';
 import AbilityScorePanel from '../panels/ability-score-panel';
 import FilterPanel from '../panels/filter-panel';
 import Note from '../panels/note';
@@ -410,10 +411,10 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 <Col span={8} className='text-container'>
                     <b>type</b>
                 </Col>
-                <Col span={12} className='text-container number'>
-                    <b>average number</b>
+                <Col span={4} className='text-container number'>
+                    <b>avg</b>
                 </Col>
-                <Col span={8} className='text-container number'>
+                <Col span={4} className='text-container number'>
                     <b>min - max</b>
                 </Col>
             </Row>
@@ -845,8 +846,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 ];
                 sidebar = (
                     <Col span={8} className='scrollable sidebar right'>
-                        <Selector
-                            tabs={true}
+                        <Tabs
                             options={sidebarOptions}
                             selectedID={this.state.sidebar}
                             select={optionID => this.setState({sidebar: optionID as 'similar' | 'scratchpad'})}
@@ -874,8 +874,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             return (
                 <Row className='full-height'>
                     <Col span={16} className='scrollable'>
-                        <Selector
-                            tabs={true}
+                        <Tabs
                             options={pages}
                             selectedID={this.state.page}
                             select={optionID => this.setPage(optionID as 'overview' | 'abilities' | 'cbt-stats' | 'actions')}

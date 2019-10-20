@@ -72,7 +72,7 @@ export default class NumberSpin extends React.Component<Props> {
             minusBtns.reverse();
 
             return (
-                <div className={this.props.disabled ? 'spin disabled' : 'spin'}>
+                <div className={this.props.disabled ? 'number-spin disabled' : 'number-spin'}>
                     <div className='minus'>
                         {minusBtns}
                     </div>

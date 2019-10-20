@@ -144,6 +144,69 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// NumberSpin
+
+.number-spin {
+    margin: 5px 0;
+    border: 1px solid $control-border;
+    background-color: $background;
+
+    &:hover {
+        border-color: $highlight;
+    }
+
+    .minus,
+    .plus,
+    .spin-button,
+    .info {
+        display: inline-block;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .spin-button {
+        height: 20px;
+        width: 20px;
+        margin: 5px;
+        cursor: pointer;
+        background-color: transparent;
+        border: 2px solid $control-border;
+        border-radius: 50%;
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 15px;
+
+        &.multiple {
+            font-size: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        &:hover {
+            background-color: $highlight01;
+            border-color: $highlight05;
+            color: $highlight;
+        }
+    }
+
+    .info {
+        margin: 2px 0;
+
+        .info-label {
+            font-size: 11px;
+        }
+
+        .info-value {
+            font-weight: 600;
+            font-size: 15px;
+
+            &.dimmed {
+                opacity: 0.25;
+            }
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Radial
 
 .radial {
@@ -241,127 +304,74 @@
 
 .selector {
     margin: 5px 0;
+    padding: 3px;
+    background-color: $background;
+    border: 1px solid $control-border;
 
     .option {
         display: inline-block;
+        vertical-align: middle;
         text-align: center;
         margin: 1px;
+        padding: 3px;
         overflow: hidden;
         text-overflow: ellipsis;
         cursor: pointer;
-        padding: 3px;
+
+        &:hover {
+            background-color: $highlight01;
+        }
 
         &.selected {
             cursor: default;
-        }
-    }
-
-    &.tabs {
-        margin: 15px 0;
-        background-color: transparent;
-
-        .option {
-            line-height: 24px;
-            font-size: 16px;
+            background-color: $highlight02;
             font-weight: 600;
-            letter-spacing: 1px;
-            border-bottom: 2px solid $control-border;
-
-            &:hover {
-                border-bottom-color: $highlight;
-            }
-
-            &.selected {
-                background-color: $highlight02;
-                border-bottom-color: $highlight;
-            }
         }
     }
-
-    &.radio {
-        padding: 3px;
-        background-color: $background;
-        border: 1px solid $control-border;
-    }
-
-        &:hover {
-            border-color: $highlight;
-        }
-
-        .option {
-            vertical-align: middle;
-
-            &:hover {
-                background-color: $highlight01;
-            }
-
-            &.selected {
-                background-color: $highlight02;
-                font-weight: 600;
-            }
-        }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Spin
-
-.spin {
-    margin: 5px 0;
-    border: 1px solid $control-border;
-    background-color: $background;
 
     &:hover {
         border-color: $highlight;
     }
+}
 
-    .minus,
-    .plus,
-    .spin-button,
-    .info {
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Tabs
+
+.tabs {
+    margin: 5px 0;
+    margin: 15px 0;
+    background-color: transparent;
+
+    .tab {
         display: inline-block;
-        text-align: center;
         vertical-align: middle;
-    }
-
-    .spin-button {
-        height: 20px;
-        width: 20px;
-        margin: 5px;
-        cursor: pointer;
-        background-color: transparent;
-        border: 2px solid $control-border;
-        border-radius: 50%;
-        font-size: 20px;
+        text-align: center;
+        border-bottom: 2px solid $control-border;
+        margin: 1px;
+        padding: 3px;
+        font-size: 16px;
         font-weight: 600;
-        line-height: 15px;
-
-        &.multiple {
-            font-size: 8px;
-            letter-spacing: -0.5px;
-        }
+        letter-spacing: 1px;
+        line-height: 24px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
 
         &:hover {
+            border-bottom-color: $highlight;
             background-color: $highlight01;
-            border-color: $highlight05;
-            color: $highlight;
+        }
+
+        &.selected {
+            background-color: $highlight02;
+            border-bottom-color: $highlight;
+            font-weight: 600;
+            cursor: default;
         }
     }
 
-    .info {
-        margin: 2px 0;
-
-        .info-label {
-            font-size: 11px;
-        }
-
-        .info-value {
-            font-weight: 600;
-            font-size: 15px;
-
-            &.dimmed {
-                opacity: 0.25;
-            }
-        }
+    &:hover {
+        border-color: $highlight;
     }
 }
 
