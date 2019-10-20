@@ -22,6 +22,7 @@ import CombatStartModal from './modals/combat-start-modal';
 import ConditionModal from './modals/condition-modal';
 import MapEditorModal from './modals/map-editor-modal';
 import MonsterEditorModal from './modals/monster-editor-modal';
+import MonsterImportModal from './modals/monster-import-modal';
 import PCEditorModal from './modals/pc-editor-modal';
 import SearchModal from './modals/search-modal';
 import ToolsModal from './modals/tools-modal';
@@ -321,6 +322,26 @@ export default class Dojo extends React.Component<Props, State> {
             group.monsters.splice(index, 1);
             this.setState({
                 library: this.state.library
+            });
+        }
+    }
+
+    private importMonster() {
+        this.setState({
+            drawer: {
+                type: 'import-monster',
+                monster: Factory.createMonster()
+            }
+        });
+    }
+
+    private acceptImportedMonster() {
+        const group = this.state.library.find(g => g.id === this.state.selectedMonsterGroupID);
+        if (group) {
+            group.monsters.push(this.state.drawer.monster);
+            this.setState({
+                library: this.state.library,
+                drawer: null
             });
         }
     }
@@ -1722,6 +1743,7 @@ export default class Dojo extends React.Component<Props, State> {
                             goBack={() => this.selectMonsterGroup(null)}
                             removeMonsterGroup={() => this.removeMonsterGroup()}
                             addMonster={() => this.addMonster()}
+                            importMonster={() => this.importMonster()}
                             removeMonster={monster => this.removeMonster(monster)}
                             sortMonsters={() => this.sortMonsters()}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
@@ -1888,6 +1910,19 @@ export default class Dojo extends React.Component<Props, State> {
                         </Row>
                     );
                     width = '75%';
+                    break;
+                case 'import-monster':
+                    content = (
+                        <MonsterImportModal
+                            monster={this.state.drawer.monster}
+                        />
+                    );
+                    footer = (
+                        <button onClick={() => this.acceptImportedMonster()}>
+                            accept monster
+                        </button>
+                    );
+                    closable = true;
                     break;
                 case 'map':
                     content = (

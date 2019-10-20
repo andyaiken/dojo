@@ -15,6 +15,7 @@ interface Props {
     goBack: () => void;
     removeMonsterGroup: () => void;
     addMonster: () => void;
+    importMonster: () => void;
     removeMonster: (monster: Monster) => void;
     editMonster: (monster: Monster) => void;
     cloneMonster: (monster: Monster, name: string) => void;
@@ -58,6 +59,7 @@ export default class MonsterScreen extends React.Component<Props> {
                             monsterGroup={this.props.monsterGroup}
                             goBack={() => this.props.goBack()}
                             addMonster={() => this.props.addMonster()}
+                            importMonster={() => this.props.importMonster()}
                             sortMonsters={() => this.props.sortMonsters()}
                             changeValue={(type, value) => this.props.changeValue(this.props.monsterGroup, type, value)}
                             removeMonsterGroup={() => this.props.removeMonsterGroup()}
@@ -83,6 +85,7 @@ interface MonsterInfoProps {
     goBack: () => void;
     changeValue: (field: string, value: string) => void;
     addMonster: () => void;
+    importMonster: () => void;
     sortMonsters: () => void;
     removeMonsterGroup: () => void;
 }
@@ -104,6 +107,7 @@ class MonsterInfo extends React.Component<MonsterInfoProps> {
                     <div className='divider' />
                     <div className='section'>
                         <button onClick={() => this.props.addMonster()}>add a new monster</button>
+                        <button onClick={() => this.props.importMonster()}>import a monster</button>
                         <button onClick={() => this.props.sortMonsters()}>sort monsters</button>
                         <ConfirmButton text='delete group' callback={() => this.props.removeMonsterGroup()} />
                         <div className='divider' />

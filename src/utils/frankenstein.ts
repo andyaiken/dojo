@@ -74,6 +74,37 @@ export default class Frankenstein {
         });
     }
 
+    public static clear(monster: Monster) {
+        monster.name = '';
+        monster.size = 'medium';
+        monster.category = 'beast';
+        monster.tag = '';
+        monster.alignment = '';
+        monster.challenge = 1;
+        monster.abilityScores.str = 10;
+        monster.abilityScores.dex = 10;
+        monster.abilityScores.con = 10;
+        monster.abilityScores.int = 10;
+        monster.abilityScores.wis = 10;
+        monster.abilityScores.cha = 10;
+        monster.ac = 10;
+        monster.hpMax = 0;
+        monster.hpTemp = 0;
+        monster.hitDice = 1;
+        monster.damage.resist = '';
+        monster.damage.vulnerable = '';
+        monster.damage.immune = '';
+        monster.savingThrows = '';
+        monster.speed = '';
+        monster.skills = '';
+        monster.senses = '';
+        monster.languages = '';
+        monster.equipment = '';
+        monster.traits = [];
+        monster.conditionImmunities = '';
+        monster.portrait = '';
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Monster creation
 
@@ -329,6 +360,158 @@ export default class Frankenstein {
             text: text,
             uses: 0
         };
+    }
+
+    public static import(source: string, monster: Monster): void {
+        Frankenstein.clear(monster);
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(source, 'text/html');
+        const root = doc.getElementsByClassName('mon-stat-block')[0];
+
+        try {
+            monster.name = (root.getElementsByClassName('mon-stat-block__name')[0] as HTMLElement).innerText.trim();
+            let meta = (root.getElementsByClassName('mon-stat-block__meta')[0] as HTMLElement).innerText.toLowerCase().trim();
+            const firstSpace = meta.indexOf(' ');
+            monster.size = meta.substring(0, firstSpace).trim();
+            meta = meta.substring(firstSpace + 1).trim();
+            const comma = meta.indexOf(',');
+            monster.alignment = meta.substring(comma + 1).trim();
+            meta = meta.substring(0, comma).trim();
+            const open = meta.indexOf('(');
+            const close = meta.indexOf(')');
+            if ((open !== -1) && (close !== -1)) {
+                monster.tag = meta.substring(open + 1, close).trim();
+                meta = meta.substring(0, open).trim();
+            }
+            monster.category = meta;
+        } catch (ex) {
+            console.error(ex);
+        }
+
+        try {
+            const attrs = root.getElementsByClassName('mon-stat-block__attribute');
+            for (let attrIndex = 0; attrIndex !== attrs.length; ++attrIndex) {
+                const attr = attrs[attrIndex];
+                const label = (attr.getElementsByClassName('mon-stat-block__attribute-label')[0] as HTMLElement).innerText.toLowerCase().trim();
+                const value = (attr.getElementsByClassName('mon-stat-block__attribute-data-value')[0] as HTMLElement).innerText.toLowerCase().trim();
+                switch (label) {
+                    case 'armor class':
+                        monster.ac = Number.parseInt(value, 10);
+                        break;
+                    case 'hit points':
+                        monster.hpMax = Number.parseInt(value, 10);
+                        const extra = (attr.getElementsByClassName('mon-stat-block__attribute-data-extra')[0] as HTMLElement).innerText.toLowerCase().trim();
+                        monster.hitDice = Number.parseInt(extra.substring(1, extra.indexOf('d')), 10);
+                        break;
+                    case 'speed':
+                        monster.speed = value;
+                        break;
+                }
+            }
+        } catch (ex) {
+            console.error(ex);
+        }
+
+        try {
+            const stats = root.getElementsByClassName('ability-block__stat');
+            for (let statIndex = 0; statIndex !== stats.length; ++statIndex) {
+                const stat = stats[statIndex];
+                const ability = (stat.getElementsByClassName('ability-block__heading')[0] as HTMLElement).innerText.toLowerCase().trim();
+                const scoreStr = (stat.getElementsByClassName('ability-block__score')[0] as HTMLElement).innerText.toLowerCase().trim();
+                const score = Number.parseInt(scoreStr, 10);
+                monster.abilityScores[ability as 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha'] = score;
+            }
+        } catch (ex) {
+            console.error(ex);
+        }
+
+        try {
+            const tidbits = root.getElementsByClassName('mon-stat-block__tidbit');
+            for (let tidbitIndex = 0; tidbitIndex !== tidbits.length; ++tidbitIndex) {
+                const tidbit = tidbits[tidbitIndex];
+                const label = (tidbit.getElementsByClassName('mon-stat-block__tidbit-label')[0] as HTMLElement).innerText.toLowerCase().trim();
+                const value = (tidbit.getElementsByClassName('mon-stat-block__tidbit-data')[0] as HTMLElement).innerText.toLowerCase().trim();
+                switch (label) {
+                    case 'saving throws':
+                        monster.savingThrows = value;
+                        break;
+                    case 'skills':
+                        monster.skills = value;
+                        break;
+                    case 'damage immunities':
+                        monster.damage.immune = value;
+                        break;
+                    case 'condition immunities':
+                        monster.conditionImmunities = value;
+                        break;
+                    case 'senses':
+                        monster.senses = value;
+                        break;
+                    case 'languages':
+                        monster.languages = value;
+                        break;
+                    case 'challenge':
+                        const sp = value.indexOf(' ');
+                        monster.challenge = Number.parseInt(value.substring(0, sp), 10);
+                        break;
+                }
+            }
+
+            // TODO: Damage resistances
+            // TODO: Damage vulnerabilities
+            // TODO: Equipment
+        } catch (ex) {
+            console.error(ex);
+        }
+
+        try {
+            const blocks = root.getElementsByClassName('mon-stat-block__description-block');
+            for (let blockIndex = 0; blockIndex !== blocks.length; ++blockIndex) {
+                const block = blocks[blockIndex];
+                let traitType: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'lair' = 'trait';
+                const headingElements = block.getElementsByClassName('mon-stat-block__description-block-heading');
+                if (headingElements.length > 0) {
+                    const heading = (headingElements[0] as HTMLElement).innerText.toLowerCase().trim();
+                    switch (heading) {
+                        case 'actions':
+                            traitType = 'action';
+                            break;
+                        case 'bonus actions':
+                            traitType = 'bonus';
+                            break;
+                        case 'reactions':
+                            traitType = 'reaction';
+                            break;
+                        case 'legendary actions':
+                            traitType = 'legendary';
+                            break;
+                        case 'lair actions':
+                            traitType = 'lair';
+                            break;
+                    }
+                }
+                const traits = block.getElementsByTagName('p');
+                for (let traitIndex = 0; traitIndex !== traits.length; ++traitIndex) {
+                    let text = (traits[traitIndex] as HTMLElement).innerText.trim();
+                    const t = Factory.createTrait();
+                    t.type = traitType;
+                    const stop = text.indexOf('.');
+                    t.text = text.substring(stop + 1).trim();
+                    text = text.substring(0, stop);
+                    const open = text.indexOf('(');
+                    const close = text.indexOf(')');
+                    if ((open !== -1) && (close !== -1)) {
+                        t.usage = text.substring(open + 1, close).trim();
+                        text = text.substring(0, open).trim();
+                    }
+                    t.name = text;
+                    monster.traits.push(t);
+                }
+            }
+        } catch (ex) {
+            console.error(ex);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

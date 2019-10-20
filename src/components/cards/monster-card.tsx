@@ -670,6 +670,9 @@ export default class MonsterCard extends React.Component<Props, State> {
                         <div>
                             <div className='divider' />
                             <div className='section'>
+                                <AbilityScorePanel combatant={this.props.monster} />
+                            </div>
+                            <div className='section'>
                                 <b>ac</b> {this.props.monster.ac}
                             </div>
                             <div className='section' style={{ display: this.props.monster.hpMax !== 0 ? '' : 'none' }}>
@@ -677,9 +680,6 @@ export default class MonsterCard extends React.Component<Props, State> {
                             </div>
                             <div className='section' style={{ display: this.props.monster.speed !== '' ? '' : 'none' }}>
                                 <b>speed</b> {this.props.monster.speed}
-                            </div>
-                            <div className='section'>
-                                <AbilityScorePanel combatant={this.props.monster} />
                             </div>
                             <div className='section' style={{ display: this.props.monster.savingThrows !== '' ? '' : 'none' }}>
                                 <b>saving throws</b> {this.props.monster.savingThrows}

@@ -356,7 +356,7 @@ export default class PCCard extends React.Component<Props, State> {
                             <div className='section centered lowercase'>
                                 <i>{desc}</i>
                                 <div style={{ display: this.props.pc.url ? '' : 'none' }}>
-                                    <a href={this.props.pc.url} target='_blank' rel='noopener noreferrer'>d&d beyond sheet</a>
+                                    <a href={this.props.pc.url} target='_blank' rel='noopener noreferrer'>d&amp;d beyond sheet</a>
                                 </div>
                             </div>
                             <div className='divider' />
