@@ -439,6 +439,12 @@ export default class Frankenstein {
                     case 'skills':
                         monster.skills = value;
                         break;
+                    case 'damage vulnerabilities':
+                        monster.damage.vulnerable = value;
+                        break;
+                    case 'damage resistances':
+                        monster.damage.resist = value;
+                        break;
                     case 'damage immunities':
                         monster.damage.immune = value;
                         break;
@@ -457,10 +463,6 @@ export default class Frankenstein {
                         break;
                 }
             }
-
-            // TODO: Damage resistances
-            // TODO: Damage vulnerabilities
-            // TODO: Equipment
         } catch (ex) {
             console.error(ex);
         }

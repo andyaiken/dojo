@@ -59,7 +59,7 @@ export default class MonsterImportModal extends React.Component<Props, State> {
                         </Note>
                         <Input.TextArea
                             placeholder='paste page source here'
-                            rows={20}
+                            rows={10}
                             value={this.state.source}
                             onChange={event => this.setSource(event.target.value)}
                         />
