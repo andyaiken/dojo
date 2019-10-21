@@ -7,13 +7,13 @@ interface Props {
     openDrawer: (type: string) => void;
 }
 
-export default class Titlebar extends React.Component<Props> {
+export default class PageHeader extends React.Component<Props> {
     public render() {
         /*
         try {
         */
             return (
-                <div className='titlebar'>
+                <div className='page-header'>
                     <Icon type='menu' className='menu-icon' onClick={() => this.props.openMenu()} title='menu' />
                     <div className='app-title app-name'>dojo</div>
                     <div className='drawer-icons'>

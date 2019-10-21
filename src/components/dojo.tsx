@@ -26,8 +26,9 @@ import MonsterImportModal from './modals/monster-import-modal';
 import PCEditorModal from './modals/pc-editor-modal';
 import SearchModal from './modals/search-modal';
 import ToolsModal from './modals/tools-modal';
-import Navbar from './panels/navbar';
-import Titlebar from './panels/titlebar';
+import PageFooter from './panels/page-footer';
+import PageHeader from './panels/page-header';
+import PageNavigation from './panels/page-navigation';
 import CombatListScreen from './screens/combat-list-screen';
 import CombatScreen from './screens/combat-screen';
 import EncounterListScreen from './screens/encounter-list-screen';
@@ -99,6 +100,10 @@ export default class Dojo extends React.Component<Props, State> {
             if (data !== null) {
                 data.parties.forEach(p => {
                     p.pcs.forEach(pc => {
+                        if (pc.size === undefined) {
+                            pc.size = 'medium';
+                        }
+
                         if (pc.companions === undefined) {
                             pc.companions = [];
                         }
@@ -794,7 +799,7 @@ export default class Dojo extends React.Component<Props, State> {
         combatant.defeated = false;
 
         combatant.displayName = pc.name;
-        combatant.displaySize = 'medium';
+        combatant.displaySize = pc.size;
         combatant.showOnMap = true;
         combatant.initiative = 10;
         combatant.hp = null;
@@ -2075,19 +2080,16 @@ export default class Dojo extends React.Component<Props, State> {
             const content = this.getContent();
             const drawer = this.getDrawer();
 
-            const encountersEnabled = this.state.library.length !== 0;
-            const combatEnabled = (this.state.parties.length !== 0) && (this.state.encounters.length !== 0);
-
             return (
                 <div className='dojo'>
-                    <Titlebar
+                    <PageHeader
                         openMenu={() => this.toggleNavigation()}
                         openDrawer={type => this.openToolsDrawer(type)}
                     />
                     <div className='page-content'>
                         {content}
                     </div>
-                    <Navbar
+                    <PageFooter
                         view={this.state.view}
                         parties={this.state.parties}
                         library={this.state.library}
@@ -2103,22 +2105,17 @@ export default class Dojo extends React.Component<Props, State> {
                         onClose={() => this.toggleNavigation()}
                     >
                         <div className='drawer-header' />
-                        <div className='drawer-content scrollable'>
-                            <div className='nav-item' onClick={() => this.selectPartyByID(null)}>
-                                player characters
-                            </div>
-                            <div className='nav-item' onClick={() => this.selectMonsterGroupByID(null)}>
-                                monster library
-                            </div>
-                            <div className={encountersEnabled ? 'nav-item' : 'nav-item disabled'} onClick={() => this.selectEncounterByID(null)}>
-                                encounter builder
-                            </div>
-                            <div className='nav-item' onClick={() => this.selectMapFolioByID(null)}>
-                                map folios
-                            </div>
-                            <div className={combatEnabled ? 'nav-item' : 'nav-item disabled'} onClick={() => this.selectCombatByID(null)}>
-                                combat tracker
-                            </div>
+                        <div className='drawer-content'>
+                            <PageNavigation
+                                parties={this.state.parties}
+                                library={this.state.library}
+                                encounters={this.state.encounters}
+                                openParties={() => this.selectPartyByID(null)}
+                                openLibrary={() => this.selectMonsterGroupByID(null)}
+                                openEncounters={() => this.selectEncounterByID(null)}
+                                openMaps={() => this.selectMapFolioByID(null)}
+                                openCombats={() => this.selectCombatByID(null)}
+                            />
                         </div>
                         <div className='drawer-footer' />
                     </Drawer>

@@ -10,6 +10,7 @@ export interface PC {
     active: boolean;
     player: string;
     name: string;
+    size: string;
     race: string;
     classes: string;
     level: number;

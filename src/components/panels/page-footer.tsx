@@ -12,7 +12,7 @@ interface Props {
     setView: (view: 'home' | 'parties' | 'library' | 'encounters' | 'maps' | 'combat') => void;
 }
 
-export default class Navbar extends React.Component<Props> {
+export default class PageFooter extends React.Component<Props> {
     public render() {
         try {
             const partiesStyle = this.props.view === 'parties' ? 'navigator-item selected' : 'navigator-item';
@@ -31,7 +31,7 @@ export default class Navbar extends React.Component<Props> {
             }
 
             return (
-                <div className='navbar'>
+                <div className='page-footer'>
                     <div className={partiesStyle} onClick={() => this.props.setView('parties')}>player characters</div>
                     <div className={libraryStyle} onClick={() => this.props.setView('library')}>monster library</div>
                     <div className={encounterStyle} onClick={() => encountersEnabled ? this.props.setView('encounters') : null}>encounter builder</div>

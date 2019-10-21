@@ -14,7 +14,6 @@ h1 {
     font-weight: 600;
     font-size: 20px;
     text-transform: uppercase;
-    letter-spacing: 1px;
     margin: 0;
     padding: 10px 0;
 }
@@ -270,6 +269,7 @@ button {
     text-transform: uppercase;
     color: black;
     font-weight: 600;
+    letter-spacing: 2px;
 }
 
 .heading {
@@ -282,7 +282,7 @@ button {
 
 .subheading {
     font-weight: 600;
-    font-size: 16px;
+    font-size: 15px;
     padding-top: 3px;
     color: #656565;
 }
@@ -317,22 +317,6 @@ button {
 .strikethrough {
     text-decoration: line-through;
     opacity: 0.8;
-}
-
-.vertical-center-outer {
-    display: table;
-    height: 100%;
-    width: 100%;
-
-    .vertical-center-middle {
-        display: table-cell;
-        vertical-align: middle;
-
-        .vertical-center-inner {
-            margin: 0 auto;
-            width: 50%;
-        }
-    }
 }
 
 .image.rotate {
@@ -388,7 +372,7 @@ button {
     transition: all 0.2s ease-in-out;
     -webkit-user-select: none;
     user-select: none;
-    font-family: 'Source Sans Pro', sans-serif;
+    font-family: 'Open Sans', sans-serif;
 }
 
 html,
@@ -428,42 +412,6 @@ body,
     font-weight: 600;
     text-align: center;
     content: 'error';
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Navbar
-
-.navbar {
-    height: 50px;
-    padding: 0 5px;
-    text-align: center;
-    background-color: $header-background;
-
-    .navigator-item {
-        display: inline-block;
-        vertical-align: middle;
-        padding: 5px;
-        cursor: pointer;
-        height: 50px;
-        line-height: 35px;
-        width: calc((100% - 1px) / 5);
-        font-size: 14px;
-        color: $header-foreground;
-        border-top: 1px solid $control-border;
-
-        &.selected {
-            background-color: $background;
-            border-top: 1px solid transparent;
-            border-left: 1px solid $control-border;
-            border-right: 1px solid $control-border;
-            pointer-events: none;
-        }
-
-        &.selected,
-        &:hover {
-            font-weight: 600;
-        }
-    }
 }
 
 .grid-panel {
@@ -506,20 +454,19 @@ body,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Title bar
+// Page Header / Page Footer
 
-.titlebar {
+.page-header {
     height: 50px;
     padding: 10px 5px;
     background-color: $header-background;
     border-bottom: 1px solid $control-border;
 
     .menu-icon {
-        position: absolute;
-        left: 5px;
-        top: 0;
+        display: inline-block;
+        vertical-align: top;
         padding: 5px;
-        margin: 10px 5px;
+        margin: 0 5px;
         font-size: 20px;
         cursor: pointer;
 
@@ -529,9 +476,8 @@ body,
     }
 
     .app-title {
-        position: absolute;
-        left: 50px;
-        top: 10px;
+        display: inline-block;
+        vertical-align: top;
         padding: 5px;
         height: 30px;
         line-height: 20px;
@@ -539,7 +485,6 @@ body,
         font-weight: 600;
         color: $header-foreground;
         border-left: 3px solid $header-foreground;
-        letter-spacing: 3px;
     }
 
     .drawer-icons {
@@ -558,6 +503,39 @@ body,
 
         &:hover {
             background-color: $highlight02;
+        }
+    }
+}
+
+.page-footer {
+    height: 50px;
+    padding: 0 5px;
+    text-align: center;
+    background-color: $header-background;
+
+    .navigator-item {
+        display: inline-block;
+        vertical-align: middle;
+        padding: 5px;
+        cursor: pointer;
+        height: 50px;
+        line-height: 35px;
+        width: calc((100% - 1px) / 5);
+        font-size: 14px;
+        color: $header-foreground;
+        border-top: 1px solid $control-border;
+
+        &.selected {
+            background-color: $background;
+            border-top: 1px solid transparent;
+            border-left: 1px solid $control-border;
+            border-right: 1px solid $control-border;
+            pointer-events: none;
+        }
+
+        &.selected,
+        &:hover {
+            font-weight: 600;
         }
     }
 }
@@ -1382,6 +1360,20 @@ body,
     }
 }
 
+.nav-item {
+    margin: 10px 0;
+    border-left: 5px solid $control-border;
+    padding-left: 10px;
+    padding-bottom: 3px;
+    font-size: 20px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: $highlight01;
+        border-color: $highlight;
+    }
+}
+
 .drawer-header {
     height: 50px;
     background-color: $header-background;
@@ -1393,20 +1385,6 @@ body,
     height: calc(100% - 100px);
     padding-left: 5px;
     padding-right: 5px;
-
-    .nav-item {
-        margin: 10px 0;
-        border-left: 5px solid $control-border;
-        padding-left: 10px;
-        padding-bottom: 3px;
-        font-size: 20px;
-        cursor: pointer;
-
-        &:hover {
-            background-color: $highlight01;
-            border-color: $highlight;
-        }
-    }
 
     .hp-value {
         height: 32px;

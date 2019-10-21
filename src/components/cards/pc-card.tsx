@@ -257,6 +257,7 @@ export default class PCCard extends React.Component<Props, State> {
                 if (!combatant.pending) {
                     options.push(
                         <Collapse
+                            key='init'
                             bordered={false}
                             expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
                             expandIconPosition={'right'}

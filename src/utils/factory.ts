@@ -24,6 +24,7 @@ export default class Factory {
             active: true,
             player: '',
             name: '',
+            size: 'medium',
             race: '',
             classes: '',
             level: 1,

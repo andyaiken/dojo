@@ -31,35 +31,29 @@ export default class HomeScreen extends React.Component<Props> {
             }
 
             return (
-                <div className='scrollable'>
-                    <div className='vertical-center-outer'>
-                        <div className='vertical-center-middle'>
-                            <div className='vertical-center-inner'>
-                                <Readaloud>
-                                    <div className='heading'>welcome to <span className='app-name'>dojo</span></div>
-                                    <div className='divider' />
-                                    <div className='section'>
-                                        <span className='app-name'>dojo</span> is an app for dms of dungeons and dragons fifth edition
-                                    </div>
-                                    <div className='section'>
-                                        with <span className='app-name'>dojo</span> you can:
-                                        <ul>
-                                            <li>build unique, challenging monsters</li>
-                                            <li>create encounters of just the right difficulty for your players</li>
-                                            <li>design intricate tactical maps</li>
-                                            <li>run combat without the book-keeping</li>
-                                        </ul>
-                                    </div>
-                                    {monsters}
-                                    <div className='divider' />
-                                    <div className='section'>
-                                        use the buttons at the bottom of the screen to explore the app's main features,
-                                        or press the dm tools button at the top right for additional dm tools
-                                    </div>
-                                </Readaloud>
-                            </div>
+                <div className='scrollable' style={{ width: '80%', margin: '0 auto', paddingTop: '100px' }}>
+                    <Readaloud>
+                        <div className='heading'>welcome to <span className='app-name'>dojo</span></div>
+                        <div className='divider' />
+                        <div className='section'>
+                            <span className='app-name'>dojo</span> is an app for dms of dungeons and dragons fifth edition
                         </div>
-                    </div>
+                        <div className='section'>
+                            with <span className='app-name'>dojo</span> you can:
+                            <ul>
+                                <li>build unique, challenging monsters</li>
+                                <li>create encounters of just the right difficulty for your players</li>
+                                <li>design intricate tactical maps</li>
+                                <li>run combat without the book-keeping</li>
+                            </ul>
+                        </div>
+                        {monsters}
+                        <div className='divider' />
+                        <div className='section'>
+                            use the buttons at the bottom of the screen to explore the app's main features,
+                            or press the dm tools button at the top right for additional dm tools
+                        </div>
+                    </Readaloud>
                 </div>
             );
         } catch (ex) {

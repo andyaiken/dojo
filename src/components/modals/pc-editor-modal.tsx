@@ -3,6 +3,7 @@ import React from 'react';
 import { Col, Input, Row } from 'antd';
 
 import Factory from '../../utils/factory';
+import Utils from '../../utils/utils';
 
 import { PC } from '../../models/party';
 
@@ -52,8 +53,19 @@ export default class PCEditorModal extends React.Component<Props, State> {
     }
 
     private nudgeValue(source: any, field: string, delta: number) {
-        const value = source[field] + delta;
-        this.changeValue(source, field, value);
+        const value = source[field];
+
+        let newValue;
+        switch (field) {
+            case 'size':
+                newValue = Utils.nudgeSize(value, delta);
+                break;
+            default:
+                newValue = (value ? value : 0) + delta;
+                break;
+        }
+
+        this.changeValue(source, field, newValue);
     }
 
     public render() {
@@ -95,6 +107,12 @@ export default class PCEditorModal extends React.Component<Props, State> {
                             value={this.state.pc.player}
                             allowClear={true}
                             onChange={event => this.changeValue(this.state.pc, 'player', event.target.value)}
+                        />
+                        <div className='subheading'>size</div>
+                        <NumberSpin
+                            source={this.state.pc}
+                            name='size'
+                            nudgeValue={delta => this.nudgeValue(this.state.pc, 'size', delta)}
                         />
                         <div className='subheading'>race:</div>
                         <Input
