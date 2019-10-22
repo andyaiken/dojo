@@ -1,12 +1,12 @@
 {
   "files": {
     "main.css": "/dojo/static/css/main.dfbe0fcd.chunk.css",
-    "main.js": "/dojo/static/js/main.09c059da.chunk.js",
+    "main.js": "/dojo/static/js/main.f10e8157.chunk.js",
     "runtime-main.js": "/dojo/static/js/runtime-main.f6a12998.js",
     "static/css/2.8ac4ff58.chunk.css": "/dojo/static/css/2.8ac4ff58.chunk.css",
     "static/js/2.d996a6b3.chunk.js": "/dojo/static/js/2.d996a6b3.chunk.js",
     "index.html": "/dojo/index.html",
-    "precache-manifest.f4f412511e230179569fae1e8e67cb79.js": "/dojo/precache-manifest.f4f412511e230179569fae1e8e67cb79.js",
+    "precache-manifest.7d431d1a5645778fb8a3fbefeaec6a33.js": "/dojo/precache-manifest.7d431d1a5645778fb8a3fbefeaec6a33.js",
     "service-worker.js": "/dojo/service-worker.js",
     "static/media/down-arrow-black.svg": "/dojo/static/media/down-arrow-black.a2fc7a1f.svg",
     "static/media/down-arrow.svg": "/dojo/static/media/down-arrow.697dc1af.svg",
@@ -19,6 +19,6 @@
     "static/css/2.8ac4ff58.chunk.css",
     "static/js/2.d996a6b3.chunk.js",
     "static/css/main.dfbe0fcd.chunk.css",
-    "static/js/main.09c059da.chunk.js"
+    "static/js/main.f10e8157.chunk.js"
   ]
 }
