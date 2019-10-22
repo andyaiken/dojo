@@ -806,9 +806,11 @@ class PendingCombatantRow extends React.Component<PendingCombatantRowProps> {
 
             return (
                 <div className={style} onClick={e => this.onClick(e)}>
-                    <div className='name'>
+                    <div className='header'>
                         <PortraitPanel source={this.props.combatant} inline={true} />
-                        {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
+                        <div className='name'>
+                            {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
+                        </div>
                         <span className='info'>{this.getInformationText()}</span>
                     </div>
                     <div className='content'>
