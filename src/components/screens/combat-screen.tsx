@@ -935,10 +935,12 @@ class PCRow extends React.Component<PCRowProps> {
 
             return (
                 <div className={style} onClick={e => this.onClick(e)}>
-                    <div className='name'>
+                    <div className='header'>
                         <PortraitPanel source={this.props.combatant} inline={true} />
-                        {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
-                        {this.props.combatant.player ? ' | ' + this.props.combatant.player : ''}
+                        <div className='name'>
+                            {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
+                            {this.props.combatant.player ? ' | ' + this.props.combatant.player : ''}
+                        </div>
                         <span className='info'>{this.getInformationText()}</span>
                     </div>
                     <div className='content'>
@@ -1073,9 +1075,11 @@ class MonsterRow extends React.Component<MonsterRowProps> {
 
             return (
                 <div className={style} onClick={e => this.onClick(e)}>
-                    <div className='name'>
+                    <div className='header'>
                         <PortraitPanel source={this.props.combatant} inline={true} />
-                        {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
+                        <div className='name'>
+                            {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
+                        </div>
                         <span className='info'>{this.getInformationText()}</span>
                     </div>
                     <div className='content'>
