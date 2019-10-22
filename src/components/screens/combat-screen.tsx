@@ -628,7 +628,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                         {notificationSection}
                         {this.getTools()}
                         <GridPanel
-                            heading='waiting for intiative to be entered'
+                            heading='waiting for intiative'
                             content={pending}
                             columns={1}
                             showToggle={true}

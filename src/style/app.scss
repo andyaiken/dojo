@@ -276,6 +276,7 @@ button {
     padding: 5px 0;
     border-bottom: 1px solid $control-border;
     margin-bottom: 10px;
+    padding: 5px 10px;
     font-size: 20px;
     font-weight: 600;
 }
@@ -415,10 +416,10 @@ body,
 }
 
 .grid-panel {
-    .heading {
+    > .heading {
         font-size: 20px;
 
-        .title {
+        > .title {
             width: calc(100% - 20px);
             display: inline-block;
         }
@@ -489,7 +490,7 @@ body,
 
     .drawer-icons {
         position: absolute;
-        right: 0;
+        right: 5px;
         top: 0;
         height: 50px;
     }
@@ -552,7 +553,7 @@ body,
         height: 35px;
         font-size: 15px;
         margin: 0;
-        padding-left: 8px;
+        padding: 5px 0 5px 8px;
         border-bottom: none;
         background-color: #656565;
         color: $background;
@@ -707,10 +708,13 @@ body,
         color: $background;
         font-size: 15px;
         font-weight: 600;
-        padding: 3px 5px 5px 5px;
+        line-height: 20px;
+        padding: 5px 8px;
 
         .info {
             float: right;
+            font-size: 12px;
+            line-height: 20px;
         }
     }
 
@@ -959,7 +963,7 @@ body,
 
 .notifications {
     position: sticky;
-    z-index: 10;
+    z-index: 15;
     top: 0;
     background-color: transparent;
     padding: 1px 5px 0 5px;
@@ -1216,6 +1220,7 @@ body,
     .heading {
         font-size: 20px;
         border: none;
+        padding-left: 0;
     }
 }
 
@@ -1236,6 +1241,7 @@ body,
     .heading {
         font-size: 20px;
         border: none;
+        padding-left: 0;
     }
 
     .text {
@@ -1282,6 +1288,7 @@ body,
         img {
             width: 100%;
             height: 100%;
+            vertical-align: top;
         }
     }
 }
