@@ -53,6 +53,14 @@ export default class Utils {
         return collection;
     }
 
+    public static debounce(func: () => void, delay: number = 1000) {
+        let timeout: NodeJS.Timeout;
+        return () => {
+            clearTimeout(timeout);
+            timeout = setTimeout(func, delay);
+        };
+    }
+
     public static modifierValue(score: number): number {
         return Math.floor((score - 10) / 2);
     }

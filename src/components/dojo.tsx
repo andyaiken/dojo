@@ -65,6 +65,8 @@ interface State {
 }
 
 export default class Dojo extends React.Component<Props, State> {
+    private save: () => void;
+
     constructor(props: Props) {
         super(props);
 
@@ -83,6 +85,22 @@ export default class Dojo extends React.Component<Props, State> {
             selectedMapFolioID: null,
             selectedCombatID: null
         };
+
+        this.save = Utils.debounce(() => {
+            let json = null;
+            try {
+                json = JSON.stringify(this.state);
+            } catch (ex) {
+                console.error('Could not stringify data: ', ex);
+                json = null;
+            }
+
+            if (json !== null) {
+                const mb = json.length / (1024 * 1024);
+                console.info('Saving: ' + mb.toFixed(2) + ' MB');
+                window.localStorage.setItem('data', json);
+            }
+        }, 2000);
 
         try {
             let data: State | null = null;
@@ -184,17 +202,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     public componentDidUpdate() {
-        let json = null;
-        try {
-            json = JSON.stringify(this.state);
-        } catch (ex) {
-            console.error('Could not stringify data: ', ex);
-            json = null;
-        }
-
-        if (json !== null) {
-            window.localStorage.setItem('data', json);
-        }
+        this.save();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
