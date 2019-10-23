@@ -24,6 +24,7 @@ import ConditionModal from './modals/condition-modal';
 import MapEditorModal from './modals/map-editor-modal';
 import MonsterEditorModal from './modals/monster-editor-modal';
 import MonsterImportModal from './modals/monster-import-modal';
+import PartyImportModal from './modals/party-import-modal';
 import PCEditorModal from './modals/pc-editor-modal';
 import SearchModal from './modals/search-modal';
 import ToolsModal from './modals/tools-modal';
@@ -149,7 +150,16 @@ export default class Dojo extends React.Component<Props, State> {
                     const data = LZString.compress(json);
 
                     const mb = data.length / (1024 * 1024);
-                    console.info('Saving (' + key + '): ' + mb.toFixed(2) + ' MB');
+                    if (mb >= 1) {
+                        console.info('Saving (' + key + '): ' + mb.toFixed(2) + ' MB');
+                    } else {
+                        const kb = data.length / 1024;
+                        if (kb >= 1) {
+                            console.info('Saving (' + key + '): ' + kb.toFixed(2) + ' KB');
+                        } else {
+                            console.info('Saving (' + key + '): ' + data.length + ' B');
+                        }
+                    }
 
                     window.localStorage.setItem(key, data);
                 } catch (ex) {
@@ -205,6 +215,23 @@ export default class Dojo extends React.Component<Props, State> {
                 selectedPartyID: null
             });
         }
+    }
+
+    private importParty() {
+        this.setState({
+            drawer: {
+                type: 'import-party',
+                party: Factory.createParty()
+            }
+        });
+    }
+
+    private acceptImportedParty() {
+        this.state.parties.push(this.state.drawer.party);
+        this.setState({
+            parties: this.state.parties,
+            drawer: null
+        });
     }
 
     private addPC() {
@@ -1719,6 +1746,7 @@ export default class Dojo extends React.Component<Props, State> {
                         <PartyListScreen
                             parties={this.state.parties}
                             addParty={() => this.addParty()}
+                            importParty={() => this.importParty()}
                             selectParty={party => this.selectParty(party)}
                         />
                     );
@@ -1899,6 +1927,19 @@ export default class Dojo extends React.Component<Props, State> {
                         </Row>
                     );
                     width = '75%';
+                    break;
+                case 'import-party':
+                    content = (
+                        <PartyImportModal
+                            party={this.state.drawer.party}
+                        />
+                    );
+                    footer = (
+                        <button onClick={() => this.acceptImportedParty()}>
+                            accept party
+                        </button>
+                    );
+                    closable = true;
                     break;
                 case 'import-monster':
                     content = (

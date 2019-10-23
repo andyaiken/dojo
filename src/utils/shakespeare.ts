@@ -1,3 +1,5 @@
+// This utility file deals with text
+
 import Utils from './utils';
 
 interface ModelLine {

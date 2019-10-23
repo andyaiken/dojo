@@ -1,3 +1,5 @@
+// This utility file deals with encounters and combat
+
 import Factory from './factory';
 import Sherlock from './sherlock';
 import Utils from './utils';

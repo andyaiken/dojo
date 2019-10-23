@@ -1,3 +1,5 @@
+// This utility file deals with map folios and maps
+
 import Factory from './factory';
 import Utils from './utils';
 

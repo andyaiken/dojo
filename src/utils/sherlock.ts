@@ -1,3 +1,5 @@
+// This utility file deals with search
+
 import { Encounter, EncounterSlot, EncounterWave } from '../models/encounter';
 import { Map, MapFolio } from '../models/map-folio';
 import { Monster, MonsterGroup, Trait } from '../models/monster-group';

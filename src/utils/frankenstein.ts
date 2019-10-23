@@ -1,3 +1,5 @@
+// This utility file deals with monster groups and monsters
+
 import Factory from './factory';
 import Utils from './utils';
 
@@ -367,11 +369,10 @@ export default class Frankenstein {
 
         const parser = new DOMParser();
         const doc = parser.parseFromString(source, 'text/html');
-        const root = doc.getElementsByClassName('mon-stat-block')[0];
 
         try {
-            monster.name = (root.getElementsByClassName('mon-stat-block__name')[0] as HTMLElement).innerText.trim();
-            let meta = (root.getElementsByClassName('mon-stat-block__meta')[0] as HTMLElement).innerText.toLowerCase().trim();
+            monster.name = (doc.getElementsByClassName('mon-stat-block__name')[0] as HTMLElement).innerText.trim();
+            let meta = (doc.getElementsByClassName('mon-stat-block__meta')[0] as HTMLElement).innerText.toLowerCase().trim();
             const firstSpace = meta.indexOf(' ');
             monster.size = meta.substring(0, firstSpace).trim();
             meta = meta.substring(firstSpace + 1).trim();
@@ -390,7 +391,7 @@ export default class Frankenstein {
         }
 
         try {
-            const attrs = root.getElementsByClassName('mon-stat-block__attribute');
+            const attrs = doc.getElementsByClassName('mon-stat-block__attribute');
             for (let attrIndex = 0; attrIndex !== attrs.length; ++attrIndex) {
                 const attr = attrs[attrIndex];
                 const label = (attr.getElementsByClassName('mon-stat-block__attribute-label')[0] as HTMLElement).innerText.toLowerCase().trim();
@@ -414,7 +415,7 @@ export default class Frankenstein {
         }
 
         try {
-            const stats = root.getElementsByClassName('ability-block__stat');
+            const stats = doc.getElementsByClassName('ability-block__stat');
             for (let statIndex = 0; statIndex !== stats.length; ++statIndex) {
                 const stat = stats[statIndex];
                 const ability = (stat.getElementsByClassName('ability-block__heading')[0] as HTMLElement).innerText.toLowerCase().trim();
@@ -427,7 +428,7 @@ export default class Frankenstein {
         }
 
         try {
-            const tidbits = root.getElementsByClassName('mon-stat-block__tidbit');
+            const tidbits = doc.getElementsByClassName('mon-stat-block__tidbit');
             for (let tidbitIndex = 0; tidbitIndex !== tidbits.length; ++tidbitIndex) {
                 const tidbit = tidbits[tidbitIndex];
                 const label = (tidbit.getElementsByClassName('mon-stat-block__tidbit-label')[0] as HTMLElement).innerText.toLowerCase().trim();
@@ -468,7 +469,7 @@ export default class Frankenstein {
         }
 
         try {
-            const blocks = root.getElementsByClassName('mon-stat-block__description-block');
+            const blocks = doc.getElementsByClassName('mon-stat-block__description-block');
             for (let blockIndex = 0; blockIndex !== blocks.length; ++blockIndex) {
                 const block = blocks[blockIndex];
                 let traitType: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'lair' = 'trait';

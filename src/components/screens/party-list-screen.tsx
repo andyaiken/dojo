@@ -10,6 +10,7 @@ import Note from '../panels/note';
 interface Props {
     parties: Party[];
     addParty: () => void;
+    importParty: () => void;
     selectParty: (party: Party) => void;
 }
 
@@ -38,6 +39,7 @@ export default class PartyListScreen extends React.Component<Props> {
                             <div className='section'>to start adding a party, press the <b>create a new party</b> button</div>
                         </Note>
                         <button onClick={() => this.props.addParty()}>create a new party</button>
+                        <button onClick={() => this.props.importParty()}>import a party</button>
                     </Col>
                     <Col span={18} className='scrollable'>
                         <GridPanel heading='parties' content={listItems} />
