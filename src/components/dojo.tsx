@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Col, Drawer, Row } from 'antd';
+import LZString from 'lz-string';
 
 import Factory from '../utils/factory';
 import Frankenstein from '../utils/frankenstein';
@@ -70,15 +71,70 @@ export default class Dojo extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
+        let parties: Party[] = [];
+        try {
+            const str = window.localStorage.getItem('data-parties');
+            if (str) {
+                const json = LZString.decompress(str);
+                parties = JSON.parse(json);
+            }
+        } catch (ex) {
+            console.error('Could not parse JSON: ', ex);
+        }
+
+        let library: MonsterGroup[] = [];
+        try {
+            const str = window.localStorage.getItem('data-library');
+            if (str) {
+                const json = LZString.decompress(str);
+                library = JSON.parse(json);
+            }
+        } catch (ex) {
+            console.error('Could not parse JSON: ', ex);
+        }
+
+        let encounters: Encounter[] = [];
+        try {
+            const str = window.localStorage.getItem('data-encounters');
+            if (str) {
+                const json = LZString.decompress(str);
+                encounters = JSON.parse(json);
+            }
+        } catch (ex) {
+            console.error('Could not parse JSON: ', ex);
+        }
+
+        let mapFolios: MapFolio[] = [];
+        try {
+            const str = window.localStorage.getItem('data-mapfolios');
+            if (str) {
+                const json = LZString.decompress(str);
+                mapFolios = JSON.parse(json);
+            }
+        } catch (ex) {
+            console.error('Could not parse JSON: ', ex);
+        }
+
+        let combats: Combat[] = [];
+        try {
+            const str = window.localStorage.getItem('data-combats');
+            if (str) {
+                const json = LZString.decompress(str);
+                combats = JSON.parse(json);
+            }
+        } catch (ex) {
+            console.error('Could not parse JSON: ', ex);
+        }
+
         this.state = {
             view: 'home',
             navigation: false,
             drawer: null,
-            parties: [],
-            library: [],
-            encounters: [],
-            mapFolios: [],
-            combats: [],
+            parties: parties,
+            library: library,
+            encounters: encounters,
+            mapFolios: mapFolios,
+            combats: combats,
             selectedPartyID: null,
             selectedMonsterGroupID: null,
             selectedEncounterID: null,
@@ -87,118 +143,38 @@ export default class Dojo extends React.Component<Props, State> {
         };
 
         this.save = Utils.debounce(() => {
-            let json = null;
-            try {
-                json = JSON.stringify(this.state);
-            } catch (ex) {
-                console.error('Could not stringify data: ', ex);
-                json = null;
-            }
+            const fn = async (obj: any, key: string) => {
+                try {
+                    const json = JSON.stringify(obj);
+                    const data = LZString.compress(json);
 
-            if (json !== null) {
-                const mb = json.length / (1024 * 1024);
-                console.info('Saving: ' + mb.toFixed(2) + ' MB');
-                window.localStorage.setItem('data', json);
-            }
-        }, 2000);
+                    const mb = data.length / (1024 * 1024);
+                    console.info('Saving (' + key + '): ' + mb.toFixed(2) + ' MB');
 
-        try {
-            let data: State | null = null;
-
-            try {
-                const json = window.localStorage.getItem('data');
-                if (json) {
-                    data = JSON.parse(json);
+                    window.localStorage.setItem(key, data);
+                } catch (ex) {
+                    console.error('Could not stringify data: ', ex);
                 }
-            } catch (ex) {
-                console.error('Could not parse JSON: ', ex);
-                data = null;
+            };
+
+            switch (this.state.view) {
+                case 'parties':
+                    fn(this.state.parties, 'data-parties');
+                    break;
+                case 'library':
+                    fn(this.state.library, 'data-library');
+                    break;
+                case 'encounters':
+                    fn(this.state.encounters, 'data-encounters');
+                    break;
+                case 'maps':
+                    fn(this.state.mapFolios, 'data-mapfolios');
+                    break;
+                case 'combat':
+                    fn(this.state.combats, 'data-combats');
+                    break;
             }
-
-            if (data !== null) {
-                data.parties.forEach(p => {
-                    p.pcs.forEach(pc => {
-                        if (pc.size === undefined) {
-                            pc.size = 'medium';
-                        }
-
-                        if (pc.companions === undefined) {
-                            pc.companions = [];
-                        }
-                    });
-                });
-                data.library.forEach(g => {
-                    g.monsters.forEach(m => {
-                        m.traits.forEach(t => {
-                            if (t.uses === undefined) {
-                                t.uses = 0;
-                            }
-                        });
-                    });
-                });
-
-                data.encounters.forEach(enc => {
-                    if (!enc.waves) {
-                        enc.waves = [];
-                    }
-                });
-
-                if (!data.mapFolios) {
-                    data.mapFolios = [];
-                    data.selectedMapFolioID = null;
-                }
-
-                data.mapFolios.forEach(folio => {
-                    folio.maps.forEach(map => {
-                        map.items.forEach(item => {
-                            if (item.style === undefined) {
-                                item.style = null;
-                            }
-                        });
-                    });
-                });
-
-                data.combats.forEach(combat => {
-                    if (!combat.notifications) {
-                        combat.notifications = [];
-                    }
-                    combat.combatants.forEach(c => {
-                        if (c.showOnMap === undefined) {
-                            c.showOnMap = true;
-                        }
-
-                        if (c.altitude === undefined) {
-                            c.altitude = 0;
-                        }
-
-                        if (c.tags === undefined) {
-                            c.tags = [];
-                        }
-
-                        if (c.aura === undefined) {
-                            c.aura = { radius: 0, style: 'rounded', color: '#005080' };
-                        }
-
-                        if (c.type === 'monster') {
-                            const m = c as Combatant & Monster;
-                            m.traits.forEach(t => {
-                                if (t.uses === undefined) {
-                                    t.uses = 0;
-                                }
-                            });
-                        }
-                    });
-                });
-
-                data.view = 'home';
-                data.navigation = false;
-                data.drawer = null;
-
-                this.state = data;
-            }
-        } catch (ex) {
-            console.error(ex);
-        }
+        }, 5000);
     }
 
     public componentDidUpdate() {
