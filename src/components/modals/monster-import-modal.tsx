@@ -44,7 +44,7 @@ export default class MonsterImportModal extends React.Component<Props, State> {
     public render() {
         try {
             return (
-                <Row gutter={10} className='full-height'>
+                <Row className='full-height'>
                     <Col span={12} className='scrollable'>
                         <div className='heading'>import monster</div>
                         <Note>

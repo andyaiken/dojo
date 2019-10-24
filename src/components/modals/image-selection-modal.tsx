@@ -1,5 +1,8 @@
 import React from 'react';
 
+import { Input } from 'antd';
+
+import Sherlock from '../../utils/sherlock';
 import Utils from '../../utils/utils';
 
 interface Props {
@@ -9,6 +12,7 @@ interface Props {
 
 interface State {
     images: SavedImage[];
+    filter: string;
 }
 
 interface SavedImage {
@@ -21,7 +25,7 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        const images: SavedImage[] = [];
+        let images: SavedImage[] = [];
         for (let n = 0; n !== localStorage.length; ++n) {
             const key = localStorage.key(n);
             if (key && key.startsWith('image-')) {
@@ -37,9 +41,18 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
             }
         }
 
+        images = Utils.sort(images, [{ field: 'name', dir: 'asc'}]);
+
         this.state = {
-            images: images
+            images: images,
+            filter: ''
         };
+    }
+
+    private setFilter(text: string) {
+        this.setState({
+            filter: text
+        });
     }
 
     private onFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
@@ -94,7 +107,12 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
                                 onChange={e => this.onFileSelected(e)}
                             />
                             <div className='divider' />
-                            {this.state.images.map(img => (
+                            <Input.Search
+                                placeholder='search for an image'
+                                onChange={e => this.setFilter(e.target.value)}
+                                onSearch={value => this.setFilter(value)}
+                            />
+                            {this.state.images.filter(img => Sherlock.match(this.state.filter, img.name)).map(img => (
                                 <div key={img.id}>
                                     <div className='subheading'>{img.name}</div>
                                     <img className='selectable-image' src={img.data} alt={img.name} onClick={() => this.props.select(img.id)} />
