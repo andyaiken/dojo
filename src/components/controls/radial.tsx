@@ -1,4 +1,5 @@
 import React from 'react';
+import { Icon } from 'antd';
 
 interface Props {
     click: (dir: string, dir2: 'in' | 'out' | null) => void;
@@ -33,58 +34,58 @@ export default class Radial extends React.Component<Props> {
                     <div className='cell' style={{ display: showDiag ? 'none' : 'inline-block' }} />
                     <div className='cell' style={{ display: showDiag ? 'inline-block' : 'none' }}>
                         <div className='arrow diag' style={{ display: showOut ? 'block' : 'none' }} onClick={e => this.click(e, 'NW')}>
-                            &#8598;
+                            <Icon type='arrow-up' rotate={-45} />
                         </div>
                     </div>
                     <div className='cell'>
                         <div className='arrow vertical' style={{ display: showOut ? 'block' : 'none' }} onClick={e => this.click(e, 'N', 'out')}>
-                            &#8593;
+                            <Icon type='up-circle' />
                         </div>
                         <div className='arrow vertical' style={{ display: showIn ? 'block' : 'none' }} onClick={e => this.click(e, 'N', 'in')}>
-                            &#8595;
+                            <Icon type='down-circle' />
                         </div>
                     </div>
                     <div className='cell' style={{ display: showDiag ? 'none' : 'inline-block' }} />
                     <div className='cell' style={{ display: showDiag ? 'inline-block' : 'none' }}>
                         <div className='arrow diag' style={{ display: showOut ? 'block' : 'none' }} onClick={e => this.click(e, 'NE')}>
-                            &#8599;
+                            <Icon type='arrow-up' rotate={45} />
                         </div>
                     </div>
                     <div className='cell'>
                         <div className='arrow horizontal' style={{ display: showOut ? 'inline-block' : 'none' }} onClick={e => this.click(e, 'W', 'out')}>
-                            &#8592;
+                            <Icon type='left-circle' />
                         </div>
                         <div className='arrow horizontal' style={{ display: showIn ? 'inline-block' : 'none' }} onClick={e => this.click(e, 'W', 'in')}>
-                            &#8594;
+                            <Icon type='right-circle' />
                         </div>
                     </div>
                     <div className='cell' />
                     <div className='cell'>
                         <div className='arrow horizontal' style={{ display: showIn ? 'inline-block' : 'none' }} onClick={e => this.click(e, 'E', 'in')}>
-                            &#8592;
+                            <Icon type='left-circle' />
                         </div>
                         <div className='arrow horizontal' style={{ display: showOut ? 'inline-block' : 'none' }} onClick={e => this.click(e, 'E', 'out')}>
-                            &#8594;
+                            <Icon type='right-circle' />
                         </div>
                     </div>
                     <div className='cell' style={{ display: showDiag ? 'none' : 'inline-block' }} />
                     <div className='cell' style={{ display: showDiag ? 'inline-block' : 'none' }}>
                         <div className='arrow diag' style={{ display: showOut ? 'block' : 'none' }} onClick={e => this.click(e, 'SW')}>
-                            &#8601;
+                            <Icon type='arrow-down' rotate={45} />
                         </div>
                     </div>
                     <div className='cell'>
                         <div className='arrow vertical' style={{ display: showIn ? 'block' : 'none' }} onClick={e => this.click(e, 'S', 'in')}>
-                            &#8593;
+                            <Icon type='up-circle' />
                         </div>
                         <div className='arrow vertical' style={{ display: showOut ? 'block' : 'none' }} onClick={e => this.click(e, 'S', 'out')}>
-                            &#8595;
+                            <Icon type='down-circle' />
                         </div>
                     </div>
                     <div className='cell' style={{ display: showDiag ? 'none' : 'inline-block' }} />
                     <div className='cell' style={{ display: showDiag ? 'inline-block' : 'none' }}>
                         <div className='arrow diag' style={{ display: showOut ? 'block' : 'none' }} onClick={e => this.click(e, 'SE', 'out')}>
-                            &#8600;
+                            <Icon type='arrow-down' rotate={-45} />
                         </div>
                     </div>
                 </div>
