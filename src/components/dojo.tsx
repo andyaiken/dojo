@@ -67,8 +67,6 @@ interface State {
 }
 
 export default class Dojo extends React.Component<Props, State> {
-    private save: () => void;
-
     constructor(props: Props) {
         super(props);
 
@@ -142,53 +140,14 @@ export default class Dojo extends React.Component<Props, State> {
             selectedMapFolioID: null,
             selectedCombatID: null
         };
-
-        this.save = Utils.debounce(() => {
-            const fn = async (obj: any, key: string) => {
-                try {
-                    const json = JSON.stringify(obj);
-                    const data = LZString.compress(json);
-
-                    const mb = data.length / (1024 * 1024);
-                    if (mb >= 1) {
-                        console.info('Saving (' + key + '): ' + mb.toFixed(2) + ' MB');
-                    } else {
-                        const kb = data.length / 1024;
-                        if (kb >= 1) {
-                            console.info('Saving (' + key + '): ' + kb.toFixed(2) + ' KB');
-                        } else {
-                            console.info('Saving (' + key + '): ' + data.length + ' B');
-                        }
-                    }
-
-                    window.localStorage.setItem(key, data);
-                } catch (ex) {
-                    console.error('Could not stringify data: ', ex);
-                }
-            };
-
-            switch (this.state.view) {
-                case 'parties':
-                    fn(this.state.parties, 'data-parties');
-                    break;
-                case 'library':
-                    fn(this.state.library, 'data-library');
-                    break;
-                case 'encounters':
-                    fn(this.state.encounters, 'data-encounters');
-                    break;
-                case 'maps':
-                    fn(this.state.mapFolios, 'data-mapfolios');
-                    break;
-                case 'combat':
-                    fn(this.state.combats, 'data-combats');
-                    break;
-            }
-        }, 5000);
     }
 
     public componentDidUpdate() {
-        this.save();
+        this.saveAfterDelay();
+    }
+
+    public componentWillUnmount() {
+        this.saveAll();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1632,6 +1591,10 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private changeValue(combatant: any, type: string, value: any) {
+        if (type === 'view') {
+            this.save();
+        }
+
         switch (type) {
             case 'hp':
                 value = Math.min(value, combatant.hpMax);
@@ -1712,6 +1675,61 @@ export default class Dojo extends React.Component<Props, State> {
             } else {
                 obj = obj[token];
             }
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private saveAfterDelay = Utils.debounce(() => this.save(), 10000);
+
+    private save() {
+        switch (this.state.view) {
+            case 'parties':
+                this.saveKey(this.state.parties, 'data-parties');
+                break;
+            case 'library':
+                this.saveKey(this.state.library, 'data-library');
+                break;
+            case 'encounters':
+                this.saveKey(this.state.encounters, 'data-encounters');
+                break;
+            case 'maps':
+                this.saveKey(this.state.mapFolios, 'data-mapfolios');
+                break;
+            case 'combat':
+                this.saveKey(this.state.combats, 'data-combats');
+                break;
+        }
+    }
+
+    private saveAll() {
+        this.saveKey(this.state.parties, 'data-parties');
+        this.saveKey(this.state.library, 'data-library');
+        this.saveKey(this.state.encounters, 'data-encounters');
+        this.saveKey(this.state.mapFolios, 'data-mapfolios');
+        this.saveKey(this.state.combats, 'data-combats');
+    }
+
+    private saveKey(obj: any, key: string) {
+        try {
+            const json = JSON.stringify(obj);
+            const data = LZString.compress(json);
+
+            const mb = data.length / (1024 * 1024);
+            if (mb >= 1) {
+                console.info('Saving (' + key + '): ' + mb.toFixed(2) + ' MB');
+            } else {
+                const kb = data.length / 1024;
+                if (kb >= 1) {
+                    console.info('Saving (' + key + '): ' + kb.toFixed(2) + ' KB');
+                } else {
+                    console.info('Saving (' + key + '): ' + data.length + ' B');
+                }
+            }
+
+            window.localStorage.setItem(key, data);
+        } catch (ex) {
+            console.error('Could not stringify data: ', ex);
         }
     }
 
