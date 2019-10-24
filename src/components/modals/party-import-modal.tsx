@@ -47,7 +47,6 @@ export default class PartyImportModal extends React.Component<Props, State> {
             return (
                 <Row className='full-height'>
                     <Col span={12} className='scrollable'>
-                        <div className='heading'>import party</div>
                         <Note>
                             <div>go to the following link to find the party you want to import</div>
                             <div>

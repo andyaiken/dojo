@@ -166,7 +166,6 @@ export default class SearchModal extends React.Component<Props, State> {
 
             return (
                 <div className='scrollable'>
-                    <div className='heading'>search</div>
                     <Input.Search
                         placeholder='search'
                         onChange={e => this.setSearchTerm(e.target.value)}

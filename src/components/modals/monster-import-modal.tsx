@@ -46,7 +46,6 @@ export default class MonsterImportModal extends React.Component<Props, State> {
             return (
                 <Row className='full-height'>
                     <Col span={12} className='scrollable'>
-                        <div className='heading'>import monster</div>
                         <Note>
                             <div>go to the following link to find the monster you want to import</div>
                             <div>

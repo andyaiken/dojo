@@ -113,7 +113,6 @@ export default class ToolsModal extends React.Component<Props, State> {
 
             return (
                 <div className='scrollable'>
-                    <div className='heading'>dm tools</div>
                     <Selector
                         options={options}
                         selectedID={this.state.view}

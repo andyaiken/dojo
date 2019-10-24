@@ -1424,40 +1424,6 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
-    private breadcrumbClicked(view: string) {
-        switch (view) {
-            case 'home':
-                this.setState({
-                    view: 'home'
-                });
-                break;
-            case 'parties':
-                this.setState({
-                    view: 'parties',
-                    selectedPartyID: null
-                });
-                break;
-            case 'library':
-                this.setState({
-                    view: 'library',
-                    selectedMonsterGroupID: null
-                });
-                break;
-            case 'encounters':
-                this.setState({
-                    view: 'encounters',
-                    selectedEncounterID: null
-                });
-                break;
-            case 'maps':
-                this.setState({
-                    view: 'maps',
-                    selectedMapFolioID: null
-                });
-                break;
-        }
-    }
-
     private openToolsDrawer(type: string) {
         this.setState({
             drawer: {
@@ -1887,6 +1853,7 @@ export default class Dojo extends React.Component<Props, State> {
 
     private getDrawer() {
         let content = null;
+        let header = null;
         let footer = null;
         let width = '50%';
         let closable = false;
@@ -1899,6 +1866,7 @@ export default class Dojo extends React.Component<Props, State> {
                             pc={this.state.drawer.pc}
                         />
                     );
+                    header = 'pc editor';
                     footer = (
                         <Row gutter={10}>
                             <Col span={12}>
@@ -1918,6 +1886,7 @@ export default class Dojo extends React.Component<Props, State> {
                             showSidebar={this.state.drawer.showSidebar}
                         />
                     );
+                    header = 'monster editor';
                     footer = (
                         <Row gutter={10}>
                             <Col span={8}>
@@ -1943,6 +1912,7 @@ export default class Dojo extends React.Component<Props, State> {
                             party={this.state.drawer.party}
                         />
                     );
+                    header = 'import party';
                     footer = (
                         <button onClick={() => this.acceptImportedParty()}>
                             accept party
@@ -1956,6 +1926,7 @@ export default class Dojo extends React.Component<Props, State> {
                             monster={this.state.drawer.monster}
                         />
                     );
+                    header = 'import monster';
                     footer = (
                         <button onClick={() => this.acceptImportedMonster()}>
                             accept monster
@@ -1969,6 +1940,7 @@ export default class Dojo extends React.Component<Props, State> {
                             map={this.state.drawer.map}
                         />
                     );
+                    header = 'map editor';
                     footer = (
                         <Row gutter={10}>
                             <Col span={12}>
@@ -1992,6 +1964,7 @@ export default class Dojo extends React.Component<Props, State> {
                             notify={() => this.setState({drawer: this.state.drawer})}
                         />
                     );
+                    header = 'start combat';
                     footer = (
                         <button
                             className={this.state.drawer.combatSetup.partyID && this.state.drawer.combatSetup.encounterID ? '' : 'disabled'}
@@ -2012,6 +1985,7 @@ export default class Dojo extends React.Component<Props, State> {
                             notify={() => this.setState({drawer: this.state.drawer})}
                         />
                     );
+                    header = 'add a wave';
                     footer = (
                         <button
                             className={this.state.drawer.combatSetup.waveID !== null ? '' : 'disabled'}
@@ -2030,6 +2004,7 @@ export default class Dojo extends React.Component<Props, State> {
                             library={this.state.library}
                         />
                     );
+                    header = 'add combatants';
                     footer = (
                         <button onClick={() => this.addCombatantsFromModal()}>add combatants</button>
                     );
@@ -2043,6 +2018,7 @@ export default class Dojo extends React.Component<Props, State> {
                             combat={this.state.drawer.combat}
                         />
                     );
+                    header = 'add a condition';
                     footer = (
                         <button onClick={() => this.addConditionFromModal()}>add</button>
                     );
@@ -2056,6 +2032,7 @@ export default class Dojo extends React.Component<Props, State> {
                             combat={this.state.drawer.combat}
                         />
                     );
+                    header = 'edit condition';
                     footer = (
                         <Row gutter={10}>
                             <Col span={12}>
@@ -2073,6 +2050,7 @@ export default class Dojo extends React.Component<Props, State> {
                             library={this.state.library}
                         />
                     );
+                    header = 'dm tools';
                     closable = true;
                     break;
                 case 'search':
@@ -2088,6 +2066,7 @@ export default class Dojo extends React.Component<Props, State> {
                             openFolio={id => this.selectMapFolioByID(id)}
                         />
                     );
+                    header = 'search';
                     closable = true;
                     break;
                 case 'about':
@@ -2096,6 +2075,7 @@ export default class Dojo extends React.Component<Props, State> {
                             resetAll={() => this.resetAll()}
                         />
                     );
+                    header = 'about';
                     closable = true;
                     break;
             }
@@ -2103,6 +2083,7 @@ export default class Dojo extends React.Component<Props, State> {
 
         return {
             content: content,
+            header: header,
             footer: footer,
             width: width,
             closable: closable
@@ -2160,7 +2141,7 @@ export default class Dojo extends React.Component<Props, State> {
                         visible={drawer.content !== null}
                         onClose={() => this.closeDrawer()}
                     >
-                        <div className='drawer-header' />
+                        <div className='drawer-header'><div className='text'>{drawer.header}</div></div>
                         <div className='drawer-content'>{drawer.content}</div>
                         <div className='drawer-footer'>{drawer.footer}</div>
                     </Drawer>

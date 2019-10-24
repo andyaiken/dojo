@@ -224,6 +224,7 @@ button {
 
 .ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
     padding: 0 10px 5px 10px;
+    overflow-y: auto;
 }
 
 .ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow {
@@ -1241,7 +1242,7 @@ body,
     border-width: 7px;
     border-image: url("../resources/images/bookends.png") 12 stretch;
     border-image-outset: 4px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
 
     &.white {
         background-color: #FFFFFF;
@@ -1394,7 +1395,21 @@ body,
     height: 50px;
     background-color: $header-background;
     border-top: 1px solid $control-border;
-    padding: 4px 20px;
+    padding: 10px;
+
+    .text {
+        display: inline-block;
+        vertical-align: top;
+        padding: 5px;
+        height: 30px;
+        line-height: 20px;
+        font-size: 20px;
+        font-weight: 600;
+        color: #3c3c3c;
+        border-left: 3px solid #3c3c3c;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
 }
 
 .drawer-content {
