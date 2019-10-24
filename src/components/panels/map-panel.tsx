@@ -376,8 +376,14 @@ class MapTile extends React.Component<MapTileProps> {
 
             let content = null;
             if (this.props.tile.terrain === 'custom') {
+                let src = none;
+                const data = localStorage.getItem('image-' + this.props.tile.customBackground);
+                if (data) {
+                    const image = JSON.parse(data);
+                    src = image.data;
+                }
                 content = (
-                    <img className='custom-image' src={this.props.tile.customBackground ? this.props.tile.customBackground : none} alt='map tile' />
+                    <img className='custom-image' alt='map tile' src={src} />
                 );
             }
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Input, Row } from 'antd';
+import { Col, Drawer, Input, Row } from 'antd';
 
 import Factory from '../../utils/factory';
 import Mercator from '../../utils/mercator';
@@ -15,6 +15,7 @@ import Radial from '../controls/radial';
 import Selector from '../controls/selector';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
+import ImageSelectionModal from './image-selection-modal';
 
 interface Props {
     map: Map;
@@ -25,6 +26,7 @@ interface State {
     selectedTileID: string | null;
     addingTile: boolean;
     mapSize: number;
+    showImageSelection: boolean;
 }
 
 export default class MapEditorModal extends React.Component<Props, State> {
@@ -35,7 +37,8 @@ export default class MapEditorModal extends React.Component<Props, State> {
             map: props.map,
             selectedTileID: null,
             addingTile: false,
-            mapSize: 30
+            mapSize: 30,
+            showImageSelection: false
         };
     }
 
@@ -54,6 +57,12 @@ export default class MapEditorModal extends React.Component<Props, State> {
     private nudgeMapSize(value: number) {
         this.setState({
             mapSize: this.state.mapSize + value
+        });
+    }
+
+    private toggleImageSelection() {
+        this.setState({
+            showImageSelection: !this.state.showImageSelection
         });
     }
 
@@ -213,6 +222,13 @@ export default class MapEditorModal extends React.Component<Props, State> {
         });
     }
 
+    private setCustomImage(id: string) {
+        const item = this.state.map.items.find(i => i.id === this.state.selectedTileID);
+        if (item) {
+            this.changeValue(item, 'customBackground', id);
+        }
+    }
+
     private rotateMap() {
         Mercator.rotateMap(this.state.map);
 
@@ -235,7 +251,8 @@ export default class MapEditorModal extends React.Component<Props, State> {
         source[field] = value;
 
         this.setState({
-            map: this.state.map
+            map: this.state.map,
+            showImageSelection: false
         });
     }
 
@@ -258,25 +275,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
                         customSection = (
                             <div>
                                 <div className='subheading'>custom image</div>
-                                <button onClick={() => (document.getElementById('file-upload') as HTMLElement).click()}>select image</button>
-                                <input
-                                    type='file'
-                                    id='file-upload'
-                                    accept='image/*'
-                                    style={{ display: 'none' }}
-                                    onChange={e => {
-                                        if (e.target.files) {
-                                            const reader = new FileReader();
-                                            reader.onload = readerEvent => {
-                                                if (readerEvent.target) {
-                                                    const content = readerEvent.target.result as string;
-                                                    this.changeValue(item, 'customBackground', content);
-                                                }
-                                            };
-                                            reader.readAsDataURL(e.target.files[0]);
-                                        }
-                                    }}
-                                />
+                                <button onClick={() => this.toggleImageSelection()}>select image</button>
                                 <button onClick={() => this.changeValue(item, 'customBackground', '')}>clear image</button>
                             </div>
                         );
@@ -373,6 +372,9 @@ export default class MapEditorModal extends React.Component<Props, State> {
                             gridSquareClicked={(x, y) => this.addMapTile(x, y)}
                         />
                     </Col>
+                    <Drawer visible={this.state.showImageSelection} closable={false} onClose={() => this.toggleImageSelection()}>
+                        <ImageSelectionModal select={id => this.setCustomImage(id)} cancel={() => this.toggleImageSelection()} />
+                    </Drawer>
                 </Row>
             );
         } catch (e) {

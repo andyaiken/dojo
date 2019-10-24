@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Input, Row } from 'antd';
+import { Col, Drawer, Input, Row } from 'antd';
 
 import Factory from '../../utils/factory';
 import Utils from '../../utils/utils';
@@ -9,6 +9,7 @@ import { PC } from '../../models/party';
 
 import NumberSpin from '../controls/number-spin';
 import PortraitPanel from '../panels/portrait-panel';
+import ImageSelectionModal from './image-selection-modal';
 
 interface Props {
     pc: PC;
@@ -16,6 +17,7 @@ interface Props {
 
 interface State {
     pc: PC;
+    showImageSelection: boolean;
 }
 
 export default class PCEditorModal extends React.Component<Props, State> {
@@ -23,8 +25,15 @@ export default class PCEditorModal extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            pc: props.pc
+            pc: props.pc,
+            showImageSelection: false
         };
+    }
+
+    private toggleImageSelection() {
+        this.setState({
+            showImageSelection: !this.state.showImageSelection
+        });
     }
 
     private addCompanion() {
@@ -48,7 +57,8 @@ export default class PCEditorModal extends React.Component<Props, State> {
         source[field] = value;
 
         this.setState({
-            pc: this.state.pc
+            pc: this.state.pc,
+            showImageSelection: false
         });
     }
 
@@ -167,11 +177,18 @@ export default class PCEditorModal extends React.Component<Props, State> {
                             onChange={event => this.changeValue(this.state.pc, 'url', event.target.value)}
                         />
                         <div className='subheading'>portrait</div>
-                        <PortraitPanel source={this.state.pc} setValue={value => this.changeValue(this.state.pc, 'portrait', value)} />
+                        <PortraitPanel
+                            source={this.state.pc}
+                            edit={() => this.toggleImageSelection()}
+                            clear={() => this.changeValue(this.state.pc, 'portrait', '')}
+                        />
                         <div className='subheading'>companions:</div>
                         {companions}
                         <button onClick={() => this.addCompanion()}>add a new companion</button>
                     </Col>
+                    <Drawer visible={this.state.showImageSelection} closable={false} onClose={() => this.toggleImageSelection()}>
+                        <ImageSelectionModal select={id => this.changeValue(this.state.pc, 'portrait', id)} cancel={() => this.toggleImageSelection()} />
+                    </Drawer>
                 </Row>
             );
         } catch (e) {

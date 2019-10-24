@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { Col, Drawer, Row } from 'antd';
-import LZString from 'lz-string';
 
 import Factory from '../utils/factory';
 import Frankenstein from '../utils/frankenstein';
@@ -74,8 +73,7 @@ export default class Dojo extends React.Component<Props, State> {
         try {
             const str = window.localStorage.getItem('data-parties');
             if (str) {
-                const json = LZString.decompress(str);
-                parties = JSON.parse(json);
+                parties = JSON.parse(str);
             }
         } catch (ex) {
             console.error('Could not parse JSON: ', ex);
@@ -85,8 +83,7 @@ export default class Dojo extends React.Component<Props, State> {
         try {
             const str = window.localStorage.getItem('data-library');
             if (str) {
-                const json = LZString.decompress(str);
-                library = JSON.parse(json);
+                library = JSON.parse(str);
             }
         } catch (ex) {
             console.error('Could not parse JSON: ', ex);
@@ -96,8 +93,7 @@ export default class Dojo extends React.Component<Props, State> {
         try {
             const str = window.localStorage.getItem('data-encounters');
             if (str) {
-                const json = LZString.decompress(str);
-                encounters = JSON.parse(json);
+                encounters = JSON.parse(str);
             }
         } catch (ex) {
             console.error('Could not parse JSON: ', ex);
@@ -107,8 +103,7 @@ export default class Dojo extends React.Component<Props, State> {
         try {
             const str = window.localStorage.getItem('data-mapfolios');
             if (str) {
-                const json = LZString.decompress(str);
-                mapFolios = JSON.parse(json);
+                mapFolios = JSON.parse(str);
             }
         } catch (ex) {
             console.error('Could not parse JSON: ', ex);
@@ -118,8 +113,7 @@ export default class Dojo extends React.Component<Props, State> {
         try {
             const str = window.localStorage.getItem('data-combats');
             if (str) {
-                const json = LZString.decompress(str);
-                combats = JSON.parse(json);
+                combats = JSON.parse(str);
             }
         } catch (ex) {
             console.error('Could not parse JSON: ', ex);
@@ -144,10 +138,6 @@ export default class Dojo extends React.Component<Props, State> {
 
     public componentDidUpdate() {
         this.saveAfterDelay();
-    }
-
-    public componentWillUnmount() {
-        this.saveAll();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1428,6 +1418,7 @@ export default class Dojo extends React.Component<Props, State> {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private setView(view: 'home' | 'parties' | 'library' | 'encounters' | 'maps' | 'combat') {
+        this.save();
         this.setState({
             view: view
         });
@@ -1518,6 +1509,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private selectPartyByID(id: string | null) {
+        this.save();
         this.setState({
             view: 'parties',
             navigation: false,
@@ -1526,6 +1518,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private selectMonsterGroupByID(id: string | null) {
+        this.save();
         this.setState({
             view: 'library',
             navigation: false,
@@ -1534,6 +1527,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private selectEncounterByID(id: string | null) {
+        this.save();
         this.setState({
             view: 'encounters',
             navigation: false,
@@ -1542,6 +1536,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private selectMapFolioByID(id: string | null) {
+        this.save();
         this.setState({
             view: 'maps',
             navigation: false,
@@ -1550,6 +1545,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private selectCombatByID(id: string | null) {
+        this.save();
         if ((this.state.selectedCombatID !== null) && (id === null)) {
             this.pauseCombat();
         } else {
@@ -1591,10 +1587,6 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private changeValue(combatant: any, type: string, value: any) {
-        if (type === 'view') {
-            this.save();
-        }
-
         switch (type) {
             case 'hp':
                 value = Math.min(value, combatant.hpMax);
@@ -1680,7 +1672,7 @@ export default class Dojo extends React.Component<Props, State> {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private saveAfterDelay = Utils.debounce(() => this.save(), 10000);
+    private saveAfterDelay = Utils.debounce(() => this.saveAll(), 10000);
 
     private save() {
         switch (this.state.view) {
@@ -1713,21 +1705,20 @@ export default class Dojo extends React.Component<Props, State> {
     private saveKey(obj: any, key: string) {
         try {
             const json = JSON.stringify(obj);
-            const data = LZString.compress(json);
 
-            const mb = data.length / (1024 * 1024);
+            const mb = json.length / (1024 * 1024);
             if (mb >= 1) {
                 console.info('Saving (' + key + '): ' + mb.toFixed(2) + ' MB');
             } else {
-                const kb = data.length / 1024;
+                const kb = json.length / 1024;
                 if (kb >= 1) {
                     console.info('Saving (' + key + '): ' + kb.toFixed(2) + ' KB');
                 } else {
-                    console.info('Saving (' + key + '): ' + data.length + ' B');
+                    console.info('Saving (' + key + '): ' + json.length + ' B');
                 }
             }
 
-            window.localStorage.setItem(key, data);
+            window.localStorage.setItem(key, json);
         } catch (ex) {
             console.error('Could not stringify data: ', ex);
         }

@@ -1494,3 +1494,14 @@ body,
         background-color: $highlight02;
     }
 }
+
+.selectable-image {
+    cursor: pointer;
+    border: 1px solid $control-border;
+    padding: 5px;
+    width: 100%;
+
+    &:hover {
+        border-color: $highlight;
+    }
+}

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Collapse, Icon, Input, Row } from 'antd';
+import { Col, Collapse, Drawer, Icon, Input, Row } from 'antd';
 
 import Factory from '../../utils/factory';
 import Frankenstein from '../../utils/frankenstein';
@@ -21,6 +21,7 @@ import FilterPanel from '../panels/filter-panel';
 import Note from '../panels/note';
 import PortraitPanel from '../panels/portrait-panel';
 import TraitEditorPanel from '../panels/trait-editor-panel';
+import ImageSelectionModal from './image-selection-modal';
 
 interface Props {
     monster: Monster;
@@ -43,6 +44,7 @@ interface State {
     };
     scratchpadFilter: MonsterFilter;
     scratchpadList: Monster[];
+    showImageSelection: boolean;
 }
 
 export default class MonsterEditorModal extends React.Component<Props, State> {
@@ -62,7 +64,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 challenge: true
             },
             scratchpadFilter: Factory.createMonsterFilter(),
-            scratchpadList: []
+            scratchpadList: [],
+            showImageSelection: false
         };
     }
 
@@ -85,6 +88,12 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         this.state.similarFilter[type] = !this.state.similarFilter[type];
         this.setState({
             similarFilter: this.state.similarFilter
+        });
+    }
+
+    private toggleImageSelection() {
+        this.setState({
+            showImageSelection: !this.state.showImageSelection
         });
     }
 
@@ -229,7 +238,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     private changeValue(field: string, value: any) {
         Frankenstein.changeValue(this.state.monster, field, value);
         this.setState({
-            monster: this.state.monster
+            monster: this.state.monster,
+            showImageSelection: false
         });
     }
 
@@ -601,7 +611,11 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                     onChange={event => this.changeValue('equipment', event.target.value)}
                                 />
                                 <div className='subheading'>portrait</div>
-                                <PortraitPanel source={this.state.monster} setValue={value => this.changeValue('portrait', value)} />
+                                <PortraitPanel
+                                    source={this.state.monster}
+                                    edit={() => this.toggleImageSelection()}
+                                    clear={() => this.changeValue('portrait', '')}
+                                />
                             </Col>
                         </Row>
                     );
@@ -883,6 +897,9 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         {help}
                     </Col>
                     {sidebar}
+                    <Drawer visible={this.state.showImageSelection} closable={false} onClose={() => this.toggleImageSelection()}>
+                        <ImageSelectionModal select={id => this.changeValue('portrait', id)} cancel={() => this.toggleImageSelection()} />
+                    </Drawer>
                 </Row>
             );
         } catch (e) {
