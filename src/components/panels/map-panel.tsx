@@ -448,7 +448,7 @@ class MapToken extends React.Component<MapTokenProps> {
             let altitudeBadge = null;
             let conditionsBadge = null;
             if (!this.props.simple) {
-                let src = none;
+                let src = '';
                 if (c.portrait) {
                     const data = localStorage.getItem('image-' + c.portrait);
                     if (data) {
