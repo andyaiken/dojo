@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Collapse, Icon } from 'antd';
+import { Icon } from 'antd';
 
 import Utils from '../../utils/utils';
 
@@ -70,8 +70,13 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
                 name = this.props.condition.text;
             }
 
+            let duration = null;
             if (this.props.condition.duration !== null) {
-                name += ' ' + Utils.conditionDurationText(this.props.condition, this.props.combat);
+                duration = (
+                    <div className='section'>
+                        <i>{Utils.conditionDurationText(this.props.condition, this.props.combat)}</i>
+                    </div>
+                );
             }
 
             const description = [];
@@ -93,18 +98,17 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
             }
 
             return (
-                <Collapse
-                    bordered={false}
-                    expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
-                    expandIconPosition={'right'}
-                >
-                    <Collapse.Panel key='one' header={name}>
-                        {description}
-                        <div className='divider' />
-                        <button onClick={() => this.props.editCondition(this.props.condition)}>edit</button>
-                        <button onClick={() => this.props.removeCondition(this.props.condition.id)}>remove</button>
-                    </Collapse.Panel>
-                </Collapse>
+                <div className='group-panel condition-panel'>
+                    <div>
+                        <div className='condition-name'>{name}</div>
+                        <div className='condition-buttons'>
+                            <Icon type='edit' title='edit' onClick={() => this.props.editCondition(this.props.condition)} />
+                            <Icon type='close' title='remove' onClick={() => this.props.removeCondition(this.props.condition.id)} />
+                        </div>
+                    </div>
+                    {duration}
+                    {description}
+                </div>
             );
         } catch (e) {
             console.error(e);

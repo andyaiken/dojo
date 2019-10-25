@@ -1323,7 +1323,11 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private addConditionFromModal() {
-        this.state.drawer.combatant.conditions.push(this.state.drawer.condition);
+        const conditions: Condition[] = this.state.drawer.combatant.conditions;
+        conditions.push(this.state.drawer.condition);
+
+        // eslint-disable-next-line
+        this.state.drawer.combatant.conditions = Utils.sort(conditions, [{ field: 'name', dir: 'asc' }]);
 
         this.setState({
             combats: this.state.combats,
@@ -1352,6 +1356,9 @@ export default class Dojo extends React.Component<Props, State> {
             const index = conditions.indexOf(original);
             // eslint-disable-next-line
             conditions[index] = this.state.drawer.condition;
+
+            // eslint-disable-next-line
+            this.state.drawer.combatant.conditions = Utils.sort(conditions, [{ field: 'name', dir: 'asc' }]);
 
             this.setState({
                 combats: this.state.combats,
@@ -1421,6 +1428,8 @@ export default class Dojo extends React.Component<Props, State> {
             const c = Factory.createCondition();
             c.name = condition;
             combatant.conditions.push(c);
+
+            combatant.conditions = Utils.sort(combatant.conditions, [{ field: 'name', dir: 'asc' }]);
 
             this.setState({
                 combats: this.state.combats

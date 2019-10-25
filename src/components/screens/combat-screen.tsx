@@ -902,15 +902,13 @@ class PCRow extends React.Component<PCRowProps> {
                     const description = [];
                     const text = Utils.conditionText(c);
                     for (let n = 0; n !== text.length; ++n) {
-                        description.push(<li key={n} className='condition-text'>{text[n]}</li>);
+                        description.push(<div key={n} className='condition-text'>{text[n]}</div>);
                     }
                     return (
                         <Note key={c.id} white={true}>
                             <div className='condition'>
                                 <div className='condition-name'>{name}</div>
-                                <ul>
-                                    {description}
-                                </ul>
+                                {description}
                             </div>
                         </Note>
                     );
@@ -1032,15 +1030,13 @@ class MonsterRow extends React.Component<MonsterRowProps> {
                     const description = [];
                     const text = Utils.conditionText(c);
                     for (let n = 0; n !== text.length; ++n) {
-                        description.push(<li key={n} className='condition-text'>{text[n]}</li>);
+                        description.push(<div key={n} className='condition-text'>{text[n]}</div>);
                     }
                     return (
                         <Note key={c.id} white={true}>
                             <div className='condition'>
                                 <div className='condition-name'>{name}</div>
-                                <ul>
-                                    {description}
-                                </ul>
+                                {description}
                             </div>
                         </Note>
                     );
