@@ -1,7 +1,6 @@
 import { Condition } from './condition';
 import { Map } from './map-folio';
-import { Monster, Trait } from './monster-group';
-import { PC } from './party';
+import { Trait } from './monster-group';
 
 export interface CombatSetup {
     partyID: string | null;
@@ -17,7 +16,7 @@ export interface Combat {
     id: string;
     name: string;
     encounterID: string | null;
-    combatants: ((Combatant & PC) | (Combatant & Monster))[];
+    combatants: Combatant[];
     map: Map | null;
     round: number;
     notifications: Notification[];
@@ -27,6 +26,7 @@ export interface Combat {
 
 export interface Combatant {
     id: string;
+    type: string;
     displayName: string;
     displaySize: string;
     showOnMap: boolean;
@@ -50,5 +50,5 @@ export interface Notification {
     id: string;
     type: 'condition-save' | 'condition-end' | 'trait-recharge';
     data: Condition | Trait | null;
-    combatant: (Combatant & Monster) | null;
+    combatant: Combatant | null;
 }

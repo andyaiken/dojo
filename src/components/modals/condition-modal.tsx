@@ -8,6 +8,7 @@ import Utils from '../../utils/utils';
 import { Combat, Combatant } from '../../models/combat';
 import { Condition, CONDITION_TYPES, ConditionDurationCombatant, ConditionDurationSaves } from '../../models/condition';
 import { Monster } from '../../models/monster-group';
+import { PC } from '../../models/party';
 
 import Dropdown from '../controls/dropdown';
 import NumberSpin from '../controls/number-spin';
@@ -157,7 +158,13 @@ export default class ConditionModal extends React.Component<Props, State> {
                     text: 'end of turn'
                 }
             ];
-            const combatantOptions = this.props.combat.combatants.map(c => ({ id: c.id, text: (c.displayName || c.name || 'unnamed monster') }));
+            const combatantOptions = this.props.combat.combatants.map(combatant => {
+                const c = combatant as (Combatant & PC) | (Combatant & Monster);
+                return {
+                    id: c.id,
+                    text: (c.displayName || c.name || 'unnamed monster')
+                };
+            });
 
             const durations = [
                 {

@@ -917,7 +917,7 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
-    private makeCurrent(combatant: (Combatant & PC) | (Combatant & Monster) | null, newRound: boolean) {
+    private makeCurrent(combatant: Combatant | null, newRound: boolean) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
             // Handle start-of-turn conditions
@@ -980,7 +980,7 @@ export default class Dojo extends React.Component<Props, State> {
 
             // Handle recharging traits
             if (combatant && (combatant.type === 'monster')) {
-                (combatant as Monster).traits
+                (combatant as Combatant & Monster).traits
                     .filter(t => (t.uses > 0) && t.usage.toLowerCase().startsWith('recharge '))
                     .forEach(t => {
                         combat.notifications.push({
@@ -990,7 +990,7 @@ export default class Dojo extends React.Component<Props, State> {
                             combatant: combatant as Combatant & Monster
                         });
                     });
-                (combatant as Monster).traits
+                (combatant as Combatant & Monster).traits
                     .filter(t => t.type === 'legendary')
                     .forEach(t => {
                         t.uses = 0;
@@ -1014,7 +1014,7 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
-    private makeActive(combatant: (Combatant & PC) | (Combatant & Monster)) {
+    private makeActive(combatant: Combatant) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
             combatant.pending = false;
@@ -1029,7 +1029,7 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
-    private makeDefeated(combatant: (Combatant & PC) | (Combatant & Monster)) {
+    private makeDefeated(combatant: Combatant) {
         combatant.pending = false;
         combatant.active = false;
         combatant.defeated = true;
@@ -1129,7 +1129,7 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
-    private removeCombatant(combatant: (Combatant & PC) | (Combatant & Monster)) {
+    private removeCombatant(combatant: Combatant) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
             const index = combat.combatants.indexOf(combatant);
@@ -1149,7 +1149,7 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
-    private mapAdd(combatant: ((Combatant & PC) | (Combatant & Monster)), x: number, y: number) {
+    private mapAdd(combatant: Combatant, x: number, y: number) {
         const item = Factory.createMapItem();
         item.id = combatant.id;
         item.type = combatant.type as 'pc' | 'monster';
@@ -1157,7 +1157,7 @@ export default class Dojo extends React.Component<Props, State> {
         item.y = y;
         let size = 1;
         if (combatant.type === 'monster') {
-            size = Utils.miniSize((combatant as Monster).size);
+            size = Utils.miniSize((combatant as Combatant & Monster).size);
         }
         item.height = size;
         item.width = size;
@@ -1172,7 +1172,7 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
-    private mapMove(combatant: (Combatant & PC) | (Combatant & Monster), dir: string) {
+    private mapMove(combatant: Combatant, dir: string) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat && combat.map) {
             const item = combat.map.items.find(i => i.id === combatant.id);
@@ -1218,7 +1218,7 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
-    private mapRemove(combatant: (Combatant & PC) | (Combatant & Monster)) {
+    private mapRemove(combatant: Combatant) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat && combat.map) {
             const item = combat.map.items.find(i => i.id === combatant.id);
@@ -1233,7 +1233,7 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
-    private endTurn(combatant: (Combatant & PC) | (Combatant & Monster)) {
+    private endTurn(combatant: Combatant) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
             // Handle end-of-turn conditions
@@ -1305,7 +1305,7 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
-    private addCondition(combatant: (Combatant & PC) | (Combatant & Monster)) {
+    private addCondition(combatant: Combatant) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
             const condition = Factory.createCondition();
@@ -1331,7 +1331,7 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
-    private editCondition(combatant: (Combatant & PC) | (Combatant & Monster), condition: Condition) {
+    private editCondition(combatant: Combatant, condition: Condition) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
             this.setState({
@@ -1360,7 +1360,7 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
-    private removeCondition(combatant: (Combatant & PC) | (Combatant & Monster), conditionID: string) {
+    private removeCondition(combatant: Combatant, conditionID: string) {
         const condition = combatant.conditions.find(c => c.id === conditionID);
         if (condition) {
             const index = combatant.conditions.indexOf(condition);
@@ -1378,8 +1378,8 @@ export default class Dojo extends React.Component<Props, State> {
             if (a.initiative && b.initiative && (a.initiative < b.initiative)) { return 1; }
             if (a.initiative && b.initiative && (a.initiative > b.initiative)) { return -1; }
             // Then sort by name, ascending
-            if (a.name < b.name) { return -1; }
-            if (a.name > b.name) { return 1; }
+            if (a.displayName < b.displayName) { return -1; }
+            if (a.displayName > b.displayName) { return 1; }
             return 0;
         });
     }
@@ -1411,6 +1411,21 @@ export default class Dojo extends React.Component<Props, State> {
         this.setState({
             combats: this.state.combats
         });
+    }
+
+    private toggleCondition(combatant: Combatant, condition: string) {
+        const existing = combatant.conditions.find(c => c.name === condition);
+        if (existing) {
+            this.removeCondition(combatant, existing.id);
+        } else {
+            const c = Factory.createCondition();
+            c.name = condition;
+            combatant.conditions.push(c);
+
+            this.setState({
+                combats: this.state.combats
+            });
+        }
     }
 
     private scatterCombatants(type: 'pc' | 'monster') {
@@ -1857,6 +1872,7 @@ export default class Dojo extends React.Component<Props, State> {
                             changeHP={(combatant, hp, temp) => this.changeHP(combatant, hp, temp)}
                             closeNotification={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
                             toggleTag={(combatant, tag) => this.toggleTag(combatant, tag)}
+                            toggleCondition={(combatant, condition) => this.toggleCondition(combatant, condition)}
                             scatterCombatants={type => this.scatterCombatants(type)}
                             rotateMap={() => this.rotateMap()}
                         />

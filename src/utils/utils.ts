@@ -1,7 +1,8 @@
-﻿import { Combat } from '../models/combat';
+﻿import { Combat, Combatant } from '../models/combat';
 import { Condition, ConditionDurationCombatant, ConditionDurationRounds, ConditionDurationSaves } from '../models/condition';
 import { Encounter, EncounterWave } from '../models/encounter';
 import { Monster, MonsterGroup } from '../models/monster-group';
+import { PC } from '../models/party';
 
 export default class Utils {
 
@@ -575,7 +576,7 @@ export default class Utils {
                 case 'combatant':
                     const combatantDuration = condition.duration as ConditionDurationCombatant;
                     const point = combatantDuration.point;
-                    const c = combat.combatants.find(cmb => cmb.id === combatantDuration.combatantID);
+                    const c = combat.combatants.find(cmb => cmb.id === combatantDuration.combatantID) as (Combatant & PC) | (Combatant & Monster);
                     const combatant = c ? (c.displayName || c.name || 'unnamed monster') + '\'s' : 'someone\'s';
                     return 'until the ' + point + ' of ' + combatant + ' next turn';
                 case 'rounds':

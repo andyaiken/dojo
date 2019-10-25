@@ -60,6 +60,7 @@ interface Props {
     removeCondition: (combatant: Combatant, conditionID: string) => void;
     nudgeConditionValue: (condition: Condition, field: string, delta: number) => void;
     toggleTag: (combatant: Combatant, tag: string) => void;
+    toggleCondition: (combatant: Combatant, condition: string) => void;
 }
 
 interface State {
@@ -100,7 +101,8 @@ export default class MonsterCard extends React.Component<Props, State> {
         editCondition: null,
         removeCondition: null,
         nudgeConditionValue: null,
-        toggleTag: null
+        toggleTag: null,
+        toggleCondition: null
     };
 
     constructor(props: Props) {
@@ -291,6 +293,26 @@ export default class MonsterCard extends React.Component<Props, State> {
                                 display='button'
                                 checked={combatant.tags.includes('hex')}
                                 changeValue={value => this.props.toggleTag(combatant, 'hex')}
+                            />
+                        </Col>
+                    </Row>
+                );
+                options.push(
+                    <Row key='conditions' gutter={10}>
+                        <Col span={12}>
+                            <Checkbox
+                                label='prone'
+                                display='button'
+                                checked={combatant.conditions.some(c => c.name === 'prone')}
+                                changeValue={value => this.props.toggleCondition(combatant, 'prone')}
+                            />
+                        </Col>
+                        <Col span={12}>
+                            <Checkbox
+                                label='unconscious'
+                                display='button'
+                                checked={combatant.conditions.some(c => c.name === 'unconscious')}
+                                changeValue={value => this.props.toggleCondition(combatant, 'unconscious')}
                             />
                         </Col>
                     </Row>

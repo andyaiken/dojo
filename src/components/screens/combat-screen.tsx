@@ -31,23 +31,24 @@ interface Props {
     pauseCombat: () => void;
     endCombat: () => void;
     closeNotification: (notification: Notification, removeCondition: boolean) => void;
-    mapAdd: (combatant: (Combatant & PC) | (Combatant & Monster), x: number, y: number) => void;
-    makeCurrent: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
-    makeActive: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
-    makeDefeated: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
-    removeCombatant: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
+    mapAdd: (combatant: Combatant, x: number, y: number) => void;
+    makeCurrent: (combatant: Combatant) => void;
+    makeActive: (combatant: Combatant) => void;
+    makeDefeated: (combatant: Combatant) => void;
+    removeCombatant: (combatant: Combatant) => void;
     addCombatants: () => void;
     addWave: () => void;
-    addCondition: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
-    editCondition: (combatant: (Combatant & PC) | (Combatant & Monster), condition: Condition) => void;
-    removeCondition: (combatant: (Combatant & PC) | (Combatant & Monster), conditionID: string) => void;
-    mapMove: (combatant: (Combatant & PC) | (Combatant & Monster), dir: string) => void;
-    mapRemove: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
-    endTurn: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
+    addCondition: (combatant: Combatant) => void;
+    editCondition: (combatant: Combatant, condition: Condition) => void;
+    removeCondition: (combatant: Combatant, conditionID: string) => void;
+    mapMove: (combatant: Combatant, dir: string) => void;
+    mapRemove: (combatant: Combatant) => void;
+    endTurn: (combatant: Combatant) => void;
     changeHP: (combatant: Combatant & Monster, hp: number, temp: number) => void;
     changeValue: (source: {}, type: string, value: any) => void;
     nudgeValue: (source: {}, type: string, delta: number) => void;
     toggleTag: (combatant: Combatant, tag: string) => void;
+    toggleCondition: (combatant: Combatant, condition: string) => void;
     scatterCombatants: (type: 'pc' | 'monster') => void;
     rotateMap: () => void;
 }
@@ -357,7 +358,7 @@ export default class CombatScreen extends React.Component<Props, State> {
         );
     }
 
-    private createCard(combatant: (Combatant & PC) | (Combatant & Monster)) {
+    private createCard(combatant: Combatant) {
         let mode = 'combat';
         if (this.props.combat.map) {
             mode += ' tactical';
@@ -375,19 +376,20 @@ export default class CombatScreen extends React.Component<Props, State> {
                         combat={this.props.combat as Combat}
                         changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
                         nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
-                        makeCurrent={c => this.props.makeCurrent(c as Combatant & PC)}
-                        makeActive={c => this.props.makeActive(c as Combatant & PC)}
-                        makeDefeated={c => this.defeatCombatant(c as Combatant & PC)}
-                        removeCombatant={c => this.props.removeCombatant(c as Combatant & PC)}
-                        addCondition={c => this.props.addCondition(c as Combatant & Monster)}
-                        editCondition={(c, condition) => this.props.editCondition(c as Combatant & Monster, condition)}
-                        removeCondition={(c, conditionID) => this.props.removeCondition(c as Combatant & Monster, conditionID)}
+                        makeCurrent={c => this.props.makeCurrent(c)}
+                        makeActive={c => this.props.makeActive(c)}
+                        makeDefeated={c => this.defeatCombatant(c)}
+                        removeCombatant={c => this.props.removeCombatant(c)}
+                        addCondition={c => this.props.addCondition(c)}
+                        editCondition={(c, condition) => this.props.editCondition(c, condition)}
+                        removeCondition={(c, conditionID) => this.props.removeCondition(c, conditionID)}
                         nudgeConditionValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
                         mapAdd={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
-                        mapMove={(c, dir) => this.props.mapMove(c as Combatant & PC, dir)}
-                        mapRemove={c => this.props.mapRemove(c as Combatant & PC)}
-                        endTurn={c => this.props.endTurn(c as Combatant & PC)}
+                        mapMove={(c, dir) => this.props.mapMove(c, dir)}
+                        mapRemove={c => this.props.mapRemove(c)}
+                        endTurn={c => this.props.endTurn(c)}
                         toggleTag={(c, tag) => this.props.toggleTag(c, tag)}
+                        toggleCondition={(c, condition) => this.props.toggleCondition(c, condition)}
                     />
                 );
             case 'monster':
@@ -399,20 +401,21 @@ export default class CombatScreen extends React.Component<Props, State> {
                         combat={this.props.combat as Combat}
                         changeValue={(c, type, value) => this.props.changeValue(c, type, value)}
                         nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
-                        makeCurrent={c => this.props.makeCurrent(c as Combatant & Monster)}
-                        makeActive={c => this.props.makeActive(c as Combatant & Monster)}
-                        makeDefeated={c => this.defeatCombatant(c as Combatant & Monster)}
-                        removeCombatant={c => this.props.removeCombatant(c as Combatant & Monster)}
-                        addCondition={c => this.props.addCondition(c as Combatant & Monster)}
-                        editCondition={(c, condition) => this.props.editCondition(c as Combatant & Monster, condition)}
-                        removeCondition={(c, conditionID) => this.props.removeCondition(c as Combatant & Monster, conditionID)}
+                        makeCurrent={c => this.props.makeCurrent(c)}
+                        makeActive={c => this.props.makeActive(c)}
+                        makeDefeated={c => this.defeatCombatant(c)}
+                        removeCombatant={c => this.props.removeCombatant(c)}
+                        addCondition={c => this.props.addCondition(c)}
+                        editCondition={(c, condition) => this.props.editCondition(c, condition)}
+                        removeCondition={(c, conditionID) => this.props.removeCondition(c, conditionID)}
                         nudgeConditionValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
                         mapAdd={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
-                        mapMove={(c, dir) => this.props.mapMove(c as Combatant & Monster, dir)}
-                        mapRemove={c => this.props.mapRemove(c as Combatant & Monster)}
-                        endTurn={(c) => this.props.endTurn(c as Combatant & Monster)}
+                        mapMove={(c, dir) => this.props.mapMove(c, dir)}
+                        mapRemove={c => this.props.mapRemove(c)}
+                        endTurn={(c) => this.props.endTurn(c)}
                         changeHP={(c, hp, temp) => this.props.changeHP(c as Combatant & Monster, hp, temp)}
                         toggleTag={(c, tag) => this.props.toggleTag(c, tag)}
+                        toggleCondition={(c, condition) => this.props.toggleCondition(c, condition)}
                     />
                 );
             default:
@@ -420,7 +423,7 @@ export default class CombatScreen extends React.Component<Props, State> {
         }
     }
 
-    private defeatCombatant(combatant: (Combatant & PC) | (Combatant & Monster)) {
+    private defeatCombatant(combatant: Combatant) {
         if (this.state.selectedTokenID === combatant.id) {
             this.setState({
                 selectedTokenID: null
@@ -774,11 +777,11 @@ class NotificationPanel extends React.Component<NotificationProps> {
 }
 
 interface PendingCombatantRowProps {
-    combatant: (Combatant & PC) | (Combatant & Monster);
+    combatant: Combatant;
     selected: boolean;
-    select: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
-    nudgeValue: (combatant: (Combatant & PC) | (Combatant & Monster), field: string, delta: number) => void;
-    makeActive: (combatant: (Combatant & PC) | (Combatant & Monster)) => void;
+    select: (combatant: Combatant) => void;
+    nudgeValue: (combatant: Combatant, field: string, delta: number) => void;
+    makeActive: (combatant: Combatant) => void;
 }
 
 class PendingCombatantRow extends React.Component<PendingCombatantRowProps> {
@@ -804,12 +807,14 @@ class PendingCombatantRow extends React.Component<PendingCombatantRowProps> {
                 style += ' highlight';
             }
 
+            const c = this.props.combatant as (Combatant & PC) | (Combatant & Monster);
+
             return (
                 <div className={style} onClick={e => this.onClick(e)}>
                     <div className='header'>
-                        <PortraitPanel source={this.props.combatant} inline={true} />
+                        <PortraitPanel source={c} inline={true} />
                         <div className='name'>
-                            {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
+                            {c.displayName || c.name || 'combatant'}
                         </div>
                         <span className='info'>{this.getInformationText()}</span>
                     </div>

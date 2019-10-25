@@ -15,7 +15,7 @@ interface Props {
     map: Map;
     mode: 'edit' | 'thumbnail' | 'combat' | 'combat-player';
     size: number;
-    combatants: ((Combatant & PC) | (Combatant & Monster))[];
+    combatants: Combatant[];
     showOverlay: boolean;
     selectedItemID: string;
     setSelectedItemID: (itemID: string | null) => void;
@@ -84,7 +84,7 @@ export default class MapPanel extends React.Component<Props> {
                 if (mi) {
                     const sizeInSquares = c.aura.radius / 5;
                     let miniSize = 1;
-                    const m = c as Monster;
+                    const m = c as Combatant & Monster;
                     if (m) {
                         miniSize = Utils.miniSize(m.size);
                     }
@@ -405,7 +405,7 @@ class MapTile extends React.Component<MapTileProps> {
 
 interface MapTokenProps {
     token: MapItem;
-    combatant: (Combatant & PC) | (Combatant & Monster);
+    combatant: Combatant;
     style: MapItemStyle;
     simple: boolean;
     showGauge: boolean;
@@ -425,7 +425,8 @@ class MapToken extends React.Component<MapTokenProps> {
 
     public render() {
         try {
-            const name = this.props.combatant.displayName || this.props.combatant.name || 'combatant';
+            const c = this.props.combatant as (Combatant & PC) | (Combatant & Monster);
+            const name = c.displayName || c.name || 'combatant';
 
             let style = 'token ' + this.props.token.type;
             if (this.props.selected) {
@@ -448,10 +449,12 @@ class MapToken extends React.Component<MapTokenProps> {
             let conditionsBadge = null;
             if (!this.props.simple) {
                 let src = none;
-                const data = localStorage.getItem('image-' + this.props.combatant.portrait);
-                if (data) {
-                    const image = JSON.parse(data);
-                    src = image.data;
+                if (c.portrait) {
+                    const data = localStorage.getItem('image-' + c.portrait);
+                    if (data) {
+                        const image = JSON.parse(data);
+                        src = image.data;
+                    }
                 }
 
                 if (src) {
@@ -465,11 +468,11 @@ class MapToken extends React.Component<MapTokenProps> {
                 }
 
                 if (this.props.combatant.type === 'monster' && this.props.showGauge) {
-                    const c = this.props.combatant as Combatant & Monster;
-                    const current = c.hp || 0;
-                    if (current < c.hpMax) {
+                    const monster = this.props.combatant as Combatant & Monster;
+                    const current = monster.hp || 0;
+                    if (current < monster.hpMax) {
                         hpGauge = (
-                            <HitPointGauge combatant={this.props.combatant as Combatant & Monster} />
+                            <HitPointGauge combatant={monster} />
                         );
                     }
                 }
