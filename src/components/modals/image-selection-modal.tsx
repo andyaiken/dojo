@@ -5,6 +5,8 @@ import { Input } from 'antd';
 import Sherlock from '../../utils/sherlock';
 import Utils from '../../utils/utils';
 
+import Note from '../panels/note';
+
 interface Props {
     select: (id: string) => void;
     cancel: () => void;
@@ -84,14 +86,43 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
     private delete(id: string) {
         localStorage.removeItem('image-' + id);
 
-        const index = this.state.images.findIndex(img => img.id === id);
-        this.setState({
-            images: this.state.images.splice(index, 1)
-        });
+        const item = this.state.images.find(img => img.id === id);
+        if (item) {
+            const index = this.state.images.indexOf(item);
+            this.setState({
+                images: this.state.images.splice(index, 1)
+            });
+        }
     }
 
     public render() {
         try {
+            const images = this.state.images
+                .filter(img => !!localStorage.getItem('image-' + img.id))
+                .filter(img => Sherlock.match(this.state.filter, img.name))
+                .map(img => (
+                    <div key={img.id}>
+                        <div className='subheading'>{img.name}</div>
+                        <img className='selectable-image' src={img.data} alt={img.name} onClick={() => this.props.select(img.id)} />
+                        <button onClick={() => this.delete(img.id)}>delete this image</button>
+                    </div>
+                ));
+
+            if (images.length === 0) {
+                images.push(
+                    <Note key='empty'>no images</Note>
+                );
+            } else {
+                images.unshift(
+                    <Input.Search
+                        key='search'
+                        placeholder='search for an image'
+                        onChange={e => this.setFilter(e.target.value)}
+                        onSearch={value => this.setFilter(value)}
+                    />
+                );
+            }
+
             return (
                 <div className='full-height'>
                     <div className='drawer-header'><div className='text'>select image</div></div>
@@ -105,19 +136,7 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
                                 style={{ display: 'none' }}
                                 onChange={e => this.onFileSelected(e)}
                             />
-                            <div className='divider' />
-                            <Input.Search
-                                placeholder='search for an image'
-                                onChange={e => this.setFilter(e.target.value)}
-                                onSearch={value => this.setFilter(value)}
-                            />
-                            {this.state.images.filter(img => Sherlock.match(this.state.filter, img.name)).map(img => (
-                                <div key={img.id}>
-                                    <div className='subheading'>{img.name}</div>
-                                    <img className='selectable-image' src={img.data} alt={img.name} onClick={() => this.props.select(img.id)} />
-                                    <button onClick={() => this.delete(img.id)}>delete this image</button>
-                                </div>
-                            ))}
+                            {images}
                         </div>
                     </div>
                     <div className='drawer-footer'>

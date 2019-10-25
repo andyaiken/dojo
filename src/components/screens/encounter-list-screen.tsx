@@ -7,6 +7,7 @@ import Napoleon from '../../utils/napoleon';
 import { Encounter, EncounterSlot } from '../../models/encounter';
 import { Monster } from '../../models/monster-group';
 
+import ConfirmButton from '../controls/confirm-button';
 import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
 
@@ -14,6 +15,7 @@ interface Props {
     encounters: Encounter[];
     addEncounter: () => void;
     selectEncounter: (encounter: Encounter) => void;
+    deleteEncounter: (encounter: Encounter) => void;
     getMonster: (monsterName: string, groupName: string) => Monster | null;
 }
 
@@ -24,7 +26,8 @@ export default class EncounterListScreen extends React.Component<Props> {
                 <ListItem
                     key={e.id}
                     encounter={e}
-                    setSelection={encounter => this.props.selectEncounter(encounter)}
+                    open={encounter => this.props.selectEncounter(encounter)}
+                    delete={encounter => this.props.deleteEncounter(encounter)}
                     getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
                 />
             ));
@@ -62,7 +65,8 @@ export default class EncounterListScreen extends React.Component<Props> {
 
 interface ListItemProps {
     encounter: Encounter;
-    setSelection: (encounter: Encounter) => void;
+    open: (encounter: Encounter) => void;
+    delete: (encounter: Encounter) => void;
     getMonster: (monsterName: string, groupName: string) => Monster | null;
 }
 
@@ -109,7 +113,8 @@ class ListItem extends React.Component<ListItemProps> {
                             {Napoleon.getEncounterXP(this.props.encounter, this.props.getMonster)}
                         </div>
                         <div className='divider'/>
-                        <button onClick={() => this.props.setSelection(this.props.encounter)}>open</button>
+                        <button onClick={() => this.props.open(this.props.encounter)}>open</button>
+                        <ConfirmButton text='delete' callback={() => this.props.delete(this.props.encounter)} />
                     </div>
                 </div>
             );

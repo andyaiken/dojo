@@ -154,16 +154,20 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
-    private removeParty() {
+    private removeCurrentParty() {
         const party = this.state.parties.find(p => p.id === this.state.selectedPartyID);
         if (party) {
-            const index = this.state.parties.indexOf(party);
-            this.state.parties.splice(index, 1);
-            this.setState({
-                parties: this.state.parties,
-                selectedPartyID: null
-            });
+            this.removeParty(party);
         }
+    }
+
+    private removeParty(party: Party) {
+        const index = this.state.parties.indexOf(party);
+        this.state.parties.splice(index, 1);
+        this.setState({
+            parties: this.state.parties,
+            selectedPartyID: null
+        });
     }
 
     private importParty() {
@@ -256,16 +260,20 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
-    private removeMonsterGroup() {
+    private removeCurrentMonsterGroup() {
         const group = this.state.library.find(g => g.id === this.state.selectedMonsterGroupID);
         if (group) {
-            const index = this.state.library.indexOf(group);
-            this.state.library.splice(index, 1);
-            this.setState({
-                library: this.state.library,
-                selectedMonsterGroupID: null
-            });
+            this.removeMonsterGroup(group);
         }
+    }
+
+    private removeMonsterGroup(group: MonsterGroup) {
+        const index = this.state.library.indexOf(group);
+        this.state.library.splice(index, 1);
+        this.setState({
+            library: this.state.library,
+            selectedMonsterGroupID: null
+        });
     }
 
     private addMonster() {
@@ -463,17 +471,21 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
-    private removeEncounter() {
+    private removeCurrentEncounter() {
         const encounter = this.state.encounters.find(e => e.id === this.state.selectedEncounterID);
         if (encounter) {
-            const index = this.state.encounters.indexOf(encounter);
-            this.state.encounters.splice(index, 1);
-
-            this.setState({
-                encounters: this.state.encounters,
-                selectedEncounterID: null
-            });
+            this.removeEncounter(encounter);
         }
+    }
+
+    private removeEncounter(encounter: Encounter) {
+        const index = this.state.encounters.indexOf(encounter);
+        this.state.encounters.splice(index, 1);
+
+        this.setState({
+            encounters: this.state.encounters,
+            selectedEncounterID: null
+        });
     }
 
     private buildEncounter(xp: number, filter: MonsterFilter) {
@@ -608,17 +620,21 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
-    private removeMapFolio() {
+    private removeCurrentMapFolio() {
         const folio = this.state.mapFolios.find(f => f.id === this.state.selectedMapFolioID);
         if (folio) {
-            const index = this.state.mapFolios.indexOf(folio);
-            this.state.mapFolios.splice(index, 1);
-
-            this.setState({
-                mapFolios: this.state.mapFolios,
-                selectedMapFolioID: null
-            });
+            this.removeMapFolio(folio);
         }
+    }
+
+    private removeMapFolio(folio: MapFolio) {
+        const index = this.state.mapFolios.indexOf(folio);
+        this.state.mapFolios.splice(index, 1);
+
+        this.setState({
+            mapFolios: this.state.mapFolios,
+            selectedMapFolioID: null
+        });
     }
 
     private addMap() {
@@ -885,16 +901,20 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
-    private endCombat() {
+    private endCurrentCombat() {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
-            const index = this.state.combats.indexOf(combat);
-            this.state.combats.splice(index, 1);
-            this.setState({
-                combats: this.state.combats,
-                selectedCombatID: null
-            });
+            this.endCombat(combat);
         }
+    }
+
+    private endCombat(combat: Combat) {
+        const index = this.state.combats.indexOf(combat);
+        this.state.combats.splice(index, 1);
+        this.setState({
+            combats: this.state.combats,
+            selectedCombatID: null
+        });
     }
 
     private makeCurrent(combatant: (Combatant & PC) | (Combatant & Monster) | null, newRound: boolean) {
@@ -1707,7 +1727,7 @@ export default class Dojo extends React.Component<Props, State> {
                         <PartyScreen
                             party={this.state.parties.find(p => p.id === this.state.selectedPartyID) as Party}
                             goBack={() => this.selectParty(null)}
-                            removeParty={() => this.removeParty()}
+                            removeParty={() => this.removeCurrentParty()}
                             addPC={() => this.addPC()}
                             editPC={pc => this.editPC(pc)}
                             removePC={pc => this.removePC(pc)}
@@ -1723,6 +1743,7 @@ export default class Dojo extends React.Component<Props, State> {
                             addParty={() => this.addParty()}
                             importParty={() => this.importParty()}
                             selectParty={party => this.selectParty(party)}
+                            deleteParty={party => this.removeParty(party)}
                         />
                     );
                 }
@@ -1733,7 +1754,7 @@ export default class Dojo extends React.Component<Props, State> {
                             monsterGroup={this.state.library.find(g => g.id === this.state.selectedMonsterGroupID) as MonsterGroup}
                             library={this.state.library}
                             goBack={() => this.selectMonsterGroup(null)}
-                            removeMonsterGroup={() => this.removeMonsterGroup()}
+                            removeMonsterGroup={() => this.removeCurrentMonsterGroup()}
                             addMonster={() => this.addMonster()}
                             importMonster={() => this.importMonster()}
                             removeMonster={monster => this.removeMonster(monster)}
@@ -1751,6 +1772,7 @@ export default class Dojo extends React.Component<Props, State> {
                             library={this.state.library}
                             addMonsterGroup={() => this.addMonsterGroup()}
                             selectMonsterGroup={group => this.selectMonsterGroup(group)}
+                            deleteMonsterGroup={group => this.removeMonsterGroup(group)}
                         />
                     );
                 }
@@ -1763,7 +1785,7 @@ export default class Dojo extends React.Component<Props, State> {
                             library={this.state.library}
                             goBack={() => this.selectEncounter(null)}
                             clearEncounter={() => this.clearEncounter()}
-                            removeEncounter={() => this.removeEncounter()}
+                            removeEncounter={() => this.removeCurrentEncounter()}
                             buildEncounter={(xp, filter) => this.buildEncounter(xp, filter)}
                             addWave={() => this.addWaveToEncounter()}
                             removeWave={wave => this.removeWave(wave)}
@@ -1781,6 +1803,7 @@ export default class Dojo extends React.Component<Props, State> {
                             encounters={this.state.encounters}
                             addEncounter={() => this.addEncounter()}
                             selectEncounter={encounter => this.selectEncounter(encounter)}
+                            deleteEncounter={encounter => this.removeEncounter(encounter)}
                             getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
                         />
                     );
@@ -1791,7 +1814,7 @@ export default class Dojo extends React.Component<Props, State> {
                         <MapScreen
                             mapFolio={this.state.mapFolios.find(f => f.id === this.state.selectedMapFolioID) as MapFolio}
                             goBack={() => this.selectMapFolio(null)}
-                            removeMapFolio={() => this.removeMapFolio()}
+                            removeMapFolio={() => this.removeCurrentMapFolio()}
                             addMap={() => this.addMap()}
                             editMap={map => this.editMap(map)}
                             removeMap={map => this.removeMap(map)}
@@ -1804,6 +1827,7 @@ export default class Dojo extends React.Component<Props, State> {
                             mapFolios={this.state.mapFolios}
                             addMapFolio={() => this.addMapFolio()}
                             selectMapFolio={folio => this.selectMapFolio(folio)}
+                            deleteMapFolio={folio => this.removeMapFolio(folio)}
                         />
                     );
                 }
@@ -1814,7 +1838,7 @@ export default class Dojo extends React.Component<Props, State> {
                             combat={this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat}
                             encounters={this.state.encounters}
                             pauseCombat={() => this.pauseCombat()}
-                            endCombat={() => this.endCombat()}
+                            endCombat={() => this.endCurrentCombat()}
                             nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                             makeCurrent={(combatant) => this.makeCurrent(combatant, false)}
@@ -1842,7 +1866,8 @@ export default class Dojo extends React.Component<Props, State> {
                         <CombatListScreen
                             combats={this.state.combats}
                             createCombat={() => this.createCombat()}
-                            resumeCombat={pausedCombat => this.resumeCombat(pausedCombat)}
+                            resumeCombat={combat => this.resumeCombat(combat)}
+                            deleteCombat={combat => this.endCombat(combat)}
                         />
                     );
                 }

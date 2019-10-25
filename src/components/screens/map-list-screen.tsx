@@ -4,6 +4,7 @@ import { Col, Row } from 'antd';
 
 import { MapFolio } from '../../models/map-folio';
 
+import ConfirmButton from '../controls/confirm-button';
 import GridPanel from '../panels/grid-panel';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
@@ -12,6 +13,7 @@ interface Props {
     mapFolios: MapFolio[];
     addMapFolio: () => void;
     selectMapFolio: (mapFolio: MapFolio) => void;
+    deleteMapFolio: (mapFolio: MapFolio) => void;
 }
 
 export default class MapListScreen extends React.Component<Props> {
@@ -21,7 +23,8 @@ export default class MapListScreen extends React.Component<Props> {
                 <ListItem
                     key={mapFolio.id}
                     mapFolio={mapFolio}
-                    setSelection={f => this.props.selectMapFolio(f)}
+                    open={f => this.props.selectMapFolio(f)}
+                    delete={f => this.props.deleteMapFolio(f)}
                 />
             ));
 
@@ -53,7 +56,8 @@ export default class MapListScreen extends React.Component<Props> {
 
 interface ListItemProps {
     mapFolio: MapFolio;
-    setSelection: (mapFolio: MapFolio) => void;
+    open: (mapFolio: MapFolio) => void;
+    delete: (mapFolio: MapFolio) => void;
 }
 
 class ListItem extends React.Component<ListItemProps> {
@@ -86,7 +90,8 @@ class ListItem extends React.Component<ListItemProps> {
                             {maps}
                         </div>
                         <div className='divider'/>
-                        <button onClick={() => this.props.setSelection(this.props.mapFolio)}>open</button>
+                        <button onClick={() => this.props.open(this.props.mapFolio)}>open</button>
+                        <ConfirmButton text='delete' callback={() => this.props.delete(this.props.mapFolio)} />
                     </div>
                 </div>
             );

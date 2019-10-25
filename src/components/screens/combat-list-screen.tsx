@@ -4,6 +4,7 @@ import { Col, Row } from 'antd';
 
 import { Combat } from '../../models/combat';
 
+import ConfirmButton from '../controls/confirm-button';
 import GridPanel from '../panels/grid-panel';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
@@ -12,6 +13,7 @@ interface Props {
     combats: Combat[];
     createCombat: () => void;
     resumeCombat: (combat: Combat) => void;
+    deleteCombat: (combat: Combat) => void;
 }
 
 export default class CombatListScreen extends React.Component<Props> {
@@ -21,7 +23,8 @@ export default class CombatListScreen extends React.Component<Props> {
                 <ListItem
                     key={c.id}
                     combat={c}
-                    setSelection={combat => this.props.resumeCombat(combat)}
+                    resume={combat => this.props.resumeCombat(combat)}
+                    delete={combat => this.props.deleteCombat(combat)}
                 />
             ));
 
@@ -54,7 +57,8 @@ export default class CombatListScreen extends React.Component<Props> {
 
 interface ListItemProps {
     combat: Combat;
-    setSelection: (combat: Combat) => void;
+    resume: (combat: Combat) => void;
+    delete: (combat: Combat) => void;
 }
 
 class ListItem extends React.Component<ListItemProps> {
@@ -85,7 +89,8 @@ class ListItem extends React.Component<ListItemProps> {
                             {map}
                         </div>
                         <div className='divider'/>
-                        <button onClick={() => this.props.setSelection(this.props.combat)}>resume</button>
+                        <button onClick={() => this.props.resume(this.props.combat)}>resume</button>
+                        <ConfirmButton text='delete' callback={() => this.props.delete(this.props.combat)} />
                     </div>
                 </div>
             );

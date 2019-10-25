@@ -6,6 +6,7 @@ import Utils from '../../utils/utils';
 
 import { CATEGORY_TYPES, MonsterGroup, SIZE_TYPES } from '../../models/monster-group';
 
+import ConfirmButton from '../controls/confirm-button';
 import Selector from '../controls/selector';
 import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
@@ -14,6 +15,7 @@ interface Props {
     library: MonsterGroup[];
     addMonsterGroup: () => void;
     selectMonsterGroup: (group: MonsterGroup) => void;
+    deleteMonsterGroup: (group: MonsterGroup) => void;
 }
 
 export default class MonsterListScreen extends React.Component<Props> {
@@ -23,7 +25,8 @@ export default class MonsterListScreen extends React.Component<Props> {
                 <ListItem
                     key={group.id}
                     group={group}
-                    setSelection={grp => this.props.selectMonsterGroup(grp)}
+                    open={grp => this.props.selectMonsterGroup(grp)}
+                    delete={grp => this.props.deleteMonsterGroup(grp)}
                 />
             ));
 
@@ -55,7 +58,8 @@ export default class MonsterListScreen extends React.Component<Props> {
 
 interface ListItemProps {
     group: MonsterGroup;
-    setSelection: (group: MonsterGroup) => void;
+    open: (group: MonsterGroup) => void;
+    delete: (group: MonsterGroup) => void;
 }
 
 interface ListItemState {
@@ -191,7 +195,8 @@ class ListItem extends React.Component<ListItemProps, ListItemState> {
                             {content}
                         </div>
                         <div className='divider'/>
-                        <button onClick={() => this.props.setSelection(this.props.group)}>open</button>
+                        <button onClick={() => this.props.open(this.props.group)}>open</button>
+                        <ConfirmButton text='delete' callback={() => this.props.delete(this.props.group)} />
                     </div>
                 </div>
             );

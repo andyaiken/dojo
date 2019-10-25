@@ -4,6 +4,7 @@ import { Col, Row } from 'antd';
 
 import { Party, PC } from '../../models/party';
 
+import ConfirmButton from '../controls/confirm-button';
 import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
 
@@ -12,6 +13,7 @@ interface Props {
     addParty: () => void;
     importParty: () => void;
     selectParty: (party: Party) => void;
+    deleteParty: (party: Party) => void;
 }
 
 export default class PartyListScreen extends React.Component<Props> {
@@ -21,7 +23,8 @@ export default class PartyListScreen extends React.Component<Props> {
                 <ListItem
                     key={p.id}
                     party={p}
-                    setSelection={party => this.props.selectParty(party)}
+                    open={party => this.props.selectParty(party)}
+                    delete={party => this.props.deleteParty(party)}
                 />
             ));
 
@@ -55,7 +58,8 @@ export default class PartyListScreen extends React.Component<Props> {
 
 interface ListItemProps {
     party: Party;
-    setSelection: (party: Party) => void;
+    open: (party: Party) => void;
+    delete: (party: Party) => void;
 }
 
 class ListItem extends React.Component<ListItemProps> {
@@ -99,7 +103,8 @@ class ListItem extends React.Component<ListItemProps> {
                             {pcs}
                         </div>
                         <div className='divider'/>
-                        <button onClick={() => this.props.setSelection(this.props.party)}>open</button>
+                        <button onClick={() => this.props.open(this.props.party)}>open</button>
+                        <ConfirmButton text='delete' callback={() => this.props.delete(this.props.party)} />
                     </div>
                 </div>
             );
