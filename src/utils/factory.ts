@@ -209,7 +209,7 @@ export default class Factory {
             id: Utils.guid(),
             name: '',
             level: 1,
-            text: null,
+            text: '',
             duration: null
         };
     }

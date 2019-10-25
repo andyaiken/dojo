@@ -2,7 +2,7 @@ export interface Condition {
     id: string;
     name: string;
     level: number;
-    text: string | null;
+    text: string;
     duration: ConditionDurationSaves | ConditionDurationCombatant | ConditionDurationRounds | null;
 }
 

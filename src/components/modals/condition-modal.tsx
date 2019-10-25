@@ -34,16 +34,18 @@ export default class ConditionModal extends React.Component<Props, State> {
     }
 
     private setCondition(conditionName: string) {
-        // eslint-disable-next-line
-        this.state.condition.name = conditionName;
-        // eslint-disable-next-line
-        this.state.condition.level = 1;
-        // eslint-disable-next-line
-        this.state.condition.text = conditionName === 'custom' ? 'custom condition' : null;
+        if (this.state.condition.name !== conditionName) {
+            // eslint-disable-next-line
+            this.state.condition.name = conditionName;
+            // eslint-disable-next-line
+            this.state.condition.level = 1;
+            // eslint-disable-next-line
+            this.state.condition.text = '';
 
-        this.setState({
-            condition: this.state.condition
-        });
+            this.setState({
+                condition: this.state.condition
+            });
+        }
     }
 
     private setDuration(durationType: 'saves' | 'combatant' | 'rounds') {
@@ -108,8 +110,9 @@ export default class ConditionModal extends React.Component<Props, State> {
                     if (condition === 'custom') {
                         controls.push(
                             <Input
+                                key='customtext'
                                 placeholder='custom condition'
-                                value={this.state.condition.text ? this.state.condition.text : ''}
+                                value={this.state.condition.text}
                                 allowClear={true}
                                 onChange={event => this.changeValue(this.state.condition, 'text', event.target.value)}
                             />
