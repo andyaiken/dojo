@@ -66,6 +66,9 @@ interface State {
 }
 
 export default class Dojo extends React.Component<Props, State> {
+
+    //#region Constructor
+
     constructor(props: Props) {
         super(props);
 
@@ -136,12 +139,133 @@ export default class Dojo extends React.Component<Props, State> {
         };
     }
 
+    //#endregion
+
     public componentDidUpdate() {
         this.saveAfterDelay();
     }
 
+    //#region Helper methods
+
+    private setView(view: 'home' | 'parties' | 'library' | 'encounters' | 'maps' | 'combat') {
+        this.save();
+        this.setState({
+            view: view
+        });
+    }
+
+    private openToolsDrawer(type: string) {
+        this.setState({
+            drawer: {
+                type: type
+            }
+        });
+    }
+
+    private toggleNavigation() {
+        this.setState({
+            navigation: !this.state.navigation
+        });
+    }
+
+    private closeDrawer() {
+        this.setState({
+            drawer: null
+        });
+    }
+
+    private selectParty(party: Party | null) {
+        this.setState({
+            selectedPartyID: party ? party.id : null
+        });
+    }
+
+    private selectMonsterGroup(group: MonsterGroup | null) {
+        this.setState({
+            selectedMonsterGroupID: group ? group.id : null
+        });
+    }
+
+    private selectEncounter(encounter: Encounter | null) {
+        this.setState({
+            selectedEncounterID: encounter ? encounter.id : null
+        });
+    }
+
+    private selectMapFolio(mapFolio: MapFolio | null) {
+        this.setState({
+            selectedMapFolioID: mapFolio ? mapFolio.id : null
+        });
+    }
+
+    private selectPartyByID(id: string | null) {
+        this.save();
+        this.setState({
+            view: 'parties',
+            navigation: false,
+            selectedPartyID: id
+        });
+    }
+
+    private selectMonsterGroupByID(id: string | null) {
+        this.save();
+        this.setState({
+            view: 'library',
+            navigation: false,
+            selectedMonsterGroupID: id
+        });
+    }
+
+    private selectEncounterByID(id: string | null) {
+        this.save();
+        this.setState({
+            view: 'encounters',
+            navigation: false,
+            selectedEncounterID: id
+        });
+    }
+
+    private selectMapFolioByID(id: string | null) {
+        this.save();
+        this.setState({
+            view: 'maps',
+            navigation: false,
+            selectedMapFolioID: id
+        });
+    }
+
+    private selectCombatByID(id: string | null) {
+        this.save();
+        if ((this.state.selectedCombatID !== null) && (id === null)) {
+            this.pauseCombat();
+        } else {
+            this.setState({
+                view: 'combat',
+                navigation: false,
+                selectedCombatID: id
+            });
+        }
+    }
+
+    private resetAll() {
+        this.setState({
+            parties: [],
+            selectedPartyID: null,
+            library: [],
+            selectedMonsterGroupID: null,
+            encounters: [],
+            selectedEncounterID: null,
+            mapFolios: [],
+            selectedMapFolioID: null,
+            combats: [],
+            selectedCombatID: null
+        });
+    }
+
+    //#endregion
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Party screen
+    //#region Party screen
 
     private addParty() {
         const party = Factory.createParty();
@@ -246,8 +370,10 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
+    //#endregion
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Library screen
+    //#region Library screen
 
     private addMonsterGroup() {
         const group = Factory.createMonsterGroup();
@@ -444,8 +570,10 @@ export default class Dojo extends React.Component<Props, State> {
             });
     }
 
+    //#endregion
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Encounter screen
+    //#region Encounter screen
 
     private addEncounter() {
         const encounter = Factory.createEncounter();
@@ -605,8 +733,10 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
+    //#endregion
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Map screen
+    //#region Map screen
 
     private addMapFolio() {
         const folio = Factory.createMapFolio();
@@ -686,8 +816,10 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
+    //#endregion
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Combat screen
+    //#region Combat screen
 
     private createCombat() {
         const party = this.state.parties.length === 1 ? this.state.parties[0] : null;
@@ -1459,128 +1591,7 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private setView(view: 'home' | 'parties' | 'library' | 'encounters' | 'maps' | 'combat') {
-        this.save();
-        this.setState({
-            view: view
-        });
-    }
-
-    private openToolsDrawer(type: string) {
-        this.setState({
-            drawer: {
-                type: type
-            }
-        });
-    }
-
-    private closeModal() {
-        this.setState({
-            drawer: null
-        });
-    }
-
-    private toggleNavigation() {
-        this.setState({
-            navigation: !this.state.navigation
-        });
-    }
-
-    private closeDrawer() {
-        this.setState({
-            drawer: null
-        });
-    }
-
-    private selectParty(party: Party | null) {
-        this.setState({
-            selectedPartyID: party ? party.id : null
-        });
-    }
-
-    private selectMonsterGroup(group: MonsterGroup | null) {
-        this.setState({
-            selectedMonsterGroupID: group ? group.id : null
-        });
-    }
-
-    private selectEncounter(encounter: Encounter | null) {
-        this.setState({
-            selectedEncounterID: encounter ? encounter.id : null
-        });
-    }
-
-    private selectMapFolio(mapFolio: MapFolio | null) {
-        this.setState({
-            selectedMapFolioID: mapFolio ? mapFolio.id : null
-        });
-    }
-
-    private selectPartyByID(id: string | null) {
-        this.save();
-        this.setState({
-            view: 'parties',
-            navigation: false,
-            selectedPartyID: id
-        });
-    }
-
-    private selectMonsterGroupByID(id: string | null) {
-        this.save();
-        this.setState({
-            view: 'library',
-            navigation: false,
-            selectedMonsterGroupID: id
-        });
-    }
-
-    private selectEncounterByID(id: string | null) {
-        this.save();
-        this.setState({
-            view: 'encounters',
-            navigation: false,
-            selectedEncounterID: id
-        });
-    }
-
-    private selectMapFolioByID(id: string | null) {
-        this.save();
-        this.setState({
-            view: 'maps',
-            navigation: false,
-            selectedMapFolioID: id
-        });
-    }
-
-    private selectCombatByID(id: string | null) {
-        this.save();
-        if ((this.state.selectedCombatID !== null) && (id === null)) {
-            this.pauseCombat();
-        } else {
-            this.setState({
-                view: 'combat',
-                navigation: false,
-                selectedCombatID: id
-            });
-        }
-    }
-
-    private resetAll() {
-        this.setState({
-            parties: [],
-            selectedPartyID: null,
-            library: [],
-            selectedMonsterGroupID: null,
-            encounters: [],
-            selectedEncounterID: null,
-            mapFolios: [],
-            selectedMapFolioID: null,
-            combats: [],
-            selectedCombatID: null
-        });
-    }
+    //#endregion
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1681,6 +1692,7 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //#region Saving
 
     private saveAfterDelay = Utils.debounce(() => this.saveAll(), 10000);
 
@@ -1734,7 +1746,10 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
+    //#endregion
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //#region Rendering
 
     private getContent() {
         switch (this.state.view) {
@@ -2202,4 +2217,6 @@ export default class Dojo extends React.Component<Props, State> {
             return <div className='render-error'/>;
         }
     }
+
+    //#endregion
 }

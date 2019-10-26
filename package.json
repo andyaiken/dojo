@@ -1,6 +1,6 @@
 {
     "name": "dojo",
-    "version": "4.1.13",
+    "version": "4.1.14",
     "license": "MIT",
     "repository": "https://github.com/andyaiken/dojo.git",
     "homepage": "https://andyaiken.github.io/dojo/",
@@ -29,7 +29,7 @@
         "typescript": "^3.6.4"
     },
     "scripts": {
-        "update": "npm update",
+        "update": "npm update --save-dev",
         "start": "react-scripts start --display-error-details",
         "lint": "tslint --config tslint.json --format verbose 'src/**/*.{ts,tsx}'",
         "test": "jest",

@@ -1,7 +1,9 @@
 const puppeteer = require('puppeteer');
 
-let browser;
-let page;
+let browser = null;
+let page = null;
+
+let timeout = 10000;
 
 beforeEach(async () => {
     browser = await puppeteer.launch({
@@ -18,14 +20,39 @@ beforeEach(async () => {
     });
 
     await page.goto('http://localhost:3000/');
+    await page.waitForSelector('.dojo');
 });
 
 afterEach(async () => {
     browser.close();
 });
 
-describe('Suite 1', () => {
+describe('Parties', () => {
     test('Test 1', async () => {
       expect(true).toBe(true);
-    });
+    }, timeout);
+});
+
+describe('Monsters', () => {
+    test('Test 1', async () => {
+      expect(true).toBe(true);
+    }, timeout);
+});
+
+describe('Encounters', () => {
+    test('Test 1', async () => {
+      expect(true).toBe(true);
+    }, timeout);
+});
+
+describe('Maps', () => {
+    test('Test 1', async () => {
+      expect(true).toBe(true);
+    }, timeout);
+});
+
+describe('Combats', () => {
+    test('Test 1', async () => {
+      expect(true).toBe(true);
+    }, timeout);
 });

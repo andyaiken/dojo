@@ -6,14 +6,6 @@ It can be used to design monsters and to plan and run combat encounters.
 
 You can find it at [https://andyaiken.github.io/dojo/](https://andyaiken.github.io/dojo/).
 
-![Browsing the monster library](./docs/goblinoids.jpg)
-
-![Planning an encounter](./docs/encounter.jpg)
-
-![Starting an encounter](./docs/start-encounter.jpg)
-
-![Running combat](./docs/combat.jpg)
-
 Dojo is written in TypeScript / JavaScript, using React and SCSS. If you would like to contribute to this project, you are welcome to do so.
 
 ## Initial set up
@@ -37,9 +29,10 @@ If there are any build errors, you will see them in the terminal and the browser
 
 ## Making a change to the app
 
-Check that your changes don't break the project's style rules:
+Check that your changes don't break any functionality, or the project's style rules:
 
 * Open a terminal in the root folder
+* Run `npm run test`
 * Run `npm run lint`
 
 Remember to update the app version number in `package.json` before pushing any change to the repository.
