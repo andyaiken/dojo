@@ -211,16 +211,16 @@ export default class CombatScreen extends React.Component<Props, State> {
                                 display={value => value + ' ft.'}
                                 nudgeValue={delta => this.props.nudgeValue(token, 'altitude', delta * 5)}
                             />
-                            <Row key='tags' gutter={10}>
-                                <Col span={6}>
+                            <Row gutter={10}>
+                                <Col span={8}>
                                     <Checkbox
-                                        label='conc'
+                                        label='conc.'
                                         display='button'
                                         checked={token.tags.includes('conc')}
                                         changeValue={value => this.props.toggleTag(token, 'conc')}
                                     />
                                 </Col>
-                                <Col span={6}>
+                                <Col span={8}>
                                     <Checkbox
                                         label='bane'
                                         display='button'
@@ -228,7 +228,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                                         changeValue={value => this.props.toggleTag(token, 'bane')}
                                     />
                                 </Col>
-                                <Col span={6}>
+                                <Col span={8}>
                                     <Checkbox
                                         label='bless'
                                         display='button'
@@ -236,12 +236,30 @@ export default class CombatScreen extends React.Component<Props, State> {
                                         changeValue={value => this.props.toggleTag(token, 'bless')}
                                     />
                                 </Col>
-                                <Col span={6}>
+                            </Row>
+                            <Row gutter={10}>
+                                <Col span={8}>
                                     <Checkbox
-                                        label='hex'
+                                        label='prone'
                                         display='button'
-                                        checked={token.tags.includes('hex')}
-                                        changeValue={value => this.props.toggleTag(token, 'hex')}
+                                        checked={token.conditions.some(c => c.name === 'prone')}
+                                        changeValue={value => this.props.toggleCondition(token, 'prone')}
+                                    />
+                                </Col>
+                                <Col span={8}>
+                                    <Checkbox
+                                        label='uncon.'
+                                        display='button'
+                                        checked={token.conditions.some(c => c.name === 'unconscious')}
+                                        changeValue={value => this.props.toggleCondition(token, 'unconscious')}
+                                    />
+                                </Col>
+                                <Col span={8}>
+                                    <Checkbox
+                                        label='hidden'
+                                        display='button'
+                                        checked={!token.showOnMap}
+                                        changeValue={value => this.props.changeValue(token, 'showOnMap', !value)}
                                     />
                                 </Col>
                             </Row>
@@ -886,9 +904,31 @@ class PCRow extends React.Component<PCRowProps> {
                 );
             }
 
-            let conditions = null;
+            const notes = [];
+            if (this.props.combat.map) {
+                if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
+                    notes.push(
+                        <Note key='not-on-map' white={true}>not on the map</Note>
+                    );
+                }
+                if (!this.props.combatant.showOnMap) {
+                    notes.push(
+                        <Note key='hidden' white={true}>hidden</Note>
+                    );
+                }
+            }
+            this.props.combatant.tags.forEach(tag => {
+                notes.push(
+                    <Note key={tag} white={true}>
+                        <div className='condition'>
+                            <div className='condition-name'>{Utils.getTagTitle(tag)}</div>
+                            {Utils.getTagDescription(tag)}
+                        </div>
+                    </Note>
+                );
+            });
             if (this.props.combatant.conditions) {
-                conditions = this.props.combatant.conditions.map(c => {
+                this.props.combatant.conditions.forEach(c => {
                     let name = c.name;
                     if (c.name === 'exhaustion') {
                         name += ' (' + c.level + ')';
@@ -904,7 +944,7 @@ class PCRow extends React.Component<PCRowProps> {
                     for (let n = 0; n !== text.length; ++n) {
                         description.push(<div key={n} className='condition-text'>{text[n]}</div>);
                     }
-                    return (
+                    notes.push(
                         <Note key={c.id} white={true}>
                             <div className='condition'>
                                 <div className='condition-name'>{name}</div>
@@ -914,20 +954,6 @@ class PCRow extends React.Component<PCRowProps> {
                     );
                 });
             }
-
-            const notes = [];
-            if (this.props.combat.map) {
-                if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
-                    notes.push(
-                        <Note key='not-on-map' white={true}>not on the map</Note>
-                    );
-                }
-            }
-            this.props.combatant.tags.forEach(tag => {
-                notes.push(
-                    <Note key={tag} white={true}>{Utils.getTagDescription(tag)}</Note>
-                );
-            });
 
             let companions = null;
             if (this.props.combatant.companions.length > 0) {
@@ -950,7 +976,6 @@ class PCRow extends React.Component<PCRowProps> {
                     </div>
                     <div className='content'>
                         {desc}
-                        {conditions}
                         {notes}
                         {companions}
                     </div>
@@ -1014,9 +1039,31 @@ class MonsterRow extends React.Component<MonsterRowProps> {
                 );
             }
 
-            let conditions = null;
+            const notes = [];
+            if (this.props.combat.map) {
+                if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
+                    notes.push(
+                        <Note key='not-on-map' white={true}>not on the map</Note>
+                    );
+                }
+                if (!this.props.combatant.showOnMap) {
+                    notes.push(
+                        <Note key='hidden' white={true}>hidden</Note>
+                    );
+                }
+            }
+            this.props.combatant.tags.forEach(tag => {
+                notes.push(
+                    <Note key={tag} white={true}>
+                        <div className='condition'>
+                            <div className='condition-name'>{Utils.getTagTitle(tag)}</div>
+                            {Utils.getTagDescription(tag)}
+                        </div>
+                    </Note>
+                );
+            });
             if (this.props.combatant.conditions) {
-                conditions = this.props.combatant.conditions.map(c => {
+                this.props.combatant.conditions.forEach(c => {
                     let name = c.name;
                     if (c.name === 'exhaustion') {
                         name += ' (' + c.level + ')';
@@ -1032,7 +1079,7 @@ class MonsterRow extends React.Component<MonsterRowProps> {
                     for (let n = 0; n !== text.length; ++n) {
                         description.push(<div key={n} className='condition-text'>{text[n]}</div>);
                     }
-                    return (
+                    notes.push(
                         <Note key={c.id} white={true}>
                             <div className='condition'>
                                 <div className='condition-name'>{name}</div>
@@ -1042,20 +1089,6 @@ class MonsterRow extends React.Component<MonsterRowProps> {
                     );
                 });
             }
-
-            const notes = [];
-            if (this.props.combat.map) {
-                if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
-                    notes.push(
-                        <Note key='not-on-map' white={true}>not on the map</Note>
-                    );
-                }
-            }
-            this.props.combatant.tags.forEach(tag => {
-                notes.push(
-                    <Note key={tag} white={true}>{Utils.getTagDescription(tag)}</Note>
-                );
-            });
 
             let dmInfo = null;
             if (!this.props.minimal) {
@@ -1087,7 +1120,6 @@ class MonsterRow extends React.Component<MonsterRowProps> {
                     </div>
                     <div className='content'>
                         {dmInfo}
-                        {conditions}
                         {notes}
                     </div>
                 </div>

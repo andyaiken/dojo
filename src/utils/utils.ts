@@ -614,16 +614,27 @@ export default class Utils {
         return monsterNames;
     }
 
+    public static getTagTitle(tag: string) {
+        switch (tag) {
+            case 'conc':
+                return 'concentration';
+            case 'bane':
+                return 'affected by bane';
+            case 'bless':
+                return 'affected by bless';
+            default:
+                return tag;
+        }
+    }
+
     public static getTagDescription(tag: string) {
         switch (tag) {
             case 'conc':
-                return 'concentrating';
+                return 'if damaged, must make con save (dc is half damage taken or 10, whichever is higher) or lose concentration';
             case 'bane':
-                return 'baned (subtract d4 from attack rolls and saving throws)';
+                return 'subtract d4 from attack rolls and saving throws';
             case 'bless':
-                return 'blessed (add d4 to attack rolls and saving throws)';
-            case 'hex':
-                return 'hexed (disadvantage on one saving throw; take additional damage on hit)';
+                return 'add d4 to attack rolls and saving throws';
             default:
                 return tag;
         }

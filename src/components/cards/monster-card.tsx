@@ -250,28 +250,17 @@ export default class MonsterCard extends React.Component<Props, State> {
                     options.push(<button key='makeActive' onClick={() => this.props.makeActive(combatant)}>mark as active</button>);
                 }
                 options.push(<div key='tag-sep' className='divider' />);
-                if (this.props.mode.indexOf('tactical') !== -1) {
-                    options.push(
-                        <Checkbox
-                            key='hidden'
-                            label='hidden'
-                            display='switch'
-                            checked={!combatant.showOnMap}
-                            changeValue={value => this.props.changeValue(combatant, 'showOnMap', !value)}
-                        />
-                    );
-                }
                 options.push(
                     <Row key='tags' gutter={10}>
-                        <Col span={6}>
+                        <Col span={8}>
                             <Checkbox
-                                label='conc'
+                                label='conc.'
                                 display='button'
                                 checked={combatant.tags.includes('conc')}
                                 changeValue={value => this.props.toggleTag(combatant, 'conc')}
                             />
                         </Col>
-                        <Col span={6}>
+                        <Col span={8}>
                             <Checkbox
                                 label='bane'
                                 display='button'
@@ -279,7 +268,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                                 changeValue={value => this.props.toggleTag(combatant, 'bane')}
                             />
                         </Col>
-                        <Col span={6}>
+                        <Col span={8}>
                             <Checkbox
                                 label='bless'
                                 display='button'
@@ -287,19 +276,11 @@ export default class MonsterCard extends React.Component<Props, State> {
                                 changeValue={value => this.props.toggleTag(combatant, 'bless')}
                             />
                         </Col>
-                        <Col span={6}>
-                            <Checkbox
-                                label='hex'
-                                display='button'
-                                checked={combatant.tags.includes('hex')}
-                                changeValue={value => this.props.toggleTag(combatant, 'hex')}
-                            />
-                        </Col>
                     </Row>
                 );
                 options.push(
                     <Row key='conditions' gutter={10}>
-                        <Col span={12}>
+                        <Col span={8}>
                             <Checkbox
                                 label='prone'
                                 display='button'
@@ -307,12 +288,21 @@ export default class MonsterCard extends React.Component<Props, State> {
                                 changeValue={value => this.props.toggleCondition(combatant, 'prone')}
                             />
                         </Col>
-                        <Col span={12}>
+                        <Col span={8}>
                             <Checkbox
-                                label='unconscious'
+                                label='uncon.'
                                 display='button'
                                 checked={combatant.conditions.some(c => c.name === 'unconscious')}
                                 changeValue={value => this.props.toggleCondition(combatant, 'unconscious')}
+                            />
+                        </Col>
+                        <Col span={8}>
+                            <Checkbox
+                                label='hidden'
+                                display='button'
+                                checked={!combatant.showOnMap}
+                                disabled={this.props.mode.indexOf('tactical') === -1}
+                                changeValue={value => this.props.changeValue(combatant, 'showOnMap', !value)}
                             />
                         </Col>
                     </Row>

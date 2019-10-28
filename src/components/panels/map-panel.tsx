@@ -489,7 +489,9 @@ class MapToken extends React.Component<MapTokenProps> {
                     );
                 }
 
-                if ((this.props.combatant.conditions) && (this.props.combatant.conditions.length > 0)) {
+                const hasConditions = this.props.combatant.conditions && (this.props.combatant.conditions.length > 0);
+                const hasTags = this.props.combatant.tags && (this.props.combatant.tags.length > 0);
+                if (hasConditions || hasTags) {
                     conditionsBadge = (
                         <div className='badge' title='affected by conditions'>&#9670;</div>
                     );
