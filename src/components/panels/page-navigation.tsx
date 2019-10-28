@@ -76,31 +76,86 @@ export default class PageNavigation extends React.Component<Props, State> {
                 <div key={combat.id} className='nav-subitem' onClick={() => this.props.openCombat(combat.id)}>{combat.name}</div>
             ));
 
+            let openParties = null;
+            if (this.props.parties.length > 0) {
+                openParties = (
+                    <Icon
+                        type='down-circle'
+                        className={this.state.showParties ? 'toggle open' : 'toggle'}
+                        onClick={() => this.open('parties')}
+                    />
+                );
+            }
+
+            let openGroups = null;
+            if (this.props.library.length > 0) {
+                openGroups = (
+                    <Icon
+                        type='down-circle'
+                        className={this.state.showGroups ? 'toggle open' : 'toggle'}
+                        onClick={() => this.open('groups')}
+                    />
+                );
+            }
+
+            let openEncounters = null;
+            if (this.props.encounters.length > 0) {
+                openEncounters = (
+                    <Icon
+                        type='down-circle'
+                        className={this.state.showEncounters ? 'toggle open' : 'toggle'}
+                        onClick={() => this.open('encounters')}
+                    />
+                );
+            }
+
+            let openMaps = null;
+            if (this.props.maps.length > 0) {
+                openMaps = (
+                    <Icon
+                        type='down-circle'
+                        className={this.state.showMaps ? 'toggle open' : 'toggle'}
+                        onClick={() => this.open('maps')}
+                    />
+                );
+            }
+
+            let openCombats = null;
+            if (this.props.combats.length > 0) {
+                openCombats = (
+                    <Icon
+                        type='down-circle'
+                        className={this.state.showCombats ? 'toggle open' : 'toggle'}
+                        onClick={() => this.open('combats')}
+                    />
+                );
+            }
+
             return (
                 <div className='scrollable'>
                     <div className='nav-item'>
                         <div className='text' onClick={() => this.props.openParty(null)}>pcs</div>
-                        <Icon type='down-circle' className={this.state.showParties ? 'toggle open' : 'toggle'} onClick={() => this.open('parties')} />
+                        {openParties}
                     </div>
                     {this.state.showParties ? parties : null}
                     <div className='nav-item'>
                         <div className='text' onClick={() => this.props.openMonsterGroup(null)}>monsters</div>
-                        <Icon type='down-circle' className={this.state.showGroups ? 'toggle open' : 'toggle'} onClick={() => this.open('groups')} />
+                        {openGroups}
                     </div>
                     {this.state.showGroups ? groups : null}
                     <div className={encountersEnabled ? 'nav-item' : 'nav-item disabled'}>
                         <div className='text' onClick={() => this.props.openEncounter(null)}>encounters</div>
-                        <Icon type='down-circle' className={this.state.showEncounters ? 'toggle open' : 'toggle'} onClick={() => this.open('encounters')} />
+                        {openEncounters}
                     </div>
                     {this.state.showEncounters ? encounters : null}
                     <div className='nav-item'>
                         <div className='text' onClick={() => this.props.openMapFolio(null)}>maps</div>
-                        <Icon type='down-circle' className={this.state.showMaps ? 'toggle open' : 'toggle'} onClick={() => this.open('maps')} />
+                        {openMaps}
                     </div>
                     {this.state.showMaps ? maps : null}
                     <div className={combatEnabled ? 'nav-item' : 'nav-item disabled'}>
                         <div className='text' onClick={() => this.props.openCombat(null)}>combat</div>
-                        <Icon type='down-circle' className={this.state.showCombats ? 'toggle open' : 'toggle'} onClick={() => this.open('combats')} />
+                        {openCombats}
                     </div>
                     {this.state.showCombats ? combats : null}
                 </div>
