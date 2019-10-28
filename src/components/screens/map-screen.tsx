@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Col, Icon, Input, Row } from 'antd';
 
+import Mercator from '../../utils/mercator';
+
 import { Map, MapFolio } from '../../models/map-folio';
 
 import ConfirmButton from '../controls/confirm-button';
@@ -87,6 +89,37 @@ interface MapFolioInfoProps {
 }
 
 class MapFolioInfo extends React.Component<MapFolioInfoProps> {
+    private getSummary() {
+        if (this.props.mapFolio.maps.length === 0) {
+            return (
+                <div className='section centered'>
+                    <i>no maps</i>
+                </div>
+            );
+        }
+
+        const size: { min: number | null, max: number | null } = { min: null, max: null };
+
+        this.props.mapFolio.maps.forEach(map => {
+            const mapSize = Mercator.mapSize(map);
+            size.min = size.min === null ? mapSize : Math.min(size.min, mapSize);
+            size.max = size.max === null ? mapSize : Math.max(size.max, mapSize);
+        });
+
+        const sizeSummary = size.min === size.max ? (size.min as number).toString() : size.min + ' - ' + size.max;
+
+        return (
+            <div className='group-panel'>
+                <div className='section'>
+                    <div className='subheading'>map size</div>
+                </div>
+                <div className='section'>
+                    {sizeSummary}
+                </div>
+            </div>
+        );
+    }
+
     public render() {
         try {
             return (
@@ -100,6 +133,8 @@ class MapFolioInfo extends React.Component<MapFolioInfoProps> {
                             onChange={event => this.props.changeValue(this.props.mapFolio, 'name', event.target.value)}
                         />
                     </div>
+                    <div className='divider' />
+                    {this.getSummary()}
                     <div className='divider' />
                     <div className='section'>
                         <button onClick={() => this.props.addMap()}>add a new map</button>

@@ -4,7 +4,7 @@ import Factory from './factory';
 import Utils from './utils';
 
 import { Combat, Combatant } from '../models/combat';
-import { Map } from '../models/map-folio';
+import { Map, MapItem } from '../models/map-folio';
 
 export default class Mercator {
     public static scatterCombatants(combat: Combat, type: 'pc' | 'monster') {
@@ -119,5 +119,19 @@ export default class Mercator {
             item.width = newWidth;
             item.height = newHeight;
         });
+    }
+
+    public static mapSize(map: Map) {
+        return map.items
+            .filter(item => item.type === 'tile')
+            .reduce((sum, item) => sum + Mercator.mapTileSize(item), 0);
+    }
+
+    public static mapTileSize(tile: MapItem) {
+        if (tile.type === 'tile') {
+            return tile.width * tile.height;
+        }
+
+        return 0;
     }
 }

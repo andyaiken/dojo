@@ -102,7 +102,11 @@ class PartyInfo extends React.Component<PartyInfoProps> {
     private getSummary() {
         const activePCs = this.props.party.pcs.filter(pc => pc.active);
         if (activePCs.length === 0) {
-            return null;
+            return (
+                <div className='section centered'>
+                    <i>no pcs</i>
+                </div>
+            );
         }
 
         let languages = '';

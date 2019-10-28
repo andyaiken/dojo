@@ -91,6 +91,36 @@ interface MonsterInfoProps {
 }
 
 class MonsterInfo extends React.Component<MonsterInfoProps> {
+    private getSummary() {
+        if (this.props.monsterGroup.monsters.length === 0) {
+            return (
+                <div className='section centered'>
+                    <i>no monsters</i>
+                </div>
+            );
+        }
+
+        const challenge: { min: number | null, max: number | null } = { min: null, max: null };
+
+        this.props.monsterGroup.monsters.forEach(monster => {
+            challenge.min = challenge.min === null ? monster.challenge : Math.min(challenge.min, monster.challenge);
+            challenge.max = challenge.max === null ? monster.challenge : Math.max(challenge.max, monster.challenge);
+        });
+
+        const challengeSummary = challenge.min === challenge.max ? (challenge.min as number).toString() : challenge.min + ' - ' + challenge.max;
+
+        return (
+            <div className='group-panel'>
+                <div className='section'>
+                    <div className='subheading'>challenge rating</div>
+                </div>
+                <div className='section'>
+                    {challengeSummary}
+                </div>
+            </div>
+        );
+    }
+
     public render() {
         try {
             return (
@@ -104,6 +134,8 @@ class MonsterInfo extends React.Component<MonsterInfoProps> {
                             onChange={event => this.props.changeValue('name', event.target.value)}
                         />
                     </div>
+                    <div className='divider' />
+                    {this.getSummary()}
                     <div className='divider' />
                     <div className='section'>
                         <button onClick={() => this.props.addMonster()}>add a new monster</button>
