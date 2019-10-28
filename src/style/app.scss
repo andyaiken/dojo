@@ -686,6 +686,10 @@ body,
     .card-content {
         padding: 5px 10px;
 
+        .stats {
+            column-width: 250px;
+        }
+
         .grid {
             height: 200px;
             overflow-y: auto;
@@ -967,6 +971,10 @@ body,
         font-weight: 600;
         text-align: right;
     }
+
+    .trait {
+        break-inside: avoid-column;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1199,6 +1207,7 @@ body,
     background: $background;
     padding: 5px 10px;
     margin: 5px 0;
+    break-inside: avoid-column;
 
     &.clickable {
         cursor: pointer;
