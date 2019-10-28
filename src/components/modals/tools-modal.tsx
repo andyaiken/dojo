@@ -12,6 +12,7 @@ import { CATEGORY_TYPES, Monster, MonsterGroup, SIZE_TYPES } from '../../models/
 import Checkbox from '../controls/checkbox';
 import NumberSpin from '../controls/number-spin';
 import Selector from '../controls/selector';
+import ChartPanel from '../panels/chart-panel';
 import GridPanel from '../panels/grid-panel';
 
 const showdown = new Showdown.Converter();
@@ -268,7 +269,7 @@ class DemographicsModule extends React.Component<DemographicsModuleProps, Demogr
                 case 'size':
                     data = SIZE_TYPES.map(size => {
                         return {
-                            text: size.length < 10 ? size : size.substring(0, 4) + '.',
+                            text: size,
                             value: allMonsters.filter(monster => monster.size === size).length
                         };
                     });
@@ -276,7 +277,7 @@ class DemographicsModule extends React.Component<DemographicsModuleProps, Demogr
                 case 'type':
                     data = CATEGORY_TYPES.map(cat => {
                         return {
-                            text: cat.length < 10 ? cat : cat.substring(0, 4) + '.',
+                            text: cat,
                             value: allMonsters.filter(monster => monster.category === cat).length
                         };
                     });
@@ -285,23 +286,6 @@ class DemographicsModule extends React.Component<DemographicsModuleProps, Demogr
                     // Do nothing
                     break;
             }
-
-            const max = Math.max(...data.map(d => d.value));
-
-            const bars = data.map(d => (
-                <div
-                    key={d.text}
-                    className='bar-container'
-                    title={d.text + ': ' + d.value + ' monsters'}
-                >
-                    <div
-                        className='bar'
-                        style={{
-                            width: 'calc((100% - 1px) * ' + d.value + ' / ' + max + ')'
-                        }}
-                    />
-                </div>
-            ));
 
             const chartOptions = [
                 {
@@ -325,9 +309,7 @@ class DemographicsModule extends React.Component<DemographicsModuleProps, Demogr
                         selectedID={this.state.chart}
                         select={optionID => this.selectChart(optionID)}
                     />
-                    <div className='chart'>
-                        <div className='plot'>{bars}</div>
-                    </div>
+                    <ChartPanel data={data} />
                 </div>
             );
         } catch (ex) {

@@ -74,7 +74,7 @@ class ListItem extends React.Component<ListItemProps> {
     public render() {
         try {
             const pcs = this.props.party.pcs.filter(pc => pc.active).map(pc => (
-                <div key={pc.id} className='section'>{this.getText(pc)}</div>
+                <div key={pc.id} className='pc'>{this.getText(pc)}</div>
             ));
             if (pcs.length === 0) {
                 pcs.push(<div key='empty' className='section'>no pcs</div>);
@@ -86,7 +86,7 @@ class ListItem extends React.Component<ListItemProps> {
                     <div key='inactive' className='subheading'>inactive pcs</div>
                 );
                 inactive.forEach(pc => pcs.push(
-                    <div key={pc.id} className='section'>{this.getText(pc)}</div>
+                    <div key={pc.id} className='pc'>{this.getText(pc)}</div>
                 ));
             }
 

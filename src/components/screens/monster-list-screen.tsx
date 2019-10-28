@@ -6,8 +6,9 @@ import Utils from '../../utils/utils';
 
 import { CATEGORY_TYPES, MonsterGroup, SIZE_TYPES } from '../../models/monster-group';
 
+import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
-import Selector from '../controls/selector';
+import ChartPanel from '../panels/chart-panel';
 import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
 
@@ -63,26 +64,26 @@ interface ListItemProps {
 }
 
 interface ListItemState {
-    view: string;
+    showBreakdown: boolean;
 }
 
 class ListItem extends React.Component<ListItemProps, ListItemState> {
     constructor(props: ListItemProps) {
         super(props);
         this.state = {
-            view: 'monsters'
+            showBreakdown: false
         };
     }
 
-    private setView(view: string) {
+    private toggleBreakdown() {
         this.setState({
-            view: view
+            showBreakdown: !this.state.showBreakdown
         });
     }
 
     private getMonsters() {
         const monsters = this.props.group.monsters.map(m => (
-            <div key={m.id} className='section'>
+            <div key={m.id} className='monster'>
                 {m.name || 'unnamed monster'}
             </div>
         ));
@@ -99,85 +100,47 @@ class ListItem extends React.Component<ListItemProps, ListItemState> {
     }
 
     private getBreakdown() {
-        const sizes: JSX.Element[] = [];
-        SIZE_TYPES.forEach(size => {
-            const count = this.props.group.monsters.filter(m => m.size === size).length;
-            if (count > 0) {
-                const pc = Math.round(100 * count / this.props.group.monsters.length);
-                sizes.push(this.getBar(size, pc));
-            }
-        });
-        if (sizes.length === 0) {
-            sizes.push(<div key='empty'>none</div>);
+        if (this.props.group.monsters.length === 0) {
+            return <div className='section'>no monsters</div>;
         }
 
-        const categories: JSX.Element[] = [];
-        CATEGORY_TYPES.forEach(cat => {
-            const count = this.props.group.monsters.filter(m => m.category === cat).length;
-            if (count > 0) {
-                const pc = Math.round(100 * count / this.props.group.monsters.length);
-                categories.push(this.getBar(cat, pc));
-            }
+        const sizeData = SIZE_TYPES.map(size => {
+            return {
+                text: size,
+                value: this.props.group.monsters.filter(monster => monster.size === size).length
+            };
         });
-        if (categories.length === 0) {
-            categories.push(<div key='empty'>none</div>);
-        }
 
-        const challengeRatings = [
+        const categoryData = CATEGORY_TYPES.map(cat => {
+            return {
+                text: cat,
+                value: this.props.group.monsters.filter(monster => monster.category === cat).length
+            };
+        });
+
+        const challengeData = [
             0, 0.125, 0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
-        ];
-        const crs: JSX.Element[] = [];
-        challengeRatings.forEach(rating => {
-            const count = this.props.group.monsters.filter(m => m.challenge === rating).length;
-            if (count > 0) {
-                const pc = Math.round(100 * count / this.props.group.monsters.length);
-                crs.push(this.getBar(Utils.challenge(rating), pc));
-            }
+        ].map(cr => {
+            return {
+                text: 'cr ' + Utils.challenge(cr),
+                value: this.props.group.monsters.filter(monster => monster.challenge === cr).length
+            };
         });
-        if (crs.length === 0) {
-            crs.push(<div key='empty'>none</div>);
-        }
 
         return (
             <div>
                 <div className='subheading'>size</div>
-                {sizes}
+                <ChartPanel data={sizeData} />
                 <div className='subheading'>category</div>
-                {categories}
+                <ChartPanel data={categoryData} />
                 <div className='subheading'>challenge rating</div>
-                {crs}
-            </div>
-        );
-    }
-
-    private getBar(text: string, value: number) {
-        const width = value + '%';
-        return (
-            <div key={text} className='breakdown-bar'>
-                <div className='bar-text'>{text}</div>
-                <div className='bar-value-container'>
-                    <div className='bar-value' style={{ width: width }} />
-                </div>
+                <ChartPanel data={challengeData} />
             </div>
         );
     }
 
     public render() {
         try {
-            const options = ['monsters', 'breakdown'].map(item => {
-                return { id: item, text: item };
-            });
-
-            let content = null;
-            switch (this.state.view) {
-                case 'monsters':
-                    content = this.getMonsters();
-                    break;
-                case 'breakdown':
-                    content = this.getBreakdown();
-                    break;
-            }
-
             return (
                 <div className='card monster'>
                     <div className='heading'>
@@ -187,15 +150,11 @@ class ListItem extends React.Component<ListItemProps, ListItemState> {
                     </div>
                     <div className='card-content'>
                         <div className='grid'>
-                            <Selector
-                                options={options}
-                                selectedID={this.state.view}
-                                select={view => this.setView(view)}
-                            />
-                            {content}
+                            {this.state.showBreakdown ? this.getBreakdown() : this.getMonsters()}
                         </div>
                         <div className='divider'/>
                         <button onClick={() => this.props.open(this.props.group)}>open</button>
+                        <Checkbox label='breakdown' checked={this.state.showBreakdown} changeValue={() => this.toggleBreakdown()} />
                         <ConfirmButton text='delete' callback={() => this.props.delete(this.props.group)} />
                     </div>
                 </div>

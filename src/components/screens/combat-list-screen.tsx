@@ -76,6 +76,10 @@ class ListItem extends React.Component<ListItemProps> {
                 );
             }
 
+            const list = this.props.combat.combatants
+                .filter(c => c.active)
+                .map(c => <div key={c.id} className={c.type}>{c.displayName}</div>);
+
             return (
                 <div className='card combat'>
                     <div className='heading'>
@@ -87,6 +91,7 @@ class ListItem extends React.Component<ListItemProps> {
                         <div className='grid'>
                             <div className='section'>paused at {this.props.combat.timestamp}</div>
                             {map}
+                            {list}
                         </div>
                         <div className='divider'/>
                         <button onClick={() => this.props.resume(this.props.combat)}>resume</button>
