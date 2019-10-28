@@ -1435,10 +1435,44 @@ body,
 
 .nav-item {
     margin: 10px 0;
-    border-left: 5px solid $control-border;
-    padding-left: 10px;
-    padding-bottom: 3px;
     font-size: 20px;
+
+    .text {
+        display: inline-block;
+        width: calc(100% - 30px);
+        border-left: 5px solid $control-border;
+        padding-left: 10px;
+        padding-bottom: 3px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $highlight01;
+            border-color: $highlight;
+        }
+    }
+
+    .toggle {
+        display: inline-block;
+        margin-left: 10px;
+        border-radius: 100%;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $highlight01;
+        }
+
+        &.open {
+            transform: rotate(-180deg);
+        }
+    }
+}
+
+.nav-subitem {
+    border-left: 5px solid $control-border;
+    margin: 3px 30px 3px 10px;
+    font-size: 12px;
+    padding-left: 5px;
+    padding-bottom: 2px;
     cursor: pointer;
 
     &:hover {

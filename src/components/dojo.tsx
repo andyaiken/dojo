@@ -2192,12 +2192,13 @@ export default class Dojo extends React.Component<Props, State> {
                                 parties={this.state.parties}
                                 library={this.state.library}
                                 encounters={this.state.encounters}
+                                maps={this.state.mapFolios}
                                 combats={this.state.combats}
-                                openParties={() => this.selectPartyByID(null)}
-                                openLibrary={() => this.selectMonsterGroupByID(null)}
-                                openEncounters={() => this.selectEncounterByID(null)}
-                                openMaps={() => this.selectMapFolioByID(null)}
-                                openCombats={() => this.selectCombatByID(null)}
+                                openParty={id => this.selectPartyByID(id)}
+                                openMonsterGroup={id => this.selectMonsterGroupByID(id)}
+                                openEncounter={id => this.selectEncounterByID(id)}
+                                openMapFolio={id => this.selectMapFolioByID(id)}
+                                openCombat={id => this.selectCombatByID(id)}
                             />
                         </div>
                         <div className='drawer-footer' />
