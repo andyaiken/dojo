@@ -2,12 +2,15 @@ import React from 'react';
 
 import { Col, Row } from 'antd';
 
-import { Combat } from '../../models/combat';
+import { Combat, Combatant } from '../../models/combat';
+import { Monster } from '../../models/monster-group';
+import { PC } from '../../models/party';
 
 import ConfirmButton from '../controls/confirm-button';
 import GridPanel from '../panels/grid-panel';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
+import PortraitPanel from '../panels/portrait-panel';
 
 interface Props {
     combats: Combat[];
@@ -78,7 +81,12 @@ class ListItem extends React.Component<ListItemProps> {
 
             const list = this.props.combat.combatants
                 .filter(c => c.active)
-                .map(c => <div key={c.id} className={c.type}>{c.displayName}</div>);
+                .map(c => (
+                    <div key={c.id} className={c.type}>
+                        <PortraitPanel source={c as (Combatant & PC) | (Combatant & Monster)} inline={true}/>
+                        <div className='name'>{c.displayName}</div>
+                    </div>
+                ));
 
             return (
                 <div className='card combat'>

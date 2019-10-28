@@ -284,7 +284,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                         </Col>
                         <Col xs={24} sm={24} md={12} lg={8} xl={6} className='scrollable'>
                             {controls}
-                            <div className='heading'>initiative order</div>
+                            <div className='heading fixed-top'>initiative order</div>
                             {init}
                         </Col>
                     </Row>

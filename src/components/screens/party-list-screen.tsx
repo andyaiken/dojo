@@ -7,6 +7,7 @@ import { Party, PC } from '../../models/party';
 import ConfirmButton from '../controls/confirm-button';
 import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
+import PortraitPanel from '../panels/portrait-panel';
 
 interface Props {
     parties: Party[];
@@ -74,7 +75,10 @@ class ListItem extends React.Component<ListItemProps> {
     public render() {
         try {
             const pcs = this.props.party.pcs.filter(pc => pc.active).map(pc => (
-                <div key={pc.id} className='pc'>{this.getText(pc)}</div>
+                <div key={pc.id} className='pc'>
+                    <PortraitPanel source={pc} inline={true}/>
+                    <div className='name'>{this.getText(pc)}</div>
+                </div>
             ));
             if (pcs.length === 0) {
                 pcs.push(<div key='empty' className='section'>no pcs</div>);
@@ -86,7 +90,10 @@ class ListItem extends React.Component<ListItemProps> {
                     <div key='inactive' className='subheading'>inactive pcs</div>
                 );
                 inactive.forEach(pc => pcs.push(
-                    <div key={pc.id} className='pc'>{this.getText(pc)}</div>
+                    <div key={pc.id} className='pc'>
+                        <PortraitPanel source={pc} inline={true}/>
+                        <div className='name'>{this.getText(pc)}</div>
+                    </div>
                 ));
             }
 

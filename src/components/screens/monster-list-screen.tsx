@@ -11,6 +11,7 @@ import ConfirmButton from '../controls/confirm-button';
 import ChartPanel from '../panels/chart-panel';
 import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
+import PortraitPanel from '../panels/portrait-panel';
 
 interface Props {
     library: MonsterGroup[];
@@ -84,7 +85,8 @@ class ListItem extends React.Component<ListItemProps, ListItemState> {
     private getMonsters() {
         const monsters = this.props.group.monsters.map(m => (
             <div key={m.id} className='monster'>
-                {m.name || 'unnamed monster'}
+                <PortraitPanel source={m} inline={true}/>
+                <div className='name'>{m.name || 'unnamed monster'}</div>
             </div>
         ));
         if (monsters.length === 0) {
@@ -132,7 +134,7 @@ class ListItem extends React.Component<ListItemProps, ListItemState> {
                 <div className='subheading'>size</div>
                 <ChartPanel data={sizeData} />
                 <div className='subheading'>category</div>
-                <ChartPanel data={categoryData} />
+                <ChartPanel data={categoryData} collapse={true} />
                 <div className='subheading'>challenge rating</div>
                 <ChartPanel data={challengeData} />
             </div>

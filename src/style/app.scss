@@ -702,20 +702,27 @@ body,
             height: 200px;
             overflow-y: auto;
 
-            .pc {
-                background-color: #006500;
+            .pc, .monster {
                 color: white;
                 border-radius: 5px;
+                height: 24px;
                 margin: 3px 0;
                 padding: 2px 5px;
+
+                .name {
+                    display: inline-block;
+                    vertical-align: top;
+                    padding: 1px 0;
+                    height: 20px;
+                }
+            }
+
+            .pc {
+                background-color: #006500;
             }
 
             .monster {
                 background-color: #650000;
-                color: white;
-                border-radius: 5px;
-                margin: 3px 0;
-                padding: 2px 5px;
             }
         }
     }
@@ -808,16 +815,18 @@ body,
 // Chart
 
 .chart {
+    margin: 5px 0;
 
     .plot {
-        margin: 10px 0;
+        padding: 5px 0;
+        border-left: 1px solid steelblue;
 
         .bar-container {
             position: relative;
 
             .bar {
                 background-color: lightsteelblue;
-                border-left: 1px solid steelblue;
+                //border-left: 1px solid steelblue;
                 border-right: 1px solid steelblue;
                 height: 30px;
 
