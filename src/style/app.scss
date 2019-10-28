@@ -24,8 +24,7 @@ p {
 
 input[type=text],
 input[type=color] {
-    -webkit-appearance: none;
-    -webkit-user-select: text;
+    user-select: text;
     margin: 5px 0;
     padding: 5px 8px;
     border: 1px solid $control-border;
@@ -177,6 +176,8 @@ button {
     font-size: 12px;
     height: 100%;
     color: $foreground;
+    user-select: none;
+    font-family: 'Open Sans', sans-serif;
 }
 
 .ant-input {
@@ -244,7 +245,6 @@ button {
     padding: 0 10px;
     overflow-x: hidden;
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
 
     &.both-ways {
         overflow: auto;
@@ -264,6 +264,17 @@ button {
     z-index: 5;
     top: 0;
     background-color: $background;
+
+    &::after {
+        position: absolute;
+        top: 40px;
+        left: 1px;
+        right: 1px;
+        height: 5px;
+        background: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+        content: "";
+        z-index: 10;
+    }
 }
 
 .app-name {
@@ -370,11 +381,7 @@ button {
 // Core app classes
 
 * {
-    box-sizing: border-box;
     transition: all 0.2s ease-in-out;
-    -webkit-user-select: none;
-    user-select: none;
-    font-family: 'Open Sans', sans-serif;
 }
 
 html,
@@ -390,11 +397,12 @@ body,
 }
 
 .dojo {
+    font-family: 'Open Sans', sans-serif;
     font-size: 12px;
     background-color: $background;
     color: $foreground;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    box-sizing: border-box;
+    user-select: none;
 
     &.popout {
         

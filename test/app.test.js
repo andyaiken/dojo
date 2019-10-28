@@ -1,23 +1,24 @@
 const puppeteer = require('puppeteer');
 
-let browser = null;
-let page = null;
+var browser = null;
+var page = null;
 
-let timeout = 10000;
+var timeout = 10000;
+
+var getText = async selector => {
+    var title = await page.waitForSelector(selector);
+    return await page.evaluate(e => e.innerText, title);
+}
+
+beforeAll(async () => {
+    //
+});
 
 beforeEach(async () => {
     browser = await puppeteer.launch({
-        headless: false
+        headless: true
     });
     page = await browser.newPage();
-
-    page.emulate({
-        viewport: {
-          width: 800,
-          height: 500
-        },
-        userAgent: ''
-    });
 
     await page.goto('http://localhost:3000/');
     await page.waitForSelector('.dojo');
@@ -27,32 +28,47 @@ afterEach(async () => {
     browser.close();
 });
 
+afterAll(async () => {
+    //
+});
+
 describe('Parties', () => {
     test('Test 1', async () => {
-      expect(true).toBe(true);
+      var button = await page.waitForSelector('.page-footer .navigator-item.pcs');
+      await button.click();
+      var text = await getText('.page-header .app-title');
+      expect(text).toBe('DOJO: PCS');
     }, timeout);
 });
 
 describe('Monsters', () => {
     test('Test 1', async () => {
+      var button = await page.waitForSelector('.page-footer .navigator-item.monsters');
+      await button.click();
       expect(true).toBe(true);
     }, timeout);
 });
 
 describe('Encounters', () => {
     test('Test 1', async () => {
+      var button = await page.waitForSelector('.page-footer .navigator-item.encounters');
+      await button.click();
       expect(true).toBe(true);
     }, timeout);
 });
 
 describe('Maps', () => {
     test('Test 1', async () => {
+      var button = await page.waitForSelector('.page-footer .navigator-item.maps');
+      await button.click();
       expect(true).toBe(true);
     }, timeout);
 });
 
 describe('Combats', () => {
     test('Test 1', async () => {
+      var button = await page.waitForSelector('.page-footer .navigator-item.combat');
+      await button.click();
       expect(true).toBe(true);
     }, timeout);
 });

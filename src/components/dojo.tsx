@@ -2163,6 +2163,7 @@ export default class Dojo extends React.Component<Props, State> {
             return (
                 <div className='dojo'>
                     <PageHeader
+                        view={this.state.view}
                         openMenu={() => this.toggleNavigation()}
                         openDrawer={type => this.openToolsDrawer(type)}
                     />
@@ -2174,6 +2175,7 @@ export default class Dojo extends React.Component<Props, State> {
                         parties={this.state.parties}
                         library={this.state.library}
                         encounters={this.state.encounters}
+                        combats={this.state.combats}
                         setView={view => this.setView(view)}
                     />
                     <Drawer
@@ -2190,6 +2192,7 @@ export default class Dojo extends React.Component<Props, State> {
                                 parties={this.state.parties}
                                 library={this.state.library}
                                 encounters={this.state.encounters}
+                                combats={this.state.combats}
                                 openParties={() => this.selectPartyByID(null)}
                                 openLibrary={() => this.selectMonsterGroupByID(null)}
                                 openEncounters={() => this.selectEncounterByID(null)}
