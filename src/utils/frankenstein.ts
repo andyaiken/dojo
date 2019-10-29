@@ -509,7 +509,14 @@ export default class Frankenstein {
                         text = text.substring(0, open).trim();
                     }
                     t.name = text;
-                    monster.traits.push(t);
+                    if (t.name) {
+                        monster.traits.push(t);
+                    } else {
+                        // This is part of the previous trait
+                        const prev = monster.traits[monster.traits.length - 1];
+                        prev.text += '\n';
+                        prev.text += '* ' + t.text;
+                    }
                 }
             }
         } catch (ex) {
