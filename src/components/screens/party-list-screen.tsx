@@ -75,7 +75,7 @@ class ListItem extends React.Component<ListItemProps> {
     public render() {
         try {
             const pcs = this.props.party.pcs.filter(pc => pc.active).map(pc => (
-                <div key={pc.id} className='pc'>
+                <div key={pc.id} className='pc-row'>
                     <PortraitPanel source={pc} inline={true}/>
                     <div className='name'>{this.getText(pc)}</div>
                 </div>
@@ -90,7 +90,7 @@ class ListItem extends React.Component<ListItemProps> {
                     <div key='inactive' className='subheading'>inactive pcs</div>
                 );
                 inactive.forEach(pc => pcs.push(
-                    <div key={pc.id} className='pc'>
+                    <div key={pc.id} className='pc-row'>
                         <PortraitPanel source={pc} inline={true}/>
                         <div className='name'>{this.getText(pc)}</div>
                     </div>

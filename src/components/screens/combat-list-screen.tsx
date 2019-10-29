@@ -82,7 +82,7 @@ class ListItem extends React.Component<ListItemProps> {
             const list = this.props.combat.combatants
                 .filter(c => c.active)
                 .map(c => (
-                    <div key={c.id} className={c.type}>
+                    <div key={c.id} className={c.type + '-row'}>
                         <PortraitPanel source={c as (Combatant & PC) | (Combatant & Monster)} inline={true}/>
                         <div className='name'>{c.displayName}</div>
                     </div>

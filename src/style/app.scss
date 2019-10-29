@@ -709,7 +709,7 @@ body,
             height: 200px;
             overflow-y: auto;
 
-            .pc, .monster {
+            .pc-row, .monster-row {
                 color: white;
                 border-radius: 5px;
                 height: 24px;
@@ -724,11 +724,11 @@ body,
                 }
             }
 
-            .pc {
+            .pc-row {
                 background-color: #006500;
             }
 
-            .monster {
+            .monster-row {
                 background-color: #650000;
             }
         }

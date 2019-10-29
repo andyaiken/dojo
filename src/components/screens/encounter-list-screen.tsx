@@ -82,7 +82,7 @@ class ListItem extends React.Component<ListItemProps> {
     public render() {
         try {
             const slots = this.props.encounter.slots.map(slot => (
-                <div key={slot.id} className='monster'><div className='name'>{this.getText(slot)}</div></div>
+                <div key={slot.id} className='monster-row'><div className='name'>{this.getText(slot)}</div></div>
             ));
             if (slots.length === 0) {
                 slots.push(<div key='empty' className='section'>no monsters</div>);
@@ -91,7 +91,7 @@ class ListItem extends React.Component<ListItemProps> {
             this.props.encounter.waves.forEach(wave => {
                 slots.push(<div key={'name ' + wave.id} className='section subheading'>{wave.name || 'unnamed wave'}</div>);
                 wave.slots.forEach(slot => {
-                    slots.push(<div key={slot.id} className='monster'><div className='name'>{this.getText(slot)}</div></div>);
+                    slots.push(<div key={slot.id} className='monster-row'><div className='name'>{this.getText(slot)}</div></div>);
                 });
                 if (slots.length === 0) {
                     slots.push(<div key={'empty ' + wave.id} className='section'>no monsters</div>);

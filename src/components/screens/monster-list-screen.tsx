@@ -84,7 +84,7 @@ class ListItem extends React.Component<ListItemProps, ListItemState> {
 
     private getMonsters() {
         const monsters = this.props.group.monsters.map(m => (
-            <div key={m.id} className='monster'>
+            <div key={m.id} className='monster-row'>
                 <PortraitPanel source={m} inline={true}/>
                 <div className='name'>{m.name || 'unnamed monster'}</div>
             </div>
