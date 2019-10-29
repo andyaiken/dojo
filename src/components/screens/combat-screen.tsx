@@ -356,7 +356,6 @@ export default class CombatScreen extends React.Component<Props, State> {
                             <div className='subheading'>map</div>
                             <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
                             <button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
-                            <button onClick={() => this.toggleAddingOverlay()}>add token / overlay</button>
                             <Checkbox
                                 label={this.state.addingOverlay ? 'click on the map to add the item, or click here to cancel' : 'add token / overlay'}
                                 display='button'
