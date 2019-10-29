@@ -96,7 +96,7 @@ class ListItem extends React.Component<ListItemProps> {
                         </div>
                     </div>
                     <div className='card-content'>
-                        <div className='grid'>
+                        <div className='fixed-height'>
                             <div className='section'>paused at {this.props.combat.timestamp}</div>
                             {map}
                             {list}

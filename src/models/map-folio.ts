@@ -12,14 +12,16 @@ export interface Map {
 
 export interface MapItem {
     id: string;
-    type: 'tile' | 'pc' | 'monster';
+    type: 'tile' | 'pc' | 'monster' | 'overlay' | 'token';
     x: number;
     y: number;
     width: number;
     height: number;
-    terrain: string | null;
-    customBackground: string;
-    style: 'square' | 'rounded' | 'circle' | null;
+    terrain: string;                                // Used by tiles
+    customBackground: string;                       // Used by tiles
+    color: string;                                  // Used by overlays
+    opacity: number;                                // Used by overlays
+    style: 'square' | 'rounded' | 'circle' | null;  // Used by tiles and overlays
 }
 
 export const TERRAIN_TYPES = [

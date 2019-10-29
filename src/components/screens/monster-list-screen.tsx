@@ -151,7 +151,7 @@ class ListItem extends React.Component<ListItemProps, ListItemState> {
                         </div>
                     </div>
                     <div className='card-content'>
-                        <div className='grid'>
+                        <div className='fixed-height'>
                             {this.state.showBreakdown ? this.getBreakdown() : this.getMonsters()}
                         </div>
                         <div className='divider'/>

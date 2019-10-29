@@ -85,7 +85,7 @@ class ListItem extends React.Component<ListItemProps> {
                         </div>
                     </div>
                     <div className='card-content'>
-                        <div className='grid'>
+                        <div className='fixed-height'>
                             <div className='subheading'>maps</div>
                             {maps}
                         </div>

@@ -37,6 +37,7 @@ interface MapItemStyle {
     borderRadius: string;
     backgroundSize: string;
     backgroundColor?: string;
+    opacity?: string;
 }
 
 export default class MapPanel extends React.Component<Props> {
@@ -202,6 +203,26 @@ export default class MapPanel extends React.Component<Props> {
                     );
                 });
 
+            // Draw overlays
+            let overlays: JSX.Element[] = [];
+            if ((this.props.mode !== 'edit') && (this.props.mode !== 'thumbnail')) {
+                overlays = this.props.map.items
+                    .filter(i => i.type === 'overlay')
+                    .map(i => {
+                        const overlayStyle = this.getStyle(i.x, i.y, i.width, i.height, i.style, mapDimensions);
+                        overlayStyle.backgroundColor = i.color + i.opacity.toString(16);
+                        return (
+                            <MapOverlay
+                                key={i.id}
+                                overlay={i}
+                                style={overlayStyle}
+                                selected={this.props.selectedItemID === i.id}
+                                select={id => this.props.setSelectedItemID(id)}
+                            />
+                        );
+                    });
+            }
+
             // Draw token auras
             let auras: JSX.Element[] = [];
             if ((this.props.mode !== 'edit') && (this.props.mode !== 'thumbnail')) {
@@ -233,29 +254,28 @@ export default class MapPanel extends React.Component<Props> {
             let tokens: JSX.Element[] = [];
             if (this.props.mode !== 'edit') {
                 tokens = this.props.map.items
-                    .filter(i => (i.type === 'monster') || (i.type === 'pc'))
+                    .filter(i => (i.type === 'monster') || (i.type === 'pc') || (i.type === 'token'))
                     .map(i => {
+                        let miniSize = Math.min(i.width, i.height);
                         const combatant = this.props.combatants.find(c => c.id === i.id);
                         if (combatant) {
-                            const miniSize = Utils.miniSize(combatant.displaySize);
-                            const tokenStyle = this.getStyle(i.x, i.y, miniSize, miniSize, 'circle', mapDimensions);
-                            return (
-                                <MapToken
-                                    key={i.id}
-                                    token={i}
-                                    combatant={combatant}
-                                    style={tokenStyle}
-                                    simple={this.props.mode === 'thumbnail'}
-                                    showGauge={this.props.mode === 'combat'}
-                                    showHidden={this.props.mode === 'combat'}
-                                    selectable={(this.props.mode === 'combat') || (this.props.mode === 'combat-player')}
-                                    selected={this.props.selectedItemID ===  i.id}
-                                    select={id => this.props.setSelectedItemID(id)}
-                                />
-                            );
+                            miniSize = Utils.miniSize(combatant.displaySize);
                         }
-
-                        return null;
+                        const tokenStyle = this.getStyle(i.x, i.y, miniSize, miniSize, 'circle', mapDimensions);
+                        return (
+                            <MapToken
+                                key={i.id}
+                                token={i}
+                                combatant={combatant || null}
+                                style={tokenStyle}
+                                simple={this.props.mode === 'thumbnail'}
+                                showGauge={this.props.mode === 'combat'}
+                                showHidden={this.props.mode === 'combat'}
+                                selectable={(this.props.mode === 'combat') || (this.props.mode === 'combat-player')}
+                                selected={this.props.selectedItemID ===  i.id}
+                                select={id => this.props.setSelectedItemID(id)}
+                            />
+                        );
                     })
                     .filter(mt => mt !== null) as JSX.Element[];
             }
@@ -287,6 +307,7 @@ export default class MapPanel extends React.Component<Props> {
                     <div className='grid' style={{ height: ((this.props.size * mapHeight) + 1) + 'px' }}>
                         {grid}
                         {tiles}
+                        {overlays}
                         {auras}
                         {tokens}
                         {dragOverlay}
@@ -403,9 +424,43 @@ class MapTile extends React.Component<MapTileProps> {
     }
 }
 
+interface MapOverlayProps {
+    overlay: MapItem;
+    style: MapItemStyle;
+    selected: boolean;
+    select: (tileID: string) => void;
+}
+
+class MapOverlay extends React.Component<MapOverlayProps> {
+    private select(e: React.MouseEvent) {
+        e.stopPropagation();
+        this.props.select(this.props.overlay.id);
+    }
+
+    public render() {
+        try {
+            let style = 'overlay';
+            if (this.props.selected) {
+                style += ' selected';
+            }
+
+            return (
+                <div
+                    className={style}
+                    style={this.props.style}
+                    onClick={e => this.select(e)}
+                />
+            );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
+        }
+    }
+}
+
 interface MapTokenProps {
     token: MapItem;
-    combatant: Combatant;
+    combatant: Combatant | null;
     style: MapItemStyle;
     simple: boolean;
     showGauge: boolean;
@@ -425,21 +480,27 @@ class MapToken extends React.Component<MapTokenProps> {
 
     public render() {
         try {
-            const c = this.props.combatant as (Combatant & PC) | (Combatant & Monster);
-            const name = c.displayName || c.name || 'combatant';
+            let name = 'token';
+            let style = 'token';
 
-            let style = 'token ' + this.props.token.type;
             if (this.props.selected) {
                 style += ' selected';
             }
-            if (this.props.combatant.current) {
-                style += ' current';
-            }
-            if (!this.props.combatant.showOnMap) {
-                if (this.props.showHidden) {
-                    style += ' hidden';
-                } else {
-                    return null;
+
+            const c = this.props.combatant as (Combatant & PC) | (Combatant & Monster);
+            if (this.props.combatant) {
+                name = c.displayName || c.name || 'combatant';
+                style += ' ' + this.props.combatant.type;
+
+                if (this.props.combatant.current) {
+                    style += ' current';
+                }
+                if (!this.props.combatant.showOnMap) {
+                    if (this.props.showHidden) {
+                        style += ' hidden';
+                    } else {
+                        return null;
+                    }
                 }
             }
 
@@ -447,9 +508,9 @@ class MapToken extends React.Component<MapTokenProps> {
             let hpGauge = null;
             let altitudeBadge = null;
             let conditionsBadge = null;
-            if (!this.props.simple) {
+            if (this.props.combatant && !this.props.simple) {
                 let src = '';
-                if (c.portrait) {
+                if (c && c.portrait) {
                     const data = localStorage.getItem('image-' + c.portrait);
                     if (data) {
                         const image = JSON.parse(data);

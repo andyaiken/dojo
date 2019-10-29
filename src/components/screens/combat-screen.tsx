@@ -1,13 +1,15 @@
 import React from 'react';
 
-import { Col, Collapse, Icon, Row, Statistic } from 'antd';
+import { Col, Collapse, Icon, Row, Slider, Statistic } from 'antd';
 
+import Factory from '../../utils/factory';
 import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
 import { Combat, Combatant, Notification } from '../../models/combat';
 import { Condition, ConditionDurationSaves } from '../../models/condition';
 import { Encounter } from '../../models/encounter';
+import { MapItem } from '../../models/map-folio';
 import { Monster, Trait } from '../../models/monster-group';
 import { PC } from '../../models/party';
 
@@ -17,6 +19,7 @@ import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
 import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
+import Selector from '../controls/selector';
 import GridPanel from '../panels/grid-panel';
 import HitPointGauge from '../panels/hit-point-gauge';
 import MapPanel from '../panels/map-panel';
@@ -41,8 +44,9 @@ interface Props {
     addCondition: (combatant: Combatant) => void;
     editCondition: (combatant: Combatant, condition: Condition) => void;
     removeCondition: (combatant: Combatant, conditionID: string) => void;
-    mapMove: (combatant: Combatant, dir: string) => void;
-    mapRemove: (combatant: Combatant) => void;
+    mapMove: (id: string, dir: string) => void;
+    mapResize: (id: string, dir: string, dir2: 'out' | 'in') => void;
+    mapRemove: (id: string) => void;
     endTurn: (combatant: Combatant) => void;
     changeHP: (combatant: Combatant & Monster, hp: number, temp: number) => void;
     changeValue: (source: {}, type: string, value: any) => void;
@@ -51,11 +55,13 @@ interface Props {
     toggleCondition: (combatant: Combatant, condition: string) => void;
     scatterCombatants: (type: 'pc' | 'monster') => void;
     rotateMap: () => void;
+    addOverlay: (overlay: MapItem) => void;
 }
 
 interface State {
-    selectedTokenID: string | null;
+    selectedItemID: string | null;
     addingToMapID: string | null;
+    addingOverlay: boolean;
     mapSize: number;
     playerView: {
         open: boolean;
@@ -69,8 +75,9 @@ export default class CombatScreen extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            selectedTokenID: null,  // The ID of the combatant that's selected
+            selectedItemID: null,   // The ID of the combatant or map item (overlay) that's selected
             addingToMapID: null,    // The ID of the combatant we're adding to the map
+            addingOverlay: false,   // True if we're adding a custom overlay to the map
             mapSize: 30,
             playerView: {
                 open: false,
@@ -86,15 +93,23 @@ export default class CombatScreen extends React.Component<Props, State> {
         });
     }
 
-    private setSelectedTokenID(id: string | null) {
+    private setSelectedItemID(id: string | null) {
         this.setState({
-            selectedTokenID: id
+            selectedItemID: id
         });
     }
 
     private setAddingToMapID(id: string | null) {
         this.setState({
-            addingToMapID: id
+            addingToMapID: id,
+            addingOverlay: false
+        });
+    }
+
+    private toggleAddingOverlay() {
+        this.setState({
+            addingOverlay: !this.state.addingOverlay,
+            addingToMapID: null
         });
     }
 
@@ -157,8 +172,8 @@ export default class CombatScreen extends React.Component<Props, State> {
                                 combatant={combatant as Combatant & PC}
                                 minimal={true}
                                 combat={this.props.combat as Combat}
-                                select={c => this.setSelectedTokenID(c.id)}
-                                selected={combatant.id === this.state.selectedTokenID}
+                                select={c => this.setSelectedItemID(c.id)}
+                                selected={combatant.id === this.state.selectedItemID}
                             />
                         );
                     case 'monster':
@@ -168,8 +183,8 @@ export default class CombatScreen extends React.Component<Props, State> {
                                 combatant={combatant as Combatant & Monster}
                                 minimal={true}
                                 combat={this.props.combat as Combat}
-                                select={c => this.setSelectedTokenID(c.id)}
-                                selected={combatant.id === this.state.selectedTokenID}
+                                select={c => this.setSelectedItemID(c.id)}
+                                selected={combatant.id === this.state.selectedItemID}
                             />
                         );
                     default:
@@ -183,7 +198,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                 let selection = combat.combatants
                     .filter(c => combat.map !== null ? combat.map.items.find(item => item.id === c.id) : false)
                     .filter(c => c.showOnMap)
-                    .find(c => c.id === this.state.selectedTokenID);
+                    .find(c => c.id === this.state.selectedItemID);
                 if (!selection) {
                     selection = combat.combatants
                         .filter(c => combat.map !== null ? combat.map.items.find(item => item.id === c.id) : false)
@@ -199,7 +214,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                             <div className='section centered'>
                                 <Radial
                                     direction='eight'
-                                    click={dir => this.props.mapMove(token, dir)}
+                                    click={dir => this.props.mapMove(token.id, dir)}
                                 />
                             </div>
                             <div className='divider' />
@@ -278,8 +293,8 @@ export default class CombatScreen extends React.Component<Props, State> {
                                 mode='combat-player'
                                 size={this.state.playerView.mapSize}
                                 combatants={combat.combatants}
-                                selectedItemID={this.state.selectedTokenID ? this.state.selectedTokenID : undefined}
-                                setSelectedItemID={id => this.setSelectedTokenID(id)}
+                                selectedItemID={this.state.selectedItemID ? this.state.selectedItemID : undefined}
+                                setSelectedItemID={id => this.setSelectedItemID(id)}
                             />
                         </Col>
                         <Col xs={24} sm={24} md={12} lg={8} xl={6} className='scrollable'>
@@ -341,11 +356,17 @@ export default class CombatScreen extends React.Component<Props, State> {
                             <div className='subheading'>map</div>
                             <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
                             <button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
-                            <button onClick={() => this.props.rotateMap()}>rotate the map</button>
+                            <button onClick={() => this.toggleAddingOverlay()}>add token / overlay</button>
+                            <Checkbox
+                                label={this.state.addingOverlay ? 'click on the map to add the item, or click here to cancel' : 'add token / overlay'}
+                                display='button'
+                                checked={this.state.addingOverlay}
+                                changeValue={() => this.toggleAddingOverlay()}
+                            />
                             <NumberSpin
                                 source={this.state}
                                 name={'mapSize'}
-                                display={value => 'zoom'}
+                                display={() => 'zoom'}
                                 nudgeValue={delta => this.nudgeMapSize(delta * 5)}
                             />
                         </div>
@@ -366,7 +387,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                             <NumberSpin
                                 source={this.state.playerView}
                                 name={'mapSize'}
-                                display={value => 'zoom'}
+                                display={() => 'zoom'}
                                 nudgeValue={delta => this.nudgePlayerViewMapSize(delta * 5)}
                             />
                         </div>
@@ -403,8 +424,8 @@ export default class CombatScreen extends React.Component<Props, State> {
                         removeCondition={(c, conditionID) => this.props.removeCondition(c, conditionID)}
                         nudgeConditionValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
                         mapAdd={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
-                        mapMove={(c, dir) => this.props.mapMove(c, dir)}
-                        mapRemove={c => this.props.mapRemove(c)}
+                        mapMove={(c, dir) => this.props.mapMove(c.id, dir)}
+                        mapRemove={c => this.props.mapRemove(c.id)}
                         endTurn={c => this.props.endTurn(c)}
                         toggleTag={(c, tag) => this.props.toggleTag(c, tag)}
                         toggleCondition={(c, condition) => this.props.toggleCondition(c, condition)}
@@ -428,8 +449,8 @@ export default class CombatScreen extends React.Component<Props, State> {
                         removeCondition={(c, conditionID) => this.props.removeCondition(c, conditionID)}
                         nudgeConditionValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
                         mapAdd={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
-                        mapMove={(c, dir) => this.props.mapMove(c, dir)}
-                        mapRemove={c => this.props.mapRemove(c)}
+                        mapMove={(c, dir) => this.props.mapMove(c.id, dir)}
+                        mapRemove={c => this.props.mapRemove(c.id)}
                         endTurn={(c) => this.props.endTurn(c)}
                         changeHP={(c, hp, temp) => this.props.changeHP(c as Combatant & Monster, hp, temp)}
                         toggleTag={(c, tag) => this.props.toggleTag(c, tag)}
@@ -442,21 +463,43 @@ export default class CombatScreen extends React.Component<Props, State> {
     }
 
     private defeatCombatant(combatant: Combatant) {
-        if (this.state.selectedTokenID === combatant.id) {
+        if (this.state.selectedItemID === combatant.id) {
             this.setState({
-                selectedTokenID: null
+                selectedItemID: null
             });
         }
 
         this.props.makeDefeated(combatant);
     }
 
-    private addCombatantToMap(x: number, y: number) {
-        const combatant = this.props.combat.combatants.find(c => c.id === this.state.addingToMapID);
-        if (combatant) {
-            this.props.mapAdd(combatant, x, y);
+    private gridSquareClicked(x: number, y: number) {
+        if (this.state.addingToMapID) {
+            const combatant = this.props.combat.combatants.find(c => c.id === this.state.addingToMapID);
+            if (combatant) {
+                this.props.mapAdd(combatant, x, y);
+            }
+
+            this.setAddingToMapID(null);
         }
-        this.setAddingToMapID(null);
+
+        if (this.state.addingOverlay) {
+            const overlay = Factory.createMapItem();
+            overlay.type = 'overlay';
+            overlay.x = x;
+            overlay.y = y;
+            overlay.width = 1;
+            overlay.height = 1;
+            overlay.color = '#005080';
+            overlay.opacity = 127;
+            overlay.style = 'square';
+
+            this.props.addOverlay(overlay);
+            this.setState({
+                addingOverlay: false,
+                addingToMapID: null,
+                selectedItemID: overlay.id
+            });
+        }
     }
 
     public render() {
@@ -475,8 +518,8 @@ export default class CombatScreen extends React.Component<Props, State> {
                         <PendingCombatantRow
                             key={combatant.id}
                             combatant={combatant}
-                            select={c => this.setSelectedTokenID(c.id)}
-                            selected={combatant.id === this.state.selectedTokenID}
+                            select={c => this.setSelectedItemID(c.id)}
+                            selected={combatant.id === this.state.selectedItemID}
                             nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
                             makeActive={c => this.props.makeActive(c)}
                         />
@@ -490,8 +533,8 @@ export default class CombatScreen extends React.Component<Props, State> {
                                     key={combatant.id}
                                     combatant={combatant as Combatant & PC}
                                     combat={this.props.combat as Combat}
-                                    select={c => this.setSelectedTokenID(c.id)}
-                                    selected={combatant.id === this.state.selectedTokenID}
+                                    select={c => this.setSelectedItemID(c.id)}
+                                    selected={combatant.id === this.state.selectedItemID}
                                 />
                             );
                             break;
@@ -501,8 +544,8 @@ export default class CombatScreen extends React.Component<Props, State> {
                                     key={combatant.id}
                                     combatant={combatant as Combatant & Monster}
                                     combat={this.props.combat as Combat}
-                                    select={c => this.setSelectedTokenID(c.id)}
-                                    selected={combatant.id === this.state.selectedTokenID}
+                                    select={c => this.setSelectedItemID(c.id)}
+                                    selected={combatant.id === this.state.selectedItemID}
                                 />
                             );
                             break;
@@ -516,8 +559,8 @@ export default class CombatScreen extends React.Component<Props, State> {
                                     key={combatant.id}
                                     combatant={combatant as Combatant & PC}
                                     combat={this.props.combat as Combat}
-                                    select={c => this.setSelectedTokenID(c.id)}
-                                    selected={combatant.id === this.state.selectedTokenID}
+                                    select={c => this.setSelectedItemID(c.id)}
+                                    selected={combatant.id === this.state.selectedItemID}
                                 />
                             );
                             break;
@@ -527,8 +570,8 @@ export default class CombatScreen extends React.Component<Props, State> {
                                     key={combatant.id}
                                     combatant={combatant as Combatant & Monster}
                                     combat={this.props.combat as Combat}
-                                    select={c => this.setSelectedTokenID(c.id)}
-                                    selected={combatant.id === this.state.selectedTokenID}
+                                    select={c => this.setSelectedItemID(c.id)}
+                                    selected={combatant.id === this.state.selectedItemID}
                                 />
                             );
                             break;
@@ -591,11 +634,11 @@ export default class CombatScreen extends React.Component<Props, State> {
                             map={this.props.combat.map}
                             mode='combat'
                             size={this.state.mapSize}
-                            showOverlay={this.state.addingToMapID !== null}
+                            showOverlay={(this.state.addingToMapID !== null) || this.state.addingOverlay}
                             combatants={this.props.combat.combatants}
-                            selectedItemID={this.state.selectedTokenID ? this.state.selectedTokenID : undefined}
-                            setSelectedItemID={id => this.setSelectedTokenID(id)}
-                            gridSquareClicked={(x, y) => this.addCombatantToMap(x, y)}
+                            selectedItemID={this.state.selectedItemID ? this.state.selectedItemID : undefined}
+                            setSelectedItemID={id => this.setSelectedItemID(id)}
+                            gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
                         />
                     </div>
                 );
@@ -623,10 +666,89 @@ export default class CombatScreen extends React.Component<Props, State> {
             });
 
             let selectedCombatant = null;
-            if (this.state.selectedTokenID) {
-                const combatant = this.props.combat.combatants.find(c => c.id === this.state.selectedTokenID);
-                if (combatant && !combatant.current) {
-                    selectedCombatant = this.createCard(combatant);
+            if (this.state.selectedItemID) {
+                const combatant = this.props.combat.combatants.find(c => c.id === this.state.selectedItemID);
+                if (combatant) {
+                    if (combatant.current) {
+                        selectedCombatant = (
+                            <Note key='selected'>
+                                <div className='section'>
+                                    <b>{combatant.displayName}</b> is selected; it is the current initiative holder
+                                </div>
+                            </Note>
+                        );
+                    } else {
+                        selectedCombatant = this.createCard(combatant);
+                    }
+                }
+
+                if (this.props.combat.map) {
+                    const item = this.props.combat.map.items.find(i => i.id === this.state.selectedItemID);
+                    if (item) {
+                        const typeOptions = ['overlay', 'token'].map(t => {
+                            return { id: t, text: t };
+                        });
+
+                        const styleOptions = ['square', 'rounded', 'circle'].map(t => {
+                            return { id: t, text: t };
+                        });
+
+                        selectedCombatant = (
+                            <div className='card map' key='selected'>
+                                <div className='heading'>
+                                    <div className='title'>map item</div>
+                                </div>
+                                <div className='card-content'>
+                                    <div className='subheading'>size</div>
+                                    <div className='section'>{item.width} sq x {item.height} sq</div>
+                                    <div className='section'>{item.width * 5} ft x {item.height * 5} ft</div>
+                                    <div className='divider' />
+                                    <div className='subheading'>type</div>
+                                    <Selector
+                                        options={typeOptions}
+                                        selectedID={item.type}
+                                        select={optionID => this.props.changeValue(item, 'type', optionID)}
+                                    />
+                                    <div style={{ display: item.type === 'overlay' ? 'block' : 'none' }}>
+                                        <div className='subheading'>border style</div>
+                                        <Selector
+                                            options={styleOptions}
+                                            selectedID={item.style}
+                                            select={optionID => this.props.changeValue(item, 'style', optionID)}
+                                        />
+                                        <div className='subheading'>color</div>
+                                        <input
+                                            type='color'
+                                            value={item.color}
+                                            onChange={event => this.props.changeValue(item, 'color', event.target.value)}
+                                        />
+                                        <div className='subheading'>opacity</div>
+                                        <Slider
+                                            min={0}
+                                            max={255}
+                                            value={item.opacity}
+                                            tooltipVisible={false}
+                                            onChange={value => this.props.changeValue(item, 'opacity', value)}
+                                        />
+                                    </div>
+                                    <div className='divider' />
+                                    <div className='subheading'>move</div>
+                                    <div className='section centered'>
+                                        <Radial direction='eight' click={dir => this.props.mapMove(item.id, dir)} />
+                                    </div>
+                                    <div className='divider' />
+                                    <div className='subheading'>resize</div>
+                                    <div className='section centered'>
+                                        <Radial direction='both' click={(dir, dir2) => this.props.mapResize(item.id, dir, dir2 as 'in' | 'out')} />
+                                    </div>
+                                    <div className='divider' />
+                                    <div className='section'>
+                                        <button onClick={() => this.props.mapRemove(item.id)}>remove from the map</button>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    }
                 }
             }
             if (!selectedCombatant) {

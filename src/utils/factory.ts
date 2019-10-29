@@ -163,8 +163,10 @@ export default class Factory {
             y: 0,
             width: 4,
             height: 4,
-            terrain: null,
+            terrain: '',
             customBackground: '',
+            color: '',
+            opacity: 255,
             style: null
         };
     }

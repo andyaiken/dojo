@@ -11,7 +11,7 @@ import Utils from '../utils/utils';
 import { Combat, Combatant, CombatSetup, Notification } from '../models/combat';
 import { Condition } from '../models/condition';
 import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../models/encounter';
-import { Map, MapFolio } from '../models/map-folio';
+import { Map, MapFolio, MapItem } from '../models/map-folio';
 import { Monster, MonsterGroup } from '../models/monster-group';
 import { Party, PC } from '../models/party';
 
@@ -141,9 +141,13 @@ export default class Dojo extends React.Component<Props, State> {
 
     //#endregion
 
+    //#region Lifecycle
+
     public componentDidUpdate() {
         this.saveAfterDelay();
     }
+
+    //#endregion
 
     //#region Helper methods
 
@@ -262,9 +266,104 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
+    private getMonster(monsterName: string, groupName: string) {
+        const group = this.state.library.find(p => p.name === groupName);
+        if (group) {
+            const monster = group.monsters.find(m => m.name === monsterName);
+            if (monster) {
+                return monster;
+            }
+        }
+
+        return null;
+    }
+
+    private changeValue(combatant: any, type: string, value: any) {
+        switch (type) {
+            case 'hp':
+                value = Math.min(value, combatant.hpMax);
+                value = Math.max(value, 0);
+                break;
+            case 'hpTemp':
+                value = Math.max(value, 0);
+                break;
+            case 'level':
+                value = Math.max(value, 1);
+                value = (combatant.player !== undefined) ? Math.min(value, 20) : Math.min(value, 6);
+                break;
+            case 'count':
+                value = Math.max(value, 1);
+                break;
+            case 'hitDice':
+                value = Math.max(value, 1);
+                break;
+            default:
+                // Do nothing
+                break;
+        }
+
+        const tokens = type.split('.');
+        let obj = combatant;
+        for (let n = 0; n !== tokens.length; ++n) {
+            const token = tokens[n];
+            if (n === tokens.length - 1) {
+                obj[token] = value;
+            } else {
+                obj = obj[token];
+            }
+        }
+
+        Utils.sort(this.state.parties);
+        Utils.sort(this.state.library);
+        Utils.sort(this.state.encounters);
+
+        if (type === 'initiative') {
+            if (!(combatant as Combatant).pending) {
+                const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+                this.sortCombatants(combat as Combat);
+            }
+        }
+
+        this.setState({
+            parties: this.state.parties,
+            library: this.state.library,
+            encounters: this.state.encounters,
+            combats: this.state.combats,
+            selectedPartyID: this.state.selectedPartyID,
+            selectedMonsterGroupID: this.state.selectedMonsterGroupID,
+            selectedEncounterID: this.state.selectedEncounterID,
+            selectedCombatID: this.state.selectedCombatID,
+            drawer: this.state.drawer
+        });
+    }
+
+    private nudgeValue(combatant: any, type: string, delta: number) {
+        const tokens = type.split('.');
+        let obj = combatant;
+        for (let n = 0; n !== tokens.length; ++n) {
+            const token = tokens[n];
+            if (n === tokens.length - 1) {
+                let value = null;
+                switch (token) {
+                    case 'challenge':
+                        value = Utils.nudgeChallenge(obj[token], delta);
+                        break;
+                    case 'size':
+                    case 'displaySize':
+                        value = Utils.nudgeSize(obj[token], delta);
+                        break;
+                    default:
+                        value = obj[token] + delta;
+                }
+                this.changeValue(combatant, type, value);
+            } else {
+                obj = obj[token];
+            }
+        }
+    }
+
     //#endregion
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //#region Party screen
 
     private addParty() {
@@ -372,7 +471,6 @@ export default class Dojo extends React.Component<Props, State> {
 
     //#endregion
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //#region Library screen
 
     private addMonsterGroup() {
@@ -572,7 +670,6 @@ export default class Dojo extends React.Component<Props, State> {
 
     //#endregion
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //#region Encounter screen
 
     private addEncounter() {
@@ -735,7 +832,6 @@ export default class Dojo extends React.Component<Props, State> {
 
     //#endregion
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //#region Map screen
 
     private addMapFolio() {
@@ -818,7 +914,6 @@ export default class Dojo extends React.Component<Props, State> {
 
     //#endregion
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //#region Combat screen
 
     private createCombat() {
@@ -1304,10 +1399,10 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
-    private mapMove(combatant: Combatant, dir: string) {
+    private mapMove(id: string, dir: string) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat && combat.map) {
-            const item = combat.map.items.find(i => i.id === combatant.id);
+            const item = combat.map.items.find(i => i.id === id);
             if (item) {
                 switch (dir) {
                     case 'N':
@@ -1350,10 +1445,69 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
-    private mapRemove(combatant: Combatant) {
+    private mapResize(id: string, dir: string, dir2: 'out' | 'in') {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat && combat.map) {
-            const item = combat.map.items.find(i => i.id === combatant.id);
+            const item = combat.map.items.find(i => i.id === id);
+            if (item) {
+                switch (dir2) {
+                    case 'in':
+                        switch (dir) {
+                            case 'N':
+                                if (item.height > 1) {
+                                    item.y += 1;
+                                    item.height -= 1;
+                                }
+                                break;
+                            case 'E':
+                                if (item.width > 1) {
+                                    item.width -= 1;
+                                }
+                                break;
+                            case 'S':
+                                if (item.height > 1) {
+                                    item.height -= 1;
+                                }
+                                break;
+                            case 'W':
+                                if (item.width > 1) {
+                                    item.x += 1;
+                                    item.width -= 1;
+                                }
+                                break;
+                        }
+                        break;
+                    case 'out':
+                        switch (dir) {
+                            case 'N':
+                                item.y -= 1;
+                                item.height += 1;
+                                break;
+                            case 'E':
+                                item.width += 1;
+                                break;
+                            case 'S':
+                                item.height += 1;
+                                break;
+                            case 'W':
+                                item.x -= 1;
+                                item.width += 1;
+                                break;
+                        }
+                        break;
+                }
+
+                this.setState({
+                    combats: this.state.combats
+                });
+            }
+        }
+    }
+
+    private mapRemove(id: string) {
+        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+        if (combat && combat.map) {
+            const item = combat.map.items.find(i => i.id === id);
             if (item) {
                 const index = combat.map.items.indexOf(item);
                 combat.map.items.splice(index, 1);
@@ -1591,107 +1745,19 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
+    private addMapItem(item: MapItem) {
+        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+        if (combat && combat.map) {
+            combat.map.items.push(item);
+
+            this.setState({
+                combats: this.state.combats
+            });
+        }
+    }
+
     //#endregion
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private getMonster(monsterName: string, groupName: string) {
-        const group = this.state.library.find(p => p.name === groupName);
-        if (group) {
-            const monster = group.monsters.find(m => m.name === monsterName);
-            if (monster) {
-                return monster;
-            }
-        }
-
-        return null;
-    }
-
-    private changeValue(combatant: any, type: string, value: any) {
-        switch (type) {
-            case 'hp':
-                value = Math.min(value, combatant.hpMax);
-                value = Math.max(value, 0);
-                break;
-            case 'hpTemp':
-                value = Math.max(value, 0);
-                break;
-            case 'level':
-                value = Math.max(value, 1);
-                value = (combatant.player !== undefined) ? Math.min(value, 20) : Math.min(value, 6);
-                break;
-            case 'count':
-                value = Math.max(value, 1);
-                break;
-            case 'hitDice':
-                value = Math.max(value, 1);
-                break;
-            default:
-                // Do nothing
-                break;
-        }
-
-        const tokens = type.split('.');
-        let obj = combatant;
-        for (let n = 0; n !== tokens.length; ++n) {
-            const token = tokens[n];
-            if (n === tokens.length - 1) {
-                obj[token] = value;
-            } else {
-                obj = obj[token];
-            }
-        }
-
-        Utils.sort(this.state.parties);
-        Utils.sort(this.state.library);
-        Utils.sort(this.state.encounters);
-
-        if (type === 'initiative') {
-            if (!(combatant as Combatant).pending) {
-                const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-                this.sortCombatants(combat as Combat);
-            }
-        }
-
-        this.setState({
-            parties: this.state.parties,
-            library: this.state.library,
-            encounters: this.state.encounters,
-            combats: this.state.combats,
-            selectedPartyID: this.state.selectedPartyID,
-            selectedMonsterGroupID: this.state.selectedMonsterGroupID,
-            selectedEncounterID: this.state.selectedEncounterID,
-            selectedCombatID: this.state.selectedCombatID,
-            drawer: this.state.drawer
-        });
-    }
-
-    private nudgeValue(combatant: any, type: string, delta: number) {
-        const tokens = type.split('.');
-        let obj = combatant;
-        for (let n = 0; n !== tokens.length; ++n) {
-            const token = tokens[n];
-            if (n === tokens.length - 1) {
-                let value = null;
-                switch (token) {
-                    case 'challenge':
-                        value = Utils.nudgeChallenge(obj[token], delta);
-                        break;
-                    case 'size':
-                    case 'displaySize':
-                        value = Utils.nudgeSize(obj[token], delta);
-                        break;
-                    default:
-                        value = obj[token] + delta;
-                }
-                this.changeValue(combatant, type, value);
-            } else {
-                obj = obj[token];
-            }
-        }
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //#region Saving
 
     private saveAfterDelay = Utils.debounce(() => this.saveAll(), 10000);
@@ -1748,7 +1814,6 @@ export default class Dojo extends React.Component<Props, State> {
 
     //#endregion
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //#region Rendering
 
     private getContent() {
@@ -1890,8 +1955,9 @@ export default class Dojo extends React.Component<Props, State> {
                             editCondition={(combatant, condition) => this.editCondition(combatant, condition)}
                             removeCondition={(combatant, conditionID) => this.removeCondition(combatant, conditionID)}
                             mapAdd={(combatant, x, y) => this.mapAdd(combatant, x, y)}
-                            mapMove={(combatant, dir) => this.mapMove(combatant, dir)}
-                            mapRemove={combatant => this.mapRemove(combatant)}
+                            mapResize={(id, dir, dir2) => this.mapResize(id, dir, dir2)}
+                            mapMove={(id, dir) => this.mapMove(id, dir)}
+                            mapRemove={id => this.mapRemove(id)}
                             endTurn={(combatant) => this.endTurn(combatant)}
                             changeHP={(combatant, hp, temp) => this.changeHP(combatant, hp, temp)}
                             closeNotification={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
@@ -1899,6 +1965,7 @@ export default class Dojo extends React.Component<Props, State> {
                             toggleCondition={(combatant, condition) => this.toggleCondition(combatant, condition)}
                             scatterCombatants={type => this.scatterCombatants(type)}
                             rotateMap={() => this.rotateMap()}
+                            addOverlay={overlay => this.addMapItem(overlay)}
                         />
                     );
                 } else {

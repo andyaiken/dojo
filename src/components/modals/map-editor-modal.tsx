@@ -296,7 +296,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
                             />
                             {customSection}
                             <div className='divider' />
-                            <div className='subheading'>style</div>
+                            <div className='subheading'>border style</div>
                             <Selector
                                 options={styleOptions}
                                 selectedID={item.style}
@@ -305,7 +305,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
                             <div className='divider' />
                             <div className='subheading'>move</div>
                             <div className='section centered'>
-                                <Radial direction='out' click={dir => this.moveMapItem(item, dir)} />
+                                <Radial direction='eight' click={dir => this.moveMapItem(item, dir)} />
                             </div>
                             <div className='divider' />
                             <div className='subheading'>resize</div>
