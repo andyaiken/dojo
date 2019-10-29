@@ -681,7 +681,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                     }
                 }
 
-                if (this.props.combat.map) {
+                if (!selectedCombatant && this.props.combat.map) {
                     const item = this.props.combat.map.items.find(i => i.id === this.state.selectedItemID);
                     if (item) {
                         const typeOptions = ['overlay', 'token'].map(t => {
