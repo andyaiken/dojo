@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Collapse, Icon, Row, Slider, Statistic } from 'antd';
+import { Col, Row, Slider, Statistic } from 'antd';
 
 import Factory from '../../utils/factory';
 import Napoleon from '../../utils/napoleon';
@@ -59,6 +59,7 @@ interface Props {
 }
 
 interface State {
+    showTools: boolean;
     selectedItemID: string | null;
     addingToMapID: string | null;
     addingOverlay: boolean;
@@ -75,6 +76,7 @@ export default class CombatScreen extends React.Component<Props, State> {
         super(props);
 
         this.state = {
+            showTools: false,
             selectedItemID: null,   // The ID of the combatant or map item (overlay) that's selected
             addingToMapID: null,    // The ID of the combatant we're adding to the map
             addingOverlay: false,   // True if we're adding a custom overlay to the map
@@ -90,6 +92,12 @@ export default class CombatScreen extends React.Component<Props, State> {
     public componentDidMount() {
         window.addEventListener('beforeunload', () => {
             this.setPlayerViewOpen(false);
+        });
+    }
+
+    private toggleTools() {
+        this.setState({
+            showTools: !this.state.showTools
         });
     }
 
@@ -318,9 +326,6 @@ export default class CombatScreen extends React.Component<Props, State> {
     }
 
     private getTools() {
-        const pending = this.props.combat.combatants.some(c => c.pending);
-        const current = this.props.combat.combatants.find(c => c.current);
-
         let wavesAvailable = false;
         const encounterID = this.props.combat.encounterID;
         const encounter = this.props.encounters.find(enc => enc.id === encounterID);
@@ -328,72 +333,159 @@ export default class CombatScreen extends React.Component<Props, State> {
 
         return (
             <div>
-                <Row>
-                    <Col span={12}>
-                        <div className='section centered'>
-                            <Statistic title='round' value={this.props.combat.round} />
-                        </div>
-                    </Col>
-                    <Col span={12}>
-                        <div className='section centered'>
-                            <Statistic title='xp' value={Napoleon.getCombatXP(this.props.combat)} />
-                        </div>
-                    </Col>
-                </Row>
-                <button className={pending ? 'disabled' : ''} onClick={() => this.nextTurn()}>{current ? 'next turn' : 'start combat'}</button>
+                <div className='subheading'>encounter</div>
                 <button onClick={() => this.props.pauseCombat()}>pause combat</button>
                 <ConfirmButton text='end combat' callback={() => this.props.endCombat()} />
-                <Collapse
-                    bordered={false}
-                    expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
-                    expandIconPosition={'right'}
-                >
-                    <Collapse.Panel key='one' header='tools'>
-                        <div className='subheading'>encounter</div>
-                        <button onClick={() => this.props.addCombatants()}>add combatants</button>
-                        <button onClick={() => this.props.addWave()} style={{ display: wavesAvailable ? 'block' : 'none' }}>add wave</button>
-                        <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
-                            <div className='subheading'>map</div>
-                            <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
-                            <button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
-                            <Checkbox
-                                label={this.state.addingOverlay ? 'click on the map to add the item, or click here to cancel' : 'add token / overlay'}
-                                display='button'
-                                checked={this.state.addingOverlay}
-                                changeValue={() => this.toggleAddingOverlay()}
-                            />
-                            <NumberSpin
-                                source={this.state}
-                                name={'mapSize'}
-                                display={() => 'zoom'}
-                                nudgeValue={delta => this.nudgeMapSize(delta * 5)}
-                            />
-                        </div>
-                        <div className='subheading'>player view</div>
-                        <Checkbox
-                            label='show player view'
-                            checked={this.state.playerView.open}
-                            changeValue={value => this.setPlayerViewOpen(value)}
-                        />
-                        <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
-                            <Checkbox
-                                label='show map controls'
-                                checked={this.state.playerView.showControls}
-                                changeValue={value => this.setPlayerViewShowControls(value)}
-                            />
-                        </div>
-                        <div style={{ display: (this.props.combat.map && this.state.playerView.open) ? 'block' : 'none' }}>
-                            <NumberSpin
-                                source={this.state.playerView}
-                                name={'mapSize'}
-                                display={() => 'zoom'}
-                                nudgeValue={delta => this.nudgePlayerViewMapSize(delta * 5)}
-                            />
-                        </div>
-                    </Collapse.Panel>
-                </Collapse>
+                <div className='subheading'>combatants</div>
+                <button onClick={() => this.props.addCombatants()}>add combatants</button>
+                <button onClick={() => this.props.addWave()} style={{ display: wavesAvailable ? 'block' : 'none' }}>add wave</button>
+                <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
+                    <div className='subheading'>map</div>
+                    <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
+                    <button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
+                    <Checkbox
+                        label={this.state.addingOverlay ? 'click on the map to add the item, or click here to cancel' : 'add token / overlay'}
+                        display='button'
+                        checked={this.state.addingOverlay}
+                        changeValue={() => this.toggleAddingOverlay()}
+                    />
+                    <NumberSpin
+                        source={this.state}
+                        name={'mapSize'}
+                        display={() => 'zoom'}
+                        nudgeValue={delta => this.nudgeMapSize(delta * 5)}
+                    />
+                </div>
+                <div className='subheading'>player view</div>
+                <Checkbox
+                    label='show player view'
+                    checked={this.state.playerView.open}
+                    changeValue={value => this.setPlayerViewOpen(value)}
+                />
+                <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
+                    <Checkbox
+                        label='show map controls'
+                        checked={this.state.playerView.showControls}
+                        changeValue={value => this.setPlayerViewShowControls(value)}
+                    />
+                </div>
+                <div style={{ display: (this.props.combat.map && this.state.playerView.open) ? 'block' : 'none' }}>
+                    <NumberSpin
+                        source={this.state.playerView}
+                        name={'mapSize'}
+                        display={() => 'zoom'}
+                        nudgeValue={delta => this.nudgePlayerViewMapSize(delta * 5)}
+                    />
+                </div>
             </div>
         );
+    }
+
+    private getSelectedCombatant() {
+        let selectedCombatant = null;
+        if (this.state.selectedItemID) {
+            const combatant = this.props.combat.combatants.find(c => c.id === this.state.selectedItemID);
+            if (combatant) {
+                if (combatant.current) {
+                    selectedCombatant = (
+                        <Note key='selected'>
+                            <div className='section'>
+                                <b>{combatant.displayName}</b> is selected; it is the current initiative holder
+                            </div>
+                        </Note>
+                    );
+                } else {
+                    selectedCombatant = this.createCard(combatant);
+                }
+            }
+
+            if (!selectedCombatant && this.props.combat.map) {
+                const item = this.props.combat.map.items.find(i => i.id === this.state.selectedItemID);
+                if (item) {
+                    const typeOptions = ['overlay', 'token'].map(t => {
+                        return { id: t, text: t };
+                    });
+
+                    const styleOptions = ['square', 'rounded', 'circle'].map(t => {
+                        return { id: t, text: t };
+                    });
+
+                    selectedCombatant = (
+                        <div className='card map' key='selected'>
+                            <div className='heading'>
+                                <div className='title'>map item</div>
+                            </div>
+                            <div className='card-content'>
+                                <div className='subheading'>size</div>
+                                <div className='section'>{item.width} sq x {item.height} sq</div>
+                                <div className='section'>{item.width * 5} ft x {item.height * 5} ft</div>
+                                <div className='divider' />
+                                <div className='section centered'>
+                                    <Radial direction='eight' click={dir => this.props.mapMove(item.id, dir)} />
+                                </div>
+                                <div className='divider' />
+                                <div className='subheading'>type</div>
+                                <Selector
+                                    options={typeOptions}
+                                    selectedID={item.type}
+                                    select={optionID => this.props.changeValue(item, 'type', optionID)}
+                                />
+                                <div style={{ display: item.type === 'overlay' ? 'block' : 'none' }}>
+                                    <div className='subheading'>shape</div>
+                                    <Selector
+                                        options={styleOptions}
+                                        selectedID={item.style}
+                                        select={optionID => this.props.changeValue(item, 'style', optionID)}
+                                    />
+                                    <div className='subheading'>color</div>
+                                    <input
+                                        type='color'
+                                        value={item.color}
+                                        onChange={event => this.props.changeValue(item, 'color', event.target.value)}
+                                    />
+                                    <div className='subheading'>opacity</div>
+                                    <Slider
+                                        min={0}
+                                        max={255}
+                                        value={item.opacity}
+                                        tooltipVisible={false}
+                                        onChange={value => this.props.changeValue(item, 'opacity', value)}
+                                    />
+                                    <div className='subheading'>size</div>
+                                    <div className='section centered'>
+                                        <Radial direction='both' click={(dir, dir2) => this.props.mapResize(item.id, dir, dir2 as 'in' | 'out')} />
+                                    </div>
+                                </div>
+                                <div style={{ display: item.type === 'token' ? 'block' : 'none' }}>
+                                    <div className='subheading'>size</div>
+                                    <NumberSpin
+                                        source={item}
+                                        name='size'
+                                        nudgeValue={delta => this.props.nudgeValue(item, 'size', delta)}
+                                    />
+                                </div>
+                                <div className='divider' />
+                                <div className='section'>
+                                    <button onClick={() => this.props.mapRemove(item.id)}>remove from the map</button>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                }
+            }
+        }
+
+        if (!selectedCombatant) {
+            selectedCombatant = (
+                <Note key='selected'>
+                    <div className='section'>
+                        select a pc or monster from the <b>initiative order</b> list to see its details here
+                    </div>
+                </Note>
+            );
+        }
+
+        return selectedCombatant;
     }
 
     private createCard(combatant: Combatant) {
@@ -664,108 +756,6 @@ export default class CombatScreen extends React.Component<Props, State> {
                 }
             });
 
-            let selectedCombatant = null;
-            if (this.state.selectedItemID) {
-                const combatant = this.props.combat.combatants.find(c => c.id === this.state.selectedItemID);
-                if (combatant) {
-                    if (combatant.current) {
-                        selectedCombatant = (
-                            <Note key='selected'>
-                                <div className='section'>
-                                    <b>{combatant.displayName}</b> is selected; it is the current initiative holder
-                                </div>
-                            </Note>
-                        );
-                    } else {
-                        selectedCombatant = this.createCard(combatant);
-                    }
-                }
-
-                if (!selectedCombatant && this.props.combat.map) {
-                    const item = this.props.combat.map.items.find(i => i.id === this.state.selectedItemID);
-                    if (item) {
-                        const typeOptions = ['overlay', 'token'].map(t => {
-                            return { id: t, text: t };
-                        });
-
-                        const styleOptions = ['square', 'rounded', 'circle'].map(t => {
-                            return { id: t, text: t };
-                        });
-
-                        selectedCombatant = (
-                            <div className='card map' key='selected'>
-                                <div className='heading'>
-                                    <div className='title'>map item</div>
-                                </div>
-                                <div className='card-content'>
-                                    <div className='subheading'>size</div>
-                                    <div className='section'>{item.width} sq x {item.height} sq</div>
-                                    <div className='section'>{item.width * 5} ft x {item.height * 5} ft</div>
-                                    <div className='divider' />
-                                    <div className='section centered'>
-                                        <Radial direction='eight' click={dir => this.props.mapMove(item.id, dir)} />
-                                    </div>
-                                    <div className='divider' />
-                                    <div className='subheading'>type</div>
-                                    <Selector
-                                        options={typeOptions}
-                                        selectedID={item.type}
-                                        select={optionID => this.props.changeValue(item, 'type', optionID)}
-                                    />
-                                    <div style={{ display: item.type === 'overlay' ? 'block' : 'none' }}>
-                                        <div className='subheading'>shape</div>
-                                        <Selector
-                                            options={styleOptions}
-                                            selectedID={item.style}
-                                            select={optionID => this.props.changeValue(item, 'style', optionID)}
-                                        />
-                                        <div className='subheading'>color</div>
-                                        <input
-                                            type='color'
-                                            value={item.color}
-                                            onChange={event => this.props.changeValue(item, 'color', event.target.value)}
-                                        />
-                                        <div className='subheading'>opacity</div>
-                                        <Slider
-                                            min={0}
-                                            max={255}
-                                            value={item.opacity}
-                                            tooltipVisible={false}
-                                            onChange={value => this.props.changeValue(item, 'opacity', value)}
-                                        />
-                                        <div className='subheading'>size</div>
-                                        <div className='section centered'>
-                                            <Radial direction='both' click={(dir, dir2) => this.props.mapResize(item.id, dir, dir2 as 'in' | 'out')} />
-                                        </div>
-                                    </div>
-                                    <div style={{ display: item.type === 'token' ? 'block' : 'none' }}>
-                                        <div className='subheading'>size</div>
-                                        <NumberSpin
-                                            source={item}
-                                            name='size'
-                                            nudgeValue={delta => this.props.nudgeValue(item, 'size', delta)}
-                                        />
-                                    </div>
-                                    <div className='divider' />
-                                    <div className='section'>
-                                        <button onClick={() => this.props.mapRemove(item.id)}>remove from the map</button>
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    }
-                }
-            }
-            if (!selectedCombatant) {
-                selectedCombatant = (
-                    <Note key='selected'>
-                        <div className='section'>
-                            select a pc or monster from the <b>initiative order</b> list to see its details here
-                        </div>
-                    </Note>
-                );
-            }
-
             return (
                 <Row className='full-height'>
                     <Col span={8} className='scrollable'>
@@ -774,7 +764,25 @@ export default class CombatScreen extends React.Component<Props, State> {
                     </Col>
                     <Col span={8} className='scrollable'>
                         {notificationSection}
-                        {this.getTools()}
+                        <Row>
+                            <Col span={12}>
+                                <div className='section centered'>
+                                    <Statistic title='round' value={this.props.combat.round} />
+                                </div>
+                            </Col>
+                            <Col span={12}>
+                                <div className='section centered'>
+                                    <Statistic title='xp' value={Napoleon.getCombatXP(this.props.combat)} />
+                                </div>
+                            </Col>
+                        </Row>
+                        <button
+                            className={this.props.combat.combatants.some(c => c.pending) ? 'disabled' : ''}
+                            onClick={() => this.nextTurn()}
+                        >
+                            {this.props.combat.combatants.find(c => c.current) ? 'next turn' : 'start combat'}
+                        </button>
+                        <Checkbox label='show combat tools' checked={this.state.showTools} changeValue={() => this.toggleTools()} />
                         <GridPanel
                             heading='waiting for intiative'
                             content={pending}
@@ -806,9 +814,19 @@ export default class CombatScreen extends React.Component<Props, State> {
                             showToggle={true}
                         />
                     </Col>
-                    <Col span={8} className='scrollable'>
-                        <div className='heading fixed-top'>selected combatant</div>
-                        {selectedCombatant}
+                    <Col span={8} className='full-height'>
+                        <div className={this.state.showTools ? 'double-sided flipped' : 'double-sided'}>
+                            <div className='double-sided-inner'>
+                                <div className='front-face scrollable'>
+                                    <div className='heading fixed-top'>selected combatant</div>
+                                    {this.getSelectedCombatant()}
+                                </div>
+                                <div className='back-face scrollable'>
+                                    <div className='heading fixed-top'>tools</div>
+                                    {this.getTools()}
+                                </div>
+                            </div>
+                        </div>
                     </Col>
                     {this.getPlayerView(this.props.combat)}
                 </Row>
@@ -1097,7 +1115,7 @@ class PCRow extends React.Component<PCRowProps> {
                         <PortraitPanel source={this.props.combatant} inline={true} />
                         <div className='name'>
                             {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
-                            {this.props.combatant.player ? ' | ' + this.props.combatant.player : ''}
+                            {this.props.combatant.player ? ' / ' + this.props.combatant.player : ''}
                         </div>
                         <span className='info'>{this.getInformationText()}</span>
                     </div>

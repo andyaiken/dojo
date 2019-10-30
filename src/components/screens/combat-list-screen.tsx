@@ -99,7 +99,7 @@ class ListItem extends React.Component<ListItemProps> {
                     </div>
                     <div className='card-content'>
                         <div className='fixed-height'>
-                            <div className='section'>paused at {this.props.combat.timestamp}</div>
+                            <div className='section'>paused at round {this.props.combat.round}</div>
                             {map}
                             <div className='subheading'>initiative order</div>
                             {list}

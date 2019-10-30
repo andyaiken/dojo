@@ -1113,15 +1113,9 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private pauseCombat() {
-        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-        if (combat) {
-            combat.timestamp = new Date().toLocaleString();
-            this.setState({
-                view: 'combat',
-                combats: this.state.combats,
-                selectedCombatID: null
-            });
-        }
+        this.setState({
+            selectedCombatID: null
+        });
     }
 
     private resumeCombat(combat: Combat) {

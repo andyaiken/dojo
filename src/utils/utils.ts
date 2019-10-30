@@ -617,7 +617,7 @@ export default class Utils {
     public static getTagTitle(tag: string) {
         switch (tag) {
             case 'conc':
-                return 'concentration';
+                return 'concentrating';
             case 'bane':
                 return 'affected by bane';
             case 'bless':

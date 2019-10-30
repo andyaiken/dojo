@@ -193,8 +193,7 @@ export default class Factory {
             map: null,
             round: 1,
             notifications: [],
-            issues: [],
-            timestamp: null
+            issues: []
         };
     }
 
