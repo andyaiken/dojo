@@ -70,12 +70,14 @@ class ListItem extends React.Component<ListItemProps> {
             let map = null;
             if (this.props.combat.map) {
                 map = (
-                    <MapPanel
-                        map={this.props.combat.map}
-                        mode='thumbnail'
-                        size={10}
-                        combatants={this.props.combat.combatants}
-                    />
+                    <div className='section'>
+                        <MapPanel
+                            map={this.props.combat.map}
+                            mode='thumbnail'
+                            size={10}
+                            combatants={this.props.combat.combatants}
+                        />
+                    </div>
                 );
             }
 
@@ -99,6 +101,7 @@ class ListItem extends React.Component<ListItemProps> {
                         <div className='fixed-height'>
                             <div className='section'>paused at {this.props.combat.timestamp}</div>
                             {map}
+                            <div className='subheading'>initiative order</div>
                             {list}
                         </div>
                         <div className='divider'/>

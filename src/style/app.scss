@@ -699,7 +699,7 @@ body,
         padding: 5px 10px;
 
         .stats {
-            column-width: 250px;
+            column-width: 200px;
         }
 
         .fixed-height {
@@ -709,7 +709,6 @@ body,
             .pc-row, .monster-row {
                 color: white;
                 border-radius: 5px;
-                height: 24px;
                 margin: 3px 0;
                 padding: 2px 5px;
 
@@ -717,7 +716,7 @@ body,
                     display: inline-block;
                     vertical-align: top;
                     padding: 1px 0;
-                    height: 20px;
+                    min-height: 20px;
                 }
             }
 
