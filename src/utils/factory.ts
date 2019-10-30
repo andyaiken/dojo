@@ -165,6 +165,7 @@ export default class Factory {
             height: 4,
             terrain: '',
             customBackground: '',
+            size: 'medium',
             color: '',
             opacity: 255,
             style: null

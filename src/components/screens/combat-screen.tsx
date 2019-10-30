@@ -702,6 +702,10 @@ export default class CombatScreen extends React.Component<Props, State> {
                                     <div className='section'>{item.width} sq x {item.height} sq</div>
                                     <div className='section'>{item.width * 5} ft x {item.height * 5} ft</div>
                                     <div className='divider' />
+                                    <div className='section centered'>
+                                        <Radial direction='eight' click={dir => this.props.mapMove(item.id, dir)} />
+                                    </div>
+                                    <div className='divider' />
                                     <div className='subheading'>type</div>
                                     <Selector
                                         options={typeOptions}
@@ -709,7 +713,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                                         select={optionID => this.props.changeValue(item, 'type', optionID)}
                                     />
                                     <div style={{ display: item.type === 'overlay' ? 'block' : 'none' }}>
-                                        <div className='subheading'>border style</div>
+                                        <div className='subheading'>shape</div>
                                         <Selector
                                             options={styleOptions}
                                             selectedID={item.style}
@@ -729,16 +733,18 @@ export default class CombatScreen extends React.Component<Props, State> {
                                             tooltipVisible={false}
                                             onChange={value => this.props.changeValue(item, 'opacity', value)}
                                         />
+                                        <div className='subheading'>size</div>
+                                        <div className='section centered'>
+                                            <Radial direction='both' click={(dir, dir2) => this.props.mapResize(item.id, dir, dir2 as 'in' | 'out')} />
+                                        </div>
                                     </div>
-                                    <div className='divider' />
-                                    <div className='subheading'>move</div>
-                                    <div className='section centered'>
-                                        <Radial direction='eight' click={dir => this.props.mapMove(item.id, dir)} />
-                                    </div>
-                                    <div className='divider' />
-                                    <div className='subheading'>resize</div>
-                                    <div className='section centered'>
-                                        <Radial direction='both' click={(dir, dir2) => this.props.mapResize(item.id, dir, dir2 as 'in' | 'out')} />
+                                    <div style={{ display: item.type === 'token' ? 'block' : 'none' }}>
+                                        <div className='subheading'>size</div>
+                                        <NumberSpin
+                                            source={item}
+                                            name='size'
+                                            nudgeValue={delta => this.props.nudgeValue(item, 'size', delta)}
+                                        />
                                     </div>
                                     <div className='divider' />
                                     <div className='section'>

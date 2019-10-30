@@ -46,6 +46,7 @@ input[type=color] {
 
 input[type=color] {
     padding: 0 2px;
+    background-color: $background;
 }
 
 ul, ol {
@@ -533,20 +534,16 @@ body,
     .navigator-item {
         display: inline-block;
         vertical-align: middle;
-        padding: 5px;
+        margin: 5px;
         cursor: pointer;
-        height: 50px;
-        line-height: 35px;
-        width: calc((100% - 1px) / 5);
+        height: 40px;
+        line-height: 40px;
+        width: calc(((100% - 1px) / 5) - 10px);
         font-size: 14px;
         color: $header-foreground;
-        border-top: 1px solid $control-border;
 
         &.selected {
             background-color: $background;
-            border-top: 1px solid transparent;
-            border-left: 1px solid $control-border;
-            border-right: 1px solid $control-border;
             pointer-events: none;
         }
 
@@ -1489,8 +1486,7 @@ body,
     border-left: 5px solid $control-border;
     margin: 3px 30px 3px 10px;
     font-size: 12px;
-    padding-left: 5px;
-    padding-bottom: 2px;
+    padding: 2px 5px;
     cursor: pointer;
 
     &:hover {

@@ -256,7 +256,7 @@ export default class MapPanel extends React.Component<Props> {
                 tokens = this.props.map.items
                     .filter(i => (i.type === 'monster') || (i.type === 'pc') || (i.type === 'token'))
                     .map(i => {
-                        let miniSize = Math.min(i.width, i.height);
+                        let miniSize = Utils.miniSize(i.size);
                         const combatant = this.props.combatants.find(c => c.id === i.id);
                         if (combatant) {
                             miniSize = Utils.miniSize(combatant.displaySize);

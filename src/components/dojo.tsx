@@ -42,6 +42,8 @@ import MonsterScreen from './screens/monster-screen';
 import PartyListScreen from './screens/party-list-screen';
 import PartyScreen from './screens/party-screen';
 
+import pkg from '../../package.json';
+
 // tslint:disable-next-line:no-empty-interface
 interface Props {
     // No props; this is the root component
@@ -2268,7 +2270,9 @@ export default class Dojo extends React.Component<Props, State> {
                                 openCombat={id => this.selectCombatByID(id)}
                             />
                         </div>
-                        <div className='drawer-footer' />
+                        <div className='drawer-footer'>
+                            <div style={{ padding: '10px 0' }}>version <b>{pkg.version}</b></div>
+                        </div>
                     </Drawer>
                     <Drawer
                         closable={false}

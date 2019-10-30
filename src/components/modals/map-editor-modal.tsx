@@ -296,7 +296,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
                             />
                             {customSection}
                             <div className='divider' />
-                            <div className='subheading'>border style</div>
+                            <div className='subheading'>shape</div>
                             <Selector
                                 options={styleOptions}
                                 selectedID={item.style}
