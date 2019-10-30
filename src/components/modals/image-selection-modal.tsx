@@ -27,6 +27,13 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
+        this.state = {
+            images: this.listImages(),
+            filter: ''
+        };
+    }
+
+    private listImages() {
         let images: SavedImage[] = [];
         for (let n = 0; n !== localStorage.length; ++n) {
             const key = localStorage.key(n);
@@ -43,12 +50,7 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
             }
         }
 
-        images = Utils.sort(images, [{ field: 'name', dir: 'asc'}]);
-
-        this.state = {
-            images: images,
-            filter: ''
-        };
+        return Utils.sort(images, [{ field: 'name', dir: 'asc'}]);
     }
 
     private setFilter(text: string) {
@@ -72,9 +74,8 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
                     const json = JSON.stringify(image);
                     localStorage.setItem('image-' + image.id, json);
 
-                    this.state.images.push(image);
                     this.setState({
-                        images: this.state.images
+                        images: this.listImages()
                     });
                 }
             };
@@ -86,19 +87,14 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
     private delete(id: string) {
         localStorage.removeItem('image-' + id);
 
-        const item = this.state.images.find(img => img.id === id);
-        if (item) {
-            const index = this.state.images.indexOf(item);
-            this.setState({
-                images: this.state.images.splice(index, 1)
-            });
-        }
+        this.setState({
+            images: this.listImages()
+        });
     }
 
     public render() {
         try {
             const images = this.state.images
-                .filter(img => !!localStorage.getItem('image-' + img.id))
                 .filter(img => Sherlock.match(this.state.filter, img.name))
                 .map(img => (
                     <div key={img.id}>
@@ -114,14 +110,16 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
                 );
             }
 
-            images.unshift(
-                <Input.Search
-                    key='search'
-                    placeholder='search for an image'
-                    onChange={e => this.setFilter(e.target.value)}
-                    onSearch={value => this.setFilter(value)}
-                />
-            );
+            if (this.state.images.length > 0) {
+                images.unshift(
+                    <Input.Search
+                        key='search'
+                        placeholder='search for an image'
+                        onChange={e => this.setFilter(e.target.value)}
+                        onSearch={value => this.setFilter(value)}
+                    />
+                );
+            }
 
             return (
                 <div className='full-height'>

@@ -515,7 +515,7 @@ export default class Frankenstein {
                         // This is part of the previous trait
                         const prev = monster.traits[monster.traits.length - 1];
                         prev.text += '\n';
-                        prev.text += '* ' + t.text;
+                        prev.text += t.text;
                     }
                 }
             }

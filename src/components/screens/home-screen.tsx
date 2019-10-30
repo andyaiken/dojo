@@ -31,7 +31,7 @@ export default class HomeScreen extends React.Component<Props> {
             }
 
             return (
-                <div className='scrollable' style={{ width: '80%', margin: '0 auto', paddingTop: '100px' }}>
+                <div className='scrollable' style={{ width: '700px', margin: '0 auto', paddingTop: '100px' }}>
                     <Readaloud>
                         <div className='heading'>welcome to <span className='app-name'>dojo</span></div>
                         <div className='divider' />

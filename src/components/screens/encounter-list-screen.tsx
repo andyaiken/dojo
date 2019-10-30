@@ -10,6 +10,7 @@ import { Monster } from '../../models/monster-group';
 import ConfirmButton from '../controls/confirm-button';
 import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
+import PortraitPanel from '../panels/portrait-panel';
 
 interface Props {
     encounters: Encounter[];
@@ -76,13 +77,25 @@ class ListItem extends React.Component<ListItemProps> {
         if (slot.count > 1) {
             text += ' (x' + slot.count + ')';
         }
-        return text;
+        return <div className='name'>{text}</div>;
+    }
+
+    private getPortrait(slot: EncounterSlot) {
+        const monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
+        if (monster && monster.portrait) {
+            return <PortraitPanel source={monster} inline={true} />;
+        }
+
+        return null;
     }
 
     public render() {
         try {
             const slots = this.props.encounter.slots.map(slot => (
-                <div key={slot.id} className='monster-row'><div className='name'>{this.getText(slot)}</div></div>
+                <div key={slot.id} className='monster-row'>
+                    {this.getPortrait(slot)}
+                    {this.getText(slot)}
+                </div>
             ));
             if (slots.length === 0) {
                 slots.push(<div key='empty' className='section'>no monsters</div>);
@@ -91,7 +104,12 @@ class ListItem extends React.Component<ListItemProps> {
             this.props.encounter.waves.forEach(wave => {
                 slots.push(<div key={'name ' + wave.id} className='section subheading'>{wave.name || 'unnamed wave'}</div>);
                 wave.slots.forEach(slot => {
-                    slots.push(<div key={slot.id} className='monster-row'><div className='name'>{this.getText(slot)}</div></div>);
+                    slots.push(
+                        <div key={slot.id} className='monster-row'>
+                            {this.getPortrait(slot)}
+                            {this.getText(slot)}
+                        </div>
+                    );
                 });
                 if (slots.length === 0) {
                     slots.push(<div key={'empty ' + wave.id} className='section'>no monsters</div>);
