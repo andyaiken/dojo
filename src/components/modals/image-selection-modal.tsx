@@ -34,7 +34,7 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
     }
 
     private listImages() {
-        let images: SavedImage[] = [];
+        const images: SavedImage[] = [];
         for (let n = 0; n !== localStorage.length; ++n) {
             const key = localStorage.key(n);
             if (key && key.startsWith('image-')) {
