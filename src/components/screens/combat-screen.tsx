@@ -584,6 +584,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 
             this.props.addOverlay(overlay);
             this.setState({
+                showTools: false,
                 addingOverlay: false,
                 addingToMapID: null,
                 selectedItemID: overlay.id
@@ -754,6 +755,9 @@ export default class CombatScreen extends React.Component<Props, State> {
                 }
             });
 
+            const rightHeading = this.state.showTools ? 'tools' : 'selected combatant';
+            const rightContent = this.state.showTools ? this.getTools() : this.getSelectedCombatant();
+
             return (
                 <div className='full-height'>
                     <Row className='combat-top-row'>
@@ -817,19 +821,9 @@ export default class CombatScreen extends React.Component<Props, State> {
                                 showToggle={true}
                             />
                         </Col>
-                        <Col span={8} className='full-height'>
-                            <div className={this.state.showTools ? 'double-sided flipped' : 'double-sided'}>
-                                <div className='double-sided-inner'>
-                                    <div className='front-face scrollable'>
-                                        <div className='heading fixed-top'>selected combatant</div>
-                                        {this.getSelectedCombatant()}
-                                    </div>
-                                    <div className='back-face scrollable'>
-                                        <div className='heading fixed-top'>tools</div>
-                                        {this.getTools()}
-                                    </div>
-                                </div>
-                            </div>
+                        <Col span={8} className='scrollable'>
+                            <div className='heading fixed-top'>{rightHeading}</div>
+                            {rightContent}
                         </Col>
                     </Row>
                     {this.getPlayerView(this.props.combat)}
