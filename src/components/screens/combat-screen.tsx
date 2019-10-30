@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Row, Slider, Statistic } from 'antd';
+import { Col, Row, Slider } from 'antd';
 
 import Factory from '../../utils/factory';
 import Napoleon from '../../utils/napoleon';
@@ -517,7 +517,6 @@ export default class CombatScreen extends React.Component<Props, State> {
                         mapAdd={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
                         mapMove={(c, dir) => this.props.mapMove(c.id, dir)}
                         mapRemove={c => this.props.mapRemove(c.id)}
-                        endTurn={c => this.props.endTurn(c)}
                         toggleTag={(c, tag) => this.props.toggleTag(c, tag)}
                         toggleCondition={(c, condition) => this.props.toggleCondition(c, condition)}
                     />
@@ -542,7 +541,6 @@ export default class CombatScreen extends React.Component<Props, State> {
                         mapAdd={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
                         mapMove={(c, dir) => this.props.mapMove(c.id, dir)}
                         mapRemove={c => this.props.mapRemove(c.id)}
-                        endTurn={(c) => this.props.endTurn(c)}
                         changeHP={(c, hp, temp) => this.props.changeHP(c as Combatant & Monster, hp, temp)}
                         toggleTag={(c, tag) => this.props.toggleTag(c, tag)}
                         toggleCondition={(c, condition) => this.props.toggleCondition(c, condition)}
@@ -757,79 +755,85 @@ export default class CombatScreen extends React.Component<Props, State> {
             });
 
             return (
-                <Row className='full-height'>
-                    <Col span={8} className='scrollable'>
-                        <div className='heading fixed-top'>initiative holder</div>
-                        {current}
-                    </Col>
-                    <Col span={8} className='scrollable'>
-                        {notificationSection}
-                        <Row>
-                            <Col span={12}>
-                                <div className='section centered'>
-                                    <Statistic title='round' value={this.props.combat.round} />
-                                </div>
-                            </Col>
-                            <Col span={12}>
-                                <div className='section centered'>
-                                    <Statistic title='xp' value={Napoleon.getCombatXP(this.props.combat)} />
-                                </div>
-                            </Col>
-                        </Row>
-                        <button
-                            className={this.props.combat.combatants.some(c => c.pending) ? 'disabled' : ''}
-                            onClick={() => this.nextTurn()}
-                        >
-                            {this.props.combat.combatants.find(c => c.current) ? 'next turn' : 'start combat'}
-                        </button>
-                        <Checkbox label='show combat tools' checked={this.state.showTools} changeValue={() => this.toggleTools()} />
-                        <GridPanel
-                            heading='waiting for intiative'
-                            content={pending}
-                            columns={1}
-                            showToggle={true}
-                        />
-                        <GridPanel
-                            heading={'don\'t forget'}
-                            content={special}
-                            columns={1}
-                            showToggle={true}
-                        />
-                        <GridPanel
-                            heading='encounter map'
-                            content={[mapSection]}
-                            columns={1}
-                            showToggle={true}
-                        />
-                        <GridPanel
-                            heading='initiative order'
-                            content={active}
-                            columns={1}
-                            showToggle={true}
-                        />
-                        <GridPanel
-                            heading='defeated'
-                            content={defeated}
-                            columns={1}
-                            showToggle={true}
-                        />
-                    </Col>
-                    <Col span={8} className='full-height'>
-                        <div className={this.state.showTools ? 'double-sided flipped' : 'double-sided'}>
-                            <div className='double-sided-inner'>
-                                <div className='front-face scrollable'>
-                                    <div className='heading fixed-top'>selected combatant</div>
-                                    {this.getSelectedCombatant()}
-                                </div>
-                                <div className='back-face scrollable'>
-                                    <div className='heading fixed-top'>tools</div>
-                                    {this.getTools()}
+                <div className='full-height'>
+                    <Row className='combat-top-row'>
+                        <Col span={8} style={{ padding: '0 10px' }}>
+                            <button
+                                className={this.props.combat.combatants.some(c => c.pending) ? 'disabled' : ''}
+                                onClick={() => this.nextTurn()}
+                            >
+                                {this.props.combat.combatants.find(c => c.current) ? 'next turn' : 'start combat'}
+                            </button>
+                        </Col>
+                        <Col span={4}>
+                            <div className='statistic'>
+                                round {this.props.combat.round}
+                            </div>
+                        </Col>
+                        <Col span={4}>
+                            <div className='statistic'>
+                                {Napoleon.getCombatXP(this.props.combat)} xp
+                            </div>
+                        </Col>
+                        <Col span={8} style={{ padding: '0 10px' }}>
+                            <Checkbox label='show combat tools' checked={this.state.showTools} changeValue={() => this.toggleTools()} />
+                        </Col>
+                    </Row>
+                    <Row className='combat-main'>
+                        <Col span={8} className='scrollable'>
+                            <div className='heading fixed-top'>initiative holder</div>
+                            {current}
+                        </Col>
+                        <Col span={8} className='scrollable'>
+                            {notificationSection}
+                            <GridPanel
+                                heading='waiting for intiative'
+                                content={pending}
+                                columns={1}
+                                showToggle={true}
+                            />
+                            <GridPanel
+                                heading={'don\'t forget'}
+                                content={special}
+                                columns={1}
+                                showToggle={true}
+                            />
+                            <GridPanel
+                                heading='encounter map'
+                                content={[mapSection]}
+                                columns={1}
+                                showToggle={true}
+                            />
+                            <GridPanel
+                                heading='initiative order'
+                                content={active}
+                                columns={1}
+                                showToggle={true}
+                            />
+                            <GridPanel
+                                heading='defeated'
+                                content={defeated}
+                                columns={1}
+                                showToggle={true}
+                            />
+                        </Col>
+                        <Col span={8} className='full-height'>
+                            <div className={this.state.showTools ? 'double-sided flipped' : 'double-sided'}>
+                                <div className='double-sided-inner'>
+                                    <div className='front-face scrollable'>
+                                        <div className='heading fixed-top'>selected combatant</div>
+                                        {this.getSelectedCombatant()}
+                                    </div>
+                                    <div className='back-face scrollable'>
+                                        <div className='heading fixed-top'>tools</div>
+                                        {this.getTools()}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </Col>
+                        </Col>
+                    </Row>
                     {this.getPlayerView(this.props.combat)}
-                </Row>
+                </div>
             );
         } catch (e) {
             console.error(e);

@@ -1693,3 +1693,22 @@ body,
         transform: translateX(100%) rotateY(180deg);
     }
 }
+
+.combat-top-row {
+    height: 50px;
+    padding: 4px 0;
+    background-color: $header-background;
+    border-bottom: 1px solid $control-border;
+
+    .statistic {
+        height: 42px;
+        line-height: 42px;
+        font-weight: 600;
+        font-size: 15px;
+        text-align: center;
+    }
+}
+
+.combat-main {
+    height: calc(100% - 50px);
+}

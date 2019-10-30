@@ -49,7 +49,6 @@ interface Props {
     makeCurrent: (combatant: Combatant) => void;
     makeActive: (combatant: Combatant) => void;
     makeDefeated: (combatant: Combatant) => void;
-    endTurn: (combatant: Combatant) => void;
     mapAdd: (combatant: Combatant) => void;
     mapMove: (combatant: Combatant, dir: string) => void;
     mapRemove: (combatant: Combatant) => void;
@@ -239,7 +238,6 @@ export default class MonsterCard extends React.Component<Props, State> {
             case 'main':
                 if (!combatant.pending && combatant.active && !combatant.defeated) {
                     if (combatant.current) {
-                        options.push(<button key='endTurn' onClick={() => this.props.endTurn(combatant)}>end turn</button>);
                         options.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(combatant)}>mark as defeated and end turn</button>);
                     } else {
                         options.push(<button key='makeCurrent' onClick={() => this.props.makeCurrent(combatant)}>start turn</button>);
