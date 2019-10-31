@@ -356,6 +356,8 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                     expandIconPosition={'right'}
                 >
                     <Collapse.Panel key='one' header='change initiative score'>
+                        <p>adjusting initiative will re-sort the initiative order</p>
+                        <p>if you have manually changed the initiative order, your changes will be lost</p>
                         <NumberSpin
                             source={this.props.combatant}
                             name='initiative'
