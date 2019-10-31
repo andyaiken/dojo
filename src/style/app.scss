@@ -437,6 +437,10 @@ body,
 
 .page-content {
     height: calc(100% - 100px);
+
+    &.maximized {
+        height: 100%;
+    }
 }
 
 .dragged {
@@ -1252,21 +1256,21 @@ body,
     }
 
     .badge {
-        color: white;
-        width: 14px;
         position: absolute;
         top: -4px;
-        right: -4px;
-        text-align: center;
+        left: -4px;
         font-size: 15px;
-        line-height: 12px;
-        text-shadow: 0 0 5px black;
+        z-index: 5;
+    }
 
-        &.altitude {
-            top: -4px;
-            left: -4px;
-            line-height: 10px;
-        }
+    .conditions {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        animation: loadingCircle 10s infinite linear;
+        z-index: 5;
     }
 }
 
@@ -1675,6 +1679,17 @@ body,
 
 .combat-main {
     height: calc(100% - 50px);
+}
+
+.maximize-button {
+    font-size: 32px;
+    height: 32px;
+    width: 32px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: $highlight01;
+    }
 }
 
 .grabber {

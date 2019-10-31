@@ -33,6 +33,8 @@ import TraitsPanel from '../panels/traits-panel';
 interface Props {
     combat: Combat;
     encounters: Encounter[];
+    maximized: boolean;
+    maximize: () => void;
     pauseCombat: () => void;
     endCombat: () => void;
     closeNotification: (notification: Notification, removeCondition: boolean) => void;
@@ -781,12 +783,19 @@ export default class CombatScreen extends React.Component<Props, State> {
                                 {this.props.combat.combatants.find(c => c.current) ? 'next turn' : 'start combat'}
                             </button>
                         </Col>
-                        <Col span={4}>
+                        <Col span={3}>
                             <div className='statistic'>
                                 round {this.props.combat.round}
                             </div>
                         </Col>
-                        <Col span={4}>
+                        <Col span={2} className='section centered'>
+                            <Icon
+                                type={this.props.maximized ? 'fullscreen-exit' : 'fullscreen'}
+                                className='maximize-button'
+                                onClick={() => this.props.maximize()}
+                            />
+                        </Col>
+                        <Col span={3}>
                             <div className='statistic'>
                                 {Napoleon.getCombatXP(this.props.combat)} xp
                             </div>

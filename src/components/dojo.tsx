@@ -53,6 +53,7 @@ interface State {
     view: 'home' | 'parties' | 'library' | 'encounters' | 'maps' | 'combat';
     navigation: boolean;
     drawer: any;
+    maximized: boolean;
 
     parties: Party[];
     library: MonsterGroup[];
@@ -128,6 +129,7 @@ export default class Dojo extends React.Component<Props, State> {
             view: 'home',
             navigation: false,
             drawer: null,
+            maximized: false,
             parties: parties,
             library: library,
             encounters: encounters,
@@ -171,6 +173,12 @@ export default class Dojo extends React.Component<Props, State> {
     private toggleNavigation() {
         this.setState({
             navigation: !this.state.navigation
+        });
+    }
+
+    private toggleMaximized() {
+        this.setState({
+            maximized: !this.state.maximized
         });
     }
 
@@ -1114,7 +1122,8 @@ export default class Dojo extends React.Component<Props, State> {
 
     private pauseCombat() {
         this.setState({
-            selectedCombatID: null
+            selectedCombatID: null,
+            maximized: false
         });
     }
 
@@ -1136,7 +1145,8 @@ export default class Dojo extends React.Component<Props, State> {
         this.state.combats.splice(index, 1);
         this.setState({
             combats: this.state.combats,
-            selectedCombatID: null
+            selectedCombatID: null,
+            maximized: false
         });
     }
 
@@ -1953,6 +1963,8 @@ export default class Dojo extends React.Component<Props, State> {
                         <CombatScreen
                             combat={this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat}
                             encounters={this.state.encounters}
+                            maximized={this.state.maximized}
+                            maximize={() => this.toggleMaximized()}
                             pauseCombat={() => this.pauseCombat()}
                             endCombat={() => this.endCurrentCombat()}
                             nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
@@ -2237,64 +2249,73 @@ export default class Dojo extends React.Component<Props, State> {
 
     public render() {
         try {
-            const content = this.getContent();
-            const drawer = this.getDrawer();
+            const header = this.state.maximized ? null : (
+                <PageHeader
+                    view={this.state.view}
+                    openMenu={() => this.toggleNavigation()}
+                    openDrawer={type => this.openToolsDrawer(type)}
+                />
+            );
+            const footer = this.state.maximized ? null : (
+                <PageFooter
+                    view={this.state.view}
+                    parties={this.state.parties}
+                    library={this.state.library}
+                    encounters={this.state.encounters}
+                    combats={this.state.combats}
+                    setView={view => this.setView(view)}
+                />
+            );
+
+            const leftDrawer = (
+                <Drawer
+                    placement={'left'}
+                    closable={false}
+                    maskClosable={true}
+                    width={'25%'}
+                    visible={this.state.navigation}
+                    onClose={() => this.toggleNavigation()}
+                >
+                    <div className='drawer-header' />
+                    <div className='drawer-content'>
+                        <PageNavigation
+                            parties={this.state.parties}
+                            library={this.state.library}
+                            encounters={this.state.encounters}
+                            maps={this.state.mapFolios}
+                            combats={this.state.combats}
+                            openParty={id => this.selectPartyByID(id)}
+                            openMonsterGroup={id => this.selectMonsterGroupByID(id)}
+                            openEncounter={id => this.selectEncounterByID(id)}
+                            openMapFolio={id => this.selectMapFolioByID(id)}
+                            openCombat={id => this.selectCombatByID(id)}
+                        />
+                    </div>
+                    <div className='drawer-footer'>
+                        <div style={{ padding: '10px 0' }}>version <b>{pkg.version}</b></div>
+                    </div>
+                </Drawer>
+            );
+            const rightDrawer = this.getDrawer();
 
             return (
                 <div className='dojo'>
-                    <PageHeader
-                        view={this.state.view}
-                        openMenu={() => this.toggleNavigation()}
-                        openDrawer={type => this.openToolsDrawer(type)}
-                    />
-                    <div className='page-content'>
-                        {content}
+                    {header}
+                    <div className={this.state.maximized ? 'page-content maximized' : 'page-content'}>
+                        {this.getContent()}
                     </div>
-                    <PageFooter
-                        view={this.state.view}
-                        parties={this.state.parties}
-                        library={this.state.library}
-                        encounters={this.state.encounters}
-                        combats={this.state.combats}
-                        setView={view => this.setView(view)}
-                    />
-                    <Drawer
-                        placement={'left'}
-                        closable={false}
-                        maskClosable={true}
-                        width={'25%'}
-                        visible={this.state.navigation}
-                        onClose={() => this.toggleNavigation()}
-                    >
-                        <div className='drawer-header' />
-                        <div className='drawer-content'>
-                            <PageNavigation
-                                parties={this.state.parties}
-                                library={this.state.library}
-                                encounters={this.state.encounters}
-                                maps={this.state.mapFolios}
-                                combats={this.state.combats}
-                                openParty={id => this.selectPartyByID(id)}
-                                openMonsterGroup={id => this.selectMonsterGroupByID(id)}
-                                openEncounter={id => this.selectEncounterByID(id)}
-                                openMapFolio={id => this.selectMapFolioByID(id)}
-                                openCombat={id => this.selectCombatByID(id)}
-                            />
-                        </div>
-                        <div className='drawer-footer'>
-                            <div style={{ padding: '10px 0' }}>version <b>{pkg.version}</b></div>
-                        </div>
-                    </Drawer>
+                    {footer}
+                    {leftDrawer}
                     <Drawer
                         closable={false}
-                        maskClosable={drawer.closable}
-                        width={drawer.width}
-                        visible={drawer.content !== null}
+                        maskClosable={rightDrawer.closable}
+                        width={rightDrawer.width}
+                        visible={rightDrawer.content !== null}
                         onClose={() => this.closeDrawer()}
                     >
-                        <div className='drawer-header'><div className='app-title'>{drawer.header}</div></div>
-                        <div className='drawer-content'>{drawer.content}</div>
-                        <div className='drawer-footer'>{drawer.footer}</div>
+                        <div className='drawer-header'><div className='app-title'>{rightDrawer.header}</div></div>
+                        <div className='drawer-content'>{rightDrawer.content}</div>
+                        <div className='drawer-footer'>{rightDrawer.footer}</div>
                     </Drawer>
                 </div>
             );

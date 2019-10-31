@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Icon } from 'antd';
+
 import Utils from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
@@ -540,13 +542,17 @@ class MapToken extends React.Component<MapTokenProps> {
 
                 if (this.props.combatant.altitude > 0) {
                     altitudeBadge = (
-                        <div className='badge altitude' title='above the map'>&#9206;</div>
+                        <div className='badge' title='above the map'>
+                            <Icon type='up-square' theme='twoTone' twoToneColor='#3c78dc' />
+                        </div>
                     );
                 }
 
                 if (this.props.combatant.altitude < 0) {
                     altitudeBadge = (
-                        <div className='badge altitude' title='below the map'>&#9207;</div>
+                        <div className='badge' title='below the map'>
+                            <Icon type='down-square' theme='twoTone' twoToneColor='#3c78dc' />
+                        </div>
                     );
                 }
 
@@ -554,7 +560,9 @@ class MapToken extends React.Component<MapTokenProps> {
                 const hasTags = this.props.combatant.tags && (this.props.combatant.tags.length > 0);
                 if (hasConditions || hasTags) {
                     conditionsBadge = (
-                        <div className='badge' title='affected by conditions'>&#9670;</div>
+                        <div className='conditions'>
+                            <Icon type='star' theme='twoTone' twoToneColor='#3c78dc' />
+                        </div>
                     );
                 }
             }
