@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { Col, Row, Slider } from 'antd';
+import { Col, Icon, Row, Slider } from 'antd';
+import { List } from 'react-movable';
 
 import Factory from '../../utils/factory';
 import Napoleon from '../../utils/napoleon';
@@ -20,6 +21,7 @@ import ConfirmButton from '../controls/confirm-button';
 import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
 import Selector from '../controls/selector';
+import CombatControlsPanel from '../panels/combat-controls-panel';
 import GridPanel from '../panels/grid-panel';
 import HitPointGauge from '../panels/hit-point-gauge';
 import MapPanel from '../panels/map-panel';
@@ -38,6 +40,7 @@ interface Props {
     makeCurrent: (combatant: Combatant) => void;
     makeActive: (combatant: Combatant) => void;
     makeDefeated: (combatant: Combatant) => void;
+    moveCombatant: (oldIndex: number, newIndex: number) => void;
     removeCombatant: (combatant: Combatant) => void;
     addCombatants: () => void;
     addWave: () => void;
@@ -60,6 +63,7 @@ interface Props {
 
 interface State {
     showTools: boolean;
+    showDefeatedCombatants: boolean;
     selectedItemID: string | null;
     addingToMapID: string | null;
     addingOverlay: boolean;
@@ -77,9 +81,10 @@ export default class CombatScreen extends React.Component<Props, State> {
 
         this.state = {
             showTools: false,
-            selectedItemID: null,   // The ID of the combatant or map item (overlay) that's selected
-            addingToMapID: null,    // The ID of the combatant we're adding to the map
-            addingOverlay: false,   // True if we're adding a custom overlay to the map
+            showDefeatedCombatants: false,
+            selectedItemID: null,           // The ID of the combatant or map item (overlay) that's selected
+            addingToMapID: null,            // The ID of the combatant we're adding to the map
+            addingOverlay: false,           // True if we're adding a custom overlay to the map
             mapSize: 30,
             playerView: {
                 open: false,
@@ -101,9 +106,16 @@ export default class CombatScreen extends React.Component<Props, State> {
         });
     }
 
+    private toggleShowDefeatedCombatants() {
+        this.setState({
+            showDefeatedCombatants: !this.state.showDefeatedCombatants
+        });
+    }
+
     private setSelectedItemID(id: string | null) {
         this.setState({
-            selectedItemID: id
+            selectedItemID: id,
+            showTools: false
         });
     }
 
@@ -163,6 +175,49 @@ export default class CombatScreen extends React.Component<Props, State> {
         }
     }
 
+    private defeatCombatant(combatant: Combatant) {
+        if (this.state.selectedItemID === combatant.id) {
+            this.setState({
+                selectedItemID: null
+            });
+        }
+
+        this.props.makeDefeated(combatant);
+    }
+
+    private gridSquareClicked(x: number, y: number) {
+        if (this.state.addingToMapID) {
+            const combatant = this.props.combat.combatants.find(c => c.id === this.state.addingToMapID);
+            if (combatant) {
+                this.props.mapAdd(combatant, x, y);
+            }
+
+            this.setAddingToMapID(null);
+        }
+
+        if (this.state.addingOverlay) {
+            const overlay = Factory.createMapItem();
+            overlay.type = 'overlay';
+            overlay.x = x;
+            overlay.y = y;
+            overlay.width = 1;
+            overlay.height = 1;
+            overlay.color = '#005080';
+            overlay.opacity = 127;
+            overlay.style = 'square';
+
+            this.props.addOverlay(overlay);
+            this.setState({
+                showTools: false,
+                addingOverlay: false,
+                addingToMapID: null,
+                selectedItemID: overlay.id
+            });
+        }
+    }
+
+    //#region Rendering helper methods
+
     private getPlayerView(combat: Combat) {
         if (!this.state.playerView.open) {
             return null;
@@ -170,36 +225,21 @@ export default class CombatScreen extends React.Component<Props, State> {
 
         const init = combat.combatants
             .filter(c => c.showOnMap)
-            .filter(combatant => !combatant.pending && combatant.active && !combatant.defeated)
-            .map(combatant => {
-                switch (combatant.type) {
-                    case 'pc':
-                        return (
-                            <PCRow
-                                key={combatant.id}
-                                combatant={combatant as Combatant & PC}
-                                minimal={true}
-                                combat={this.props.combat as Combat}
-                                select={c => this.setSelectedItemID(c.id)}
-                                selected={combatant.id === this.state.selectedItemID}
-                            />
-                        );
-                    case 'monster':
-                        return (
-                            <MonsterRow
-                                key={combatant.id}
-                                combatant={combatant as Combatant & Monster}
-                                minimal={true}
-                                combat={this.props.combat as Combat}
-                                select={c => this.setSelectedItemID(c.id)}
-                                selected={combatant.id === this.state.selectedItemID}
-                            />
-                        );
-                    default:
-                        return null;
-                }
-            });
+            .filter(combatant => !combatant.pending && combatant.active && !combatant.defeated);
 
+        const initList = (
+            <List
+                values={init}
+                lockVertically={true}
+                onChange={({ oldIndex, newIndex }) => this.props.moveCombatant(oldIndex, newIndex)}
+                renderList={({ children, props }) => <div {...props}>{children}</div>}
+                renderItem={({ value, props, isDragged }) => (
+                    <div {...props} className={isDragged ? 'dragged' : ''}>
+                        {this.createCombatantRow(value)}
+                    </div>
+                )}
+            />
+        );
         if (combat.map) {
             let controls = null;
             if (combat.map && this.state.playerView.showControls) {
@@ -308,7 +348,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                         <Col xs={24} sm={24} md={12} lg={8} xl={6} className='scrollable'>
                             {controls}
                             <div className='heading fixed-top'>initiative order</div>
-                            {init}
+                            {initList}
                         </Col>
                     </Row>
                 </Popout>
@@ -318,7 +358,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                 <Popout title='Encounter' closeWindow={() => this.setPlayerViewOpen(false)}>
                     <div className='scrollable'>
                         <div className='heading'>initiative order</div>
-                        {init}
+                        {initList}
                     </div>
                 </Popout>
             );
@@ -337,6 +377,11 @@ export default class CombatScreen extends React.Component<Props, State> {
                 <button onClick={() => this.props.pauseCombat()}>pause combat</button>
                 <ConfirmButton text='end combat' callback={() => this.props.endCombat()} />
                 <div className='subheading'>combatants</div>
+                <Checkbox
+                    label='show defeated combatants'
+                    checked={this.state.showDefeatedCombatants}
+                    changeValue={() => this.toggleShowDefeatedCombatants()}
+                />
                 <button onClick={() => this.props.addCombatants()}>add combatants</button>
                 <button onClick={() => this.props.addWave()} style={{ display: wavesAvailable ? 'block' : 'none' }}>add wave</button>
                 <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
@@ -488,211 +533,165 @@ export default class CombatScreen extends React.Component<Props, State> {
         return selectedCombatant;
     }
 
+    private createPendingRow(combatant: Combatant) {
+        return (
+            <PendingCombatantRow
+                key={combatant.id}
+                combatant={combatant}
+                select={c => this.setSelectedItemID(c.id)}
+                selected={combatant.id === this.state.selectedItemID}
+                nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
+                makeActive={c => this.props.makeActive(c)}
+            />
+        );
+    }
+
+    private createCombatantRow(combatant: Combatant) {
+        switch (combatant.type) {
+            case 'pc':
+                return (
+                    <PCRow
+                        key={combatant.id}
+                        combatant={combatant as Combatant & PC}
+                        combat={this.props.combat as Combat}
+                        select={c => this.setSelectedItemID(c.id)}
+                        selected={combatant.id === this.state.selectedItemID}
+                    />
+                );
+            case 'monster':
+                return (
+                    <MonsterRow
+                        key={combatant.id}
+                        combatant={combatant as Combatant & Monster}
+                        combat={this.props.combat as Combat}
+                        select={c => this.setSelectedItemID(c.id)}
+                        selected={combatant.id === this.state.selectedItemID}
+                    />
+                );
+        }
+
+        return null;
+    }
+
     private createCard(combatant: Combatant) {
-        let mode = 'combat';
+        let tactical = 'no-map';
         if (this.props.combat.map) {
-            mode += ' tactical';
             const onMap = this.props.combat.map.items.find(i => i.id === combatant.id);
-            mode += onMap ? ' on-map' : ' off-map';
+            tactical = onMap ? 'on-map' : 'off-map';
         }
 
         switch (combatant.type) {
             case 'pc':
                 return (
-                    <PCCard
-                        key='selected'
-                        pc={combatant as Combatant & PC}
-                        mode={mode}
-                        combat={this.props.combat as Combat}
-                        changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
-                        nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
-                        makeCurrent={c => this.props.makeCurrent(c)}
-                        makeActive={c => this.props.makeActive(c)}
-                        makeDefeated={c => this.defeatCombatant(c)}
-                        removeCombatant={c => this.props.removeCombatant(c)}
-                        addCondition={c => this.props.addCondition(c)}
-                        editCondition={(c, condition) => this.props.editCondition(c, condition)}
-                        removeCondition={(c, conditionID) => this.props.removeCondition(c, conditionID)}
-                        nudgeConditionValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
-                        mapAdd={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
-                        mapMove={(c, dir) => this.props.mapMove(c.id, dir)}
-                        mapRemove={c => this.props.mapRemove(c.id)}
-                        toggleTag={(c, tag) => this.props.toggleTag(c, tag)}
-                        toggleCondition={(c, condition) => this.props.toggleCondition(c, condition)}
-                    />
+                    <div>
+                        <CombatControlsPanel
+                            combatant={combatant}
+                            combat={this.props.combat as Combat}
+                            tactical={tactical as 'no-map' | 'on-map' | 'off-map'}
+                            makeCurrent={c => this.props.makeCurrent(c)}
+                            makeActive={c => this.props.makeActive(c)}
+                            makeDefeated={c => this.defeatCombatant(c)}
+                            removeCombatant={c => this.props.removeCombatant(c)}
+                            changeHP={(c, hp, temp) => this.props.changeHP(c as Combatant & Monster, hp, temp)}
+                            addCondition={c => this.props.addCondition(c)}
+                            editCondition={(c, condition) => this.props.editCondition(c, condition)}
+                            removeCondition={(c, conditionID) => this.props.removeCondition(c, conditionID)}
+                            nudgeConditionValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
+                            mapAdd={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
+                            mapMove={(c, dir) => this.props.mapMove(c.id, dir)}
+                            mapRemove={c => this.props.mapRemove(c.id)}
+                            toggleTag={(c, tag) => this.props.toggleTag(c, tag)}
+                            toggleCondition={(c, condition) => this.props.toggleCondition(c, condition)}
+                            changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
+                            nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
+                        />
+                        <PCCard
+                            pc={combatant as Combatant & PC}
+                            mode={'combat'}
+                            changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
+                            nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
+                        />
+                    </div>
                 );
             case 'monster':
                 return (
-                    <MonsterCard
-                        key='selected'
-                        monster={combatant as Combatant & Monster}
-                        mode={mode}
-                        combat={this.props.combat as Combat}
-                        changeValue={(c, type, value) => this.props.changeValue(c, type, value)}
-                        nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
-                        makeCurrent={c => this.props.makeCurrent(c)}
-                        makeActive={c => this.props.makeActive(c)}
-                        makeDefeated={c => this.defeatCombatant(c)}
-                        removeCombatant={c => this.props.removeCombatant(c)}
-                        addCondition={c => this.props.addCondition(c)}
-                        editCondition={(c, condition) => this.props.editCondition(c, condition)}
-                        removeCondition={(c, conditionID) => this.props.removeCondition(c, conditionID)}
-                        nudgeConditionValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
-                        mapAdd={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
-                        mapMove={(c, dir) => this.props.mapMove(c.id, dir)}
-                        mapRemove={c => this.props.mapRemove(c.id)}
-                        changeHP={(c, hp, temp) => this.props.changeHP(c as Combatant & Monster, hp, temp)}
-                        toggleTag={(c, tag) => this.props.toggleTag(c, tag)}
-                        toggleCondition={(c, condition) => this.props.toggleCondition(c, condition)}
-                    />
+                    <div>
+                        <CombatControlsPanel
+                            combatant={combatant}
+                            combat={this.props.combat as Combat}
+                            tactical={tactical as 'no-map' | 'on-map' | 'off-map'}
+                            makeCurrent={c => this.props.makeCurrent(c)}
+                            makeActive={c => this.props.makeActive(c)}
+                            makeDefeated={c => this.defeatCombatant(c)}
+                            removeCombatant={c => this.props.removeCombatant(c)}
+                            changeHP={(c, hp, temp) => this.props.changeHP(c as Combatant & Monster, hp, temp)}
+                            addCondition={c => this.props.addCondition(c)}
+                            editCondition={(c, condition) => this.props.editCondition(c, condition)}
+                            removeCondition={(c, conditionID) => this.props.removeCondition(c, conditionID)}
+                            nudgeConditionValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
+                            mapAdd={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
+                            mapMove={(c, dir) => this.props.mapMove(c.id, dir)}
+                            mapRemove={c => this.props.mapRemove(c.id)}
+                            toggleTag={(c, tag) => this.props.toggleTag(c, tag)}
+                            toggleCondition={(c, condition) => this.props.toggleCondition(c, condition)}
+                            changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
+                            nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
+                        />
+                        <MonsterCard
+                            monster={combatant as Combatant & Monster}
+                            mode={'combat'}
+                            changeValue={(c, type, value) => this.props.changeValue(c, type, value)}
+                            nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
+                        />
+                    </div>
                 );
-            default:
-                return null;
         }
+
+        return null;
     }
 
-    private defeatCombatant(combatant: Combatant) {
-        if (this.state.selectedItemID === combatant.id) {
-            this.setState({
-                selectedItemID: null
-            });
-        }
-
-        this.props.makeDefeated(combatant);
-    }
-
-    private gridSquareClicked(x: number, y: number) {
-        if (this.state.addingToMapID) {
-            const combatant = this.props.combat.combatants.find(c => c.id === this.state.addingToMapID);
-            if (combatant) {
-                this.props.mapAdd(combatant, x, y);
-            }
-
-            this.setAddingToMapID(null);
-        }
-
-        if (this.state.addingOverlay) {
-            const overlay = Factory.createMapItem();
-            overlay.type = 'overlay';
-            overlay.x = x;
-            overlay.y = y;
-            overlay.width = 1;
-            overlay.height = 1;
-            overlay.color = '#005080';
-            overlay.opacity = 127;
-            overlay.style = 'square';
-
-            this.props.addOverlay(overlay);
-            this.setState({
-                showTools: false,
-                addingOverlay: false,
-                addingToMapID: null,
-                selectedItemID: overlay.id
-            });
-        }
-    }
+    //#endregion
 
     public render() {
         try {
             let current: JSX.Element | null = null;
-            let pending: JSX.Element[] = [];
-            let active: JSX.Element[] = [];
-            const defeated: JSX.Element[] = [];
+            const pending: JSX.Element[] = [];
+            const active: Combatant[] = [];
 
             this.props.combat.combatants.forEach(combatant => {
-                if (combatant.current) {
-                    current = this.createCard(combatant);
-                }
-                if (combatant.pending && !combatant.active && !combatant.defeated) {
-                    pending.push(
-                        <PendingCombatantRow
-                            key={combatant.id}
-                            combatant={combatant}
-                            select={c => this.setSelectedItemID(c.id)}
-                            selected={combatant.id === this.state.selectedItemID}
-                            nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
-                            makeActive={c => this.props.makeActive(c)}
-                        />
-                    );
-                }
-                if (!combatant.pending && combatant.active && !combatant.defeated) {
-                    switch (combatant.type) {
-                        case 'pc':
-                            active.push(
-                                <PCRow
-                                    key={combatant.id}
-                                    combatant={combatant as Combatant & PC}
-                                    combat={this.props.combat as Combat}
-                                    select={c => this.setSelectedItemID(c.id)}
-                                    selected={combatant.id === this.state.selectedItemID}
-                                />
-                            );
-                            break;
-                        case 'monster':
-                            active.push(
-                                <MonsterRow
-                                    key={combatant.id}
-                                    combatant={combatant as Combatant & Monster}
-                                    combat={this.props.combat as Combat}
-                                    select={c => this.setSelectedItemID(c.id)}
-                                    selected={combatant.id === this.state.selectedItemID}
-                                />
-                            );
-                            break;
+                if (combatant.pending) {
+                    pending.push(this.createPendingRow(combatant));
+                } else {
+                    if (combatant.current) {
+                        current = this.createCard(combatant);
                     }
-                }
-                if (!combatant.pending && !combatant.active && combatant.defeated) {
-                    switch (combatant.type) {
-                        case 'pc':
-                            defeated.push(
-                                <PCRow
-                                    key={combatant.id}
-                                    combatant={combatant as Combatant & PC}
-                                    combat={this.props.combat as Combat}
-                                    select={c => this.setSelectedItemID(c.id)}
-                                    selected={combatant.id === this.state.selectedItemID}
-                                />
-                            );
-                            break;
-                        case 'monster':
-                            defeated.push(
-                                <MonsterRow
-                                    key={combatant.id}
-                                    combatant={combatant as Combatant & Monster}
-                                    combat={this.props.combat as Combat}
-                                    select={c => this.setSelectedItemID(c.id)}
-                                    selected={combatant.id === this.state.selectedItemID}
-                                />
-                            );
-                            break;
+                    if (combatant.active || (combatant.defeated && this.state.showDefeatedCombatants)) {
+                        active.push(combatant);
                     }
                 }
             });
 
             if (pending.length !== 0) {
-                const pendingHelp = (
+                pending.unshift(
                     <Note key='pending-help'>
                         <div className='section'>these combatants are not yet part of the encounter</div>
                         <div className='section'>set initiative on each of them, then add them to the encounter</div>
                     </Note>
                 );
-                pending = [pendingHelp].concat(pending);
             }
 
+            let initHelp = null;
             if (!current) {
-                const activeHelp = (
+                initHelp = (
                     /* tslint:disable:max-line-length */
-                    <Note key='active-help'>
+                    <Note key='init-help'>
                         <div className='section'>these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right)</div>
                         <div className='section'>they are listed in initiative order (with the highest initiative score at the top of the list, and the lowest at the bottom)</div>
                         <div className='section'>when you're ready to begin the encounter, select the first combatant and press the <b>start turn</b> button on their stat block</div>
                     </Note>
                     /* tslint:enable:max-line-length */
                 );
-                active = [activeHelp].concat(active);
-            }
 
-            if (!current) {
                 current = (
                     <Note>
                         <div className='section'>the current initiative holder will be displayed here</div>
@@ -700,18 +699,32 @@ export default class CombatScreen extends React.Component<Props, State> {
                 );
             }
 
+            const initList = (
+                <List
+                    key='init-list'
+                    values={active}
+                    lockVertically={true}
+                    onChange={({ oldIndex, newIndex }) => this.props.moveCombatant(oldIndex, newIndex)}
+                    renderList={({ children, props }) => <div {...props}>{children}</div>}
+                    renderItem={({ value, props, isDragged }) => (
+                        <div {...props} className={isDragged ? 'dragged' : ''}>
+                            {this.createCombatantRow(value)}
+                        </div>
+                    )}
+                />
+            );
+
             let notificationSection = null;
             if (this.props.combat.notifications.length > 0) {
-                const notifications = this.props.combat.notifications.map(n => (
-                    <NotificationPanel
-                        key={n.id}
-                        notification={n}
-                        close={(notification, removeCondition) => this.props.closeNotification(notification, removeCondition)}
-                    />
-                ));
                 notificationSection = (
                     <div className='notifications'>
-                        {notifications}
+                        {this.props.combat.notifications.map(n => (
+                            <NotificationPanel
+                                key={n.id}
+                                notification={n}
+                                close={(notification, removeCondition) => this.props.closeNotification(notification, removeCondition)}
+                            />
+                        ))}
                     </div>
                 );
             }
@@ -719,18 +732,17 @@ export default class CombatScreen extends React.Component<Props, State> {
             let mapSection = null;
             if (this.props.combat.map) {
                 mapSection = (
-                    <div key='map'>
-                        <MapPanel
-                            map={this.props.combat.map}
-                            mode='combat'
-                            size={this.state.mapSize}
-                            showOverlay={(this.state.addingToMapID !== null) || this.state.addingOverlay}
-                            combatants={this.props.combat.combatants}
-                            selectedItemID={this.state.selectedItemID ? this.state.selectedItemID : undefined}
-                            setSelectedItemID={id => this.setSelectedItemID(id)}
-                            gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
-                        />
-                    </div>
+                    <MapPanel
+                        key='map'
+                        map={this.props.combat.map}
+                        mode='combat'
+                        size={this.state.mapSize}
+                        showOverlay={(this.state.addingToMapID !== null) || this.state.addingOverlay}
+                        combatants={this.props.combat.combatants}
+                        selectedItemID={this.state.selectedItemID ? this.state.selectedItemID : undefined}
+                        setSelectedItemID={id => this.setSelectedItemID(id)}
+                        gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
+                    />
                 );
             }
 
@@ -810,13 +822,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                             />
                             <GridPanel
                                 heading='initiative order'
-                                content={active}
-                                columns={1}
-                                showToggle={true}
-                            />
-                            <GridPanel
-                                heading='defeated'
-                                content={defeated}
+                                content={[initHelp, initList]}
                                 columns={1}
                                 showToggle={true}
                             />
@@ -835,6 +841,8 @@ export default class CombatScreen extends React.Component<Props, State> {
         }
     }
 }
+
+//#region Helper classes
 
 interface NotificationProps {
     notification: Notification;
@@ -1035,6 +1043,14 @@ class PCRow extends React.Component<PCRowProps> {
             if (this.props.selected) {
                 style += ' highlight';
             }
+            if (this.props.combatant.defeated) {
+                style += ' defeated';
+            }
+
+            let grabber = <Icon type='menu' className='grabber small' data-movable-handle={true} />;
+            if (this.props.combatant.portrait) {
+                grabber = <PortraitPanel source={this.props.combatant} inline={true} grabber={true} />;
+            }
 
             let desc = null;
             if (!this.props.minimal) {
@@ -1110,7 +1126,7 @@ class PCRow extends React.Component<PCRowProps> {
             return (
                 <div className={style} onClick={e => this.onClick(e)}>
                     <div className='header'>
-                        <PortraitPanel source={this.props.combatant} inline={true} />
+                        {grabber}
                         <div className='name'>
                             {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
                             {this.props.combatant.player ? ' / ' + this.props.combatant.player : ''}
@@ -1168,6 +1184,14 @@ class MonsterRow extends React.Component<MonsterRowProps> {
             let style = 'combatant-row ' + this.props.combatant.type;
             if (this.props.selected) {
                 style += ' highlight';
+            }
+            if (this.props.combatant.defeated) {
+                style += ' defeated';
+            }
+
+            let grabber = <Icon type='menu' className='grabber small' data-movable-handle={true} />;
+            if (this.props.combatant.portrait) {
+                grabber = <PortraitPanel source={this.props.combatant} inline={true} grabber={true} />;
             }
 
             let hp = (this.props.combatant.hp ? this.props.combatant.hp : 0).toString();
@@ -1255,7 +1279,7 @@ class MonsterRow extends React.Component<MonsterRowProps> {
             return (
                 <div className={style} onClick={e => this.onClick(e)}>
                     <div className='header'>
-                        <PortraitPanel source={this.props.combatant} inline={true} />
+                        {grabber}
                         <div className='name'>
                             {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
                         </div>
@@ -1273,3 +1297,5 @@ class MonsterRow extends React.Component<MonsterRowProps> {
         }
     }
 }
+
+//#endregion

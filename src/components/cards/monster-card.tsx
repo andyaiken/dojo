@@ -1,23 +1,18 @@
 import React from 'react';
 
-import { Col, Collapse, Icon, Input, Row } from 'antd';
+import { Collapse, Icon, Input } from 'antd';
 
 import Frankenstein from '../../utils/frankenstein';
 import Utils from '../../utils/utils';
 
-import { Combat, Combatant } from '../../models/combat';
-import { Condition } from '../../models/condition';
+import { Combatant } from '../../models/combat';
 import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
 import { Monster, MonsterGroup, Trait } from '../../models/monster-group';
 
-import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
 import Dropdown from '../controls/dropdown';
 import NumberSpin from '../controls/number-spin';
-import Radial from '../controls/radial';
-import Selector from '../controls/selector';
 import AbilityScorePanel from '../panels/ability-score-panel';
-import ConditionsPanel from '../panels/conditions-panel';
 import PortraitPanel from '../panels/portrait-panel';
 import TraitsPanel from '../panels/traits-panel';
 import InfoCard from './info-card';
@@ -44,29 +39,11 @@ interface Props {
     addEncounterSlot: (monster: Monster, waveID: string | null) => void;
     removeEncounterSlot: (slot: EncounterSlot) => void;
     swapEncounterSlot: (slot: EncounterSlot, groupName: string, monsterName: string) => void;
-    // Combat
-    combat: Combat;
-    makeCurrent: (combatant: Combatant) => void;
-    makeActive: (combatant: Combatant) => void;
-    makeDefeated: (combatant: Combatant) => void;
-    mapAdd: (combatant: Combatant) => void;
-    mapMove: (combatant: Combatant, dir: string) => void;
-    mapRemove: (combatant: Combatant) => void;
-    removeCombatant: (combatant: Combatant) => void;
-    changeHP: (combatant: Combatant, hp: number, tempHP: number) => void;
-    addCondition: (combatant: Combatant) => void;
-    editCondition: (combatant: Combatant, condition: Condition) => void;
-    removeCondition: (combatant: Combatant, conditionID: string) => void;
-    nudgeConditionValue: (condition: Condition, field: string, delta: number) => void;
-    toggleTag: (combatant: Combatant, tag: string) => void;
-    toggleCondition: (combatant: Combatant, condition: string) => void;
 }
 
 interface State {
     showDetails: boolean;
     cloneName: string;
-    combatMode: string;
-    damageOrHealing: number;
 }
 
 export default class MonsterCard extends React.Component<Props, State> {
@@ -108,9 +85,7 @@ export default class MonsterCard extends React.Component<Props, State> {
         super(props);
         this.state = {
             showDetails: false,
-            cloneName: props.monster.name + ' copy',
-            combatMode: 'main',
-            damageOrHealing: 0
+            cloneName: props.monster.name + ' copy'
         };
     }
 
@@ -123,61 +98,6 @@ export default class MonsterCard extends React.Component<Props, State> {
     private toggleDetails() {
         this.setState({
             showDetails: !this.state.showDetails
-        });
-    }
-
-    private setDamage(value: number) {
-        this.setState({
-            damageOrHealing: value
-        });
-    }
-
-    private nudgeDamage(delta: number) {
-        this.setState({
-            damageOrHealing: Math.max(this.state.damageOrHealing + delta, 0)
-        });
-    }
-
-    private setCombatMode(mode: string) {
-        this.setState({
-            combatMode: mode
-        });
-    }
-
-    private heal() {
-        const combatant = this.props.monster as Combatant;
-
-        let hp = (combatant.hp ? combatant.hp : 0) + this.state.damageOrHealing;
-        hp = Math.min(hp, this.props.monster.hpMax);
-
-        this.setState({
-            damageOrHealing: 0
-        }, () => {
-            this.props.changeHP(combatant, hp, this.props.monster.hpTemp);
-        });
-    }
-
-    private damage() {
-        const combatant = this.props.monster as Combatant;
-
-        let hp = (combatant.hp ? combatant.hp : 0);
-        let temp = this.props.monster.hpTemp;
-
-        let damage = this.state.damageOrHealing;
-
-        // Take damage off temp HP first
-        const val = Math.min(damage, temp);
-        damage -= val;
-        temp -= val;
-
-        // Take the rest off HP
-        hp -= damage;
-        hp = Math.max(hp, 0);
-
-        this.setState({
-            damageOrHealing: 0
-        }, () => {
-            this.props.changeHP(combatant, hp, temp);
         });
     }
 
@@ -207,313 +127,6 @@ export default class MonsterCard extends React.Component<Props, State> {
             conModStr = ' ' + conMod;
         }
         return this.props.monster.hpMax + ' (' + this.props.monster.hitDice + 'd' + die + conModStr + ')';
-    }
-
-    private getCombatControls() {
-        const combatant = this.props.monster as Combatant;
-
-        const options = [];
-
-        const combatModes = ['main', 'hp', 'cond', 'map', 'adv'].map(m => {
-            return {
-                id: m,
-                text: m
-            };
-        });
-        if (this.props.mode.indexOf('tactical') === -1) {
-            // No combat map, so remove the map option
-            combatModes.splice(3, 1);
-        }
-        options.push(
-            <Selector
-                key='selector'
-                options={combatModes}
-                selectedID={this.state.combatMode}
-                select={option => this.setCombatMode(option)}
-            />
-        );
-        options.push(<div key='selector-sep' className='divider' />);
-
-        switch (this.state.combatMode) {
-            case 'main':
-                if (!combatant.pending && combatant.active && !combatant.defeated) {
-                    if (combatant.current) {
-                        options.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(combatant)}>mark as defeated and end turn</button>);
-                    } else {
-                        options.push(<button key='makeCurrent' onClick={() => this.props.makeCurrent(combatant)}>start turn</button>);
-                        options.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(combatant)}>mark as defeated</button>);
-                    }
-                }
-                if (!combatant.pending && !combatant.active && combatant.defeated) {
-                    options.push(<button key='makeActive' onClick={() => this.props.makeActive(combatant)}>mark as active</button>);
-                }
-                options.push(<div key='tag-sep' className='divider' />);
-                options.push(
-                    <Row key='tags' gutter={10}>
-                        <Col span={8}>
-                            <Checkbox
-                                label='conc.'
-                                display='button'
-                                checked={combatant.tags.includes('conc')}
-                                changeValue={value => this.props.toggleTag(combatant, 'conc')}
-                            />
-                        </Col>
-                        <Col span={8}>
-                            <Checkbox
-                                label='bane'
-                                display='button'
-                                checked={combatant.tags.includes('bane')}
-                                changeValue={value => this.props.toggleTag(combatant, 'bane')}
-                            />
-                        </Col>
-                        <Col span={8}>
-                            <Checkbox
-                                label='bless'
-                                display='button'
-                                checked={combatant.tags.includes('bless')}
-                                changeValue={value => this.props.toggleTag(combatant, 'bless')}
-                            />
-                        </Col>
-                    </Row>
-                );
-                options.push(
-                    <Row key='conditions' gutter={10}>
-                        <Col span={8}>
-                            <Checkbox
-                                label='prone'
-                                display='button'
-                                checked={combatant.conditions.some(c => c.name === 'prone')}
-                                changeValue={value => this.props.toggleCondition(combatant, 'prone')}
-                            />
-                        </Col>
-                        <Col span={8}>
-                            <Checkbox
-                                label='uncon.'
-                                display='button'
-                                checked={combatant.conditions.some(c => c.name === 'unconscious')}
-                                changeValue={value => this.props.toggleCondition(combatant, 'unconscious')}
-                            />
-                        </Col>
-                        <Col span={8}>
-                            <Checkbox
-                                label='hidden'
-                                display='button'
-                                checked={!combatant.showOnMap}
-                                disabled={this.props.mode.indexOf('tactical') === -1}
-                                changeValue={value => this.props.changeValue(combatant, 'showOnMap', !value)}
-                            />
-                        </Col>
-                    </Row>
-                );
-                break;
-            case 'hp':
-                options.push(
-                    <div key='hp'>
-                        <NumberSpin
-                            source={this.props.monster}
-                            name='hp'
-                            label='hit points'
-                            factors={[1, 10]}
-                            nudgeValue={delta => this.props.nudgeValue(this.props.monster, 'hp', delta)}
-                        />
-                        <NumberSpin
-                            source={this.props.monster}
-                            name='hpTemp'
-                            label='temp hp'
-                            factors={[1, 10]}
-                            nudgeValue={delta => this.props.nudgeValue(this.props.monster, 'hpTemp', delta)}
-                        />
-                        <div className='divider' />
-                        <div className='section' style={{ display: this.props.monster.damage.resist !== '' ? '' : 'none' }}>
-                            <b>damage resistances</b> {this.props.monster.damage.resist}
-                        </div>
-                        <div className='section' style={{ display: this.props.monster.damage.vulnerable !== '' ? '' : 'none' }}>
-                            <b>damage vulnerabilities</b> {this.props.monster.damage.vulnerable}
-                        </div>
-                        <div className='section' style={{ display: this.props.monster.damage.immune !== '' ? '' : 'none' }}>
-                            <b>damage immunities</b> {this.props.monster.damage.immune}
-                        </div>
-                        <NumberSpin
-                            source={this.state}
-                            name='damageOrHealing'
-                            factors={[1, 10]}
-                            nudgeValue={delta => this.nudgeDamage(delta)}
-                        />
-                        <Row gutter={10}>
-                            <Col span={8}>
-                                <button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.heal()}>heal</button>
-                            </Col>
-                            <Col span={8}>
-                                <button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.setDamage(0)}>reset</button>
-                            </Col>
-                            <Col span={8}>
-                                <button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.damage()}>damage</button>
-                            </Col>
-                        </Row>
-                    </div>
-                );
-                break;
-            case 'cond':
-                options.push(
-                    <div key='conditions'>
-                        <div className='section' style={{ display: this.props.monster.conditionImmunities !== '' ? '' : 'none' }}>
-                            <b>condition immunities</b> {this.props.monster.conditionImmunities}
-                        </div>
-                        <ConditionsPanel
-                            combatant={this.props.monster as Combatant}
-                            combat={this.props.combat}
-                            addCondition={() => this.props.addCondition(this.props.monster as Combatant)}
-                            editCondition={condition => this.props.editCondition(this.props.monster as Combatant, condition)}
-                            removeCondition={conditionID => this.props.removeCondition(this.props.monster as Combatant, conditionID)}
-                            nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
-                        />
-                    </div>
-                );
-                break;
-            case 'map':
-                if (this.props.mode.indexOf('on-map') !== -1) {
-                    options.push(
-                        <div key='mapMove' className='section centered'>
-                            <Radial
-                                direction='eight'
-                                click={dir => this.props.mapMove(combatant, dir)}
-                            />
-                        </div>
-                    );
-                    options.push(<div key='move-sep' className='divider' />);
-                    options.push(
-                        <NumberSpin
-                            key='altitude'
-                            source={combatant}
-                            name='altitude'
-                            label='altitude'
-                            display={value => value + ' ft.'}
-                            nudgeValue={delta => this.props.nudgeValue(combatant, 'altitude', delta * 5)}
-                        />
-                    );
-                    let auraDetails = null;
-                    if (combatant.aura.radius > 0) {
-                        const auraStyleOptions = [
-                            {
-                                id: 'square',
-                                text: 'square'
-                            },
-                            {
-                                id: 'rounded',
-                                text: 'rounded'
-                            },
-                            {
-                                id: 'circle',
-                                text: 'circle'
-                            }
-                        ];
-                        auraDetails = (
-                            <div>
-                                <Selector
-                                    options={auraStyleOptions}
-                                    selectedID={combatant.aura.style}
-                                    select={optionID => this.props.changeValue(combatant.aura, 'style', optionID)}
-                                />
-                                <input
-                                    type='color'
-                                    value={combatant.aura.color}
-                                    onChange={event => this.props.changeValue(combatant.aura, 'color', event.target.value)}
-                                />
-                            </div>
-                        );
-                    }
-                    options.push(
-                        <Collapse
-                            key='aura'
-                            bordered={false}
-                            expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
-                            expandIconPosition={'right'}
-                        >
-                            <Collapse.Panel key='one' header='aura'>
-                                <NumberSpin
-                                    source={combatant.aura}
-                                    name='radius'
-                                    label='size'
-                                    display={value => value + ' ft.'}
-                                    nudgeValue={delta => this.props.nudgeValue(combatant.aura, 'radius', delta * 5)}
-                                />
-                                {auraDetails}
-                            </Collapse.Panel>
-                        </Collapse>
-                    );
-                    options.push(<button key='mapRemove' onClick={() => this.props.mapRemove(combatant)}>remove from map</button>);
-                }
-                if (this.props.mode.indexOf('off-map') !== -1) {
-                    options.push(<button key='mapAdd' onClick={() => this.props.mapAdd(combatant)}>add to map</button>);
-                }
-                break;
-            case 'adv':
-                if (!combatant.current) {
-                    options.push(<ConfirmButton key='remove' text='remove from encounter' callback={() => this.props.removeCombatant(combatant)} />);
-                }
-                if (!combatant.pending) {
-                    options.push(
-                        <Collapse
-                            key='init'
-                            bordered={false}
-                            expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
-                            expandIconPosition={'right'}
-                        >
-                            <Collapse.Panel key='one' header='change initiative score'>
-                                <NumberSpin
-                                    source={this.props.monster}
-                                    name='initiative'
-                                    label='initiative'
-                                    nudgeValue={delta => this.props.nudgeValue(this.props.monster, 'initiative', delta)}
-                                />
-                            </Collapse.Panel>
-                        </Collapse>
-                    );
-                }
-                options.push(
-                    <Collapse
-                        key='size'
-                        bordered={false}
-                        expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
-                        expandIconPosition={'right'}
-                    >
-                        <Collapse.Panel key='one' header='change size'>
-                            <NumberSpin
-                                source={this.props.monster}
-                                name='displaySize'
-                                label='size'
-                                nudgeValue={delta => this.props.nudgeValue(this.props.monster, 'displaySize', delta)}
-                            />
-                        </Collapse.Panel>
-                    </Collapse>
-                );
-                options.push(
-                    <Collapse
-                        key='rename'
-                        bordered={false}
-                        expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
-                        expandIconPosition={'right'}
-                    >
-                        <Collapse.Panel key='one' header='change name'>
-                            <Input
-                                value={combatant.displayName}
-                                allowClear={true}
-                                onChange={event => this.props.changeValue(this.props.monster, 'displayName', event.target.value)}
-                            />
-                        </Collapse.Panel>
-                    </Collapse>
-                );
-                break;
-        }
-
-        return (
-            <div>
-                <div className='group-panel'>
-                    {options}
-                </div>
-                <div className='divider' />
-            </div>
-        );
     }
 
     public render() {
@@ -652,11 +265,6 @@ export default class MonsterCard extends React.Component<Props, State> {
                 }
             }
 
-            let combat = null;
-            if (this.props.mode.indexOf('combat') !== -1) {
-                combat = this.getCombatControls();
-            }
-
             let stats = null;
             if (this.props.mode.indexOf('view') !== -1) {
                 let slotSection = null;
@@ -743,7 +351,6 @@ export default class MonsterCard extends React.Component<Props, State> {
                             <i>{this.description()}</i>
                         </div>
                         <div className='divider' />
-                        {combat}
                         <div className='section'>
                             <AbilityScorePanel combatant={this.props.monster} />
                         </div>

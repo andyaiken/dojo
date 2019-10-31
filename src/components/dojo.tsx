@@ -1240,11 +1240,15 @@ export default class Dojo extends React.Component<Props, State> {
     private makeActive(combatant: Combatant) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
+            const wasPending = combatant.pending;
+
             combatant.pending = false;
             combatant.active = true;
             combatant.defeated = false;
 
-            this.sortCombatants(combat);
+            if (wasPending) {
+                this.sortCombatants(combat);
+            }
 
             this.setState({
                 combats: this.state.combats
@@ -1349,6 +1353,18 @@ export default class Dojo extends React.Component<Props, State> {
                     drawer: null
                 });
             }
+        }
+    }
+
+    private moveCombatant(oldIndex: number, newIndex: number) {
+        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+        if (combat) {
+            const c = combat.combatants.splice(oldIndex, 1);
+            combat.combatants.splice(newIndex, 0, ...c);
+
+            this.setState({
+                combats: this.state.combats
+            });
         }
     }
 
@@ -1941,20 +1957,21 @@ export default class Dojo extends React.Component<Props, State> {
                             endCombat={() => this.endCurrentCombat()}
                             nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
-                            makeCurrent={(combatant) => this.makeCurrent(combatant, false)}
-                            makeActive={(combatant) => this.makeActive(combatant)}
-                            makeDefeated={(combatant) => this.makeDefeated(combatant)}
-                            removeCombatant={(combatant) => this.removeCombatant(combatant)}
+                            makeCurrent={combatant => this.makeCurrent(combatant, false)}
+                            makeActive={combatant => this.makeActive(combatant)}
+                            makeDefeated={combatant => this.makeDefeated(combatant)}
+                            moveCombatant={(oldIndex, newIndex) => this.moveCombatant(oldIndex, newIndex)}
+                            removeCombatant={combatant => this.removeCombatant(combatant)}
                             addCombatants={() => this.addToEncounter()}
                             addWave={() => this.openWaveModal()}
-                            addCondition={(combatant) => this.addCondition(combatant)}
+                            addCondition={combatant => this.addCondition(combatant)}
                             editCondition={(combatant, condition) => this.editCondition(combatant, condition)}
                             removeCondition={(combatant, conditionID) => this.removeCondition(combatant, conditionID)}
                             mapAdd={(combatant, x, y) => this.mapAdd(combatant, x, y)}
                             mapResize={(id, dir, dir2) => this.mapResize(id, dir, dir2)}
                             mapMove={(id, dir) => this.mapMove(id, dir)}
                             mapRemove={id => this.mapRemove(id)}
-                            endTurn={(combatant) => this.endTurn(combatant)}
+                            endTurn={combatant => this.endTurn(combatant)}
                             changeHP={(combatant, hp, temp) => this.changeHP(combatant, hp, temp)}
                             closeNotification={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
                             toggleTag={(combatant, tag) => this.toggleTag(combatant, tag)}
@@ -2275,7 +2292,7 @@ export default class Dojo extends React.Component<Props, State> {
                         visible={drawer.content !== null}
                         onClose={() => this.closeDrawer()}
                     >
-                        <div className='drawer-header'><div className='text'>{drawer.header}</div></div>
+                        <div className='drawer-header'><div className='app-title'>{drawer.header}</div></div>
                         <div className='drawer-content'>{drawer.content}</div>
                         <div className='drawer-footer'>{drawer.footer}</div>
                     </Drawer>

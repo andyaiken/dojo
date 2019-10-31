@@ -540,6 +540,11 @@ export default class Frankenstein {
         target.traits.push(trait);
     }
 
+    public static moveTrait(target: Monster, oldIndex: number, newIndex: number) {
+        const t = target.traits.splice(oldIndex, 1);
+        target.traits.splice(newIndex, 0, ...t);
+    }
+
     public static removeTrait(target: Monster, trait: Trait) {
         const index = target.traits.indexOf(trait);
         target.traits.splice(index, 1);

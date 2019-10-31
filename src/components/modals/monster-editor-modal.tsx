@@ -200,6 +200,13 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         });
     }
 
+    private moveTrait(oldIndex: number, newIndex: number) {
+        Frankenstein.moveTrait(this.state.monster, oldIndex, newIndex);
+        this.setState({
+            monster: this.state.monster
+        });
+    }
+
     private removeTrait(trait: Trait) {
         Frankenstein.removeTrait(this.state.monster, trait);
         this.setState({
@@ -702,8 +709,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         <TraitEditorPanel
                             combatant={this.state.monster}
                             addTrait={type => this.addTrait(type)}
+                            moveTrait={(oldIndex, newIndex) => this.moveTrait(oldIndex, newIndex)}
                             removeTrait={trait => this.removeTrait(trait)}
-                            swapTraits={(t1, t2) => this.swapTraits(t1, t2)}
                             changeValue={(trait, type, value) => this.changeTrait(trait, type, value)}
                         />
                     );

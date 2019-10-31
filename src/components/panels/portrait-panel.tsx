@@ -9,6 +9,7 @@ import none from '../../resources/images/no-portrait.png';
 interface Props {
     source: PC | Monster;
     inline: boolean;
+    grabber: boolean;
     edit: () => void;
     clear: () => void;
 }
@@ -16,6 +17,7 @@ interface Props {
 export default class PortraitPanel extends React.Component<Props> {
     public static defaultProps = {
         inline: false,
+        grabber: false,
         edit: null,
         clear: null
     };
@@ -60,19 +62,19 @@ export default class PortraitPanel extends React.Component<Props> {
             return null;
         }
 
+        let style = 'portrait';
         if (this.props.inline) {
-            return (
-                <div className='portrait inline'>
-                    <img src={image.data} alt='portrait' />
-                </div>
-            );
+            style += ' inline';
+        } else {
+            style += ' section centered';
+        }
+        if (this.props.grabber) {
+            style += ' grabber';
         }
 
         return (
-            <div className={this.props.inline ? 'portrait inline' : 'portrait'}>
-                <div className='section centered'>
-                    <img src={image.data} alt='portrait' />
-                </div>
+            <div className={style} data-movable-handle={this.props.grabber}>
+                <img src={image.data} alt='portrait' />
             </div>
         );
     }

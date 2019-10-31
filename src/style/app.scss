@@ -286,6 +286,21 @@ button {
     }
 }
 
+.app-title {
+    display: inline-block;
+    vertical-align: top;
+    padding: 5px;
+    height: 30px;
+    line-height: 20px;
+    font-size: 20px;
+    font-weight: 600;
+    color: $header-foreground;
+    border-left: 3px solid $header-foreground;
+    text-transform: uppercase;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+    letter-spacing: 2px;
+}
+
 .app-name {
     text-transform: uppercase;
     color: black;
@@ -422,6 +437,21 @@ body,
 
 .page-content {
     height: calc(100% - 100px);
+}
+
+.dragged {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px;
+    background-color: $background;
+    color: $foreground;
+    box-sizing: border-box;
+    user-select: none;
+    transition-duration: 0s;
+    z-index: 2000;
+
+    * {
+        transition-duration: 0s;
+    }
 }
 
 .render-error {
@@ -745,13 +775,17 @@ body,
         cursor: default;
     }
 
+    &.defeated {
+        opacity: 0.5;
+    }
+
     .header {
         color: $background;
         font-size: 15px;
         font-weight: 600;
         line-height: 20px;
         height: 30px;
-        padding: 5px 8px;
+        padding: 5px;
 
         .name {
             display: inline-block;
@@ -1279,6 +1313,10 @@ body,
     margin: 5px 0;
     break-inside: avoid-column;
 
+    &.combat-controls {
+        margin: 0 5px 10px 5px;
+    }
+
     &.clickable {
         cursor: pointer;
 
@@ -1383,18 +1421,13 @@ body,
 }
 
 .trait-bar {
-    border-left: 5px solid $control-border;
-    padding-left: 5px;
-    margin: 5px 0;
+    margin: 5px;
     cursor: pointer;
+    z-index: 2000;
 
     &:hover, &.selected {
         background-color: $highlight01;
         border-color: $highlight;
-
-        .icons {
-            opacity: 1;
-        }
     }
 
     &.selected {
@@ -1402,32 +1435,11 @@ body,
         cursor: default;
     }
 
-    .text {
-        width: calc(100% - 90px);
+    .name {
         display: inline-block;
-        vertical-align: middle;
-    }
-
-    .icons {
-        display: inline-block;
-        vertical-align: middle;
-        opacity: 0;
-
-        .up, .down, .delete {
-            border-radius: 50%;
-            height: 20px;
-            width: 20px;
-            margin: 5px;
-
-            &:hover {
-                cursor: pointer;
-                background-color: $highlight02;
-            }
-        }
-
-        .up {
-            transform: rotate(-180deg);
-        }
+        vertical-align: top;
+        height: 20px;
+        line-height: 20px;
     }
 }
 
@@ -1506,22 +1518,8 @@ body,
 .drawer-header {
     height: 50px;
     background-color: $header-background;
-    border-top: 1px solid $control-border;
+    border-bottom: 1px solid $control-border;
     padding: 10px;
-
-    .text {
-        display: inline-block;
-        vertical-align: top;
-        padding: 5px;
-        height: 30px;
-        line-height: 20px;
-        font-size: 20px;
-        font-weight: 600;
-        color: #3c3c3c;
-        border-left: 3px solid #3c3c3c;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-    }
 }
 
 .drawer-content {
@@ -1660,40 +1658,6 @@ body,
     }
 }
 
-.double-sided {
-    width: 100%;
-    height: 100%;
-    background-color: $background;
-    perspective: 1000px;
-    
-    .double-sided-inner {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        background-color: $background;
-        transform-style: preserve-3d;
-        transform-origin: center left;
-        transition-duration: 0.5s;
-
-        .front-face,
-        .back-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-color: $background;
-            backface-visibility: hidden;
-        }
-
-        .back-face {
-            transform: rotateY(180deg);
-        }
-    }
-
-    &.flipped .double-sided-inner {
-        transform: translateX(100%) rotateY(180deg);
-    }
-}
-
 .combat-top-row {
     height: 50px;
     padding: 4px 0;
@@ -1711,4 +1675,19 @@ body,
 
 .combat-main {
     height: calc(100% - 50px);
+}
+
+.grabber {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    cursor: ns-resize;
+    display: inline-block;
+    vertical-align: top;
+
+    &.small {
+        font-size: 14px;
+        padding: 3px 0;
+    }
 }

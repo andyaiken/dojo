@@ -36,7 +36,8 @@ export default class GridPanel extends React.Component<Props, State> {
 
     public render() {
         try {
-            if (this.props.content.filter(item => !!item).length === 0) {
+            const items = this.props.content.filter(item => !!item);
+            if (items.length === 0) {
                 return null;
             }
 
@@ -60,15 +61,13 @@ export default class GridPanel extends React.Component<Props, State> {
 
             let content = null;
             if (this.state.showContent) {
-                const items = this.props.content.map(item => (
-                    <div key={this.props.content.indexOf(item)}>
-                        {item}
-                    </div>
-                ));
-
                 content = (
                     <div className={'grid columns-' + this.props.columns}>
-                        {items}
+                        {items.map(item => (
+                            <div key={items.indexOf(item)}>
+                                {item}
+                            </div>
+                        ))}
                     </div>
                 );
             }
