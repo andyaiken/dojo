@@ -134,4 +134,8 @@ export default class Mercator {
 
         return 0;
     }
+
+    public static getNote(map: Map, item: MapItem) {
+        return map.notes.find(n => n.targetID === item.id) || null;
+    }
 }

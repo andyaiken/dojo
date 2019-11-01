@@ -1,16 +1,17 @@
 import React from 'react';
 
-import { Col, Icon, Row, Slider } from 'antd';
+import { Col, Icon, Input, Row, Slider } from 'antd';
 import { List } from 'react-movable';
 
 import Factory from '../../utils/factory';
+import Mercator from '../../utils/mercator';
 import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
 import { Combat, Combatant, Notification } from '../../models/combat';
 import { Condition, ConditionDurationSaves } from '../../models/condition';
 import { Encounter } from '../../models/encounter';
-import { MapItem } from '../../models/map-folio';
+import { MapItem, MapNote } from '../../models/map-folio';
 import { Monster, Trait } from '../../models/monster-group';
 import { PC } from '../../models/party';
 
@@ -52,6 +53,8 @@ interface Props {
     mapMove: (id: string, dir: string) => void;
     mapResize: (id: string, dir: string, dir2: 'out' | 'in') => void;
     mapRemove: (id: string) => void;
+    mapAddNote: (id: string) => void;
+    mapRemoveNote: (id: string) => void;
     endTurn: (combatant: Combatant) => void;
     changeHP: (combatant: Combatant & Monster, hp: number, temp: number) => void;
     changeValue: (source: {}, type: string, value: any) => void;
@@ -447,76 +450,21 @@ export default class CombatScreen extends React.Component<Props, State> {
             }
 
             if (!selectedCombatant && this.props.combat.map) {
-                const item = this.props.combat.map.items.find(i => i.id === this.state.selectedItemID);
-                if (item) {
-                    const typeOptions = ['overlay', 'token'].map(t => {
-                        return { id: t, text: t };
-                    });
-
-                    const styleOptions = ['square', 'rounded', 'circle'].map(t => {
-                        return { id: t, text: t };
-                    });
-
+                const mapItem = this.props.combat.map.items.find(i => i.id === this.state.selectedItemID);
+                if (mapItem) {
+                    const note = Mercator.getNote(this.props.combat.map, mapItem);
                     selectedCombatant = (
-                        <div className='card map' key='selected'>
-                            <div className='heading'>
-                                <div className='title'>map item</div>
-                            </div>
-                            <div className='card-content'>
-                                <div className='subheading'>size</div>
-                                <div className='section'>{item.width} sq x {item.height} sq</div>
-                                <div className='section'>{item.width * 5} ft x {item.height * 5} ft</div>
-                                <div className='divider' />
-                                <div className='section centered'>
-                                    <Radial direction='eight' click={dir => this.props.mapMove(item.id, dir)} />
-                                </div>
-                                <div className='divider' />
-                                <div className='subheading'>type</div>
-                                <Selector
-                                    options={typeOptions}
-                                    selectedID={item.type}
-                                    select={optionID => this.props.changeValue(item, 'type', optionID)}
-                                />
-                                <div style={{ display: item.type === 'overlay' ? 'block' : 'none' }}>
-                                    <div className='subheading'>shape</div>
-                                    <Selector
-                                        options={styleOptions}
-                                        selectedID={item.style}
-                                        select={optionID => this.props.changeValue(item, 'style', optionID)}
-                                    />
-                                    <div className='subheading'>color</div>
-                                    <input
-                                        type='color'
-                                        value={item.color}
-                                        onChange={event => this.props.changeValue(item, 'color', event.target.value)}
-                                    />
-                                    <div className='subheading'>opacity</div>
-                                    <Slider
-                                        min={0}
-                                        max={255}
-                                        value={item.opacity}
-                                        tooltipVisible={false}
-                                        onChange={value => this.props.changeValue(item, 'opacity', value)}
-                                    />
-                                    <div className='subheading'>size</div>
-                                    <div className='section centered'>
-                                        <Radial direction='both' click={(dir, dir2) => this.props.mapResize(item.id, dir, dir2 as 'in' | 'out')} />
-                                    </div>
-                                </div>
-                                <div style={{ display: item.type === 'token' ? 'block' : 'none' }}>
-                                    <div className='subheading'>size</div>
-                                    <NumberSpin
-                                        source={item}
-                                        name='size'
-                                        nudgeValue={delta => this.props.nudgeValue(item, 'size', delta)}
-                                    />
-                                </div>
-                                <div className='divider' />
-                                <div className='section'>
-                                    <button onClick={() => this.props.mapRemove(item.id)}>remove from the map</button>
-                                </div>
-                            </div>
-                        </div>
+                        <MapItemCard
+                            item={mapItem}
+                            note={note}
+                            move={(item, dir) => this.props.mapMove(item.id, dir)}
+                            resize={(item, dir, dir2) => this.props.mapResize(item.id, dir, dir2)}
+                            remove={item => this.props.mapRemove(item.id)}
+                            addNote={itemID => this.props.mapAddNote(itemID)}
+                            removeNote={itemID => this.props.mapRemoveNote(itemID)}
+                            changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
+                            nudgeValue={(source, field, delta) => this.props.nudgeValue(source, field, delta)}
+                        />
                     );
                 }
             }
@@ -1297,6 +1245,172 @@ class MonsterRow extends React.Component<MonsterRowProps> {
                     <div className='content'>
                         {dmInfo}
                         {notes}
+                    </div>
+                </div>
+            );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
+        }
+    }
+}
+
+interface MapItemCardProps {
+    item: MapItem;
+    note: MapNote | null;
+    move: (item: MapItem, dir: string) => void;
+    resize: (item: MapItem, dir: string, dir2: 'in' | 'out') => void;
+    remove: (item: MapItem) => void;
+    addNote: (itemID: string) => void;
+    removeNote: (itemID: string) => void;
+    changeValue: (source: any, field: string, value: any) => void;
+    nudgeValue: (source: any, field: string, delta: number) => void;
+}
+
+interface MapItemCardState {
+    view: string;
+}
+
+class MapItemCard extends React.Component<MapItemCardProps, MapItemCardState> {
+    constructor(props: MapItemCardProps) {
+        super(props);
+        this.state = {
+            view: 'position'
+        };
+    }
+
+    private setView(view: string) {
+        this.setState({
+            view: view
+        });
+    }
+
+    private getPositionSection() {
+        return (
+            <div>
+                <div className='subheading'>move</div>
+                <div className='section centered'>
+                    <Radial direction='eight' click={dir => this.props.move(this.props.item, dir)} />
+                </div>
+                <div style={{ display: this.props.item.type === 'overlay' ? 'block' : 'none' }}>
+                    <div className='subheading'>resize</div>
+                    <div className='section centered'>
+                        <Radial direction='both' click={(dir, dir2) => this.props.resize(this.props.item, dir, dir2 as 'in' | 'out')} />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    private getAppearanceSection() {
+        const typeOptions = ['overlay', 'token'].map(t => {
+            return { id: t, text: t };
+        });
+
+        const styleOptions = ['square', 'rounded', 'circle'].map(t => {
+            return { id: t, text: t };
+        });
+
+        return (
+            <div>
+                <div className='subheading'>type</div>
+                <Selector
+                    options={typeOptions}
+                    selectedID={this.props.item.type}
+                    select={optionID => this.props.changeValue(this.props.item, 'type', optionID)}
+                />
+                <div style={{ display: this.props.item.type === 'overlay' ? 'block' : 'none' }}>
+                    <div className='subheading'>shape</div>
+                    <Selector
+                        options={styleOptions}
+                        selectedID={this.props.item.style}
+                        select={optionID => this.props.changeValue(this.props.item, 'style', optionID)}
+                    />
+                    <div className='subheading'>color</div>
+                    <input
+                        type='color'
+                        value={this.props.item.color}
+                        onChange={event => this.props.changeValue(this.props.item, 'color', event.target.value)}
+                    />
+                    <div className='subheading'>opacity</div>
+                    <Slider
+                        min={0}
+                        max={255}
+                        value={this.props.item.opacity}
+                        tooltipVisible={false}
+                        onChange={value => this.props.changeValue(this.props.item, 'opacity', value)}
+                    />
+                </div>
+                <div style={{ display: this.props.item.type === 'token' ? 'block' : 'none' }}>
+                    <div className='subheading'>size</div>
+                    <NumberSpin
+                        source={this.props.item}
+                        name='size'
+                        nudgeValue={delta => this.props.nudgeValue(this.props.item, 'size', delta)}
+                    />
+                </div>
+            </div>
+        );
+    }
+
+    private getNotesSection() {
+        if (this.props.note) {
+            return (
+                <div>
+                    <Input.TextArea
+                        placeholder='details'
+                        autoSize={{ minRows: 10 }}
+                        value={this.props.note.text}
+                        onChange={event => this.props.changeValue(this.props.note, 'text', event.target.value)}
+                    />
+                    <button onClick={() => this.props.removeNote(this.props.item.id)}>remove note</button>
+                </div>
+            );
+        } else {
+            return (
+                <div>
+                    <button onClick={() => this.props.addNote(this.props.item.id)}>add a note</button>
+                </div>
+            );
+        }
+    }
+
+    public render() {
+        try {
+            const options = ['position', 'appearance', 'notes'].map(option => {
+                return { id: option, text: option };
+            });
+
+            let content = null;
+            switch (this.state.view) {
+                case 'position':
+                    content = this.getPositionSection();
+                    break;
+                case 'appearance':
+                    content = this.getAppearanceSection();
+                    break;
+                case 'notes':
+                    content = this.getNotesSection();
+                    break;
+            }
+
+            return (
+                <div className='card map' key='selected'>
+                    <div className='heading'>
+                        <div className='title'>map item</div>
+                    </div>
+                    <div className='card-content'>
+                        <Selector
+                            options={options}
+                            selectedID={this.state.view}
+                            select={optionID => this.setView(optionID)}
+                        />
+                        <div className='divider' />
+                        {content}
+                        <div className='divider' />
+                        <div className='section'>
+                            <button onClick={() => this.props.remove(this.props.item)}>remove from the map</button>
+                        </div>
                     </div>
                 </div>
             );

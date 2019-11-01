@@ -3,7 +3,7 @@ import Utils from './utils';
 import { Combat, CombatSetup, Notification } from '../models/combat';
 import { Condition, ConditionDurationCombatant, ConditionDurationRounds, ConditionDurationSaves } from '../models/condition';
 import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../models/encounter';
-import { Map, MapFolio, MapItem } from '../models/map-folio';
+import { Map, MapFolio, MapItem, MapNote } from '../models/map-folio';
 import { Monster, MonsterGroup, Trait } from '../models/monster-group';
 import { Companion, Party, PC } from '../models/party';
 
@@ -151,7 +151,8 @@ export default class Factory {
         return {
             id: Utils.guid(),
             name: '',
-            items: []
+            items: [],
+            notes: []
         };
     }
 
@@ -169,6 +170,14 @@ export default class Factory {
             color: '',
             opacity: 255,
             style: null
+        };
+    }
+
+    public static createMapNote(): MapNote {
+        return {
+            id: Utils.guid(),
+            targetID: '',
+            text: ''
         };
     }
 

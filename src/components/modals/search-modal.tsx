@@ -152,9 +152,18 @@ export default class SearchModal extends React.Component<Props, State> {
                     this.props.folios.filter(folio => Sherlock.matchFolio(this.state.text, folio)).forEach(folio => {
                         const maps: JSX.Element[] = [];
                         folio.maps.filter(map => Sherlock.matchMap(this.state.text, map)).forEach(map => {
+                            const notes: JSX.Element[] = [];
+                            map.notes.filter(note => Sherlock.matchMapNote(this.state.text, note)).forEach(note => {
+                                notes.push(
+                                    <div key={note.id} className='group-panel'>
+                                        <div className='section'>map note</div>
+                                    </div>
+                                );
+                            });
                             maps.push(
                                 <div key={map.id} className='group-panel'>
                                     <div className='section'>{map.name}</div>
+                                    {notes}
                                 </div>
                             );
                         });

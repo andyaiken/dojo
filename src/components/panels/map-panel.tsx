@@ -1,17 +1,22 @@
 import React from 'react';
 
-import { Icon } from 'antd';
+import { Icon, Popover } from 'antd';
+import Showdown from 'showdown';
 
+import Mercator from '../../utils/mercator';
 import Utils from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
-import { Map, MapItem } from '../../models/map-folio';
+import { Map, MapItem, MapNote } from '../../models/map-folio';
 import { Monster } from '../../models/monster-group';
 import { PC } from '../../models/party';
 
 import HitPointGauge from './hit-point-gauge';
 
 import none from '../../resources/images/no-portrait.png';
+
+const showdown = new Showdown.Converter();
+showdown.setOption('tables', true);
 
 interface Props {
     map: Map;
@@ -50,12 +55,6 @@ export default class MapPanel extends React.Component<Props> {
         setSelectedItemID: null,
         gridSquareClicked: null
     };
-
-    private setZoom(value: number) {
-        this.setState({
-            zoom: Math.max(5, value)
-        });
-    }
 
     private getMapDimensions(border: number): MapDimensions | null {
         let dimensions: MapDimensions | null = null;
@@ -197,6 +196,7 @@ export default class MapPanel extends React.Component<Props> {
                         <MapTile
                             key={i.id}
                             tile={i}
+                            note={this.props.mode !== 'combat-player' ? Mercator.getNote(this.props.map, i) : null}
                             style={tileStyle}
                             selectable={this.props.mode === 'edit'}
                             selected={this.props.selectedItemID === i.id}
@@ -217,6 +217,7 @@ export default class MapPanel extends React.Component<Props> {
                             <MapOverlay
                                 key={i.id}
                                 overlay={i}
+                                note={this.props.mode !== 'combat-player' ? Mercator.getNote(this.props.map, i) : null}
                                 style={overlayStyle}
                                 selected={this.props.selectedItemID === i.id}
                                 select={id => this.props.setSelectedItemID(id)}
@@ -268,6 +269,7 @@ export default class MapPanel extends React.Component<Props> {
                             <MapToken
                                 key={i.id}
                                 token={i}
+                                note={this.props.mode !== 'combat-player' ? Mercator.getNote(this.props.map, i) : null}
                                 combatant={combatant || null}
                                 style={tokenStyle}
                                 simple={this.props.mode === 'thumbnail'}
@@ -376,6 +378,7 @@ class GridSquare extends React.Component<GridSquareProps> {
 
 interface MapTileProps {
     tile: MapItem;
+    note: MapNote | null;
     style: MapItemStyle;
     selectable: boolean;
     selected: boolean;
@@ -410,7 +413,7 @@ class MapTile extends React.Component<MapTileProps> {
                 );
             }
 
-            return (
+            const tile = (
                 <div
                     className={style}
                     style={this.props.style}
@@ -419,6 +422,20 @@ class MapTile extends React.Component<MapTileProps> {
                     {content}
                 </div>
             );
+
+            if (this.props.note && this.props.note.text) {
+                const note = (
+                    <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.note.text) }} />
+                );
+
+                return (
+                    <Popover placement='bottom' title='note' content={note}>
+                        {tile}
+                    </Popover>
+                );
+            } else {
+                return tile;
+            }
         } catch (ex) {
             console.error(ex);
             return <div className='render-error'/>;
@@ -428,6 +445,7 @@ class MapTile extends React.Component<MapTileProps> {
 
 interface MapOverlayProps {
     overlay: MapItem;
+    note: MapNote | null;
     style: MapItemStyle;
     selected: boolean;
     select: (tileID: string) => void;
@@ -446,13 +464,27 @@ class MapOverlay extends React.Component<MapOverlayProps> {
                 style += ' selected';
             }
 
-            return (
+            const overlay = (
                 <div
                     className={style}
                     style={this.props.style}
                     onClick={e => this.select(e)}
                 />
             );
+
+            if (this.props.note && this.props.note.text) {
+                const note = (
+                    <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.note.text) }} />
+                );
+
+                return (
+                    <Popover placement='bottom' title='note' content={note}>
+                        {overlay}
+                    </Popover>
+                );
+            } else {
+                return overlay;
+            }
         } catch (ex) {
             console.error(ex);
             return <div className='render-error'/>;
@@ -462,6 +494,7 @@ class MapOverlay extends React.Component<MapOverlayProps> {
 
 interface MapTokenProps {
     token: MapItem;
+    note: MapNote | null;
     combatant: Combatant | null;
     style: MapItemStyle;
     simple: boolean;
@@ -542,7 +575,7 @@ class MapToken extends React.Component<MapTokenProps> {
 
                 if (this.props.combatant.altitude > 0) {
                     altitudeBadge = (
-                        <div className='badge' title='above the map'>
+                        <div className='badge'>
                             <Icon type='up-square' theme='twoTone' twoToneColor='#3c78dc' />
                         </div>
                     );
@@ -550,7 +583,7 @@ class MapToken extends React.Component<MapTokenProps> {
 
                 if (this.props.combatant.altitude < 0) {
                     altitudeBadge = (
-                        <div className='badge' title='below the map'>
+                        <div className='badge'>
                             <Icon type='down-square' theme='twoTone' twoToneColor='#3c78dc' />
                         </div>
                     );
@@ -567,11 +600,10 @@ class MapToken extends React.Component<MapTokenProps> {
                 }
             }
 
-            return (
+            const token = (
                 <div
                     className={style}
                     style={this.props.style}
-                    title={name}
                     onClick={e => this.select(e)}
                 >
                     {content}
@@ -580,6 +612,20 @@ class MapToken extends React.Component<MapTokenProps> {
                     {conditionsBadge}
                 </div>
             );
+
+            if (this.props.note && this.props.note.text) {
+                const note = (
+                    <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.note.text) }} />
+                );
+
+                return (
+                    <Popover placement='bottom' title='note' content={note}>
+                        {token}
+                    </Popover>
+                );
+            } else {
+                return token;
+            }
         } catch (ex) {
             console.error(ex);
             return <div className='render-error'/>;

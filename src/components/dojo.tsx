@@ -110,6 +110,14 @@ export default class Dojo extends React.Component<Props, State> {
             const str = window.localStorage.getItem('data-mapfolios');
             if (str) {
                 mapFolios = JSON.parse(str);
+
+                mapFolios.forEach(folio => {
+                    folio.maps.forEach(map => {
+                        if (map.notes === undefined) {
+                            map.notes = [];
+                        }
+                    });
+                });
             }
         } catch (ex) {
             console.error('Could not parse JSON: ', ex);
@@ -120,6 +128,14 @@ export default class Dojo extends React.Component<Props, State> {
             const str = window.localStorage.getItem('data-combats');
             if (str) {
                 combats = JSON.parse(str);
+
+                combats.forEach(combat => {
+                    if (combat.map) {
+                        if (combat.map.notes === undefined) {
+                            combat.map.notes = [];
+                        }
+                    }
+                });
             }
         } catch (ex) {
             console.error('Could not parse JSON: ', ex);
@@ -1541,6 +1557,31 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
+    private mapAddNote(tileID: string) {
+        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+        if (combat && combat.map) {
+            const note = Factory.createMapNote();
+            note.targetID = tileID;
+            combat.map.notes.push(note);
+
+            this.setState({
+                combats: this.state.combats
+            });
+        }
+    }
+
+    private mapRemoveNote(tileID: string) {
+        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+        if (combat && combat.map) {
+            const index = combat.map.notes.findIndex(n => n.targetID === tileID);
+            combat.map.notes.splice(index, 1);
+
+            this.setState({
+                combats: this.state.combats
+            });
+        }
+    }
+
     private endTurn(combatant: Combatant) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
@@ -1983,6 +2024,8 @@ export default class Dojo extends React.Component<Props, State> {
                             mapResize={(id, dir, dir2) => this.mapResize(id, dir, dir2)}
                             mapMove={(id, dir) => this.mapMove(id, dir)}
                             mapRemove={id => this.mapRemove(id)}
+                            mapAddNote={itemID => this.mapAddNote(itemID)}
+                            mapRemoveNote={itemID => this.mapRemoveNote(itemID)}
                             endTurn={combatant => this.endTurn(combatant)}
                             changeHP={(combatant, hp, temp) => this.changeHP(combatant, hp, temp)}
                             closeNotification={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}

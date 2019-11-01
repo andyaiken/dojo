@@ -8,6 +8,7 @@ export interface Map {
     id: string;
     name: string;
     items: MapItem[];
+    notes: MapNote[];
 }
 
 export interface MapItem {
@@ -23,6 +24,12 @@ export interface MapItem {
     color: string;                                  // Used by overlays
     opacity: number;                                // Used by overlays
     style: 'square' | 'rounded' | 'circle' | null;  // Used by tiles and overlays
+}
+
+export interface MapNote {
+    id: string;
+    targetID: string;
+    text: string;
 }
 
 export const TERRAIN_TYPES = [

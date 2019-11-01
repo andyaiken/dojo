@@ -6,7 +6,7 @@ import Factory from '../../utils/factory';
 import Mercator from '../../utils/mercator';
 import Utils from '../../utils/utils';
 
-import { Map, MapItem, TERRAIN_TYPES } from '../../models/map-folio';
+import { Map, MapItem, MapNote, TERRAIN_TYPES } from '../../models/map-folio';
 
 import ConfirmButton from '../controls/confirm-button';
 import Dropdown from '../controls/dropdown';
@@ -247,6 +247,25 @@ export default class MapEditorModal extends React.Component<Props, State> {
         });
     }
 
+    private addNote(tileID: string) {
+        const note = Factory.createMapNote();
+        note.targetID = tileID;
+        this.state.map.notes.push(note);
+
+        this.setState({
+            map: this.state.map
+        });
+    }
+
+    private removeNote(tileID: string) {
+        const index = this.state.map.notes.findIndex(n => n.targetID === tileID);
+        this.state.map.notes.splice(index, 1);
+
+        this.setState({
+            map: this.state.map
+        });
+    }
+
     private changeValue(source: any, field: string, value: any) {
         source[field] = value;
 
@@ -262,67 +281,22 @@ export default class MapEditorModal extends React.Component<Props, State> {
             if (this.state.selectedTileID) {
                 const item = this.state.map.items.find(i => i.id === this.state.selectedTileID);
                 if (item) {
-                    const terrainOptions = TERRAIN_TYPES.map(t => {
-                        return { id: t, text: t };
-                    });
-
-                    const styleOptions = ['square', 'rounded', 'circle'].map(t => {
-                        return { id: t, text: t };
-                    });
-
-                    let customSection = null;
-                    if (item.terrain === 'custom') {
-                        customSection = (
-                            <div>
-                                <div className='subheading'>custom image</div>
-                                <button onClick={() => this.toggleImageSelection()}>select image</button>
-                                <button onClick={() => this.changeValue(item, 'customBackground', '')}>clear image</button>
-                            </div>
-                        );
-                    }
-
+                    const note = Mercator.getNote(this.state.map, item);
                     tools = (
-                        <div>
-                            <div className='subheading'>size</div>
-                            <div className='section'>{item.width} sq x {item.height} sq</div>
-                            <div className='section'>{item.width * 5} ft x {item.height * 5} ft</div>
-                            <div className='divider' />
-                            <div className='subheading'>terrain</div>
-                            <Dropdown
-                                options={terrainOptions}
-                                placeholder='select terrain'
-                                selectedID={item.terrain ? item.terrain : undefined}
-                                select={optionID => this.changeValue(item, 'terrain', optionID)}
-                            />
-                            {customSection}
-                            <div className='divider' />
-                            <div className='subheading'>shape</div>
-                            <Selector
-                                options={styleOptions}
-                                selectedID={item.style}
-                                select={optionID => this.changeValue(item, 'style', optionID)}
-                            />
-                            <div className='divider' />
-                            <div className='subheading'>move</div>
-                            <div className='section centered'>
-                                <Radial direction='eight' click={dir => this.moveMapItem(item, dir)} />
-                            </div>
-                            <div className='divider' />
-                            <div className='subheading'>resize</div>
-                            <div className='section centered'>
-                                <Radial direction='both' click={(dir, dir2) => this.resizeMapItem(item, dir, dir2 as 'in' | 'out')} />
-                            </div>
-                            <div className='divider' />
-                            <div className='section'>
-                                <button onClick={() => this.sendToBack(item)}>send to back</button>
-                                <button onClick={() => this.bringToFront(item)}>bring to front</button>
-                            </div>
-                            <div className='divider' />
-                            <div className='section'>
-                                <button onClick={() => this.cloneMapItem(item)}>clone tile</button>
-                                <button onClick={() => this.removeMapItem(item)}>remove tile</button>
-                            </div>
-                        </div>
+                        <MapTileCard
+                            tile={item}
+                            note={note}
+                            toggleImageSelection={() => this.toggleImageSelection()}
+                            changeValue={(source, field, value) => this.changeValue(source, field, value)}
+                            move={(tile, dir) => this.moveMapItem(tile, dir)}
+                            resize={(tile, dir, dir2) => this.resizeMapItem(tile, dir, dir2)}
+                            clone={tile => this.cloneMapItem(tile)}
+                            remove={tile => this.removeMapItem(tile)}
+                            sendToBack={tile => this.sendToBack(tile)}
+                            bringToFront={tile => this.bringToFront(tile)}
+                            addNote={tileID => this.addNote(tileID)}
+                            removeNote={tileID => this.removeNote(tileID)}
+                        />
                     );
                 }
             } else {
@@ -344,7 +318,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
                         <NumberSpin
                             source={this.state}
                             name={'mapSize'}
-                            display={value => 'zoom'}
+                            display={() => 'zoom'}
                             nudgeValue={delta => this.nudgeMapSize(delta * 5)}
                         />
                         <button onClick={() => this.toggleAddingTile()}>
@@ -376,6 +350,171 @@ export default class MapEditorModal extends React.Component<Props, State> {
                         <ImageSelectionModal select={id => this.setCustomImage(id)} cancel={() => this.toggleImageSelection()} />
                     </Drawer>
                 </Row>
+            );
+        } catch (e) {
+            console.error(e);
+            return <div className='render-error'/>;
+        }
+    }
+}
+
+interface MapTileCardProps {
+    tile: MapItem;
+    note: MapNote | null;
+    toggleImageSelection: () => void;
+    changeValue: (source: any, field: string, value: any) => void;
+    move: (tile: MapItem, dir: string) => void;
+    resize: (tile: MapItem, dir: string, dir2: 'in' | 'out') => void;
+    clone: (tile: MapItem) => void;
+    remove: (tile: MapItem) => void;
+    sendToBack: (tile: MapItem) => void;
+    bringToFront: (tile: MapItem) => void;
+    addNote: (tileID: string) => void;
+    removeNote: (tileID: string) => void;
+}
+
+interface MapTileCardState {
+    view: string;
+}
+
+class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
+    constructor(props: MapTileCardProps) {
+        super(props);
+        this.state = {
+            view: 'position'
+        };
+    }
+
+    private setView(view: string) {
+        this.setState({
+            view: view
+        });
+    }
+
+    private getPositionSection() {
+        return (
+            <div>
+                <div className='subheading'>size</div>
+                <div className='section'>{this.props.tile.width} sq x {this.props.tile.height} sq</div>
+                <div className='section'>{this.props.tile.width * 5} ft x {this.props.tile.height * 5} ft</div>
+                <div className='subheading'>move</div>
+                <div className='section centered'>
+                    <Radial direction='eight' click={dir => this.props.move(this.props.tile, dir)} />
+                </div>
+                <div className='subheading'>resize</div>
+                <div className='section centered'>
+                    <Radial direction='both' click={(dir, dir2) => this.props.resize(this.props.tile, dir, dir2 as 'in' | 'out')} />
+                </div>
+                <div className='divider' />
+                <div className='section'>
+                    <button onClick={() => this.props.sendToBack(this.props.tile)}>send to back</button>
+                    <button onClick={() => this.props.bringToFront(this.props.tile)}>bring to front</button>
+                </div>
+            </div>
+        );
+    }
+
+    private getAppearanceSection() {
+        const terrainOptions = TERRAIN_TYPES.map(t => {
+            return { id: t, text: t };
+        });
+
+        let customSection = null;
+        if (this.props.tile.terrain === 'custom') {
+            customSection = (
+                <div>
+                    <div className='subheading'>custom image</div>
+                    <button onClick={() => this.props.toggleImageSelection()}>select image</button>
+                    <button onClick={() => this.props.changeValue(this.props.tile, 'customBackground', '')}>clear image</button>
+                </div>
+            );
+        }
+
+        const styleOptions = ['square', 'rounded', 'circle'].map(t => {
+            return { id: t, text: t };
+        });
+
+        return (
+            <div>
+                <div className='subheading'>terrain</div>
+                <Dropdown
+                    options={terrainOptions}
+                    placeholder='select terrain'
+                    selectedID={this.props.tile.terrain ? this.props.tile.terrain : undefined}
+                    select={optionID => this.props.changeValue(this.props.tile, 'terrain', optionID)}
+                />
+                {customSection}
+                <div className='subheading'>shape</div>
+                <Selector
+                    options={styleOptions}
+                    selectedID={this.props.tile.style}
+                    select={optionID => this.props.changeValue(this.props.tile, 'style', optionID)}
+                />
+            </div>
+        );
+    }
+
+    private getNotesSection() {
+        if (this.props.note) {
+            return (
+                <div>
+                    <Input.TextArea
+                        placeholder='details'
+                        autoSize={{ minRows: 10 }}
+                        value={this.props.note.text}
+                        onChange={event => this.props.changeValue(this.props.note, 'text', event.target.value)}
+                    />
+                    <button onClick={() => this.props.removeNote(this.props.tile.id)}>remove note from this tile</button>
+                </div>
+            );
+        } else {
+            return (
+                <div>
+                    <button onClick={() => this.props.addNote(this.props.tile.id)}>add a note to this tile</button>
+                </div>
+            );
+        }
+    }
+
+    public render() {
+        try {
+            const options = ['position', 'appearance', 'notes'].map(option => {
+                return { id: option, text: option };
+            });
+
+            let content = null;
+            switch (this.state.view) {
+                case 'position':
+                    content = this.getPositionSection();
+                    break;
+                case 'appearance':
+                    content = this.getAppearanceSection();
+                    break;
+                case 'notes':
+                    content = this.getNotesSection();
+                    break;
+            }
+
+            return (
+                <div className='card map'>
+                    <div className='heading'>
+                        <div className='title'>map tile</div>
+                    </div>
+                    <div className='card-content'>
+                        <Selector
+                            options={options}
+                            selectedID={this.state.view}
+                            select={optionID => this.setView(optionID)}
+                        />
+                        <div className='divider' />
+                        {content}
+                        <div className='divider' />
+                        <div className='section'>
+                            <button onClick={() => this.props.clone(this.props.tile)}>clone tile</button>
+                            <button onClick={() => this.props.remove(this.props.tile)}>remove tile</button>
+                        </div>
+                    </div>
+                </div>
             );
         } catch (e) {
             console.error(e);
