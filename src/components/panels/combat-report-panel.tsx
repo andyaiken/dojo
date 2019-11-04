@@ -185,9 +185,9 @@ export default class CombatReportPanel extends React.Component<Props> {
         let data: {text: string, value: number}[] = [];
 
         let start: number | null = null;
+        let pauses: { start: number | null, end: number | null }[] = [];
 
         this.props.combat.report
-            .filter(entry => (entry.type === 'turn-start') || (entry.type === 'turn-end'))
             .forEach(entry => {
                 switch (entry.type) {
                     case 'turn-start':
@@ -205,10 +205,29 @@ export default class CombatReportPanel extends React.Component<Props> {
                                     };
                                     data.push(datum);
                                 }
-                                const length = entry.timestamp - start;
+                                let length = entry.timestamp - start;
+                                pauses.forEach(p => {
+                                    if (p.start && p.end) {
+                                        const pauseLength = p.end - p.start;
+                                        length -= pauseLength;
+                                    }
+                                });
                                 datum.value += length;
                             }
                             start = null;
+                            pauses = [];
+                        }
+                        break;
+                    case 'combat-pause':
+                        pauses.push({
+                            start: entry.timestamp,
+                            end: null
+                        });
+                        break;
+                    case 'combat-resume':
+                        if (pauses.length > 0) {
+                            const last = pauses[pauses.length - 1];
+                            last.end = entry.timestamp;
                         }
                         break;
                 }

@@ -193,6 +193,27 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 
     private getHPSection() {
         const monster = this.props.combatant as Combatant & Monster;
+        if (monster === null) {
+            return null;
+        }
+
+        let btn = null;
+        if ((monster.hp !== null) && (monster.hp <= 0)) {
+            if (this.props.combatant.current) {
+                btn = (
+                    <button onClick={() => this.props.makeDefeated(this.props.combatant)}>
+                        mark as defeated and end turn
+                    </button>
+                );
+            } else {
+                btn = (
+                    <button onClick={() => this.props.makeDefeated(this.props.combatant)}>
+                        mark as defeated
+                    </button>
+                );
+            }
+        }
+
         return (
             <div>
                 <NumberSpin
@@ -236,6 +257,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                         <button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.damage()}>damage</button>
                     </Col>
                 </Row>
+                {btn}
             </div>
         );
     }
