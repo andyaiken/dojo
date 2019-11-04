@@ -32,7 +32,6 @@ If there are any build errors, you will see them in the terminal and the browser
 Check that your changes don't break any functionality, or the project's style rules:
 
 * Open a terminal in the root folder
-* Run `npm run test`
 * Run `npm run lint`
 
 Remember to update the app version number in `package.json` before pushing any change to the repository.

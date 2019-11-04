@@ -3,11 +3,13 @@ import React from 'react';
 interface Props {
     data: { text: string, value: number }[];
     collapse: boolean;
+    display: (value: number) => string;
 }
 
 export default class ChartPanel extends React.Component<Props> {
     public static defaultProps = {
-        collapse: false
+        collapse: false,
+        display: (value: number) => value.toString()
     };
 
     public render() {
@@ -35,15 +37,13 @@ export default class ChartPanel extends React.Component<Props> {
                             width: 'calc((100% - 1px) * ' + d.value + ' / ' + max + ')'
                         }}
                     >
-                        <div className='label'>{d.text}: {d.value}</div>
+                        <div className='label'>{d.text}: {this.props.display(d.value)}</div>
                     </div>
                 </div>
             ));
 
             return (
-                <div className='chart'>
-                    <div className='plot'>{bars}</div>
-                </div>
+                <div className='plot'>{bars}</div>
             );
         } catch (ex) {
             console.error(ex);

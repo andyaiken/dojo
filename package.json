@@ -1,29 +1,24 @@
 {
     "name": "dojo",
-    "version": "4.4.3",
+    "version": "4.5.0",
     "license": "MIT",
     "repository": "https://github.com/andyaiken/dojo.git",
     "homepage": "https://andyaiken.github.io/dojo/",
     "dependencies": {
-        "antd": "^3.24.2",
+        "antd": "^3.25.0",
         "react": "^16.11.0",
         "react-dom": "^16.11.0",
         "react-movable": "^2.3.0",
-        "showdown": "^1.9.0"
+        "showdown": "^1.9.1"
     },
     "devDependencies": {
-        "@types/jest": "^24.0.20",
-        "@types/node": "^12.12.3",
-        "@types/puppeteer": "^1.20.2",
+        "@types/node": "^12.12.5",
         "@types/react": "^16.9.11",
         "@types/react-dom": "^16.9.3",
         "@types/showdown": "^1.9.3",
         "faker": "^4.1.0",
         "gh-pages": "^2.1.1",
-        "jest": "^24.9.0",
-        "jest-cli": "^24.9.0",
         "node-sass": "^4.13.0",
-        "puppeteer": "^2.0.0",
         "react-scripts": "^3.2.0",
         "tslint": "^5.20.0",
         "tslint-react": "^3.6.0",
@@ -33,7 +28,6 @@
         "update": "npm update && npm update --save-dev",
         "start": "react-scripts start --display-error-details",
         "lint": "tslint --config tslint.json --format verbose 'src/**/*.{ts,tsx}'",
-        "test": "jest",
         "predeploy": "react-scripts build",
         "deploy": "gh-pages -d build"
     },

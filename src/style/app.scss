@@ -857,41 +857,37 @@ body,
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Chart
 
-.chart {
+.plot {
     margin: 5px 0;
+    padding: 5px 0;
+    border-left: 2px solid steelblue;
 
-    .plot {
-        padding: 5px 0;
-        border-left: 1px solid steelblue;
+    .bar-container {
+        position: relative;
 
-        .bar-container {
-            position: relative;
+        .bar {
+            background-color: lightsteelblue;
+            border-right: 1px solid steelblue;
+            height: 30px;
+
+            .label {
+                background-color: steelblue;
+                border-radius: 3px;
+                color: white;
+                padding: 3px 5px;
+                font-size: 10px;
+                opacity: 0.8;
+                position: absolute;
+                left: 5px;
+                top: 5px;
+            }
+        }
+
+        &:hover {
+            background-color: #EEEEEE;
 
             .bar {
-                background-color: lightsteelblue;
-                //border-left: 1px solid steelblue;
-                border-right: 1px solid steelblue;
-                height: 30px;
-
-                .label {
-                    background-color: steelblue;
-                    border-radius: 3px;
-                    color: white;
-                    padding: 3px 5px;
-                    font-size: 10px;
-                    opacity: 0.8;
-                    position: absolute;
-                    left: 5px;
-                    top: 5px;
-                }
-            }
-
-            &:hover {
-                background-color: #EEEEEE;
-
-                .bar {
-                    background-color: steelblue;
-                }
+                background-color: steelblue;
             }
         }
     }

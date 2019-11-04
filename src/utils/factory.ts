@@ -1,6 +1,6 @@
 import Utils from './utils';
 
-import { Combat, CombatSetup, Notification } from '../models/combat';
+import { Combat, CombatReportEntry, CombatSetup, Notification } from '../models/combat';
 import { Condition, ConditionDurationCombatant, ConditionDurationRounds, ConditionDurationSaves } from '../models/condition';
 import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../models/encounter';
 import { Map, MapFolio, MapItem, MapNote } from '../models/map-folio';
@@ -202,7 +202,8 @@ export default class Factory {
             map: null,
             round: 1,
             notifications: [],
-            issues: []
+            issues: [],
+            report: []
         };
     }
 
@@ -212,6 +213,16 @@ export default class Factory {
             type: 'condition-save',
             data: null,
             combatant: null
+        };
+    }
+
+    public static createCombatReportEntry(): CombatReportEntry {
+        return {
+            id: Utils.guid(),
+            type: 'combat-start',
+            timestamp: Date.now(),
+            combatantID: '',
+            value: 0
         };
     }
 

@@ -21,6 +21,7 @@ export interface Combat {
     round: number;
     notifications: Notification[];
     issues: string[];
+    report: CombatReportEntry[];
 }
 
 export interface Combatant {
@@ -50,4 +51,16 @@ export interface Notification {
     type: 'condition-save' | 'condition-end' | 'trait-recharge';
     data: Condition | Trait | null;
     combatant: Combatant | null;
+}
+
+export interface CombatReportEntry {
+    id: string;
+    type: 'movement' | 'damage' | 'kill'
+        | 'turn-start' | 'turn-end'
+        | 'combat-start' | 'combat-end'
+        | 'combat-pause' | 'combat-resume'
+        | 'condition-add' | 'condition-remove';
+    timestamp: number;
+    combatantID: string;
+    value: number;
 }

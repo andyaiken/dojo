@@ -23,6 +23,7 @@ import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
 import Selector from '../controls/selector';
 import CombatControlsPanel from '../panels/combat-controls-panel';
+import CombatReportPanel from '../panels/combat-report-panel';
 import GridPanel from '../panels/grid-panel';
 import HitPointGauge from '../panels/hit-point-gauge';
 import MapPanel from '../panels/map-panel';
@@ -56,7 +57,7 @@ interface Props {
     mapAddNote: (id: string) => void;
     mapRemoveNote: (id: string) => void;
     endTurn: (combatant: Combatant) => void;
-    changeHP: (combatant: Combatant & Monster, hp: number, temp: number) => void;
+    changeHP: (combatant: Combatant & Monster, hp: number, temp: number, damage: number) => void;
     changeValue: (source: {}, type: string, value: any) => void;
     nudgeValue: (source: {}, type: string, delta: number) => void;
     toggleTag: (combatant: Combatant, tag: string) => void;
@@ -67,7 +68,7 @@ interface Props {
 }
 
 interface State {
-    showTools: boolean;
+    rightPanel: string;
     showDefeatedCombatants: boolean;
     selectedItemID: string | null;
     addingToMapID: string | null;
@@ -85,7 +86,7 @@ export default class CombatScreen extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            showTools: false,
+            rightPanel: 'selection',
             showDefeatedCombatants: false,
             selectedItemID: null,           // The ID of the combatant or map item (overlay) that's selected
             addingToMapID: null,            // The ID of the combatant we're adding to the map
@@ -105,9 +106,9 @@ export default class CombatScreen extends React.Component<Props, State> {
         });
     }
 
-    private toggleTools() {
+    private setRightPanel(panel: string) {
         this.setState({
-            showTools: !this.state.showTools
+            rightPanel: panel
         });
     }
 
@@ -120,7 +121,7 @@ export default class CombatScreen extends React.Component<Props, State> {
     private setSelectedItemID(id: string | null) {
         this.setState({
             selectedItemID: id,
-            showTools: false
+            rightPanel: 'selection'
         });
     }
 
@@ -213,7 +214,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 
             this.props.addOverlay(overlay);
             this.setState({
-                showTools: false,
+                rightPanel: 'selection',
                 addingOverlay: false,
                 addingToMapID: null,
                 selectedItemID: overlay.id
@@ -483,6 +484,14 @@ export default class CombatScreen extends React.Component<Props, State> {
         return selectedCombatant;
     }
 
+    private getReport() {
+        return (
+            <CombatReportPanel
+                combat={this.props.combat}
+            />
+        );
+    }
+
     private createPendingRow(combatant: Combatant) {
         return (
             <PendingCombatantRow
@@ -542,7 +551,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                             makeActive={c => this.props.makeActive(c)}
                             makeDefeated={c => this.defeatCombatant(c)}
                             removeCombatant={c => this.props.removeCombatant(c)}
-                            changeHP={(c, hp, temp) => this.props.changeHP(c as Combatant & Monster, hp, temp)}
+                            changeHP={(c, hp, temp, damage) => this.props.changeHP(c as Combatant & Monster, hp, temp, damage)}
                             addCondition={c => this.props.addCondition(c)}
                             editCondition={(c, condition) => this.props.editCondition(c, condition)}
                             removeCondition={(c, conditionID) => this.props.removeCondition(c, conditionID)}
@@ -574,7 +583,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                             makeActive={c => this.props.makeActive(c)}
                             makeDefeated={c => this.defeatCombatant(c)}
                             removeCombatant={c => this.props.removeCombatant(c)}
-                            changeHP={(c, hp, temp) => this.props.changeHP(c as Combatant & Monster, hp, temp)}
+                            changeHP={(c, hp, temp, damage) => this.props.changeHP(c as Combatant & Monster, hp, temp, damage)}
                             addCondition={c => this.props.addCondition(c)}
                             editCondition={(c, condition) => this.props.editCondition(c, condition)}
                             removeCondition={(c, conditionID) => this.props.removeCondition(c, conditionID)}
@@ -717,8 +726,26 @@ export default class CombatScreen extends React.Component<Props, State> {
                 }
             });
 
-            const rightHeading = this.state.showTools ? 'tools' : 'selected combatant';
-            const rightContent = this.state.showTools ? this.getTools() : this.getSelectedCombatant();
+            const rightPanelOptions = ['selection', 'tools', 'leaderboard'].map(option => {
+                return { id: option, text: option };
+            });
+
+            let rightHeading = null;
+            let rightContent = null;
+            switch (this.state.rightPanel) {
+                case 'selection':
+                    rightHeading = 'selected combatant';
+                    rightContent = this.getSelectedCombatant();
+                    break;
+                case 'tools':
+                    rightHeading = 'tools';
+                    rightContent = this.getTools();
+                    break;
+                case 'leaderboard':
+                    rightHeading = 'leaderboard';
+                    rightContent = this.getReport();
+                    break;
+            }
 
             return (
                 <div className='full-height'>
@@ -749,7 +776,11 @@ export default class CombatScreen extends React.Component<Props, State> {
                             </div>
                         </Col>
                         <Col span={8} style={{ padding: '0 10px' }}>
-                            <Checkbox label='show combat tools' checked={this.state.showTools} changeValue={() => this.toggleTools()} />
+                            <Selector
+                                options={rightPanelOptions}
+                                selectedID={this.state.rightPanel}
+                                select={option => this.setRightPanel(option)}
+                            />
                         </Col>
                     </Row>
                     <Row className='combat-main'>

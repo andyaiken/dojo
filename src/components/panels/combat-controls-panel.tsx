@@ -24,7 +24,7 @@ interface Props {
     mapMove: (combatant: Combatant, dir: string) => void;
     mapRemove: (combatant: Combatant) => void;
     removeCombatant: (combatant: Combatant) => void;
-    changeHP: (combatant: Combatant, hp: number, tempHP: number) => void;
+    changeHP: (combatant: Combatant, hp: number, tempHP: number, damage: number) => void;
     addCondition: (combatant: Combatant) => void;
     editCondition: (combatant: Combatant, condition: Condition) => void;
     removeCondition: (combatant: Combatant, conditionID: string) => void;
@@ -77,7 +77,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
         this.setState({
             damageOrHealing: 0
         }, () => {
-            this.props.changeHP(combatant, hp, combatant.hpTemp);
+            this.props.changeHP(combatant, hp, combatant.hpTemp, 0);
         });
     }
 
@@ -87,7 +87,8 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
         let hp = (combatant.hp ? combatant.hp : 0);
         let temp = combatant.hpTemp;
 
-        let damage = this.state.damageOrHealing;
+        const totalDamage = this.state.damageOrHealing;
+        let damage = totalDamage;
 
         // Take damage off temp HP first
         const val = Math.min(damage, temp);
@@ -101,7 +102,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
         this.setState({
             damageOrHealing: 0
         }, () => {
-            this.props.changeHP(combatant, hp, temp);
+            this.props.changeHP(combatant, hp, temp, totalDamage);
         });
     }
 
