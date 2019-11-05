@@ -54,7 +54,7 @@ export default class MonsterScreen extends React.Component<Props> {
 
             return (
                 <Row className='full-height'>
-                    <Col span={6} className='scrollable sidebar left'>
+                    <Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar left'>
                         <MonsterInfo
                             monsterGroup={this.props.monsterGroup}
                             goBack={() => this.props.goBack()}
@@ -65,7 +65,7 @@ export default class MonsterScreen extends React.Component<Props> {
                             removeMonsterGroup={() => this.props.removeMonsterGroup()}
                         />
                     </Col>
-                    <Col span={18} className='scrollable'>
+                    <Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
                         <GridPanel
                             content={cards}
                             heading={this.props.monsterGroup.name || 'unnamed group'}

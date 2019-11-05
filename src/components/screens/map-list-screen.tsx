@@ -30,7 +30,7 @@ export default class MapListScreen extends React.Component<Props> {
 
             return (
                 <Row className='full-height'>
-                    <Col span={6} className='scrollable sidebar left'>
+                    <Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar left'>
                         <Note>
                             <div className='section'>on this page you can set up folios containing tactical maps</div>
                             <div className='section'>when you have created a map you can use it in the combat manager</div>
@@ -42,7 +42,7 @@ export default class MapListScreen extends React.Component<Props> {
                         </Note>
                         <button onClick={() => this.props.addMapFolio()}>create a new map folio</button>
                     </Col>
-                    <Col span={18} className='scrollable'>
+                    <Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
                         <GridPanel heading='map folios' content={listItems} />
                     </Col>
                 </Row>

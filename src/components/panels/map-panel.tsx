@@ -14,6 +14,7 @@ import { PC } from '../../models/party';
 import HitPointGauge from './hit-point-gauge';
 
 import none from '../../resources/images/no-portrait.png';
+import Factory from '../../utils/factory';
 
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);
@@ -260,16 +261,22 @@ export default class MapPanel extends React.Component<Props> {
                     .filter(i => (i.type === 'monster') || (i.type === 'pc') || (i.type === 'token'))
                     .map(i => {
                         let miniSize = Utils.miniSize(i.size);
+                        let note = Mercator.getNote(this.props.map, i);
                         const combatant = this.props.combatants.find(c => c.id === i.id);
                         if (combatant) {
                             miniSize = Utils.miniSize(combatant.displaySize);
+                            if (!note && combatant.note) {
+                                note = Factory.createMapNote();
+                                note.targetID = combatant.id;
+                                note.text = combatant.note;
+                            }
                         }
                         const tokenStyle = this.getStyle(i.x, i.y, miniSize, miniSize, 'circle', mapDimensions);
                         return (
                             <MapToken
                                 key={i.id}
                                 token={i}
-                                note={this.props.mode !== 'combat-player' ? Mercator.getNote(this.props.map, i) : null}
+                                note={this.props.mode !== 'combat-player' ? note : null}
                                 combatant={combatant || null}
                                 style={tokenStyle}
                                 simple={this.props.mode === 'thumbnail'}

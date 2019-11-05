@@ -483,26 +483,6 @@ body,
             margin-bottom: 3px;
         }
     }
-
-    .grid {
-        &.columns-1 > * {
-            display: inline-block;
-            vertical-align: top;
-            width: 100%;
-        }
-
-        &.columns-2 > * {
-            display: inline-block;
-            vertical-align: top;
-            width: calc(100% / 2);
-        }
-
-        &.columns-3 > * {
-            display: inline-block;
-            vertical-align: top;
-            width: calc(100% / 3);
-        }
-    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -809,7 +789,7 @@ body,
     .content {
         padding: 0 5px;
 
-        button, .hp-gauge, .condition, .note {
+        .hp-gauge {
             margin-bottom: 5px;
         }
 
@@ -824,8 +804,15 @@ body,
             }
         }
 
-        .note {
-            font-weight: 600;
+        .icon-button {
+            float: right;
+            font-size: 14px;
+            border-radius: 50%;
+            padding: 2px;
+
+            &:hover {
+                background-color: $highlight01;
+            }
         }
     }
 

@@ -35,7 +35,7 @@ export default class EncounterListScreen extends React.Component<Props> {
 
             return (
                 <Row className='full-height'>
-                    <Col span={6} className='scrollable sidebar left'>
+                    <Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar left'>
                         <Note>
                             <div className='section'>on this page you can set up encounters</div>
                             <div className='section'>
@@ -52,7 +52,7 @@ export default class EncounterListScreen extends React.Component<Props> {
                         </Note>
                         <button onClick={() => this.props.addEncounter()}>create a new encounter</button>
                     </Col>
-                    <Col span={18} className='scrollable'>
+                    <Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
                         <GridPanel heading='encounters' content={listItems} />
                     </Col>
                 </Row>

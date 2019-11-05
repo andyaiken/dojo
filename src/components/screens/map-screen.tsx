@@ -56,7 +56,7 @@ export default class MapScreen extends React.Component<Props> {
 
             return (
                 <Row className='full-height'>
-                    <Col span={6} className='scrollable sidebar left'>
+                    <Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar left'>
                         <MapFolioInfo
                             mapFolio={this.props.mapFolio}
                             goBack={() => this.props.goBack()}
@@ -65,7 +65,7 @@ export default class MapScreen extends React.Component<Props> {
                             changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
                         />
                     </Col>
-                    <Col span={18} className='scrollable'>
+                    <Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
                         <GridPanel
                             content={folioCards}
                             heading={this.props.mapFolio.name || 'unnamed folio'}
@@ -114,7 +114,7 @@ class MapFolioInfo extends React.Component<MapFolioInfoProps> {
                     <div className='subheading'>map size</div>
                 </div>
                 <div className='section'>
-                    {sizeSummary}
+                    {sizeSummary} squares
                 </div>
             </div>
         );

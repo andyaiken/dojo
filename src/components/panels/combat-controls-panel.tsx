@@ -124,7 +124,6 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
             return (
                 <div>
                     {options}
-                    <div className='divider' />
                     <Row gutter={10}>
                         <Col span={8}>
                             <Checkbox
@@ -178,6 +177,14 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                             />
                         </Col>
                     </Row>
+                    <div>
+                        <Input.TextArea
+                            placeholder='notes'
+                            autoSize={{ minRows: 3 }}
+                            value={this.props.combatant.note}
+                            onChange={event => this.props.changeValue(this.props.combatant, 'note', event.target.value)}
+                        />
+                    </div>
                 </div>
             );
         }
@@ -395,7 +402,19 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
         return (
             <div>
                 {remove}
-                {init}
+                <Collapse
+                    bordered={false}
+                    expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
+                    expandIconPosition={'right'}
+                >
+                    <Collapse.Panel key='one' header='change name'>
+                        <Input
+                            value={this.props.combatant.displayName}
+                            allowClear={true}
+                            onChange={event => this.props.changeValue(this.props.combatant, 'displayName', event.target.value)}
+                        />
+                    </Collapse.Panel>
+                </Collapse>
                 <Collapse
                     bordered={false}
                     expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
@@ -410,19 +429,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                         />
                     </Collapse.Panel>
                 </Collapse>
-                <Collapse
-                    bordered={false}
-                    expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
-                    expandIconPosition={'right'}
-                >
-                    <Collapse.Panel key='one' header='change name'>
-                        <Input
-                            value={this.props.combatant.displayName}
-                            allowClear={true}
-                            onChange={event => this.props.changeValue(this.props.combatant, 'displayName', event.target.value)}
-                        />
-                    </Collapse.Panel>
-                </Collapse>
+                {init}
             </div>
         );
     }

@@ -31,7 +31,7 @@ export default class PartyListScreen extends React.Component<Props> {
 
             return (
                 <Row className='full-height'>
-                    <Col span={6} className='scrollable sidebar left'>
+                    <Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar left'>
                         <Note>
                             <div className='section'>this page is where you can tell dojo all about your pcs</div>
                             <div className='section'>you can add a party for each of your gaming groups</div>
@@ -45,7 +45,7 @@ export default class PartyListScreen extends React.Component<Props> {
                         <button onClick={() => this.props.addParty()}>create a new party</button>
                         <button onClick={() => this.props.importParty()}>import a party</button>
                     </Col>
-                    <Col span={18} className='scrollable'>
+                    <Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
                         <GridPanel heading='parties' content={listItems} />
                     </Col>
                 </Row>

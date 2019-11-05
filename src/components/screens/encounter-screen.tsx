@@ -182,7 +182,7 @@ export default class EncounterScreen extends React.Component<Props, State> {
 
             return (
                 <Row className='full-height'>
-                    <Col span={6} className='scrollable sidebar left'>
+                    <Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar left'>
                         <EncounterInfo
                             encounter={this.props.encounter}
                             parties={this.props.parties}
@@ -200,7 +200,7 @@ export default class EncounterScreen extends React.Component<Props, State> {
                             resetFilter={() => this.resetFilter()}
                         />
                     </Col>
-                    <Col span={18} className='scrollable'>
+                    <Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
                         <GridPanel
                             content={this.getMonsterCards(this.props.encounter.slots, null)}
                             heading={this.props.encounter.name || 'unnamed encounter'}

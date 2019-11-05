@@ -34,7 +34,7 @@ export default class MonsterListScreen extends React.Component<Props> {
 
             return (
                 <Row className='full-height'>
-                    <Col span={6} className='scrollable sidebar left'>
+                    <Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar left'>
                         <Note>
                             <div className='section'>you can maintain your menagerie of monsters here</div>
                             <div className='section'>you can then use these monsters to design combat encounters in the encounter builder</div>
@@ -46,7 +46,7 @@ export default class MonsterListScreen extends React.Component<Props> {
                         </Note>
                         <button onClick={() => this.props.addMonsterGroup()}>create a new monster group</button>
                     </Col>
-                    <Col span={18} className='scrollable'>
+                    <Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
                         <GridPanel heading='monster groups' content={listItems} />
                     </Col>
                 </Row>

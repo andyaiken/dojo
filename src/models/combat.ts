@@ -38,6 +38,7 @@ export interface Combatant {
     hp: number | null;
     conditions: Condition[];
     tags: string[];
+    note: string;
     altitude: number;
     aura: {
         radius: number;

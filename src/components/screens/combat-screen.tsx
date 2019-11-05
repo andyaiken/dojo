@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Col, Icon, Input, Row, Slider } from 'antd';
 import { List } from 'react-movable';
+import Showdown from 'showdown';
 
 import Factory from '../../utils/factory';
 import Mercator from '../../utils/mercator';
@@ -31,6 +32,9 @@ import Note from '../panels/note';
 import Popout from '../panels/popout';
 import PortraitPanel from '../panels/portrait-panel';
 import TraitsPanel from '../panels/traits-panel';
+
+const showdown = new Showdown.Converter();
+showdown.setOption('tables', true);
 
 interface Props {
     combat: Combat;
@@ -513,8 +517,9 @@ export default class CombatScreen extends React.Component<Props, State> {
                         key={combatant.id}
                         combatant={combatant as Combatant & PC}
                         combat={this.props.combat as Combat}
-                        select={c => this.setSelectedItemID(c.id)}
                         selected={combatant.id === this.state.selectedItemID}
+                        select={c => this.setSelectedItemID(c.id)}
+                        addToMap={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
                     />
                 );
             case 'monster':
@@ -523,8 +528,9 @@ export default class CombatScreen extends React.Component<Props, State> {
                         key={combatant.id}
                         combatant={combatant as Combatant & Monster}
                         combat={this.props.combat as Combat}
-                        select={c => this.setSelectedItemID(c.id)}
                         selected={combatant.id === this.state.selectedItemID}
+                        select={c => this.setSelectedItemID(c.id)}
+                        addToMap={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
                     />
                 );
         }
@@ -646,7 +652,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                     <Note key='init-help'>
                         <div className='section'>these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right)</div>
                         <div className='section'>they are listed in initiative order (with the highest initiative score at the top of the list, and the lowest at the bottom)</div>
-                        <div className='section'>when you're ready to begin the encounter, select the first combatant and press the <b>start turn</b> button on their stat block</div>
+                        <div className='section'>when you're ready to begin the encounter, press the <b>start combat</b> button at the top left</div>
                     </Note>
                     /* tslint:enable:max-line-length */
                 );
@@ -999,6 +1005,7 @@ interface PCRowProps {
     combat: Combat;
     selected: boolean;
     select: (combatant: Combatant & PC) => void;
+    addToMap: (combatant: Combatant & PC) => void;
 }
 
 class PCRow extends React.Component<PCRowProps> {
@@ -1052,10 +1059,24 @@ class PCRow extends React.Component<PCRowProps> {
             }
 
             const notes = [];
+            if (this.props.combatant.note) {
+                notes.push(
+                    <Note key='text' white={true}>
+                        <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.combatant.note) }} />
+                    </Note>
+                );
+            }
             if (this.props.combat.map) {
                 if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
                     notes.push(
-                        <Note key='not-on-map' white={true}>not on the map</Note>
+                        <Note key='not-on-map' white={true}>
+                            <span>not on the map</span>
+                            <Icon
+                                type='environment'
+                                className='icon-button'
+                                onClick={() => this.props.addToMap(this.props.combatant)}
+                            />
+                        </Note>
                     );
                 }
                 if (!this.props.combatant.showOnMap) {
@@ -1141,6 +1162,7 @@ interface MonsterRowProps {
     combat: Combat;
     selected: boolean;
     select: (combatant: Combatant & Monster) => void;
+    addToMap: (combatant: Combatant & Monster) => void;
 }
 
 class MonsterRow extends React.Component<MonsterRowProps> {
@@ -1195,10 +1217,24 @@ class MonsterRow extends React.Component<MonsterRowProps> {
             }
 
             const notes = [];
+            if (this.props.combatant.note) {
+                notes.push(
+                    <Note key='text' white={true}>
+                        <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.combatant.note) }} />
+                    </Note>
+                );
+            }
             if (this.props.combat.map) {
                 if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
                     notes.push(
-                        <Note key='not-on-map' white={true}>not on the map</Note>
+                        <Note key='not-on-map' white={true}>
+                            <span>not on the map</span>
+                            <Icon
+                                type='environment'
+                                className='icon-button'
+                                onClick={() => this.props.addToMap(this.props.combatant)}
+                            />
+                        </Note>
                     );
                 }
                 if (!this.props.combatant.showOnMap) {
@@ -1333,7 +1369,7 @@ class MapItemCard extends React.Component<MapItemCardProps, MapItemCardState> {
         );
     }
 
-    private getAppearanceSection() {
+    private getStyleSection() {
         const typeOptions = ['overlay', 'token'].map(t => {
             return { id: t, text: t };
         });
@@ -1390,7 +1426,7 @@ class MapItemCard extends React.Component<MapItemCardProps, MapItemCardState> {
                 <div>
                     <Input.TextArea
                         placeholder='details'
-                        autoSize={{ minRows: 10 }}
+                        autoSize={{ minRows: 5 }}
                         value={this.props.note.text}
                         onChange={event => this.props.changeValue(this.props.note, 'text', event.target.value)}
                     />
@@ -1408,7 +1444,7 @@ class MapItemCard extends React.Component<MapItemCardProps, MapItemCardState> {
 
     public render() {
         try {
-            const options = ['position', 'appearance', 'notes'].map(option => {
+            const options = ['position', 'style', 'notes'].map(option => {
                 return { id: option, text: option };
             });
 
@@ -1417,8 +1453,8 @@ class MapItemCard extends React.Component<MapItemCardProps, MapItemCardState> {
                 case 'position':
                     content = this.getPositionSection();
                     break;
-                case 'appearance':
-                    content = this.getAppearanceSection();
+                case 'style':
+                    content = this.getStyleSection();
                     break;
                 case 'notes':
                     content = this.getNotesSection();

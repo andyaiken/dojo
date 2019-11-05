@@ -414,7 +414,7 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
         );
     }
 
-    private getAppearanceSection() {
+    private getStyleSection() {
         const terrainOptions = TERRAIN_TYPES.map(t => {
             return { id: t, text: t };
         });
@@ -460,7 +460,7 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
                 <div>
                     <Input.TextArea
                         placeholder='details'
-                        autoSize={{ minRows: 10 }}
+                        autoSize={{ minRows: 5 }}
                         value={this.props.note.text}
                         onChange={event => this.props.changeValue(this.props.note, 'text', event.target.value)}
                     />
@@ -478,7 +478,7 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
 
     public render() {
         try {
-            const options = ['position', 'appearance', 'notes'].map(option => {
+            const options = ['position', 'style', 'notes'].map(option => {
                 return { id: option, text: option };
             });
 
@@ -487,8 +487,8 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
                 case 'position':
                     content = this.getPositionSection();
                     break;
-                case 'appearance':
-                    content = this.getAppearanceSection();
+                case 'style':
+                    content = this.getStyleSection();
                     break;
                 case 'notes':
                     content = this.getNotesSection();

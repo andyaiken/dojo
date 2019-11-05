@@ -130,6 +130,12 @@ export default class Dojo extends React.Component<Props, State> {
                 combats = JSON.parse(str);
 
                 combats.forEach(combat => {
+                    combat.combatants.forEach(c => {
+                        if (c.note === undefined) {
+                            c.note = '';
+                        }
+                    });
+
                     if (combat.map) {
                         if (combat.map.notes === undefined) {
                             combat.map.notes = [];
@@ -1043,6 +1049,7 @@ export default class Dojo extends React.Component<Props, State> {
         combatant.hp = null;
         combatant.conditions = [];
         combatant.tags = [];
+        combatant.note = '';
         combatant.altitude = 0;
         combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
 
@@ -1081,6 +1088,7 @@ export default class Dojo extends React.Component<Props, State> {
         combatant.hp = combatant.hpMax;
         combatant.conditions = [];
         combatant.tags = [];
+        combatant.note = '';
         combatant.altitude = 0;
         combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
 
@@ -2339,6 +2347,7 @@ export default class Dojo extends React.Component<Props, State> {
                         />
                     );
                     header = 'dm tools';
+                    width = '75%';
                     closable = true;
                     break;
                 case 'search':
