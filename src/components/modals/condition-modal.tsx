@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Input, Row } from 'antd';
+import { Col, Row } from 'antd';
 
 import Factory from '../../utils/factory';
 import Utils from '../../utils/utils';
@@ -107,17 +107,6 @@ export default class ConditionModal extends React.Component<Props, State> {
                 const controls = [];
                 const description = [];
                 if (condition === this.state.condition.name) {
-                    if (condition === 'custom') {
-                        controls.push(
-                            <Input
-                                key='customtext'
-                                placeholder='custom condition'
-                                value={this.state.condition.text}
-                                allowClear={true}
-                                onChange={event => this.changeValue(this.state.condition, 'text', event.target.value)}
-                            />
-                        );
-                    }
                     if (condition === 'exhaustion') {
                         controls.push(
                             <NumberSpin

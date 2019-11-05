@@ -622,13 +622,35 @@ class MapToken extends React.Component<MapTokenProps> {
                 </div>
             );
 
+            let noteText = '';
+            if (this.props.combatant) {
+                if (!this.props.combatant.showOnMap) {
+                    noteText += '\n\n';
+                    noteText += '**hidden**';
+                }
+                this.props.combatant.tags.forEach(tag => {
+                    noteText += '\n\n';
+                    noteText += '**' + Utils.getTagTitle(tag) + '**';
+                    noteText += '\n\n';
+                    noteText += '* ' + Utils.getTagDescription(tag);
+                });
+                this.props.combatant.conditions.forEach(condition => {
+                    noteText += '\n\n';
+                    noteText += '**' + condition.name + '**';
+                    Utils.conditionText(condition).forEach(txt => {
+                        noteText += '\n\n';
+                        noteText += '* ' + txt;
+                    });
+                });
+            }
             if (this.props.note && this.props.note.text) {
-                const note = (
-                    <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.note.text) }} />
-                );
+                noteText += '\n\n';
+                noteText += this.props.note.text;
+            }
 
+            if (noteText) {
                 return (
-                    <Popover placement='bottom' title='note' content={note}>
+                    <Popover placement='bottom' title='note' content={<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(noteText) }} />}>
                         {token}
                     </Popover>
                 );

@@ -1058,13 +1058,6 @@ class PCRow extends React.Component<PCRowProps> {
             }
 
             const notes = [];
-            if (this.props.combatant.note) {
-                notes.push(
-                    <Note key='text' white={true}>
-                        <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.combatant.note) }} />
-                    </Note>
-                );
-            }
             if (this.props.combat.map) {
                 if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
                     notes.push(
@@ -1100,9 +1093,6 @@ class PCRow extends React.Component<PCRowProps> {
                     if (c.name === 'exhaustion') {
                         name += ' (' + c.level + ')';
                     }
-                    if ((c.name === 'custom') && (c.text)) {
-                        name = c.text;
-                    }
                     if (c.duration) {
                         name += ' ' + Utils.conditionDurationText(c, this.props.combat);
                     }
@@ -1120,6 +1110,13 @@ class PCRow extends React.Component<PCRowProps> {
                         </Note>
                     );
                 });
+            }
+            if (this.props.combatant.note) {
+                notes.push(
+                    <Note key='text' white={true}>
+                        <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.combatant.note) }} />
+                    </Note>
+                );
             }
 
             let companions = null;
@@ -1216,13 +1213,6 @@ class MonsterRow extends React.Component<MonsterRowProps> {
             }
 
             const notes = [];
-            if (this.props.combatant.note) {
-                notes.push(
-                    <Note key='text' white={true}>
-                        <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.combatant.note) }} />
-                    </Note>
-                );
-            }
             if (this.props.combat.map) {
                 if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
                     notes.push(
@@ -1258,9 +1248,6 @@ class MonsterRow extends React.Component<MonsterRowProps> {
                     if (c.name === 'exhaustion') {
                         name += ' (' + c.level + ')';
                     }
-                    if ((c.name === 'custom') && (c.text)) {
-                        name = c.text;
-                    }
                     if (c.duration) {
                         name += ' ' + Utils.conditionDurationText(c, this.props.combat);
                     }
@@ -1278,6 +1265,13 @@ class MonsterRow extends React.Component<MonsterRowProps> {
                         </Note>
                     );
                 });
+            }
+            if (this.props.combatant.note) {
+                notes.push(
+                    <Note key='text' white={true}>
+                        <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.combatant.note) }} />
+                    </Note>
+                );
             }
 
             let dmInfo = null;

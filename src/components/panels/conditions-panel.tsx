@@ -66,9 +66,6 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
             if (this.props.condition.name === 'exhaustion') {
                 name += ' (' + this.props.condition.level + ')';
             }
-            if ((this.props.condition.name === 'custom') && (this.props.condition.text !== null)) {
-                name = this.props.condition.text;
-            }
 
             let duration = null;
             if (this.props.condition.duration !== null) {
