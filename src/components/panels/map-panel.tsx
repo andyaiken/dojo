@@ -262,6 +262,7 @@ export default class MapPanel extends React.Component<Props> {
                     .map(i => {
                         let miniSize = Utils.miniSize(i.size);
                         let note = Mercator.getNote(this.props.map, i);
+                        let isPC = false;
                         const combatant = this.props.combatants.find(c => c.id === i.id);
                         if (combatant) {
                             miniSize = Utils.miniSize(combatant.displaySize);
@@ -270,6 +271,7 @@ export default class MapPanel extends React.Component<Props> {
                                 note.targetID = combatant.id;
                                 note.text = combatant.note;
                             }
+                            isPC = (combatant.type === 'pc');
                         }
                         const tokenStyle = this.getStyle(i.x, i.y, miniSize, miniSize, 'circle', mapDimensions);
                         return (
@@ -281,7 +283,7 @@ export default class MapPanel extends React.Component<Props> {
                                 style={tokenStyle}
                                 simple={this.props.mode === 'thumbnail'}
                                 showGauge={this.props.mode === 'combat'}
-                                showHidden={this.props.mode === 'combat'}
+                                showHidden={(this.props.mode === 'combat') || isPC}
                                 selectable={(this.props.mode === 'combat') || (this.props.mode === 'combat-player')}
                                 selected={this.props.selectedItemID ===  i.id}
                                 select={id => this.props.setSelectedItemID(id)}

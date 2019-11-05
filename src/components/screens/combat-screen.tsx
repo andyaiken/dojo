@@ -234,7 +234,7 @@ export default class CombatScreen extends React.Component<Props, State> {
         }
 
         const init = combat.combatants
-            .filter(c => c.showOnMap)
+            .filter(c => (c.type === 'pc') || c.showOnMap)
             .filter(combatant => !combatant.pending && combatant.active && !combatant.defeated);
 
         const initList = (
@@ -245,7 +245,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                 renderList={({ children, props }) => <div {...props}>{children}</div>}
                 renderItem={({ value, props, isDragged }) => (
                     <div {...props} className={isDragged ? 'dragged' : ''}>
-                        {this.createCombatantRow(value)}
+                        {this.createCombatantRow(value, true)}
                     </div>
                 )}
             />
@@ -509,7 +509,7 @@ export default class CombatScreen extends React.Component<Props, State> {
         );
     }
 
-    private createCombatantRow(combatant: Combatant) {
+    private createCombatantRow(combatant: Combatant, playerView: boolean) {
         switch (combatant.type) {
             case 'pc':
                 return (
@@ -518,6 +518,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                         combatant={combatant as Combatant & PC}
                         combat={this.props.combat as Combat}
                         selected={combatant.id === this.state.selectedItemID}
+                        minimal={playerView}
                         select={c => this.setSelectedItemID(c.id)}
                         addToMap={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
                     />
@@ -529,6 +530,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                         combatant={combatant as Combatant & Monster}
                         combat={this.props.combat as Combat}
                         selected={combatant.id === this.state.selectedItemID}
+                        minimal={playerView}
                         select={c => this.setSelectedItemID(c.id)}
                         addToMap={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
                     />
@@ -673,7 +675,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                     renderList={({ children, props }) => <div {...props}>{children}</div>}
                     renderItem={({ value, props, isDragged }) => (
                         <div {...props} className={isDragged ? 'dragged' : ''}>
-                            {this.createCombatantRow(value)}
+                            {this.createCombatantRow(value, false)}
                         </div>
                     )}
                 />
@@ -757,10 +759,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                 <div className='full-height'>
                     <Row className='combat-top-row'>
                         <Col span={8} style={{ padding: '0 10px' }}>
-                            <button
-                                className={this.props.combat.combatants.some(c => c.pending) ? 'disabled' : ''}
-                                onClick={() => this.nextTurn()}
-                            >
+                            <button onClick={() => this.nextTurn()}>
                                 {this.props.combat.combatants.find(c => c.current) ? 'next turn' : 'start combat'}
                             </button>
                         </Col>

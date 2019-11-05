@@ -69,23 +69,23 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
     }
 
     private heal() {
-        const combatant = this.props.combatant as Combatant & Monster;
+        const monster = this.props.combatant as Combatant & Monster;
 
-        let hp = (combatant.hp ? combatant.hp : 0) + this.state.damageOrHealing;
-        hp = Math.min(hp, combatant.hpMax);
+        let hp = (monster.hp ? monster.hp : 0) + this.state.damageOrHealing;
+        hp = Math.min(hp, monster.hpMax);
 
         this.setState({
             damageOrHealing: 0
         }, () => {
-            this.props.changeHP(combatant, hp, combatant.hpTemp, 0);
+            this.props.changeHP(monster, hp, monster.hpTemp, 0);
         });
     }
 
     private damage() {
-        const combatant = this.props.combatant as Combatant & Monster;
+        const monster = this.props.combatant as Combatant & Monster;
 
-        let hp = (combatant.hp ? combatant.hp : 0);
-        let temp = combatant.hpTemp;
+        let hp = (monster.hp ? monster.hp : 0);
+        let temp = monster.hpTemp;
 
         const totalDamage = this.state.damageOrHealing;
         let damage = totalDamage;
@@ -102,7 +102,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
         this.setState({
             damageOrHealing: 0
         }, () => {
-            this.props.changeHP(combatant, hp, temp, totalDamage);
+            this.props.changeHP(monster, hp, temp, totalDamage);
         });
     }
 
@@ -199,10 +199,11 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
     }
 
     private getHPSection() {
-        const monster = this.props.combatant as Combatant & Monster;
-        if (monster === null) {
-            return null;
+        if (this.props.combatant.type !== 'monster') {
+            return;
         }
+
+        const monster = this.props.combatant as Combatant & Monster;
 
         let btn = null;
         if ((monster.hp !== null) && (monster.hp <= 0)) {
