@@ -402,6 +402,14 @@ class MapTile extends React.Component<MapTileProps> {
         }
     }
 
+    private getNoteText() {
+        if (this.props.note) {
+            return this.props.note.text.trim();
+        }
+
+        return '';
+    }
+
     public render() {
         try {
             let style = 'tile ' + this.props.tile.terrain;
@@ -432,13 +440,10 @@ class MapTile extends React.Component<MapTileProps> {
                 </div>
             );
 
-            if (this.props.note && this.props.note.text) {
-                const note = (
-                    <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.note.text) }} />
-                );
-
+            const noteText = this.getNoteText();
+            if (noteText) {
                 return (
-                    <Popover placement='bottom' title='note' content={note}>
+                    <Popover placement='bottom' title='note' content={<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(noteText) }} />}>
                         {tile}
                     </Popover>
                 );
@@ -466,6 +471,14 @@ class MapOverlay extends React.Component<MapOverlayProps> {
         this.props.select(this.props.overlay.id);
     }
 
+    private getNoteText() {
+        if (this.props.note) {
+            return this.props.note.text.trim();
+        }
+
+        return '';
+    }
+
     public render() {
         try {
             let style = 'overlay';
@@ -481,13 +494,10 @@ class MapOverlay extends React.Component<MapOverlayProps> {
                 />
             );
 
-            if (this.props.note && this.props.note.text) {
-                const note = (
-                    <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.note.text) }} />
-                );
-
+            const noteText = this.getNoteText();
+            if (noteText) {
                 return (
-                    <Popover placement='bottom' title='note' content={note}>
+                    <Popover placement='bottom' title='note' content={<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(noteText) }} />}>
                         {overlay}
                     </Popover>
                 );
@@ -520,6 +530,40 @@ class MapToken extends React.Component<MapTokenProps> {
             e.stopPropagation();
             this.props.select(this.props.token.id);
         }
+    }
+
+    private getNoteText() {
+        let noteText = this.props.combatant ? '**' + this.props.combatant.displayName + '**' : '';
+
+        if (this.props.combatant) {
+            if (!this.props.combatant.showOnMap) {
+                noteText += '\n\n';
+                noteText += '**hidden**';
+            }
+
+            this.props.combatant.tags.forEach(tag => {
+                noteText += '\n\n';
+                noteText += '**' + Utils.getTagTitle(tag) + '**';
+                noteText += '\n\n';
+                noteText += '* ' + Utils.getTagDescription(tag);
+            });
+
+            this.props.combatant.conditions.forEach(condition => {
+                noteText += '\n\n';
+                noteText += '**' + condition.name + '**';
+                Utils.conditionText(condition).forEach(txt => {
+                    noteText += '\n\n';
+                    noteText += '* ' + txt;
+                });
+            });
+        }
+
+        if (this.props.note && this.props.note.text) {
+            noteText += '\n\n';
+            noteText += this.props.note.text;
+        }
+
+        return noteText.trim();
     }
 
     public render() {
@@ -622,32 +666,7 @@ class MapToken extends React.Component<MapTokenProps> {
                 </div>
             );
 
-            let noteText = '';
-            if (this.props.combatant) {
-                if (!this.props.combatant.showOnMap) {
-                    noteText += '\n\n';
-                    noteText += '**hidden**';
-                }
-                this.props.combatant.tags.forEach(tag => {
-                    noteText += '\n\n';
-                    noteText += '**' + Utils.getTagTitle(tag) + '**';
-                    noteText += '\n\n';
-                    noteText += '* ' + Utils.getTagDescription(tag);
-                });
-                this.props.combatant.conditions.forEach(condition => {
-                    noteText += '\n\n';
-                    noteText += '**' + condition.name + '**';
-                    Utils.conditionText(condition).forEach(txt => {
-                        noteText += '\n\n';
-                        noteText += '* ' + txt;
-                    });
-                });
-            }
-            if (this.props.note && this.props.note.text) {
-                noteText += '\n\n';
-                noteText += this.props.note.text;
-            }
-
+            const noteText = this.getNoteText();
             if (noteText) {
                 return (
                     <Popover placement='bottom' title='note' content={<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(noteText) }} />}>

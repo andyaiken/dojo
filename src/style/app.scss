@@ -172,6 +172,9 @@ button {
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Ant overrides
+
 .ant-drawer-body {
     padding: 0;
     font-size: 12px;
@@ -240,6 +243,26 @@ button {
 
 .ant-slider {
     margin: 10px 0;
+}
+
+.ant-popover {
+    font-size: 12px;
+    line-height: 12px;
+    color: $foreground;
+    user-select: none;
+
+    .ant-popover-title {
+        display: none;
+    }
+
+    .ant-popover-inner {
+        border-radius: 0;
+        opacity: 0.95;
+
+        .ant-popover-inner-content {
+            color: $foreground;
+        }
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
