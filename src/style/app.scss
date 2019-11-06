@@ -245,22 +245,17 @@ button {
     margin: 10px 0;
 }
 
-.ant-popover {
+.ant-tooltip {
     font-size: 12px;
     line-height: 12px;
-    color: $foreground;
     user-select: none;
 
-    .ant-popover-title {
-        display: none;
-    }
-
-    .ant-popover-inner {
+    .ant-tooltip-inner {
         border-radius: 0;
         opacity: 0.95;
 
-        .ant-popover-inner-content {
-            color: $foreground;
+        b, strong {
+            color: $background;
         }
     }
 }

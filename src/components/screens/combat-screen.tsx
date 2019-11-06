@@ -24,7 +24,6 @@ import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
 import Selector from '../controls/selector';
 import CombatControlsPanel from '../panels/combat-controls-panel';
-import CombatReportPanel from '../panels/combat-report-panel';
 import GridPanel from '../panels/grid-panel';
 import HitPointGauge from '../panels/hit-point-gauge';
 import MapPanel from '../panels/map-panel';
@@ -69,6 +68,7 @@ interface Props {
     scatterCombatants: (type: 'pc' | 'monster') => void;
     rotateMap: () => void;
     addOverlay: (overlay: MapItem) => void;
+    showLeaderboard: () => void;
 }
 
 interface State {
@@ -386,6 +386,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                 <div className='subheading'>encounter</div>
                 <button onClick={() => this.props.pauseCombat()}>pause combat</button>
                 <ConfirmButton text='end combat' callback={() => this.props.endCombat()} />
+                <button onClick={() => this.props.showLeaderboard()}>leaderboard</button>
                 <div className='subheading'>combatants</div>
                 <Checkbox
                     label='show defeated combatants'
@@ -486,14 +487,6 @@ export default class CombatScreen extends React.Component<Props, State> {
         }
 
         return selectedCombatant;
-    }
-
-    private getReport() {
-        return (
-            <CombatReportPanel
-                combat={this.props.combat}
-            />
-        );
     }
 
     private createPendingRow(combatant: Combatant) {
@@ -734,7 +727,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                 }
             });
 
-            const rightPanelOptions = ['selection', 'leaderboard', 'tools'].map(option => {
+            const rightPanelOptions = ['selection', 'tools'].map(option => {
                 return { id: option, text: option };
             });
 
@@ -744,10 +737,6 @@ export default class CombatScreen extends React.Component<Props, State> {
                 case 'selection':
                     rightHeading = 'selected combatant';
                     rightContent = this.getSelectedCombatant();
-                    break;
-                case 'leaderboard':
-                    rightHeading = 'leaderboard';
-                    rightContent = this.getReport();
                     break;
                 case 'tools':
                     rightHeading = 'tools';

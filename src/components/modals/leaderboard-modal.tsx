@@ -4,13 +4,13 @@ import Utils from '../../utils/utils';
 
 import { Combat } from '../../models/combat';
 
-import ChartPanel from './chart-panel';
+import ChartPanel from '../panels/chart-panel';
 
 interface Props {
     combat: Combat;
 }
 
-export default class CombatReportPanel extends React.Component<Props> {
+export default class LeaderboardModal extends React.Component<Props> {
     private getKillsChart() {
         let data: {text: string, value: number}[] = [];
 
@@ -31,15 +31,12 @@ export default class CombatReportPanel extends React.Component<Props> {
                 }
             });
 
-        if (data.length === 0) {
-            return null;
-        }
-
         data = Utils.sort(data, [{field: 'value', dir: 'desc'}]);
 
         return (
             <div>
                 <div className='subheading'>kills</div>
+                {data.length === 0 ? <div className='section'>no data to display</div> : null}
                 <ChartPanel data={data} />
             </div>
         );
@@ -65,15 +62,12 @@ export default class CombatReportPanel extends React.Component<Props> {
                 }
             });
 
-        if (data.length === 0) {
-            return null;
-        }
-
         data = Utils.sort(data, [{field: 'value', dir: 'desc'}]);
 
         return (
             <div>
                 <div className='subheading'>damage dealt</div>
+                {data.length === 0 ? <div className='section'>no data to display</div> : null}
                 <ChartPanel data={data} />
             </div>
         );
@@ -95,19 +89,16 @@ export default class CombatReportPanel extends React.Component<Props> {
                         };
                         data.push(datum);
                     }
-                    datum.value += entry.value;
+                    datum.value += 1;
                 }
             });
-
-        if (data.length === 0) {
-            return null;
-        }
 
         data = Utils.sort(data, [{field: 'value', dir: 'desc'}]);
 
         return (
             <div>
                 <div className='subheading'>mobility</div>
+                {data.length === 0 ? <div className='section'>no data to display</div> : null}
                 <ChartPanel data={data} />
             </div>
         );
@@ -129,19 +120,16 @@ export default class CombatReportPanel extends React.Component<Props> {
                         };
                         data.push(datum);
                     }
-                    datum.value += entry.value;
+                    datum.value += 1;
                 }
             });
-
-        if (data.length === 0) {
-            return null;
-        }
 
         data = Utils.sort(data, [{field: 'value', dir: 'desc'}]);
 
         return (
             <div>
                 <div className='subheading'>conditions added</div>
+                {data.length === 0 ? <div className='section'>no data to display</div> : null}
                 <ChartPanel data={data} />
             </div>
         );
@@ -163,19 +151,16 @@ export default class CombatReportPanel extends React.Component<Props> {
                         };
                         data.push(datum);
                     }
-                    datum.value += entry.value;
+                    datum.value += 1;
                 }
             });
-
-        if (data.length === 0) {
-            return null;
-        }
 
         data = Utils.sort(data, [{field: 'value', dir: 'desc'}]);
 
         return (
             <div>
                 <div className='subheading'>conditions removed</div>
+                {data.length === 0 ? <div className='section'>no data to display</div> : null}
                 <ChartPanel data={data} />
             </div>
         );
@@ -233,15 +218,12 @@ export default class CombatReportPanel extends React.Component<Props> {
                 }
             });
 
-        if (data.length === 0) {
-            return null;
-        }
-
         data = Utils.sort(data, [{field: 'value', dir: 'asc'}]);
 
         return (
             <div>
                 <div className='subheading'>turn length</div>
+                {data.length === 0 ? <div className='section'>no data to display</div> : null}
                 <ChartPanel
                     data={data}
                     display={value => {
@@ -256,7 +238,7 @@ export default class CombatReportPanel extends React.Component<Props> {
     public render() {
         try {
             return (
-                <div className='group-panel combat-report'>
+                <div className='combat-report scrollable'>
                     {this.getKillsChart()}
                     {this.getDamageChart()}
                     {this.getMobilityChart()}

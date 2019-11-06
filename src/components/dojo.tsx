@@ -20,6 +20,7 @@ import AboutModal from './modals/about-modal';
 import AddCombatantsModal from './modals/add-combatants-modal';
 import CombatStartModal from './modals/combat-start-modal';
 import ConditionModal from './modals/condition-modal';
+import LeaderboardModal from './modals/leaderboard-modal';
 import MapEditorModal from './modals/map-editor-modal';
 import MonsterEditorModal from './modals/monster-editor-modal';
 import MonsterImportModal from './modals/monster-import-modal';
@@ -1284,10 +1285,12 @@ export default class Dojo extends React.Component<Props, State> {
             if (combatant) {
                 combatant.current = true;
 
-                const entry = Factory.createCombatReportEntry();
-                entry.type = 'turn-start';
-                entry.combatantID = combatant.id;
-                combat.report.push(entry);
+                if (combatant.type === 'pc') {
+                    const entry = Factory.createCombatReportEntry();
+                    entry.type = 'turn-start';
+                    entry.combatantID = combatant.id;
+                    combat.report.push(entry);
+                }
             }
 
             if (newRound) {
@@ -1527,7 +1530,6 @@ export default class Dojo extends React.Component<Props, State> {
                     const entry = Factory.createCombatReportEntry();
                     entry.type = 'movement';
                     entry.combatantID = item.id;
-                    entry.value = 1;
                     combat.report.push(entry);
                 }
 
@@ -1640,10 +1642,12 @@ export default class Dojo extends React.Component<Props, State> {
     private endTurn(combatant: Combatant) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
-            const entry = Factory.createCombatReportEntry();
-            entry.type = 'turn-end';
-            entry.combatantID = combatant.id;
-            combat.report.push(entry);
+            if (combatant.type === 'pc') {
+                const entry = Factory.createCombatReportEntry();
+                entry.type = 'turn-end';
+                entry.combatantID = combatant.id;
+                combat.report.push(entry);
+            }
 
             // Handle end-of-turn conditions
             combat.combatants.filter(actor => actor.conditions).forEach(actor => {
@@ -1749,10 +1753,13 @@ export default class Dojo extends React.Component<Props, State> {
             const conditions: Condition[] = this.state.drawer.combatant.conditions;
             conditions.push(this.state.drawer.condition);
 
-            const entry = Factory.createCombatReportEntry();
-            entry.type = 'condition-add';
-            entry.combatantID = this.state.drawer.combatant.id;
-            combat.report.push(entry);
+            const current = combat.combatants.find(c => c.current);
+            if (current && (current.type === 'pc')) {
+                const entry = Factory.createCombatReportEntry();
+                entry.type = 'condition-add';
+                entry.combatantID = current.id;
+                combat.report.push(entry);
+            }
 
             // eslint-disable-next-line
             this.state.drawer.combatant.conditions = Utils.sort(conditions, [{ field: 'name', dir: 'asc' }]);
@@ -1804,10 +1811,13 @@ export default class Dojo extends React.Component<Props, State> {
                 const index = combatant.conditions.indexOf(condition);
                 combatant.conditions.splice(index, 1);
 
-                const entry = Factory.createCombatReportEntry();
-                entry.type = 'condition-remove';
-                entry.combatantID = combatant.id;
-                combat.report.push(entry);
+                const current = combat.combatants.find(c => c.current);
+                if (current && (current.type === 'pc')) {
+                    const entry = Factory.createCombatReportEntry();
+                    entry.type = 'condition-remove';
+                    entry.combatantID = current.id;
+                    combat.report.push(entry);
+                }
 
                 this.setState({
                     combats: this.state.combats
@@ -1870,10 +1880,13 @@ export default class Dojo extends React.Component<Props, State> {
 
                 combatant.conditions = Utils.sort(combatant.conditions, [{ field: 'name', dir: 'asc' }]);
 
-                const entry = Factory.createCombatReportEntry();
-                entry.type = 'condition-add';
-                entry.combatantID = combatant.id;
-                combat.report.push(entry);
+                const current = combat.combatants.find(c => c.current);
+                if (current && (current.type === 'pc')) {
+                    const entry = Factory.createCombatReportEntry();
+                    entry.type = 'condition-add';
+                    entry.combatantID = current.id;
+                    combat.report.push(entry);
+                }
 
                 this.setState({
                     combats: this.state.combats
@@ -1915,6 +1928,18 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
+
+    private showLeaderboard() {
+        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+        if (combat) {
+            this.setState({
+                drawer: {
+                    type: 'leaderboard',
+                    combat: combat
+                }
+            });
+        }
+    }
     //#endregion
 
     //#region Saving
@@ -2130,6 +2155,7 @@ export default class Dojo extends React.Component<Props, State> {
                             scatterCombatants={type => this.scatterCombatants(type)}
                             rotateMap={() => this.rotateMap()}
                             addOverlay={overlay => this.addMapItem(overlay)}
+                            showLeaderboard={() => this.showLeaderboard()}
                         />
                     );
                 } else {
@@ -2340,6 +2366,15 @@ export default class Dojo extends React.Component<Props, State> {
                         </Row>
                     );
                     break;
+                case 'leaderboard':
+                    content = (
+                        <LeaderboardModal
+                            combat={this.state.drawer.combat}
+                        />
+                    );
+                    header = 'leaderboard';
+                    closable = true;
+                    break;
                 case 'tools':
                     content = (
                         <ToolsModal
@@ -2347,7 +2382,6 @@ export default class Dojo extends React.Component<Props, State> {
                         />
                     );
                     header = 'dm tools';
-                    width = '75%';
                     closable = true;
                     break;
                 case 'search':

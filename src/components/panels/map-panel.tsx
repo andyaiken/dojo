@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Icon, Popover } from 'antd';
+import { Icon, Tooltip } from 'antd';
 import Showdown from 'showdown';
 
 import Mercator from '../../utils/mercator';
@@ -443,9 +443,9 @@ class MapTile extends React.Component<MapTileProps> {
             const noteText = this.getNoteText();
             if (noteText) {
                 return (
-                    <Popover placement='bottom' title='note' content={<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(noteText) }} />}>
+                    <Tooltip placement='bottom' title={<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(noteText) }} />}>
                         {tile}
-                    </Popover>
+                    </Tooltip>
                 );
             } else {
                 return tile;
@@ -497,9 +497,9 @@ class MapOverlay extends React.Component<MapOverlayProps> {
             const noteText = this.getNoteText();
             if (noteText) {
                 return (
-                    <Popover placement='bottom' title='note' content={<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(noteText) }} />}>
+                    <Tooltip placement='bottom' title={<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(noteText) }} />}>
                         {overlay}
-                    </Popover>
+                    </Tooltip>
                 );
             } else {
                 return overlay;
@@ -669,9 +669,9 @@ class MapToken extends React.Component<MapTokenProps> {
             const noteText = this.getNoteText();
             if (noteText) {
                 return (
-                    <Popover placement='bottom' title='note' content={<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(noteText) }} />}>
+                    <Tooltip placement='bottom' title={<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(noteText) }} />}>
                         {token}
-                    </Popover>
+                    </Tooltip>
                 );
             } else {
                 return token;

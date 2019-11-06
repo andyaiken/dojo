@@ -14,6 +14,10 @@ export default class ChartPanel extends React.Component<Props> {
 
     public render() {
         try {
+            if (this.props.data.length === 0) {
+                return null;
+            }
+
             const max = Math.max(...this.props.data.map(d => d.value));
 
             let data;
