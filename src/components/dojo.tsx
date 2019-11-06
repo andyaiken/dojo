@@ -1874,9 +1874,9 @@ export default class Dojo extends React.Component<Props, State> {
             if (existing) {
                 this.removeCondition(combatant, existing.id);
             } else {
-                const c = Factory.createCondition();
-                c.name = condition;
-                combatant.conditions.push(c);
+                const cnd = Factory.createCondition();
+                cnd.name = condition;
+                combatant.conditions.push(cnd);
 
                 combatant.conditions = Utils.sort(combatant.conditions, [{ field: 'name', dir: 'asc' }]);
 
@@ -1927,7 +1927,6 @@ export default class Dojo extends React.Component<Props, State> {
             });
         }
     }
-
 
     private showLeaderboard() {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
