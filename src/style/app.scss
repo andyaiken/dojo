@@ -1090,6 +1090,7 @@ body,
             position: absolute;
             border: 1px solid white;
             background-color: rgba(0, 60, 200, 0.2);
+            transition: none;
 
             &.grid-overlay {
                 opacity: 0.5;

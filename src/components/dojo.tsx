@@ -913,6 +913,34 @@ export default class Dojo extends React.Component<Props, State> {
         }
     }
 
+    private addDungeonMap() {
+        const folio = this.state.mapFolios.find(f => f.id === this.state.selectedMapFolioID);
+        if (folio) {
+            const map = Factory.createMap();
+            map.name = 'new dungeon';
+            Mercator.generate('dungeon', map);
+            folio.maps.push(map);
+
+            this.setState({
+                mapFolios: this.state.mapFolios
+            });
+        }
+    }
+
+    private addDelveMap() {
+        const folio = this.state.mapFolios.find(f => f.id === this.state.selectedMapFolioID);
+        if (folio) {
+            const map = Factory.createMap();
+            map.name = 'new delve';
+            Mercator.generate('delve', map);
+            folio.maps.push(map);
+
+            this.setState({
+                mapFolios: this.state.mapFolios
+            });
+        }
+    }
+
     private editMap(map: Map) {
         const copy = JSON.parse(JSON.stringify(map));
         this.setState({
@@ -2103,6 +2131,8 @@ export default class Dojo extends React.Component<Props, State> {
                             goBack={() => this.selectMapFolio(null)}
                             removeMapFolio={() => this.removeCurrentMapFolio()}
                             addMap={() => this.addMap()}
+                            addDungeonMap={() => this.addDungeonMap()}
+                            addDelveMap={() => this.addDelveMap()}
                             editMap={map => this.editMap(map)}
                             removeMap={map => this.removeMap(map)}
                             changeValue={(source, type, value) => this.changeValue(source, type, value)}

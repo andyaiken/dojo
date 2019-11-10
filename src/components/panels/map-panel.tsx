@@ -349,33 +349,24 @@ class GridSquare extends React.Component<GridSquareProps> {
         onDoubleClick: null
     };
 
-    private click(e: React.MouseEvent) {
+    private click(e: React.MouseEvent, type: 'single' | 'double') {
         e.stopPropagation();
-        if (this.props.onClick) {
+        if ((type === 'single') && this.props.onClick) {
             this.props.onClick(this.props.x, this.props.y);
         }
-    }
-
-    private doubleClick(e: React.MouseEvent) {
-        e.stopPropagation();
-        if (this.props.onDoubleClick) {
+        if ((type === 'double') && this.props.onDoubleClick) {
             this.props.onDoubleClick(this.props.x, this.props.y);
         }
     }
 
     public render() {
         try {
-            let style = 'grid-square';
-            if (this.props.overlay) {
-                style += ' grid-overlay';
-            }
-
             return (
                 <div
-                    className={style}
+                    className={this.props.overlay ? 'grid-square grid-overlay' : 'grid-square'}
                     style={this.props.style}
-                    onClick={e => this.click(e)}
-                    onDoubleClick={e => this.doubleClick(e)}
+                    onClick={e => this.click(e, 'single')}
+                    onDoubleClick={e => this.click(e, 'double')}
                 />
             );
         } catch (ex) {

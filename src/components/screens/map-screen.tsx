@@ -16,6 +16,8 @@ interface Props {
     goBack: () => void;
     removeMapFolio: () => void;
     addMap: () => void;
+    addDungeonMap: () => void;
+    addDelveMap: () => void;
     editMap: (map: Map) => void;
     removeMap: (map: Map) => void;
     changeValue: (source: {}, field: string, value: any) => void;
@@ -61,6 +63,8 @@ export default class MapScreen extends React.Component<Props> {
                             mapFolio={this.props.mapFolio}
                             goBack={() => this.props.goBack()}
                             addMap={() => this.props.addMap()}
+                            addDungeonMap={() => this.props.addDungeonMap()}
+                            addDelveMap={() => this.props.addDelveMap()}
                             removeMapFolio={() => this.props.removeMapFolio()}
                             changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
                         />
@@ -85,6 +89,8 @@ interface MapFolioInfoProps {
     goBack: () => void;
     changeValue: (source: MapFolio, field: string, value: string) => void;
     addMap: () => void;
+    addDungeonMap: () => void;
+    addDelveMap: () => void;
     removeMapFolio: () => void;
 }
 
@@ -137,7 +143,9 @@ class MapFolioInfo extends React.Component<MapFolioInfoProps> {
                     {this.getSummary()}
                     <div className='divider' />
                     <div className='section'>
-                        <button onClick={() => this.props.addMap()}>add a new map</button>
+                        <button onClick={() => this.props.addMap()}>add a new blank map</button>
+                        <button onClick={() => this.props.addDungeonMap()}>add a new dungeon map</button>
+                        <button onClick={() => this.props.addDelveMap()}>add a new delve map</button>
                         <ConfirmButton text='delete folio' callback={() => this.props.removeMapFolio()} />
                         <div className='divider' />
                         <button onClick={() => this.props.goBack()}><Icon type='caret-left' style={{ fontSize: '10px' }} /> back to the list</button>

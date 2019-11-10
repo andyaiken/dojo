@@ -56,7 +56,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
 
     private nudgeMapSize(value: number) {
         this.setState({
-            mapSize: this.state.mapSize + value
+            mapSize: Math.max(this.state.mapSize + value, 5)
         });
     }
 
@@ -247,6 +247,13 @@ export default class MapEditorModal extends React.Component<Props, State> {
         });
     }
 
+    private generate(type: string) {
+        Mercator.generate(type, this.state.map);
+        this.setState({
+            map: this.state.map
+        });
+    }
+
     private addNote(tileID: string) {
         const note = Factory.createMapNote();
         note.targetID = tileID;
@@ -324,6 +331,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
                         <button onClick={() => this.toggleAddingTile()}>
                             {this.state.addingTile ? 'click somewhere on the map to add your new tile, or click here to cancel' : 'add a new tile'}
                         </button>
+                        <button onClick={() => this.generate('room')}>generate a room</button>
                         <button onClick={() => this.rotateMap()}>rotate the map</button>
                         <ConfirmButton text='clear all tiles' callback={() => this.clearMap()} />
                     </div>

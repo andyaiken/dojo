@@ -75,8 +75,12 @@ export default class Utils {
         return str;
     }
 
-    public static dieRoll(sides: number = 20): number {
-        return Math.floor(Math.random() * sides) + 1;
+    public static dieRoll(sides: number = 20, count: number = 1): number {
+        let total = 0;
+        for (let n = 0; n !== count; ++n) {
+            total += Math.floor(Math.random() * sides) + 1;
+        }
+        return total;
     }
 
     public static miniSize(size: string): number {

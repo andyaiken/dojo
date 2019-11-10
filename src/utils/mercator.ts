@@ -54,7 +54,7 @@ export default class Mercator {
         }
     }
 
-    private static mapDimensions(map: Map) {
+    public static mapDimensions(map: Map) {
         const tiles = map.items.filter(item => item.type === 'tile');
         if (tiles.length > 0) {
             let minX: number = tiles[0].x;
@@ -79,7 +79,26 @@ export default class Mercator {
         }
     }
 
-    private static canAddMonsterHere(map: Map, combatant: Combatant, x: number, y: number) {
+    public static canAddTileHere(map: Map, tile: MapItem, x: number, y: number, minGapX: number, minGapY: number) {
+        const coveredSquares: boolean[] = [];
+
+        const left = x - minGapX;
+        const top = y - minGapY;
+        const right = x + (tile.width - 1) + minGapX;
+        const bottom = y + (tile.height - 1) + minGapY;
+        for (let x1 = left; x1 <= right; ++x1) {
+            for (let y1 = top; y1 <= bottom; ++y1) {
+                // Is this square free of tiles?
+                const occupants = Mercator.itemsAt(map as Map, x1, y1);
+                const canOccupy = occupants.every(item => item.type !== 'tile');
+                coveredSquares.push(canOccupy);
+            }
+        }
+
+        return coveredSquares.every(square => square);
+    }
+
+    public static canAddMonsterHere(map: Map, combatant: Combatant, x: number, y: number) {
         const coveredSquares: boolean[] = [];
 
         const size = Utils.miniSize(combatant.displaySize);
@@ -137,5 +156,130 @@ export default class Mercator {
 
     public static getNote(map: Map, item: MapItem) {
         return map.notes.find(n => n.targetID === item.id) || null;
+    }
+
+    public static generate(type: string, map: Map) {
+        switch (type) {
+            case 'dungeon':
+                let dungeonRooms = 0;
+                while (dungeonRooms < 10) {
+                    if (Mercator.addRoom(map)) {
+                        dungeonRooms += 1;
+                    }
+                }
+                break;
+            case 'delve':
+                let delveRooms = 0;
+                while (delveRooms < 3) {
+                    if (Mercator.addRoom(map)) {
+                        delveRooms += 1;
+                    }
+                }
+                break;
+            case 'room':
+                let added = false;
+                while (!added) {
+                    added = Mercator.addRoom(map);
+                }
+                break;
+        }
+    }
+
+    public static addRoom(map: Map) {
+        const room = Factory.createMapItem();
+        room.type = 'tile';
+        room.terrain = 'flagstone';
+        room.style = 'square';
+        room.width = Utils.dieRoll(4, 2) + 2;
+        room.height = Utils.dieRoll(4, 2) + 2;
+
+        const dimensions = Mercator.mapDimensions(map);
+        if (dimensions) {
+            // Try to find a place we can add this tile
+            const minGap = 1;
+            const maxGap = 10;
+            dimensions.minX -= (room.width + maxGap);
+            dimensions.minY -= (room.height + maxGap);
+            dimensions.maxX += maxGap;
+            dimensions.maxY += maxGap;
+            const candidates = [];
+            for (let x = dimensions.minX; x !== dimensions.maxX; ++x) {
+                for (let y = dimensions.minY; y !== dimensions.maxY; ++y) {
+                    const canAdd = Mercator.canAddTileHere(map, room, x, y, minGap, minGap);
+                    if (canAdd) {
+                        candidates.push({ x: x, y: y });
+                    }
+                }
+            }
+            if (candidates.length > 0) {
+                const index = Math.floor(Math.random() * candidates.length);
+                room.x = candidates[index].x;
+                room.y = candidates[index].y;
+            } else {
+                return false;
+            }
+
+            // Try to add a straight corridor to another tile
+            const corridors: MapItem[] = [];
+            map.items.filter(i => i.type === 'tile').forEach(tile => {
+                // Find possible straight vertical corridors joining these two tiles
+                const minX = Math.max(room.x, tile.x);
+                const maxX = Math.min((room.x + room.width - 1), (tile.x + tile.width - 1));
+                const overlapX = maxX - minX + 1;
+                if (overlapX >= 2) {
+                    const corridorTop = Math.min((room.y + room.height - 1), (tile.y + tile.height - 1)) + 1;
+                    const corridorBottom = Math.max(room.y, tile.y) - 1;
+                    for (let x = minX; x <= maxX - 1; ++x) {
+                        const corridor = Factory.createMapItem();
+                        corridor.type = 'tile';
+                        corridor.terrain = 'flagstone';
+                        corridor.style = 'square';
+                        corridor.x = x;
+                        corridor.y = corridorTop;
+                        corridor.width = 2;
+                        corridor.height = corridorBottom - corridorTop + 1;
+                        if (Mercator.canAddTileHere(map, corridor, corridor.x, corridor.y, 1, 0)) {
+                            corridors.push(corridor);
+                        }
+                    }
+                }
+
+                // Find possible straight horizontal corridors joining these two tiles
+                const minY = Math.max(room.y, tile.y);
+                const maxY = Math.min((room.y + room.height - 1), (tile.y + tile.height - 1));
+                const overlapY = maxY - minY + 1;
+                if (overlapY >= 2) {
+                    const corridorLeft = Math.min((room.x + room.width - 1), (tile.x + tile.width - 1)) + 1;
+                    const corridorRight = Math.max(room.x, tile.x) - 1;
+                    for (let y = minY; y <= maxY - 1; ++y) {
+                        const corridor = Factory.createMapItem();
+                        corridor.type = 'tile';
+                        corridor.terrain = 'flagstone';
+                        corridor.style = 'square';
+                        corridor.x = corridorLeft;
+                        corridor.y = y;
+                        corridor.width = corridorRight - corridorLeft + 1;
+                        corridor.height = 2;
+                        if (Mercator.canAddTileHere(map, corridor, corridor.x, corridor.y, 0, 1)) {
+                            corridors.push(corridor);
+                        }
+                    }
+                }
+            });
+
+            if (corridors.length > 0) {
+                const index = Math.floor(Math.random() * corridors.length);
+                map.items.push(room);
+                map.items.push(corridors[index]);
+            } else {
+                return false;
+            }
+        } else {
+            map.items.push(room);
+        }
+
+        // TODO: Maybe add a second or third adjacent tile
+
+        return true;
     }
 }

@@ -1,11 +1,11 @@
 {
     "name": "dojo",
-    "version": "4.6.2",
+    "version": "4.7.0",
     "license": "MIT",
     "repository": "https://github.com/andyaiken/dojo.git",
     "homepage": "https://andyaiken.github.io/dojo/",
     "dependencies": {
-        "antd": "^3.25.0",
+        "antd": "^3.25.1",
         "react": "^16.11.0",
         "react-dom": "^16.11.0",
         "react-movable": "^2.3.0",
@@ -14,7 +14,7 @@
     "devDependencies": {
         "@types/node": "^12.12.6",
         "@types/react": "^16.9.11",
-        "@types/react-dom": "^16.9.3",
+        "@types/react-dom": "^16.9.4",
         "@types/showdown": "^1.9.3",
         "faker": "^4.1.0",
         "gh-pages": "^2.1.1",
