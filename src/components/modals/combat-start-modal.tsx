@@ -42,7 +42,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
         };
     }
 
-    private setParty(partyID: string | null) {
+    private setPartyID(partyID: string | null) {
         // eslint-disable-next-line
         this.state.combatSetup.partyID = partyID;
         this.setState({
@@ -50,7 +50,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
         }, () => this.props.notify());
     }
 
-    private setEncounter(encounterID: string | null) {
+    private setEncounterID(encounterID: string | null) {
         // eslint-disable-next-line
         this.state.combatSetup.encounterID = encounterID;
         const enc = this.props.encounters.find(e => e.id === encounterID);
@@ -91,7 +91,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
         });
     }
 
-    private setWave(waveID: string | null) {
+    private setWaveID(waveID: string | null) {
         // eslint-disable-next-line
         this.state.combatSetup.waveID = waveID;
         const enc = this.props.encounters.find(e => e.id === this.state.combatSetup.encounterID);
@@ -127,7 +127,99 @@ export default class CombatStartModal extends React.Component<Props, State> {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private getPartySection() {
+    public render() {
+        try {
+            let leftSection = null;
+            let rightSection = null;
+
+            if (this.props.parties) {
+                leftSection = (
+                    <div>
+                        <PartySection
+                            combatSetup={this.state.combatSetup}
+                            parties={this.props.parties}
+                            setPartyID={id => this.setPartyID(id)}
+                        />
+                        <EncounterSection
+                            combatSetup={this.state.combatSetup}
+                            encounters={this.props.encounters}
+                            setEncounterID={id => this.setEncounterID(id)}
+                        />
+                        <MapSection
+                            combatSetup={this.state.combatSetup}
+                            mapFolios={this.props.mapFolios}
+                            setFolioID={id => this.setFolioID(id)}
+                            setMapID={id => this.setMapID(id)}
+                        />
+                    </div>
+                );
+
+                rightSection = (
+                    <div>
+                        <DifficultySection
+                            combatSetup={this.state.combatSetup}
+                            parties={this.props.parties}
+                            encounters={this.props.encounters}
+                            getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
+                        />
+                        <MonsterSection
+                            combatSetup={this.state.combatSetup}
+                            parties={this.props.parties}
+                            encounters={this.props.encounters}
+                            setEncounterInitMode={mode => this.setEncounterInitMode(mode)}
+                            changeName={(slotID, index, name) => this.changeName(slotID, index, name)}
+                        />
+                    </div>
+                );
+            } else {
+                leftSection = (
+                    <div>
+                        <WaveSection
+                            combatSetup={this.state.combatSetup}
+                            encounters={this.props.encounters}
+                            setWaveID={id => this.setWaveID(id)}
+                        />
+                    </div>
+                );
+
+                rightSection = (
+                    <div>
+                        <MonsterSection
+                            combatSetup={this.state.combatSetup}
+                            parties={this.props.parties}
+                            encounters={this.props.encounters}
+                            setEncounterInitMode={mode => this.setEncounterInitMode(mode)}
+                            changeName={(slotID, index, name) => this.changeName(slotID, index, name)}
+                        />
+                    </div>
+                );
+            }
+
+            return (
+                <Row className='full-height'>
+                    <Col span={12} className='scrollable'>
+                        {leftSection}
+                    </Col>
+                    <Col span={12} className='scrollable'>
+                        {rightSection}
+                    </Col>
+                </Row>
+            );
+        } catch (e) {
+            console.error(e);
+            return <div className='render-error'/>;
+        }
+    }
+}
+
+interface PartySectionProps {
+    combatSetup: CombatSetup;
+    parties: Party[];
+    setPartyID: (id: string | null) => void;
+}
+
+class PartySection extends React.Component<PartySectionProps> {
+    public render() {
         if (this.props.parties.length === 0) {
             return (
                 <div className='section'>you have not defined any parties</div>
@@ -142,8 +234,8 @@ export default class CombatStartModal extends React.Component<Props, State> {
         });
 
         let partyContent = null;
-        if (this.state.combatSetup.partyID) {
-            const selectedParty = this.props.parties.find(p => p.id === this.state.combatSetup.partyID);
+        if (this.props.combatSetup.partyID) {
+            const selectedParty = this.props.parties.find(p => p.id === this.props.combatSetup.partyID);
             if (selectedParty) {
                 const pcs = selectedParty.pcs.filter(pc => pc.active);
 
@@ -176,16 +268,24 @@ export default class CombatStartModal extends React.Component<Props, State> {
                 <Dropdown
                     options={partyOptions}
                     placeholder='select party...'
-                    selectedID={this.state.combatSetup.partyID ? this.state.combatSetup.partyID : undefined}
-                    select={optionID => this.setParty(optionID)}
-                    clear={() => this.setParty(null)}
+                    selectedID={this.props.combatSetup.partyID ? this.props.combatSetup.partyID : undefined}
+                    select={optionID => this.props.setPartyID(optionID)}
+                    clear={() => this.props.setPartyID(null)}
                 />
                 {partyContent}
             </div>
         );
     }
+}
 
-    private getEncounterSection() {
+interface EncounterSectionProps {
+    combatSetup: CombatSetup;
+    encounters: Encounter[];
+    setEncounterID: (id: string | null) => void;
+}
+
+class EncounterSection extends React.Component<EncounterSectionProps> {
+    public render() {
         if (this.props.encounters.length === 0) {
             return (
                 <div className='section'>you have not built any encounters</div>
@@ -200,8 +300,8 @@ export default class CombatStartModal extends React.Component<Props, State> {
         });
 
         let encounterContent = null;
-        if (this.state.combatSetup.encounterID) {
-            const selectedEncounter = this.props.encounters.find(e => e.id === this.state.combatSetup.encounterID);
+        if (this.props.combatSetup.encounterID) {
+            const selectedEncounter = this.props.encounters.find(e => e.id === this.props.combatSetup.encounterID);
             if (selectedEncounter) {
                 const monsterSections = selectedEncounter.slots.map(slot => {
                     let name = slot.monsterName || 'unnamed monster';
@@ -258,16 +358,25 @@ export default class CombatStartModal extends React.Component<Props, State> {
                 <Dropdown
                     options={encounterOptions}
                     placeholder='select encounter...'
-                    selectedID={this.state.combatSetup.encounterID ? this.state.combatSetup.encounterID : undefined}
-                    select={optionID => this.setEncounter(optionID)}
-                    clear={() => this.setEncounter(null)}
+                    selectedID={this.props.combatSetup.encounterID ? this.props.combatSetup.encounterID : undefined}
+                    select={optionID => this.props.setEncounterID(optionID)}
+                    clear={() => this.props.setEncounterID(null)}
                 />
                 {encounterContent}
             </div>
         );
     }
+}
 
-    private getMapSection() {
+interface MapSectionProps {
+    combatSetup: CombatSetup;
+    mapFolios: MapFolio[];
+    setFolioID: (id: string | null) => void;
+    setMapID: (id: string) => void;
+}
+
+class MapSection extends React.Component<MapSectionProps> {
+    public render() {
         const folios = this.props.mapFolios.filter(folio => folio.maps.length > 0);
         if (folios.length === 0) {
             return null;
@@ -286,8 +395,8 @@ export default class CombatStartModal extends React.Component<Props, State> {
         let selectMapSection = null;
         let thumbnailSection = null;
 
-        if (this.state.combatSetup.folioID) {
-            const folio = this.props.mapFolios.find(f => f.id === this.state.combatSetup.folioID);
+        if (this.props.combatSetup.folioID) {
+            const folio = this.props.mapFolios.find(f => f.id === this.props.combatSetup.folioID);
             if (folio) {
                 const mapOptions = folio.maps.map(m => {
                     return {
@@ -300,14 +409,14 @@ export default class CombatStartModal extends React.Component<Props, State> {
                     selectMapSection = (
                         <Selector
                             options={mapOptions}
-                            selectedID={this.state.combatSetup.mapID}
-                            select={optionID => this.setMapID(optionID)}
+                            selectedID={this.props.combatSetup.mapID}
+                            select={optionID => this.props.setMapID(optionID)}
                         />
                     );
                 }
 
-                if (this.state.combatSetup.mapID) {
-                    const map = folio.maps.find(m => m.id === this.state.combatSetup.mapID);
+                if (this.props.combatSetup.mapID) {
+                    const map = folio.maps.find(m => m.id === this.props.combatSetup.mapID);
                     if (map) {
                         thumbnailSection = (
                             <MapPanel
@@ -327,24 +436,32 @@ export default class CombatStartModal extends React.Component<Props, State> {
                 <Dropdown
                     options={folioOptions}
                     placeholder='select map folio...'
-                    selectedID={this.state.combatSetup.folioID ? this.state.combatSetup.folioID : undefined}
-                    select={optionID => this.setFolioID(optionID)}
-                    clear={() => this.setFolioID(null)}
+                    selectedID={this.props.combatSetup.folioID ? this.props.combatSetup.folioID : undefined}
+                    select={optionID => this.props.setFolioID(optionID)}
+                    clear={() => this.props.setFolioID(null)}
                 />
                 {selectMapSection}
                 {thumbnailSection}
             </div>
         );
     }
+}
 
-    private getWaveSection() {
-        if (this.state.combatSetup.encounterID === null) {
+interface WaveSectionProps {
+    combatSetup: CombatSetup;
+    encounters: Encounter[];
+    setWaveID: (id: string | null) => void;
+}
+
+class WaveSection extends React.Component<WaveSectionProps> {
+    public render() {
+        if (this.props.combatSetup.encounterID === null) {
             return (
                 <div className='section'>you have not selected an encounter</div>
             );
         }
 
-        const selectedEncounter = this.props.encounters.find(e => e.id === this.state.combatSetup.encounterID);
+        const selectedEncounter = this.props.encounters.find(e => e.id === this.props.combatSetup.encounterID);
         if (selectedEncounter) {
             if (selectedEncounter.waves.length === 0) {
                 return (
@@ -360,8 +477,8 @@ export default class CombatStartModal extends React.Component<Props, State> {
             });
 
             let waveContent = null;
-            if (this.state.combatSetup.waveID) {
-                const selectedWave = selectedEncounter.waves.find(w => w.id === this.state.combatSetup.waveID);
+            if (this.props.combatSetup.waveID) {
+                const selectedWave = selectedEncounter.waves.find(w => w.id === this.props.combatSetup.waveID);
                 if (selectedWave) {
                     const monsterSections = selectedWave.slots.map(slot => {
                         let name = slot.monsterName || 'unnamed monster';
@@ -394,9 +511,9 @@ export default class CombatStartModal extends React.Component<Props, State> {
                     <Dropdown
                         options={waveOptions}
                         placeholder='select wave...'
-                        selectedID={this.state.combatSetup.waveID ? this.state.combatSetup.waveID : undefined}
-                        select={optionID => this.setWave(optionID)}
-                        clear={() => this.setWave(null)}
+                        selectedID={this.props.combatSetup.waveID ? this.props.combatSetup.waveID : undefined}
+                        select={optionID => this.props.setWaveID(optionID)}
+                        clear={() => this.props.setWaveID(null)}
                     />
                     {waveContent}
                 </div>
@@ -405,10 +522,19 @@ export default class CombatStartModal extends React.Component<Props, State> {
 
         return null;
     }
+}
 
-    private getDifficultySection() {
-        const party = this.props.parties.find(p => p.id === this.state.combatSetup.partyID);
-        const encounter = this.props.encounters.find(enc => enc.id === this.state.combatSetup.encounterID);
+interface DifficultySectionProps {
+    combatSetup: CombatSetup;
+    parties: Party[];
+    encounters: Encounter[];
+    getMonster: (monsterName: string, groupName: string) => Monster | null;
+}
+
+class DifficultySection extends React.Component<DifficultySectionProps> {
+    public render() {
+        const party = this.props.parties.find(p => p.id === this.props.combatSetup.partyID);
+        const encounter = this.props.encounters.find(enc => enc.id === this.props.combatSetup.encounterID);
 
         if (party && encounter) {
             return (
@@ -431,9 +557,19 @@ export default class CombatStartModal extends React.Component<Props, State> {
             </div>
         );
     }
+}
 
-    private getMonsterSection() {
-        if (this.state.combatSetup.encounterID === null) {
+interface MonsterSectionProps {
+    combatSetup: CombatSetup;
+    parties: Party[];
+    encounters: Encounter[];
+    setEncounterInitMode: (mode: 'manual' | 'individual' | 'group') => void;
+    changeName: (slotID: string, index: number, name: string) => void;
+}
+
+class MonsterSection extends React.Component<MonsterSectionProps> {
+    public render() {
+        if (this.props.combatSetup.encounterID === null) {
             return (
                 <div>
                     <div className='heading'>monsters</div>
@@ -442,7 +578,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
             );
         }
 
-        if (!this.props.parties && this.state.combatSetup.waveID === null) {
+        if (!this.props.parties && this.props.combatSetup.waveID === null) {
             return (
                 <div>
                     <div className='heading'>monsters</div>
@@ -451,11 +587,11 @@ export default class CombatStartModal extends React.Component<Props, State> {
             );
         }
 
-        const selectedEncounter = this.props.encounters.find(e => e.id === this.state.combatSetup.encounterID);
+        const selectedEncounter = this.props.encounters.find(e => e.id === this.props.combatSetup.encounterID);
         if (selectedEncounter) {
             let slotsContainer: { slots: EncounterSlot[] } = selectedEncounter;
-            if (this.state.combatSetup.waveID) {
-                const selectedWave = selectedEncounter.waves.find(w => w.id === this.state.combatSetup.waveID);
+            if (this.props.combatSetup.waveID) {
+                const selectedWave = selectedEncounter.waves.find(w => w.id === this.props.combatSetup.waveID);
                 if (selectedWave) {
                     slotsContainer = selectedWave;
                 }
@@ -480,7 +616,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                 }
             ];
 
-            const names = this.state.combatSetup.monsterNames.map(slotNames => {
+            const names = this.props.combatSetup.monsterNames.map(slotNames => {
                 const slot = slotsContainer.slots.find(s => s.id === slotNames.id);
                 if (slot) {
                     const inputs = [];
@@ -491,7 +627,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                                     value={slotNames.names[n]}
                                     slotID={slot.id}
                                     index={n}
-                                    changeName={(slotID, index, value) => this.changeName(slotID, index, value)}
+                                    changeName={(slotID, index, value) => this.props.changeName(slotID, index, value)}
                                 />
                             </div>
                         );
@@ -516,8 +652,8 @@ export default class CombatStartModal extends React.Component<Props, State> {
                     <div className='subheading'>initiative</div>
                     <Selector
                         options={initOptions}
-                        selectedID={this.state.combatSetup.encounterInitMode}
-                        select={optionID => this.setEncounterInitMode(optionID as 'manual' | 'individual' | 'group')}
+                        selectedID={this.props.combatSetup.encounterInitMode}
+                        select={optionID => this.props.setEncounterInitMode(optionID as 'manual' | 'individual' | 'group')}
                     />
                     <div className='subheading'>names</div>
                     <div>{names}</div>
@@ -526,58 +662,6 @@ export default class CombatStartModal extends React.Component<Props, State> {
         }
 
         return null;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    public render() {
-        try {
-            let leftSection = null;
-            let rightSection = null;
-
-            if (this.props.parties) {
-                leftSection = (
-                    <div>
-                        {this.getPartySection()}
-                        {this.getEncounterSection()}
-                        {this.getMapSection()}
-                    </div>
-                );
-
-                rightSection = (
-                    <div>
-                        {this.getDifficultySection()}
-                        {this.getMonsterSection()}
-                    </div>
-                );
-            } else {
-                leftSection = (
-                    <div>
-                        {this.getWaveSection()}
-                    </div>
-                );
-
-                rightSection = (
-                    <div>
-                        {this.getMonsterSection()}
-                    </div>
-                );
-            }
-
-            return (
-                <Row className='full-height'>
-                    <Col span={12} className='scrollable'>
-                        {leftSection}
-                    </Col>
-                    <Col span={12} className='scrollable'>
-                        {rightSection}
-                    </Col>
-                </Row>
-            );
-        } catch (e) {
-            console.error(e);
-            return <div className='render-error'/>;
-        }
     }
 }
 
