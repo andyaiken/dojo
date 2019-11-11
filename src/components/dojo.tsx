@@ -2220,6 +2220,7 @@ export default class Dojo extends React.Component<Props, State> {
                         <CombatStartModal
                             combatSetup={this.state.drawer.combatSetup}
                             parties={this.state.parties}
+                            library={this.state.library}
                             encounters={this.state.encounters}
                             maps={this.state.maps}
                             getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
@@ -2242,8 +2243,6 @@ export default class Dojo extends React.Component<Props, State> {
                     content = (
                         <CombatStartModal
                             combatSetup={this.state.drawer.combatSetup}
-                            encounters={this.state.encounters}
-                            maps={this.state.maps}
                             getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
                             notify={() => this.setState({drawer: this.state.drawer})}
                         />

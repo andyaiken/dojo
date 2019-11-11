@@ -2,12 +2,15 @@ import React from 'react';
 
 import { Col, Input, Row } from 'antd';
 
+import Factory from '../../utils/factory';
+import Mercator from '../../utils/mercator';
+import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
 import { CombatSetup } from '../../models/combat';
 import { Encounter, EncounterSlot } from '../../models/encounter';
 import { Map } from '../../models/map';
-import { Monster } from '../../models/monster-group';
+import { Monster, MonsterGroup } from '../../models/monster-group';
 import { Party } from '../../models/party';
 
 import Dropdown from '../controls/dropdown';
@@ -18,6 +21,7 @@ import MapPanel from '../panels/map-panel';
 interface Props {
     combatSetup: CombatSetup;
     parties: Party[];
+    library: MonsterGroup[];
     encounters: Encounter[];
     maps: Map[];
     getMonster: (monsterName: string, groupName: string) => Monster | null;
@@ -30,7 +34,10 @@ interface State {
 
 export default class CombatStartModal extends React.Component<Props, State> {
     public static defaultProps = {
-        parties: null
+        parties: null,
+        library: null,
+        encounters: null,
+        maps: null
     };
 
     constructor(props: Props) {
@@ -87,6 +94,44 @@ export default class CombatStartModal extends React.Component<Props, State> {
         }, () => this.props.notify());
     }
 
+    private generateEncounter(diff: string) {
+        const encounter = Factory.createEncounter();
+        encounter.name = 'new encounter';
+
+        const filter = Factory.createMonsterFilter();
+
+        let xp = 0;
+        let sumLevel = 0;
+        if (this.state.combatSetup.party) {
+            const pcs = this.state.combatSetup.party.pcs.filter(pc => pc.active);
+            pcs.forEach(pc => {
+                xp += Utils.pcExperience(pc.level, diff);
+                sumLevel += pc.level;
+            });
+
+            const avgLevel = sumLevel / pcs.length;
+            filter.challengeMax = Math.max(avgLevel, 5);
+        }
+
+        Napoleon.buildEncounter(encounter, xp, filter, this.props.library, this.props.getMonster);
+        // eslint-disable-next-line
+        this.state.combatSetup.encounter = encounter;
+        this.setState({
+            combatSetup: this.state.combatSetup
+        }, () => this.props.notify());
+    }
+
+    private generateMap(type: string) {
+        const map = Factory.createMap();
+        map.name = 'new map';
+        Mercator.generate(type, map);
+        // eslint-disable-next-line
+        this.state.combatSetup.map = map;
+        this.setState({
+            combatSetup: this.state.combatSetup
+        }, () => this.props.notify());
+    }
+
     private setEncounterInitMode(mode: 'manual' | 'individual' | 'group') {
         // eslint-disable-next-line
         this.state.combatSetup.encounterInitMode = mode;
@@ -105,8 +150,6 @@ export default class CombatStartModal extends React.Component<Props, State> {
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     public render() {
         try {
             let leftSection = null;
@@ -124,11 +167,13 @@ export default class CombatStartModal extends React.Component<Props, State> {
                             combatSetup={this.state.combatSetup}
                             encounters={this.props.encounters}
                             setEncounterID={id => this.setEncounterID(id)}
+                            generateEncounter={diff => this.generateEncounter(diff)}
                         />
                         <MapSection
                             combatSetup={this.state.combatSetup}
                             maps={this.props.maps}
                             setMapID={id => this.setMapID(id)}
+                            generateMap={type => this.generateMap(type)}
                         />
                     </div>
                 );
@@ -144,7 +189,6 @@ export default class CombatStartModal extends React.Component<Props, State> {
                         <MonsterSection
                             combatSetup={this.state.combatSetup}
                             parties={this.props.parties}
-                            encounters={this.props.encounters}
                             setEncounterInitMode={mode => this.setEncounterInitMode(mode)}
                             changeName={(slotID, index, name) => this.changeName(slotID, index, name)}
                         />
@@ -155,7 +199,6 @@ export default class CombatStartModal extends React.Component<Props, State> {
                     <div>
                         <WaveSection
                             combatSetup={this.state.combatSetup}
-                            encounters={this.props.encounters}
                             setWaveID={id => this.setWaveID(id)}
                         />
                     </div>
@@ -166,7 +209,6 @@ export default class CombatStartModal extends React.Component<Props, State> {
                         <MonsterSection
                             combatSetup={this.state.combatSetup}
                             parties={this.props.parties}
-                            encounters={this.props.encounters}
                             setEncounterInitMode={mode => this.setEncounterInitMode(mode)}
                             changeName={(slotID, index, name) => this.changeName(slotID, index, name)}
                         />
@@ -243,7 +285,7 @@ class PartySection extends React.Component<PartySectionProps> {
                 <div className='heading'>party</div>
                 <Dropdown
                     options={partyOptions}
-                    placeholder='select party'
+                    placeholder='select a party'
                     selectedID={this.props.combatSetup.party ? this.props.combatSetup.party.id : undefined}
                     select={optionID => this.props.setPartyID(optionID)}
                     clear={() => this.props.setPartyID(null)}
@@ -258,25 +300,50 @@ interface EncounterSectionProps {
     combatSetup: CombatSetup;
     encounters: Encounter[];
     setEncounterID: (id: string | null) => void;
+    generateEncounter: (diff: string) => void;
 }
 
 class EncounterSection extends React.Component<EncounterSectionProps> {
     public render() {
-        if (this.props.encounters.length === 0) {
-            return (
+        let tools = null;
+        if (this.props.combatSetup.encounter) {
+            tools = (
                 <div>
-                    <div className='heading'>encounter</div>
-                    <div className='section'>(no encounters)</div>
+                    <button onClick={() => this.props.setEncounterID(null)}>choose a different encounter</button>
+                </div>
+            );
+        } else {
+            let selector = null;
+            if (this.props.encounters.length > 0) {
+                const options = this.props.encounters.map(encounter => {
+                    return {
+                        id: encounter.id,
+                        text: encounter.name || 'unnamed encounter'
+                    };
+                });
+                selector = (
+                    <Dropdown
+                        options={options}
+                        placeholder='select an encounter'
+                        select={optionID => this.props.setEncounterID(optionID)}
+                    />
+                );
+            }
+
+            let random = null;
+            if (this.props.combatSetup.party) {
+                random = (
+                    <button onClick={() => this.props.generateEncounter('medium')}>generate a random encounter</button>
+                );
+            }
+
+            tools = (
+                <div>
+                    {selector}
+                    {random}
                 </div>
             );
         }
-
-        const encounterOptions = this.props.encounters.map(encounter => {
-            return {
-                id: encounter.id,
-                text: encounter.name || 'unnamed encounter'
-            };
-        });
 
         let encounterContent = null;
         if (this.props.combatSetup.encounter) {
@@ -331,13 +398,7 @@ class EncounterSection extends React.Component<EncounterSectionProps> {
         return (
             <div>
                 <div className='heading'>encounter</div>
-                <Dropdown
-                    options={encounterOptions}
-                    placeholder='select encounter'
-                    selectedID={this.props.combatSetup.encounter ? this.props.combatSetup.encounter.id : undefined}
-                    select={optionID => this.props.setEncounterID(optionID)}
-                    clear={() => this.props.setEncounterID(null)}
-                />
+                {tools}
                 {encounterContent}
             </div>
         );
@@ -348,49 +409,59 @@ interface MapSectionProps {
     combatSetup: CombatSetup;
     maps: Map[];
     setMapID: (id: string | null) => void;
+    generateMap: (type: string) => void;
 }
 
 class MapSection extends React.Component<MapSectionProps> {
     public render() {
-        if (this.props.maps.length === 0) {
-            return (
+        let tools = null;
+        if (this.props.combatSetup.map) {
+            tools = (
                 <div>
-                    <div className='heading'>map</div>
-                    <div className='section'>(no maps)</div>
+                    <button onClick={() => this.props.setMapID(null)}>choose a different map</button>
+                </div>
+            );
+        } else {
+            let selector = null;
+            if (this.props.maps.length > 0) {
+                const options = this.props.maps.map(map => {
+                    return {
+                        id: map.id,
+                        text: map.name || 'unnamed map'
+                    };
+                });
+                selector = (
+                    <Dropdown
+                        options={options}
+                        placeholder='select a map'
+                        select={optionID => this.props.setMapID(optionID)}
+                    />
+                );
+            }
+
+            tools = (
+                <div>
+                    {selector}
+                    <button onClick={() => this.props.generateMap('delve')}>generate a random delve</button>
                 </div>
             );
         }
 
-        const mapOptions = this.props.maps.map(map => {
-            return {
-                id: map.id,
-                text: map.name || 'unnamed map'
-            };
-        });
-
         let mapContent = null;
         if (this.props.combatSetup.map) {
             mapContent = (
-                <div>
-                    <MapPanel
-                        map={this.props.combatSetup.map}
-                        mode='thumbnail'
-                        size={10}
-                    />
-                </div>
+                <MapPanel
+                    map={this.props.combatSetup.map}
+                    mode='thumbnail'
+                    size={10}
+                />
             );
         }
 
         return (
             <div>
                 <div className='heading'>map</div>
-                <Dropdown
-                    options={mapOptions}
-                    placeholder='select map'
-                    selectedID={this.props.combatSetup.map ? this.props.combatSetup.map.id : undefined}
-                    select={optionID => this.props.setMapID(optionID)}
-                    clear={() => this.props.setMapID(null)}
-                />
+                {tools}
                 {mapContent}
             </div>
         );
@@ -399,7 +470,6 @@ class MapSection extends React.Component<MapSectionProps> {
 
 interface WaveSectionProps {
     combatSetup: CombatSetup;
-    encounters: Encounter[];
     setWaveID: (id: string | null) => void;
 }
 
@@ -504,7 +574,6 @@ class DifficultySection extends React.Component<DifficultySectionProps> {
 interface MonsterSectionProps {
     combatSetup: CombatSetup;
     parties: Party[];
-    encounters: Encounter[];
     setEncounterInitMode: (mode: 'manual' | 'individual' | 'group') => void;
     changeName: (slotID: string, index: number, name: string) => void;
 }
