@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Col, Row } from 'antd';
 
-import { MapFolio } from '../../models/map-folio';
+import { Map } from '../../models/map';
 
 import ConfirmButton from '../controls/confirm-button';
 import GridPanel from '../panels/grid-panel';
@@ -10,21 +10,23 @@ import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 
 interface Props {
-    mapFolios: MapFolio[];
-    addMapFolio: () => void;
-    selectMapFolio: (mapFolio: MapFolio) => void;
-    deleteMapFolio: (mapFolio: MapFolio) => void;
+    maps: Map[];
+    addMap: () => void;
+    addDungeonMap: () => void;
+    addDelveMap: () => void;
+    editMap: (map: Map) => void;
+    deleteMap: (map: Map) => void;
 }
 
 export default class MapListScreen extends React.Component<Props> {
     public render() {
         try {
-            const listItems = this.props.mapFolios.map(mapFolio => (
+            const listItems = this.props.maps.map(map => (
                 <ListItem
-                    key={mapFolio.id}
-                    mapFolio={mapFolio}
-                    open={f => this.props.selectMapFolio(f)}
-                    delete={f => this.props.deleteMapFolio(f)}
+                    key={map.id}
+                    map={map}
+                    editMap={m => this.props.editMap(m)}
+                    removeMap={m => this.props.deleteMap(m)}
                 />
             ));
 
@@ -32,18 +34,19 @@ export default class MapListScreen extends React.Component<Props> {
                 <Row className='full-height'>
                     <Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar left'>
                         <Note>
-                            <div className='section'>on this page you can set up folios containing tactical maps</div>
+                            <div className='section'>on this page you can set up tactical maps</div>
                             <div className='section'>when you have created a map you can use it in the combat manager</div>
                             <div className='divider'/>
-                            <div className='section'>on the right you will see a list of map folios</div>
-                            <div className='section'>select a folio from the list to see the maps it contains</div>
+                            <div className='section'>on the right you will see a list of maps</div>
                             <div className='divider'/>
-                            <div className='section'>to start a new folio, press the <b>create a new map folio</b> button</div>
+                            <div className='section'>to start a new map, press the <b>create a new map</b> button</div>
                         </Note>
-                        <button onClick={() => this.props.addMapFolio()}>create a new map folio</button>
+                        <button onClick={() => this.props.addMap()}>create a new map</button>
+                        <button onClick={() => this.props.addDungeonMap()}>create a new dungeon map</button>
+                        <button onClick={() => this.props.addDelveMap()}>create a new delve map</button>
                     </Col>
                     <Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
-                        <GridPanel heading='map folios' content={listItems} />
+                        <GridPanel heading='maps' content={listItems} />
                     </Col>
                 </Row>
             );
@@ -55,43 +58,34 @@ export default class MapListScreen extends React.Component<Props> {
 }
 
 interface ListItemProps {
-    mapFolio: MapFolio;
-    open: (mapFolio: MapFolio) => void;
-    delete: (mapFolio: MapFolio) => void;
+    map: Map;
+    editMap: (map: Map) => void;
+    removeMap: (map: Map) => void;
 }
 
 class ListItem extends React.Component<ListItemProps> {
     public render() {
         try {
-            const maps = this.props.mapFolio.maps.map(map => (
-                <div key={map.id}>
-                    <div className='section'>{map.name || 'unnamed map'}</div>
-                    <MapPanel
-                        map={map}
-                        mode='thumbnail'
-                        size={5}
-                    />
-                </div>
-            ));
-            if (maps.length === 0) {
-                maps.push(<div key='empty' className='section'>no maps</div>);
-            }
-
             return (
                 <div className='card map'>
                     <div className='heading'>
                         <div className='title'>
-                            {this.props.mapFolio.name || 'unnamed folio'}
+                            {this.props.map.name || 'unnamed map'}
                         </div>
                     </div>
                     <div className='card-content'>
                         <div className='fixed-height'>
-                            <div className='subheading'>maps</div>
-                            {maps}
+                            <div className='section'>
+                                <MapPanel
+                                    map={this.props.map}
+                                    mode='thumbnail'
+                                    size={10}
+                                />
+                            </div>
                         </div>
                         <div className='divider'/>
-                        <button onClick={() => this.props.open(this.props.mapFolio)}>open</button>
-                        <ConfirmButton text='delete' callback={() => this.props.delete(this.props.mapFolio)} />
+                        <button onClick={() => this.props.editMap(this.props.map)}>edit map</button>
+                        <ConfirmButton text='delete map' callback={() => this.props.removeMap(this.props.map)} />
                     </div>
                 </div>
             );

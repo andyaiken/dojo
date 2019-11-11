@@ -1,10 +1,10 @@
-// This utility file deals with map folios and maps
+// This utility file deals with maps
 
 import Factory from './factory';
 import Utils from './utils';
 
 import { Combat, Combatant } from '../models/combat';
-import { Map, MapItem } from '../models/map-folio';
+import { Map, MapItem } from '../models/map';
 
 export default class Mercator {
     public static scatterCombatants(combat: Combat, type: 'pc' | 'monster') {

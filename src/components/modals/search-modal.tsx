@@ -6,7 +6,7 @@ import Sherlock from '../../utils/sherlock';
 import Utils from '../../utils/utils';
 
 import { Encounter } from '../../models/encounter';
-import { MapFolio } from '../../models/map-folio';
+import { Map } from '../../models/map';
 import { MonsterGroup } from '../../models/monster-group';
 import { Party } from '../../models/party';
 
@@ -16,11 +16,11 @@ interface Props {
     parties: Party[];
     library: MonsterGroup[];
     encounters: Encounter[];
-    folios: MapFolio[];
+    maps: Map[];
     openParty: (id: string) => void;
     openGroup: (id: string) => void;
     openEncounter: (id: string) => void;
-    openFolio: (id: string) => void;
+    openMap: (id: string) => void;
 }
 
 interface State {
@@ -149,28 +149,19 @@ export default class SearchModal extends React.Component<Props, State> {
                         );
                     });
 
-                    this.props.folios.filter(folio => Sherlock.matchFolio(this.state.text, folio)).forEach(folio => {
-                        const maps: JSX.Element[] = [];
-                        folio.maps.filter(map => Sherlock.matchMap(this.state.text, map)).forEach(map => {
-                            const notes: JSX.Element[] = [];
-                            map.notes.filter(note => Sherlock.matchMapNote(this.state.text, note)).forEach(note => {
-                                notes.push(
-                                    <div key={note.id} className='group-panel'>
-                                        <div className='section'>map note</div>
-                                    </div>
-                                );
-                            });
-                            maps.push(
-                                <div key={map.id} className='group-panel'>
-                                    <div className='section'>{map.name}</div>
-                                    {notes}
+                    this.props.maps.filter(map => Sherlock.matchMap(this.state.text, map)).forEach(map => {
+                        const notes: JSX.Element[] = [];
+                        map.notes.filter(note => Sherlock.matchMapNote(this.state.text, note)).forEach(note => {
+                            notes.push(
+                                <div key={note.id} className='group-panel'>
+                                    <div className='section'>map note</div>
                                 </div>
                             );
                         });
                         results.push(
-                            <div key={folio.id} className='group-panel clickable' onClick={() => this.props.openFolio(folio.id)}>
-                                <div className='section'>{folio.name}</div>
-                                {maps}
+                            <div key={map.id} className='group-panel clickable' onClick={() => this.props.openMap(map.id)}>
+                                <div className='section'>{map.name}</div>
+                                {notes}
                             </div>
                         );
                     });

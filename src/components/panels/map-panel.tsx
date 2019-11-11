@@ -7,7 +7,7 @@ import Mercator from '../../utils/mercator';
 import Utils from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
-import { Map, MapItem, MapNote } from '../../models/map-folio';
+import { Map, MapItem, MapNote } from '../../models/map';
 import { Monster } from '../../models/monster-group';
 import { PC } from '../../models/party';
 

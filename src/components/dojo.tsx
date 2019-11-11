@@ -11,7 +11,7 @@ import Utils from '../utils/utils';
 import { Combat, Combatant, CombatSetup, Notification } from '../models/combat';
 import { Condition } from '../models/condition';
 import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../models/encounter';
-import { Map, MapFolio, MapItem } from '../models/map-folio';
+import { Map, MapItem } from '../models/map';
 import { Monster, MonsterGroup } from '../models/monster-group';
 import { Party, PC } from '../models/party';
 
@@ -37,7 +37,6 @@ import EncounterListScreen from './screens/encounter-list-screen';
 import EncounterScreen from './screens/encounter-screen';
 import HomeScreen from './screens/home-screen';
 import MapListScreen from './screens/map-list-screen';
-import MapScreen from './screens/map-screen';
 import MonsterListScreen from './screens/monster-list-screen';
 import MonsterScreen from './screens/monster-screen';
 import PartyListScreen from './screens/party-list-screen';
@@ -59,13 +58,12 @@ interface State {
     parties: Party[];
     library: MonsterGroup[];
     encounters: Encounter[];
-    mapFolios: MapFolio[];
+    maps: Map[];
     combats: Combat[];
 
     selectedPartyID: string | null;
     selectedMonsterGroupID: string | null;
     selectedEncounterID: string | null;
-    selectedMapFolioID: string | null;
     selectedCombatID: string | null;
 }
 
@@ -106,19 +104,11 @@ export default class Dojo extends React.Component<Props, State> {
             console.error('Could not parse JSON: ', ex);
         }
 
-        let mapFolios: MapFolio[] = [];
+        let maps: Map[] = [];
         try {
-            const str = window.localStorage.getItem('data-mapfolios');
+            const str = window.localStorage.getItem('data-maps');
             if (str) {
-                mapFolios = JSON.parse(str);
-
-                mapFolios.forEach(folio => {
-                    folio.maps.forEach(map => {
-                        if (map.notes === undefined) {
-                            map.notes = [];
-                        }
-                    });
-                });
+                maps = JSON.parse(str);
             }
         } catch (ex) {
             console.error('Could not parse JSON: ', ex);
@@ -160,12 +150,11 @@ export default class Dojo extends React.Component<Props, State> {
             parties: parties,
             library: library,
             encounters: encounters,
-            mapFolios: mapFolios,
+            maps: maps,
             combats: combats,
             selectedPartyID: null,
             selectedMonsterGroupID: null,
             selectedEncounterID: null,
-            selectedMapFolioID: null,
             selectedCombatID: null
         };
     }
@@ -233,12 +222,6 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
-    private selectMapFolio(mapFolio: MapFolio | null) {
-        this.setState({
-            selectedMapFolioID: mapFolio ? mapFolio.id : null
-        });
-    }
-
     private selectPartyByID(id: string | null) {
         this.save();
         this.setState({
@@ -266,12 +249,11 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
-    private selectMapFolioByID(id: string | null) {
+    private selectMapByID(id: string | null) {
         this.save();
         this.setState({
             view: 'maps',
-            navigation: false,
-            selectedMapFolioID: id
+            navigation: false
         });
     }
 
@@ -291,14 +273,13 @@ export default class Dojo extends React.Component<Props, State> {
     private resetAll() {
         this.setState({
             parties: [],
-            selectedPartyID: null,
             library: [],
-            selectedMonsterGroupID: null,
             encounters: [],
-            selectedEncounterID: null,
-            mapFolios: [],
-            selectedMapFolioID: null,
+            maps: [],
             combats: [],
+            selectedPartyID: null,
+            selectedMonsterGroupID: null,
+            selectedEncounterID: null,
             selectedCombatID: null
         });
     }
@@ -871,74 +852,36 @@ export default class Dojo extends React.Component<Props, State> {
 
     //#region Map screen
 
-    private addMapFolio() {
-        const folio = Factory.createMapFolio();
-        folio.name = 'new folio';
-        const folios = ([] as MapFolio[]).concat(this.state.mapFolios, [folio]);
-        Utils.sort(folios);
-
-        this.setState({
-            mapFolios: folios,
-            selectedMapFolioID: folio.id
-        });
-    }
-
-    private removeCurrentMapFolio() {
-        const folio = this.state.mapFolios.find(f => f.id === this.state.selectedMapFolioID);
-        if (folio) {
-            this.removeMapFolio(folio);
-        }
-    }
-
-    private removeMapFolio(folio: MapFolio) {
-        const index = this.state.mapFolios.indexOf(folio);
-        this.state.mapFolios.splice(index, 1);
-
-        this.setState({
-            mapFolios: this.state.mapFolios,
-            selectedMapFolioID: null
-        });
-    }
-
     private addMap() {
-        const folio = this.state.mapFolios.find(f => f.id === this.state.selectedMapFolioID);
-        if (folio) {
-            const map = Factory.createMap();
-            map.name = 'new map';
-            folio.maps.push(map);
+        const map = Factory.createMap();
+        map.name = 'new map';
+        this.state.maps.push(map);
 
-            this.setState({
-                mapFolios: this.state.mapFolios
-            });
-        }
+        this.setState({
+            maps: this.state.maps
+        });
     }
 
     private addDungeonMap() {
-        const folio = this.state.mapFolios.find(f => f.id === this.state.selectedMapFolioID);
-        if (folio) {
-            const map = Factory.createMap();
-            map.name = 'new dungeon';
-            Mercator.generate('dungeon', map);
-            folio.maps.push(map);
+        const map = Factory.createMap();
+        map.name = 'new dungeon';
+        Mercator.generate('dungeon', map);
+        this.state.maps.push(map);
 
-            this.setState({
-                mapFolios: this.state.mapFolios
-            });
-        }
+        this.setState({
+            maps: this.state.maps
+        });
     }
 
     private addDelveMap() {
-        const folio = this.state.mapFolios.find(f => f.id === this.state.selectedMapFolioID);
-        if (folio) {
-            const map = Factory.createMap();
-            map.name = 'new delve';
-            Mercator.generate('delve', map);
-            folio.maps.push(map);
+        const map = Factory.createMap();
+        map.name = 'new delve';
+        Mercator.generate('delve', map);
+        this.state.maps.push(map);
 
-            this.setState({
-                mapFolios: this.state.mapFolios
-            });
-        }
+        this.setState({
+            maps: this.state.maps
+        });
     }
 
     private editMap(map: Map) {
@@ -952,29 +895,24 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private saveMap() {
-        const folio = this.state.mapFolios.find(f => f.id === this.state.selectedMapFolioID);
-        if (folio) {
-            const original = folio.maps.find(m => m.id === this.state.drawer.map.id);
-            if (original) {
-                const index = folio.maps.indexOf(original);
-                folio.maps[index] = this.state.drawer.map;
-                this.setState({
-                    mapFolios: this.state.mapFolios,
-                    drawer: null
-                });
-            }
+        const original = this.state.maps.find(m => m.id === this.state.drawer.map.id);
+        if (original) {
+            const index = this.state.maps.indexOf(original);
+            // eslint-disable-next-line
+            this.state.maps[index] = this.state.drawer.map;
+            this.setState({
+                maps: this.state.maps,
+                drawer: null
+            });
         }
     }
 
     private removeMap(map: Map) {
-        const folio = this.state.mapFolios.find(f => f.id === this.state.selectedMapFolioID);
-        if (folio) {
-            const index = folio.maps.indexOf(map);
-            folio.maps.splice(index, 1);
-            this.setState({
-                mapFolios: this.state.mapFolios
-            });
-        }
+        const index = this.state.maps.indexOf(map);
+        this.state.maps.splice(index, 1);
+        this.setState({
+            maps: this.state.maps
+        });
     }
 
     //#endregion
@@ -986,8 +924,8 @@ export default class Dojo extends React.Component<Props, State> {
         const encounter = this.state.encounters.length === 1 ? this.state.encounters[0] : null;
 
         const setup = Factory.createCombatSetup();
-        setup.partyID = party ? party.id : null;
-        setup.encounterID = encounter ? encounter.id : null;
+        setup.party = party;
+        setup.encounter = encounter;
         if (encounter) {
             setup.monsterNames = Utils.getMonsterNames(encounter);
         }
@@ -1001,28 +939,25 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private startCombat() {
-
         const combatSetup: CombatSetup = this.state.drawer.combatSetup;
-        const party = this.state.parties.find(p => p.id === combatSetup.partyID);
-        const encounter = this.state.encounters.find(e => e.id === combatSetup.encounterID);
-        if (party && encounter) {
-            const partyName = party.name || 'unnamed party';
-            const encounterName = encounter.name || 'unnamed encounter';
+        if (combatSetup.party && combatSetup.encounter) {
+            const partyName = combatSetup.party.name || 'unnamed party';
+            const encounterName = combatSetup.encounter.name || 'unnamed encounter';
 
             const combat = Factory.createCombat();
             combat.name = partyName + ' vs ' + encounterName;
-            combat.encounterID = encounter.id;
+            combat.encounter = JSON.parse(JSON.stringify(combatSetup.encounter));
 
             const entry = Factory.createCombatReportEntry();
             entry.type = 'combat-start';
             combat.report.push(entry);
 
             // Add a copy of each PC to the encounter
-            party.pcs.filter(pc => pc.active).forEach(pc => {
+            combatSetup.party.pcs.filter(pc => pc.active).forEach(pc => {
                 this.addPCToCombat(pc, combat);
             });
 
-            encounter.slots.forEach(slot => {
+            combat.encounter.slots.forEach(slot => {
                 const monster = this.getMonster(slot.monsterName, slot.monsterGroupName);
                 if (monster) {
                     const groupInitRoll = Utils.dieRoll();
@@ -1045,14 +980,8 @@ export default class Dojo extends React.Component<Props, State> {
 
             this.sortCombatants(combat);
 
-            if (combatSetup.folioID && combatSetup.mapID) {
-                const folio = this.state.mapFolios.find(f => f.id === combatSetup.folioID);
-                if (folio) {
-                    const map = folio.maps.find(m => m.id === combatSetup.mapID);
-                    if (map) {
-                        combat.map = JSON.parse(JSON.stringify(map));
-                    }
-                }
+            if (combatSetup.map) {
+                combat.map = JSON.parse(JSON.stringify(combatSetup.map));
             }
 
             this.setState({
@@ -1127,19 +1056,16 @@ export default class Dojo extends React.Component<Props, State> {
     private openWaveModal() {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
-            const encounter = this.state.encounters.find(e => e.id === combat.encounterID);
-            if (encounter) {
-                const setup = Factory.createCombatSetup();
-                setup.encounterID = combat.encounterID;
-                setup.monsterNames = Utils.getMonsterNames(encounter);
+            const setup = Factory.createCombatSetup();
+            setup.encounter = combat.encounter;
+            setup.monsterNames = Utils.getMonsterNames(combat.encounter);
 
-                this.setState({
-                    drawer: {
-                        type: 'combat-wave',
-                        combatSetup: setup
-                    }
-                });
-            }
+            this.setState({
+                drawer: {
+                    type: 'combat-wave',
+                    combatSetup: setup
+                }
+            });
         }
     }
 
@@ -1384,10 +1310,9 @@ export default class Dojo extends React.Component<Props, State> {
 
     private addWaveToCombat() {
         const combatSetup: CombatSetup = this.state.drawer.combatSetup;
-        const encounter = this.state.encounters.find(e => e.id === combatSetup.encounterID);
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-        if (combatSetup && encounter && combat) {
-            const wave = encounter.waves.find(w => w.id === combatSetup.waveID);
+        if (combatSetup && combatSetup.encounter && combat) {
+            const wave = combatSetup.encounter.waves.find(w => w.id === combatSetup.waveID);
             if (wave) {
                 wave.slots.forEach(slot => {
                     const monster = this.getMonster(slot.monsterName, slot.monsterGroupName);
@@ -1985,7 +1910,7 @@ export default class Dojo extends React.Component<Props, State> {
                 this.saveKey(this.state.encounters, 'data-encounters');
                 break;
             case 'maps':
-                this.saveKey(this.state.mapFolios, 'data-mapfolios');
+                this.saveKey(this.state.maps, 'data-maps');
                 break;
             case 'combat':
                 this.saveKey(this.state.combats, 'data-combats');
@@ -1997,7 +1922,7 @@ export default class Dojo extends React.Component<Props, State> {
         this.saveKey(this.state.parties, 'data-parties');
         this.saveKey(this.state.library, 'data-library');
         this.saveKey(this.state.encounters, 'data-encounters');
-        this.saveKey(this.state.mapFolios, 'data-mapfolios');
+        this.saveKey(this.state.maps, 'data-maps');
         this.saveKey(this.state.combats, 'data-combats');
     }
 
@@ -2124,30 +2049,16 @@ export default class Dojo extends React.Component<Props, State> {
                     );
                 }
             case 'maps':
-                if (this.state.selectedMapFolioID) {
-                    return (
-                        <MapScreen
-                            mapFolio={this.state.mapFolios.find(f => f.id === this.state.selectedMapFolioID) as MapFolio}
-                            goBack={() => this.selectMapFolio(null)}
-                            removeMapFolio={() => this.removeCurrentMapFolio()}
-                            addMap={() => this.addMap()}
-                            addDungeonMap={() => this.addDungeonMap()}
-                            addDelveMap={() => this.addDelveMap()}
-                            editMap={map => this.editMap(map)}
-                            removeMap={map => this.removeMap(map)}
-                            changeValue={(source, type, value) => this.changeValue(source, type, value)}
-                        />
-                    );
-                } else {
-                    return (
-                        <MapListScreen
-                            mapFolios={this.state.mapFolios}
-                            addMapFolio={() => this.addMapFolio()}
-                            selectMapFolio={folio => this.selectMapFolio(folio)}
-                            deleteMapFolio={folio => this.removeMapFolio(folio)}
-                        />
-                    );
-                }
+                return (
+                    <MapListScreen
+                        maps={this.state.maps}
+                        addMap={() => this.addMap()}
+                        addDungeonMap={() => this.addDungeonMap()}
+                        addDelveMap={() => this.addDelveMap()}
+                        editMap={map => this.editMap(map)}
+                        deleteMap={map => this.removeMap(map)}
+                    />
+                );
             case 'combat':
                 if (this.state.selectedCombatID) {
                     return (
@@ -2310,7 +2221,7 @@ export default class Dojo extends React.Component<Props, State> {
                             combatSetup={this.state.drawer.combatSetup}
                             parties={this.state.parties}
                             encounters={this.state.encounters}
-                            mapFolios={this.state.mapFolios}
+                            maps={this.state.maps}
                             getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
                             notify={() => this.setState({drawer: this.state.drawer})}
                         />
@@ -2318,7 +2229,7 @@ export default class Dojo extends React.Component<Props, State> {
                     header = 'start combat';
                     footer = (
                         <button
-                            className={this.state.drawer.combatSetup.partyID && this.state.drawer.combatSetup.encounterID ? '' : 'disabled'}
+                            className={this.state.drawer.combatSetup.party && this.state.drawer.combatSetup.encounter ? '' : 'disabled'}
                             onClick={() => this.startCombat()}
                         >
                             start encounter
@@ -2332,6 +2243,7 @@ export default class Dojo extends React.Component<Props, State> {
                         <CombatStartModal
                             combatSetup={this.state.drawer.combatSetup}
                             encounters={this.state.encounters}
+                            maps={this.state.maps}
                             getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
                             notify={() => this.setState({drawer: this.state.drawer})}
                         />
@@ -2419,11 +2331,11 @@ export default class Dojo extends React.Component<Props, State> {
                             parties={this.state.parties}
                             library={this.state.library}
                             encounters={this.state.encounters}
-                            folios={this.state.mapFolios}
+                            maps={this.state.maps}
                             openParty={id => this.selectPartyByID(id)}
                             openGroup={id => this.selectMonsterGroupByID(id)}
                             openEncounter={id => this.selectEncounterByID(id)}
-                            openFolio={id => this.selectMapFolioByID(id)}
+                            openMap={id => this.selectMapByID(id)}
                         />
                     );
                     header = 'search';
@@ -2485,12 +2397,12 @@ export default class Dojo extends React.Component<Props, State> {
                             parties={this.state.parties}
                             library={this.state.library}
                             encounters={this.state.encounters}
-                            maps={this.state.mapFolios}
+                            maps={this.state.maps}
                             combats={this.state.combats}
                             openParty={id => this.selectPartyByID(id)}
                             openMonsterGroup={id => this.selectMonsterGroupByID(id)}
                             openEncounter={id => this.selectEncounterByID(id)}
-                            openMapFolio={id => this.selectMapFolioByID(id)}
+                            openMap={id => this.selectMapByID(id)}
                             openCombat={id => this.selectCombatByID(id)}
                         />
                     </div>

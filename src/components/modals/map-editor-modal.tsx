@@ -6,7 +6,7 @@ import Factory from '../../utils/factory';
 import Mercator from '../../utils/mercator';
 import Utils from '../../utils/utils';
 
-import { Map, MapItem, MapNote, TERRAIN_TYPES } from '../../models/map-folio';
+import { Map, MapItem, MapNote, TERRAIN_TYPES } from '../../models/map';
 
 import ConfirmButton from '../controls/confirm-button';
 import Dropdown from '../controls/dropdown';

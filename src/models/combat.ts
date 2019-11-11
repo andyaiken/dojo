@@ -1,13 +1,14 @@
 import { Condition } from './condition';
-import { Map } from './map-folio';
+import { Encounter } from './encounter';
+import { Map } from './map';
 import { Trait } from './monster-group';
+import { Party } from './party';
 
 export interface CombatSetup {
-    partyID: string | null;
-    encounterID: string | null;
+    party: Party | null;
+    encounter: Encounter | null;
     waveID: string | null;
-    folioID: string | null;
-    mapID: string | null;
+    map: Map | null;
     monsterNames: { id: string, names: string[] }[];
     encounterInitMode: 'manual' | 'individual' | 'group';
 }
@@ -15,7 +16,7 @@ export interface CombatSetup {
 export interface Combat {
     id: string;
     name: string;
-    encounterID: string | null;
+    encounter: Encounter;
     combatants: Combatant[];
     map: Map | null;
     round: number;

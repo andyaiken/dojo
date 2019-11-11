@@ -1,9 +1,3 @@
-export interface MapFolio {
-    id: string;
-    name: string;
-    maps: Map[];
-}
-
 export interface Map {
     id: string;
     name: string;

@@ -4,7 +4,7 @@ import { Icon } from 'antd';
 
 import { Combat } from '../../models/combat';
 import { Encounter } from '../../models/encounter';
-import { MapFolio } from '../../models/map-folio';
+import { Map } from '../../models/map';
 import { MonsterGroup } from '../../models/monster-group';
 import { Party } from '../../models/party';
 
@@ -12,12 +12,12 @@ interface Props {
     parties: Party[];
     library: MonsterGroup[];
     encounters: Encounter[];
-    maps: MapFolio[];
+    maps: Map[];
     combats: Combat[];
     openParty: (id: string | null) => void;
     openMonsterGroup: (id: string | null) => void;
     openEncounter: (id: string | null) => void;
-    openMapFolio: (id: string | null) => void;
+    openMap: (id: string | null) => void;
     openCombat: (id: string | null) => void;
 }
 
@@ -54,7 +54,7 @@ export default class PageNavigation extends React.Component<Props, State> {
     public render() {
         try {
             const encountersEnabled = this.props.library.length !== 0;
-            const combatEnabled = (this.props.combats.length !== 0) || ((this.props.parties.length !== 0) && (this.props.encounters.length !== 0));
+            const combatEnabled = (this.props.combats.length !== 0) || (this.props.parties.length !== 0);
 
             const parties = this.props.parties.map(party => (
                 <div key={party.id} className='nav-subitem' onClick={() => this.props.openParty(party.id)}>{party.name}</div>
@@ -69,7 +69,7 @@ export default class PageNavigation extends React.Component<Props, State> {
             ));
 
             const maps = this.props.maps.map(map => (
-                <div key={map.id} className='nav-subitem' onClick={() => this.props.openMapFolio(map.id)}>{map.name}</div>
+                <div key={map.id} className='nav-subitem' onClick={() => this.props.openMap(map.id)}>{map.name}</div>
             ));
 
             const combats = this.props.combats.map(combat => (
@@ -149,7 +149,7 @@ export default class PageNavigation extends React.Component<Props, State> {
                     </div>
                     {this.state.showEncounters ? encounters : null}
                     <div className='nav-item'>
-                        <div className='text' onClick={() => this.props.openMapFolio(null)}>maps</div>
+                        <div className='text' onClick={() => this.props.openMap(null)}>maps</div>
                         {openMaps}
                     </div>
                     {this.state.showMaps ? maps : null}

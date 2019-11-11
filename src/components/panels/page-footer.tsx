@@ -24,7 +24,7 @@ export default class PageFooter extends React.Component<Props> {
             let combatStyle = this.props.view === 'combat' ? 'navigator-item combat selected' : 'navigator-item combat';
 
             const encountersEnabled = this.props.library.length !== 0;
-            const combatEnabled = (this.props.combats.length !== 0) || ((this.props.parties.length !== 0) && (this.props.encounters.length !== 0));
+            const combatEnabled = (this.props.combats.length !== 0) || (this.props.parties.length !== 0);
             if (!encountersEnabled) {
                 encounterStyle += ' disabled';
             }

@@ -1,7 +1,7 @@
 // This utility file deals with search
 
 import { Encounter, EncounterSlot, EncounterWave } from '../models/encounter';
-import { Map, MapFolio, MapNote } from '../models/map-folio';
+import { Map, MapNote } from '../models/map';
 import { Monster, MonsterGroup, Trait } from '../models/monster-group';
 import { Companion, Party, PC } from '../models/party';
 
@@ -120,14 +120,6 @@ export default class Sherlock {
         }
 
         return false;
-    }
-
-    public static matchFolio(filter: string, folio: MapFolio) {
-        if (Sherlock.match(filter, folio.name)) {
-            return true;
-        }
-
-        return folio.maps.some(map => Sherlock.matchMap(filter, map));
     }
 
     public static matchMap(filter: string, map: Map) {

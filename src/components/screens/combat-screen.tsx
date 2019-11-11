@@ -12,7 +12,7 @@ import Utils from '../../utils/utils';
 import { Combat, Combatant, Notification } from '../../models/combat';
 import { Condition, ConditionDurationSaves } from '../../models/condition';
 import { Encounter } from '../../models/encounter';
-import { MapItem, MapNote } from '../../models/map-folio';
+import { MapItem, MapNote } from '../../models/map';
 import { Monster, Trait } from '../../models/monster-group';
 import { PC } from '../../models/party';
 
@@ -377,9 +377,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 
     private getTools() {
         let wavesAvailable = false;
-        const encounterID = this.props.combat.encounterID;
-        const encounter = this.props.encounters.find(enc => enc.id === encounterID);
-        wavesAvailable = !!encounter && (encounter.waves.length > 0);
+        wavesAvailable = !!this.props.combat.encounter && (this.props.combat.encounter.waves.length > 0);
 
         return (
             <div>
