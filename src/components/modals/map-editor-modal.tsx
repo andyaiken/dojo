@@ -331,7 +331,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
                         <button onClick={() => this.toggleAddingTile()}>
                             {this.state.addingTile ? 'click somewhere on the map to add your new tile, or click here to cancel' : 'add a new tile'}
                         </button>
-                        <button onClick={() => this.generate('room')}>generate a room</button>
+                        <button onClick={() => this.generate('room')}>add a random room</button>
                         <button onClick={() => this.rotateMap()}>rotate the map</button>
                         <ConfirmButton text='clear all tiles' callback={() => this.clearMap()} />
                     </div>

@@ -581,13 +581,13 @@ body,
 
         &.selected {
             background-color: $control-border;
-            font-weight: 600;
             pointer-events: none;
         }
 
         &.selected,
         &:hover {
             border-color: $control-border;
+            font-weight: 600;
         }
     }
 }

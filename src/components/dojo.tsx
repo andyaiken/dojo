@@ -862,21 +862,10 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
-    private addDungeonMap() {
+    private generateMap(type: string) {
         const map = Factory.createMap();
-        map.name = 'new dungeon';
-        Mercator.generate('dungeon', map);
-        this.state.maps.push(map);
-
-        this.setState({
-            maps: this.state.maps
-        });
-    }
-
-    private addDelveMap() {
-        const map = Factory.createMap();
-        map.name = 'new delve';
-        Mercator.generate('delve', map);
+        map.name = 'new ' + type;
+        Mercator.generate(type, map);
         this.state.maps.push(map);
 
         this.setState({
@@ -2053,8 +2042,7 @@ export default class Dojo extends React.Component<Props, State> {
                     <MapListScreen
                         maps={this.state.maps}
                         addMap={() => this.addMap()}
-                        addDungeonMap={() => this.addDungeonMap()}
-                        addDelveMap={() => this.addDelveMap()}
+                        generateMap={(type) => this.generateMap(type)}
                         editMap={map => this.editMap(map)}
                         deleteMap={map => this.removeMap(map)}
                     />

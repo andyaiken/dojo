@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Row } from 'antd';
+import { Col, Collapse, Icon, Row } from 'antd';
 
 import { Map } from '../../models/map';
 
@@ -12,8 +12,7 @@ import Note from '../panels/note';
 interface Props {
     maps: Map[];
     addMap: () => void;
-    addDungeonMap: () => void;
-    addDelveMap: () => void;
+    generateMap: (type: string) => void;
     editMap: (map: Map) => void;
     deleteMap: (map: Map) => void;
 }
@@ -42,8 +41,16 @@ export default class MapListScreen extends React.Component<Props> {
                             <div className='section'>to start a new map, press the <b>create a new map</b> button</div>
                         </Note>
                         <button onClick={() => this.props.addMap()}>create a new map</button>
-                        <button onClick={() => this.props.addDungeonMap()}>create a new dungeon map</button>
-                        <button onClick={() => this.props.addDelveMap()}>create a new delve map</button>
+                        <Collapse
+                            bordered={false}
+                            expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
+                            expandIconPosition={'right'}
+                        >
+                            <Collapse.Panel key='one' header='map generator'>
+                                <button onClick={() => this.props.generateMap('dungeon')}>create a new dungeon map</button>
+                                <button onClick={() => this.props.generateMap('delve')}>create a new delve map</button>
+                            </Collapse.Panel>
+                        </Collapse>
                     </Col>
                     <Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
                         <GridPanel heading='maps' content={listItems} />
