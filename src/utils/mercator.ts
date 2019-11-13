@@ -188,7 +188,7 @@ export default class Mercator {
     public static addRoom(map: Map) {
         const room = Factory.createMapItem();
         room.type = 'tile';
-        room.terrain = 'flagstone';
+        room.terrain = 'default';
         room.style = 'square';
         room.width = Utils.dieRoll(4, 2) + 2;
         room.height = Utils.dieRoll(4, 2) + 2;
@@ -232,7 +232,7 @@ export default class Mercator {
                     for (let x = minX; x <= maxX - 1; ++x) {
                         const corridor = Factory.createMapItem();
                         corridor.type = 'tile';
-                        corridor.terrain = 'flagstone';
+                        corridor.terrain = 'default';
                         corridor.style = 'square';
                         corridor.x = x;
                         corridor.y = corridorTop;
@@ -254,7 +254,7 @@ export default class Mercator {
                     for (let y = minY; y <= maxY - 1; ++y) {
                         const corridor = Factory.createMapItem();
                         corridor.type = 'tile';
-                        corridor.terrain = 'flagstone';
+                        corridor.terrain = 'default';
                         corridor.style = 'square';
                         corridor.x = corridorLeft;
                         corridor.y = y;

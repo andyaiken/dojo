@@ -27,6 +27,7 @@ export interface MapNote {
 }
 
 export const TERRAIN_TYPES = [
+    'default',
     'cavern',
     'dirt',
     'flagstone',

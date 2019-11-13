@@ -1179,6 +1179,10 @@ body,
     border: 1px solid darkgrey;
     background-color: lightgrey;
 
+    &.default {
+        background-image: url("../resources/images/map-tiles/default.jpg");
+    }
+
     &.cavern {
         background-image: url("../resources/images/map-tiles/cavern.jpg");
     }
