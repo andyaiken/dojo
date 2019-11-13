@@ -145,7 +145,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 
     private nudgeMapSize(value: number) {
         this.setState({
-            mapSize: Math.max(this.state.mapSize + value, 5)
+            mapSize: Math.max(this.state.mapSize + value, 3)
         });
     }
 
@@ -167,7 +167,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 
     private nudgePlayerViewMapSize(value: number) {
         // eslint-disable-next-line
-        this.state.playerView.mapSize = Math.max(this.state.playerView.mapSize + value, 5);
+        this.state.playerView.mapSize = Math.max(this.state.playerView.mapSize + value, 3);
         this.setState({
             playerView: this.state.playerView
         });
@@ -407,7 +407,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                         source={this.state}
                         name={'mapSize'}
                         display={() => 'zoom'}
-                        nudgeValue={delta => this.nudgeMapSize(delta * 5)}
+                        nudgeValue={delta => this.nudgeMapSize(delta * 3)}
                     />
                 </div>
                 <div className='subheading'>player view</div>
@@ -428,7 +428,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                         source={this.state.playerView}
                         name={'mapSize'}
                         display={() => 'zoom'}
-                        nudgeValue={delta => this.nudgePlayerViewMapSize(delta * 5)}
+                        nudgeValue={delta => this.nudgePlayerViewMapSize(delta * 3)}
                     />
                 </div>
             </div>

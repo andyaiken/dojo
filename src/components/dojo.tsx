@@ -24,6 +24,7 @@ import LeaderboardModal from './modals/leaderboard-modal';
 import MapEditorModal from './modals/map-editor-modal';
 import MonsterEditorModal from './modals/monster-editor-modal';
 import MonsterImportModal from './modals/monster-import-modal';
+import MonsterInfoModal from './modals/monster-info-modal';
 import PartyImportModal from './modals/party-import-modal';
 import PCEditorModal from './modals/pc-editor-modal';
 import SearchModal from './modals/search-modal';
@@ -683,6 +684,18 @@ export default class Dojo extends React.Component<Props, State> {
                     library: this.state.library
                 });
             });
+    }
+
+    private openMonsterInfoModal(groupName: string, monsterName: string) {
+        const monster = this.getMonster(monsterName, groupName);
+        if (monster) {
+            this.setState({
+                drawer: {
+                    type: 'monster-stat-block',
+                    monster: monster
+                }
+            });
+        }
     }
 
     //#endregion
@@ -2005,6 +2018,7 @@ export default class Dojo extends React.Component<Props, State> {
                             selectMonsterGroup={group => this.selectMonsterGroup(group)}
                             deleteMonsterGroup={group => this.removeMonsterGroup(group)}
                             addOpenGameContent={() => this.addOpenGameContent()}
+                            openStatBlock={(groupName, monsterName) => this.openMonsterInfoModal(groupName, monsterName)}
                         />
                     );
                 }
@@ -2039,6 +2053,7 @@ export default class Dojo extends React.Component<Props, State> {
                             deleteEncounter={encounter => this.removeEncounter(encounter)}
                             getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
                             setView={view => this.setView(view)}
+                            openStatBlock={(groupName, monsterName) => this.openMonsterInfoModal(groupName, monsterName)}
                         />
                     );
                 }
@@ -2148,21 +2163,30 @@ export default class Dojo extends React.Component<Props, State> {
                     footer = (
                         <Row gutter={10}>
                             <Col span={8}>
+                                <button onClick={() => this.saveMonster()}>save changes</button>
+                            </Col>
+                            <Col span={8}>
+                                <button onClick={() => this.closeDrawer()}>discard changes</button>
+                            </Col>
+                            <Col span={8}>
                                 <Checkbox
                                     label='advanced tools'
                                     checked={this.state.drawer.showSidebar}
                                     changeValue={() => this.toggleShowSidebar()}
                                 />
                             </Col>
-                            <Col span={8}>
-                                <button onClick={() => this.saveMonster()}>save changes</button>
-                            </Col>
-                            <Col span={8}>
-                                <button onClick={() => this.closeDrawer()}>discard changes</button>
-                            </Col>
                         </Row>
                     );
                     width = '75%';
+                    break;
+                case 'monster-stat-block':
+                    content = (
+                        <MonsterInfoModal
+                            monster={this.state.drawer.monster}
+                        />
+                    );
+                    header = 'monster';
+                    closable = true;
                     break;
                 case 'import-party':
                     content = (

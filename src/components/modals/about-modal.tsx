@@ -17,6 +17,7 @@ export default class AboutModal extends React.Component<Props> {
                     <div className='section'>designed by <a href='mailto:andy.aiken@live.co.uk'>andy aiken</a></div>
                     <div className='section'>version <b>{pkg.version}</b></div>
                     <div className='section'>if you would like to raise a bug or request a new feature, you can do so <a href='https://github.com/andyaiken/dojo' target='_blank' rel='noopener noreferrer'>here</a></div>
+                    <div className='divider'/>
                     <div className='subheading'>open game license</div>
                     <div className='section'>The following text is the property of Wizards of the Coast, Inc. and is Copyright 2000 Wizards of the Coast, Inc ('Wizards'). All Rights Reserved.</div>
                     <ol>
@@ -36,6 +37,7 @@ export default class AboutModal extends React.Component<Props> {
                         <li><b>Reformation</b>: If any provision of this License is held to be unenforceable, such provision shall be reformed only to the extent necessary to make it enforceable.</li>
                         <li><b>COPYRIGHT NOTICE</b> Open Game License v 1.0 Copyright 2000, Wizards of the Coast, Inc.</li>
                     </ol>
+                    <div className='divider'/>
                     <div className='subheading'>options</div>
                     <div className='section'>this will reset the entire app and cannot be undone</div>
                     <div className='section'>use it at your own risk</div>

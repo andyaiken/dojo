@@ -455,7 +455,7 @@ class MapSection extends React.Component<MapSectionProps> {
                 <MapPanel
                     map={this.props.combatSetup.map}
                     mode='thumbnail'
-                    size={10}
+                    size={12}
                 />
             );
         }

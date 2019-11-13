@@ -169,25 +169,6 @@ export default class MapPanel extends React.Component<Props> {
                 );
             }
 
-            // Draw the grid squares
-            const grid = [];
-            if (this.props.mode === 'edit') {
-                for (let y = mapDimensions.minY; y !== mapDimensions.maxY + 1; ++y) {
-                    for (let x = mapDimensions.minX; x !== mapDimensions.maxX + 1; ++x) {
-                        const gridStyle = this.getStyle(x, y, 1, 1, 'square', mapDimensions);
-                        grid.push(
-                            <GridSquare
-                                key={x + ',' + y}
-                                x={x}
-                                y={y}
-                                style={gridStyle}
-                                onClick={() => this.props.setSelectedItemID(null)}
-                            />
-                        );
-                    }
-                }
-            }
-
             // Draw the map tiles
             const tiles = this.props.map.items
                 .filter(i => i.type === 'tile')
@@ -314,11 +295,11 @@ export default class MapPanel extends React.Component<Props> {
             }
 
             const style = 'map-panel ' + this.props.mode;
+            const mapWidth = 1 + mapDimensions.maxX - mapDimensions.minX;
             const mapHeight = 1 + mapDimensions.maxY - mapDimensions.minY;
             return (
                 <div className={style} onClick={() => this.props.setSelectedItemID(null)}>
-                    <div className='grid' style={{ height: ((this.props.size * mapHeight) + 1) + 'px' }}>
-                        {grid}
+                    <div className='grid' style={{ width: ((this.props.size * mapWidth) + 2) + 'px', height: ((this.props.size * mapHeight) + 2) + 'px' }}>
                         {tiles}
                         {overlays}
                         {auras}

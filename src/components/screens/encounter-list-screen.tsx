@@ -21,6 +21,7 @@ interface Props {
     deleteEncounter: (encounter: Encounter) => void;
     getMonster: (monsterName: string, groupName: string) => Monster | null;
     setView: (view: string) => void;
+    openStatBlock: (groupName: string, monsterName: string) => void;
 }
 
 export default class EncounterListScreen extends React.Component<Props> {
@@ -56,6 +57,7 @@ export default class EncounterListScreen extends React.Component<Props> {
                     encounter={e}
                     open={encounter => this.props.selectEncounter(encounter)}
                     delete={encounter => this.props.deleteEncounter(encounter)}
+                    openStatBlock={slot => this.props.openStatBlock(slot.monsterGroupName, slot.monsterName)}
                     getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
                 />
             ));
@@ -95,6 +97,7 @@ interface ListItemProps {
     encounter: Encounter;
     open: (encounter: Encounter) => void;
     delete: (encounter: Encounter) => void;
+    openStatBlock: (slot: EncounterSlot) => void;
     getMonster: (monsterName: string, groupName: string) => Monster | null;
 }
 
@@ -122,6 +125,7 @@ class ListItem extends React.Component<ListItemProps> {
                 <div key={slot.id} className='monster-row'>
                     {this.getPortrait(slot)}
                     {this.getText(slot)}
+                    <Icon className='info-icon' type='info-circle' onClick={() => this.props.openStatBlock(slot)} />
                 </div>
             ));
             if (slots.length === 0) {
@@ -135,6 +139,7 @@ class ListItem extends React.Component<ListItemProps> {
                         <div key={slot.id} className='monster-row'>
                             {this.getPortrait(slot)}
                             {this.getText(slot)}
+                            <Icon className='info-icon' type='info-circle' onClick={() => this.props.openStatBlock(slot)} />
                         </div>
                     );
                 });

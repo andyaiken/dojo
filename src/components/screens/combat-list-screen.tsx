@@ -116,7 +116,7 @@ class ListItem extends React.Component<ListItemProps> {
                         <MapPanel
                             map={this.props.combat.map}
                             mode='thumbnail'
-                            size={10}
+                            size={12}
                             combatants={this.props.combat.combatants}
                         />
                     </div>

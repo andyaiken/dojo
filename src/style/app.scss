@@ -583,6 +583,7 @@ body,
     height: 50px;
     text-align: center;
     background-color: $header-background;
+    border-top: 1px solid $control-border;
 
     .navigator-item {
         display: inline-block;
@@ -590,7 +591,7 @@ body,
         margin: 5px;
         border: 1px solid transparent;
         cursor: pointer;
-        height: 40px;
+        height: 39px;
         line-height: 38px;
         width: calc(((100% - 1px) / 5) - 10px);
         font-size: 14px;
@@ -766,12 +767,25 @@ body,
                 border-radius: 5px;
                 margin: 3px 0;
                 padding: 5px;
+                position: relative;
 
                 .name {
                     display: inline-block;
                     vertical-align: top;
                     padding: 1px 0;
                     min-height: 20px;
+                }
+
+                .info-icon {
+                    position: absolute;
+                    top: 8px;
+                    right: 8px;
+                    cursor: pointer;
+                    font-size: 15px;
+
+                    &:hover {
+                        background-color: $highlight02;
+                    }
                 }
             }
 
@@ -1106,6 +1120,7 @@ body,
 
     .grid {
         position: relative;
+        margin: 0 auto;
 
         .grid-square {
             position: absolute;
@@ -1130,6 +1145,13 @@ body,
     }
 
     &.edit {
+
+        .grid {
+            border: 1px solid $control-border;
+            background-color: #f0f0ff;
+            margin-top: 15px;
+        }
+
         .tile:hover {
             border-color: $highlight;
         }

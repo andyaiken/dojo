@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Row } from 'antd';
+import { Col, Icon, Row } from 'antd';
 
 import Utils from '../../utils/utils';
 
@@ -21,6 +21,7 @@ interface Props {
     selectMonsterGroup: (group: MonsterGroup) => void;
     deleteMonsterGroup: (group: MonsterGroup) => void;
     addOpenGameContent: () => void;
+    openStatBlock: (groupName: string, monsterName: string) => void;
 }
 
 export default class MonsterListScreen extends React.Component<Props> {
@@ -50,6 +51,7 @@ export default class MonsterListScreen extends React.Component<Props> {
                     group={group}
                     open={grp => this.props.selectMonsterGroup(grp)}
                     delete={grp => this.props.deleteMonsterGroup(grp)}
+                    openStatBlock={(groupName, monsterName) => this.props.openStatBlock(groupName, monsterName)}
                 />
             ));
 
@@ -83,6 +85,7 @@ interface ListItemProps {
     group: MonsterGroup;
     open: (group: MonsterGroup) => void;
     delete: (group: MonsterGroup) => void;
+    openStatBlock: (groupName: string, monsterName: string) => void;
 }
 
 interface ListItemState {
@@ -108,6 +111,7 @@ class ListItem extends React.Component<ListItemProps, ListItemState> {
             <div key={m.id} className='monster-row'>
                 <PortraitPanel source={m} inline={true}/>
                 <div className='name'>{m.name || 'unnamed monster'}</div>
+                <Icon className='info-icon' type='info-circle' onClick={() => this.props.openStatBlock(this.props.group.name, m.name)} />
             </div>
         ));
         if (monsters.length === 0) {

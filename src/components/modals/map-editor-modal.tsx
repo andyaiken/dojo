@@ -49,14 +49,19 @@ export default class MapEditorModal extends React.Component<Props, State> {
     }
 
     private toggleAddingTile() {
-        this.setState({
-            addingTile: !this.state.addingTile
-        });
+        if (!this.state.addingTile && (this.state.map.items.length === 0)) {
+            // Just add the tile
+            this.addMapTile(0, 0);
+        } else {
+            this.setState({
+                addingTile: !this.state.addingTile
+            });
+        }
     }
 
     private nudgeMapSize(value: number) {
         this.setState({
-            mapSize: Math.max(this.state.mapSize + value, 5)
+            mapSize: Math.max(this.state.mapSize + value, 3)
         });
     }
 
@@ -179,6 +184,16 @@ export default class MapEditorModal extends React.Component<Props, State> {
         }
     }
 
+    private rotateMapItem(item: MapItem) {
+        const tmp = item.width;
+        item.width = item.height;
+        item.height = tmp;
+
+        this.setState({
+            map: this.state.map
+        });
+    }
+
     private sendToBack(item: MapItem) {
         const index = this.state.map.items.indexOf(item);
         this.state.map.items.splice(index, 1);
@@ -299,6 +314,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
                             resize={(tile, dir, dir2) => this.resizeMapItem(tile, dir, dir2)}
                             clone={tile => this.cloneMapItem(tile)}
                             remove={tile => this.removeMapItem(tile)}
+                            rotate={tile => this.rotateMapItem(tile)}
                             sendToBack={tile => this.sendToBack(tile)}
                             bringToFront={tile => this.bringToFront(tile)}
                             addNote={tileID => this.addNote(tileID)}
@@ -326,14 +342,24 @@ export default class MapEditorModal extends React.Component<Props, State> {
                             source={this.state}
                             name={'mapSize'}
                             display={() => 'zoom'}
-                            nudgeValue={delta => this.nudgeMapSize(delta * 5)}
+                            nudgeValue={delta => this.nudgeMapSize(delta * 3)}
                         />
-                        <button onClick={() => this.toggleAddingTile()}>
-                            {this.state.addingTile ? 'click somewhere on the map to add your new tile, or click here to cancel' : 'add a new tile'}
-                        </button>
-                        <button onClick={() => this.generate('room')}>add a random room</button>
-                        <button onClick={() => this.rotateMap()}>rotate the map</button>
-                        <ConfirmButton text='clear all tiles' callback={() => this.clearMap()} />
+                        {
+                            this.state.addingTile
+                            ?
+                            <div>
+                                <button onClick={() => this.toggleAddingTile()}>
+                                    click somewhere on the map to add your new tile, or click here to cancel
+                                </button>
+                            </div>
+                            :
+                            <div>
+                                <button onClick={() => this.toggleAddingTile()}>add a new tile</button>
+                                <button onClick={() => this.generate('room')}>add a random room</button>
+                                <button onClick={() => this.rotateMap()}>rotate the map</button>
+                                <ConfirmButton text='clear all tiles' callback={() => this.clearMap()} />
+                            </div>
+                        }
                     </div>
                 );
             }
@@ -375,6 +401,7 @@ interface MapTileCardProps {
     resize: (tile: MapItem, dir: string, dir2: 'in' | 'out') => void;
     clone: (tile: MapItem) => void;
     remove: (tile: MapItem) => void;
+    rotate: (tile: MapItem) => void;
     sendToBack: (tile: MapItem) => void;
     bringToFront: (tile: MapItem) => void;
     addNote: (tileID: string) => void;
@@ -414,10 +441,10 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
                     <Radial direction='both' click={(dir, dir2) => this.props.resize(this.props.tile, dir, dir2 as 'in' | 'out')} />
                 </div>
                 <div className='divider' />
-                <div className='section'>
-                    <button onClick={() => this.props.sendToBack(this.props.tile)}>send to back</button>
-                    <button onClick={() => this.props.bringToFront(this.props.tile)}>bring to front</button>
-                </div>
+                <button onClick={() => this.props.rotate(this.props.tile)}>rotate</button>
+                <div className='divider' />
+                <button onClick={() => this.props.sendToBack(this.props.tile)}>send to back</button>
+                <button onClick={() => this.props.bringToFront(this.props.tile)}>bring to front</button>
             </div>
         );
     }
