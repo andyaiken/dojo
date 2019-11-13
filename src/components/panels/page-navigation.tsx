@@ -53,9 +53,6 @@ export default class PageNavigation extends React.Component<Props, State> {
 
     public render() {
         try {
-            const encountersEnabled = this.props.library.length !== 0;
-            const combatEnabled = (this.props.combats.length !== 0) || (this.props.parties.length !== 0);
-
             const parties = this.props.parties.map(party => (
                 <div key={party.id} className='nav-subitem' onClick={() => this.props.openParty(party.id)}>{party.name}</div>
             ));
@@ -143,7 +140,7 @@ export default class PageNavigation extends React.Component<Props, State> {
                         {openGroups}
                     </div>
                     {this.state.showGroups ? groups : null}
-                    <div className={encountersEnabled ? 'nav-item' : 'nav-item disabled'}>
+                    <div className='nav-item'>
                         <div className='text' onClick={() => this.props.openEncounter(null)}>encounters</div>
                         {openEncounters}
                     </div>
@@ -153,7 +150,7 @@ export default class PageNavigation extends React.Component<Props, State> {
                         {openMaps}
                     </div>
                     {this.state.showMaps ? maps : null}
-                    <div className={combatEnabled ? 'nav-item' : 'nav-item disabled'}>
+                    <div className='nav-item'>
                         <div className='text' onClick={() => this.props.openCombat(null)}>combat</div>
                         {openCombats}
                     </div>

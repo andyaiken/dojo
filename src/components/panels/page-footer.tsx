@@ -1,17 +1,8 @@
 import React from 'react';
 
-import { Combat } from '../../models/combat';
-import { Encounter } from '../../models/encounter';
-import { MonsterGroup } from '../../models/monster-group';
-import { Party } from '../../models/party';
-
 interface Props {
-    view: 'home' | 'parties' | 'library' | 'encounters' | 'maps' | 'combat';
-    library: MonsterGroup[];
-    parties: Party[];
-    encounters: Encounter[];
-    combats: Combat[];
-    setView: (view: 'parties' | 'library' | 'encounters' | 'maps' | 'combat') => void;
+    view: string;
+    setView: (view: string) => void;
 }
 
 export default class PageFooter extends React.Component<Props> {
@@ -19,18 +10,9 @@ export default class PageFooter extends React.Component<Props> {
         try {
             const partiesStyle = this.props.view === 'parties' ? 'navigator-item pcs selected' : 'navigator-item pcs';
             const libraryStyle = this.props.view === 'library' ? 'navigator-item monsters selected' : 'navigator-item monsters';
-            let encounterStyle = this.props.view === 'encounters' ? 'navigator-item encounters selected' : 'navigator-item encounters';
+            const encounterStyle = this.props.view === 'encounters' ? 'navigator-item encounters selected' : 'navigator-item encounters';
             const mapStyle = this.props.view === 'maps' ? 'navigator-item maps selected' : 'navigator-item maps';
-            let combatStyle = this.props.view === 'combat' ? 'navigator-item combat selected' : 'navigator-item combat';
-
-            const encountersEnabled = this.props.library.length !== 0;
-            const combatEnabled = (this.props.combats.length !== 0) || (this.props.parties.length !== 0);
-            if (!encountersEnabled) {
-                encounterStyle += ' disabled';
-            }
-            if (!combatEnabled) {
-                combatStyle += ' disabled';
-            }
+            const combatStyle = this.props.view === 'combat' ? 'navigator-item combat selected' : 'navigator-item combat';
 
             return (
                 <div className='page-footer'>

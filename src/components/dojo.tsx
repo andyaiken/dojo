@@ -50,7 +50,7 @@ interface Props {
 }
 
 interface State {
-    view: 'home' | 'parties' | 'library' | 'encounters' | 'maps' | 'combat';
+    view: string;
     navigation: boolean;
     drawer: any;
     maximized: boolean;
@@ -171,7 +171,7 @@ export default class Dojo extends React.Component<Props, State> {
 
     //#region Helper methods
 
-    private setView(view: 'home' | 'parties' | 'library' | 'encounters' | 'maps' | 'combat') {
+    private setView(view: string) {
         this.save();
         this.setState({
             view: view
@@ -281,7 +281,7 @@ export default class Dojo extends React.Component<Props, State> {
             selectedMonsterGroupID: null,
             selectedEncounterID: null,
             selectedCombatID: null
-        });
+        }, () => this.saveAll());
     }
 
     private getMonster(monsterName: string, groupName: string) {
@@ -680,7 +680,6 @@ export default class Dojo extends React.Component<Props, State> {
                 Utils.sort(this.state.library);
 
                 this.setState({
-                    view: 'library',
                     library: this.state.library
                 });
             });
@@ -1942,13 +1941,15 @@ export default class Dojo extends React.Component<Props, State> {
     //#region Rendering
 
     private getContent() {
+        let hasPCs = false;
+        this.state.parties.forEach(party => hasPCs = hasPCs || party.pcs.length > 0);
+        let hasMonsters = false;
+        this.state.library.forEach(group => hasMonsters = hasMonsters || group.monsters.length > 0);
+
         switch (this.state.view) {
             case 'home':
                 return (
-                    <HomeScreen
-                        library={this.state.library}
-                        addOpenGameContent={() => this.addOpenGameContent()}
-                    />
+                    <HomeScreen />
                 );
             case 'parties':
                 if (this.state.selectedPartyID) {
@@ -1999,9 +2000,11 @@ export default class Dojo extends React.Component<Props, State> {
                     return (
                         <MonsterListScreen
                             library={this.state.library}
+                            hasMonsters={hasMonsters}
                             addMonsterGroup={() => this.addMonsterGroup()}
                             selectMonsterGroup={group => this.selectMonsterGroup(group)}
                             deleteMonsterGroup={group => this.removeMonsterGroup(group)}
+                            addOpenGameContent={() => this.addOpenGameContent()}
                         />
                     );
                 }
@@ -2030,10 +2033,12 @@ export default class Dojo extends React.Component<Props, State> {
                     return (
                         <EncounterListScreen
                             encounters={this.state.encounters}
+                            hasMonsters={hasMonsters}
                             addEncounter={() => this.addEncounter()}
                             selectEncounter={encounter => this.selectEncounter(encounter)}
                             deleteEncounter={encounter => this.removeEncounter(encounter)}
                             getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
+                            setView={view => this.setView(view)}
                         />
                     );
                 }
@@ -2090,9 +2095,12 @@ export default class Dojo extends React.Component<Props, State> {
                     return (
                         <CombatListScreen
                             combats={this.state.combats}
+                            hasPCs={hasPCs}
+                            hasMonsters={hasMonsters}
                             createCombat={() => this.createCombat()}
                             resumeCombat={combat => this.resumeCombat(combat)}
                             deleteCombat={combat => this.endCombat(combat)}
+                            setView={view => this.setView(view)}
                         />
                     );
                 }
@@ -2361,10 +2369,6 @@ export default class Dojo extends React.Component<Props, State> {
             const footer = this.state.maximized ? null : (
                 <PageFooter
                     view={this.state.view}
-                    parties={this.state.parties}
-                    library={this.state.library}
-                    encounters={this.state.encounters}
-                    combats={this.state.combats}
                     setView={view => this.setView(view)}
                 />
             );

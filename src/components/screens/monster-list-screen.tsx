@@ -12,17 +12,38 @@ import ChartPanel from '../panels/chart-panel';
 import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
 import PortraitPanel from '../panels/portrait-panel';
+import Readaloud from '../panels/readaloud';
 
 interface Props {
     library: MonsterGroup[];
+    hasMonsters: boolean;
     addMonsterGroup: () => void;
     selectMonsterGroup: (group: MonsterGroup) => void;
     deleteMonsterGroup: (group: MonsterGroup) => void;
+    addOpenGameContent: () => void;
 }
 
 export default class MonsterListScreen extends React.Component<Props> {
     public render() {
         try {
+            if (!this.props.hasMonsters) {
+                /* tslint:disable:max-line-length */
+                return (
+                    <Row type='flex' justify='center' align='middle' className='scrollable'>
+                        <Col xs={20} sm={18} md={16} lg={12} xl={10}>
+                            <Readaloud>
+                                <div className='section'>
+                                    to kickstart your monster collection, let's import all the monsters from the <a href='http://dnd.wizards.com/articles/features/systems-reference-document-srd' target='_blank' rel='noopener noreferrer'>d&amp;d system reference document</a>
+                                </div>
+                                <div className='divider' />
+                                <button onClick={() => this.props.addOpenGameContent()}>import monsters</button>
+                            </Readaloud>
+                        </Col>
+                    </Row>
+                );
+                /* tslint:enable:max-line-length */
+            }
+
             const listItems = this.props.library.map(group => (
                 <ListItem
                     key={group.id}

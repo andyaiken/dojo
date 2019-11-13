@@ -56,6 +56,7 @@ ul, ol {
 
 li {
     margin: 5px 0;
+    list-style-type: square;
 }
 
 a {
@@ -107,6 +108,21 @@ button {
     margin: 5px 0;
     padding: 5px 9px 5px 10px;
     cursor: pointer;
+
+    &.link {
+        display: unset;
+        width: unset;
+        background-color: unset;
+        border: unset;
+        padding: unset;
+        margin: unset;
+        min-height: unset;
+        color: $highlight;
+
+        &:hover {
+            background-color: $highlight01;
+        }
+    }
 
     &:hover {
         border-color: $highlight;
@@ -375,6 +391,7 @@ button {
 .strikethrough {
     text-decoration: line-through;
     opacity: 0.8;
+    pointer-events: none;
 }
 
 .image.rotate {
@@ -1355,9 +1372,9 @@ body,
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
 
     .heading {
-        font-size: 20px;
         border: none;
-        padding-left: 0;
+        padding: 5px 0;
+        margin-bottom: 0;
     }
 }
 

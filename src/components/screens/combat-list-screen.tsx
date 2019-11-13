@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Row } from 'antd';
+import { Col, Icon, Row } from 'antd';
 
 import { Combat, Combatant } from '../../models/combat';
 import { Monster } from '../../models/monster-group';
@@ -11,17 +11,59 @@ import GridPanel from '../panels/grid-panel';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 import PortraitPanel from '../panels/portrait-panel';
+import Readaloud from '../panels/readaloud';
 
 interface Props {
     combats: Combat[];
+    hasPCs: boolean;
+    hasMonsters: boolean;
     createCombat: () => void;
     resumeCombat: (combat: Combat) => void;
     deleteCombat: (combat: Combat) => void;
+    setView: (view: string) => void;
 }
 
 export default class CombatListScreen extends React.Component<Props> {
     public render() {
         try {
+            if (!this.props.hasPCs || !this.props.hasMonsters) {
+                /* tslint:disable:max-line-length */
+                return (
+                    <Row type='flex' justify='center' align='middle' className='scrollable'>
+                        <Col xs={20} sm={18} md={16} lg={12} xl={10}>
+                            <Readaloud>
+                                <div className='section'>
+                                    this screen is for running combat encounters, but before you can do that you need to do these things first:
+                                </div>
+                                <ul>
+                                    <li>
+                                        <span className={this.props.hasPCs ? 'strikethrough' : ''}>
+                                            define a party of pcs in the <button className='link' onClick={() => this.props.setView('parties')}>pcs screen</button>
+                                        </span>
+                                        {this.props.hasPCs ? <Icon type='check-circle' title='done' style={{ marginLeft: '5px' }}/> : null}
+                                    </li>
+                                    <li>
+                                        <span className={this.props.hasMonsters ? 'strikethrough' : ''}>
+                                            add some monsters in the <button className='link' onClick={() => this.props.setView('library')}>monsters screen</button>
+                                        </span>
+                                        {this.props.hasMonsters ? <Icon type='check-circle' title='done' style={{ marginLeft: '5px' }}/> : null}
+                                    </li>
+                                </ul>
+                                <div className='divider'/>
+                                <div className='section'>
+                                    you probably want to design your encounter in the <button className='link' onClick={() => this.props.setView('encounters')}>encounters screen</button>, but you don't have to (you can generate a random encounter here instead)
+                                </div>
+                                <div className='divider'/>
+                                <div className='section'>
+                                    if you want to use a tactical map, you can either build one in the <button className='link' onClick={() => this.props.setView('maps')}>maps screen</button>, or you can generate a random one here
+                                </div>
+                            </Readaloud>
+                        </Col>
+                    </Row>
+                );
+                /* tslint:enable:max-line-length */
+            }
+
             const listItems = this.props.combats.map(c => (
                 <ListItem
                     key={c.id}

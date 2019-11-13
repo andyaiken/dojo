@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Row } from 'antd';
+import { Col, Icon, Row } from 'antd';
 
 import Napoleon from '../../utils/napoleon';
 
@@ -11,18 +11,45 @@ import ConfirmButton from '../controls/confirm-button';
 import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
 import PortraitPanel from '../panels/portrait-panel';
+import Readaloud from '../panels/readaloud';
 
 interface Props {
     encounters: Encounter[];
+    hasMonsters: boolean;
     addEncounter: () => void;
     selectEncounter: (encounter: Encounter) => void;
     deleteEncounter: (encounter: Encounter) => void;
     getMonster: (monsterName: string, groupName: string) => Monster | null;
+    setView: (view: string) => void;
 }
 
 export default class EncounterListScreen extends React.Component<Props> {
     public render() {
         try {
+            if (!this.props.hasMonsters) {
+                /* tslint:disable:max-line-length */
+                return (
+                    <Row type='flex' justify='center' align='middle' className='scrollable'>
+                        <Col xs={20} sm={18} md={16} lg={12} xl={10}>
+                            <Readaloud>
+                                <div className='section'>
+                                    this screen is for building encounters, but before you can do that you need to do these things first:
+                                </div>
+                                <ul>
+                                    <li>
+                                        <span className={this.props.hasMonsters ? 'strikethrough' : ''}>
+                                            add some monsters in the <button className='link' onClick={() => this.props.setView('library')}>monsters screen</button>
+                                        </span>
+                                        {this.props.hasMonsters ? <Icon type='check-circle' title='done' style={{ marginLeft: '5px' }}/> : null}
+                                    </li>
+                                </ul>
+                            </Readaloud>
+                        </Col>
+                    </Row>
+                );
+                /* tslint:enable:max-line-length */
+            }
+
             const listItems = this.props.encounters.map(e => (
                 <ListItem
                     key={e.id}

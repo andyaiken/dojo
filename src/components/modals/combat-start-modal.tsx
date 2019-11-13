@@ -116,6 +116,8 @@ export default class CombatStartModal extends React.Component<Props, State> {
         Napoleon.buildEncounter(encounter, xp, filter, this.props.library, this.props.getMonster);
         // eslint-disable-next-line
         this.state.combatSetup.encounter = encounter;
+        // eslint-disable-next-line
+        this.state.combatSetup.monsterNames = Utils.getMonsterNames(encounter);
         this.setState({
             combatSetup: this.state.combatSetup
         }, () => this.props.notify());
