@@ -102,7 +102,6 @@ export default class Shakespeare {
                     return line;
                 } else {
                     if (Utils.dieRoll() === 1) {
-                        // TODO: Mutate choice
                         const groups = ['bdg', 'ptk', 'sz', 'aeiouy', 'lr', 'ckq', 'vf'];
                         groups.forEach(g => {
                             if (g.includes(char)) {

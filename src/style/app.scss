@@ -1227,6 +1227,72 @@ body,
         width: 100%;
         height: 100%;
     }
+
+    .tile-content {
+        width: 100%;
+        height: 100%;
+        background-size: 100% 100%;
+
+        &.doorway.single.horizontal {
+            background-image: url("../resources/images/tile-content/doorway-single-h.svg");
+        }
+
+        &.doorway.single.vertical {
+            background-image: url("../resources/images/tile-content/doorway-single-v.svg");
+        }
+
+        &.doorway.double.horizontal {
+            background-image: url("../resources/images/tile-content/doorway-double-h.svg");
+        }
+
+        &.doorway.double.vertical {
+            background-image: url("../resources/images/tile-content/doorway-double-v.svg");
+        }
+
+        &.doorway.arch.horizontal {
+            background-image: url("../resources/images/tile-content/doorway-arch-h.svg");
+        }
+
+        &.doorway.arch.vertical {
+            background-image: url("../resources/images/tile-content/doorway-arch-v.svg");
+        }
+
+        &.doorway.bars.horizontal {
+            background-image: url("../resources/images/tile-content/doorway-bars-h.svg");
+        }
+
+        &.doorway.bars.vertical {
+            background-image: url("../resources/images/tile-content/doorway-bars-v.svg");
+        }
+
+        &.doorway.curtain.horizontal {
+            background-image: url("../resources/images/tile-content/doorway-curtain-h.svg");
+        }
+
+        &.doorway.curtain.vertical {
+            background-image: url("../resources/images/tile-content/doorway-curtain-v.svg");
+        }
+
+        &.stairway.stairs.horizontal {
+            background-image: url("../resources/images/tile-content/stairway-stairs-h.svg");
+        }
+
+        &.stairway.stairs.vertical {
+            background-image: url("../resources/images/tile-content/stairway-stairs-v.svg");
+        }
+
+        &.stairway.spiral {
+            background-image: url("../resources/images/tile-content/stairway-spiral.svg");
+        }
+
+        &.stairway.ladder.horizontal {
+            background-image: url("../resources/images/tile-content/stairway-ladder-h.svg");
+        }
+
+        &.stairway.ladder.vertical {
+            background-image: url("../resources/images/tile-content/stairway-ladder-v.svg");
+        }
+    }
 }
 
 .overlay {

@@ -284,8 +284,11 @@
 
         &.selected {
             border-color: $highlight;
-            background-color: $highlight01;
             cursor: default;
+
+            .radio-item-text {
+                color: $highlight;
+            }
         }
 
         &.disabled {
@@ -295,7 +298,6 @@
 
         .radio-item-text {
             padding: 8px 6px 8px 10px;
-            color: #3c3c3c;
             font-weight: 600;
         }
 

@@ -137,6 +137,10 @@ export default class Mercator {
             item.y = newY;
             item.width = newWidth;
             item.height = newHeight;
+
+            if (item.content) {
+                item.content.orientation = item.content.orientation === 'horizontal' ? 'vertical' : 'horizontal';
+            }
         });
     }
 
@@ -269,8 +273,22 @@ export default class Mercator {
 
             if (corridors.length > 0) {
                 const index = Math.floor(Math.random() * corridors.length);
+                const corridor = corridors[index];
+                if ((corridor.height === 1) || (corridor.width === 1)) {
+                    if (Utils.dieRoll(2) === 0) {
+                        corridor.content = {
+                            type: 'doorway',
+                            orientation: corridor.height === 1 ? 'horizontal' : 'vertical',
+                            style: 'door'
+                        };
+                    }
+                } else {
+                    // TODO: Maybe add doorways at one or both ends of the corridor
+                    // TODO: Maybe make the corridor into stairs, if it's not too long
+                }
+                map.items.push(corridor);
+
                 map.items.push(room);
-                map.items.push(corridors[index]);
             } else {
                 return false;
             }

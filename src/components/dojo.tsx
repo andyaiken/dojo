@@ -1897,7 +1897,7 @@ export default class Dojo extends React.Component<Props, State> {
 
     //#region Saving
 
-    private saveAfterDelay = Utils.debounce(() => this.saveAll(), 10000);
+    private saveAfterDelay = Utils.debounce(() => this.saveAll(), 5 * 1000);
 
     private save() {
         switch (this.state.view) {
@@ -1930,19 +1930,7 @@ export default class Dojo extends React.Component<Props, State> {
     private saveKey(obj: any, key: string) {
         try {
             const json = JSON.stringify(obj);
-
-            const mb = json.length / (1024 * 1024);
-            if (mb >= 1) {
-                console.info('Saving (' + key + '): ' + mb.toFixed(2) + ' MB');
-            } else {
-                const kb = json.length / 1024;
-                if (kb >= 1) {
-                    console.info('Saving (' + key + '): ' + kb.toFixed(2) + ' KB');
-                } else {
-                    console.info('Saving (' + key + '): ' + json.length + ' B');
-                }
-            }
-
+            console.info('Saving (' + key + '): ' + Utils.toData(json.length));
             window.localStorage.setItem(key, json);
         } catch (ex) {
             console.error('Could not stringify data: ', ex);

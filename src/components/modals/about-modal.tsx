@@ -1,5 +1,9 @@
 import React from 'react';
 
+import { Col, Row } from 'antd';
+
+import Utils from '../../utils/utils';
+
 import ConfirmButton from '../controls/confirm-button';
 
 import pkg from '../../../package.json';
@@ -11,6 +15,23 @@ interface Props {
 export default class AboutModal extends React.Component<Props> {
     public render() {
         try {
+            let data = 0;
+            let images = 0;
+            for (let n = 0; n !== localStorage.length; ++n) {
+                const key = localStorage.key(n);
+                if (key) {
+                    const value = localStorage.getItem(key);
+                    if (value) {
+                        if (key.startsWith('data')) {
+                            data += value.length;
+                        }
+                        if (key.startsWith('image')) {
+                            images += value.length;
+                        }
+                    }
+                }
+            }
+
             /* tslint:disable:max-line-length */
             return (
                 <div className='scrollable'>
@@ -42,6 +63,22 @@ export default class AboutModal extends React.Component<Props> {
                     <div className='section'>this will reset the entire app and cannot be undone</div>
                     <div className='section'>use it at your own risk</div>
                     <ConfirmButton text='clear all data' callback={() => this.props.resetAll()} />
+                    <div className='divider'/>
+                    <div className='subheading'>data</div>
+                    <div className='section'>
+                        <Row>
+                            <Col span={16}>total</Col>
+                            <Col span={8} className='statistic-value'>{Utils.toData(data + images)}</Col>
+                        </Row>
+                        <Row>
+                            <Col span={16}>data</Col>
+                            <Col span={8} className='statistic-value'>{Utils.toData(data)}</Col>
+                        </Row>
+                        <Row>
+                            <Col span={16}>images</Col>
+                            <Col span={8} className='statistic-value'>{Utils.toData(images)}</Col>
+                        </Row>
+                    </div>
                 </div>
             );
             /* tslint:enable:max-line-length */

@@ -62,6 +62,25 @@ export default class Utils {
         };
     }
 
+    public static toData(value: number) {
+        const gb = value / (1024 * 1024 * 1024);
+        if (gb >= 1) {
+            return gb.toFixed(2) + ' GB';
+        } else {
+            const mb = value / (1024 * 1024);
+            if (mb >= 1) {
+                return mb.toFixed(2) + ' MB';
+            } else {
+                const kb = value / 1024;
+                if (kb >= 1) {
+                    return kb.toFixed(2) + ' KB';
+                }
+            }
+        }
+
+        return value + ' B';
+    }
+
     public static modifierValue(score: number): number {
         return Math.floor((score - 10) / 2);
     }

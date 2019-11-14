@@ -81,15 +81,15 @@ class ListItem extends React.Component<ListItemProps> {
                         </div>
                     </div>
                     <div className='card-content'>
-                        <div className='fixed-height'>
-                            <div className='section'>
+                        <Row type='flex' justify='center' align='middle' className='fixed-height'>
+                            <Col span={24}>
                                 <MapPanel
                                     map={this.props.map}
                                     mode='thumbnail'
                                     size={12}
                                 />
-                            </div>
-                        </div>
+                            </Col>
+                        </Row>
                         <div className='divider'/>
                         <button onClick={() => this.props.editMap(this.props.map)}>edit map</button>
                         <ConfirmButton text='delete map' callback={() => this.props.removeMap(this.props.map)} />

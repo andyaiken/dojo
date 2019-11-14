@@ -6,12 +6,13 @@ import Factory from '../../utils/factory';
 import Mercator from '../../utils/mercator';
 import Utils from '../../utils/utils';
 
-import { Map, MapItem, MapNote, TERRAIN_TYPES } from '../../models/map';
+import { DOORWAY_TYPES, Map, MapItem, MapNote, STAIRWAY_TYPES, TERRAIN_TYPES } from '../../models/map';
 
 import ConfirmButton from '../controls/confirm-button';
 import Dropdown from '../controls/dropdown';
 import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
+import RadioGroup from '../controls/radio-group';
 import Selector from '../controls/selector';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
@@ -188,6 +189,10 @@ export default class MapEditorModal extends React.Component<Props, State> {
         const tmp = item.width;
         item.width = item.height;
         item.height = tmp;
+
+        if (item.content) {
+            item.content.orientation = item.content.orientation === 'horizontal' ? 'vertical' : 'horizontal';
+        }
 
         this.setState({
             map: this.state.map
@@ -469,6 +474,12 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
             return { id: t, text: t };
         });
 
+        // TODO: More content options
+        // Doorway: secret door / concealed door
+        // Stairs: slope
+        // Obstacle: pit / column
+        // Furniture: table / chair / bed / brazier / chest / fireplace
+
         return (
             <div>
                 <div className='subheading'>terrain</div>
@@ -484,6 +495,62 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
                     options={styleOptions}
                     selectedID={this.props.tile.style}
                     select={optionID => this.props.changeValue(this.props.tile, 'style', optionID)}
+                />
+                <div className='subheading'>content</div>
+                <RadioGroup
+                    items={[
+                        { id: 'none', text: 'none' },
+                        { id: 'doorway', text: 'doorway', details: (
+                            <div>
+                                <div><b>style</b></div>
+                                <Selector
+                                    options={DOORWAY_TYPES.map(o => ({ id: o, text: o }))}
+                                    itemsPerRow={3}
+                                    selectedID={this.props.tile.content ? this.props.tile.content.style : null}
+                                    select={id => this.props.changeValue(this.props.tile.content, 'style', id)}
+                                />
+                                <div><b>orientation</b></div>
+                                <Selector
+                                    options={['horizontal', 'vertical'].map(o => ({ id: o, text: o }))}
+                                    selectedID={this.props.tile.content ? this.props.tile.content.orientation : null}
+                                    select={id => this.props.changeValue(this.props.tile.content, 'orientation', id)}
+                                />
+                            </div>
+                        ) },
+                        { id: 'stairway', text: 'stairway', details: (
+                            <div>
+                                <div><b>style</b></div>
+                                <Selector
+                                    options={STAIRWAY_TYPES.map(o => ({ id: o, text: o }))}
+                                    selectedID={this.props.tile.content ? this.props.tile.content.style : null}
+                                    select={id => this.props.changeValue(this.props.tile.content, 'style', id)}
+                                />
+                                <div><b>orientation</b></div>
+                                <Selector
+                                    options={['horizontal', 'vertical'].map(o => ({ id: o, text: o }))}
+                                    selectedID={this.props.tile.content ? this.props.tile.content.orientation : null}
+                                    select={id => this.props.changeValue(this.props.tile.content, 'orientation', id)}
+                                />
+                            </div>
+                        ) }
+                    ]}
+                    selectedItemID={this.props.tile.content ? this.props.tile.content.type : 'none'}
+                    select={id => {
+                        let value = null;
+                        if (id !== 'none') {
+                            let defaultStyle = '';
+                            switch (id) {
+                                case 'doorway':
+                                    defaultStyle = DOORWAY_TYPES[0];
+                                    break;
+                                case 'stairway':
+                                    defaultStyle = STAIRWAY_TYPES[0];
+                                    break;
+                            }
+                            value = { type: id, orientation: 'horizontal', style: defaultStyle };
+                        }
+                        this.props.changeValue(this.props.tile, 'content', value);
+                    }}
                 />
             </div>
         );

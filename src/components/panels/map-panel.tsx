@@ -389,7 +389,7 @@ class MapTile extends React.Component<MapTileProps> {
                 style += ' selected';
             }
 
-            let content = null;
+            let customImage = null;
             if (this.props.tile.terrain === 'custom') {
                 let src = none;
                 const data = localStorage.getItem('image-' + this.props.tile.customBackground);
@@ -397,8 +397,16 @@ class MapTile extends React.Component<MapTileProps> {
                     const image = JSON.parse(data);
                     src = image.data;
                 }
-                content = (
+                customImage = (
                     <img className='custom-image' alt='map tile' src={src} />
+                );
+            }
+
+            let content = null;
+            if (this.props.tile.content) {
+                const s = 'tile-content ' + this.props.tile.content.type + ' ' + this.props.tile.content.style + ' ' + this.props.tile.content.orientation;
+                content = (
+                    <div className={s} />
                 );
             }
 
@@ -408,6 +416,7 @@ class MapTile extends React.Component<MapTileProps> {
                     style={this.props.style}
                     onClick={e => this.select(e)}
                 >
+                    {customImage}
                     {content}
                 </div>
             );
