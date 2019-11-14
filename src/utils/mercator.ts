@@ -4,7 +4,7 @@ import Factory from './factory';
 import Utils from './utils';
 
 import { Combat, Combatant } from '../models/combat';
-import { Map, MapItem } from '../models/map';
+import { DOORWAY_TYPES, Map, MapItem } from '../models/map';
 
 export default class Mercator {
     public static scatterCombatants(combat: Combat, type: 'pc' | 'monster') {
@@ -224,7 +224,7 @@ export default class Mercator {
             }
 
             // Try to add a straight corridor to another tile
-            const corridors: MapItem[] = [];
+            const corridors: { tile: MapItem, horizontal: boolean }[] = [];
             map.items.filter(i => i.type === 'tile').forEach(tile => {
                 // Find possible straight vertical corridors joining these two tiles
                 const minX = Math.max(room.x, tile.x);
@@ -243,7 +243,7 @@ export default class Mercator {
                         corridor.width = 2;
                         corridor.height = corridorBottom - corridorTop + 1;
                         if (Mercator.canAddTileHere(map, corridor, corridor.x, corridor.y, 1, 0)) {
-                            corridors.push(corridor);
+                            corridors.push({ tile: corridor, horizontal: false });
                         }
                     }
                 }
@@ -265,7 +265,7 @@ export default class Mercator {
                         corridor.width = corridorRight - corridorLeft + 1;
                         corridor.height = 2;
                         if (Mercator.canAddTileHere(map, corridor, corridor.x, corridor.y, 0, 1)) {
-                            corridors.push(corridor);
+                            corridors.push({ tile: corridor, horizontal: true });
                         }
                     }
                 }
@@ -274,19 +274,87 @@ export default class Mercator {
             if (corridors.length > 0) {
                 const index = Math.floor(Math.random() * corridors.length);
                 const corridor = corridors[index];
-                if ((corridor.height === 1) || (corridor.width === 1)) {
-                    if (Utils.dieRoll(2) === 0) {
-                        corridor.content = {
+
+                if ((!corridor.horizontal && (corridor.tile.height === 1)) || (corridor.horizontal && (corridor.tile.width === 1))) {
+                    if (Utils.dieRoll(2) === 2) {
+                        corridor.tile.content = {
                             type: 'doorway',
-                            orientation: corridor.height === 1 ? 'horizontal' : 'vertical',
-                            style: 'door'
+                            style: Mercator.getRandomDoorwayStyle(),
+                            orientation: corridor.horizontal ? 'vertical' : 'horizontal'
                         };
                     }
                 } else {
-                    // TODO: Maybe add doorways at one or both ends of the corridor
-                    // TODO: Maybe make the corridor into stairs, if it's not too long
+                    if ((!corridor.horizontal && (corridor.tile.height >= 4)) || (corridor.horizontal && (corridor.tile.width >= 4))) {
+                        if (Utils.dieRoll(2) === 2) {
+                            const door = Factory.createMapItem();
+                            door.type = 'tile';
+                            door.terrain = 'default';
+                            door.style = 'square';
+                            door.content = {
+                                type: 'doorway',
+                                style: Mercator.getRandomDoorwayStyle(),
+                                orientation: ''
+                            };
+                            if (corridor.horizontal) {
+                                door.x = corridor.tile.x;
+                                door.y = corridor.tile.y;
+                                door.width = 1;
+                                door.height = 2;
+                                door.content.orientation = 'vertical';
+                                corridor.tile.x += 1;
+                                corridor.tile.width -= 1;
+                            } else {
+                                door.x = corridor.tile.x;
+                                door.y = corridor.tile.y;
+                                door.width = 2;
+                                door.height = 1;
+                                door.content.orientation = 'horizontal';
+                                corridor.tile.y += 1;
+                                corridor.tile.height -= 1;
+                            }
+                            map.items.push(door);
+                        }
+                        if (Utils.dieRoll(2) === 2) {
+                            const door = Factory.createMapItem();
+                            door.type = 'tile';
+                            door.terrain = 'default';
+                            door.style = 'square';
+                            door.content = {
+                                type: 'doorway',
+                                style: Mercator.getRandomDoorwayStyle(),
+                                orientation: ''
+                            };
+                            if (corridor.horizontal) {
+                                door.x = corridor.tile.x + corridor.tile.width - 1;
+                                door.y = corridor.tile.y;
+                                door.width = 1;
+                                door.height = 2;
+                                door.content.orientation = 'vertical';
+                                corridor.tile.width -= 1;
+                            } else {
+                                door.x = corridor.tile.x;
+                                door.y = corridor.tile.y + corridor.tile.height - 1;
+                                door.width = 2;
+                                door.height = 1;
+                                door.content.orientation = 'horizontal';
+                                corridor.tile.height -= 1;
+                            }
+                            map.items.push(door);
+                        }
+                    }
+
+                    if ((!corridor.horizontal && (corridor.tile.height <= 4)) || (corridor.horizontal && (corridor.tile.width <= 4))) {
+                        if (Utils.dieRoll(3) === 3) {
+                            corridor.tile.content = {
+                                type: 'stairway',
+                                style: 'stairs',
+                                orientation: corridor.horizontal ? 'vertical' : 'horizontal'
+                            };
+                        }
+                    }
                 }
-                map.items.push(corridor);
+
+                map.items.push(corridor.tile);
 
                 map.items.push(room);
             } else {
@@ -299,5 +367,10 @@ export default class Mercator {
         // TODO: Maybe add a second or third adjacent tile
 
         return true;
+    }
+
+    private static getRandomDoorwayStyle() {
+        const index = Math.floor(Math.random() * DOORWAY_TYPES.length);
+        return DOORWAY_TYPES[index];
     }
 }

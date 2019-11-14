@@ -505,7 +505,7 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
                                 <div><b>style</b></div>
                                 <Selector
                                     options={DOORWAY_TYPES.map(o => ({ id: o, text: o }))}
-                                    itemsPerRow={3}
+                                    itemsPerRow={2}
                                     selectedID={this.props.tile.content ? this.props.tile.content.style : null}
                                     select={id => this.props.changeValue(this.props.tile.content, 'style', id)}
                                 />

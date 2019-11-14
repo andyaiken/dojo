@@ -45,8 +45,7 @@ export const DOORWAY_TYPES = [
     'single',
     'double',
     'arch',
-    'bars',
-    'curtain'
+    'bars'
 ];
 
 export const STAIRWAY_TYPES = [

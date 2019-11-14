@@ -165,7 +165,7 @@ export default class MapPanel extends React.Component<Props> {
             const mapDimensions = this.getMapDimensions(border);
             if (!mapDimensions) {
                 return (
-                    <div>(blank map)</div>
+                    <div className='section centered'>(blank map)</div>
                 );
             }
 
@@ -404,10 +404,168 @@ class MapTile extends React.Component<MapTileProps> {
 
             let content = null;
             if (this.props.tile.content) {
-                const s = 'tile-content ' + this.props.tile.content.type + ' ' + this.props.tile.content.style + ' ' + this.props.tile.content.orientation;
-                content = (
-                    <div className={s} />
-                );
+                switch (this.props.tile.content.type) {
+                    case 'doorway':
+                        switch (this.props.tile.content.style) {
+                            case 'single':
+                                switch (this.props.tile.content.orientation) {
+                                    case 'horizontal':
+                                        content = (
+                                            <svg className='tile-content'>
+                                                <line className='thick' x1='0' y1='50%' x2='100%' y2='50%' />
+                                                <rect className='thin outline' x='10%' y='25%' width='80%' height='50%' />
+                                            </svg>
+                                        );
+                                        break;
+                                    case 'vertical':
+                                        content = (
+                                            <svg className='tile-content'>
+                                                <line className='thick' x1='50%' y1='0' x2='50%' y2='100%' />
+                                                <rect className='thin outline' x='25%' y='10%' width='50%' height='80%' />
+                                            </svg>
+                                        );
+                                        break;
+                                }
+                                break;
+                            case 'double':
+                                switch (this.props.tile.content.orientation) {
+                                    case 'horizontal':
+                                        content = (
+                                            <svg className='tile-content'>
+                                                <line className='thick' x1='0' y1='50%' x2='100%' y2='50%' />
+                                                <rect className='thin outline' x='10%' y='25%' width='80%' height='50%' />
+                                                <line className='thin' x1='50%' y1='25%' x2='50%' y2='75%' />
+                                            </svg>
+                                        );
+                                        break;
+                                    case 'vertical':
+                                        content = (
+                                            <svg className='tile-content'>
+                                                <line className='thick' x1='50%' y1='0' x2='50%' y2='100%' />
+                                                <rect className='thin outline' x='25%' y='10%' width='50%' height='80%' />
+                                                <line className='thin' x1='25%' y1='50%' x2='75%' y2='50%' />
+                                            </svg>
+                                        );
+                                        break;
+                                }
+                                break;
+                            case 'arch':
+                                switch (this.props.tile.content.orientation) {
+                                    case 'horizontal':
+                                        content = (
+                                            <svg className='tile-content'>
+                                                <line className='thick' x1='0' y1='50%' x2='20%' y2='50%' />
+                                                <line className='thick' x1='80%' y1='50%' x2='100%' y2='50%' />
+                                                <line className='medium' x1='20%' y1='20%' x2='20%' y2='80%' />
+                                                <line className='medium' x1='80%' y1='20%' x2='80%' y2='80%' />
+                                            </svg>
+                                        );
+                                        break;
+                                    case 'vertical':
+                                        content = (
+                                            <svg className='tile-content'>
+                                                <line className='thick' x1='50%' y1='0' x2='50%' y2='20%' />
+                                                <line className='thick' x1='50%' y1='80%' x2='50%' y2='100%' />
+                                                <line className='medium' x1='20%' y1='20%' x2='80%' y2='20%' />
+                                                <line className='medium' x1='20%' y1='80%' x2='80%' y2='80%' />
+                                            </svg>
+                                        );
+                                        break;
+                                }
+                                break;
+                            case 'bars':
+                                switch (this.props.tile.content.orientation) {
+                                    case 'horizontal':
+                                        content = (
+                                            <svg className='tile-content'>
+                                                <circle className='thin filled' cx='10%' cy='50%' r='5%' />
+                                                <circle className='thin filled' cx='30%' cy='50%' r='5%' />
+                                                <circle className='thin filled' cx='50%' cy='50%' r='5%' />
+                                                <circle className='thin filled' cx='70%' cy='50%' r='5%' />
+                                                <circle className='thin filled' cx='90%' cy='50%' r='5%' />
+                                            </svg>
+                                        );
+                                        break;
+                                    case 'vertical':
+                                        content = (
+                                            <svg className='tile-content'>
+                                                <circle className='thin filled' cx='50%' cy='10%' r='5%' />
+                                                <circle className='thin filled' cx='50%' cy='30%' r='5%' />
+                                                <circle className='thin filled' cx='50%' cy='50%' r='5%' />
+                                                <circle className='thin filled' cx='50%' cy='70%' r='5%' />
+                                                <circle className='thin filled' cx='50%' cy='90%' r='5%' />
+                                            </svg>
+                                        );
+                                        break;
+                                }
+                                break;
+                        }
+                        break;
+                    case 'stairway':
+                        switch (this.props.tile.content.style) {
+                            case 'stairs':
+                                switch (this.props.tile.content.orientation) {
+                                    case 'horizontal':
+                                        content = (
+                                            <svg className='tile-content'>
+                                                <line className='thin' x1='0' y1='0' x2='100%' y2='0' />
+                                                <line className='thin' x1='0' y1='25%' x2='100%' y2='25%' />
+                                                <line className='thin' x1='0' y1='50%' x2='100%' y2='50%' />
+                                                <line className='thin' x1='0' y1='75%' x2='100%' y2='75%' />
+                                                <line className='thin' x1='0' y1='100%' x2='100%' y2='100%' />
+                                            </svg>
+                                        );
+                                        break;
+                                    case 'vertical':
+                                        content = (
+                                            <svg className='tile-content'>
+                                                <line className='thin' x1='0' y1='0' x2='0' y2='100%' />
+                                                <line className='thin' x1='25%' y1='0' x2='25%' y2='100%' />
+                                                <line className='thin' x1='50%' y1='0' x2='50%' y2='100%' />
+                                                <line className='thin' x1='75%' y1='0' x2='75%' y2='100%' />
+                                                <line className='thin' x1='100%' y1='0' x2='100%' y2='100%' />
+                                            </svg>
+                                        );
+                                        break;
+                                }
+                                break;
+                            case 'spiral':
+                                content = (
+                                    <svg className='tile-content'>
+                                        <ellipse className='thin outline' cx='50%' cy='50%' rx='40%' ry='40%' />
+                                        <ellipse className='thin filled' cx='50%' cy='50%' rx='10%' ry='10%' />
+                                        <line className='thin' x1='50%' y1='10%' x2='50%' y2='90%' />
+                                        <line className='thin' x1='10%' y1='50%' x2='90%' y2='50%' />
+                                        <line className='thin' x1='20%' y1='20%' x2='80%' y2='80%' />
+                                        <line className='thin' x1='20%' y1='80%' x2='80%' y2='20%' />
+                                    </svg>
+                                );
+                                break;
+                            case 'ladder':
+                                switch (this.props.tile.content.orientation) {
+                                    case 'horizontal':
+                                        content = (
+                                            <svg className='tile-content'>
+                                                <circle className='thin filled' cx='20%' cy='50%' r='7%' />
+                                                <line className='thin' x1='20%' y1='50%' x2='80%' y2='50%' />
+                                                <circle className='thin filled' cx='80%' cy='50%' r='7%' />
+                                            </svg>
+                                        );
+                                        break;
+                                    case 'vertical':
+                                        content = (
+                                            <svg className='tile-content'>
+                                                <circle className='thin filled' cx='50%' cy='20%' r='7%' />
+                                                <line className='thin' x1='50%' y1='20%' x2='50%' y2='80%' />
+                                                <circle className='thin filled' cx='50%' cy='80%' r='7%' />
+                                            </svg>
+                                        );
+                                        break;
+                                }
+                                break;
+                        }
+                        break;
+                }
             }
 
             const tile = (
