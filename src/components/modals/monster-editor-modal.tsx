@@ -503,6 +503,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                     break;
             }
 
+            /* tslint:disable:max-line-length */
             return (
                 <Note>
                     <div className='section'>{info}</div>
@@ -513,6 +514,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                     </div>
                 </Note>
             );
+            /* tslint:enable:max-line-length */
         }
 
         return monsterCards;
