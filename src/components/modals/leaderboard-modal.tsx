@@ -238,7 +238,7 @@ export default class LeaderboardModal extends React.Component<Props> {
     public render() {
         try {
             return (
-                <div className='combat-report scrollable'>
+                <div className='scrollable' style={{ padding: '10px' }}>
                     {this.getKillsChart()}
                     {this.getDamageChart()}
                     {this.getMobilityChart()}

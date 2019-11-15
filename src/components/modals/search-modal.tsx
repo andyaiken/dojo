@@ -183,7 +183,7 @@ export default class SearchModal extends React.Component<Props, State> {
             }
 
             return (
-                <div className='scrollable'>
+                <div className='scrollable' style={{ padding: '10px' }}>
                     <Input.Search
                         placeholder='search'
                         allowClear={true}

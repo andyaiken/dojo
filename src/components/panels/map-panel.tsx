@@ -508,22 +508,26 @@ class MapTile extends React.Component<MapTileProps> {
                                     case 'horizontal':
                                         content = (
                                             <svg className='tile-content'>
-                                                <line className='thin' x1='0' y1='0' x2='100%' y2='0' />
+                                                <line className='thin' x1='0' y1='12.5%' x2='100%' y2='12.5%' />
                                                 <line className='thin' x1='0' y1='25%' x2='100%' y2='25%' />
+                                                <line className='thin' x1='0' y1='37.5%' x2='100%' y2='37.5%' />
                                                 <line className='thin' x1='0' y1='50%' x2='100%' y2='50%' />
+                                                <line className='thin' x1='0' y1='62.5%' x2='100%' y2='62.5%' />
                                                 <line className='thin' x1='0' y1='75%' x2='100%' y2='75%' />
-                                                <line className='thin' x1='0' y1='100%' x2='100%' y2='100%' />
+                                                <line className='thin' x1='0' y1='87.5%' x2='100%' y2='87.5%' />
                                             </svg>
                                         );
                                         break;
                                     case 'vertical':
                                         content = (
                                             <svg className='tile-content'>
-                                                <line className='thin' x1='0' y1='0' x2='0' y2='100%' />
+                                                <line className='thin' x1='12.5%' y1='0' x2='12.5%' y2='100%' />
                                                 <line className='thin' x1='25%' y1='0' x2='25%' y2='100%' />
+                                                <line className='thin' x1='37.5%' y1='0' x2='37.5%' y2='100%' />
                                                 <line className='thin' x1='50%' y1='0' x2='50%' y2='100%' />
+                                                <line className='thin' x1='62.5%' y1='0' x2='62.5%' y2='100%' />
                                                 <line className='thin' x1='75%' y1='0' x2='75%' y2='100%' />
-                                                <line className='thin' x1='100%' y1='0' x2='100%' y2='100%' />
+                                                <line className='thin' x1='87.5%' y1='0' x2='87.5%' y2='100%' />
                                             </svg>
                                         );
                                         break;

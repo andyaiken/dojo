@@ -1145,11 +1145,12 @@ body,
     }
 
     &.edit {
+        overflow: visible;
 
         .grid {
             border: 1px solid $control-border;
-            background-color: #f0f0ff;
-            margin-top: 15px;
+            background-color: #B8C7F4;
+            margin: 15px auto;
         }
 
         .tile:hover {
@@ -1637,7 +1638,7 @@ body,
 
             .text-container {
                 min-height: 42px;
-                line-height: 42px;
+                padding: 12px 0;
 
                 &.number {
                     text-align: right;

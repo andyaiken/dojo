@@ -92,14 +92,30 @@ export default class MapEditorModal extends React.Component<Props, State> {
             case 'N':
                 item.y -= 1;
                 break;
+            case 'NE':
+                item.x += 1;
+                item.y -= 1;
+                break;
             case 'E':
                 item.x += 1;
+                break;
+            case 'SE':
+                item.x += 1;
+                item.y += 1;
                 break;
             case 'S':
                 item.y += 1;
                 break;
+            case 'SW':
+                item.x -= 1;
+                item.y += 1;
+                break;
             case 'W':
                 item.x -= 1;
+                break;
+            case 'NW':
+                item.x -= 1;
+                item.y -= 1;
                 break;
             default:
                 // Do nothing
@@ -374,7 +390,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
                     <Col span={8} className='scrollable'>
                         {tools}
                     </Col>
-                    <Col span={16} className='scrollable'>
+                    <Col span={16} className='scrollable both-ways'>
                         <MapPanel
                             map={this.state.map}
                             mode='edit'
@@ -445,8 +461,6 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
                 <div className='section centered'>
                     <Radial direction='both' click={(dir, dir2) => this.props.resize(this.props.tile, dir, dir2 as 'in' | 'out')} />
                 </div>
-                <div className='divider' />
-                <button onClick={() => this.props.rotate(this.props.tile)}>rotate</button>
                 <div className='divider' />
                 <button onClick={() => this.props.sendToBack(this.props.tile)}>send to back</button>
                 <button onClick={() => this.props.bringToFront(this.props.tile)}>bring to front</button>
@@ -612,6 +626,7 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
                         {content}
                         <div className='divider' />
                         <div className='section'>
+                            <button onClick={() => this.props.rotate(this.props.tile)}>rotate tile</button>
                             <button onClick={() => this.props.clone(this.props.tile)}>clone tile</button>
                             <button onClick={() => this.props.remove(this.props.tile)}>remove tile</button>
                         </div>

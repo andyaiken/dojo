@@ -496,15 +496,22 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             let info = '';
             switch (this.state.sidebar) {
                 case 'similar':
-                    info = 'there are no monsters in your library which match the above criteria.';
+                    info = 'there are no monsters in your library which match the above criteria';
                     break;
                 case 'scratchpad':
-                    info = 'your scratchpad list is empty; you can add monsters to it to see their stats here.';
+                    info = 'your scratchpad list is empty; you can add monsters to it to see their stats here';
                     break;
             }
 
             return (
-                <Note>{info}</Note>
+                <Note>
+                    <div className='section'>{info}</div>
+                    <div className='divider'/>
+                    <div className='section'>when there are monsters shown in this sidebar, you will see their combined stats on the left</div>
+                    <div className='section'>
+                        you can also quickly blend together all the monters in this list to create a new monster by clicking the <b>generate hybrid monster</b> button above
+                    </div>
+                </Note>
             );
         }
 
@@ -875,7 +882,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         {sidebarContent}
                         <div className='divider'/>
                         <button className={monsters.length < 2 ? 'disabled' : ''} onClick={() => this.spliceMonsters(monsters)}>
-                            build random monster
+                            generate hybrid monster
                         </button>
                         <div className='divider'/>
                         {this.getMonsterCards(monsters)}
