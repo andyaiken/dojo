@@ -160,7 +160,7 @@ export default class Shakespeare {
         const maleDragonborn = 'Han Asar Ash Aar Esch An Rash En Arr Jed Rin Gar Ash Dinn Hun Rek';
         const maleMisc = 'Orel Aadi Ahn Aver Eiros Kain Retor Lannan Pet Ikos';
 
-        const femaleHuman = 'Er Ey A E Il Elia Ya Ed Eue Ild Oane Yne Orna Ie Ala Erri';
+        const femaleHuman = 'Er Ey A E Il Elia Ya Ed Eue Ild Oane Yne Orna Ie Ala Erri Ea Ia';
         const femaleDwarf = 'Ber Tin Hild Dryn A Eth Runn Ellen Loda Dis Ja Lin Ra Tyrd De Rasa';
         const femaleElf = 'Rie Aea Striana Inua Rynna Ilia Na Neth Leth Iel Lee Qui Astra Ia Ania Ynn';
         const femaleHalfling = 'Dry Ree Lie Ora Emia Ian Ri Inia Ina Aena Ani Erna Lyse La Da Aela';
@@ -179,7 +179,14 @@ export default class Shakespeare {
             const startIndex = Math.floor(Math.random() * starts.length);
             const endIndex = Math.floor(Math.random() * ends.length);
 
-            const name = starts[startIndex] + ends[endIndex];
+            let separator = '';
+            if (Utils.dieRoll(10) === 1) {
+                const separators = ['-', '\''];
+                const sepIndex = Math.floor(Math.random() * separators.length);
+                separator = separators[sepIndex];
+            }
+
+            const name = starts[startIndex] + separator + ends[endIndex];
             if (!names.includes(name)) {
                 names.push(name);
             }
