@@ -113,7 +113,7 @@ export default class ToolsModal extends React.Component<Props, State> {
             }
 
             return (
-                <div className='scrollable' style={{ padding: '10px' }}>
+                <div className='tools scrollable' style={{ padding: '10px' }}>
                     <Selector
                         options={options}
                         selectedID={this.state.view}
@@ -776,6 +776,7 @@ class LanguageModule extends React.Component<LanguageModuleProps, LanguageModule
                         bordered={false}
                         expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
                         expandIconPosition={'right'}
+                        className='language-options'
                     >
                         <Collapse.Panel key='one' header={'selected languages: ' + selectedLanguages}>
                             <GridPanel content={languages} />
@@ -828,6 +829,7 @@ class GeneratedText extends React.Component<GeneratedTextProps> {
                     bordered={false}
                     expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
                     expandIconPosition={'right'}
+                    className='language-output'
                 >
                     <Collapse.Panel key='one' header={this.props.text.toLowerCase()}>
                         <button onClick={e => this.copy(e)}>copy to clipboard</button>
@@ -851,11 +853,7 @@ interface NameModuleProps {
 }
 
 interface NameModuleState {
-    output: {
-        male: string[],
-        female: string[],
-        surname: string[]
-    };
+    names: string[];
 }
 
 class NameModule extends React.Component<NameModuleProps, NameModuleState> {
@@ -863,75 +861,32 @@ class NameModule extends React.Component<NameModuleProps, NameModuleState> {
         super(props);
 
         this.state = {
-            output: {
-                male: [],
-                female: [],
-                surname: []
-            }
+            names: []
         };
     }
 
-    private async generate(type: 'male' | 'female' | 'surname') {
-        const response = await fetch('./data/names/' + type + '.txt');
-        const input = await response.text();
-
-        Shakespeare.initModel([input]);
-        const names = Shakespeare.generate(10).map(n => n.line).sort();
-
-        this.state.output[type] = names;
+    private async generate() {
         this.setState({
-            output: this.state.output
+            names: Shakespeare.generateNames(10)
         });
     }
 
     public render() {
         try {
-            const male = [];
-            for (let n = 0; n !== this.state.output.male.length; ++n) {
-                male.push(
-                    <div key={n} className='section'>
-                        {this.state.output.male[n].toLowerCase()}
-                    </div>
-                );
-            }
-
-            const female = [];
-            for (let n = 0; n !== this.state.output.female.length; ++n) {
-                female.push(
-                    <div key={n} className='section'>
-                        {this.state.output.female[n].toLowerCase()}
-                    </div>
-                );
-            }
-
-            const surname = [];
-            for (let n = 0; n !== this.state.output.surname.length; ++n) {
-                surname.push(
-                    <div key={n} className='section'>
-                        {this.state.output.surname[n].toLowerCase()}
+            const names = [];
+            for (let n = 0; n !== this.state.names.length; ++n) {
+                names.push(
+                    <div key={n} className='section name-output'>
+                        {this.state.names[n].toLowerCase()}
                     </div>
                 );
             }
 
             return (
                 <div className='name-output'>
-                    <Row gutter={10}>
-                        <Col span={8}>
-                            <div className='heading'>male names</div>
-                            <button onClick={() => this.generate('male')}>generate</button>
-                            {male}
-                        </Col>
-                        <Col span={8}>
-                            <div className='heading'>female names</div>
-                            <button onClick={() => this.generate('female')}>generate</button>
-                            {female}
-                        </Col>
-                        <Col span={8}>
-                            <div className='heading'>surnames</div>
-                            <button onClick={() => this.generate('surname')}>generate</button>
-                            {surname}
-                        </Col>
-                    </Row>
+                    <div className='subheading'>names</div>
+                    <button onClick={() => this.generate()}>generate</button>
+                    {names}
                 </div>
             );
         } catch (ex) {

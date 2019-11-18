@@ -10,15 +10,23 @@ You can find it at [https://andyaiken.github.io/dojo/](https://andyaiken.github.
 
 You can build your own monsters with the built-in monster designer, which lets you check your creations against other similar monsters. Or you can let the app do it for you - just select a few monsters and let it splice them together into a new hybrid monster.
 
+![Monster](./public/screenshots/monster.png)
+
 The app comes with all the standard monsters from the official D&D system reference document, and you can also quickly import a monster from D&D Beyond.
+
+![Monsters](./public/screenshots/monsters.png)
 
 ### Encounter Builder
 
 The encounter builder allows you to build combat encounters, and even split an encounter into multiple waves. You can check your encounter's difficulty for a group of PCs, and the calculations are all done for you. You can even ask it to build you a totally random encounter.
 
+![Encounter difficulty](./public/screenshots/diff.png)
+
 ### Tactical Maps
 
 You can create your own tactical maps by placing and dragging map tiles around a board, or by importing image files. Your map can include standard features like doors and stairs, and you can add notes to significant locations on the map.
+
+![Map](./public/screenshots/map.png)
 
 With the click of a button you can add a random room to the map, or generate an entirely random three-room dungeon delve or a larger ten-room dungeon.
 
@@ -30,9 +38,21 @@ The app can help you to run combat encounters, taking care of the initiative ord
 
 If you're using a tactical map for your encounter, you can move tokens around the map, or add overlays to represent significant regions (such as spell effects or monster auras).
 
+![Combat](./public/screenshots/combat.png)
+
 If you have a second display, the app can show a separate window including the initiative list (which includes relevant condition information) and a copy of the map, if you're using one.
 
----
+### DM Tools
+
+Who needs a DM screen, when you have all this at your fingertips?
+
+- a **die roller** if you want to go all-digital
+- a **name generator** for NPCs
+- **references** for skills, conditions, and combat actions
+- a **text generator** that can quickly give you whole paragraphs of Elvish, Dwarvish, Orcish, Draconic, and so on
+
+![DM tools](./public/screenshots/dmtools.png)
+
 ---
 ---
 

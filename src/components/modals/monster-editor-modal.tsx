@@ -5,6 +5,7 @@ import { Col, Collapse, Drawer, Icon, Input, Row } from 'antd';
 import Factory from '../../utils/factory';
 import Frankenstein from '../../utils/frankenstein';
 import Napoleon from '../../utils/napoleon';
+import Shakespeare from '../../utils/shakespeare';
 import Utils from '../../utils/utils';
 
 import { MonsterFilter } from '../../models/encounter';
@@ -179,6 +180,12 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         });
     }
 
+    private randomName() {
+        let name = Shakespeare.generateNames(1)[0];
+        name = name[0].toUpperCase() + name.substr(1);
+        this.changeValue('name', name);
+    }
+
     private spliceMonsters(monsters: Monster[]) {
         Frankenstein.spliceMonsters(this.state.monster, monsters);
         this.setState({
@@ -209,13 +216,6 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
     private removeTrait(trait: Trait) {
         Frankenstein.removeTrait(this.state.monster, trait);
-        this.setState({
-            monster: this.state.monster
-        });
-    }
-
-    private swapTraits(t1: Trait, t2: Trait) {
-        Frankenstein.swapTraits(this.state.monster, t1, t2);
         this.setState({
             monster: this.state.monster
         });
@@ -569,6 +569,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                     allowClear={true}
                                     onChange={event => this.changeValue('name', event.target.value)}
                                 />
+                                <button onClick={() => this.randomName()}>generate a random name</button>
                                 <div className='subheading'>size</div>
                                 <NumberSpin
                                     source={this.state.monster}
