@@ -773,7 +773,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                 expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
                                 expandIconPosition={'right'}
                             >
-                                <Collapse.Panel key='one' header='similarity criteria'>
+                                <Collapse.Panel key='one' header={<div className='collapse-header-text'>similarity criteria</div>}>
                                     <Checkbox
                                         label={'size ' + this.state.monster.size}
                                         checked={this.state.similarFilter.size}
@@ -835,7 +835,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                         expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
                                         expandIconPosition={'right'}
                                     >
-                                        <Collapse.Panel key='one' header='remove monsters from the list'>
+                                        <Collapse.Panel key='one' header={<div className='collapse-header-text'>remove monsters from the list</div>}>
                                             {deleteRows}
                                         </Collapse.Panel>
                                     </Collapse>
@@ -848,7 +848,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                         expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
                                         expandIconPosition={'right'}
                                     >
-                                        <Collapse.Panel key='one' header='add monsters to the list'>
+                                        <Collapse.Panel key='one' header={<div className='collapse-header-text'>add monsters to the list</div>}>
                                             <FilterPanel
                                                 filter={this.state.scratchpadFilter}
                                                 changeValue={(type, value) => this.changeFilterValue(type, value)}

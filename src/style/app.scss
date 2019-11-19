@@ -245,6 +245,10 @@ button {
 .ant-collapse > .ant-collapse-item > .ant-collapse-header {
     padding: 5px 10px;
     font-weight: 600;
+
+    .collapse-header-text {
+        width: calc(100% - 22px);
+    }
 }
 
 .ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content {

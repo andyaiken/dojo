@@ -1804,7 +1804,7 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                         expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
                         expandIconPosition={'right'}
                     >
-                        <Collapse.Panel key='one' header='aura'>
+                        <Collapse.Panel key='one' header={<div className='collapse-header-text'>aura</div>}>
                             <NumberSpin
                                 source={this.props.combatant.aura}
                                 name='radius'
@@ -1841,7 +1841,7 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                     expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
                     expandIconPosition={'right'}
                 >
-                    <Collapse.Panel key='one' header='change initiative score'>
+                    <Collapse.Panel key='one' header={<div className='collapse-header-text'>change initiative score</div>}>
                         <p>adjusting initiative will re-sort the initiative order</p>
                         <p>if you have manually changed the initiative order, your changes will be lost</p>
                         <NumberSpin
@@ -1863,7 +1863,7 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                     expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
                     expandIconPosition={'right'}
                 >
-                    <Collapse.Panel key='one' header='change name'>
+                    <Collapse.Panel key='one' header={<div className='collapse-header-text'>change name</div>}>
                         <Input
                             value={this.props.combatant.displayName}
                             allowClear={true}
@@ -1876,7 +1876,7 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                     expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
                     expandIconPosition={'right'}
                 >
-                    <Collapse.Panel key='one' header='change size'>
+                    <Collapse.Panel key='one' header={<div className='collapse-header-text'>change size</div>}>
                         <NumberSpin
                             source={this.props.combatant}
                             name='displaySize'

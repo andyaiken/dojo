@@ -76,7 +76,7 @@ export default class FilterPanel extends React.Component<Props> {
                     expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
                     expandIconPosition={'right'}
                 >
-                    <Collapse.Panel key='one' header={summary}>
+                    <Collapse.Panel key='one' header={<div className='collapse-header-text'>{summary}</div>}>
                         {content}
                     </Collapse.Panel>
                 </Collapse>

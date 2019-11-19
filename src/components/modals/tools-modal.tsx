@@ -778,7 +778,7 @@ class LanguageModule extends React.Component<LanguageModuleProps, LanguageModule
                         expandIconPosition={'right'}
                         className='language-options'
                     >
-                        <Collapse.Panel key='one' header={'selected languages: ' + selectedLanguages}>
+                        <Collapse.Panel key='one' header={<div className='collapse-header-text'>selected languages: {selectedLanguages}</div>}>
                             <GridPanel content={languages} />
                         </Collapse.Panel>
                     </Collapse>
@@ -831,7 +831,7 @@ class GeneratedText extends React.Component<GeneratedTextProps> {
                     expandIconPosition={'right'}
                     className='language-output'
                 >
-                    <Collapse.Panel key='one' header={this.props.text.toLowerCase()}>
+                    <Collapse.Panel key='one' header={<div className='collapse-header-text'>{this.props.text.toLowerCase()}</div>}>
                         <button onClick={e => this.copy(e)}>copy to clipboard</button>
                         <button onClick={e => this.say(e)}>say</button>
                         <div className='section'>

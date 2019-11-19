@@ -146,7 +146,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                                 expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
                                 expandIconPosition={'right'}
                             >
-                                <Collapse.Panel key='one' header='clone monster'>
+                                <Collapse.Panel key='one' header={<div className='collapse-header-text'>clone monster</div>}>
                                     <Input
                                         placeholder='monster name'
                                         value={this.state.cloneName}

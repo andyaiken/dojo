@@ -312,7 +312,7 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
                             expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
                             expandIconPosition={'right'}
                         >
-                            <Collapse.Panel key='one' header='build a random encounter'>
+                            <Collapse.Panel key='one' header={<div className='collapse-header-text'>build a random encounter</div>}>
                                 <p>add random monsters to this encounter until its adjusted xp value is at least the following value</p>
                                 <NumberSpin
                                     source={this.state}

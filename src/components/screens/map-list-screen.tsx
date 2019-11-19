@@ -46,7 +46,7 @@ export default class MapListScreen extends React.Component<Props> {
                             expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
                             expandIconPosition={'right'}
                         >
-                            <Collapse.Panel key='one' header='map generator'>
+                            <Collapse.Panel key='one' header={<div className='collapse-header-text'>map generator</div>}>
                                 <button onClick={() => this.props.generateMap('dungeon')}>create a new dungeon map</button>
                                 <button onClick={() => this.props.generateMap('delve')}>create a new delve map</button>
                             </Collapse.Panel>
