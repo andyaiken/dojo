@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Drawer, Input, Row } from 'antd';
+import { Col, Drawer, Row } from 'antd';
 
 import Factory from '../../utils/factory';
 import Mercator from '../../utils/mercator';
@@ -14,6 +14,7 @@ import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
 import RadioGroup from '../controls/radio-group';
 import Selector from '../controls/selector';
+import Textbox from '../controls/textbox';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 import ImageSelectionModal from './image-selection-modal';
@@ -274,11 +275,11 @@ export default class MapEditorModal extends React.Component<Props, State> {
     }
 
     private clearMap() {
-        // eslint-disable-next-line
-        this.state.map.items = [];
+        const map = this.state.map;
+        map.items = [];
 
         this.setState({
-            map: this.state.map,
+            map: map,
             selectedTileID: null
         });
     }
@@ -347,11 +348,10 @@ export default class MapEditorModal extends React.Component<Props, State> {
                 tools = (
                     <div>
                         <div className='subheading'>map name</div>
-                        <Input
+                        <Textbox
+                            text={this.state.map.name}
                             placeholder='map name'
-                            value={this.state.map.name}
-                            allowClear={true}
-                            onChange={event => this.changeValue(this.state.map, 'name', event.target.value)}
+                            onChange={value => this.changeValue(this.state.map, 'name', value)}
                         />
                         <div className='divider' />
                         <Note>
@@ -574,11 +574,11 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
         if (this.props.note) {
             return (
                 <div>
-                    <Input.TextArea
+                    <Textbox
+                        text={this.props.note.text}
                         placeholder='details'
-                        autoSize={{ minRows: 5 }}
-                        value={this.props.note.text}
-                        onChange={event => this.props.changeValue(this.props.note, 'text', event.target.value)}
+                        lines={5}
+                        onChange={value => this.props.changeValue(this.props.note, 'text', value)}
                     />
                     <button onClick={() => this.props.removeNote(this.props.tile.id)}>remove note from this tile</button>
                 </div>

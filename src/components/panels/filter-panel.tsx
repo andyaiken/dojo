@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { Collapse, Icon, Input } from 'antd';
-
 import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
@@ -9,7 +7,9 @@ import { MonsterFilter } from '../../models/encounter';
 import { CATEGORY_TYPES, SIZE_TYPES } from '../../models/monster-group';
 
 import Dropdown from '../controls/dropdown';
+import Expander from '../controls/expander';
 import NumberSpin from '../controls/number-spin';
+import Textbox from '../controls/textbox';
 
 interface Props {
     filter: MonsterFilter;
@@ -27,13 +27,12 @@ export default class FilterPanel extends React.Component<Props> {
             const categories = ['all types'].concat(CATEGORY_TYPES);
             const catOptions = categories.map(cat => ({ id: cat, text: cat }));
 
-            const content = (
-                <div>
-                    <Input
+            return (
+                <Expander text={'showing ' + Napoleon.getFilterDescription(this.props.filter)}>
+                    <Textbox
+                        text={this.props.filter.name}
                         placeholder='name'
-                        value={this.props.filter.name}
-                        allowClear={true}
-                        onChange={event => this.props.changeValue('name', event.target.value)}
+                        onChange={value => this.props.changeValue('name', value)}
                     />
                     <NumberSpin
                         source={this.props.filter}
@@ -65,21 +64,7 @@ export default class FilterPanel extends React.Component<Props> {
                     <div className='section'>
                         <button onClick={() => this.props.resetFilter()}>clear filter</button>
                     </div>
-                </div>
-            );
-
-            const summary = 'showing ' + Napoleon.getFilterDescription(this.props.filter);
-
-            return (
-                <Collapse
-                    bordered={false}
-                    expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
-                    expandIconPosition={'right'}
-                >
-                    <Collapse.Panel key='one' header={<div className='collapse-header-text'>{summary}</div>}>
-                        {content}
-                    </Collapse.Panel>
-                </Collapse>
+                </Expander>
             );
         } catch (e) {
             console.error(e);

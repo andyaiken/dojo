@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Collapse, Icon, Input, Row, Slider } from 'antd';
+import { Col, Icon, Row, Slider } from 'antd';
 import { List } from 'react-movable';
 import Showdown from 'showdown';
 
@@ -20,9 +20,11 @@ import MonsterCard from '../cards/monster-card';
 import PCCard from '../cards/pc-card';
 import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
+import Expander from '../controls/expander';
 import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
 import Selector from '../controls/selector';
+import Textbox from '../controls/textbox';
 import ConditionsPanel from '../panels/conditions-panel';
 import GridPanel from '../panels/grid-panel';
 import HitPointGauge from '../panels/hit-point-gauge';
@@ -150,26 +152,26 @@ export default class CombatScreen extends React.Component<Props, State> {
     }
 
     private setPlayerViewOpen(show: boolean) {
-        // eslint-disable-next-line
-        this.state.playerView.open = show;
+        const pv = this.state.playerView;
+        pv.open = show;
         this.setState({
-            playerView: this.state.playerView
+            playerView: pv
         });
     }
 
     private setPlayerViewShowControls(show: boolean) {
-        // eslint-disable-next-line
-        this.state.playerView.showControls = show;
+        const pv = this.state.playerView;
+        pv.showControls = show;
         this.setState({
-            playerView: this.state.playerView
+            playerView: pv
         });
     }
 
     private nudgePlayerViewMapSize(value: number) {
-        // eslint-disable-next-line
-        this.state.playerView.mapSize = Math.max(this.state.playerView.mapSize + value, 3);
+        const pv = this.state.playerView;
+        pv.mapSize = Math.max(pv.mapSize + value, 3);
         this.setState({
-            playerView: this.state.playerView
+            playerView: pv
         });
     }
 
@@ -1404,11 +1406,11 @@ class MapItemCard extends React.Component<MapItemCardProps, MapItemCardState> {
         if (this.props.note) {
             return (
                 <div>
-                    <Input.TextArea
+                    <Textbox
+                        text={this.props.note.text}
                         placeholder='details'
-                        autoSize={{ minRows: 5 }}
-                        value={this.props.note.text}
-                        onChange={event => this.props.changeValue(this.props.note, 'text', event.target.value)}
+                        lines={5}
+                        onChange={value => this.props.changeValue(this.props.note, 'text', value)}
                     />
                     <button onClick={() => this.props.removeNote(this.props.item.id)}>remove note</button>
                 </div>
@@ -1633,11 +1635,11 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                         </Col>
                     </Row>
                     <div>
-                        <Input.TextArea
+                        <Textbox
+                            text={this.props.combatant.note}
                             placeholder='notes'
-                            autoSize={{ minRows: 3 }}
-                            value={this.props.combatant.note}
-                            onChange={event => this.props.changeValue(this.props.combatant, 'note', event.target.value)}
+                            lines={3}
+                            onChange={value => this.props.changeValue(this.props.combatant, 'note', value)}
                         />
                     </div>
                 </div>
@@ -1799,22 +1801,16 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                         display={value => value + ' ft.'}
                         nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'altitude', delta * 5)}
                     />
-                    <Collapse
-                        bordered={false}
-                        expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
-                        expandIconPosition={'right'}
-                    >
-                        <Collapse.Panel key='one' header={<div className='collapse-header-text'>aura</div>}>
-                            <NumberSpin
-                                source={this.props.combatant.aura}
-                                name='radius'
-                                label='size'
-                                display={value => value + ' ft.'}
-                                nudgeValue={delta => this.props.nudgeValue(this.props.combatant.aura, 'radius', delta * 5)}
-                            />
-                            {auraDetails}
-                        </Collapse.Panel>
-                    </Collapse>
+                    <Expander text='aura'>
+                        <NumberSpin
+                            source={this.props.combatant.aura}
+                            name='radius'
+                            label='size'
+                            display={value => value + ' ft.'}
+                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant.aura, 'radius', delta * 5)}
+                        />
+                        {auraDetails}
+                    </Expander>
                     <button onClick={() => this.props.mapRemove(this.props.combatant)}>remove from map</button>
                 </div>
             );
@@ -1836,55 +1832,36 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
         let init = null;
         if (!this.props.combatant.pending) {
             init = (
-                <Collapse
-                    bordered={false}
-                    expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
-                    expandIconPosition={'right'}
-                >
-                    <Collapse.Panel key='one' header={<div className='collapse-header-text'>change initiative score</div>}>
-                        <p>adjusting initiative will re-sort the initiative order</p>
-                        <p>if you have manually changed the initiative order, your changes will be lost</p>
-                        <NumberSpin
-                            source={this.props.combatant}
-                            name='initiative'
-                            label='initiative'
-                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
-                        />
-                    </Collapse.Panel>
-                </Collapse>
+                <Expander text='change initiative score'>
+                    <p>adjusting initiative will re-sort the initiative order</p>
+                    <p>if you have manually changed the initiative order, your changes will be lost</p>
+                    <NumberSpin
+                        source={this.props.combatant}
+                        name='initiative'
+                        label='initiative'
+                        nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
+                    />
+                </Expander>
             );
         }
 
         return (
             <div>
                 {remove}
-                <Collapse
-                    bordered={false}
-                    expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
-                    expandIconPosition={'right'}
-                >
-                    <Collapse.Panel key='one' header={<div className='collapse-header-text'>change name</div>}>
-                        <Input
-                            value={this.props.combatant.displayName}
-                            allowClear={true}
-                            onChange={event => this.props.changeValue(this.props.combatant, 'displayName', event.target.value)}
-                        />
-                    </Collapse.Panel>
-                </Collapse>
-                <Collapse
-                    bordered={false}
-                    expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
-                    expandIconPosition={'right'}
-                >
-                    <Collapse.Panel key='one' header={<div className='collapse-header-text'>change size</div>}>
-                        <NumberSpin
-                            source={this.props.combatant}
-                            name='displaySize'
-                            label='size'
-                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'displaySize', delta)}
-                        />
-                    </Collapse.Panel>
-                </Collapse>
+                <Expander text='change name'>
+                    <Textbox
+                        text={this.props.combatant.displayName}
+                        onChange={value => this.props.changeValue(this.props.combatant, 'displayName', value)}
+                    />
+                </Expander>
+                <Expander text='change size'>
+                    <NumberSpin
+                        source={this.props.combatant}
+                        name='displaySize'
+                        label='size'
+                        nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'displaySize', delta)}
+                    />
+                </Expander>
                 {init}
             </div>
         );

@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { Col, Icon, Input, Row } from 'antd';
+import { Col, Icon, Row } from 'antd';
 
 import { Party, PC } from '../../models/party';
 
 import PCCard from '../cards/pc-card';
 import ConfirmButton from '../controls/confirm-button';
+import Textbox from '../controls/textbox';
 import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
 
@@ -188,11 +189,10 @@ class PartyInfo extends React.Component<PartyInfoProps> {
                 <div>
                     <div className='section'>
                         <div className='subheading'>party name</div>
-                        <Input
+                        <Textbox
+                            text={this.props.party.name}
                             placeholder='party name'
-                            value={this.props.party.name}
-                            allowClear={true}
-                            onChange={event => this.props.changeValue('name', event.target.value)}
+                            onChange={value => this.props.changeValue('name', value)}
                         />
                     </div>
                     <div className='divider' />

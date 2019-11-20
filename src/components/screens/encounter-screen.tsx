@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Collapse, Icon, Input, Row } from 'antd';
+import { Col, Icon, Row } from 'antd';
 
 import Factory from '../../utils/factory';
 import Napoleon from '../../utils/napoleon';
@@ -12,8 +12,10 @@ import { Party } from '../../models/party';
 
 import MonsterCard from '../cards/monster-card';
 import ConfirmButton from '../controls/confirm-button';
+import Expander from '../controls/expander';
 import NumberSpin from '../controls/number-spin';
 import Selector from '../controls/selector';
+import Textbox from '../controls/textbox';
 import DifficultyChartPanel from '../panels/difficulty-chart-panel';
 import FilterPanel from '../panels/filter-panel';
 import GridPanel from '../panels/grid-panel';
@@ -54,10 +56,10 @@ export default class EncounterScreen extends React.Component<Props, State> {
     }
 
     private changeFilterValue(type: 'name' | 'challengeMin' | 'challengeMax' | 'category' | 'size', value: any) {
-        // eslint-disable-next-line
-        this.state.filter[type] = value as never;
+        const filter = this.state.filter as any;
+        filter[type] = value;
         this.setState({
-            filter: this.state.filter
+            filter: filter
         });
     }
 
@@ -264,11 +266,10 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
         try {
             const waves = this.props.encounter.waves.map(wave => (
                 <div key={wave.id} className='group-panel'>
-                    <Input
+                    <Textbox
+                        text={wave.name}
                         placeholder='wave name'
-                        value={wave.name}
-                        allowClear={true}
-                        onChange={event => this.props.changeValue(wave, 'name', event.target.value)}
+                        onChange={value => this.props.changeValue(wave, 'name', value)}
                     />
                     <ConfirmButton text='delete wave' callback={() => this.props.removeWave(wave)} />
                 </div>
@@ -278,11 +279,10 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
                 <div>
                     <div className='section'>
                         <div className='subheading'>encounter name</div>
-                        <Input
+                        <Textbox
+                            text={this.props.encounter.name}
                             placeholder='encounter name'
-                            value={this.props.encounter.name}
-                            allowClear={true}
-                            onChange={event => this.props.changeValue(this.props.encounter, 'name', event.target.value)}
+                            onChange={value => this.props.changeValue(this.props.encounter, 'name', value)}
                         />
                     </div>
                     <div className='section'>
@@ -307,30 +307,23 @@ class EncounterInfo extends React.Component<EncounterInfoProps, EncounterInfoSta
                     </div>
                     <div className='divider' />
                     <div className='section'>
-                        <Collapse
-                            bordered={false}
-                            expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
-                            expandIconPosition={'right'}
-                        >
-                            <Collapse.Panel key='one' header={<div className='collapse-header-text'>build a random encounter</div>}>
-                                <p>add random monsters to this encounter until its adjusted xp value is at least the following value</p>
-                                <NumberSpin
-                                    source={this.state}
-                                    name='randomEncounterXP'
-                                    label='xp'
-                                    nudgeValue={delta => this.setRandomEncounterXP(this.state.randomEncounterXP + (delta * this.state.randomEncounterStep))}
-                                />
-                                <Selector
-                                    options={['10', '100', '1000'].map(t => {
-                                        return { id: t, text: t };
-                                    })}
-                                    selectedID={this.state.randomEncounterStep.toString()}
-                                    select={optionID => this.setRandomEncounterStep(Number.parseInt(optionID, 10))}
-                                />
-                                <button onClick={() => this.props.buildEncounter(this.state.randomEncounterXP)}>build encounter</button>
-                            </Collapse.Panel>
-                        </Collapse>
-
+                        <Expander text='build a random encounter'>
+                            <p>add random monsters to this encounter until its adjusted xp value is at least the following value</p>
+                            <NumberSpin
+                                source={this.state}
+                                name='randomEncounterXP'
+                                label='xp'
+                                nudgeValue={delta => this.setRandomEncounterXP(this.state.randomEncounterXP + (delta * this.state.randomEncounterStep))}
+                            />
+                            <Selector
+                                options={['10', '100', '1000'].map(t => {
+                                    return { id: t, text: t };
+                                })}
+                                selectedID={this.state.randomEncounterStep.toString()}
+                                select={optionID => this.setRandomEncounterStep(Number.parseInt(optionID, 10))}
+                            />
+                            <button onClick={() => this.props.buildEncounter(this.state.randomEncounterXP)}>build encounter</button>
+                        </Expander>
                         <ConfirmButton text='clear encounter' callback={() => this.props.clearEncounter()} />
                         <ConfirmButton text='delete encounter' callback={() => this.props.removeEncounter()} />
                         <div className='divider' />

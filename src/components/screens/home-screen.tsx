@@ -4,9 +4,7 @@ import { Col, Row } from 'antd';
 
 import Readaloud from '../panels/readaloud';
 
-// tslint:disable-next-line:no-empty-interface
 interface Props {
-    //
 }
 
 export default class HomeScreen extends React.Component<Props> {

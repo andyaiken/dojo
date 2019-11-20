@@ -35,15 +35,13 @@ export default class ConditionModal extends React.Component<Props, State> {
 
     private setCondition(conditionName: string) {
         if (this.state.condition.name !== conditionName) {
-            // eslint-disable-next-line
-            this.state.condition.name = conditionName;
-            // eslint-disable-next-line
-            this.state.condition.level = 1;
-            // eslint-disable-next-line
-            this.state.condition.text = '';
+            const c = this.state.condition;
+            c.name = conditionName;
+            c.level = 1;
+            c.text = '';
 
             this.setState({
-                condition: this.state.condition
+                condition: c
             });
         }
     }
@@ -67,10 +65,10 @@ export default class ConditionModal extends React.Component<Props, State> {
                 break;
         }
 
-        // eslint-disable-next-line
-        this.state.condition.duration = duration;
+        const c = this.state.condition;
+        c.duration = duration;
         this.setState({
-            condition: this.state.condition
+            condition: c
         });
     }
 

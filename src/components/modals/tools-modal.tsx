@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Collapse, Icon, Row, Spin } from 'antd';
+import { Col, Icon, Row, Spin } from 'antd';
 import Showdown from 'showdown';
 
 import Shakespeare from '../../utils/shakespeare';
@@ -10,6 +10,7 @@ import Utils from '../../utils/utils';
 import { CATEGORY_TYPES, Monster, MonsterGroup, SIZE_TYPES } from '../../models/monster-group';
 
 import Checkbox from '../controls/checkbox';
+import Expander from '../controls/expander';
 import NumberSpin from '../controls/number-spin';
 import Selector from '../controls/selector';
 import ChartPanel from '../panels/chart-panel';
@@ -131,9 +132,7 @@ export default class ToolsModal extends React.Component<Props, State> {
     }
 }
 
-// tslint:disable-next-line:no-empty-interface
 interface ActionsModuleProps {
-    //
 }
 
 interface ActionsModuleState {
@@ -177,9 +176,7 @@ class ActionsModule extends React.Component<ActionsModuleProps, ActionsModuleSta
     }
 }
 
-// tslint:disable-next-line:no-empty-interface
 interface ConditionsModuleProps {
-    //
 }
 
 interface ConditionsModuleState {
@@ -319,9 +316,7 @@ class DemographicsModule extends React.Component<DemographicsModuleProps, Demogr
     }
 }
 
-// tslint:disable-next-line:no-empty-interface
 interface DieRollerModuleProps {
-    //
 }
 
 interface DieRollerModuleState {
@@ -528,9 +523,7 @@ class DieRollerModule extends React.Component<DieRollerModuleProps, DieRollerMod
     }
 }
 
-// tslint:disable-next-line:no-empty-interface
 interface LanguageModuleProps {
-    //
 }
 
 interface LanguageModuleState {
@@ -772,16 +765,9 @@ class LanguageModule extends React.Component<LanguageModuleProps, LanguageModule
                         select={optionID => this.usePreset(optionID)}
                     />
                     <div className='divider' />
-                    <Collapse
-                        bordered={false}
-                        expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
-                        expandIconPosition={'right'}
-                        className='language-options'
-                    >
-                        <Collapse.Panel key='one' header={<div className='collapse-header-text'>selected languages: {selectedLanguages}</div>}>
-                            <GridPanel content={languages} />
-                        </Collapse.Panel>
-                    </Collapse>
+                    <Expander text={'selected languages: ' + selectedLanguages}>
+                        <GridPanel content={languages} />
+                    </Expander>
                     <div className='divider' />
                     <Row gutter={10}>
                         <Col span={8}>
@@ -825,20 +811,13 @@ class GeneratedText extends React.Component<GeneratedTextProps> {
     public render() {
         try {
             return (
-                <Collapse
-                    bordered={false}
-                    expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
-                    expandIconPosition={'right'}
-                    className='language-output'
-                >
-                    <Collapse.Panel key='one' header={<div className='collapse-header-text'>{this.props.text.toLowerCase()}</div>}>
-                        <button onClick={e => this.copy(e)}>copy to clipboard</button>
-                        <button onClick={e => this.say(e)}>say</button>
-                        <div className='section'>
-                            <b>note:</b> speech may not work consistently on all platforms
-                        </div>
-                    </Collapse.Panel>
-                </Collapse>
+                <Expander text={this.props.text.toLowerCase()}>
+                    <button onClick={e => this.copy(e)}>copy to clipboard</button>
+                    <button onClick={e => this.say(e)}>say</button>
+                    <div className='section'>
+                        <b>note:</b> speech may not work consistently on all platforms
+                    </div>
+                </Expander>
             );
         } catch (ex) {
             console.error(ex);
@@ -847,9 +826,7 @@ class GeneratedText extends React.Component<GeneratedTextProps> {
     }
 }
 
-// tslint:disable-next-line:no-empty-interface
 interface NameModuleProps {
-    //
 }
 
 interface NameModuleState {
@@ -896,9 +873,7 @@ class NameModule extends React.Component<NameModuleProps, NameModuleState> {
     }
 }
 
-// tslint:disable-next-line:no-empty-interface
 interface SkillsModuleProps {
-    //
 }
 
 interface SkillsModuleState {

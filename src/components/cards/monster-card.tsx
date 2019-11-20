@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { Collapse, Icon, Input } from 'antd';
-
 import Frankenstein from '../../utils/frankenstein';
 import Utils from '../../utils/utils';
 
@@ -11,7 +9,9 @@ import { Monster, MonsterGroup, Trait } from '../../models/monster-group';
 
 import ConfirmButton from '../controls/confirm-button';
 import Dropdown from '../controls/dropdown';
+import Expander from '../controls/expander';
 import NumberSpin from '../controls/number-spin';
+import Textbox from '../controls/textbox';
 import AbilityScorePanel from '../panels/ability-score-panel';
 import PortraitPanel from '../panels/portrait-panel';
 import TraitsPanel from '../panels/traits-panel';
@@ -140,22 +140,14 @@ export default class MonsterCard extends React.Component<Props, State> {
                         );
 
                         options.push(
-                            <Collapse
-                                key='clone'
-                                bordered={false}
-                                expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
-                                expandIconPosition={'right'}
-                            >
-                                <Collapse.Panel key='one' header={<div className='collapse-header-text'>clone monster</div>}>
-                                    <Input
-                                        placeholder='monster name'
-                                        value={this.state.cloneName}
-                                        allowClear={true}
-                                        onChange={event => this.setCloneName(event.target.value)}
-                                    />
-                                    <button onClick={() => this.props.cloneMonster(this.props.monster, this.state.cloneName)}>create copy</button>
-                                </Collapse.Panel>
-                            </Collapse>
+                            <Expander key='clone' text='clone monster'>
+                                <Textbox
+                                    text={this.state.cloneName}
+                                    placeholder='monster name'
+                                    onChange={value => this.setCloneName(value)}
+                                />
+                                <button onClick={() => this.props.cloneMonster(this.props.monster, this.state.cloneName)}>create copy</button>
+                            </Expander>
                         );
 
                         const groupOptions: { id: string, text: string }[] = [];

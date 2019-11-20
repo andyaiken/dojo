@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Drawer, Input, Row } from 'antd';
+import { Col, Drawer, Row } from 'antd';
 
 import Factory from '../../utils/factory';
 import Utils from '../../utils/utils';
@@ -8,6 +8,7 @@ import Utils from '../../utils/utils';
 import { PC } from '../../models/party';
 
 import NumberSpin from '../controls/number-spin';
+import Textbox from '../controls/textbox';
 import PortraitPanel from '../panels/portrait-panel';
 import ImageSelectionModal from './image-selection-modal';
 
@@ -46,10 +47,10 @@ export default class PCEditorModal extends React.Component<Props, State> {
     }
 
     private removeCompanion(id: string) {
-        // eslint-disable-next-line
-        this.state.pc.companions = this.state.pc.companions.filter(c => c.id !== id);
+        const pc = this.state.pc;
+        pc.companions = this.state.pc.companions.filter(c => c.id !== id);
         this.setState({
-            pc: this.state.pc
+            pc: pc
         });
     }
 
@@ -83,10 +84,9 @@ export default class PCEditorModal extends React.Component<Props, State> {
             const companions = this.state.pc.companions.map(comp => (
                 <Row gutter={10} className='companion' key={comp.id}>
                     <Col span={16}>
-                        <Input
-                            value={comp.name}
-                            allowClear={true}
-                            onChange={event => this.changeValue(comp, 'name', event.target.value)}
+                        <Textbox
+                            text={comp.name}
+                            onChange={value => this.changeValue(comp, 'name', value)}
                         />
                     </Col>
                     <Col span={8}>
@@ -107,16 +107,14 @@ export default class PCEditorModal extends React.Component<Props, State> {
                 <Row className='full-height'>
                     <Col span={12} className='scrollable'>
                         <div className='subheading'>character name:</div>
-                        <Input
-                            value={this.state.pc.name}
-                            allowClear={true}
-                            onChange={event => this.changeValue(this.state.pc, 'name', event.target.value)}
+                        <Textbox
+                            text={this.state.pc.name}
+                            onChange={value => this.changeValue(this.state.pc, 'name', value)}
                         />
                         <div className='subheading'>player name:</div>
-                        <Input
-                            value={this.state.pc.player}
-                            allowClear={true}
-                            onChange={event => this.changeValue(this.state.pc, 'player', event.target.value)}
+                        <Textbox
+                            text={this.state.pc.player}
+                            onChange={value => this.changeValue(this.state.pc, 'player', value)}
                         />
                         <div className='subheading'>size</div>
                         <NumberSpin
@@ -125,16 +123,14 @@ export default class PCEditorModal extends React.Component<Props, State> {
                             nudgeValue={delta => this.nudgeValue(this.state.pc, 'size', delta)}
                         />
                         <div className='subheading'>race:</div>
-                        <Input
-                            value={this.state.pc.race}
-                            allowClear={true}
-                            onChange={event => this.changeValue(this.state.pc, 'race', event.target.value)}
+                        <Textbox
+                            text={this.state.pc.race}
+                            onChange={value => this.changeValue(this.state.pc, 'race', value)}
                         />
                         <div className='subheading'>class:</div>
-                        <Input
-                            value={this.state.pc.classes}
-                            allowClear={true}
-                            onChange={event => this.changeValue(this.state.pc, 'classes', event.target.value)}
+                        <Textbox
+                            text={this.state.pc.classes}
+                            onChange={value => this.changeValue(this.state.pc, 'classes', value)}
                         />
                         <div className='subheading'>level:</div>
                         <NumberSpin
@@ -164,17 +160,15 @@ export default class PCEditorModal extends React.Component<Props, State> {
                     </Col>
                     <Col span={12} className='scrollable'>
                         <div className='subheading'>languages:</div>
-                        <Input
-                            value={this.state.pc.languages}
-                            allowClear={true}
-                            onChange={event => this.changeValue(this.state.pc, 'languages', event.target.value)}
+                        <Textbox
+                            text={this.state.pc.languages}
+                            onChange={value => this.changeValue(this.state.pc, 'languages', value)}
                         />
                         <div className='subheading'>d&d beyond link:</div>
-                        <Input
-                            value={this.state.pc.url}
+                        <Textbox
+                            text={this.state.pc.url}
                             placeholder='https://ddb.ac/characters/...'
-                            allowClear={true}
-                            onChange={event => this.changeValue(this.state.pc, 'url', event.target.value)}
+                            onChange={value => this.changeValue(this.state.pc, 'url', value)}
                         />
                         <div className='subheading'>portrait</div>
                         <PortraitPanel

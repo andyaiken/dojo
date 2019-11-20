@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { Col, Icon, Input, Row } from 'antd';
+import { Col, Icon, Row } from 'antd';
 
 import { Monster, MonsterGroup } from '../../models/monster-group';
 
 import MonsterCard from '../cards/monster-card';
 import ConfirmButton from '../controls/confirm-button';
+import Textbox from '../controls/textbox';
 import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
 
@@ -127,11 +128,10 @@ class MonsterInfo extends React.Component<MonsterInfoProps> {
                 <div>
                     <div className='section'>
                         <div className='subheading'>monster group name</div>
-                        <Input
+                        <Textbox
+                            text={this.props.monsterGroup.name}
                             placeholder='monster group name'
-                            value={this.props.monsterGroup.name}
-                            allowClear={true}
-                            onChange={event => this.props.changeValue('name', event.target.value)}
+                            onChange={value => this.props.changeValue('name', value)}
                         />
                     </div>
                     <div className='divider' />

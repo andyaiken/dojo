@@ -46,9 +46,7 @@ import PartyScreen from './screens/party-screen';
 
 import pkg from '../../package.json';
 
-// tslint:disable-next-line:no-empty-interface
 interface Props {
-    // No props; this is the root component
 }
 
 interface State {
@@ -69,7 +67,7 @@ interface State {
     selectedCombatID: string | null;
 }
 
-export default class Dojo extends React.Component<Props, State> {
+export default class App extends React.Component<Props, State> {
 
     //#region Constructor
 
@@ -637,10 +635,10 @@ export default class Dojo extends React.Component<Props, State> {
     }
 
     private toggleShowSidebar() {
-        // eslint-disable-next-line
-        this.state.drawer.showSidebar = !this.state.drawer.showSidebar;
+        const drawer = this.state.drawer;
+        drawer.showSidebar = !drawer.showSidebar;
         this.setState({
-            drawer: this.state.drawer
+            drawer: drawer
         });
     }
 
@@ -911,10 +909,10 @@ export default class Dojo extends React.Component<Props, State> {
         const original = this.state.maps.find(m => m.id === this.state.drawer.map.id);
         if (original) {
             const index = this.state.maps.indexOf(original);
-            // eslint-disable-next-line
-            this.state.maps[index] = this.state.drawer.map;
+            const maps = this.state.maps;
+            maps[index] = this.state.drawer.map;
             this.setState({
-                maps: this.state.maps,
+                maps: maps,
                 drawer: null
             });
         }
@@ -1727,8 +1725,8 @@ export default class Dojo extends React.Component<Props, State> {
                 combat.report.push(entry);
             }
 
-            // eslint-disable-next-line
-            this.state.drawer.combatant.conditions = Utils.sort(conditions, [{ field: 'name', dir: 'asc' }]);
+            const combatant = this.state.drawer.combatant;
+            combatant.conditions = Utils.sort(conditions, [{ field: 'name', dir: 'asc' }]);
 
             this.setState({
                 combats: this.state.combats,
@@ -1756,11 +1754,10 @@ export default class Dojo extends React.Component<Props, State> {
         const original = conditions.find(c => c.id === this.state.drawer.condition.id);
         if (original) {
             const index = conditions.indexOf(original);
-            // eslint-disable-next-line
             conditions[index] = this.state.drawer.condition;
 
-            // eslint-disable-next-line
-            this.state.drawer.combatant.conditions = Utils.sort(conditions, [{ field: 'name', dir: 'asc' }]);
+            const combatant = this.state.drawer.combatant;
+            combatant.conditions = Utils.sort(conditions, [{ field: 'name', dir: 'asc' }]);
 
             this.setState({
                 combats: this.state.combats,

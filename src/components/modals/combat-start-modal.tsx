@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Input, Row } from 'antd';
+import { Col, Row } from 'antd';
 
 import Factory from '../../utils/factory';
 import Mercator from '../../utils/mercator';
@@ -15,6 +15,7 @@ import { Party } from '../../models/party';
 
 import Dropdown from '../controls/dropdown';
 import Selector from '../controls/selector';
+import Textbox from '../controls/textbox';
 import DifficultyChartPanel from '../panels/difficulty-chart-panel';
 import MapPanel from '../panels/map-panel';
 
@@ -50,47 +51,45 @@ export default class CombatStartModal extends React.Component<Props, State> {
 
     private setPartyID(partyID: string | null) {
         const party = this.props.parties.find(p => p.id === partyID);
-        // eslint-disable-next-line
-        this.state.combatSetup.party = party || null;
+        const setup = this.state.combatSetup;
+        setup.party = party || null;
         this.setState({
-            combatSetup: this.state.combatSetup
+            combatSetup: setup
         }, () => this.props.notify());
     }
 
     private setEncounterID(encounterID: string | null) {
         const encounter = this.props.encounters.find(e => e.id === encounterID);
-        // eslint-disable-next-line
-        this.state.combatSetup.encounter = encounter || null;
+        const setup = this.state.combatSetup;
+        setup.encounter = encounter || null;
         if (encounter) {
-            // eslint-disable-next-line
-            this.state.combatSetup.monsterNames = Utils.getMonsterNames(encounter);
+            setup.monsterNames = Utils.getMonsterNames(encounter);
         }
         this.setState({
-            combatSetup: this.state.combatSetup
+            combatSetup: setup
         }, () => this.props.notify());
     }
 
     private setMapID(mapID: string | null) {
         const map = this.props.maps.find(m => m.id === mapID);
-        // eslint-disable-next-line
-        this.state.combatSetup.map = map || null;
+        const setup = this.state.combatSetup;
+        setup.map = map || null;
         this.setState({
-            combatSetup: this.state.combatSetup
+            combatSetup: setup
         });
     }
 
     private setWaveID(waveID: string | null) {
-        // eslint-disable-next-line
-        this.state.combatSetup.waveID = waveID;
-        if (this.state.combatSetup.encounter) {
-            const wave = this.state.combatSetup.encounter.waves.find(w => w.id === waveID);
+        const setup = this.state.combatSetup;
+        setup.waveID = waveID;
+        if (setup.encounter) {
+            const wave = setup.encounter.waves.find(w => w.id === waveID);
             if (wave) {
-                // eslint-disable-next-line
-                this.state.combatSetup.monsterNames = Utils.getMonsterNames(wave);
+                setup.monsterNames = Utils.getMonsterNames(wave);
             }
         }
         this.setState({
-            combatSetup: this.state.combatSetup
+            combatSetup: setup
         }, () => this.props.notify());
     }
 
@@ -114,12 +113,11 @@ export default class CombatStartModal extends React.Component<Props, State> {
         }
 
         Napoleon.buildEncounter(encounter, xp, filter, this.props.library, this.props.getMonster);
-        // eslint-disable-next-line
-        this.state.combatSetup.encounter = encounter;
-        // eslint-disable-next-line
-        this.state.combatSetup.monsterNames = Utils.getMonsterNames(encounter);
+        const setup = this.state.combatSetup;
+        setup.encounter = encounter;
+        setup.monsterNames = Utils.getMonsterNames(encounter);
         this.setState({
-            combatSetup: this.state.combatSetup
+            combatSetup: setup
         }, () => this.props.notify());
     }
 
@@ -127,18 +125,18 @@ export default class CombatStartModal extends React.Component<Props, State> {
         const map = Factory.createMap();
         map.name = 'new map';
         Mercator.generate(type, map);
-        // eslint-disable-next-line
-        this.state.combatSetup.map = map;
+        const setup = this.state.combatSetup;
+        setup.map = map;
         this.setState({
-            combatSetup: this.state.combatSetup
+            combatSetup: setup
         }, () => this.props.notify());
     }
 
     private setEncounterInitMode(mode: 'manual' | 'individual' | 'group') {
-        // eslint-disable-next-line
-        this.state.combatSetup.encounterInitMode = mode;
+        const setup = this.state.combatSetup;
+        setup.encounterInitMode = mode;
         this.setState({
-            combatSetup: this.state.combatSetup
+            combatSetup: setup
         });
     }
 
@@ -688,10 +686,9 @@ class MonsterName extends React.Component<MonsterNameProps> {
     public render() {
         try {
             return (
-                <Input
-                    value={this.props.value}
-                    allowClear={true}
-                    onChange={event => this.props.changeName(this.props.slotID, this.props.index, event.target.value)}
+                <Textbox
+                    text={this.props.value}
+                    onChange={value => this.props.changeName(this.props.slotID, this.props.index, value)}
                 />
             );
         } catch (ex) {

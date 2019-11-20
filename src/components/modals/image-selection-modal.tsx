@@ -115,6 +115,7 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
                     <Input.Search
                         key='search'
                         placeholder='search for an image'
+                        allowClear={true}
                         onChange={e => this.setFilter(e.target.value)}
                         onSearch={value => this.setFilter(value)}
                     />

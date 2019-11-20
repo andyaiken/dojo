@@ -1,12 +1,13 @@
 import React from 'react';
 
-import { Col, Input, Row } from 'antd';
+import { Col, Row } from 'antd';
 
 import Hero from '../../utils/hero';
 
 import { PC } from '../../models/party';
 
 import PCCard from '../cards/pc-card';
+import Textbox from '../controls/textbox';
 import Note from '../panels/note';
 
 interface Props {
@@ -61,11 +62,11 @@ export default class PCUpdateModal extends React.Component<Props, State> {
                             </div>
                             <div>copy the data into the clipboard, paste it into the box below, and press the analyse button</div>
                         </Note>
-                        <Input.TextArea
+                        <Textbox
+                            text={this.state.source}
                             placeholder='paste data here'
-                            rows={10}
-                            value={this.state.source}
-                            onChange={event => this.setSource(event.target.value)}
+                            lines={10}
+                            onChange={value => this.setSource(value)}
                         />
                         <button onClick={() => this.analyse()}>analyse</button>
                     </Col>

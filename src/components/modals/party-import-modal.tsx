@@ -1,12 +1,13 @@
 import React from 'react';
 
-import { Col, Input, Row } from 'antd';
+import { Col, Row } from 'antd';
 
 import Hero from '../../utils/hero';
 
 import { Party } from '../../models/party';
 
 import PCCard from '../cards/pc-card';
+import Textbox from '../controls/textbox';
 import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
 
@@ -57,11 +58,11 @@ export default class PartyImportModal extends React.Component<Props, State> {
                             <div>then right-click on the page and select <b>view page source</b></div>
                             <div>copy the entire page source into the clipboard, paste it into the box below, and press the analyse button</div>
                         </Note>
-                        <Input.TextArea
+                        <Textbox
+                            text={this.state.source}
                             placeholder='paste page source here'
-                            rows={10}
-                            value={this.state.source}
-                            onChange={event => this.setSource(event.target.value)}
+                            lines={10}
+                            onChange={value => this.setSource(value)}
                         />
                         <button onClick={() => this.analyse()}>analyse</button>
                     </Col>

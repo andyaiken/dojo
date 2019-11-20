@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Icon, Input, Row } from 'antd';
+import { Col, Icon, Row } from 'antd';
 import { List } from 'react-movable';
 
 import Utils from '../../utils/utils';
@@ -9,6 +9,7 @@ import { Combatant } from '../../models/combat';
 import { Monster, Trait, TRAIT_TYPES } from '../../models/monster-group';
 
 import Dropdown from '../controls/dropdown';
+import Textbox from '../controls/textbox';
 import Note from './note';
 
 interface Props {
@@ -170,23 +171,21 @@ class TraitPanel extends React.Component<TraitPanelProps> {
             return (
                 <div className='section'>
                     <div className='subheading'>trait name</div>
-                    <Input
-                        value={this.props.trait.name}
-                        allowClear={true}
-                        onChange={event => this.props.changeValue(this.props.trait, 'name', event.target.value)}
+                    <Textbox
+                        text={this.props.trait.name}
+                        onChange={value => this.props.changeValue(this.props.trait, 'name', value)}
                     />
                     <div className='subheading'>usage</div>
-                    <Input
-                        value={this.props.trait.usage}
-                        allowClear={true}
-                        onChange={event => this.props.changeValue(this.props.trait, 'usage', event.target.value)}
+                    <Textbox
+                        text={this.props.trait.usage}
+                        onChange={value => this.props.changeValue(this.props.trait, 'usage', value)}
                     />
                     <div className='subheading'>details</div>
-                    <Input.TextArea
+                    <Textbox
+                        text={this.props.trait.text}
                         placeholder='details'
-                        autoSize={{ minRows: 5 }}
-                        value={this.props.trait.text}
-                        onChange={event => this.props.changeValue(this.props.trait, 'text', event.target.value)}
+                        lines={5}
+                        onChange={value => this.props.changeValue(this.props.trait, 'text', value)}
                     />
                     <div className='divider' />
                     <button onClick={() => this.props.removeTrait(this.props.trait)}>remove this trait</button>

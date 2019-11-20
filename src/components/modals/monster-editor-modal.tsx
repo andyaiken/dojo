@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Collapse, Drawer, Icon, Input, Row } from 'antd';
+import { Col, Drawer, Row } from 'antd';
 
 import Factory from '../../utils/factory';
 import Frankenstein from '../../utils/frankenstein';
@@ -14,9 +14,11 @@ import { CATEGORY_TYPES, Monster, MonsterGroup, Trait, TRAIT_TYPES } from '../..
 import MonsterCard from '../cards/monster-card';
 import Checkbox from '../controls/checkbox';
 import Dropdown from '../controls/dropdown';
+import Expander from '../controls/expander';
 import NumberSpin from '../controls/number-spin';
 import Selector from '../controls/selector';
 import Tabs from '../controls/tabs';
+import Textbox from '../controls/textbox';
 import AbilityScorePanel from '../panels/ability-score-panel';
 import FilterPanel from '../panels/filter-panel';
 import Note from '../panels/note';
@@ -85,10 +87,10 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     }
 
     private toggleMatch(type: 'size' | 'type' | 'subtype' | 'alignment' | 'challenge') {
-        // eslint-disable-next-line
-        this.state.similarFilter[type] = !this.state.similarFilter[type];
+        const filter = this.state.similarFilter;
+        filter[type] = !filter[type];
         this.setState({
-            similarFilter: this.state.similarFilter
+            similarFilter: filter
         });
     }
 
@@ -99,12 +101,11 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     }
 
     private addToScratchpadList(monster: Monster) {
-        // eslint-disable-next-line
-        this.state.scratchpadList.push(monster);
-        // eslint-disable-next-line
-        Utils.sort(this.state.scratchpadList);
+        const list = this.state.scratchpadList;
+        list.push(monster);
+        Utils.sort(list);
         this.setState({
-            scratchpadList: this.state.scratchpadList
+            scratchpadList: list
         });
     }
 
@@ -251,10 +252,10 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     }
 
     private changeFilterValue(type: 'name' | 'challengeMin' | 'challengeMax' | 'category' | 'size', value: any) {
-        // eslint-disable-next-line
-        this.state.scratchpadFilter[type] = value as never;
+        const filter = this.state.scratchpadFilter as any;
+        filter[type] = value;
         this.setState({
-            scratchpadFilter: this.state.scratchpadFilter
+            scratchpadFilter: filter
         });
     }
 
@@ -564,10 +565,9 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         <Row gutter={10}>
                             <Col span={12}>
                                 <div className='subheading'>name</div>
-                                <Input
-                                    value={this.state.monster.name}
-                                    allowClear={true}
-                                    onChange={event => this.changeValue('name', event.target.value)}
+                                <Textbox
+                                    text={this.state.monster.name}
+                                    onChange={value => this.changeValue('name', value)}
                                 />
                                 <button onClick={() => this.randomName()}>generate a random name</button>
                                 <div className='subheading'>size</div>
@@ -583,16 +583,14 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                     select={optionID => this.changeValue('category', optionID)}
                                 />
                                 <div className='subheading'>subtype</div>
-                                <Input
-                                    value={this.state.monster.tag}
-                                    allowClear={true}
-                                    onChange={event => this.changeValue('tag', event.target.value)}
+                                <Textbox
+                                    text={this.state.monster.tag}
+                                    onChange={value => this.changeValue('tag', value)}
                                 />
                                 <div className='subheading'>alignment</div>
-                                <Input
-                                    value={this.state.monster.alignment}
-                                    allowClear={true}
-                                    onChange={event => this.changeValue('alignment', event.target.value)}
+                                <Textbox
+                                    text={this.state.monster.alignment}
+                                    onChange={value => this.changeValue('alignment', value)}
                                 />
                                 <div className='subheading'>challenge rating</div>
                                 <NumberSpin
@@ -604,28 +602,24 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                             </Col>
                             <Col span={12}>
                                 <div className='subheading'>speed</div>
-                                <Input
-                                    value={this.state.monster.speed}
-                                    allowClear={true}
-                                    onChange={event => this.changeValue('speed', event.target.value)}
+                                <Textbox
+                                    text={this.state.monster.speed}
+                                    onChange={value => this.changeValue('speed', value)}
                                 />
                                 <div className='subheading'>senses</div>
-                                <Input
-                                    value={this.state.monster.senses}
-                                    allowClear={true}
-                                    onChange={event => this.changeValue('senses', event.target.value)}
+                                <Textbox
+                                    text={this.state.monster.senses}
+                                    onChange={value => this.changeValue('senses', value)}
                                 />
                                 <div className='subheading'>languages</div>
-                                <Input
-                                    value={this.state.monster.languages}
-                                    allowClear={true}
-                                    onChange={event => this.changeValue('languages', event.target.value)}
+                                <Textbox
+                                    text={this.state.monster.languages}
+                                    onChange={value => this.changeValue('languages', value)}
                                 />
                                 <div className='subheading'>equipment</div>
-                                <Input
-                                    value={this.state.monster.equipment}
-                                    allowClear={true}
-                                    onChange={event => this.changeValue('equipment', event.target.value)}
+                                <Textbox
+                                    text={this.state.monster.equipment}
+                                    onChange={value => this.changeValue('equipment', value)}
                                 />
                                 <div className='subheading'>portrait</div>
                                 <PortraitPanel
@@ -650,16 +644,14 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                             </Col>
                             <Col span={12}>
                                 <div className='subheading'>saving throws</div>
-                                <Input
-                                    value={this.state.monster.savingThrows}
-                                    allowClear={true}
-                                    onChange={event => this.changeValue('savingThrows', event.target.value)}
+                                <Textbox
+                                    text={this.state.monster.savingThrows}
+                                    onChange={value => this.changeValue('savingThrows', value)}
                                 />
                                 <div className='subheading'>skills</div>
-                                <Input
-                                    value={this.state.monster.skills}
-                                    allowClear={true}
-                                    onChange={event => this.changeValue('skills', event.target.value)}
+                                <Textbox
+                                    text={this.state.monster.skills}
+                                    onChange={value => this.changeValue('skills', value)}
                                 />
                             </Col>
                         </Row>
@@ -687,28 +679,24 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                             </Col>
                             <Col span={12}>
                                 <div className='subheading'>damage resistances</div>
-                                <Input
-                                    value={this.state.monster.damage.resist}
-                                    allowClear={true}
-                                    onChange={event => this.changeValue('damage.resist', event.target.value)}
+                                <Textbox
+                                    text={this.state.monster.damage.resist}
+                                    onChange={value => this.changeValue('damage.resist', value)}
                                 />
                                 <div className='subheading'>damage vulnerabilities</div>
-                                <Input
-                                    value={this.state.monster.damage.vulnerable}
-                                    allowClear={true}
-                                    onChange={event => this.changeValue('damage.vulnerable', event.target.value)}
+                                <Textbox
+                                    text={this.state.monster.damage.vulnerable}
+                                    onChange={value => this.changeValue('damage.vulnerable', value)}
                                 />
                                 <div className='subheading'>damage immunities</div>
-                                <Input
-                                    value={this.state.monster.damage.immune}
-                                    allowClear={true}
-                                    onChange={event => this.changeValue('damage.immune', event.target.value)}
+                                <Textbox
+                                    text={this.state.monster.damage.immune}
+                                    onChange={value => this.changeValue('damage.immune', value)}
                                 />
                                 <div className='subheading'>condition immunities</div>
-                                <Input
-                                    value={this.state.monster.conditionImmunities}
-                                    allowClear={true}
-                                    onChange={event => this.changeValue('conditionImmunities', event.target.value)}
+                                <Textbox
+                                    text={this.state.monster.conditionImmunities}
+                                    onChange={value => this.changeValue('conditionImmunities', value)}
                                 />
                             </Col>
                         </Row>
@@ -768,41 +756,35 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 switch (this.state.sidebar) {
                     case 'similar':
                         sidebarContent = (
-                            <Collapse
-                                bordered={false}
-                                expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
-                                expandIconPosition={'right'}
-                            >
-                                <Collapse.Panel key='one' header={<div className='collapse-header-text'>similarity criteria</div>}>
-                                    <Checkbox
-                                        label={'size ' + this.state.monster.size}
-                                        checked={this.state.similarFilter.size}
-                                        changeValue={value => this.toggleMatch('size')}
-                                    />
-                                    <Checkbox
-                                        label={'type ' + this.state.monster.category}
-                                        checked={this.state.similarFilter.type}
-                                        changeValue={value => this.toggleMatch('type')}
-                                    />
-                                    <Checkbox
-                                        label={this.state.monster.tag ? 'subtype ' + this.state.monster.tag : 'subtype'}
-                                        checked={this.state.similarFilter.subtype}
-                                        disabled={!this.state.monster.tag}
-                                        changeValue={value => this.toggleMatch('subtype')}
-                                    />
-                                    <Checkbox
-                                        label={this.state.monster.alignment ? 'alignment ' + this.state.monster.alignment : 'alignment'}
-                                        checked={this.state.similarFilter.alignment}
-                                        disabled={!this.state.monster.alignment}
-                                        changeValue={value => this.toggleMatch('alignment')}
-                                    />
-                                    <Checkbox
-                                        label={'challenge rating ' + Utils.challenge(this.state.monster.challenge)}
-                                        checked={this.state.similarFilter.challenge}
-                                        changeValue={value => this.toggleMatch('challenge')}
-                                    />
-                                </Collapse.Panel>
-                            </Collapse>
+                            <Expander text='similarity criteria'>
+                                <Checkbox
+                                    label={'size ' + this.state.monster.size}
+                                    checked={this.state.similarFilter.size}
+                                    changeValue={value => this.toggleMatch('size')}
+                                />
+                                <Checkbox
+                                    label={'type ' + this.state.monster.category}
+                                    checked={this.state.similarFilter.type}
+                                    changeValue={value => this.toggleMatch('type')}
+                                />
+                                <Checkbox
+                                    label={this.state.monster.tag ? 'subtype ' + this.state.monster.tag : 'subtype'}
+                                    checked={this.state.similarFilter.subtype}
+                                    disabled={!this.state.monster.tag}
+                                    changeValue={value => this.toggleMatch('subtype')}
+                                />
+                                <Checkbox
+                                    label={this.state.monster.alignment ? 'alignment ' + this.state.monster.alignment : 'alignment'}
+                                    checked={this.state.similarFilter.alignment}
+                                    disabled={!this.state.monster.alignment}
+                                    changeValue={value => this.toggleMatch('alignment')}
+                                />
+                                <Checkbox
+                                    label={'challenge rating ' + Utils.challenge(this.state.monster.challenge)}
+                                    checked={this.state.similarFilter.challenge}
+                                    changeValue={value => this.toggleMatch('challenge')}
+                                />
+                            </Expander>
                         );
                         break;
                     case 'scratchpad':
@@ -830,35 +812,23 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                     <button key={m.id} onClick={() => this.removeFromScratchpadList(m)}>{m.name}</button>
                                 );
                                 removeSection = (
-                                    <Collapse
-                                        bordered={false}
-                                        expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
-                                        expandIconPosition={'right'}
-                                    >
-                                        <Collapse.Panel key='one' header={<div className='collapse-header-text'>remove monsters from the list</div>}>
-                                            {deleteRows}
-                                        </Collapse.Panel>
-                                    </Collapse>
+                                    <Expander text='remove monsters from the list'>
+                                        {deleteRows}
+                                    </Expander>
                                 );
                             }
                             sidebarContent = (
                                 <div>
-                                    <Collapse
-                                        bordered={false}
-                                        expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
-                                        expandIconPosition={'right'}
-                                    >
-                                        <Collapse.Panel key='one' header={<div className='collapse-header-text'>add monsters to the list</div>}>
-                                            <FilterPanel
-                                                filter={this.state.scratchpadFilter}
-                                                changeValue={(type, value) => this.changeFilterValue(type, value)}
-                                                nudgeValue={(type, delta) => this.nudgeFilterValue(type, delta)}
-                                                resetFilter={() => this.resetFilter()}
-                                            />
-                                            <div className='divider' />
-                                            {resultsRows}
-                                        </Collapse.Panel>
-                                    </Collapse>
+                                    <Expander text='add monsters to the list'>
+                                        <FilterPanel
+                                            filter={this.state.scratchpadFilter}
+                                            changeValue={(type, value) => this.changeFilterValue(type, value)}
+                                            nudgeValue={(type, delta) => this.nudgeFilterValue(type, delta)}
+                                            resetFilter={() => this.resetFilter()}
+                                        />
+                                        <div className='divider' />
+                                        {resultsRows}
+                                    </Expander>
                                     {removeSection}
                                 </div>
                             );

@@ -33,10 +33,10 @@ export default class AddCombatantsModal extends React.Component<Props, State> {
     }
 
     private changeFilterValue(type: 'name' | 'challengeMin' | 'challengeMax' | 'category' | 'size', value: any) {
-        // eslint-disable-next-line
-        this.state.filter[type] = value as never;
+        const filter = this.state.filter as any;
+        filter[type] = value;
         this.setState({
-            filter: this.state.filter
+            filter: filter
         });
     }
 

@@ -54,7 +54,7 @@ export default class Utils {
         return collection;
     }
 
-    public static debounce(func: () => void, delay: number = 1000) {
+    public static debounce(func: () => void, delay: number = 500) {
         let timeout: NodeJS.Timeout;
         return () => {
             clearTimeout(timeout);

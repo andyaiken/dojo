@@ -42,7 +42,7 @@ export default class SearchModal extends React.Component<Props, State> {
         this.setState({
             canSearch: true
         });
-    }, 500);
+    });
 
     private setSearchTerm(text: string) {
         this.setState({
