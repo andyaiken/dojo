@@ -27,6 +27,7 @@ import MonsterImportModal from './modals/monster-import-modal';
 import MonsterInfoModal from './modals/monster-info-modal';
 import PartyImportModal from './modals/party-import-modal';
 import PCEditorModal from './modals/pc-editor-modal';
+import PCUpdateModal from './modals/pc-update-modal';
 import SearchModal from './modals/search-modal';
 import ToolsModal from './modals/tools-modal';
 import PageFooter from './panels/page-footer';
@@ -472,6 +473,16 @@ export default class Dojo extends React.Component<Props, State> {
         });
     }
 
+    private importPC(pc: PC) {
+        const copy = JSON.parse(JSON.stringify(pc));
+        this.setState({
+            drawer: {
+                type: 'update-pc',
+                pc: copy
+            }
+        });
+    }
+
     private savePC() {
         Utils.sort(this.state.drawer.pc.companions);
         const party = this.state.parties.find(p => p.id === this.state.selectedPartyID);
@@ -480,6 +491,7 @@ export default class Dojo extends React.Component<Props, State> {
             if (original) {
                 const index = party.pcs.indexOf(original);
                 party.pcs[index] = this.state.drawer.pc;
+                Utils.sort(party.pcs);
                 this.setState({
                     parties: this.state.parties,
                     drawer: null
@@ -1961,6 +1973,7 @@ export default class Dojo extends React.Component<Props, State> {
                             removeParty={() => this.removeCurrentParty()}
                             addPC={() => this.addPC()}
                             editPC={pc => this.editPC(pc)}
+                            importPC={pc => this.importPC(pc)}
                             removePC={pc => this.removePC(pc)}
                             sortPCs={() => this.sortPCs()}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
@@ -2121,6 +2134,20 @@ export default class Dojo extends React.Component<Props, State> {
 
         if (this.state.drawer) {
             switch (this.state.drawer.type) {
+                case 'import-party':
+                    content = (
+                        <PartyImportModal
+                            party={this.state.drawer.party}
+                        />
+                    );
+                    header = 'import party';
+                    footer = (
+                        <button onClick={() => this.acceptImportedParty()}>
+                            accept party
+                        </button>
+                    );
+                    closable = true;
+                    break;
                 case 'pc':
                     content = (
                         <PCEditorModal
@@ -2138,6 +2165,20 @@ export default class Dojo extends React.Component<Props, State> {
                             </Col>
                         </Row>
                     );
+                    break;
+                case 'update-pc':
+                    content = (
+                        <PCUpdateModal
+                            pc={this.state.drawer.pc}
+                        />
+                    );
+                    header = 'update pc';
+                    footer = (
+                        <button onClick={() => this.savePC()}>
+                            accept pc
+                        </button>
+                    );
+                    closable = true;
                     break;
                 case 'monster':
                     content = (
@@ -2174,20 +2215,6 @@ export default class Dojo extends React.Component<Props, State> {
                         />
                     );
                     header = 'monster';
-                    closable = true;
-                    break;
-                case 'import-party':
-                    content = (
-                        <PartyImportModal
-                            party={this.state.drawer.party}
-                        />
-                    );
-                    header = 'import party';
-                    footer = (
-                        <button onClick={() => this.acceptImportedParty()}>
-                            accept party
-                        </button>
-                    );
                     closable = true;
                     break;
                 case 'import-monster':

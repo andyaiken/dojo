@@ -13,6 +13,7 @@ interface Props {
     nudgeValue: (pc: any, field: string, delta: number) => void;
     removePC: (pc: PC) => void;
     editPC: (pc: PC) => void;
+    importPC: (pc: PC) => void;
 }
 
 export default class PCCard extends React.Component<Props> {
@@ -20,7 +21,8 @@ export default class PCCard extends React.Component<Props> {
         changeValue: null,
         nudgeValue: null,
         removePC: null,
-        editPC: null
+        editPC: null,
+        importPC: null
     };
 
     public render() {
@@ -28,6 +30,9 @@ export default class PCCard extends React.Component<Props> {
             const options = [];
             if (this.props.mode.indexOf('edit') !== -1) {
                 options.push(<button key='edit' onClick={() => this.props.editPC(this.props.pc)}>edit pc</button>);
+                if (this.props.pc.url) {
+                    options.push(<button key='import' onClick={() => this.props.importPC(this.props.pc)}>update from d&amp;d beyond</button>);
+                }
                 if (this.props.pc.active) {
                     options.push(
                         <button key='toggle-active' onClick={() => this.props.changeValue(this.props.pc, 'active', false)}>

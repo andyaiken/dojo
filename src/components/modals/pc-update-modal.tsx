@@ -4,28 +4,27 @@ import { Col, Input, Row } from 'antd';
 
 import Hero from '../../utils/hero';
 
-import { Party } from '../../models/party';
+import { PC } from '../../models/party';
 
 import PCCard from '../cards/pc-card';
-import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
 
 interface Props {
-    party: Party;
+    pc: PC;
 }
 
 interface State {
     source: string;
-    party: Party;
+    pc: PC;
 }
 
-export default class PartyImportModal extends React.Component<Props, State> {
+export default class PCUpdateModal extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
         this.state = {
             source: '',
-            party: props.party
+            pc: props.pc
         };
     }
 
@@ -36,29 +35,34 @@ export default class PartyImportModal extends React.Component<Props, State> {
     }
 
     private analyse() {
-        Hero.importParty(this.state.source, this.state.party);
+        Hero.importPC(this.state.source, this.state.pc);
         this.setState({
-            party: this.state.party
+            pc: this.state.pc
         });
     }
 
     public render() {
         try {
+            let url = this.state.pc.url;
+            if (!url.endsWith('/')) {
+                url += '/';
+            }
+            url += 'json';
+
             return (
                 <Row className='full-height'>
                     <Col span={12} className='scrollable'>
                         <Note>
-                            <div>go to the following link to find the party you want to import</div>
+                            <div>go to the following link</div>
                             <div>
-                                <a href='https://www.dndbeyond.com/my-campaigns' target='_blank' rel='noopener noreferrer'>
-                                    https://www.dndbeyond.com/my-campaigns
+                                <a href={url} target='_blank' rel='noopener noreferrer'>
+                                    {url}
                                 </a>
                             </div>
-                            <div>then right-click on the page and select <b>view page source</b></div>
-                            <div>copy the entire page source into the clipboard, paste it into the box below, and press the analyse button</div>
+                            <div>copy the data into the clipboard, paste it into the box below, and press the analyse button</div>
                         </Note>
                         <Input.TextArea
-                            placeholder='paste page source here'
+                            placeholder='paste data here'
                             rows={10}
                             value={this.state.source}
                             onChange={event => this.setSource(event.target.value)}
@@ -66,11 +70,7 @@ export default class PartyImportModal extends React.Component<Props, State> {
                         <button onClick={() => this.analyse()}>analyse</button>
                     </Col>
                     <Col span={12} className='scrollable'>
-                        <GridPanel
-                            heading={this.props.party.name}
-                            columns={1}
-                            content={this.props.party.pcs.map(pc => <PCCard key={pc.id} pc={pc} mode='view' />)}
-                        />
+                        <PCCard pc={this.state.pc} mode='view' />
                     </Col>
                 </Row>
             );
