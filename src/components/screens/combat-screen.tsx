@@ -1754,6 +1754,35 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
 
     private getMapSection() {
         if (this.props.tactical === 'on-map') {
+            let distance = null;
+            if (!this.props.combatant.current && this.props.combat.map) {
+                const current = this.props.combat.combatants.find(c => c.current);
+                if (current) {
+                    const miCurrent = this.props.combat.map.items.find(mi => mi.id === current.id);
+                    const miThis = this.props.combat.map.items.find(mi => mi.id === this.props.combatant.id);
+                    if (miCurrent && miThis) {
+                        const sizeCurrent = Utils.miniSize(current.displaySize);
+                        const sizeThis = Utils.miniSize(this.props.combatant.displaySize);
+                        const rightCurrent = miCurrent.x + sizeCurrent - 1;
+                        const rightThis = miThis.x + sizeThis - 1;
+                        const bottomCurrent = miCurrent.y + sizeCurrent - 1;
+                        const bottomThis = miThis.y + sizeThis - 1;
+                        const dx = Math.max((miCurrent.x - rightThis - 1), (miThis.x - rightCurrent - 1), 0);
+                        const dy = Math.max((miCurrent.y - bottomThis - 1), (miThis.y - bottomCurrent - 1), 0);
+                        distance = (
+                            <div>
+                                <div className='section'>distance to {current.displayName}:</div>
+                                <ul>
+                                    <li className='section'>horizontal: {dx * 5} ft / {dx} squares</li>
+                                    <li className='section'>vertical: {dy * 5} ft / {dy} squares</li>
+                                </ul>
+                                <div className='divider'/>
+                            </div>
+                        );
+                    }
+                }
+            }
+
             let auraDetails = null;
             if (this.props.combatant.aura.radius > 0) {
                 const auraStyleOptions = [
@@ -1785,8 +1814,10 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                     </div>
                 );
             }
+
             return (
                 <div>
+                    {distance}
                     <div className='section centered'>
                         <Radial
                             direction='eight'
