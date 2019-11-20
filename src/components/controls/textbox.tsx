@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Input } from 'antd';
 
+import Utils from '../../utils/utils';
+
 interface Props {
     text: string;
     placeholder: string;
@@ -10,17 +12,31 @@ interface Props {
     onChange: (value: string) => void;
 }
 
-export default class Textbox extends React.Component<Props> {
+interface State {
+    text: string;
+}
+
+export default class Textbox extends React.Component<Props, State> {
     public static defaultProps = {
         placeholder: '',
         lines: 1,
         disabled: false
     };
 
-    private onChange(value: string) {
-        // TODO: Debounce this
-        this.props.onChange(value);
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            text: props.text
+        };
     }
+
+    private onChange(value: string) {
+        this.setState({
+            text: value
+        }, () => this.notifyAfterDelay());
+    }
+
+    private notifyAfterDelay = Utils.debounce(() => this.props.onChange(this.state.text));
 
     public render() {
         try {
@@ -33,7 +49,7 @@ export default class Textbox extends React.Component<Props> {
                 return (
                     <Input.TextArea
                         className={style}
-                        value={this.props.text}
+                        value={this.state.text}
                         placeholder={this.props.placeholder}
                         autoSize={{ minRows: this.props.lines }}
                         onChange={event => this.onChange(event.target.value)}
@@ -44,7 +60,7 @@ export default class Textbox extends React.Component<Props> {
             return (
                 <Input
                     className={style}
-                    value={this.props.text}
+                    value={this.state.text}
                     placeholder={this.props.placeholder}
                     allowClear={true}
                     onChange={event => this.onChange(event.target.value)}
