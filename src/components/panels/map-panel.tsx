@@ -3,6 +3,7 @@ import React from 'react';
 import { Icon, Tooltip } from 'antd';
 import Showdown from 'showdown';
 
+import Factory from '../../utils/factory';
 import Mercator from '../../utils/mercator';
 import Utils from '../../utils/utils';
 
@@ -14,7 +15,6 @@ import { PC } from '../../models/party';
 import HitPointGauge from './hit-point-gauge';
 
 import none from '../../resources/images/no-portrait.png';
-import Factory from '../../utils/factory';
 
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);
@@ -23,10 +23,12 @@ interface Props {
     map: Map;
     mode: 'edit' | 'thumbnail' | 'combat' | 'combat-player';
     size: number;
+    floatingItem: MapItem | null;
     combatants: Combatant[];
     showOverlay: boolean;
     selectedItemID: string;
     setSelectedItemID: (itemID: string | null) => void;
+    gridSquareEntered: (x: number, y: number) => void;
     gridSquareClicked: (x: number, y: number) => void;
 }
 
@@ -50,10 +52,12 @@ interface MapItemStyle {
 
 export default class MapPanel extends React.Component<Props> {
     public static defaultProps = {
+        floatingItem: null,
         combatants: null,
         showOverlay: false,
         selectedItemID: null,
         setSelectedItemID: null,
+        gridSquareEntered: null,
         gridSquareClicked: null
     };
 
@@ -161,7 +165,7 @@ export default class MapPanel extends React.Component<Props> {
 
     public render() {
         try {
-            const border = (this.props.mode === 'edit') ? 2 : 0;
+            const border = (this.props.mode === 'edit') ? 4 : 0;
             const mapDimensions = this.getMapDimensions(border);
             if (!mapDimensions) {
                 return (
@@ -169,8 +173,14 @@ export default class MapPanel extends React.Component<Props> {
                 );
             }
 
+            let items: MapItem[] = [];
+            items = items.concat(this.props.map.items);
+            if (this.props.floatingItem) {
+                items.push(this.props.floatingItem);
+            }
+
             // Draw the map tiles
-            const tiles = this.props.map.items
+            const tiles = items
                 .filter(i => i.type === 'tile')
                 .map(i => {
                     const tileStyle = this.getStyle(i.x, i.y, i.width, i.height, i.style, mapDimensions);
@@ -190,7 +200,7 @@ export default class MapPanel extends React.Component<Props> {
             // Draw overlays
             let overlays: JSX.Element[] = [];
             if ((this.props.mode !== 'edit') && (this.props.mode !== 'thumbnail')) {
-                overlays = this.props.map.items
+                overlays = items
                     .filter(i => i.type === 'overlay')
                     .map(i => {
                         const overlayStyle = this.getStyle(i.x, i.y, i.width, i.height, i.style, mapDimensions);
@@ -215,7 +225,7 @@ export default class MapPanel extends React.Component<Props> {
                     .filter(c => c.aura.radius > 0)
                     .filter(c => c.showOnMap || (this.props.mode !== 'combat-player'))
                     .map(c => {
-                        const mi = this.props.map.items.find(i => i.id === c.id);
+                        const mi = items.find(i => i.id === c.id);
                         if (mi) {
                             const sizeInSquares = c.aura.radius / 5;
                             const miniSize = Utils.miniSize(c.displaySize);
@@ -238,7 +248,7 @@ export default class MapPanel extends React.Component<Props> {
             // Draw the tokens
             let tokens: JSX.Element[] = [];
             if (this.props.mode !== 'edit') {
-                tokens = this.props.map.items
+                tokens = items
                     .filter(i => (i.type === 'monster') || (i.type === 'pc') || (i.type === 'token'))
                     .map(i => {
                         let miniSize = Utils.miniSize(i.size);
@@ -287,6 +297,7 @@ export default class MapPanel extends React.Component<Props> {
                                 y={yOver}
                                 style={overlayStyle}
                                 overlay={true}
+                                onMouseEnter={(posX, posY) => this.props.gridSquareEntered(posX, posY)}
                                 onClick={(posX, posY) => this.props.gridSquareClicked(posX, posY)}
                             />
                         );
@@ -320,6 +331,7 @@ interface GridSquareProps {
     y: number;
     style: MapItemStyle;
     overlay: boolean;
+    onMouseEnter: (x: number, y: number) => void;
     onClick: (x: number, y: number) => void;
     onDoubleClick: (x: number, y: number) => void;
 }
@@ -329,6 +341,11 @@ class GridSquare extends React.Component<GridSquareProps> {
         overlay: false,
         onDoubleClick: null
     };
+
+    private mouseEnter(e: React.MouseEvent) {
+        e.stopPropagation();
+        this.props.onMouseEnter(this.props.x, this.props.y);
+    }
 
     private click(e: React.MouseEvent, type: 'single' | 'double') {
         e.stopPropagation();
@@ -346,6 +363,7 @@ class GridSquare extends React.Component<GridSquareProps> {
                 <div
                     className={this.props.overlay ? 'grid-square grid-overlay' : 'grid-square'}
                     style={this.props.style}
+                    onMouseEnter={e => this.mouseEnter(e)}
                     onClick={e => this.click(e, 'single')}
                     onDoubleClick={e => this.click(e, 'double')}
                 />

@@ -26,7 +26,7 @@ interface Props {
 interface State {
     map: Map;
     selectedTileID: string | null;
-    addingTile: boolean;
+    addingTile: MapItem | null;
     mapSize: number;
     showImageSelection: boolean;
 }
@@ -38,7 +38,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
         this.state = {
             map: props.map,
             selectedTileID: null,
-            addingTile: false,
+            addingTile: null,
             mapSize: 30,
             showImageSelection: false
         };
@@ -50,13 +50,73 @@ export default class MapEditorModal extends React.Component<Props, State> {
         });
     }
 
-    private toggleAddingTile() {
-        if (!this.state.addingTile && (this.state.map.items.length === 0)) {
+    private setAddingTile(type: string | null) {
+        let tile = null;
+        switch (type) {
+            case 'room':
+                tile = Factory.createMapItem();
+                tile.terrain = 'default';
+                tile.width = 6;
+                tile.height = 6;
+                tile.style = 'square';
+                break;
+            case 'corridor':
+                tile = Factory.createMapItem();
+                tile.terrain = 'default';
+                tile.width = 6;
+                tile.height = 2;
+                tile.style = 'square';
+                break;
+            case 'door':
+                tile = Factory.createMapItem();
+                tile.terrain = 'default';
+                tile.width = 2;
+                tile.height = 1;
+                tile.style = 'square';
+                tile.content = {
+                    type: 'doorway',
+                    style: 'single',
+                    orientation: 'horizontal'
+                };
+                break;
+            case 'stairs':
+                tile = Factory.createMapItem();
+                tile.terrain = 'default';
+                tile.width = 4;
+                tile.height = 2;
+                tile.style = 'square';
+                tile.content = {
+                    type: 'stairway',
+                    style: 'stairs',
+                    orientation: 'vertical'
+                };
+                break;
+        }
+
+        if (tile && (this.state.map.items.length === 0)) {
             // Just add the tile
-            this.addMapTile(0, 0);
+            tile.x = 0;
+            tile.y = 0;
+            this.state.map.items.push(tile);
+
+            this.setState({
+                map: this.state.map,
+                selectedTileID: tile.id
+            });
         } else {
             this.setState({
-                addingTile: !this.state.addingTile
+                addingTile: tile
+            });
+        }
+    }
+
+    private moveAddedTile(x: number, y: number) {
+        const tile = this.state.addingTile;
+        if (tile) {
+            tile.x = x;
+            tile.y = y;
+            this.setState({
+                addingTile: tile
             });
         }
     }
@@ -74,18 +134,19 @@ export default class MapEditorModal extends React.Component<Props, State> {
     }
 
     private addMapTile(x: number, y: number) {
-        const tile = Factory.createMapItem();
-        tile.x = x;
-        tile.y = y;
-        tile.style = 'square';
-        tile.terrain = 'default';
-        this.state.map.items.push(tile);
+        if (this.state.addingTile) {
+            const tile = this.state.addingTile;
 
-        this.setState({
-            map: this.state.map,
-            selectedTileID: tile.id,
-            addingTile: false
-        });
+            tile.x = x;
+            tile.y = y;
+            this.state.map.items.push(tile);
+
+            this.setState({
+                map: this.state.map,
+                selectedTileID: tile.id,
+                addingTile: null
+            });
+        }
     }
 
     private moveMapItem(item: MapItem, dir: string) {
@@ -207,6 +268,10 @@ export default class MapEditorModal extends React.Component<Props, State> {
         item.width = item.height;
         item.height = tmp;
 
+        const diff = Math.floor((item.width - item.height) / 2);
+        item.x -= diff;
+        item.y += diff;
+
         if (item.content) {
             item.content.orientation = item.content.orientation === 'horizontal' ? 'vertical' : 'horizontal';
         }
@@ -246,6 +311,18 @@ export default class MapEditorModal extends React.Component<Props, State> {
         this.setState({
             map: this.state.map,
             selectedTileID: copy.id
+        });
+    }
+
+    private pickUpMapItem(item: MapItem) {
+        const map = this.state.map;
+        const index = map.items.indexOf(item);
+        map.items.splice(index, 1);
+
+        this.setState({
+            map: map,
+            selectedTileID: null,
+            addingTile: item
         });
     }
 
@@ -319,6 +396,17 @@ export default class MapEditorModal extends React.Component<Props, State> {
         });
     }
 
+    private nudgeValue(source: any, field: string, delta: number) {
+        let value: number = source[field];
+        value += delta;
+
+        if ((field === 'width') || (field === 'height')) {
+            value = Math.max(value, 1);
+        }
+
+        this.changeValue(source, field, value);
+    }
+
     public render() {
         try {
             let tools = null;
@@ -332,9 +420,11 @@ export default class MapEditorModal extends React.Component<Props, State> {
                             note={note}
                             toggleImageSelection={() => this.toggleImageSelection()}
                             changeValue={(source, field, value) => this.changeValue(source, field, value)}
+                            nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
                             move={(tile, dir) => this.moveMapItem(tile, dir)}
                             resize={(tile, dir, dir2) => this.resizeMapItem(tile, dir, dir2)}
                             clone={tile => this.cloneMapItem(tile)}
+                            pickUp={tile => this.pickUpMapItem(tile)}
                             remove={tile => this.removeMapItem(tile)}
                             rotate={tile => this.rotateMapItem(tile)}
                             sendToBack={tile => this.sendToBack(tile)}
@@ -355,7 +445,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
                         />
                         <div className='divider' />
                         <Note>
-                            <p>to add a new tile to the map, click on the button below</p>
+                            <p>to add a new tile to the map, click on one of the buttons below</p>
                             <p>to edit an existing tile, click on it to select it</p>
                         </Note>
                         <div className='divider' />
@@ -365,17 +455,40 @@ export default class MapEditorModal extends React.Component<Props, State> {
                             display={() => 'zoom'}
                             nudgeValue={delta => this.nudgeMapSize(delta * 3)}
                         />
+                        <div className='divider' />
                         {
                             this.state.addingTile
                             ?
                             <div>
-                                <button onClick={() => this.toggleAddingTile()}>
-                                    click somewhere on the map to add your new tile, or click here to cancel
+                                <button onClick={() => this.setAddingTile(null)}>
+                                    click somewhere on the map to lock the tile in place, or click here to remove it from the map
                                 </button>
                             </div>
                             :
                             <div>
-                                <button onClick={() => this.toggleAddingTile()}>add a new tile</button>
+                                <Row gutter={10}>
+                                    <Col span={12}>
+                                        <button className='image-button' onClick={() => this.setAddingTile('room')}>
+                                            add a room
+                                        </button>
+                                    </Col>
+                                    <Col span={12}>
+                                        <button className='image-button' onClick={() => this.setAddingTile('corridor')}>
+                                            add a corridor
+                                        </button>
+                                    </Col>
+                                    <Col span={12}>
+                                        <button className='image-button' onClick={() => this.setAddingTile('door')}>
+                                            add a door
+                                        </button>
+                                    </Col>
+                                    <Col span={12}>
+                                        <button className='image-button' onClick={() => this.setAddingTile('stairs')}>
+                                            add stairs
+                                        </button>
+                                    </Col>
+                                </Row>
+                                <div className='divider' />
                                 <button onClick={() => this.generate('room')}>add a random room</button>
                                 <button onClick={() => this.rotateMap()}>rotate the map</button>
                                 <ConfirmButton text='clear all tiles' callback={() => this.clearMap()} />
@@ -396,8 +509,10 @@ export default class MapEditorModal extends React.Component<Props, State> {
                             mode='edit'
                             size={this.state.mapSize}
                             selectedItemID={this.state.selectedTileID ? this.state.selectedTileID : undefined}
-                            showOverlay={this.state.addingTile}
+                            showOverlay={!!this.state.addingTile}
+                            floatingItem={this.state.addingTile}
                             setSelectedItemID={id => this.setSelectedTileID(id)}
+                            gridSquareEntered={(x, y) => this.moveAddedTile(x, y)}
                             gridSquareClicked={(x, y) => this.addMapTile(x, y)}
                         />
                     </Col>
@@ -418,9 +533,11 @@ interface MapTileCardProps {
     note: MapNote | null;
     toggleImageSelection: () => void;
     changeValue: (source: any, field: string, value: any) => void;
+    nudgeValue: (source: any, field: string, delta: number) => void;
     move: (tile: MapItem, dir: string) => void;
     resize: (tile: MapItem, dir: string, dir2: 'in' | 'out') => void;
     clone: (tile: MapItem) => void;
+    pickUp: (tile: MapItem) => void;
     remove: (tile: MapItem) => void;
     rotate: (tile: MapItem) => void;
     sendToBack: (tile: MapItem) => void;
@@ -450,16 +567,27 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
     private getPositionSection() {
         return (
             <div>
-                <div className='subheading'>size</div>
-                <div className='section'>{this.props.tile.width} sq x {this.props.tile.height} sq</div>
-                <div className='section'>{this.props.tile.width * 5} ft x {this.props.tile.height * 5} ft</div>
                 <div className='subheading'>move</div>
                 <div className='section centered'>
                     <Radial direction='eight' click={dir => this.props.move(this.props.tile, dir)} />
                 </div>
-                <div className='subheading'>resize</div>
-                <div className='section centered'>
-                    <Radial direction='both' click={(dir, dir2) => this.props.resize(this.props.tile, dir, dir2 as 'in' | 'out')} />
+                <div className='subheading'>size</div>
+                <div className='section'>{this.props.tile.width * 5} ft x {this.props.tile.height * 5} ft</div>
+                <div className='section'>
+                    <NumberSpin
+                        source={this.props.tile}
+                        name='width'
+                        label='width'
+                        display={value => value + ' sq'}
+                        nudgeValue={delta => this.props.nudgeValue(this.props.tile, 'width', delta)}
+                    />
+                    <NumberSpin
+                        source={this.props.tile}
+                        name='height'
+                        label='height'
+                        display={value => value + ' sq'}
+                        nudgeValue={delta => this.props.nudgeValue(this.props.tile, 'height', delta)}
+                    />
                 </div>
                 <div className='divider' />
                 <button onClick={() => this.props.sendToBack(this.props.tile)}>send to back</button>
@@ -628,6 +756,7 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
                         <div className='section'>
                             <button onClick={() => this.props.rotate(this.props.tile)}>rotate tile</button>
                             <button onClick={() => this.props.clone(this.props.tile)}>clone tile</button>
+                            <button onClick={() => this.props.pickUp(this.props.tile)}>pick up tile</button>
                             <button onClick={() => this.props.remove(this.props.tile)}>remove tile</button>
                         </div>
                     </div>

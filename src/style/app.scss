@@ -124,6 +124,10 @@ button {
         }
     }
 
+    &.image-button {
+        height: 50px;
+    }
+
     &:hover {
         border-color: $highlight;
 
@@ -1128,7 +1132,6 @@ body,
 
         .grid-square {
             position: absolute;
-            border: 1px solid white;
             background-color: rgba(0, 60, 200, 0.2);
             transition: none;
 
