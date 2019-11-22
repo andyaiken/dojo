@@ -1666,7 +1666,7 @@ body,
 
     .name-row {
         margin: 5px 0;
-        border-left: 3px solid $foreground;
+        border-left: 5px solid $control-border;
     
         &:hover {
             border-color: $highlight;

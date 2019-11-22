@@ -277,7 +277,8 @@ export default class MapEditorModal extends React.Component<Props, State> {
         }
 
         this.setState({
-            map: this.state.map
+            map: this.state.map,
+            addingTile: this.state.addingTile
         });
     }
 
@@ -449,13 +450,6 @@ export default class MapEditorModal extends React.Component<Props, State> {
                             <p>to edit an existing tile, click on it to select it</p>
                         </Note>
                         <div className='divider' />
-                        <NumberSpin
-                            source={this.state}
-                            name={'mapSize'}
-                            display={() => 'zoom'}
-                            nudgeValue={delta => this.nudgeMapSize(delta * 3)}
-                        />
-                        <div className='divider' />
                         {
                             this.state.addingTile
                             ?
@@ -463,26 +457,27 @@ export default class MapEditorModal extends React.Component<Props, State> {
                                 <button onClick={() => this.setAddingTile(null)}>
                                     click somewhere on the map to lock the tile in place, or click here to remove it from the map
                                 </button>
+                                <button onClick={() => this.rotateMapItem(this.state.addingTile as MapItem)}>rotate tile</button>
                             </div>
                             :
                             <div>
                                 <Row gutter={10}>
-                                    <Col span={12}>
+                                    <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                                         <button className='image-button' onClick={() => this.setAddingTile('room')}>
                                             add a room
                                         </button>
                                     </Col>
-                                    <Col span={12}>
+                                    <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                                         <button className='image-button' onClick={() => this.setAddingTile('corridor')}>
                                             add a corridor
                                         </button>
                                     </Col>
-                                    <Col span={12}>
+                                    <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                                         <button className='image-button' onClick={() => this.setAddingTile('door')}>
                                             add a door
                                         </button>
                                     </Col>
-                                    <Col span={12}>
+                                    <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                                         <button className='image-button' onClick={() => this.setAddingTile('stairs')}>
                                             add stairs
                                         </button>
@@ -504,6 +499,12 @@ export default class MapEditorModal extends React.Component<Props, State> {
                         {tools}
                     </Col>
                     <Col span={16} className='scrollable both-ways'>
+                        <NumberSpin
+                            source={this.state}
+                            name={'mapSize'}
+                            display={() => 'zoom'}
+                            nudgeValue={delta => this.nudgeMapSize(delta * 3)}
+                        />
                         <MapPanel
                             map={this.state.map}
                             mode='edit'

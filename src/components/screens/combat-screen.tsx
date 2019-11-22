@@ -1538,14 +1538,14 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
         });
     }
 
-    private damage() {
+    private damage(factor: number = 1) {
         const monster = this.props.combatant as Combatant & Monster;
 
         let hp = (monster.hp ? monster.hp : 0);
         let temp = monster.hpTemp;
 
         const totalDamage = this.state.damageOrHealing;
-        let damage = totalDamage;
+        let damage = Math.floor(totalDamage * factor);
 
         // Take damage off temp HP first
         const val = Math.min(damage, temp);
@@ -1712,13 +1712,16 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                     nudgeValue={delta => this.nudgeDamage(delta)}
                 />
                 <Row gutter={10}>
-                    <Col span={8}>
+                    <Col xs={24} sm={24} md={12} lg={12} xl={6}>
                         <button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.heal()}>heal</button>
                     </Col>
-                    <Col span={8}>
+                    <Col xs={24} sm={24} md={12} lg={12} xl={6}>
                         <button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.setDamage(0)}>reset</button>
                     </Col>
-                    <Col span={8}>
+                    <Col xs={24} sm={24} md={12} lg={12} xl={6}>
+                        <button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.damage(0.5)}>half damage</button>
+                    </Col>
+                    <Col xs={24} sm={24} md={12} lg={12} xl={6}>
                         <button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.damage()}>damage</button>
                     </Col>
                 </Row>
