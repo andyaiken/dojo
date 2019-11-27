@@ -169,7 +169,7 @@ class TraitPanel extends React.Component<TraitPanelProps> {
     public render() {
         try {
             return (
-                <div className='section'>
+                <div key={this.props.trait.id} className='section'>
                     <div className='subheading'>trait name</div>
                     <Textbox
                         text={this.props.trait.name}
@@ -184,7 +184,8 @@ class TraitPanel extends React.Component<TraitPanelProps> {
                     <Textbox
                         text={this.props.trait.text}
                         placeholder='details'
-                        lines={5}
+                        minLines={5}
+                        maxLines={20}
                         onChange={value => this.props.changeValue(this.props.trait, 'text', value)}
                     />
                     <div className='divider' />

@@ -14,7 +14,7 @@ import { Condition, ConditionDurationSaves } from '../../models/condition';
 import { Encounter } from '../../models/encounter';
 import { MapItem, MapNote } from '../../models/map';
 import { Monster, Trait } from '../../models/monster-group';
-import { PC } from '../../models/party';
+import { Party, PC } from '../../models/party';
 
 import MonsterCard from '../cards/monster-card';
 import PCCard from '../cards/pc-card';
@@ -39,6 +39,7 @@ showdown.setOption('tables', true);
 
 interface Props {
     combat: Combat;
+    parties: Party[];
     encounters: Encounter[];
     maximized: boolean;
     maximize: () => void;
@@ -52,6 +53,7 @@ interface Props {
     moveCombatant: (oldIndex: number, newIndex: number) => void;
     removeCombatant: (combatant: Combatant) => void;
     addCombatants: () => void;
+    addPC: (partyID: string, pcID: string) => void;
     addWave: () => void;
     addCondition: (combatant: Combatant) => void;
     editCondition: (combatant: Combatant, condition: Condition) => void;
@@ -381,6 +383,24 @@ export default class CombatScreen extends React.Component<Props, State> {
         let wavesAvailable = false;
         wavesAvailable = !!this.props.combat.encounter && (this.props.combat.encounter.waves.length > 0);
 
+        const parties: Party[] = [];
+        this.props.combat.combatants.filter(c => c.type === 'pc').forEach(pc => {
+            const party = this.props.parties.find(p => p.pcs.find(item => item.id === pc.id));
+            if (party && !parties.includes(party)) {
+                parties.push(party);
+            }
+        });
+        const pcOptions: JSX.Element[] = [];
+        parties.forEach(party => {
+            party.pcs.forEach(pc => {
+                if (!this.props.combat.combatants.find(c => c.id === pc.id)) {
+                    pcOptions.push(
+                        <button key={pc.id} onClick={() => this.props.addPC(party.id, pc.id)}>{pc.name} ({party.name})</button>
+                    );
+                }
+            });
+        });
+
         return (
             <div>
                 <div className='subheading'>encounter</div>
@@ -394,6 +414,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                     changeValue={() => this.toggleShowDefeatedCombatants()}
                 />
                 <button onClick={() => this.props.addCombatants()}>add combatants</button>
+                {pcOptions.length > 0 ? <Expander text='add pcs'>{pcOptions}</Expander> : null}
                 <button onClick={() => this.props.addWave()} style={{ display: wavesAvailable ? 'block' : 'none' }}>add wave</button>
                 <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
                     <div className='subheading'>map</div>
@@ -1409,7 +1430,8 @@ class MapItemCard extends React.Component<MapItemCardProps, MapItemCardState> {
                     <Textbox
                         text={this.props.note.text}
                         placeholder='details'
-                        lines={5}
+                        minLines={5}
+                        maxLines={10}
                         onChange={value => this.props.changeValue(this.props.note, 'text', value)}
                     />
                     <button onClick={() => this.props.removeNote(this.props.item.id)}>remove note</button>
@@ -1638,7 +1660,8 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                         <Textbox
                             text={this.props.combatant.note}
                             placeholder='notes'
-                            lines={3}
+                            minLines={3}
+                            maxLines={10}
                             onChange={value => this.props.changeValue(this.props.combatant, 'note', value)}
                         />
                     </div>
@@ -1938,7 +1961,7 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
             }
 
             return (
-                <div className='group-panel combat-controls'>
+                <div key={this.props.combatant.id} className='group-panel combat-controls'>
                     <Selector
                         options={views}
                         selectedID={this.state.view}

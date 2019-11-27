@@ -65,7 +65,8 @@ export default class PCUpdateModal extends React.Component<Props, State> {
                         <Textbox
                             text={this.state.source}
                             placeholder='paste data here'
-                            lines={10}
+                            minLines={10}
+                            maxLines={10}
                             onChange={value => this.setSource(value)}
                         />
                         <button onClick={() => this.analyse()}>analyse</button>

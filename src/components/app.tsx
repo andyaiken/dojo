@@ -1119,6 +1119,22 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
+    private addPCToEncounter(partyID: string, pcID: string) {
+        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+        if (combat) {
+            const party = this.state.parties.find(p => p.id === partyID);
+            if (party) {
+                const pc = party.pcs.find(item => item.id === pcID);
+                if (pc) {
+                    this.addPCToCombat(pc, combat);
+                    this.setState({
+                        combats: this.state.combats
+                    });
+                }
+            }
+        }
+    }
+
     private pauseCombat() {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
@@ -2070,6 +2086,7 @@ export default class App extends React.Component<Props, State> {
                     return (
                         <CombatScreen
                             combat={this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat}
+                            parties={this.state.parties}
                             encounters={this.state.encounters}
                             maximized={this.state.maximized}
                             maximize={() => this.toggleMaximized()}
@@ -2083,6 +2100,7 @@ export default class App extends React.Component<Props, State> {
                             moveCombatant={(oldIndex, newIndex) => this.moveCombatant(oldIndex, newIndex)}
                             removeCombatant={combatant => this.removeCombatant(combatant)}
                             addCombatants={() => this.addToEncounter()}
+                            addPC={(partyID, pcID) => this.addPCToEncounter(partyID, pcID)}
                             addWave={() => this.openWaveModal()}
                             addCondition={combatant => this.addCondition(combatant)}
                             editCondition={(combatant, condition) => this.editCondition(combatant, condition)}

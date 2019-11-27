@@ -7,7 +7,8 @@ import Utils from '../../utils/utils';
 interface Props {
     text: string;
     placeholder: string;
-    lines: number;
+    minLines: number;
+    maxLines: number;
     disabled: boolean;
     onChange: (value: string) => void;
 }
@@ -19,7 +20,8 @@ interface State {
 export default class Textbox extends React.Component<Props, State> {
     public static defaultProps = {
         placeholder: '',
-        lines: 1,
+        minLines: 1,
+        maxLines: 1,
         disabled: false
     };
 
@@ -45,13 +47,13 @@ export default class Textbox extends React.Component<Props, State> {
                 style += ' disabled';
             }
 
-            if (this.props.lines > 1) {
+            if (this.props.maxLines > 1) {
                 return (
                     <Input.TextArea
                         className={style}
                         value={this.state.text}
                         placeholder={this.props.placeholder}
-                        autoSize={{ minRows: this.props.lines }}
+                        autoSize={{ minRows: this.props.minLines, maxRows: this.props.maxLines }}
                         onChange={event => this.onChange(event.target.value)}
                     />
                 );

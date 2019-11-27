@@ -562,7 +562,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                     const catOptions = CATEGORY_TYPES.map(cat => ({ id: cat, text: cat }));
 
                     content = (
-                        <Row gutter={10}>
+                        <Row gutter={10} key='overview'>
                             <Col span={12}>
                                 <div className='subheading'>name</div>
                                 <Textbox
@@ -633,7 +633,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                     break;
                 case 'abilities':
                     content = (
-                        <Row gutter={10}>
+                        <Row gutter={10} key='abilities'>
                             <Col span={12}>
                                 <div className='subheading'>ability scores</div>
                                 <AbilityScorePanel
@@ -659,7 +659,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                     break;
                 case 'cbt-stats':
                     content = (
-                        <Row gutter={10}>
+                        <Row gutter={10} key='cbt-stats'>
                             <Col span={12}>
                                 <div className='subheading'>armor class</div>
                                 <NumberSpin
