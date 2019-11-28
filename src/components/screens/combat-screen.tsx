@@ -722,6 +722,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                         combatants={this.props.combat.combatants}
                         selectedItemID={this.state.selectedItemID ? this.state.selectedItemID : undefined}
                         setSelectedItemID={id => this.setSelectedItemID(id)}
+                        gridSquareEntered={(x, y) => null}
                         gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
                     />
                 );
