@@ -14,6 +14,8 @@ interface ModelChar {
 
 export default class Shakespeare {
 
+    //#region Text generation
+
     private static model: ModelLine[] = [];
     private static maxLength: number = 0;
 
@@ -142,6 +144,26 @@ export default class Shakespeare {
         return values.reduce((sum, value) => sum + value, 0) / values.length;
     }
 
+    //#endregion
+
+    public static startsWithVowel(str: string) {
+        ['a', 'e', 'i', 'o', 'u', 'y'].forEach(vowel => {
+            if (str.toLowerCase().startsWith(vowel)) {
+                return true;
+            }
+        });
+
+        return false;
+    }
+
+    private static getMultipleValues(list: string[]) {
+        const items = [];
+        while (Utils.randomNumber(3) !== 0) {
+            items.push(list[Utils.randomNumber(list.length)]);
+        }
+        return items.join(', ');
+    }
+
     public static generateNames(count: number): string[] {
         const names: string[] = [];
 
@@ -195,5 +217,920 @@ export default class Shakespeare {
         names.sort();
 
         return names;
+    }
+
+    public static generatePotion() {
+        let str = '';
+
+        const color = Shakespeare.potionColour(true);
+        const liquid = Shakespeare.potionLiquid();
+        const adj = Shakespeare.potionAdjective();
+        const feature = Shakespeare.potionFeature();
+
+        switch (Utils.randomNumber(5)) {
+            case 0:
+                str = color + ' ' + liquid;
+                break;
+            case 1:
+                str = color + ' ' + liquid + ' ' + feature;
+                break;
+            case 2:
+                str = adj + ' ' + color + ' ' + liquid;
+                break;
+            case 3:
+                str = adj + ' ' + color + ' ' + liquid + ' ' + feature;
+                break;
+            case 4:
+                str = adj + ' ' + liquid + ', ' + color + ' ' + feature;
+                break;
+        }
+
+        const start = Shakespeare.startsWithVowel(str) ? 'an' : 'a';
+        str = start + ' ' + str + ' in ' + Shakespeare.potionContainer() + '.';
+
+        switch (Utils.randomNumber(5)) {
+            case 0:
+                str += ' it smells ' + Shakespeare.potionSmell() + '.';
+                break;
+            case 1:
+                str += ' it tastes ' + Shakespeare.potionSmell() + '.';
+                break;
+            case 2:
+                str += ' it smells ' + Shakespeare.potionSmell() + ' but tastes ' + Shakespeare.potionSmell() + '.';
+                break;
+            case 3:
+                str += ' it smells and tastes ' + Shakespeare.potionSmell() + '.';
+                break;
+        }
+
+        // TODO: Advanced: layered / varigated / alternating colours
+
+        return str;
+    }
+
+    public static generateBookTitle() {
+        let title = '';
+
+        const np1 = Shakespeare.bookNounPhrase(Utils.randomNumber(2) === 0, Utils.randomNumber(2) === 0);
+        const np2 = Shakespeare.bookNounPhrase(Utils.randomNumber(2) === 0, Utils.randomNumber(2) === 0);
+        const np3 = Shakespeare.bookNounPhrase(Utils.randomNumber(2) === 0, false);
+        const np4 = Shakespeare.bookNounPhrase(Utils.randomNumber(2) === 0, true);
+
+        switch (Utils.randomNumber(5)) {
+            case 0:
+                // The NOUN's NOUN
+                title = np1 + '\'s ' + np3;
+                break;
+            case 1:
+                // The NOUN and the NOUN
+                title = np1 + ' ' + Shakespeare.bookPreposition() + ' ' + np2;
+                break;
+            case 2:
+                // VERBING the NOUN
+                title = Shakespeare.bookGerund() + ' the ' + np3;
+                break;
+            case 3:
+                // About NOUN
+                const about = Shakespeare.bookAbout();
+                title = (Utils.randomNumber(2) === 0) ? about + ' ' + Shakespeare.bookNoun(true) + 's' : about + ' ' + Shakespeare.bookNoun(false);
+                break;
+            case 4:
+                // The NOUN
+                title = np4;
+                break;
+        }
+
+        if (Utils.randomNumber(10) === 0) {
+            // Append a volume number
+
+            let type = '';
+            switch (Utils.randomNumber(3)) {
+                case 0:
+                    type = 'volume';
+                    break;
+                case 1:
+                    type = 'part';
+                    break;
+                case 2:
+                    type = 'book';
+                    break;
+            }
+
+            switch (Utils.randomNumber(5)) {
+                case 0:
+                    title += ', ' + type + ' one';
+                    break;
+                case 1:
+                    title += ', ' + type + ' two';
+                    break;
+                case 2:
+                    title += ', ' + type + ' three';
+                    break;
+                case 3:
+                    title += ', ' + type + ' four';
+                    break;
+                case 4:
+                    title += ', ' + type + ' five';
+                    break;
+            }
+        }
+
+        return title;
+    }
+
+    public static generateNPC() {
+        const ages = ['elderly', 'middle-aged', 'teenage', 'youthful', 'young', 'old'];
+        const age = ages[Utils.randomNumber(ages.length)];
+
+        const professions = ['apothecary', 'architect', 'armourer', 'arrowsmith', 'astrologer', 'baker', 'barber', 'lawyer', 'beggar', 'bellfounder', 'blacksmith', 'bookbinder', 'brewer', 'bricklayer', 'butcher', 'carpenter', 'carter', 'cartwright', 'chandler', 'peddler', 'clerk', 'clockmaker', 'cobbler', 'cook', 'cooper', 'merchant', 'embroiderer', 'engraver', 'fisherman', 'fishmonger', 'forester', 'furrier', 'gardener', 'gemcutter', 'glassblower', 'goldsmith', 'grocer', 'haberdasher', 'stableman', 'courtier', 'herbalist', 'innkeeper', 'ironmonger', 'labourer', 'painter', 'locksmith', 'mason', 'messenger', 'miller', 'miner', 'minstrel', 'ploughman', 'farmer', 'porter', 'sailor', 'scribe', 'seamstress', 'shepherd', 'shipwright', 'soapmaker', 'tailor', 'tinker', 'vintner', 'weaver'];
+        const profession = professions[Utils.randomNumber(professions.length)];
+
+        let main = '';
+        switch (Utils.randomNumber(3)) {
+            case 0:
+            case 1:
+                main = profession;
+                break;
+            case 2:
+                main = age + ' ' + profession;
+                break;
+        }
+
+        main = (Shakespeare.startsWithVowel(main) ? 'an' : 'a') + ' ' + main;
+
+        const heights = ['gangly', 'gigantic', 'hulking', 'lanky', 'short', 'small', 'stumpy', 'tall', 'tiny', 'willowy'];
+        const height = heights[Utils.randomNumber(heights.length)];
+
+        const weights = ['broad-shouldered', 'fat', 'gaunt', 'obese', 'plump', 'pot-bellied', 'rotund', 'skinny', 'slender', 'slim', 'statuesque', 'stout', 'thin'];
+        const weight = weights[Utils.randomNumber(weights.length)];
+
+        let stature = '';
+        switch (Utils.randomNumber(4)) {
+            case 0:
+            case 1:
+                stature = height + ' and ' + weight;
+                break;
+            case 2:
+                stature = height;
+                break;
+            case 3:
+                stature = weight;
+                break;
+        }
+
+        const hairStyles = ['short', 'cropped', 'long', 'braided', 'dreadlocked', 'shoulder-length', 'wiry', 'balding', 'receeding', 'curly', 'tightly-curled', 'straight', 'greasy', 'limp', 'sparse', 'thinning', 'wavy'];
+        const hairColours = ['black', 'brown', 'dark brown', 'light brown', 'red', 'ginger', 'strawberry blonde', 'blonde', 'ash blonde', 'graying', 'silver', 'white', 'gray', 'auburn'];
+        const hair = hairStyles[Utils.randomNumber(hairStyles.length)] + ' ' + hairColours[Utils.randomNumber(hairColours.length)];
+
+        let desc = '';
+        switch (Utils.randomNumber(4)) {
+            case 0:
+            case 1:
+                desc = main + ', ' + stature + ' with ' + hair + ' hair';
+                break;
+            case 2:
+                desc = main + ' with ' + hair + ' hair';
+                break;
+            case 3:
+                desc = main + ', ' + stature;
+                break;
+        }
+
+        return desc;
+    }
+
+    public static generateNPCPhysical() {
+        const physical = ['bearded', 'buck-toothed', 'chiselled', 'doe-eyed', 'fine-featured', 'florid', 'gap-toothed', 'goggle-eyed', 'grizzled', 'jowly', 'jug-eared', 'pock-marked', 'broken nose', 'red-cheeked', 'scarred', 'squinting', 'thin-lipped', 'toothless', 'weather-beaten', 'wrinkled'];
+        return Shakespeare.getMultipleValues(physical);
+    }
+
+    public static generateNPCMental() {
+        const mental = ['hot-tempered', 'overbearing', 'antagonistic', 'haughty', 'elitist', 'proud', 'rude', 'aloof', 'mischievous', 'impulsive', 'lusty', 'irreverent', 'madcap', 'thoughtless', 'absent-minded', 'insensitive', 'brave', 'craven', 'shy', 'fearless', 'obsequious', 'inquisitive', 'prying', 'intellectual', 'perceptive', 'keen', 'perfectionist', 'stern', 'harsh', 'punctual', 'driven', 'trusting', 'kind-hearted', 'forgiving', 'easy-going', 'compassionate', 'miserly', 'hard-hearted', 'covetous', 'avaricious', 'thrifty', 'wastrel', 'spendthrift', 'extravagant', 'kind', 'charitable', 'gloomy', 'morose', 'compulsive', 'irritable', 'vengeful', 'honest', 'truthful', 'innocent', 'gullible', 'bigoted', 'biased', 'narrow-minded', 'cheerful', 'happy', 'diplomatic', 'pleasant', 'foolhardy', 'affable', 'fatalistic', 'depressing', 'cynical', 'sarcastic', 'realistic', 'secretive', 'retiring', 'practical', 'level-headed', 'dull', 'reverent', 'scheming', 'paranoid', 'cautious', 'deceitful', 'nervous', 'uncultured', 'boorish', 'barbaric', 'graceless', 'crude', 'cruel', 'sadistic', 'immoral', 'jealous', 'belligerent', 'argumentative', 'arrogant', 'careless', 'curious', 'exacting', 'friendly', 'greedy', 'generous', 'moody', 'naive', 'opinionated', 'optimistic', 'pessimistic', 'quiet', 'sober', 'suspicious', 'uncivilised', 'violent', 'peaceful'];
+        return Shakespeare.getMultipleValues(mental);
+    }
+
+    public static generateNPCSpeech() {
+        const speech = ['accented', 'articulate', 'garrulous', 'breathless', 'crisp', 'gutteral', 'high-pitched', 'lisping', 'loud', 'nasal', 'slow', 'fast', 'squeaky', 'stuttering', 'wheezy', 'whiny', 'whispery', 'soft-spoken', 'laconic', 'blustering'];
+        return Shakespeare.getMultipleValues(speech);
+    }
+
+    public static generateTreasure() {
+        let result = '';
+
+        const stones = ['diamond', 'ruby', 'sapphire', 'emerald', 'amethyst', 'garnet', 'topaz', 'pearl', 'black pearl', 'opal', 'fire opal', 'amber', 'coral', 'agate', 'carnelian', 'jade', 'peridot', 'moonstone', 'alexandrite', 'aquamarine', 'jacinth', 'marble'];
+
+        switch (Utils.randomNumber(12)) {
+            case 0:
+            case 1:
+            case 2:
+                // Gemstone
+                let stone = stones[Utils.randomNumber(stones.length)];
+
+                switch (Utils.randomNumber(2)) {
+                    case 0:
+                        stone = stone + ' gemstone';
+                        break;
+                    case 1:
+                        stone = 'piece of ' + stone;
+                        break;
+                }
+
+                switch (Utils.randomNumber(12)) {
+                    case 0:
+                        stone = 'well cut ' + stone;
+                        break;
+                    case 1:
+                        stone = 'rough-cut ' + stone;
+                        break;
+                    case 2:
+                        stone = 'poorly cut ' + stone;
+                        break;
+                    case 3:
+                        stone = 'small ' + stone;
+                        break;
+                    case 4:
+                        stone = 'large ' + stone;
+                        break;
+                    case 5:
+                        stone = 'oddly shaped ' + stone;
+                        break;
+                    case 6:
+                        stone = 'highly polished ' + stone;
+                        break;
+                    default:
+                        break;
+                }
+
+                result = stone;
+                break;
+            case 3:
+            case 4:
+            case 5:
+                // Object
+                const fObjects = ['medal', 'statuette', 'sculpture', 'idol', 'chalice', 'goblet', 'dish', 'bowl'];
+                const object = fObjects[Utils.randomNumber(fObjects.length)];
+
+                const objectAdjectives = ['small', 'large', 'light', 'heavy', 'delicate', 'fragile', 'masterwork', 'elegant'];
+                const objectAdjective = objectAdjectives[Utils.randomNumber(objectAdjectives.length)];
+
+                result = objectAdjective + ' ' + object;
+                break;
+            case 6:
+            case 7:
+            case 8:
+                // Jewellery
+                const jewellery = ['ring', 'necklace', 'crown', 'circlet', 'bracelet', 'anklet', 'torc', 'brooch', 'pendant', 'locket', 'diadem', 'tiara', 'earring'];
+                const item = jewellery[Utils.randomNumber(jewellery.length)];
+
+                const metals = ['gold', 'silver', 'bronze', 'platinum', 'electrum', 'mithral', 'orium', 'adamantine'];
+                const metal = metals[Utils.randomNumber(metals.length)];
+
+                result = metal + ' ' + item;
+
+                switch (Utils.randomNumber(5)) {
+                    case 0:
+                        // Enamelled or laquered
+                        const deco1 = (Utils.randomNumber(2) === 0) ? 'enamelled' : 'laquered';
+                        result = deco1 + ' ' + result;
+                        break;
+                    case 1:
+                        // Filigree or plating
+                        const metal2 = metals[Utils.randomNumber(metals.length)];
+                        const deco2 = (Utils.randomNumber(2) === 0) ? 'plated' : 'filigreed';
+                        result = metal2 + '-' + deco2 + ' ' + result;
+                        break;
+                }
+
+                switch (Utils.randomNumber(10)) {
+                    case 0:
+                        result = 'delicate ' + result;
+                        break;
+                    case 1:
+                        result = 'intricate ' + result;
+                        break;
+                    case 2:
+                        result = 'elegant ' + result;
+                        break;
+                    case 3:
+                        result = 'simple ' + result;
+                        break;
+                    case 4:
+                        result = 'plain ' + result;
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case 9:
+            case 10:
+                // Artwork
+                let artwork = '';
+                switch (Utils.randomNumber(2)) {
+                    case 0:
+                        // Painting
+                        artwork = 'painting';
+
+                        switch (Utils.randomNumber(2)) {
+                            case 0:
+                                artwork = 'oil ' + artwork;
+                                break;
+                            case 1:
+                                artwork = 'watercolour ' + artwork;
+                                break;
+                        }
+                        break;
+                    case 1:
+                        // Drawing
+                        artwork = 'drawing';
+
+                        switch (Utils.randomNumber(3)) {
+                            case 0:
+                                artwork = 'pencil ' + artwork;
+                                break;
+                            case 1:
+                                artwork = 'charcoal ' + artwork;
+                                break;
+                            case 2:
+                                artwork = 'pastel ' + artwork;
+                                break;
+                        }
+                        break;
+                }
+
+                const artAdjectives = ['small', 'large', 'delicate', 'fragile', 'elegant', 'detailed'];
+                const artAdjective = artAdjectives[Utils.randomNumber(artAdjectives.length)];
+
+                const media = ['canvas', 'paper', 'parchment', 'wood panels', 'fabric'];
+                const medium = media[Utils.randomNumber(media.length)];
+
+                result = artAdjective + ' ' + artwork + ' on ' + medium;
+
+                // TODO: Subject
+                break;
+            case 11:
+                // Musical instrument
+                const instruments = ['lute', 'lyre', 'mandolin', 'violin', 'drum', 'flute', 'clarinet', 'accordion', 'banjo', 'bodhran', 'ocarina', 'zither', 'djembe', 'shawm'];
+                const instrument = instruments[Utils.randomNumber(instruments.length)];
+
+                const instrumentAdjectives = ['small', 'large', 'light', 'heavy', 'delicate', 'fragile', 'masterwork', 'elegant'];
+                const instrumentAdjective = instrumentAdjectives[Utils.randomNumber(instrumentAdjectives.length)];
+
+                result = instrumentAdjective + ' ' + instrument;
+                break;
+        }
+
+        switch (Utils.randomNumber(5)) {
+            case 0:
+                const locations = ['feywild', 'shadowfell', 'elemental chaos', 'astral plane', 'abyss', 'distant north', 'distant east', 'distant west', 'distant south'];
+                const location = locations[Utils.randomNumber(locations.length)];
+
+                result += ' from the ' + location;
+                break;
+            case 1:
+                const gerunds = ['decorated with', 'inscribed with', 'engraved with', 'embossed with', 'carved with'];
+                const gerund = gerunds[Utils.randomNumber(gerunds.length)];
+
+                const adjectives = ['indecipherable', 'ancient', 'curious', 'unusual', 'dwarven', 'eladrin', 'elven', 'draconic', 'gith'];
+                const adjective = adjectives[Utils.randomNumber(adjectives.length)];
+
+                const designs = ['script', 'designs', 'sigils', 'runes', 'glyphs', 'patterns'];
+                const design = designs[Utils.randomNumber(designs.length)];
+
+                result += ' ' + gerund + ' ' + adjective + ' ' + design;
+                break;
+            case 2:
+                const magicGerunds = ['glowing with', 'suffused with', 'infused with', 'humming with', 'pulsing with'];
+                const magicGerund = magicGerunds[Utils.randomNumber(magicGerunds.length)];
+
+                const magics = ['arcane', 'divine', 'primal', 'psionic', 'dark', 'shadow', 'elemental', 'ethereal', 'unknown'];
+                const magic = magics[Utils.randomNumber(magics.length)];
+
+                const powers = ['energy', 'power', 'magic'];
+                const power = powers[Utils.randomNumber(powers.length)];
+
+                result += ' ' + magicGerund + ' ' + magic + ' ' + power;
+                break;
+            case 4:
+                let stone = stones[Utils.randomNumber(stones.length)];
+
+                if (Utils.randomNumber(2) === 0) {
+                    stone += 's';
+                } else {
+                    stone = 'a single ' + stone;
+                }
+
+                const setGerunds = ['set with', 'inlaid with', 'studded with', 'with shards of'];
+                const setGerund = setGerunds[Utils.randomNumber(setGerunds.length)];
+
+                result += ' ' + setGerund + ' ' + stone;
+                break;
+        }
+
+        return result;
+    }
+
+    private static potionColour(complex: boolean) {
+        let values = [
+            'red',
+            'scarlet',
+            'crimson',
+            'vermillion',
+            'pink',
+            'blue',
+            'royal blue',
+            'sky blue',
+            'light blue',
+            'dark blue',
+            'midnight blue',
+            'indigo',
+            'yellow',
+            'lemon yellow',
+            'amber',
+            'green',
+            'light green',
+            'dark green',
+            'sea green',
+            'turquoise',
+            'aquamarine',
+            'emerald',
+            'purple',
+            'lavender',
+            'lilac',
+            'mauve',
+            'orange',
+            'brown',
+            'maroon',
+            'ochre',
+            'black',
+            'dark grey',
+            'grey',
+            'light grey',
+            'off-white',
+            'white',
+            'golden',
+            'silver'
+        ];
+
+        if (complex) {
+            values = values.concat([
+                'blood red',
+                'cherry red',
+                'ruby-coloured',
+                'rose-coloured',
+                'sapphire-coloured',
+                'straw-coloured',
+                'olive-coloured',
+                'plum-coloured',
+                'mud-coloured',
+                'cream-coloured',
+                'ivory-coloured',
+                'bronze-coloured',
+                'colourless',
+                'clear',
+                'transparent'
+            ]);
+
+            // TODO: Two colours
+            // TODO: Marbled (two colours)
+        }
+
+        const index = Utils.randomNumber(values.length);
+        return values[index];
+    }
+
+    private static potionAdjective() {
+        const values = [
+            'watery',
+            'syrupy',
+            'thick',
+            'viscous',
+            'gloopy',
+            'thin',
+            'runny',
+            'translucent',
+            'effervescent',
+            'fizzing',
+            'bubbling',
+            'foaming',
+            'volatile',
+            'smoking',
+            'fuming',
+            'vaporous',
+            'steaming',
+            'cold',
+            'icy cold',
+            'hot',
+            'sparkling',
+            'iridescent',
+            'cloudy',
+            'opalescent',
+            'luminous',
+            'phosphorescent',
+            'glowing'
+        ];
+
+        return values[Utils.randomNumber(values.length)];
+    }
+
+    private static potionFeature() {
+        switch (Utils.randomNumber(5)) {
+            case 0:
+                return 'with ' + this.potionColour(true) + ' specks';
+            case 1:
+                return 'with flecks of ' + this.potionColour(false);
+            case 2:
+                const col = this.potionColour(true);
+                const article = Shakespeare.startsWithVowel(col) ? 'an' : 'a';
+                return 'with ' + article + ' ' + col + ' suspension';
+            case 3:
+                return 'with a floating ' + this.potionColour(true) + ' layer';
+            case 4:
+                return 'with a ribbon of ' + this.potionColour(false);
+        }
+
+        return '';
+    }
+
+    private static potionLiquid() {
+        const values = ['liquid', 'solution', 'draught', 'oil', 'elixir', 'potion'];
+        return values[Utils.randomNumber(values.length)];
+    }
+
+    private static potionContainer() {
+        const shapes = ['small', 'rounded', 'tall', 'square', 'irregularly-shaped', 'long-necked', 'cylindrical', 'round-bottomed'];
+        const materials = ['glass', 'metal', 'ceramic', 'crystal'];
+        const types = ['vial', 'jar', 'bottle', 'flask'];
+
+        const shapeIndex = Utils.randomNumber(shapes.length);
+        const shape = shapes[shapeIndex];
+
+        const materialIndex = Utils.randomNumber(materials.length);
+        let material = materials[materialIndex];
+
+        const typeIndex = Utils.randomNumber(types.length);
+        const type = types[typeIndex];
+
+        if (Utils.randomNumber(3) === 0) {
+            material = this.potionColour(true) + ' ' + material;
+        }
+
+        let result = '';
+        switch (Utils.randomNumber(2)) {
+            case 0:
+                result = material + ' ' + type;
+                break;
+            case 1:
+                result = shape + ' ' + material + ' ' + type;
+                break;
+        }
+
+        const start = Shakespeare.startsWithVowel(result) ? 'an' : 'a';
+        return start + ' ' + result;
+    }
+
+    private static potionSmell() {
+        const values = [
+            'acidic',
+            'acrid',
+            'of ammonia',
+            'of apples',
+            'bitter',
+            'brackish',
+            'buttery',
+            'of cherries',
+            'delicious',
+            'earthy',
+            'of earwax',
+            'of fish',
+            'floral',
+            'of lavender',
+            'lemony',
+            'of honey',
+            'fruity',
+            'meaty',
+            'metallic',
+            'musty',
+            'of onions',
+            'of oranges',
+            'peppery',
+            'of perfume',
+            'rotten',
+            'salty',
+            'sickly sweet',
+            'starchy',
+            'sugary',
+            'smokey',
+            'sour',
+            'spicy',
+            'of sweat',
+            'sweet',
+            'unpleasant',
+            'vile',
+            'vinegary'
+        ];
+
+        return values[Utils.randomNumber(values.length)];
+    }
+
+    private static bookNounPhrase(concreteNoun: boolean, article: boolean) {
+        let np = Shakespeare.bookNoun(concreteNoun);
+
+        let plural = false;
+        if (concreteNoun && (Utils.randomNumber(5) === 0)) {
+            // Pluralise
+            np += 's';
+            plural = true;
+        }
+
+        if (Utils.randomNumber(3) === 0) {
+            const adj = Shakespeare.bookAdjective();
+            np = adj + ' ' + np;
+        }
+
+        if (article) {
+            if (Utils.randomNumber(2) === 0) {
+                // Prepend 'the' or 'a' / 'an' or 'one'
+                switch (Utils.randomNumber(2)) {
+                    case 0:
+                        np = 'the ' + np;
+                        break;
+                    case 1:
+                        if (!plural) {
+                            switch (Utils.randomNumber(2)) {
+                                case 0:
+                                    np = (Shakespeare.startsWithVowel(np) ? 'an' : 'a') + ' ' + np;
+                                    break;
+                                case 1:
+                                    np = 'one ' + np;
+                                    break;
+                            }
+                        } else {
+                            switch (Utils.randomNumber(6)) {
+                                case 0:
+                                    np = 'two ' + np;
+                                    break;
+                                case 1:
+                                    np = 'three ' + np;
+                                    break;
+                                case 2:
+                                    np = 'four ' + np;
+                                    break;
+                                case 3:
+                                    np = 'five ' + np;
+                                    break;
+                                case 4:
+                                    np = 'six ' + np;
+                                    break;
+                                case 5:
+                                    np = 'seven ' + np;
+                                    break;
+                            }
+                        }
+                        break;
+                }
+            }
+        }
+
+        return np;
+    }
+
+    private static bookNoun(concrete: boolean) {
+        let list = [
+            'elf',
+            'halfling',
+            'dwarf',
+            'gnome',
+            'tiefling',
+            'dragonborn',
+            'goliath',
+            'changeling',
+            'drow',
+            'minotaur',
+            'beast',
+            'orc',
+            'goblin',
+            'hobgoblin',
+            'dragon',
+            'demon',
+            'devil',
+            'angel',
+            'god',
+            'gith',
+            'night',
+            'day',
+            'eclipse',
+            'shadow',
+            'sky',
+            'sun',
+            'moon',
+            'star',
+            'void',
+            'battle',
+            'war',
+            'brawl',
+            'fist',
+            'blade',
+            'arrow',
+            'spell',
+            'prayer',
+            'eye',
+            'wing',
+            'army',
+            'legion',
+            'brigade',
+            'galleon',
+            'warship',
+            'frigate',
+            'potion',
+            'jewel',
+            'ring',
+            'amulet',
+            'cloak',
+            'sword',
+            'spear',
+            'helm',
+            'wizard',
+            'king',
+            'queen',
+            'prince',
+            'princess',
+            'warlock',
+            'barbarian',
+            'sorcerer',
+            'thief',
+            'mage',
+            'child',
+            'wayfarer',
+            'adventurer',
+            'pirate',
+            'spy',
+            'sage',
+            'assassin',
+            'mountain',
+            'forest',
+            'peak',
+            'cave',
+            'cavern',
+            'lake',
+            'swamp',
+            'marshland',
+            'island',
+            'shore',
+            'city',
+            'town',
+            'village',
+            'tower',
+            'arena',
+            'castle',
+            'citadel',
+            'bridge',
+            'game',
+            'wager',
+            'quest',
+            'challenge',
+            'rose',
+            'lily',
+            'thorn',
+            'leaf',
+            'word',
+            'snake',
+            'serpent',
+            'song',
+            'lament',
+            'dirge',
+            'elegy',
+            'storm',
+            'tempest',
+            'snow'
+        ];
+
+        if (!concrete) {
+            // Can you have two of them?
+            // If not, they go here
+
+            list = list.concat([
+                'darkness',
+                'light',
+                'dusk',
+                'twilight',
+                'revenge',
+                'vengeance',
+                'blood',
+                'earth',
+                'water',
+                'ice',
+                'wood',
+                'metal',
+                'lightning',
+                'thunder',
+                'mist',
+                'flame',
+                'fire',
+                'wind',
+                'stone',
+                'destruction',
+                'life',
+                'death',
+                'time',
+                'end',
+                'danger',
+                'luck',
+                'chaos',
+                'truth',
+                'untruth',
+                'lie',
+                'deception',
+                'music',
+                'sound',
+                'one',
+                'two',
+                'three',
+                'four',
+                'five',
+                'six',
+                'seven',
+                'eight',
+                'nine',
+                'ten',
+                'eleven',
+                'twelve'
+            ]);
+        }
+
+        const index = Utils.randomNumber(list.length);
+        return list[index];
+    }
+
+    private static bookAdjective() {
+        const list = [
+            'dark',
+            'bright',
+            'tyrannous',
+            'devout',
+            'noble',
+            'eldritch',
+            'mystical',
+            'magical',
+            'sorcerous',
+            'savage',
+            'silent',
+            'lonely',
+            'violent',
+            'peaceful',
+            'black',
+            'white',
+            'gold',
+            'silver',
+            'red',
+            'pale',
+            'dying',
+            'living',
+            'ascending',
+            'defiled',
+            'mythical',
+            'legendary',
+            'heroic',
+            'empty',
+            'mighty',
+            'despairing',
+            'spellbound',
+            'enchanted',
+            'soaring',
+            'falling',
+            'visionary',
+            'bold',
+            'perilous'
+        ];
+
+        return list[Utils.randomNumber(list.length)];
+    }
+
+    private static bookGerund() {
+        const list = [
+            'killing',
+            'murdering',
+            'watching',
+            'examining',
+            'enchanting',
+            'destroying',
+            'defying',
+            'betraying',
+            'protecting',
+            'silencing',
+            'bearing',
+            'fighting'
+        ];
+
+        return list[Utils.randomNumber(list.length)];
+    }
+
+    private static bookPreposition() {
+        const prepositions = ['and', 'in', 'of', 'with', 'without', 'against', 'for', 'to'];
+        return prepositions[Utils.randomNumber(prepositions.length)];
+    }
+
+    private static bookAbout() {
+        const about = ['about', 'on', 'concerning', 'regarding'];
+        return about[Utils.randomNumber(about.length)];
     }
 }

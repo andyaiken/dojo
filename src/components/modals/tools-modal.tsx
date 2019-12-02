@@ -1,23 +1,20 @@
 import React from 'react';
 
-import { Col, Icon, Row, Spin } from 'antd';
-import Showdown from 'showdown';
+import { MonsterGroup } from '../../models/monster-group';
 
-import Shakespeare from '../../utils/shakespeare';
-import Ustinov from '../../utils/ustinov';
-import Utils from '../../utils/utils';
-
-import { CATEGORY_TYPES, Monster, MonsterGroup, SIZE_TYPES } from '../../models/monster-group';
-
-import Checkbox from '../controls/checkbox';
-import Expander from '../controls/expander';
-import NumberSpin from '../controls/number-spin';
 import Selector from '../controls/selector';
-import ChartPanel from '../panels/chart-panel';
-import GridPanel from '../panels/grid-panel';
 
-const showdown = new Showdown.Converter();
-showdown.setOption('tables', true);
+import ActionsTool from '../tools/actions-tool';
+import BookTool from '../tools/book-tool';
+import ConditionsTool from '../tools/conditions-tool';
+import DemographicsTool from '../tools/demographics-tool';
+import DieRollerTool from '../tools/die-roller-tool';
+import LanguageTool from '../tools/language-tool';
+import NameTool from '../tools/name-tool';
+import NPCTool from '../tools/npc-tool';
+import PotionTool from '../tools/potion-tool';
+import SkillsTool from '../tools/skills-tool';
+import TreasureTool from '../tools/treasure-tool';
 
 interface Props {
     library: MonsterGroup[];
@@ -70,6 +67,22 @@ export default class ToolsModal extends React.Component<Props, State> {
                     text: 'name generator'
                 },
                 {
+                    id: 'book',
+                    text: 'book title generator'
+                },
+                {
+                    id: 'potion',
+                    text: 'potion generator'
+                },
+                {
+                    id: 'treasure',
+                    text: 'treasure generator'
+                },
+                {
+                    id: 'npc',
+                    text: 'npc generator'
+                },
+                {
                     id: 'demographics',
                     text: 'monster demographics'
                 }
@@ -79,37 +92,57 @@ export default class ToolsModal extends React.Component<Props, State> {
             switch (this.state.view) {
                 case 'skills':
                     content = (
-                        <SkillsModule />
+                        <SkillsTool />
                     );
                     break;
                 case 'conditions':
                     content = (
-                        <ConditionsModule />
+                        <ConditionsTool />
                     );
                     break;
                 case 'actions':
                     content = (
-                        <ActionsModule />
+                        <ActionsTool />
                     );
                     break;
                 case 'die':
                     content = (
-                        <DieRollerModule />
+                        <DieRollerTool />
                     );
                     break;
                 case 'language':
                     content = (
-                        <LanguageModule />
+                        <LanguageTool />
                     );
                     break;
                 case 'name':
                     content = (
-                        <NameModule />
+                        <NameTool />
+                    );
+                    break;
+                case 'book':
+                    content = (
+                        <BookTool />
+                    );
+                    break;
+                case 'potion':
+                    content = (
+                        <PotionTool />
+                    );
+                    break;
+                case 'treasure':
+                    content = (
+                        <TreasureTool />
+                    );
+                    break;
+                case 'npc':
+                    content = (
+                        <NPCTool />
                     );
                     break;
                 case 'demographics':
                     content = (
-                        <DemographicsModule library={this.props.library} />
+                        <DemographicsTool library={this.props.library} />
                     );
             }
 
@@ -124,791 +157,6 @@ export default class ToolsModal extends React.Component<Props, State> {
                     <div className='divider' />
                     {content}
                 </div>
-            );
-        } catch (ex) {
-            console.error(ex);
-            return <div className='render-error'/>;
-        }
-    }
-}
-
-interface ActionsModuleProps {
-}
-
-interface ActionsModuleState {
-    source: string | null;
-}
-
-class ActionsModule extends React.Component<ActionsModuleProps, ActionsModuleState> {
-    constructor(props: ActionsModuleProps) {
-        super(props);
-
-        this.state = {
-            source: null
-        };
-    }
-
-    private async fetchData() {
-        const response = await fetch('./data/actions.md');
-        const text = await response.text();
-        this.setState({
-            source: text
-        });
-    }
-
-    public render() {
-        try {
-            if (!this.state.source) {
-                this.fetchData();
-            }
-
-            const icon = <Icon type='loading' style={{ fontSize: 20, marginTop: 100 }} spin={true} />;
-
-            return (
-                <Spin spinning={this.state.source === null} indicator={icon}>
-                    <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.state.source || '') }} />
-                </Spin>
-            );
-        } catch (ex) {
-            console.error(ex);
-            return <div className='render-error'/>;
-        }
-    }
-}
-
-interface ConditionsModuleProps {
-}
-
-interface ConditionsModuleState {
-    source: string | null;
-}
-
-class ConditionsModule extends React.Component<ConditionsModuleProps, ConditionsModuleState> {
-    constructor(props: ConditionsModuleProps) {
-        super(props);
-
-        this.state = {
-            source: null
-        };
-    }
-
-    private async fetchData() {
-        const response = await fetch('./data/conditions.md');
-        const text = await response.text();
-        this.setState({
-            source: text
-        });
-    }
-
-    public render() {
-        try {
-            if (!this.state.source) {
-                this.fetchData();
-            }
-
-            const icon = <Icon type='loading' style={{ fontSize: 20, marginTop: 100 }} spin={true} />;
-
-            return (
-                <Spin spinning={this.state.source === null} indicator={icon}>
-                    <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.state.source || '') }} />
-                </Spin>
-            );
-        } catch (ex) {
-            console.error(ex);
-            return <div className='render-error'/>;
-        }
-    }
-}
-
-interface DemographicsModuleProps {
-    library: MonsterGroup[];
-}
-
-interface DemographicsModuleState {
-    chart: string;
-}
-
-class DemographicsModule extends React.Component<DemographicsModuleProps, DemographicsModuleState> {
-    constructor(props: DemographicsModuleProps) {
-        super(props);
-        this.state = {
-            chart: 'challenge'
-        };
-    }
-
-    private selectChart(chart: string) {
-        this.setState({
-            chart: chart
-        });
-    }
-
-    public render() {
-        try {
-            const allMonsters: Monster[] = [];
-            this.props.library.forEach(group => group.monsters.forEach(monster => allMonsters.push(monster)));
-            if (allMonsters.length === 0) {
-                return null;
-            }
-
-            let data: { text: string, value: number }[] = [];
-            switch (this.state.chart) {
-                case 'challenge':
-                    const crs = [
-                        0, 0.125, 0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
-                    ];
-                    data = crs.map(cr => {
-                        return {
-                            text: 'cr ' + Utils.challenge(cr),
-                            value: allMonsters.filter(monster => monster.challenge === cr).length
-                        };
-                    });
-                    break;
-                case 'size':
-                    data = SIZE_TYPES.map(size => {
-                        return {
-                            text: size,
-                            value: allMonsters.filter(monster => monster.size === size).length
-                        };
-                    });
-                    break;
-                case 'type':
-                    data = CATEGORY_TYPES.map(cat => {
-                        return {
-                            text: cat,
-                            value: allMonsters.filter(monster => monster.category === cat).length
-                        };
-                    });
-                    break;
-                default:
-                    // Do nothing
-                    break;
-            }
-
-            const chartOptions = [
-                {
-                    id: 'challenge',
-                    text: 'challenge rating'
-                },
-                {
-                    id: 'size',
-                    text: 'size'
-                },
-                {
-                    id: 'type',
-                    text: 'type'
-                }
-            ];
-
-            return (
-                <div>
-                    <Selector
-                        options={chartOptions}
-                        selectedID={this.state.chart}
-                        select={optionID => this.selectChart(optionID)}
-                    />
-                    <ChartPanel data={data} />
-                </div>
-            );
-        } catch (ex) {
-            console.error(ex);
-            return <div className='render-error'/>;
-        }
-    }
-}
-
-interface DieRollerModuleProps {
-}
-
-interface DieRollerModuleState {
-    dice: string;
-    count: number;
-    options: string[];
-    rolls: number[] | null;
-    result: number | null;
-}
-
-class DieRollerModule extends React.Component<DieRollerModuleProps, DieRollerModuleState> {
-    constructor(props: DieRollerModuleProps) {
-        super(props);
-
-        this.state = {
-            dice: '20',
-            count: 1,
-            options: [],
-            rolls: null,
-            result: null
-        };
-    }
-
-    private setDice(dice: string) {
-        this.setState({
-            dice: dice
-        });
-    }
-
-    private nudgeCount(delta: number) {
-        this.setState({
-            count: Math.max(1, this.state.count + delta)
-        });
-    }
-
-    private toggleOption(option: string) {
-        if (this.state.options.includes(option)) {
-            // Remove option
-            const index = this.state.options.indexOf(option);
-            this.state.options.splice(index, 1);
-        } else {
-            // Add option
-            this.state.options.push(option);
-            // Make sure we don't have both advantage and disadvantage
-            if (this.state.options.includes('advantage') && this.state.options.includes('disadvantage')) {
-                const index = this.state.options.indexOf(option === 'advantage' ? 'disadvantage' : 'advantage');
-                this.state.options.splice(index, 1);
-            }
-        }
-        this.setState({
-            options: this.state.options
-        });
-    }
-
-    private roll() {
-        const sides = parseInt(this.state.dice, 10);
-
-        const rolls: number[] = [];
-        let count = this.state.count;
-        if (this.state.options.includes('advantage') || this.state.options.includes('disadvantage')) {
-            count = 2;
-        }
-        for (let n = 0; n !== count; ++n) {
-            rolls.push(Utils.dieRoll(sides));
-        }
-        rolls.sort((a, b) => a - b);
-
-        let result = 0;
-        if ((this.state.count === 1) && (this.state.dice === '20') && this.state.options.includes('advantage')) {
-            result = Math.max(...rolls);
-        } else if ((this.state.count === 1) && (this.state.dice === '20') && this.state.options.includes('disadvantage')) {
-            result = Math.min(...rolls);
-        } else {
-            rolls.forEach(roll => result += roll);
-            if ((this.state.count > 1) && this.state.options.includes('drop lowest')) {
-                result -= Math.min(...rolls);
-            }
-            if ((this.state.count > 1) && this.state.options.includes('drop highest')) {
-                result -= Math.max(...rolls);
-            }
-        }
-
-        this.setState({
-            rolls: rolls,
-            result: result
-        });
-    }
-
-    public render() {
-        try {
-            const options = [
-                {
-                    id: '4',
-                    text: 'd4'
-                },
-                {
-                    id: '6',
-                    text: 'd6'
-                },
-                {
-                    id: '8',
-                    text: 'd8'
-                },
-                {
-                    id: '10',
-                    text: 'd10'
-                },
-                {
-                    id: '12',
-                    text: 'd12'
-                },
-                {
-                    id: '20',
-                    text: 'd20'
-                },
-                {
-                    id: '100',
-                    text: 'd100'
-                }
-            ];
-
-            let optionsSection = null;
-            if ((this.state.dice === '20') && (this.state.count === 1)) {
-                optionsSection = (
-                    <Row gutter={10}>
-                        <Col span={12}>
-                            <Checkbox
-                                label='advantage'
-                                checked={this.state.options.includes('advantage')}
-                                changeValue={value => this.toggleOption('advantage')}
-                            />
-                        </Col>
-                        <Col span={12}>
-                            <Checkbox
-                                label='disadvantage'
-                                checked={this.state.options.includes('disadvantage')}
-                                changeValue={value => this.toggleOption('disadvantage')}
-                            />
-                        </Col>
-                    </Row>
-                );
-            } else if (this.state.count > 1) {
-                optionsSection = (
-                    <Row gutter={10}>
-                        <Col span={12}>
-                            <Checkbox
-                                label='drop lowest'
-                                checked={this.state.options.includes('drop lowest')}
-                                changeValue={value => this.toggleOption('drop lowest')}
-                            />
-                        </Col>
-                        <Col span={12}>
-                            <Checkbox
-                                label='drop highest'
-                                checked={this.state.options.includes('drop highest')}
-                                changeValue={value => this.toggleOption('drop highest')}
-                            />
-                        </Col>
-                    </Row>
-                );
-            }
-
-            let rollsSection = null;
-            if ((this.state.rolls !== null) && (this.state.rolls.length > 1)) {
-                rollsSection = (
-                    <div className='section die-rolls'>{this.state.rolls.join(', ')}</div>
-                );
-            }
-
-            let resultSection = null;
-            if (this.state.result !== null) {
-                resultSection = (
-                    <div className='section die-result'>{this.state.result}</div>
-                );
-            }
-
-            return (
-                <div>
-                    <div className='subheading'>die type</div>
-                    <Selector
-                        options={options}
-                        selectedID={this.state.dice}
-                        select={optionID => this.setDice(optionID)}
-                    />
-                    <div className='subheading'>number of dice to roll</div>
-                    <NumberSpin
-                        source={this.state}
-                        name='count'
-                        display={count => count + 'd' + this.state.dice}
-                        nudgeValue={delta => this.nudgeCount(delta)}
-                    />
-                    {optionsSection ? <div className='subheading'>options</div> : null}
-                    {optionsSection}
-                    <div className='divider' />
-                    <button onClick={() => this.roll()}>roll dice</button>
-                    {rollsSection}
-                    {resultSection}
-                </div>
-            );
-        } catch (ex) {
-            console.error(ex);
-            return <div className='render-error'/>;
-        }
-    }
-}
-
-interface LanguageModuleProps {
-}
-
-interface LanguageModuleState {
-    sources: { [id: string]: string; };
-    output: string[];
-}
-
-interface LanguagePreset {
-    name: string;
-    languages: string[];
-}
-
-class LanguageModule extends React.Component<LanguageModuleProps, LanguageModuleState> {
-    constructor(props: LanguageModuleProps) {
-        super(props);
-
-        this.state = {
-            sources: {},
-            output: []
-        };
-    }
-
-    private getLanguages(): string[] {
-        // Note: When adding a language to this list, also check the Speech.getLanguageCode() method
-        return [
-            'afrikaans',
-            'amharic',
-            'armenian',
-            'basque',
-            'belarusian',
-            'bulgarian',
-            'chichewa',
-            'chinese',
-            'croatian',
-            'czech',
-            'danish',
-            'dutch',
-            'english',
-            'finnish',
-            'french',
-            'german',
-            'greek',
-            'hawaiian',
-            'hindi',
-            'hungarian',
-            'icelandic',
-            'irish',
-            'italian',
-            'japanese',
-            'kannada',
-            'kazakh',
-            'korean',
-            'kyrgyz',
-            'latvian',
-            'lithuanian',
-            'macedonian',
-            'malay',
-            'maltese',
-            'maori',
-            'myanmar',
-            'nepali',
-            'norwegian',
-            'polish',
-            'portuguese',
-            'punjabi',
-            'romanian',
-            'russian',
-            'samoan',
-            'serbian',
-            'shona',
-            'somali',
-            'spanish',
-            'swahili',
-            'swedish',
-            'thai',
-            'turkish',
-            'welsh',
-            'yiddish',
-            'zulu'
-        ];
-    }
-
-    private getPresets(): LanguagePreset[] {
-        return [
-            {
-                name: 'draconic',
-                languages: ['armenian', 'irish', 'maltese']
-            },
-            {
-                name: 'dwarvish',
-                languages: ['czech', 'german', 'yiddish']
-            },
-            {
-                name: 'elvish',
-                languages: ['finnish', 'spanish', 'welsh']
-            },
-            {
-                name: 'goblin',
-                languages: ['hawaiian', 'kyrgyz', 'somali']
-            },
-            {
-                name: 'orc',
-                languages: ['macedonian', 'russian', 'turkish']
-            }
-        ];
-    }
-
-    private async addLanguage(language: string) {
-        const response = await fetch('./data/langs/' + language + '.txt');
-        this.state.sources[language] = await response.text();
-        this.setState({
-            sources: this.state.sources
-        });
-    }
-
-    private removeLanguage(language: string) {
-        delete this.state.sources[language];
-        this.setState({
-            sources: this.state.sources
-        });
-    }
-
-    private usePreset(presetName: string) {
-        const preset = this.getPresets().find(p => p.name === presetName);
-        if (preset) {
-            this.setState({
-                sources: {},
-                output: []
-            }, () => {
-                preset.languages.forEach(lang => {
-                    this.addLanguage(lang);
-                });
-            });
-        }
-    }
-
-    private random() {
-        const languages = this.getLanguages();
-
-        const selection: string[] = [];
-        while (selection.length !== 3) {
-            const n = Math.floor(Math.random() * languages.length);
-            const lang = languages[n];
-            if (!selection.includes(lang)) {
-                selection.push(lang);
-            }
-        }
-
-        this.setState({
-            sources: {},
-            output: []
-        }, () => {
-            selection.forEach(lang => {
-                this.addLanguage(lang);
-            });
-        });
-    }
-
-    private generate() {
-        const sources: string[] = [];
-        Object.keys(this.state.sources).forEach(key => {
-            const src = this.state.sources[key];
-            sources.push(src);
-        });
-        Shakespeare.initModel(sources);
-        this.setState({
-            output: Shakespeare.generate(5).map(l => l.line)
-        });
-    }
-
-    private reset() {
-        this.setState({
-            sources: {},
-            output: []
-        });
-    }
-
-    public render() {
-        try {
-            const presetOptions = this.getPresets().map(p => {
-                return {
-                    id: p.name,
-                    text: p.name
-                };
-            });
-
-            let selectedPreset = '';
-            this.getPresets().forEach(p => {
-                const selected = Object.keys(this.state.sources).sort().join(', ');
-                const setting = p.languages.sort().join(', ');
-                if (selected === setting) {
-                    selectedPreset = p.name;
-                }
-            });
-
-            let selectedLanguages = Object.keys(this.state.sources).sort().join(', ');
-            if (selectedLanguages === '') {
-                selectedLanguages = 'none';
-            }
-
-            const languages = this.getLanguages()
-                .map(lang => {
-                    const isSelected = Object.keys(this.state.sources).includes(lang);
-                    return (
-                        <Checkbox
-                            key={lang}
-                            label={lang}
-                            checked={isSelected}
-                            changeValue={value => value ? this.addLanguage(lang) : this.removeLanguage(lang)}
-                        />
-                    );
-                });
-
-            const allowGenerate = Object.keys(this.state.sources).length > 0;
-            const allowReset = allowGenerate || this.state.output.length > 0;
-
-            const output = [];
-            if (this.state.output.length > 0) {
-                output.push(
-                    <div key='div' className='divider' />
-                );
-            }
-            for (let n = 0; n !== this.state.output.length; ++n) {
-                output.push(
-                    <GeneratedText
-                        key={n}
-                        text={this.state.output[n]}
-                        languages={Object.keys(this.state.sources)}
-                    />
-                );
-            }
-
-            return (
-                <div>
-                    <div className='subheading'>presets</div>
-                    <Selector
-                        options={presetOptions}
-                        selectedID={selectedPreset}
-                        select={optionID => this.usePreset(optionID)}
-                    />
-                    <div className='divider' />
-                    <Expander text={'selected languages: ' + selectedLanguages}>
-                        <GridPanel content={languages} />
-                    </Expander>
-                    <div className='divider' />
-                    <Row gutter={10}>
-                        <Col span={8}>
-                            <button className={allowGenerate ? '' : 'disabled'} onClick={() => this.generate()}>generate text</button>
-                        </Col>
-                        <Col span={8}>
-                            <button className={allowReset ? '' : 'disabled'} onClick={() => this.reset()}>reset</button>
-                        </Col>
-                        <Col span={8}>
-                            <button onClick={() => this.random()}>random sources</button>
-                        </Col>
-                    </Row>
-                    <div className='language-output'>
-                        {output}
-                    </div>
-                </div>
-            );
-        } catch (ex) {
-            console.error(ex);
-            return <div className='render-error'/>;
-        }
-    }
-}
-
-interface GeneratedTextProps {
-    text: string;
-    languages: string[];
-}
-
-class GeneratedText extends React.Component<GeneratedTextProps> {
-    private copy(e: React.MouseEvent) {
-        e.preventDefault();
-        navigator.clipboard.writeText(this.props.text);
-    }
-
-    private say(e: React.MouseEvent) {
-        e.preventDefault();
-        Ustinov.say(this.props.text, this.props.languages);
-    }
-
-    public render() {
-        try {
-            return (
-                <Expander text={this.props.text.toLowerCase()}>
-                    <button onClick={e => this.copy(e)}>copy to clipboard</button>
-                    <button onClick={e => this.say(e)}>say</button>
-                    <div className='section'>
-                        <b>note:</b> speech may not work consistently on all platforms
-                    </div>
-                </Expander>
-            );
-        } catch (ex) {
-            console.error(ex);
-            return <div className='render-error'/>;
-        }
-    }
-}
-
-interface NameModuleProps {
-}
-
-interface NameModuleState {
-    names: string[];
-}
-
-class NameModule extends React.Component<NameModuleProps, NameModuleState> {
-    constructor(props: NameModuleProps) {
-        super(props);
-
-        this.state = {
-            names: []
-        };
-    }
-
-    private async generate() {
-        this.setState({
-            names: Shakespeare.generateNames(10)
-        });
-    }
-
-    public render() {
-        try {
-            const names = [];
-            for (let n = 0; n !== this.state.names.length; ++n) {
-                names.push(
-                    <div key={n} className='section name-output'>
-                        {this.state.names[n].toLowerCase()}
-                    </div>
-                );
-            }
-
-            return (
-                <div className='name-output'>
-                    <div className='subheading'>names</div>
-                    <button onClick={() => this.generate()}>generate</button>
-                    {names}
-                </div>
-            );
-        } catch (ex) {
-            console.error(ex);
-            return <div className='render-error'/>;
-        }
-    }
-}
-
-interface SkillsModuleProps {
-}
-
-interface SkillsModuleState {
-    source: string | null;
-}
-
-class SkillsModule extends React.Component<SkillsModuleProps, SkillsModuleState> {
-    constructor(props: SkillsModuleProps) {
-        super(props);
-
-        this.state = {
-            source: null
-        };
-    }
-
-    private async fetchData() {
-        const response = await fetch('./data/skills.md');
-        const text = await response.text();
-        this.setState({
-            source: text
-        });
-    }
-
-    public render() {
-        try {
-            if (!this.state.source) {
-                this.fetchData();
-            }
-
-            const icon = <Icon type='loading' style={{ fontSize: 20, marginTop: 100 }} spin={true} />;
-
-            return (
-                <Spin spinning={this.state.source === null} indicator={icon}>
-                    <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.state.source || '') }} />
-                </Spin>
             );
         } catch (ex) {
             console.error(ex);

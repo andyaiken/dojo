@@ -835,6 +835,27 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
+    private moveToWave(slot: EncounterSlot, current: EncounterSlot[], waveID: string) {
+        const encounter = this.state.encounters.find(e => e.id === this.state.selectedEncounterID);
+        if (encounter) {
+            const index = current.indexOf(slot);
+            current.splice(index, 1);
+
+            if (waveID === '') {
+                encounter.slots.push(slot);
+            } else {
+                const wave = encounter.waves.find(w => w.id === waveID);
+                if (wave) {
+                    wave.slots.push(slot);
+                }
+            }
+
+            this.setState({
+                encounters: this.state.encounters
+            });
+        }
+    }
+
     private sortEncounterSlots(slotContainer: { slots: EncounterSlot[] }) {
         slotContainer.slots.sort((a, b) => {
             const aName = a.monsterName.toLowerCase();
@@ -2053,6 +2074,7 @@ export default class App extends React.Component<Props, State> {
                             addEncounterSlot={(monster, waveID) => this.addEncounterSlot(monster, waveID)}
                             removeEncounterSlot={(slot, waveID) => this.removeEncounterSlot(slot, waveID)}
                             swapEncounterSlot={(s, waveID, groupID, monsterID) => this.swapEncounterSlot(s, waveID, groupID, monsterID)}
+                            moveToWave={(s, current, waveID) => this.moveToWave(s, current, waveID)}
                             nudgeValue={(slot, type, delta) => this.nudgeValue(slot, type, delta)}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                         />

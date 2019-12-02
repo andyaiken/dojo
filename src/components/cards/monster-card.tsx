@@ -39,6 +39,7 @@ interface Props {
     addEncounterSlot: (monster: Monster, waveID: string | null) => void;
     removeEncounterSlot: (slot: EncounterSlot) => void;
     swapEncounterSlot: (slot: EncounterSlot, groupName: string, monsterName: string) => void;
+    moveToWave: (slot: EncounterSlot, current: EncounterSlot[], waveID: string) => void;
 }
 
 interface State {
@@ -63,6 +64,7 @@ export default class MonsterCard extends React.Component<Props, State> {
         addEncounterSlot: null,
         removeEncounterSlot: null,
         swapEncounterSlot: null,
+        moveToWave: null,
         combat: null,
         makeCurrent: null,
         makeActive: null,
@@ -193,6 +195,28 @@ export default class MonsterCard extends React.Component<Props, State> {
                                                 this.props.swapEncounterSlot(this.props.slot, candidate.group, candidate.text);
                                             }
                                         }}
+                                    />
+                                );
+                            }
+                            if (this.props.encounter.waves.length > 0) {
+                                let current = this.props.encounter.slots;
+                                const waves = [];
+                                if (!this.props.encounter.slots.includes(this.props.slot)) {
+                                    waves.push({ id: '', text: 'main encounter' });
+                                }
+                                this.props.encounter.waves.forEach(wave => {
+                                    if (wave.slots.includes(this.props.slot)) {
+                                        current = wave.slots;
+                                    } else {
+                                        waves.push({ id: wave.id, text: wave.name });
+                                    }
+                                });
+                                options.push(
+                                    <Dropdown
+                                        key='move'
+                                        placeholder='move to...'
+                                        options={waves}
+                                        select={id => this.props.moveToWave(this.props.slot, current, id)}
                                     />
                                 );
                             }

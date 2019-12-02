@@ -94,10 +94,14 @@ export default class Utils {
         return str;
     }
 
+    public static randomNumber(max: number) {
+        return Math.floor(Math.random() * max);
+    }
+
     public static dieRoll(sides: number = 20, count: number = 1): number {
         let total = 0;
         for (let n = 0; n !== count; ++n) {
-            total += Math.floor(Math.random() * sides) + 1;
+            total += Utils.randomNumber(sides) + 1;
         }
         return total;
     }
