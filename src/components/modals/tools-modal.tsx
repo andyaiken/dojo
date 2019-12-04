@@ -4,16 +4,13 @@ import { MonsterGroup } from '../../models/monster-group';
 
 import Selector from '../controls/selector';
 
-import ActionsTool from '../tools/actions-tool';
 import BookTool from '../tools/book-tool';
-import ConditionsTool from '../tools/conditions-tool';
 import DemographicsTool from '../tools/demographics-tool';
 import DieRollerTool from '../tools/die-roller-tool';
 import LanguageTool from '../tools/language-tool';
 import NameTool from '../tools/name-tool';
 import NPCTool from '../tools/npc-tool';
 import PotionTool from '../tools/potion-tool';
-import SkillsTool from '../tools/skills-tool';
 import TreasureTool from '../tools/treasure-tool';
 
 interface Props {
@@ -29,7 +26,7 @@ export default class ToolsModal extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            view: 'skills'
+            view: 'die'
         };
     }
 
@@ -42,18 +39,6 @@ export default class ToolsModal extends React.Component<Props, State> {
     public render() {
         try {
             const options = [
-                {
-                    id: 'skills',
-                    text: 'skills reference'
-                },
-                {
-                    id: 'conditions',
-                    text: 'conditions reference'
-                },
-                {
-                    id: 'actions',
-                    text: 'actions reference'
-                },
                 {
                     id: 'die',
                     text: 'die roller'
@@ -90,21 +75,6 @@ export default class ToolsModal extends React.Component<Props, State> {
 
             let content = null;
             switch (this.state.view) {
-                case 'skills':
-                    content = (
-                        <SkillsTool />
-                    );
-                    break;
-                case 'conditions':
-                    content = (
-                        <ConditionsTool />
-                    );
-                    break;
-                case 'actions':
-                    content = (
-                        <ActionsTool />
-                    );
-                    break;
                 case 'die':
                     content = (
                         <DieRollerTool />

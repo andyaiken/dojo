@@ -28,6 +28,7 @@ import MonsterInfoModal from './modals/monster-info-modal';
 import PartyImportModal from './modals/party-import-modal';
 import PCEditorModal from './modals/pc-editor-modal';
 import PCUpdateModal from './modals/pc-update-modal';
+import ReferenceModal from './modals/reference-modal';
 import SearchModal from './modals/search-modal';
 import ToolsModal from './modals/tools-modal';
 import PageFooter from './panels/page-footer';
@@ -2394,6 +2395,14 @@ export default class App extends React.Component<Props, State> {
                         />
                     );
                     header = 'dm tools';
+                    closable = true;
+                    break;
+                case 'reference':
+                    content = (
+                        <ReferenceModal
+                        />
+                    );
+                    header = 'reference';
                     closable = true;
                     break;
                 case 'search':

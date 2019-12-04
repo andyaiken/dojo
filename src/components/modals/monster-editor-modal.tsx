@@ -182,7 +182,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
     }
 
     private randomName() {
-        let name = Shakespeare.generateNames(1)[0];
+        let name = Shakespeare.generateName();
         name = name[0].toUpperCase() + name.substr(1);
         this.changeValue('name', name);
     }

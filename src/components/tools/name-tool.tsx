@@ -6,7 +6,7 @@ interface Props {
 }
 
 interface State {
-    names: string[];
+    values: string[];
 }
 
 export default class NameTool extends React.Component<Props, State> {
@@ -14,23 +14,32 @@ export default class NameTool extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            names: []
+            values: []
         };
     }
 
-    private async generate() {
+    private generate() {
+        const values: string[] = [];
+        while (values.length < 10) {
+            const v = Shakespeare.generateName();
+            if (!values.includes(v)) {
+                values.push(v);
+            }
+        }
+        values.sort();
+
         this.setState({
-            names: Shakespeare.generateNames(10)
+            values: values
         });
     }
 
     public render() {
         try {
-            const names = [];
-            for (let n = 0; n !== this.state.names.length; ++n) {
-                names.push(
-                    <div key={n} className='section name-output'>
-                        {this.state.names[n].toLowerCase()}
+            const values = [];
+            for (let n = 0; n !== this.state.values.length; ++n) {
+                values.push(
+                    <div key={n} className='section large'>
+                        {this.state.values[n].toLowerCase()}
                     </div>
                 );
             }
@@ -39,7 +48,7 @@ export default class NameTool extends React.Component<Props, State> {
                 <div className='name-output'>
                     <div className='subheading'>names</div>
                     <button onClick={() => this.generate()}>generate</button>
-                    {names}
+                    {values}
                 </div>
             );
         } catch (ex) {

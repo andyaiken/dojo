@@ -98,6 +98,10 @@ export default class Utils {
         return Math.floor(Math.random() * max);
     }
 
+    public static randomBoolean() {
+        return Utils.randomNumber(2) === 0;
+    }
+
     public static dieRoll(sides: number = 20, count: number = 1): number {
         let total = 0;
         for (let n = 0; n !== count; ++n) {

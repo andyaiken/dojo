@@ -6,29 +6,48 @@ interface Props {
 }
 
 interface State {
-    current: string;
+    values: string[];
 }
 
 export default class PotionTool extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            current: Shakespeare.generatePotion()
+            values: []
         };
     }
 
     private generate() {
+        const values: string[] = [];
+        while (values.length < 10) {
+            const v = Shakespeare.generatePotion();
+            if (!values.includes(v)) {
+                values.push(v);
+            }
+        }
+        values.sort();
+
         this.setState({
-            current: Shakespeare.generatePotion()
+            values: values
         });
     }
 
     public render() {
         try {
+            const values = [];
+            for (let n = 0; n !== this.state.values.length; ++n) {
+                values.push(
+                    <div key={n} className='section large'>
+                        {this.state.values[n].toLowerCase()}
+                    </div>
+                );
+            }
+
             return (
                 <div>
+                    <div className='subheading'>potion description</div>
                     <button onClick={() => this.generate()}>generate</button>
-                    <div className='section'>{this.state.current}</div>
+                    {values}
                 </div>
             );
         } catch (ex) {

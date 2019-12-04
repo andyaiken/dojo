@@ -6,29 +6,48 @@ interface Props {
 }
 
 interface State {
-    current: string;
+    values: string[];
 }
 
 export default class TreasureTool extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            current: Shakespeare.generateTreasure()
+            values: []
         };
     }
 
     private generate() {
+        const values: string[] = [];
+        while (values.length < 10) {
+            const v = Shakespeare.generateTreasure();
+            if (!values.includes(v)) {
+                values.push(v);
+            }
+        }
+        values.sort();
+
         this.setState({
-            current: Shakespeare.generateTreasure()
+            values: values
         });
     }
 
     public render() {
         try {
+            const values = [];
+            for (let n = 0; n !== this.state.values.length; ++n) {
+                values.push(
+                    <div key={n} className='section large'>
+                        {this.state.values[n].toLowerCase()}
+                    </div>
+                );
+            }
+
             return (
                 <div>
+                    <div className='subheading'>treasure</div>
                     <button onClick={() => this.generate()}>generate</button>
-                    <div className='section'>{this.state.current}</div>
+                    {values}
                 </div>
             );
         } catch (ex) {

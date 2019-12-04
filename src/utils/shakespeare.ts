@@ -147,13 +147,15 @@ export default class Shakespeare {
     //#endregion
 
     public static startsWithVowel(str: string) {
-        ['a', 'e', 'i', 'o', 'u', 'y'].forEach(vowel => {
+        let result = false;
+
+        ['a', 'e', 'i', 'o', 'u'].forEach(vowel => {
             if (str.toLowerCase().startsWith(vowel)) {
-                return true;
+                result = true;
             }
         });
 
-        return false;
+        return result;
     }
 
     private static getMultipleValues(list: string[]) {
@@ -164,9 +166,7 @@ export default class Shakespeare {
         return items.join(', ');
     }
 
-    public static generateNames(count: number): string[] {
-        const names: string[] = [];
-
+    public static generateName() {
         const startHuman1 = 'As Has Khe Zash Gl Ig Iv Kos Miv Pav Ser Dar Even Gor Rand Sto Tam Barer Keth Mum';
         const startHuman2 = 'Mar Burg Al Hel Wrayt S Eag Eath Joan Answ L Ot Ced At Tal Ham Jasm Mail Yash Row';
         const startDwarf = 'Adr Alber Ba Bar Gar Kildr Kath Dies Eld Gurd Har Morg Or Rur Mar Vis Jen Torg Tak Thor End Ris Em Gunn';
@@ -197,26 +197,17 @@ export default class Shakespeare {
             femaleHuman, femaleDwarf, femaleElf, femaleHalfling, femaleDragonborn, femaleMisc
         ].join(' ').toLowerCase().split(' ');
 
-        while (names.length < count) {
-            const startIndex = Math.floor(Math.random() * starts.length);
-            const endIndex = Math.floor(Math.random() * ends.length);
+        const startIndex = Math.floor(Math.random() * starts.length);
+        const endIndex = Math.floor(Math.random() * ends.length);
 
-            let separator = '';
-            if (Utils.dieRoll(10) === 1) {
-                const separators = ['-', '\''];
-                const sepIndex = Math.floor(Math.random() * separators.length);
-                separator = separators[sepIndex];
-            }
-
-            const name = starts[startIndex] + separator + ends[endIndex];
-            if (!names.includes(name)) {
-                names.push(name);
-            }
+        let separator = '';
+        if (Utils.dieRoll(10) === 1) {
+            const separators = ['-', '\''];
+            const sepIndex = Math.floor(Math.random() * separators.length);
+            separator = separators[sepIndex];
         }
 
-        names.sort();
-
-        return names;
+        return starts[startIndex] + separator + ends[endIndex];
     }
 
     public static generatePotion() {
@@ -246,20 +237,20 @@ export default class Shakespeare {
         }
 
         const start = Shakespeare.startsWithVowel(str) ? 'an' : 'a';
-        str = start + ' ' + str + ' in ' + Shakespeare.potionContainer() + '.';
+        str = start + ' ' + str + ' in ' + Shakespeare.potionContainer();
 
-        switch (Utils.randomNumber(5)) {
+        switch (Utils.randomNumber(6)) {
             case 0:
-                str += ' it smells ' + Shakespeare.potionSmell() + '.';
+                str += '; it smells ' + Shakespeare.potionSmell();
                 break;
             case 1:
-                str += ' it tastes ' + Shakespeare.potionSmell() + '.';
+                str += '; it tastes ' + Shakespeare.potionSmell();
                 break;
             case 2:
-                str += ' it smells ' + Shakespeare.potionSmell() + ' but tastes ' + Shakespeare.potionSmell() + '.';
+                str += '; it smells ' + Shakespeare.potionSmell() + ' but tastes ' + Shakespeare.potionSmell();
                 break;
             case 3:
-                str += ' it smells and tastes ' + Shakespeare.potionSmell() + '.';
+                str += '; it smells and tastes ' + Shakespeare.potionSmell();
                 break;
         }
 
@@ -271,33 +262,34 @@ export default class Shakespeare {
     public static generateBookTitle() {
         let title = '';
 
-        const np1 = Shakespeare.bookNounPhrase(Utils.randomNumber(2) === 0, Utils.randomNumber(2) === 0);
-        const np2 = Shakespeare.bookNounPhrase(Utils.randomNumber(2) === 0, Utils.randomNumber(2) === 0);
-        const np3 = Shakespeare.bookNounPhrase(Utils.randomNumber(2) === 0, false);
-        const np4 = Shakespeare.bookNounPhrase(Utils.randomNumber(2) === 0, true);
+        const np = Shakespeare.bookNounPhrase(Utils.randomBoolean(), Utils.randomBoolean());
 
         switch (Utils.randomNumber(5)) {
             case 0:
                 // The NOUN's NOUN
-                title = np1 + '\'s ' + np3;
+                title = np + '\'s ' + Shakespeare.bookNounPhrase(Utils.randomBoolean(), false);
                 break;
             case 1:
                 // The NOUN and the NOUN
-                title = np1 + ' ' + Shakespeare.bookPreposition() + ' ' + np2;
+                title = np + ' ' + Shakespeare.bookPreposition() + ' ' + Shakespeare.bookNounPhrase(Utils.randomBoolean(), true);
                 break;
             case 2:
                 // VERBING the NOUN
-                title = Shakespeare.bookGerund() + ' the ' + np3;
+                title = Shakespeare.bookGerund() + ' ' + Shakespeare.bookNounPhrase(Utils.randomBoolean(), true);
                 break;
             case 3:
                 // About NOUN
-                const about = Shakespeare.bookAbout();
-                title = (Utils.randomNumber(2) === 0) ? about + ' ' + Shakespeare.bookNoun(true) + 's' : about + ' ' + Shakespeare.bookNoun(false);
+                title = Shakespeare.bookAbout() + ' ' + np;
                 break;
             case 4:
                 // The NOUN
-                title = np4;
+                title = np;
                 break;
+        }
+
+        if (Utils.randomNumber(10) === 0) {
+            // Append a subtitle
+            title += ': ' + Shakespeare.bookAbout() + ' ' + Shakespeare.bookNounPhrase(Utils.randomBoolean(), Utils.randomBoolean());
         }
 
         if (Utils.randomNumber(10) === 0) {
@@ -426,11 +418,11 @@ export default class Shakespeare {
                 // Gemstone
                 let stone = stones[Utils.randomNumber(stones.length)];
 
-                switch (Utils.randomNumber(2)) {
-                    case 0:
+                switch (Utils.randomBoolean()) {
+                    case true:
                         stone = stone + ' gemstone';
                         break;
-                    case 1:
+                    case false:
                         stone = 'piece of ' + stone;
                         break;
                 }
@@ -490,13 +482,13 @@ export default class Shakespeare {
                 switch (Utils.randomNumber(5)) {
                     case 0:
                         // Enamelled or laquered
-                        const deco1 = (Utils.randomNumber(2) === 0) ? 'enamelled' : 'laquered';
+                        const deco1 = (Utils.randomBoolean()) ? 'enamelled' : 'laquered';
                         result = deco1 + ' ' + result;
                         break;
                     case 1:
                         // Filigree or plating
                         const metal2 = metals[Utils.randomNumber(metals.length)];
-                        const deco2 = (Utils.randomNumber(2) === 0) ? 'plated' : 'filigreed';
+                        const deco2 = (Utils.randomBoolean()) ? 'plated' : 'filigreed';
                         result = metal2 + '-' + deco2 + ' ' + result;
                         break;
                 }
@@ -525,21 +517,21 @@ export default class Shakespeare {
             case 10:
                 // Artwork
                 let artwork = '';
-                switch (Utils.randomNumber(2)) {
-                    case 0:
+                switch (Utils.randomBoolean()) {
+                    case true:
                         // Painting
                         artwork = 'painting';
 
-                        switch (Utils.randomNumber(2)) {
-                            case 0:
+                        switch (Utils.randomBoolean()) {
+                            case true:
                                 artwork = 'oil ' + artwork;
                                 break;
-                            case 1:
+                            case false:
                                 artwork = 'watercolour ' + artwork;
                                 break;
                         }
                         break;
-                    case 1:
+                    case false:
                         // Drawing
                         artwork = 'drawing';
 
@@ -613,7 +605,7 @@ export default class Shakespeare {
             case 4:
                 let stone = stones[Utils.randomNumber(stones.length)];
 
-                if (Utils.randomNumber(2) === 0) {
+                if (Utils.randomBoolean()) {
                     stone += 's';
                 } else {
                     stone = 'a single ' + stone;
@@ -626,7 +618,7 @@ export default class Shakespeare {
                 break;
         }
 
-        return result;
+        return (Shakespeare.startsWithVowel(result) ? 'an ' : 'a ') + result;
     }
 
     private static potionColour(complex: boolean) {
@@ -634,6 +626,7 @@ export default class Shakespeare {
             'red',
             'scarlet',
             'crimson',
+            'carmine',
             'vermillion',
             'pink',
             'blue',
@@ -775,11 +768,11 @@ export default class Shakespeare {
         }
 
         let result = '';
-        switch (Utils.randomNumber(2)) {
-            case 0:
+        switch (Utils.randomBoolean()) {
+            case true:
                 result = material + ' ' + type;
                 break;
-            case 1:
+            case false:
                 result = shape + ' ' + material + ' ' + type;
                 break;
         }
@@ -848,19 +841,19 @@ export default class Shakespeare {
         }
 
         if (article) {
-            if (Utils.randomNumber(2) === 0) {
+            if (Utils.randomBoolean()) {
                 // Prepend 'the' or 'a' / 'an' or 'one'
-                switch (Utils.randomNumber(2)) {
-                    case 0:
+                switch (Utils.randomBoolean()) {
+                    case true:
                         np = 'the ' + np;
                         break;
-                    case 1:
+                    case false:
                         if (!plural) {
-                            switch (Utils.randomNumber(2)) {
-                                case 0:
+                            switch (Utils.randomBoolean()) {
+                                case true:
                                     np = (Shakespeare.startsWithVowel(np) ? 'an' : 'a') + ' ' + np;
                                     break;
-                                case 1:
+                                case false:
                                     np = 'one ' + np;
                                     break;
                             }
@@ -1000,8 +993,7 @@ export default class Shakespeare {
             'dirge',
             'elegy',
             'storm',
-            'tempest',
-            'snow'
+            'tempest'
         ];
 
         if (!concrete) {
@@ -1024,6 +1016,7 @@ export default class Shakespeare {
                 'lightning',
                 'thunder',
                 'mist',
+                'snow',
                 'flame',
                 'fire',
                 'wind',
@@ -1125,12 +1118,19 @@ export default class Shakespeare {
     }
 
     private static bookPreposition() {
-        const prepositions = ['and', 'in', 'of', 'with', 'without', 'against', 'for', 'to'];
+        const prepositions = ['and', 'in', 'of', 'with', 'against', 'for', 'to', 'towards'];
         return prepositions[Utils.randomNumber(prepositions.length)];
     }
 
     private static bookAbout() {
-        const about = ['about', 'on', 'concerning', 'regarding'];
-        return about[Utils.randomNumber(about.length)];
+        const starts = ['treatise', 'essay', 'monograph', 'discourse', 'dissertation'];
+        let start = starts[Utils.randomNumber(starts.length)];
+        if (Utils.randomBoolean()) {
+            start = (Shakespeare.startsWithVowel(start) ? 'an ' : 'a ') + start;
+        } else {
+            start += 's';
+        }
+        const about = ['about', 'on', 'concerning', 'regarding', 'on the subject of'];
+        return start + ' ' + about[Utils.randomNumber(about.length)];
     }
 }
