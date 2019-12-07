@@ -2286,7 +2286,7 @@ export default class App extends React.Component<Props, State> {
                             </Col>
                         </Row>
                     );
-                    width = '75%';
+                    width = '100%';
                     break;
                 case 'combat-start':
                     content = (

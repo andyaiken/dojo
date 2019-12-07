@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Col, Icon, Row } from 'antd';
 
+import Utils from '../../utils/utils';
+
 import { Monster, MonsterGroup } from '../../models/monster-group';
 
 import MonsterCard from '../cards/monster-card';
@@ -101,14 +103,16 @@ class MonsterInfo extends React.Component<MonsterInfoProps> {
             );
         }
 
-        const challenge: { min: number | null, max: number | null } = { min: null, max: null };
+        const challenge: { min: number, max: number } = { min: 30, max: 0 };
 
         this.props.monsterGroup.monsters.forEach(monster => {
-            challenge.min = challenge.min === null ? monster.challenge : Math.min(challenge.min, monster.challenge);
-            challenge.max = challenge.max === null ? monster.challenge : Math.max(challenge.max, monster.challenge);
+            challenge.min = Math.min(challenge.min, monster.challenge);
+            challenge.max = Math.max(challenge.max, monster.challenge);
         });
 
-        const challengeSummary = challenge.min === challenge.max ? (challenge.min as number).toString() : challenge.min + ' - ' + challenge.max;
+        const challengeSummary = challenge.min === challenge.max
+            ? Utils.challenge(challenge.min as number)
+            : Utils.challenge(challenge.min) + ' - ' + Utils.challenge(challenge.max);
 
         return (
             <div className='group-panel'>

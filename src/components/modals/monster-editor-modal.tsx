@@ -862,8 +862,55 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                     </Col>
                 );
             } else {
+                let stats = null;
+                const details = Utils.challengeDetails().find(x => x.cr === this.state.monster.challenge);
+                if (details) {
+                    stats = (
+                        <div className='group-panel'>
+                            <div className='subheading'>suggested stats</div>
+                            <div className='section'>
+                                <Row>
+                                    <Col span={16}>challenge</Col>
+                                    <Col span={8} className='statistic-value'>{details.cr}</Col>
+                                </Row>
+                            </div>
+                            <div className='section'>
+                                <Row>
+                                    <Col span={16}>armor class</Col>
+                                    <Col span={8} className='statistic-value'>{details.ac}</Col>
+                                </Row>
+                            </div>
+                            <div className='section'>
+                                <Row>
+                                    <Col span={16}>hit points</Col>
+                                    <Col span={8} className='statistic-value'>{details.hpMin} - {details.hpMax}</Col>
+                                </Row>
+                            </div>
+                            <div className='section'>
+                                <Row>
+                                    <Col span={16}>attack bonus</Col>
+                                    <Col span={8} className='statistic-value'>{details.attack}</Col>
+                                </Row>
+                            </div>
+                            <div className='section'>
+                                <Row>
+                                    <Col span={16}>damage / rnd</Col>
+                                    <Col span={8} className='statistic-value'>{details.dmgMin} - {details.dmgMax}</Col>
+                                </Row>
+                            </div>
+                            <div className='section'>
+                                <Row>
+                                    <Col span={16}>save dc</Col>
+                                    <Col span={8} className='statistic-value'>{details.save}</Col>
+                                </Row>
+                            </div>
+                        </div>
+                    );
+                }
+
                 sidebar = (
                     <Col span={8} className='scrollable sidebar right' style={{ padding: '5px' }}>
+                        {stats}
                         <MonsterCard
                             monster={this.state.monster}
                             mode='view full'

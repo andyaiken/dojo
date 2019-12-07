@@ -1123,7 +1123,7 @@ export default class Shakespeare {
     }
 
     private static bookAbout() {
-        const starts = ['treatise', 'essay', 'monograph', 'discourse', 'dissertation'];
+        const starts = ['treatise', 'essay', 'monograph', 'discourse', 'dissertation', 'primer', 'history', 'enchiridion'];
         let start = starts[Utils.randomNumber(starts.length)];
         if (Utils.randomBoolean()) {
             start = (Shakespeare.startsWithVowel(start) ? 'an ' : 'a ') + start;
