@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/dojo/static/css/main.112e640a.chunk.css",
-    "main.js": "/dojo/static/js/main.88212fd7.chunk.js",
+    "main.css": "/dojo/static/css/main.06ed006d.chunk.css",
+    "main.js": "/dojo/static/js/main.5032f084.chunk.js",
     "runtime-main.js": "/dojo/static/js/runtime-main.7ca0a861.js",
     "static/css/2.ecae5d96.chunk.css": "/dojo/static/css/2.ecae5d96.chunk.css",
-    "static/js/2.4ed14d4a.chunk.js": "/dojo/static/js/2.4ed14d4a.chunk.js",
+    "static/js/2.46a0dbb7.chunk.js": "/dojo/static/js/2.46a0dbb7.chunk.js",
     "index.html": "/dojo/index.html",
-    "precache-manifest.1e59875336ddb88a8dd90ad379304b4e.js": "/dojo/precache-manifest.1e59875336ddb88a8dd90ad379304b4e.js",
+    "precache-manifest.7370802da6e9b195025087f5c6d24911.js": "/dojo/precache-manifest.7370802da6e9b195025087f5c6d24911.js",
     "service-worker.js": "/dojo/service-worker.js",
-    "static/js/2.4ed14d4a.chunk.js.LICENSE": "/dojo/static/js/2.4ed14d4a.chunk.js.LICENSE",
+    "static/js/2.46a0dbb7.chunk.js.LICENSE": "/dojo/static/js/2.46a0dbb7.chunk.js.LICENSE",
     "static/media/down-arrow-black.svg": "/dojo/static/media/down-arrow-black.a2fc7a1f.svg",
     "static/media/down-arrow.svg": "/dojo/static/media/down-arrow.697dc1af.svg",
     "static/media/ellipsis.svg": "/dojo/static/media/ellipsis.9650a20f.svg",
@@ -18,8 +18,8 @@
   "entrypoints": [
     "static/js/runtime-main.7ca0a861.js",
     "static/css/2.ecae5d96.chunk.css",
-    "static/js/2.4ed14d4a.chunk.js",
-    "static/css/main.112e640a.chunk.css",
-    "static/js/main.88212fd7.chunk.js"
+    "static/js/2.46a0dbb7.chunk.js",
+    "static/css/main.06ed006d.chunk.css",
+    "static/js/main.5032f084.chunk.js"
   ]
 }
