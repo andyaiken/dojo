@@ -911,6 +911,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 sidebar = (
                     <Col span={8} className='scrollable sidebar right' style={{ padding: '5px' }}>
                         {stats}
+                        {stats ? <div className='divider' /> : null}
                         <MonsterCard
                             monster={this.state.monster}
                             mode='view full'
