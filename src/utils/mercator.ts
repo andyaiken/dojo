@@ -201,7 +201,7 @@ export default class Mercator {
         if (dimensions) {
             // Try to find a place we can add this tile
             const minGap = 1;
-            const maxGap = 10;
+            const maxGap = 2;
             dimensions.minX -= (room.width + maxGap);
             dimensions.minY -= (room.height + maxGap);
             dimensions.maxX += maxGap;

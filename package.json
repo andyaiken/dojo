@@ -16,7 +16,6 @@
         "@types/react": "^16.9.15",
         "@types/react-dom": "^16.9.4",
         "@types/showdown": "^1.9.3",
-        "faker": "^4.1.0",
         "gh-pages": "^2.1.1",
         "node-sass": "^4.13.0",
         "react-scripts": "^3.3.0",

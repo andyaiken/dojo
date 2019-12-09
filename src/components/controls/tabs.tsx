@@ -38,14 +38,14 @@ export default class Tabs extends React.Component<Props> {
     }
 }
 
-interface TabInterface {
+interface TabProps {
     option: { id: string; text: string; disabled?: boolean };
     selected: boolean;
     count: number;
     select: (optionID: string) => void;
 }
 
-class Tab extends React.Component<TabInterface> {
+class Tab extends React.Component<TabProps> {
     private click(e: React.MouseEvent) {
         e.stopPropagation();
         if (!this.props.option.disabled) {
