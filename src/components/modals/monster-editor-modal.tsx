@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { Col, Drawer, Row } from 'antd';
+import { Col, Drawer, Icon, Row } from 'antd';
+import { List } from 'react-movable';
 
 import Factory from '../../utils/factory';
 import Frankenstein from '../../utils/frankenstein';
@@ -23,7 +24,6 @@ import AbilityScorePanel from '../panels/ability-score-panel';
 import FilterPanel from '../panels/filter-panel';
 import Note from '../panels/note';
 import PortraitPanel from '../panels/portrait-panel';
-import TraitEditorPanel from '../panels/trait-editor-panel';
 import ImageSelectionModal from './image-selection-modal';
 
 interface Props {
@@ -179,12 +179,6 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         this.setState({
             monster: this.state.monster
         });
-    }
-
-    private randomName() {
-        let name = Shakespeare.generateName();
-        name = name[0].toUpperCase() + name.substr(1);
-        this.changeValue('name', name);
     }
 
     private spliceMonsters(monsters: Monster[]) {
@@ -559,153 +553,37 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             let content = null;
             switch (this.state.page) {
                 case 'overview':
-                    const catOptions = CATEGORY_TYPES.map(cat => ({ id: cat, text: cat }));
-
                     content = (
-                        <Row gutter={10} key='overview'>
-                            <Col span={12}>
-                                <div className='subheading'>name</div>
-                                <Textbox
-                                    text={this.state.monster.name}
-                                    onChange={value => this.changeValue('name', value)}
-                                />
-                                <button onClick={() => this.randomName()}>generate a random name</button>
-                                <div className='subheading'>size</div>
-                                <NumberSpin
-                                    source={this.state.monster}
-                                    name='size'
-                                    nudgeValue={delta => this.nudgeValue('size', delta)}
-                                />
-                                <div className='subheading'>type</div>
-                                <Dropdown
-                                    options={catOptions}
-                                    selectedID={this.state.monster.category}
-                                    select={optionID => this.changeValue('category', optionID)}
-                                />
-                                <div className='subheading'>subtype</div>
-                                <Textbox
-                                    text={this.state.monster.tag}
-                                    onChange={value => this.changeValue('tag', value)}
-                                />
-                                <div className='subheading'>alignment</div>
-                                <Textbox
-                                    text={this.state.monster.alignment}
-                                    onChange={value => this.changeValue('alignment', value)}
-                                />
-                                <div className='subheading'>challenge rating</div>
-                                <NumberSpin
-                                    source={this.state.monster}
-                                    name='challenge'
-                                    display={value => Utils.challenge(value)}
-                                    nudgeValue={delta => this.nudgeValue('challenge', delta)}
-                                />
-                            </Col>
-                            <Col span={12}>
-                                <div className='subheading'>speed</div>
-                                <Textbox
-                                    text={this.state.monster.speed}
-                                    onChange={value => this.changeValue('speed', value)}
-                                />
-                                <div className='subheading'>senses</div>
-                                <Textbox
-                                    text={this.state.monster.senses}
-                                    onChange={value => this.changeValue('senses', value)}
-                                />
-                                <div className='subheading'>languages</div>
-                                <Textbox
-                                    text={this.state.monster.languages}
-                                    onChange={value => this.changeValue('languages', value)}
-                                />
-                                <div className='subheading'>equipment</div>
-                                <Textbox
-                                    text={this.state.monster.equipment}
-                                    onChange={value => this.changeValue('equipment', value)}
-                                />
-                                <div className='subheading'>portrait</div>
-                                <PortraitPanel
-                                    source={this.state.monster}
-                                    edit={() => this.toggleImageSelection()}
-                                    clear={() => this.changeValue('portrait', '')}
-                                />
-                            </Col>
-                        </Row>
+                        <OverviewTab
+                            monster={this.state.monster}
+                            toggleImageSelection={() => this.toggleImageSelection()}
+                            changeValue={(field, value) => this.changeValue(field, value)}
+                            nudgeValue={(field, delta) => this.nudgeValue(field, delta)}
+                        />
                     );
                     break;
                 case 'abilities':
                     content = (
-                        <Row gutter={10} key='abilities'>
-                            <Col span={12}>
-                                <div className='subheading'>ability scores</div>
-                                <AbilityScorePanel
-                                    edit={true}
-                                    combatant={this.state.monster}
-                                    nudgeValue={(source, type, delta) => this.nudgeValue(type, delta)}
-                                />
-                            </Col>
-                            <Col span={12}>
-                                <div className='subheading'>saving throws</div>
-                                <Textbox
-                                    text={this.state.monster.savingThrows}
-                                    onChange={value => this.changeValue('savingThrows', value)}
-                                />
-                                <div className='subheading'>skills</div>
-                                <Textbox
-                                    text={this.state.monster.skills}
-                                    onChange={value => this.changeValue('skills', value)}
-                                />
-                            </Col>
-                        </Row>
+                        <AbilitiesTab
+                            monster={this.state.monster}
+                            changeValue={(field, value) => this.changeValue(field, value)}
+                            nudgeValue={(field, delta) => this.nudgeValue(field, delta)}
+                        />
                     );
                     break;
                 case 'cbt-stats':
                     content = (
-                        <Row gutter={10} key='cbt-stats'>
-                            <Col span={12}>
-                                <div className='subheading'>armor class</div>
-                                <NumberSpin
-                                    source={this.state.monster}
-                                    name='ac'
-                                    nudgeValue={delta => this.nudgeValue('ac', delta)}
-                                />
-                                <div className='subheading'>hit dice</div>
-                                <NumberSpin
-                                    source={this.state.monster}
-                                    name='hitDice'
-                                    display={value => value + 'd' + Utils.hitDieType(this.state.monster.size)}
-                                    nudgeValue={delta => this.nudgeValue('hitDice', delta)}
-                                />
-                                <div className='subheading'>hit points</div>
-                                <div className='hp-value'>{this.state.monster.hpMax} hp</div>
-                            </Col>
-                            <Col span={12}>
-                                <div className='subheading'>damage resistances</div>
-                                <Textbox
-                                    text={this.state.monster.damage.resist}
-                                    onChange={value => this.changeValue('damage.resist', value)}
-                                />
-                                <div className='subheading'>damage vulnerabilities</div>
-                                <Textbox
-                                    text={this.state.monster.damage.vulnerable}
-                                    onChange={value => this.changeValue('damage.vulnerable', value)}
-                                />
-                                <div className='subheading'>damage immunities</div>
-                                <Textbox
-                                    text={this.state.monster.damage.immune}
-                                    onChange={value => this.changeValue('damage.immune', value)}
-                                />
-                                <div className='subheading'>condition immunities</div>
-                                <Textbox
-                                    text={this.state.monster.conditionImmunities}
-                                    onChange={value => this.changeValue('conditionImmunities', value)}
-                                />
-                            </Col>
-                        </Row>
+                        <CombatTab
+                            monster={this.state.monster}
+                            changeValue={(field, value) => this.changeValue(field, value)}
+                            nudgeValue={(field, delta) => this.nudgeValue(field, delta)}
+                        />
                     );
                     break;
                 case 'actions':
                     content = (
-                        <TraitEditorPanel
-                            combatant={this.state.monster}
+                        <TraitsTab
+                            monster={this.state.monster}
                             addTrait={type => this.addTrait(type)}
                             moveTrait={(oldIndex, newIndex) => this.moveTrait(oldIndex, newIndex)}
                             removeTrait={trait => this.removeTrait(trait)}
@@ -936,6 +814,386 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         <ImageSelectionModal select={id => this.changeValue('portrait', id)} cancel={() => this.toggleImageSelection()} />
                     </Drawer>
                 </Row>
+            );
+        } catch (e) {
+            console.error(e);
+            return <div className='render-error'/>;
+        }
+    }
+}
+
+interface OverviewTabProps {
+    monster: Monster;
+    toggleImageSelection: () => void;
+    changeValue: (field: string, value: any) => void;
+    nudgeValue: (field: string, delta: number) => void;
+}
+
+class OverviewTab extends React.Component<OverviewTabProps> {
+    private randomName() {
+        let name = Shakespeare.generateName();
+        name = name[0].toUpperCase() + name.substr(1);
+        this.props.changeValue('name', name);
+    }
+
+    public render() {
+        try {
+            const catOptions = CATEGORY_TYPES.map(cat => ({ id: cat, text: cat }));
+
+            return (
+                <Row gutter={10} key='overview'>
+                    <Col span={12}>
+                        <div className='subheading'>name</div>
+                        <Textbox
+                            text={this.props.monster.name}
+                            onChange={value => this.props.changeValue('name', value)}
+                        />
+                        <button onClick={() => this.randomName()}>generate a random name</button>
+                        <div className='subheading'>size</div>
+                        <NumberSpin
+                            source={this.props.monster}
+                            name='size'
+                            nudgeValue={delta => this.props.nudgeValue('size', delta)}
+                        />
+                        <div className='subheading'>type</div>
+                        <Dropdown
+                            options={catOptions}
+                            selectedID={this.props.monster.category}
+                            select={optionID => this.props.changeValue('category', optionID)}
+                        />
+                        <div className='subheading'>subtype</div>
+                        <Textbox
+                            text={this.props.monster.tag}
+                            onChange={value => this.props.changeValue('tag', value)}
+                        />
+                        <div className='subheading'>alignment</div>
+                        <Textbox
+                            text={this.props.monster.alignment}
+                            onChange={value => this.props.changeValue('alignment', value)}
+                        />
+                        <div className='subheading'>challenge rating</div>
+                        <NumberSpin
+                            source={this.props.monster}
+                            name='challenge'
+                            display={value => Utils.challenge(value)}
+                            nudgeValue={delta => this.props.nudgeValue('challenge', delta)}
+                        />
+                    </Col>
+                    <Col span={12}>
+                        <div className='subheading'>speed</div>
+                        <Textbox
+                            text={this.props.monster.speed}
+                            onChange={value => this.props.changeValue('speed', value)}
+                        />
+                        <div className='subheading'>senses</div>
+                        <Textbox
+                            text={this.props.monster.senses}
+                            onChange={value => this.props.changeValue('senses', value)}
+                        />
+                        <div className='subheading'>languages</div>
+                        <Textbox
+                            text={this.props.monster.languages}
+                            onChange={value => this.props.changeValue('languages', value)}
+                        />
+                        <div className='subheading'>equipment</div>
+                        <Textbox
+                            text={this.props.monster.equipment}
+                            onChange={value => this.props.changeValue('equipment', value)}
+                        />
+                        <div className='subheading'>portrait</div>
+                        <PortraitPanel
+                            source={this.props.monster}
+                            edit={() => this.props.toggleImageSelection()}
+                            clear={() => this.props.changeValue('portrait', '')}
+                        />
+                    </Col>
+                </Row>
+            );
+        } catch (e) {
+            console.error(e);
+            return <div className='render-error'/>;
+        }
+    }
+}
+
+interface AbilitiesTabProps {
+    monster: Monster;
+    changeValue: (field: string, value: any) => void;
+    nudgeValue: (field: string, delta: number) => void;
+}
+
+class AbilitiesTab extends React.Component<AbilitiesTabProps> {
+    public render() {
+        try {
+            return (
+                <Row gutter={10} key='abilities'>
+                    <Col span={12}>
+                        <div className='subheading'>ability scores</div>
+                        <AbilityScorePanel
+                            edit={true}
+                            combatant={this.props.monster}
+                            nudgeValue={(source, type, delta) => this.props.nudgeValue(type, delta)}
+                        />
+                    </Col>
+                    <Col span={12}>
+                        <div className='subheading'>saving throws</div>
+                        <Textbox
+                            text={this.props.monster.savingThrows}
+                            onChange={value => this.props.changeValue('savingThrows', value)}
+                        />
+                        <div className='subheading'>skills</div>
+                        <Textbox
+                            text={this.props.monster.skills}
+                            onChange={value => this.props.changeValue('skills', value)}
+                        />
+                    </Col>
+                </Row>
+            );
+        } catch (e) {
+            console.error(e);
+            return <div className='render-error'/>;
+        }
+    }
+}
+
+interface CombatTabProps {
+    monster: Monster;
+    changeValue: (field: string, value: any) => void;
+    nudgeValue: (field: string, delta: number) => void;
+}
+
+class CombatTab extends React.Component<CombatTabProps> {
+    public render() {
+        try {
+            return (
+                <Row gutter={10} key='cbt-stats'>
+                    <Col span={12}>
+                        <div className='subheading'>armor class</div>
+                        <NumberSpin
+                            source={this.props.monster}
+                            name='ac'
+                            nudgeValue={delta => this.props.nudgeValue('ac', delta)}
+                        />
+                        <div className='subheading'>hit dice</div>
+                        <NumberSpin
+                            source={this.props.monster}
+                            name='hitDice'
+                            display={value => value + 'd' + Utils.hitDieType(this.props.monster.size)}
+                            nudgeValue={delta => this.props.nudgeValue('hitDice', delta)}
+                        />
+                        <div className='subheading'>hit points</div>
+                        <div className='hp-value'>{this.props.monster.hpMax} hp</div>
+                    </Col>
+                    <Col span={12}>
+                        <div className='subheading'>damage resistances</div>
+                        <Textbox
+                            text={this.props.monster.damage.resist}
+                            onChange={value => this.props.changeValue('damage.resist', value)}
+                        />
+                        <div className='subheading'>damage vulnerabilities</div>
+                        <Textbox
+                            text={this.props.monster.damage.vulnerable}
+                            onChange={value => this.props.changeValue('damage.vulnerable', value)}
+                        />
+                        <div className='subheading'>damage immunities</div>
+                        <Textbox
+                            text={this.props.monster.damage.immune}
+                            onChange={value => this.props.changeValue('damage.immune', value)}
+                        />
+                        <div className='subheading'>condition immunities</div>
+                        <Textbox
+                            text={this.props.monster.conditionImmunities}
+                            onChange={value => this.props.changeValue('conditionImmunities', value)}
+                        />
+                    </Col>
+                </Row>
+            );
+        } catch (e) {
+            console.error(e);
+            return <div className='render-error'/>;
+        }
+    }
+}
+
+interface TraitsTabProps {
+    monster: Monster;
+    addTrait: (traitType: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'lair') => void;
+    copyTrait: (trait: Trait) => void;
+    moveTrait: (oldIndex: number, newIndex: number) => void;
+    removeTrait: (trait: Trait) => void;
+    changeValue: (trait: Trait, field: string, value: any) => void;
+}
+
+interface TraitsTabState {
+    selectedTraitID: string | null;
+}
+
+class TraitsTab extends React.Component<TraitsTabProps, TraitsTabState> {
+    constructor(props: TraitsTabProps) {
+        super(props);
+        this.state = {
+            selectedTraitID: null
+        };
+    }
+
+    public static defaultProps = {
+        addTrait: null,
+        copyTrait: null,
+        removeTrait: null,
+        changeValue: null,
+        swapTraits: null
+    };
+
+    private setSelectedTraitID(id: string | null) {
+        this.setState({
+            selectedTraitID: id
+        });
+    }
+
+    private createTraitBar(trait: Trait) {
+        return (
+            <TraitBarPanel
+                key={trait.id}
+                trait={trait}
+                isSelected={trait.id === this.state.selectedTraitID}
+                select={id => this.setSelectedTraitID(id)}
+            />
+        );
+    }
+
+    private createSection(traitsByType: { [id: string]: Trait[] }, type: string) {
+        const traits = traitsByType[type];
+        if (traits.length === 0) {
+            return null;
+        }
+
+        return (
+            <div>
+                <div className='section heading'>{Utils.traitType(type, true)}</div>
+                <List
+                    values={traits}
+                    lockVertically={true}
+                    onChange={({ oldIndex, newIndex }) => this.props.moveTrait(oldIndex, newIndex)}
+                    renderList={({ children, props }) => <div {...props}>{children}</div>}
+                    renderItem={({ value, props, isDragged }) => (
+                        <div {...props} className={isDragged ? 'dragged' : ''}>
+                            {this.createTraitBar(value)}
+                        </div>
+                    )}
+                />
+            </div>
+        );
+    }
+
+    public render() {
+        try {
+            const options: { id: string, text: string }[] = [];
+            const traitsByType: { [id: string]: Trait[] } = {};
+
+            TRAIT_TYPES.forEach(type => {
+                options.push({ id: type, text: Utils.traitType(type, false) });
+                traitsByType[type] = this.props.monster.traits.filter(t => t.type === type);
+            });
+
+            const selectedTrait = this.props.monster.traits.find(t => t.id === this.state.selectedTraitID);
+            let selection = null;
+            if (selectedTrait) {
+                selection = (
+                    <TraitEditorPanel
+                        trait={selectedTrait}
+                        removeTrait={trait => this.props.removeTrait(trait)}
+                        changeValue={(trait, type, value) => this.props.changeValue(trait, type, value)}
+                    />
+                );
+            } else {
+                selection = (
+                    <Note>select one of the traits or actions from the column to the left to edit its details here</Note>
+                );
+            }
+
+            return (
+                <Row gutter={10}>
+                    <Col span={12}>
+                        <Dropdown
+                            options={options}
+                            placeholder='add a new...'
+                            select={id => this.props.addTrait(id as 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'lair')}
+                        />
+                        {this.createSection(traitsByType, 'trait')}
+                        {this.createSection(traitsByType, 'action')}
+                        {this.createSection(traitsByType, 'bonus')}
+                        {this.createSection(traitsByType, 'reaction')}
+                        {this.createSection(traitsByType, 'legendary')}
+                        {this.createSection(traitsByType, 'lair')}
+                    </Col>
+                    <Col span={12}>
+                        {selection}
+                    </Col>
+                </Row>
+            );
+        } catch (e) {
+            console.error(e);
+            return <div className='render-error'/>;
+        }
+    }
+}
+
+interface TraitBarProps {
+    trait: Trait;
+    isSelected: boolean;
+    select: (id: string) => void;
+}
+
+class TraitBarPanel extends React.Component<TraitBarProps> {
+    public render() {
+        try {
+            return (
+                <div className={this.props.isSelected ? 'trait-bar selected' : 'trait-bar'} onClick={() => this.props.select(this.props.trait.id)}>
+                    <Icon type='menu' className='grabber small' data-movable-handle={true} />
+                    <div className='name'>
+                        {this.props.trait.name || 'unnamed ' + Utils.traitType(this.props.trait.type, false)}
+                    </div>
+                </div>
+            );
+        } catch (e) {
+            console.error(e);
+            return <div className='render-error'/>;
+        }
+    }
+}
+
+interface TraitEditorPanelProps {
+    trait: Trait;
+    removeTrait: (trait: Trait) => void;
+    changeValue: (trait: Trait, field: string, value: any) => void;
+}
+
+class TraitEditorPanel extends React.Component<TraitEditorPanelProps> {
+    public render() {
+        try {
+            return (
+                <div key={this.props.trait.id} className='section'>
+                    <div className='subheading'>trait name</div>
+                    <Textbox
+                        text={this.props.trait.name}
+                        onChange={value => this.props.changeValue(this.props.trait, 'name', value)}
+                    />
+                    <div className='subheading'>usage</div>
+                    <Textbox
+                        text={this.props.trait.usage}
+                        onChange={value => this.props.changeValue(this.props.trait, 'usage', value)}
+                    />
+                    <div className='subheading'>details</div>
+                    <Textbox
+                        text={this.props.trait.text}
+                        placeholder='details'
+                        minLines={5}
+                        maxLines={20}
+                        onChange={value => this.props.changeValue(this.props.trait, 'text', value)}
+                    />
+                    <div className='divider' />
+                    <button onClick={() => this.props.removeTrait(this.props.trait)}>remove this trait</button>
+                </div>
             );
         } catch (e) {
             console.error(e);
