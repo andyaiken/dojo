@@ -17,7 +17,7 @@ interface Props {
     encounters: Encounter[];
     hasMonsters: boolean;
     addEncounter: () => void;
-    selectEncounter: (encounter: Encounter) => void;
+    editEncounter: (encounter: Encounter) => void;
     deleteEncounter: (encounter: Encounter) => void;
     getMonster: (monsterName: string, groupName: string) => Monster | null;
     setView: (view: string) => void;
@@ -55,7 +55,7 @@ export default class EncounterListScreen extends React.Component<Props> {
                 <ListItem
                     key={e.id}
                     encounter={e}
-                    open={encounter => this.props.selectEncounter(encounter)}
+                    edit={encounter => this.props.editEncounter(encounter)}
                     delete={encounter => this.props.deleteEncounter(encounter)}
                     openStatBlock={slot => this.props.openStatBlock(slot.monsterGroupName, slot.monsterName)}
                     getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
@@ -95,7 +95,7 @@ export default class EncounterListScreen extends React.Component<Props> {
 
 interface ListItemProps {
     encounter: Encounter;
-    open: (encounter: Encounter) => void;
+    edit: (encounter: Encounter) => void;
     delete: (encounter: Encounter) => void;
     openStatBlock: (slot: EncounterSlot) => void;
     getMonster: (monsterName: string, groupName: string) => Monster | null;
@@ -163,7 +163,7 @@ class ListItem extends React.Component<ListItemProps> {
                             {Napoleon.getEncounterXP(this.props.encounter, this.props.getMonster)}
                         </div>
                         <div className='divider'/>
-                        <button onClick={() => this.props.open(this.props.encounter)}>open</button>
+                        <button onClick={() => this.props.edit(this.props.encounter)}>edit</button>
                         <ConfirmButton text='delete' callback={() => this.props.delete(this.props.encounter)} />
                     </div>
                 </div>

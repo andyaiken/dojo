@@ -221,9 +221,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                                 );
                             }
                             options.push(
-                                <button key='remove' onClick={() => this.props.removeEncounterSlot(this.props.slot)}>
-                                    remove from encounter
-                                </button>
+                                <button key='remove' onClick={() => this.props.removeEncounterSlot(this.props.slot)}>remove</button>
                             );
                         } else {
                             let canAdd = false;
