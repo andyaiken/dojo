@@ -10,6 +10,7 @@ import DieRollerTool from '../tools/die-roller-tool';
 import LanguageTool from '../tools/language-tool';
 import NameTool from '../tools/name-tool';
 import NPCTool from '../tools/npc-tool';
+import PlaceNameTool from '../tools/place-name-tool';
 import PotionTool from '../tools/potion-tool';
 import TreasureTool from '../tools/treasure-tool';
 
@@ -64,6 +65,10 @@ export default class ToolsModal extends React.Component<Props, State> {
                     text: 'treasure generator'
                 },
                 {
+                    id: 'place',
+                    text: 'place name generator'
+                },
+                {
                     id: 'npc',
                     text: 'npc generator'
                 },
@@ -103,6 +108,11 @@ export default class ToolsModal extends React.Component<Props, State> {
                 case 'treasure':
                     content = (
                         <TreasureTool />
+                    );
+                    break;
+                case 'place':
+                    content = (
+                        <PlaceNameTool />
                     );
                     break;
                 case 'npc':

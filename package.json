@@ -1,19 +1,19 @@
 {
     "name": "dojo",
-    "version": "5.4.0",
+    "version": "5.5.0",
     "license": "MIT",
     "repository": "https://github.com/andyaiken/dojo.git",
     "homepage": "https://andyaiken.github.io/dojo/",
     "dependencies": {
-        "antd": "^3.26.3",
+        "antd": "^3.26.6",
         "react": "^16.12.0",
         "react-dom": "^16.12.0",
         "react-movable": "^2.4.0",
         "showdown": "^1.9.1"
     },
     "devDependencies": {
-        "@types/node": "^12.12.17",
-        "@types/react": "^16.9.16",
+        "@types/node": "^12.12.24",
+        "@types/react": "^16.9.17",
         "@types/react-dom": "^16.9.4",
         "@types/showdown": "^1.9.3",
         "gh-pages": "^2.1.1",
@@ -21,7 +21,7 @@
         "react-scripts": "^3.3.0",
         "tslint": "^5.20.1",
         "tslint-react": "^3.6.0",
-        "typescript": "^3.7.3"
+        "typescript": "^3.7.4"
     },
     "scripts": {
         "update": "npm update && npm update --save-dev",

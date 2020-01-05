@@ -45,7 +45,7 @@ export default class BookTool extends React.Component<Props, State> {
 
             return (
                 <div>
-                    <div className='subheading'>book title</div>
+                    <div className='subheading'>book titles</div>
                     <button onClick={() => this.generate()}>generate</button>
                     {values}
                 </div>
