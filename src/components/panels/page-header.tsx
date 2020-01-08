@@ -36,7 +36,7 @@ export default class PageHeader extends React.Component<Props> {
                     <div className='app-title app-name'>{title}</div>
                     <div className='drawer-icons'>
                         <Icon type='search' className='title-bar-icon' onClick={() => this.props.openDrawer('search')} title='search' />
-                        <Icon type='setting' className='title-bar-icon' onClick={() => this.props.openDrawer('tools')} title='dm tools' />
+                        <Icon type='tool' className='title-bar-icon' onClick={() => this.props.openDrawer('tools')} title='dm tools' />
                         <Icon type='book' className='title-bar-icon' onClick={() => this.props.openDrawer('reference')} title='reference' />
                         <Icon type='info-circle' className='title-bar-icon' onClick={() => this.props.openDrawer('about')} title='about' />
                     </div>

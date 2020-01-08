@@ -1,6 +1,6 @@
 {
     "name": "dojo",
-    "version": "5.5.0",
+    "version": "5.5.1",
     "license": "MIT",
     "repository": "https://github.com/andyaiken/dojo.git",
     "homepage": "https://andyaiken.github.io/dojo/",
@@ -16,7 +16,7 @@
         "@types/react": "^16.9.17",
         "@types/react-dom": "^16.9.4",
         "@types/showdown": "^1.9.3",
-        "gh-pages": "^2.1.1",
+        "gh-pages": "^2.2.0",
         "node-sass": "^4.13.0",
         "react-scripts": "^3.3.0",
         "tslint": "^5.20.1",

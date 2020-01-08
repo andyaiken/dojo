@@ -1942,8 +1942,13 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                 views.splice(1, 1);
             }
 
+            let currentView = this.state.view;
+            if (!views.find(v => v.id === currentView)) {
+                currentView = 'main';
+            }
+
             let content = null;
-            switch (this.state.view) {
+            switch (currentView) {
                 case 'main':
                     content = this.getMainSection();
                     break;
@@ -1965,7 +1970,7 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                 <div key={this.props.combatant.id} className='group-panel combat-controls'>
                     <Selector
                         options={views}
-                        selectedID={this.state.view}
+                        selectedID={currentView}
                         select={option => this.setView(option)}
                     />
                     <div className='divider' />

@@ -202,7 +202,9 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         });
     }
 
-    private moveTrait(oldIndex: number, newIndex: number) {
+    private moveTrait(trait: Trait, moveBefore: Trait) {
+        const oldIndex = this.state.monster.traits.indexOf(trait);
+        const newIndex = this.state.monster.traits.indexOf(moveBefore);
         Frankenstein.moveTrait(this.state.monster, oldIndex, newIndex);
         this.setState({
             monster: this.state.monster
@@ -585,7 +587,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         <TraitsTab
                             monster={this.state.monster}
                             addTrait={type => this.addTrait(type)}
-                            moveTrait={(oldIndex, newIndex) => this.moveTrait(oldIndex, newIndex)}
+                            moveTrait={(trait, moveBefore) => this.moveTrait(trait, moveBefore)}
                             removeTrait={trait => this.removeTrait(trait)}
                             changeValue={(trait, type, value) => this.changeTrait(trait, type, value)}
                         />
@@ -1019,7 +1021,7 @@ interface TraitsTabProps {
     monster: Monster;
     addTrait: (traitType: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'lair') => void;
     copyTrait: (trait: Trait) => void;
-    moveTrait: (oldIndex: number, newIndex: number) => void;
+    moveTrait: (trait: Trait, moveBefore: Trait) => void;
     removeTrait: (trait: Trait) => void;
     changeValue: (trait: Trait, field: string, value: any) => void;
 }
@@ -1061,6 +1063,10 @@ class TraitsTab extends React.Component<TraitsTabProps, TraitsTabState> {
         );
     }
 
+    private moveTrait(trait: Trait, moveBefore: Trait) {
+        this.props.moveTrait(trait, moveBefore);
+    }
+
     private createSection(traitsByType: { [id: string]: Trait[] }, type: string) {
         const traits = traitsByType[type];
         if (traits.length === 0) {
@@ -1073,7 +1079,7 @@ class TraitsTab extends React.Component<TraitsTabProps, TraitsTabState> {
                 <List
                     values={traits}
                     lockVertically={true}
-                    onChange={({ oldIndex, newIndex }) => this.props.moveTrait(oldIndex, newIndex)}
+                    onChange={({ oldIndex, newIndex }) => this.moveTrait(traits[oldIndex], traits[newIndex])}
                     renderList={({ children, props }) => <div {...props}>{children}</div>}
                     renderItem={({ value, props, isDragged }) => (
                         <div {...props} className={isDragged ? 'dragged' : ''}>

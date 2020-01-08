@@ -28,43 +28,45 @@ export default class FilterPanel extends React.Component<Props> {
             const catOptions = categories.map(cat => ({ id: cat, text: cat }));
 
             return (
-                <Expander text={'showing ' + Napoleon.getFilterDescription(this.props.filter)}>
+                <div>
                     <Textbox
                         text={this.props.filter.name}
                         placeholder='name'
                         onChange={value => this.props.changeValue('name', value)}
                     />
-                    <NumberSpin
-                        source={this.props.filter}
-                        name='challengeMin'
-                        label='min cr'
-                        display={value => Utils.challenge(value)}
-                        nudgeValue={delta => this.props.nudgeValue('challengeMin', delta)}
-                    />
-                    <NumberSpin
-                        source={this.props.filter}
-                        name='challengeMax'
-                        label='max cr'
-                        display={value => Utils.challenge(value)}
-                        nudgeValue={delta => this.props.nudgeValue('challengeMax', delta)}
-                    />
-                    <Dropdown
-                        options={sizeOptions}
-                        placeholder='filter by size...'
-                        selectedID={this.props.filter.size}
-                        select={optionID => this.props.changeValue('size', optionID)}
-                    />
-                    <Dropdown
-                        options={catOptions}
-                        placeholder='filter by type...'
-                        selectedID={this.props.filter.category}
-                        select={optionID => this.props.changeValue('category', optionID)}
-                    />
-                    <div className='divider' />
-                    <div className='section'>
-                        <button onClick={() => this.props.resetFilter()}>clear filter</button>
-                    </div>
-                </Expander>
+                    <Expander text={'showing ' + Napoleon.getFilterDescription(this.props.filter)}>
+                        <NumberSpin
+                            source={this.props.filter}
+                            name='challengeMin'
+                            label='min cr'
+                            display={value => Utils.challenge(value)}
+                            nudgeValue={delta => this.props.nudgeValue('challengeMin', delta)}
+                        />
+                        <NumberSpin
+                            source={this.props.filter}
+                            name='challengeMax'
+                            label='max cr'
+                            display={value => Utils.challenge(value)}
+                            nudgeValue={delta => this.props.nudgeValue('challengeMax', delta)}
+                        />
+                        <Dropdown
+                            options={sizeOptions}
+                            placeholder='filter by size...'
+                            selectedID={this.props.filter.size}
+                            select={optionID => this.props.changeValue('size', optionID)}
+                        />
+                        <Dropdown
+                            options={catOptions}
+                            placeholder='filter by type...'
+                            selectedID={this.props.filter.category}
+                            select={optionID => this.props.changeValue('category', optionID)}
+                        />
+                        <div className='divider' />
+                        <div className='section'>
+                            <button onClick={() => this.props.resetFilter()}>clear filter</button>
+                        </div>
+                    </Expander>
+                </div>
             );
         } catch (e) {
             console.error(e);
