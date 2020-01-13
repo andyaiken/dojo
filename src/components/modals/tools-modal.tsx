@@ -10,6 +10,7 @@ import DieRollerTool from '../tools/die-roller-tool';
 import LanguageTool from '../tools/language-tool';
 import NameTool from '../tools/name-tool';
 import NPCTool from '../tools/npc-tool';
+import OracleTool from '../tools/oracle-tool';
 import PlaceNameTool from '../tools/place-name-tool';
 import PotionTool from '../tools/potion-tool';
 import TreasureTool from '../tools/treasure-tool';
@@ -73,6 +74,10 @@ export default class ToolsModal extends React.Component<Props, State> {
                     text: 'npc generator'
                 },
                 {
+                    id: 'oracle',
+                    text: 'oracle'
+                },
+                {
                     id: 'demographics',
                     text: 'monster demographics'
                 }
@@ -118,6 +123,11 @@ export default class ToolsModal extends React.Component<Props, State> {
                 case 'npc':
                     content = (
                         <NPCTool />
+                    );
+                    break;
+                case 'oracle':
+                    content = (
+                        <OracleTool />
                     );
                     break;
                 case 'demographics':

@@ -1796,3 +1796,29 @@ body,
         padding: 3px 0;
     }
 }
+
+.oracle-card {
+    margin: 10px 5px;
+    padding: 10px;
+    height: 250px;
+    border: 1px solid $control-border;
+    border-radius: 15px;
+
+    .oracle-card-name {
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .oracle-card-reversed {
+        font-size: 10px;
+        height: 20px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .oracle-card-meaning {
+        font-size: 14px;
+    }
+}
