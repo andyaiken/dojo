@@ -149,22 +149,68 @@ export default class OracleTool extends React.Component<Props, State> {
 
                 return (
                     <Col span={8} key={card.id}>
-                        <div className='oracle-card'>
-                            <div className='oracle-card-name'>{card.name}</div>
-                            <div className='oracle-card-reversed'>{draw.reversed ? '(reversed)' : ''}</div>
-                            <div className='oracle-card-meaning'>{draw.reversed ? card.meanings.upright : card.meanings.reversed}</div>
-                        </div>
+                        <Card card={card} reversed={draw.reversed} />
                     </Col>
                 );
             });
 
             return (
                 <div>
-                    <div className='subheading'>treasure</div>
+                    <div className='subheading'>oracle</div>
                     <button onClick={() => this.drawCards(3)}>draw cards</button>
                     <Row>
                         {cards}
                     </Row>
+                </div>
+            );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
+        }
+    }
+}
+
+interface CardProps {
+    card: OracleCard;
+    reversed: boolean;
+}
+
+interface CardState {
+    flipped: boolean;
+}
+
+class Card extends React.Component<CardProps, CardState> {
+    constructor(props: CardProps) {
+        super(props);
+        this.state = {
+            flipped: false
+        };
+    }
+
+    private flip() {
+        this.setState({
+            flipped: !this.state.flipped
+        });
+    }
+
+    public render() {
+        try {
+            return (
+                <div className={this.state.flipped ? 'oracle-card flipped' : 'oracle-card'} onClick={() => this.flip()}>
+                    <div className='oracle-card-inner'>
+                        <div className='oracle-card-front'>?</div>
+                        <div className='oracle-card-back'>
+                            <div className='oracle-card-name'>
+                                {this.props.card.name}
+                            </div>
+                            <div className='oracle-card-reversed'>
+                                {this.props.reversed ? '(reversed)' : ''}
+                            </div>
+                            <div className='oracle-card-meaning'>
+                                {this.props.reversed ? this.props.card.meanings.upright : this.props.card.meanings.reversed}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             );
         } catch (ex) {

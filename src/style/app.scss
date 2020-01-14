@@ -1798,27 +1798,60 @@ body,
 }
 
 .oracle-card {
-    margin: 10px 5px;
-    padding: 10px;
     height: 250px;
-    border: 1px solid $control-border;
-    border-radius: 15px;
+    perspective: 1000px;
 
-    .oracle-card-name {
-        font-weight: 600;
-        font-size: 14px;
-        margin-bottom: 10px;
-        text-align: center;
+    .oracle-card-inner {
+        margin: 10px 5px;
+        position: relative;
+        height: 100%;
+        transition: transform 0.5s;
+        transform-style: preserve-3d;
+
+        .oracle-card-front,
+        .oracle-card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            padding: 10px;
+            backface-visibility: hidden;
+            border: 1px solid $control-border;
+            border-radius: 15px;
+        }
+
+        .oracle-card-front {
+            text-align: center;
+            font-size: 130px;
+            background-color: $control-border;
+            color: $background;
+        }
+
+        .oracle-card-back {
+            transform: rotateY(180deg);
+
+            .oracle-card-name {
+                font-weight: 600;
+                font-size: 14px;
+                margin-bottom: 10px;
+                text-align: center;
+            }
+
+            .oracle-card-reversed {
+                font-size: 10px;
+                height: 20px;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+
+            .oracle-card-meaning {
+                font-size: 14px;
+            }
+        }
     }
 
-    .oracle-card-reversed {
-        font-size: 10px;
-        height: 20px;
-        margin-bottom: 20px;
-        text-align: center;
-    }
-
-    .oracle-card-meaning {
-        font-size: 14px;
+    &.flipped .oracle-card-inner {
+        transform: rotateY(180deg);
     }
 }
