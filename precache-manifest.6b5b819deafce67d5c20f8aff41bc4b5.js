@@ -1,27 +1,27 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "fc47d6771c2afb4f0edc8fcad0a244a4",
+    "revision": "950770e933fc31b82f7c0e3d19a1e19f",
     "url": "/dojo/index.html"
   },
   {
-    "revision": "a27dfebbdf829db00535",
-    "url": "/dojo/static/css/2.60301458.chunk.css"
+    "revision": "d4218f2988d31f7c33e6",
+    "url": "/dojo/static/css/2.e9609898.chunk.css"
   },
   {
-    "revision": "989b980975f6c38c3c51",
-    "url": "/dojo/static/css/main.82eda2ea.chunk.css"
+    "revision": "92d144e8038623036634",
+    "url": "/dojo/static/css/main.bf875c67.chunk.css"
   },
   {
-    "revision": "a27dfebbdf829db00535",
-    "url": "/dojo/static/js/2.149cfc7b.chunk.js"
+    "revision": "d4218f2988d31f7c33e6",
+    "url": "/dojo/static/js/2.9a3580b2.chunk.js"
   },
   {
     "revision": "f5264843af700df07b0ba8e9ff4a8b94",
-    "url": "/dojo/static/js/2.149cfc7b.chunk.js.LICENSE"
+    "url": "/dojo/static/js/2.9a3580b2.chunk.js.LICENSE"
   },
   {
-    "revision": "989b980975f6c38c3c51",
-    "url": "/dojo/static/js/main.7693fa46.chunk.js"
+    "revision": "92d144e8038623036634",
+    "url": "/dojo/static/js/main.54910b11.chunk.js"
   },
   {
     "revision": "27d3c0d9a5b25edb4583",
