@@ -18,7 +18,7 @@ interface Props {
 
 interface State {
     deck: OracleCard[];
-    draws: { id: string, reversed: boolean }[];
+    draws: { id: string, cardID: string, reversed: boolean }[];
 }
 
 export default class OracleTool extends React.Component<Props, State> {
@@ -126,12 +126,12 @@ export default class OracleTool extends React.Component<Props, State> {
     }
 
     private drawCards(count: number) {
-        const draws: { id: string, reversed: boolean }[] = [];
+        const draws: { id: string, cardID: string, reversed: boolean }[] = [];
         while (draws.length < count) {
             const index = Utils.randomNumber(this.state.deck.length);
             const card = this.state.deck[index];
-            if (!draws.find(c => c.id === card.id)) {
-                draws.push({ id: card.id, reversed: Utils.randomBoolean() });
+            if (!draws.find(c => c.cardID === card.id)) {
+                draws.push({ id: Utils.guid(), cardID: card.id, reversed: Utils.randomBoolean() });
             }
         }
         this.setState({
@@ -142,13 +142,13 @@ export default class OracleTool extends React.Component<Props, State> {
     public render() {
         try {
             const cards = this.state.draws.map(draw => {
-                const card = this.state.deck.find(c => c.id === draw.id);
+                const card = this.state.deck.find(c => c.id === draw.cardID);
                 if (!card) {
                     return null;
                 }
 
                 return (
-                    <Col span={8} key={card.id}>
+                    <Col span={8} key={draw.id}>
                         <Card card={card} reversed={draw.reversed} />
                     </Col>
                 );
@@ -198,7 +198,9 @@ class Card extends React.Component<CardProps, CardState> {
             return (
                 <div className={this.state.flipped ? 'oracle-card flipped' : 'oracle-card'} onClick={() => this.flip()}>
                     <div className='oracle-card-inner'>
-                        <div className='oracle-card-front'>?</div>
+                        <div className='oracle-card-front'>
+                            ?
+                        </div>
                         <div className='oracle-card-back'>
                             <div className='oracle-card-name'>
                                 {this.props.card.name}
@@ -207,7 +209,7 @@ class Card extends React.Component<CardProps, CardState> {
                                 {this.props.reversed ? '(reversed)' : ''}
                             </div>
                             <div className='oracle-card-meaning'>
-                                {this.props.reversed ? this.props.card.meanings.upright : this.props.card.meanings.reversed}
+                                {this.props.reversed ? this.props.card.meanings.reversed : this.props.card.meanings.upright}
                             </div>
                         </div>
                     </div>
