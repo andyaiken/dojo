@@ -329,6 +329,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
             <GridPanel
                 heading='monster library'
                 content={libraryCards}
+                columns={3}
                 showToggle={true}
             />
         );
@@ -353,6 +354,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
                         key={w.id}
                         heading={w.name || 'unnamed wave'}
                         content={this.getMonsterCards(w.slots, w.id)}
+                        columns={3}
                     />
                 );
             });
@@ -412,6 +414,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
                     </Col>
                     <Col span={16} className='scrollable'>
                         <GridPanel
+                            columns={3}
                             content={this.getMonsterCards(this.props.encounter.slots, null)}
                             heading='encounter'
                         />

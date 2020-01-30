@@ -17,7 +17,7 @@ interface State {
 
 export default class GridPanel extends React.Component<Props, State> {
     public static defaultProps = {
-        columns: 3,
+        columns: 0,
         heading: null,
         showToggle: false
     };
@@ -71,7 +71,13 @@ export default class GridPanel extends React.Component<Props, State> {
                         break;
                     case 2:
                         // We specifically want two columns
+                        // Small or extra small displays will still use one column
                         span = { xs: 24, sm: 24, md: 12, lg: 12, xl: 12 };
+                        break;
+                    case 3:
+                        // We specifically want three columns
+                        // Small or extra small displays will still use one column
+                        span = { xs: 24, sm: 24, md: 8, lg: 8, xl: 8 };
                         break;
                 }
 
