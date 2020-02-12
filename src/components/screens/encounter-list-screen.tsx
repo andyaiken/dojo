@@ -19,6 +19,7 @@ interface Props {
     addEncounter: () => void;
     editEncounter: (encounter: Encounter) => void;
     deleteEncounter: (encounter: Encounter) => void;
+    runEncounter: (encounter: Encounter) => void;
     getMonster: (monsterName: string, groupName: string) => Monster | null;
     setView: (view: string) => void;
     openStatBlock: (groupName: string, monsterName: string) => void;
@@ -57,6 +58,7 @@ export default class EncounterListScreen extends React.Component<Props> {
                     encounter={e}
                     edit={encounter => this.props.editEncounter(encounter)}
                     delete={encounter => this.props.deleteEncounter(encounter)}
+                    run={encounter => this.props.runEncounter(encounter)}
                     openStatBlock={slot => this.props.openStatBlock(slot.monsterGroupName, slot.monsterName)}
                     getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
                 />
@@ -97,6 +99,7 @@ interface ListItemProps {
     encounter: Encounter;
     edit: (encounter: Encounter) => void;
     delete: (encounter: Encounter) => void;
+    run: (encounter: Encounter) => void;
     openStatBlock: (slot: EncounterSlot) => void;
     getMonster: (monsterName: string, groupName: string) => Monster | null;
 }
@@ -122,7 +125,7 @@ class ListItem extends React.Component<ListItemProps> {
     public render() {
         try {
             const slots = this.props.encounter.slots.map(slot => (
-                <div key={slot.id} className='monster-row'>
+                <div key={slot.id} className='combatant-row'>
                     {this.getPortrait(slot)}
                     {this.getText(slot)}
                     <Icon className='info-icon' type='info-circle' onClick={() => this.props.openStatBlock(slot)} />
@@ -136,7 +139,7 @@ class ListItem extends React.Component<ListItemProps> {
                 slots.push(<div key={'name ' + wave.id} className='section subheading'>{wave.name || 'unnamed wave'}</div>);
                 wave.slots.forEach(slot => {
                     slots.push(
-                        <div key={slot.id} className='monster-row'>
+                        <div key={slot.id} className='combatant-row'>
                             {this.getPortrait(slot)}
                             {this.getText(slot)}
                             <Icon className='info-icon' type='info-circle' onClick={() => this.props.openStatBlock(slot)} />
@@ -163,6 +166,7 @@ class ListItem extends React.Component<ListItemProps> {
                             {Napoleon.getEncounterXP(this.props.encounter, this.props.getMonster)}
                         </div>
                         <div className='divider'/>
+                        <button onClick={() => this.props.run(this.props.encounter)}>run</button>
                         <button onClick={() => this.props.edit(this.props.encounter)}>edit</button>
                         <ConfirmButton text='delete' callback={() => this.props.delete(this.props.encounter)} />
                     </div>

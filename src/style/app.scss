@@ -764,18 +764,21 @@ body,
 
         .stats {
             column-width: 220px;
+            column-count: 2;
         }
 
         .fixed-height {
             height: 200px;
             overflow-y: auto;
 
-            .pc-row, .monster-row {
+            .combatant-row {
                 color: white;
+                background-color: #656565;
                 border-radius: 5px;
                 margin: 3px 0;
-                padding: 5px;
+                padding: 3px 5px;
                 position: relative;
+                cursor: default;
 
                 .name {
                     display: inline-block;
@@ -786,8 +789,8 @@ body,
 
                 .info-icon {
                     position: absolute;
-                    top: 8px;
-                    right: 8px;
+                    top: 5px;
+                    right: 5px;
                     cursor: pointer;
                     font-size: 15px;
 
@@ -795,14 +798,6 @@ body,
                         background-color: $highlight02;
                     }
                 }
-            }
-
-            .pc-row {
-                background-color: #006500;
-            }
-
-            .monster-row {
-                background-color: #650000;
             }
         }
     }
@@ -814,10 +809,16 @@ body,
 .combatant-row {
     margin: 5px;
     background-color: beige;
+    border: 1px solid #656565;
     cursor: pointer;
 
     &.highlight {
         cursor: default;
+        pointer-events: none;
+
+        .header {
+            background-color: black;
+        }
     }
 
     &.defeated {
@@ -826,6 +827,7 @@ body,
 
     .header {
         color: $background;
+        background-color: #656565;
         font-size: 15px;
         font-weight: 600;
         line-height: 20px;
@@ -874,22 +876,6 @@ body,
             &:hover {
                 background-color: $highlight01;
             }
-        }
-    }
-
-    &.pc {
-        border: 1px solid #006500;
-
-        .header {
-            background-color: #006500;
-        }
-    }
-
-    &.monster {
-        border: 1px solid #650000;
-
-        .header {
-            background-color: #650000;
         }
     }
 

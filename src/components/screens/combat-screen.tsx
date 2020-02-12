@@ -14,7 +14,7 @@ import { Condition, ConditionDurationSaves } from '../../models/condition';
 import { Encounter } from '../../models/encounter';
 import { MapItem, MapNote } from '../../models/map';
 import { Monster, Trait } from '../../models/monster-group';
-import { Party, PC } from '../../models/party';
+import { Companion, Party, PC } from '../../models/party';
 
 import MonsterCard from '../cards/monster-card';
 import PCCard from '../cards/pc-card';
@@ -53,6 +53,7 @@ interface Props {
     moveCombatant: (oldIndex: number, newIndex: number) => void;
     removeCombatant: (combatant: Combatant) => void;
     addCombatants: () => void;
+    addCompanion: (companion: Companion | null) => void;
     addPC: (partyID: string, pcID: string) => void;
     addWave: () => void;
     addCondition: (combatant: Combatant) => void;
@@ -416,6 +417,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                 <button onClick={() => this.props.addCombatants()}>add combatants</button>
                 {pcOptions.length > 0 ? <Expander text='add pcs'>{pcOptions}</Expander> : null}
                 <button onClick={() => this.props.addWave()} style={{ display: wavesAvailable ? 'block' : 'none' }}>add wave</button>
+                <button onClick={() => this.props.addCompanion(null)}>add a companion</button>
                 <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
                     <div className='subheading'>map</div>
                     <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
@@ -524,6 +526,12 @@ export default class CombatScreen extends React.Component<Props, State> {
     }
 
     private createCombatantRow(combatant: Combatant, playerView: boolean) {
+        let selected = combatant.id === this.state.selectedItemID;
+        // If we're in player view, and there's no map, don't show selection
+        if (playerView && !this.props.combat.map) {
+            selected = false;
+        }
+
         switch (combatant.type) {
             case 'pc':
                 return (
@@ -531,7 +539,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                         key={combatant.id}
                         combatant={combatant as Combatant & PC}
                         combat={this.props.combat as Combat}
-                        selected={combatant.id === this.state.selectedItemID}
+                        selected={selected}
                         minimal={playerView}
                         select={c => this.setSelectedItemID(c.id)}
                         addToMap={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
@@ -543,7 +551,19 @@ export default class CombatScreen extends React.Component<Props, State> {
                         key={combatant.id}
                         combatant={combatant as Combatant & Monster}
                         combat={this.props.combat as Combat}
-                        selected={combatant.id === this.state.selectedItemID}
+                        selected={selected}
+                        minimal={playerView}
+                        select={c => this.setSelectedItemID(c.id)}
+                        addToMap={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
+                    />
+                );
+            case 'companion':
+                return (
+                    <CompanionRow
+                        key={combatant.id}
+                        combatant={combatant as Combatant & PC}
+                        combat={this.props.combat as Combat}
+                        selected={selected}
                         minimal={playerView}
                         select={c => this.setSelectedItemID(c.id)}
                         addToMap={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
@@ -573,7 +593,6 @@ export default class CombatScreen extends React.Component<Props, State> {
                             makeActive={c => this.props.makeActive(c)}
                             makeDefeated={c => this.defeatCombatant(c)}
                             removeCombatant={c => this.props.removeCombatant(c)}
-                            changeHP={(c, hp, temp, damage) => this.props.changeHP(c as Combatant & Monster, hp, temp, damage)}
                             addCondition={c => this.props.addCondition(c)}
                             editCondition={(c, condition) => this.props.editCondition(c, condition)}
                             removeCondition={(c, conditionID) => this.props.removeCondition(c, conditionID)}
@@ -583,6 +602,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                             mapRemove={c => this.props.mapRemove(c.id)}
                             toggleTag={(c, tag) => this.props.toggleTag(c, tag)}
                             toggleCondition={(c, condition) => this.props.toggleCondition(c, condition)}
+                            addCompanion={companion => this.props.addCompanion(companion)}
                             changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
                             nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
                         />
@@ -623,6 +643,31 @@ export default class CombatScreen extends React.Component<Props, State> {
                             mode={'combat'}
                             changeValue={(c, type, value) => this.props.changeValue(c, type, value)}
                             nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
+                        />
+                    </div>
+                );
+            case 'companion':
+                return (
+                    <div>
+                        <CombatControlsPanel
+                            combatant={combatant}
+                            combat={this.props.combat as Combat}
+                            tactical={tactical as 'no-map' | 'on-map' | 'off-map'}
+                            makeCurrent={c => this.props.makeCurrent(c)}
+                            makeActive={c => this.props.makeActive(c)}
+                            makeDefeated={c => this.defeatCombatant(c)}
+                            removeCombatant={c => this.props.removeCombatant(c)}
+                            addCondition={c => this.props.addCondition(c)}
+                            editCondition={(c, condition) => this.props.editCondition(c, condition)}
+                            removeCondition={(c, conditionID) => this.props.removeCondition(c, conditionID)}
+                            nudgeConditionValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
+                            mapAdd={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
+                            mapMove={(c, dir) => this.props.mapMove(c.id, dir)}
+                            mapRemove={c => this.props.mapRemove(c.id)}
+                            toggleTag={(c, tag) => this.props.toggleTag(c, tag)}
+                            toggleCondition={(c, condition) => this.props.toggleCondition(c, condition)}
+                            changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
+                            nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
                         />
                     </div>
                 );
@@ -1045,7 +1090,7 @@ class PCRow extends React.Component<PCRowProps> {
     public render() {
         try {
             let style = 'combatant-row ' + this.props.combatant.type;
-            if (this.props.selected) {
+            if (this.props.combatant.current || this.props.selected) {
                 style += ' highlight';
             }
             if (this.props.combatant.defeated) {
@@ -1130,15 +1175,6 @@ class PCRow extends React.Component<PCRowProps> {
                 );
             }
 
-            let companions = null;
-            if (this.props.combatant.companions.length > 0) {
-                companions = (
-                    <div className='section'>
-                        <b>companions:</b> {this.props.combatant.companions.map(companion => companion.name).join(', ')}
-                    </div>
-                );
-            }
-
             return (
                 <div className={style} onClick={e => this.onClick(e)}>
                     <div className='header'>
@@ -1152,7 +1188,6 @@ class PCRow extends React.Component<PCRowProps> {
                     <div className='content'>
                         {desc}
                         {notes}
-                        {companions}
                     </div>
                 </div>
             );
@@ -1199,7 +1234,7 @@ class MonsterRow extends React.Component<MonsterRowProps> {
     public render() {
         try {
             let style = 'combatant-row ' + this.props.combatant.type;
-            if (this.props.selected) {
+            if (this.props.combatant.current || this.props.selected) {
                 style += ' highlight';
             }
             if (this.props.combatant.defeated) {
@@ -1315,6 +1350,132 @@ class MonsterRow extends React.Component<MonsterRowProps> {
                     </div>
                     <div className='content'>
                         {dmInfo}
+                        {notes}
+                    </div>
+                </div>
+            );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
+        }
+    }
+}
+
+interface CompanionRowProps {
+    combatant: Combatant;
+    minimal: boolean;
+    combat: Combat;
+    selected: boolean;
+    select: (combatant: Combatant) => void;
+    addToMap: (combatant: Combatant) => void;
+}
+
+class CompanionRow extends React.Component<CompanionRowProps> {
+    public static defaultProps = {
+        minimal: false
+    };
+
+    private getInformationText() {
+        if (this.props.combatant.current) {
+            return 'current turn';
+        }
+
+        if (this.props.selected) {
+            return 'selected';
+        }
+
+        return null;
+    }
+
+    private onClick(e: React.MouseEvent) {
+        e.stopPropagation();
+        if (!this.props.selected && this.props.select) {
+            this.props.select(this.props.combatant);
+        }
+    }
+
+    public render() {
+        try {
+            let style = 'combatant-row ' + this.props.combatant.type;
+            if (this.props.combatant.current || this.props.selected) {
+                style += ' highlight';
+            }
+            if (this.props.combatant.defeated) {
+                style += ' defeated';
+            }
+
+            const notes = [];
+            if (this.props.combat.map) {
+                if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
+                    notes.push(
+                        <Note key='not-on-map' white={true}>
+                            <span>not on the map</span>
+                            <Icon
+                                type='environment'
+                                className='icon-button'
+                                onClick={() => this.props.addToMap(this.props.combatant)}
+                            />
+                        </Note>
+                    );
+                }
+                if (!this.props.combatant.showOnMap) {
+                    notes.push(
+                        <Note key='hidden' white={true}>hidden</Note>
+                    );
+                }
+            }
+            this.props.combatant.tags.forEach(tag => {
+                notes.push(
+                    <Note key={tag} white={true}>
+                        <div className='condition'>
+                            <div className='condition-name'>{Utils.getTagTitle(tag)}</div>
+                            {Utils.getTagDescription(tag)}
+                        </div>
+                    </Note>
+                );
+            });
+            if (this.props.combatant.conditions) {
+                this.props.combatant.conditions.forEach(c => {
+                    let name = c.name;
+                    if (c.name === 'exhaustion') {
+                        name += ' (' + c.level + ')';
+                    }
+                    if (c.duration) {
+                        name += ' ' + Utils.conditionDurationText(c, this.props.combat);
+                    }
+                    const description = [];
+                    const text = Utils.conditionText(c);
+                    for (let n = 0; n !== text.length; ++n) {
+                        description.push(<div key={n} className='condition-text'>{text[n]}</div>);
+                    }
+                    notes.push(
+                        <Note key={c.id} white={true}>
+                            <div className='condition'>
+                                <div className='condition-name'>{name}</div>
+                                {description}
+                            </div>
+                        </Note>
+                    );
+                });
+            }
+            if (this.props.combatant.note) {
+                notes.push(
+                    <Note key='text' white={true}>
+                        <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.combatant.note) }} />
+                    </Note>
+                );
+            }
+
+            return (
+                <div className={style} onClick={e => this.onClick(e)}>
+                    <div className='header'>
+                        <Icon type='menu' className='grabber small' data-movable-handle={true} />
+                        <div className='name'>
+                            {this.props.combatant.displayName || 'combatant'}
+                        </div>
+                        <span className='info'>{this.getInformationText()}</span>
+                    </div>
+                    <div className='content'>
                         {notes}
                     </div>
                 </div>
@@ -1504,13 +1665,14 @@ interface CombatControlsPanelProps {
     mapMove: (combatant: Combatant, dir: string) => void;
     mapRemove: (combatant: Combatant) => void;
     removeCombatant: (combatant: Combatant) => void;
-    changeHP: (combatant: Combatant, hp: number, tempHP: number, damage: number) => void;
+    changeHP: (combatant: Combatant & Monster, hp: number, tempHP: number, damage: number) => void;
     addCondition: (combatant: Combatant) => void;
     editCondition: (combatant: Combatant, condition: Condition) => void;
     removeCondition: (combatant: Combatant, conditionID: string) => void;
     nudgeConditionValue: (condition: Condition, field: string, delta: number) => void;
     toggleTag: (combatant: Combatant, tag: string) => void;
     toggleCondition: (combatant: Combatant, condition: string) => void;
+    addCompanion: (companion: Companion) => void;
     changeValue: (monster: any, field: string, value: any) => void;
     nudgeValue: (source: any, field: string, delta: number) => void;
 }
@@ -1521,6 +1683,11 @@ interface CombatControlsPanelState {
 }
 
 class CombatControlsPanel extends React.Component<CombatControlsPanelProps, CombatControlsPanelState> {
+    public static defaultProps = {
+        changeHP: null,
+        addCompanion: null
+    };
+
     constructor(props: CombatControlsPanelProps) {
         super(props);
 
@@ -1903,6 +2070,13 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
             );
         }
 
+        let companions: JSX.Element[] = [];
+        if ((this.props.combatant.type === 'pc') && this.props.addCompanion) {
+            companions = (this.props.combatant as Combatant & PC).companions
+                .filter(comp => !this.props.combat.combatants.find(c => c.id === comp.id))
+                .map(comp => <button key={comp.id} onClick={() => this.props.addCompanion(comp)}>add {comp.name}</button>);
+        }
+
         return (
             <div>
                 {remove}
@@ -1921,6 +2095,7 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                     />
                 </Expander>
                 {init}
+                {companions}
             </div>
         );
     }
@@ -1937,8 +2112,8 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                 // No combat map, so remove the map option
                 views.splice(3, 1);
             }
-            if (this.props.combatant.type === 'pc') {
-                // Can't change hit points for a PC
+            if (this.props.changeHP === null) {
+                // Can't change hit points
                 views.splice(1, 1);
             }
 
@@ -1968,6 +2143,7 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
 
             return (
                 <div key={this.props.combatant.id} className='group-panel combat-controls'>
+                    <div className='subheading'>{this.props.combatant.displayName}</div>
                     <Selector
                         options={views}
                         selectedID={currentView}

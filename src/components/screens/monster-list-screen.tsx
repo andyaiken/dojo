@@ -108,7 +108,7 @@ class ListItem extends React.Component<ListItemProps, ListItemState> {
 
     private getMonsters() {
         const monsters = this.props.group.monsters.map(m => (
-            <div key={m.id} className='monster-row'>
+            <div key={m.id} className='combatant-row'>
                 <PortraitPanel source={m} inline={true}/>
                 <div className='name'>{m.name || 'unnamed monster'}</div>
                 <Icon className='info-icon' type='info-circle' onClick={() => this.props.openStatBlock(this.props.group.name, m.name)} />

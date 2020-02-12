@@ -12,7 +12,7 @@ import { Condition } from '../models/condition';
 import { Encounter, EncounterSlot } from '../models/encounter';
 import { Map, MapItem } from '../models/map';
 import { Monster, MonsterGroup } from '../models/monster-group';
-import { Party, PC } from '../models/party';
+import { Companion, Party, PC } from '../models/party';
 
 import Checkbox from './controls/checkbox';
 import AboutModal from './modals/about-modal';
@@ -804,15 +804,18 @@ export default class App extends React.Component<Props, State> {
 
     //#region Combat screen
 
-    private createCombat() {
+    private createCombat(encounter: Encounter | null = null) {
         const party = this.state.parties.length === 1 ? this.state.parties[0] : null;
-        const encounter = this.state.encounters.length === 1 ? this.state.encounters[0] : null;
+        let enc = this.state.encounters.length === 1 ? this.state.encounters[0] : null;
+        if (encounter) {
+            enc = encounter;
+        }
 
         const setup = Factory.createCombatSetup();
         setup.party = party;
-        setup.encounter = encounter;
-        if (encounter) {
-            setup.monsterNames = Utils.getMonsterNames(encounter);
+        setup.encounter = enc;
+        if (enc) {
+            setup.monsterNames = Utils.getMonsterNames(enc);
         }
 
         this.setState({
@@ -936,6 +939,37 @@ export default class App extends React.Component<Props, State> {
         combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
 
         combat.combatants.push(combatant);
+    }
+
+    private addCompanionToCombat(companion: Companion | null) {
+        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+        if (combat) {
+            const combatant: Combatant = {
+                id: companion ? companion.id : Utils.guid(),
+                type: 'companion',
+
+                current: false,
+                pending: true,
+                active: false,
+                defeated: false,
+
+                displayName: companion ? companion.name : 'companion',
+                displaySize: 'medium',
+                showOnMap: true,
+                initiative: 10,
+                hp: null,
+                conditions: [],
+                tags: [],
+                note: '',
+                altitude: 0,
+                aura: { radius: 0, style: 'rounded', color: '#005080' }
+            };
+
+            combat.combatants.push(combatant);
+            this.setState({
+                combats: this.state.combats
+            });
+        }
     }
 
     private openWaveModal() {
@@ -1321,7 +1355,7 @@ export default class App extends React.Component<Props, State> {
     private mapAdd(combatant: Combatant, x: number, y: number) {
         const item = Factory.createMapItem();
         item.id = combatant.id;
-        item.type = combatant.type as 'pc' | 'monster';
+        item.type = combatant.type as 'pc' | 'monster' | 'companion';
         item.x = x;
         item.y = y;
         let size = 1;
@@ -1919,6 +1953,7 @@ export default class App extends React.Component<Props, State> {
                         addEncounter={() => this.addEncounter()}
                         editEncounter={encounter => this.editEncounter(encounter)}
                         deleteEncounter={encounter => this.removeEncounter(encounter)}
+                        runEncounter={encounter => this.createCombat(encounter)}
                         getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
                         setView={view => this.setView(view)}
                         openStatBlock={(groupName, monsterName) => this.openMonsterInfoModal(groupName, monsterName)}
@@ -1953,6 +1988,7 @@ export default class App extends React.Component<Props, State> {
                             moveCombatant={(oldIndex, newIndex) => this.moveCombatant(oldIndex, newIndex)}
                             removeCombatant={combatant => this.removeCombatant(combatant)}
                             addCombatants={() => this.addToEncounter()}
+                            addCompanion={companion => this.addCompanionToCombat(companion)}
                             addPC={(partyID, pcID) => this.addPCToEncounter(partyID, pcID)}
                             addWave={() => this.openWaveModal()}
                             addCondition={combatant => this.addCondition(combatant)}

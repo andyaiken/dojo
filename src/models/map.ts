@@ -7,7 +7,7 @@ export interface Map {
 
 export interface MapItem {
     id: string;
-    type: 'tile' | 'pc' | 'monster' | 'overlay' | 'token';
+    type: 'tile' | 'pc' | 'monster' | 'companion' | 'overlay' | 'token';
     x: number;
     y: number;
     width: number;                                                          // Used by tiles

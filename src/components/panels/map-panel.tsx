@@ -249,7 +249,7 @@ export default class MapPanel extends React.Component<Props> {
             let tokens: JSX.Element[] = [];
             if (this.props.mode !== 'edit') {
                 tokens = items
-                    .filter(i => (i.type === 'monster') || (i.type === 'pc') || (i.type === 'token'))
+                    .filter(i => (i.type === 'monster') || (i.type === 'pc') || (i.type === 'companion') || (i.type === 'token'))
                     .map(i => {
                         let miniSize = Utils.miniSize(i.size);
                         let note = Mercator.getNote(this.props.map, i);
@@ -736,9 +736,8 @@ class MapToken extends React.Component<MapTokenProps> {
                 style += ' selected';
             }
 
-            const c = this.props.combatant as (Combatant & PC) | (Combatant & Monster);
             if (this.props.combatant) {
-                name = c.displayName || c.name || 'combatant';
+                name = this.props.combatant.displayName || 'combatant';
                 style += ' ' + this.props.combatant.type;
 
                 if (this.props.combatant.current) {
@@ -759,6 +758,7 @@ class MapToken extends React.Component<MapTokenProps> {
             let conditionsBadge = null;
             if (this.props.combatant && !this.props.simple) {
                 let src = '';
+                const c = this.props.combatant as (Combatant & PC) | (Combatant & Monster);
                 if (c && c.portrait) {
                     const data = localStorage.getItem('image-' + c.portrait);
                     if (data) {
