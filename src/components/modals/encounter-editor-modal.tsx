@@ -220,8 +220,8 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
     private changeFilterValue(type: 'name' | 'challenge' | 'category' | 'size', value: any) {
         const filter = this.state.filter as any;
         if (type === 'challenge') {
-            filter['challengeMin'] = value[0];
-            filter['challengeMax'] = value[1];
+            filter.challengeMin = value[0];
+            filter.challengeMax = value[1];
         } else {
             filter[type] = value;
         }

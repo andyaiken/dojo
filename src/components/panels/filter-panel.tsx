@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Slider } from 'antd';
 
 import Napoleon from '../../utils/napoleon';
@@ -8,8 +9,8 @@ import { CATEGORY_TYPES, SIZE_TYPES } from '../../models/monster-group';
 
 import Dropdown from '../controls/dropdown';
 import Expander from '../controls/expander';
-import Textbox from '../controls/textbox';
 import Selector from '../controls/selector';
+import Textbox from '../controls/textbox';
 
 interface Props {
     filter: MonsterFilter;
