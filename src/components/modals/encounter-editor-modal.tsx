@@ -4,7 +4,6 @@ import { Col, Row } from 'antd';
 
 import Factory from '../../utils/factory';
 import Napoleon from '../../utils/napoleon';
-import Utils from '../../utils/utils';
 
 import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../../models/encounter';
 import { Monster, MonsterGroup } from '../../models/monster-group';
@@ -218,17 +217,17 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
         this.changeValue(source, field, value);
     }
 
-    private changeFilterValue(type: 'name' | 'challengeMin' | 'challengeMax' | 'category' | 'size', value: any) {
+    private changeFilterValue(type: 'name' | 'challenge' | 'category' | 'size', value: any) {
         const filter = this.state.filter as any;
-        filter[type] = value;
+        if (type === 'challenge') {
+            filter['challengeMin'] = value[0];
+            filter['challengeMax'] = value[1];
+        } else {
+            filter[type] = value;
+        }
         this.setState({
             filter: filter
         });
-    }
-
-    private nudgeFilterValue(type: 'challengeMin' | 'challengeMax', delta: number) {
-        const value = Utils.nudgeChallenge(this.state.filter[type], delta);
-        this.changeFilterValue(type, value);
     }
 
     private resetFilter() {
@@ -386,7 +385,6 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
                             <FilterPanel
                                 filter={this.state.filter}
                                 changeValue={(type, value) => this.changeFilterValue(type, value)}
-                                nudgeValue={(type, delta) => this.nudgeFilterValue(type, delta)}
                                 resetFilter={() => this.resetFilter()}
                             />
                         </div>

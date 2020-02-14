@@ -1,20 +1,19 @@
 import React from 'react';
+import { Slider } from 'antd';
 
 import Napoleon from '../../utils/napoleon';
-import Utils from '../../utils/utils';
 
 import { MonsterFilter } from '../../models/encounter';
 import { CATEGORY_TYPES, SIZE_TYPES } from '../../models/monster-group';
 
 import Dropdown from '../controls/dropdown';
 import Expander from '../controls/expander';
-import NumberSpin from '../controls/number-spin';
 import Textbox from '../controls/textbox';
+import Selector from '../controls/selector';
 
 interface Props {
     filter: MonsterFilter;
-    changeValue: (type: 'name' | 'challengeMin' | 'challengeMax' | 'category' | 'size', value: any) => void;
-    nudgeValue: (type: 'challengeMin' | 'challengeMax', delta: number) => void;
+    changeValue: (type: 'name' | 'challenge' | 'category' | 'size', value: any) => void;
     resetFilter: () => void;
 }
 
@@ -26,6 +25,30 @@ export default class FilterPanel extends React.Component<Props> {
 
             const categories = ['all types'].concat(CATEGORY_TYPES);
             const catOptions = categories.map(cat => ({ id: cat, text: cat }));
+            const aberr = catOptions.find(o => o.id === 'aberration');
+            if (aberr) {
+                aberr.text = 'aberr.';
+            }
+            const celest = catOptions.find(o => o.id === 'celestial');
+            if (celest) {
+                celest.text = 'celest.';
+            }
+            const constr = catOptions.find(o => o.id === 'construct');
+            if (constr) {
+                constr.text = 'const.';
+            }
+            const elem = catOptions.find(o => o.id === 'elemental');
+            if (elem) {
+                elem.text = 'elem.';
+            }
+            const human = catOptions.find(o => o.id === 'humanoid');
+            if (human) {
+                human.text = 'human.';
+            }
+            const monst = catOptions.find(o => o.id === 'monstrosity');
+            if (monst) {
+                monst.text = 'monst.';
+            }
 
             return (
                 <div>
@@ -35,19 +58,12 @@ export default class FilterPanel extends React.Component<Props> {
                         onChange={value => this.props.changeValue('name', value)}
                     />
                     <Expander text={'showing ' + Napoleon.getFilterDescription(this.props.filter)}>
-                        <NumberSpin
-                            source={this.props.filter}
-                            name='challengeMin'
-                            label='min cr'
-                            display={value => Utils.challenge(value)}
-                            nudgeValue={delta => this.props.nudgeValue('challengeMin', delta)}
-                        />
-                        <NumberSpin
-                            source={this.props.filter}
-                            name='challengeMax'
-                            label='max cr'
-                            display={value => Utils.challenge(value)}
-                            nudgeValue={delta => this.props.nudgeValue('challengeMax', delta)}
+                        <Slider
+                            range={true}
+                            min={0}
+                            max={35}
+                            value={[this.props.filter.challengeMin, this.props.filter.challengeMax]}
+                            onChange={value => this.props.changeValue('challenge', value)}
                         />
                         <Dropdown
                             options={sizeOptions}
@@ -55,10 +71,10 @@ export default class FilterPanel extends React.Component<Props> {
                             selectedID={this.props.filter.size}
                             select={optionID => this.props.changeValue('size', optionID)}
                         />
-                        <Dropdown
+                        <Selector
                             options={catOptions}
-                            placeholder='filter by type...'
                             selectedID={this.props.filter.category}
+                            itemsPerRow={3}
                             select={optionID => this.props.changeValue('category', optionID)}
                         />
                         <div className='divider' />
