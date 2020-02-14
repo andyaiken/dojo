@@ -875,7 +875,8 @@ export default class App extends React.Component<Props, State> {
             this.setState({
                 combats: ([] as Combat[]).concat(this.state.combats, [combat]),
                 selectedCombatID: combat.id,
-                drawer: null
+                drawer: null,
+                view: 'combat'
             });
         }
     }
