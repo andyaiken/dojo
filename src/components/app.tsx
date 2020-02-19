@@ -763,16 +763,22 @@ export default class App extends React.Component<Props, State> {
 
     //#region Combat screen
 
-    private createCombat(encounter: Encounter | null = null) {
-        const party = this.state.parties.length === 1 ? this.state.parties[0] : null;
+    private createCombat(encounter: Encounter | null = null, partyID: string | null = null) {
+        let party = this.state.parties.length === 1 ? this.state.parties[0] : null;
+        if (partyID) {
+            const p = this.state.parties.find(par => par.id === partyID);
+            if (p) {
+                party = p;
+            }
+        }
         let enc = this.state.encounters.length === 1 ? this.state.encounters[0] : null;
         if (encounter) {
             enc = encounter;
         }
 
         const setup = Factory.createCombatSetup();
-        setup.party = party;
-        setup.encounter = enc;
+        setup.party = JSON.parse(JSON.stringify(party));
+        setup.encounter = JSON.parse(JSON.stringify(encounter));
         if (enc) {
             setup.monsterNames = Utils.getMonsterNames(enc);
         }
@@ -1907,11 +1913,12 @@ export default class App extends React.Component<Props, State> {
                 return (
                     <EncounterListScreen
                         encounters={this.state.encounters}
+                        parties={this.state.parties}
                         hasMonsters={hasMonsters}
                         addEncounter={() => this.editEncounter(null)}
                         editEncounter={encounter => this.editEncounter(encounter)}
                         deleteEncounter={encounter => this.removeEncounter(encounter)}
-                        runEncounter={encounter => this.createCombat(encounter)}
+                        runEncounter={(encounter, partyID) => this.createCombat(encounter, partyID)}
                         getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
                         setView={view => this.setView(view)}
                         openStatBlock={(groupName, monsterName) => this.openMonsterInfoModal(groupName, monsterName)}

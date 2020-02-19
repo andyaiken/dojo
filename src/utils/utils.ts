@@ -638,7 +638,7 @@ export default class Utils {
         return null;
     }
 
-    public static getMonsterNames(encounter: Encounter | EncounterWave): { id: string, names: string[] }[] {
+    public static getMonsterNames(encounter: Encounter | EncounterWave | null): { id: string, names: string[] }[] {
         const monsterNames: any[] = [];
         if (encounter) {
             encounter.slots.forEach(slot => {

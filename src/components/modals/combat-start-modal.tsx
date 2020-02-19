@@ -14,6 +14,7 @@ import { Monster, MonsterGroup } from '../../models/monster-group';
 import { Party } from '../../models/party';
 
 import Dropdown from '../controls/dropdown';
+import NumberSpin from '../controls/number-spin';
 import Selector from '../controls/selector';
 import Textbox from '../controls/textbox';
 import DifficultyChartPanel from '../panels/difficulty-chart-panel';
@@ -50,21 +51,19 @@ export default class CombatStartModal extends React.Component<Props, State> {
     }
 
     private setPartyID(partyID: string | null) {
-        const party = this.props.parties.find(p => p.id === partyID);
         const setup = this.state.combatSetup;
-        setup.party = party || null;
+        const party = this.props.parties.find(p => p.id === partyID);
+        setup.party = party ? JSON.parse(JSON.stringify(party)) : null;
         this.setState({
             combatSetup: setup
         }, () => this.props.notify());
     }
 
     private setEncounterID(encounterID: string | null) {
-        const encounter = this.props.encounters.find(e => e.id === encounterID);
         const setup = this.state.combatSetup;
-        setup.encounter = encounter || null;
-        if (encounter) {
-            setup.monsterNames = Utils.getMonsterNames(encounter);
-        }
+        const encounter = this.props.encounters.find(e => e.id === encounterID);
+        setup.encounter = encounter ? JSON.parse(JSON.stringify(encounter)) : null;
+        setup.monsterNames = Utils.getMonsterNames(setup.encounter);
         this.setState({
             combatSetup: setup
         }, () => this.props.notify());
@@ -141,12 +140,28 @@ export default class CombatStartModal extends React.Component<Props, State> {
     }
 
     private changeName(slotID: string, index: number, name: string) {
-        const slot = this.state.combatSetup.monsterNames.find(s => s.id === slotID);
-        if (slot) {
-            slot.names[index] = name;
+        const monsterNames = this.state.combatSetup.monsterNames.find(mn => mn.id === slotID);
+        if (monsterNames) {
+            monsterNames.names[index] = name;
             this.setState({
                 combatSetup: this.state.combatSetup
             });
+        }
+    }
+
+    private nudgeCount(slotID: string, delta: number) {
+        const setup = this.state.combatSetup;
+        if (setup.encounter) {
+            const slot = setup.encounter.slots.find(s => s.id === slotID);
+            if (slot) {
+                // Change number
+                slot.count = Math.max(0, slot.count + delta);
+                // Reset names
+                setup.monsterNames = Utils.getMonsterNames(setup.encounter);
+                this.setState({
+                    combatSetup: setup
+                });
+            }
         }
     }
 
@@ -186,11 +201,16 @@ export default class CombatStartModal extends React.Component<Props, State> {
                             encounters={this.props.encounters}
                             getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
                         />
-                        <MonsterSection
+                        <InitiativeSection
                             combatSetup={this.state.combatSetup}
                             parties={this.props.parties}
                             setEncounterInitMode={mode => this.setEncounterInitMode(mode)}
+                        />
+                        <MonsterSection
+                            combatSetup={this.state.combatSetup}
+                            parties={this.props.parties}
                             changeName={(slotID, index, name) => this.changeName(slotID, index, name)}
+                            nudgeCount={(slotID, delta) => this.nudgeCount(slotID, delta)}
                         />
                     </div>
                 );
@@ -206,11 +226,16 @@ export default class CombatStartModal extends React.Component<Props, State> {
 
                 rightSection = (
                     <div>
-                        <MonsterSection
+                        <InitiativeSection
                             combatSetup={this.state.combatSetup}
                             parties={this.props.parties}
                             setEncounterInitMode={mode => this.setEncounterInitMode(mode)}
+                        />
+                        <MonsterSection
+                            combatSetup={this.state.combatSetup}
+                            parties={this.props.parties}
                             changeName={(slotID, index, name) => this.changeName(slotID, index, name)}
+                            nudgeCount={(slotID, delta) => this.nudgeCount(slotID, delta)}
                         />
                     </div>
                 );
@@ -571,16 +596,70 @@ class DifficultySection extends React.Component<DifficultySectionProps> {
     }
 }
 
-interface MonsterSectionProps {
+interface InitiativeSectionProps {
     combatSetup: CombatSetup;
     parties: Party[];
     setEncounterInitMode: (mode: 'manual' | 'individual' | 'group') => void;
+}
+
+class InitiativeSection extends React.Component<InitiativeSectionProps> {
+    public render() {
+        if (!this.props.combatSetup.encounter) {
+            return (
+                <div>
+                    <div className='heading'>initiative</div>
+                    <div className='section'>select an encounter to see initiative options here.</div>
+                </div>
+            );
+        }
+
+        if (!this.props.parties && !this.props.combatSetup.waveID) {
+            return (
+                <div>
+                    <div className='heading'>monsters</div>
+                    <div className='section'>select a wave to see initiative options here.</div>
+                </div>
+            );
+        }
+
+        const initOptions = [
+            {
+                id: 'manual',
+                text: 'enter manually'
+            },
+            {
+                id: 'individual',
+                text: 'roll individually'
+            },
+            {
+                id: 'group',
+                text: 'roll in groups'
+            }
+        ];
+
+        return (
+            <div>
+                <div className='heading'>initiative</div>
+                <Selector
+                    options={initOptions}
+                    selectedID={this.props.combatSetup.encounterInitMode}
+                    select={optionID => this.props.setEncounterInitMode(optionID as 'manual' | 'individual' | 'group')}
+                />
+            </div>
+        );
+    }
+}
+
+interface MonsterSectionProps {
+    combatSetup: CombatSetup;
+    parties: Party[];
     changeName: (slotID: string, index: number, name: string) => void;
+    nudgeCount: (slotID: string, delta: number) => void;
 }
 
 class MonsterSection extends React.Component<MonsterSectionProps> {
     public render() {
-        if (this.props.combatSetup.encounter === null) {
+        if (!this.props.combatSetup.encounter) {
             return (
                 <div>
                     <div className='heading'>monsters</div>
@@ -589,7 +668,7 @@ class MonsterSection extends React.Component<MonsterSectionProps> {
             );
         }
 
-        if (!this.props.parties && this.props.combatSetup.waveID === null) {
+        if (!this.props.parties && !this.props.combatSetup.waveID) {
             return (
                 <div>
                     <div className='heading'>monsters</div>
@@ -611,35 +690,17 @@ class MonsterSection extends React.Component<MonsterSectionProps> {
                 return null;
             }
 
-            const initOptions = [
-                {
-                    id: 'manual',
-                    text: 'enter manually'
-                },
-                {
-                    id: 'individual',
-                    text: 'roll individually'
-                },
-                {
-                    id: 'group',
-                    text: 'roll in groups'
-                }
-            ];
-
             const names = this.props.combatSetup.monsterNames.map(slotNames => {
                 const slot = slotsContainer.slots.find(s => s.id === slotNames.id);
                 if (slot) {
                     const inputs = [];
                     for (let n = 0; n !== slotNames.names.length; ++n) {
                         inputs.push(
-                            <div key={n}>
-                                <MonsterName
-                                    value={slotNames.names[n]}
-                                    slotID={slot.id}
-                                    index={n}
-                                    changeName={(slotID, index, value) => this.props.changeName(slotID, index, value)}
-                                />
-                            </div>
+                            <Textbox
+                                key={n}
+                                text={slotNames.names[n]}
+                                onChange={value => this.props.changeName(slot.id, n, value)}
+                            />
                         );
                     }
                     return (
@@ -648,6 +709,11 @@ class MonsterSection extends React.Component<MonsterSectionProps> {
                                 {slot.monsterName}
                             </div>
                             <div className='name-inputs'>
+                                <NumberSpin
+                                    source={slot}
+                                    name='count'
+                                    nudgeValue={delta => this.props.nudgeCount(slot.id, delta)}
+                                />
                                 {inputs}
                             </div>
                         </div>
@@ -659,41 +725,11 @@ class MonsterSection extends React.Component<MonsterSectionProps> {
             return (
                 <div>
                     <div className='heading'>monsters</div>
-                    <div className='subheading'>initiative</div>
-                    <Selector
-                        options={initOptions}
-                        selectedID={this.props.combatSetup.encounterInitMode}
-                        select={optionID => this.props.setEncounterInitMode(optionID as 'manual' | 'individual' | 'group')}
-                    />
-                    <div className='subheading'>names</div>
                     <div>{names}</div>
                 </div>
             );
         }
 
         return null;
-    }
-}
-
-interface MonsterNameProps {
-    slotID: string;
-    index: number;
-    value: string;
-    changeName: (slotID: string, index: number, value: string) => void;
-}
-
-class MonsterName extends React.Component<MonsterNameProps> {
-    public render() {
-        try {
-            return (
-                <Textbox
-                    text={this.props.value}
-                    onChange={value => this.props.changeName(this.props.slotID, this.props.index, value)}
-                />
-            );
-        } catch (ex) {
-            console.error(ex);
-            return <div className='render-error'/>;
-        }
     }
 }

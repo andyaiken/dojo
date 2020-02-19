@@ -151,8 +151,8 @@ class ListItem extends React.Component<ListItemProps> {
                             {list}
                         </div>
                         <div className='divider'/>
-                        <button onClick={() => this.props.resume(this.props.combat)}>resume</button>
-                        <ConfirmButton text='delete' callback={() => this.props.delete(this.props.combat)} />
+                        <button onClick={() => this.props.resume(this.props.combat)}>resume combat</button>
+                        <ConfirmButton text='delete combat' callback={() => this.props.delete(this.props.combat)} />
                     </div>
                 </div>
             );

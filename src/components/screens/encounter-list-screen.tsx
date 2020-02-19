@@ -7,8 +7,10 @@ import Utils from '../../utils/utils';
 
 import { Encounter, EncounterSlot } from '../../models/encounter';
 import { Monster } from '../../models/monster-group';
+import { Party } from '../../models/party';
 
 import ConfirmButton from '../controls/confirm-button';
+import Dropdown from '../controls/dropdown';
 import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
 import PortraitPanel from '../panels/portrait-panel';
@@ -16,11 +18,12 @@ import Readaloud from '../panels/readaloud';
 
 interface Props {
     encounters: Encounter[];
+    parties: Party[];
     hasMonsters: boolean;
     addEncounter: () => void;
     editEncounter: (encounter: Encounter) => void;
     deleteEncounter: (encounter: Encounter) => void;
-    runEncounter: (encounter: Encounter) => void;
+    runEncounter: (encounter: Encounter, partyID: string) => void;
     getMonster: (monsterName: string, groupName: string) => Monster | null;
     setView: (view: string) => void;
     openStatBlock: (groupName: string, monsterName: string) => void;
@@ -59,9 +62,10 @@ export default class EncounterListScreen extends React.Component<Props> {
                 <ListItem
                     key={e.id}
                     encounter={e}
+                    parties={this.props.parties}
                     edit={encounter => this.props.editEncounter(encounter)}
                     delete={encounter => this.props.deleteEncounter(encounter)}
-                    run={encounter => this.props.runEncounter(encounter)}
+                    run={(encounter, partyID) => this.props.runEncounter(encounter, partyID)}
                     openStatBlock={slot => this.props.openStatBlock(slot.monsterGroupName, slot.monsterName)}
                     getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
                 />
@@ -100,9 +104,10 @@ export default class EncounterListScreen extends React.Component<Props> {
 
 interface ListItemProps {
     encounter: Encounter;
+    parties: Party[];
     edit: (encounter: Encounter) => void;
     delete: (encounter: Encounter) => void;
-    run: (encounter: Encounter) => void;
+    run: (encounter: Encounter, partyID: string) => void;
     openStatBlock: (slot: EncounterSlot) => void;
     getMonster: (monsterName: string, groupName: string) => Monster | null;
 }
@@ -154,6 +159,23 @@ class ListItem extends React.Component<ListItemProps> {
                 }
             });
 
+            let run = null;
+            if (this.props.parties.length > 0) {
+                const options = this.props.parties.map(p => {
+                    return {
+                        id: p.id,
+                        text: p.name
+                    };
+                });
+                run = (
+                    <Dropdown
+                        options={options}
+                        placeholder='run with...'
+                        select={partyID => this.props.run(this.props.encounter, partyID)}
+                    />
+                );
+            }
+
             return (
                 <div className='card encounter'>
                     <div className='heading'>
@@ -169,9 +191,9 @@ class ListItem extends React.Component<ListItemProps> {
                             {Napoleon.getEncounterXP(this.props.encounter, this.props.getMonster)}
                         </div>
                         <div className='divider'/>
-                        <button onClick={() => this.props.run(this.props.encounter)}>run</button>
-                        <button onClick={() => this.props.edit(this.props.encounter)}>edit</button>
-                        <ConfirmButton text='delete' callback={() => this.props.delete(this.props.encounter)} />
+                        {run}
+                        <button onClick={() => this.props.edit(this.props.encounter)}>edit encounter</button>
+                        <ConfirmButton text='delete encounter' callback={() => this.props.delete(this.props.encounter)} />
                     </div>
                 </div>
             );

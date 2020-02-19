@@ -90,8 +90,8 @@ class ListItem extends React.Component<ListItemProps> {
                             </Col>
                         </Row>
                         <div className='divider'/>
-                        <button onClick={() => this.props.editMap(this.props.map)}>edit</button>
-                        <ConfirmButton text='delete' callback={() => this.props.removeMap(this.props.map)} />
+                        <button onClick={() => this.props.editMap(this.props.map)}>edit map</button>
+                        <ConfirmButton text='delete map' callback={() => this.props.removeMap(this.props.map)} />
                     </div>
                 </div>
             );
