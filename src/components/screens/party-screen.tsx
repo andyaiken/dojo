@@ -18,7 +18,6 @@ interface Props {
     editPC: (pc: PC) => void;
     importPC: (pc: PC) => void;
     removePC: (pc: PC) => void;
-    sortPCs: () => void;
     changeValue: (source: any, field: string, value: any) => void;
     nudgeValue: (source: any, field: string, value: number) => void;
 }
@@ -69,7 +68,6 @@ export default class PartyScreen extends React.Component<Props> {
                             party={this.props.party}
                             goBack={() => this.props.goBack()}
                             addPC={() => this.props.addPC()}
-                            sortPCs={() => this.props.sortPCs()}
                             changeValue={(type, value) => this.props.changeValue(this.props.party, type, value)}
                             removeParty={() => this.props.removeParty()}
                         />
@@ -98,7 +96,6 @@ interface PartyInfoProps {
     goBack: () => void;
     changeValue: (field: string, value: string) => void;
     addPC: () => void;
-    sortPCs: () => void;
     removeParty: () => void;
 }
 
@@ -200,7 +197,6 @@ class PartyInfo extends React.Component<PartyInfoProps> {
                     <div className='divider' />
                     <div className='section'>
                         <button onClick={() => this.props.addPC()}>add a new pc</button>
-                        <button onClick={() => this.props.sortPCs()}>sort pcs</button>
                         <ConfirmButton text='delete party' callback={() => this.props.removeParty()} />
                         <div className='divider' />
                         <button onClick={() => this.props.goBack()}><Icon type='caret-left' style={{ fontSize: '10px' }} /> back to the list</button>

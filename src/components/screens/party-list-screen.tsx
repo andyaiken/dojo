@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Col, Row } from 'antd';
 
+import Utils from '../../utils/utils';
+
 import { Party, PC } from '../../models/party';
 
 import ConfirmButton from '../controls/confirm-button';
@@ -20,7 +22,9 @@ interface Props {
 export default class PartyListScreen extends React.Component<Props> {
     public render() {
         try {
-            const listItems = this.props.parties.map(p => (
+            const parties = this.props.parties;
+            Utils.sort(parties);
+            const listItems = parties.map(p => (
                 <ListItem
                     key={p.id}
                     party={p}

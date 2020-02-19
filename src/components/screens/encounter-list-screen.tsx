@@ -3,6 +3,7 @@ import React from 'react';
 import { Col, Icon, Row } from 'antd';
 
 import Napoleon from '../../utils/napoleon';
+import Utils from '../../utils/utils';
 
 import { Encounter, EncounterSlot } from '../../models/encounter';
 import { Monster } from '../../models/monster-group';
@@ -52,7 +53,9 @@ export default class EncounterListScreen extends React.Component<Props> {
                 /* tslint:enable:max-line-length */
             }
 
-            const listItems = this.props.encounters.map(e => (
+            const encounters = this.props.encounters;
+            Utils.sort(encounters);
+            const listItems = encounters.map(e => (
                 <ListItem
                     key={e.id}
                     encounter={e}

@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Col, Icon, Row } from 'antd';
 
+import Utils from '../../utils/utils';
+
 import { Combat, Combatant } from '../../models/combat';
 import { Monster } from '../../models/monster-group';
 import { PC } from '../../models/party';
@@ -64,7 +66,9 @@ export default class CombatListScreen extends React.Component<Props> {
                 /* tslint:enable:max-line-length */
             }
 
-            const listItems = this.props.combats.map(c => (
+            const combats = this.props.combats;
+            Utils.sort(combats);
+            const listItems = combats.map(c => (
                 <ListItem
                     key={c.id}
                     combat={c}

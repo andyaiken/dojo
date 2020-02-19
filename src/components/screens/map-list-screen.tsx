@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Col, Row } from 'antd';
 
+import Utils from '../../utils/utils';
+
 import { Map } from '../../models/map';
 
 import ConfirmButton from '../controls/confirm-button';
@@ -21,7 +23,9 @@ interface Props {
 export default class MapListScreen extends React.Component<Props> {
     public render() {
         try {
-            const listItems = this.props.maps.map(map => (
+            const maps = this.props.maps;
+            Utils.sort(maps);
+            const listItems = maps.map(map => (
                 <ListItem
                     key={map.id}
                     map={map}

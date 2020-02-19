@@ -45,7 +45,9 @@ export default class MonsterListScreen extends React.Component<Props> {
                 /* tslint:enable:max-line-length */
             }
 
-            const listItems = this.props.library.map(group => (
+            const groups = this.props.library;
+            Utils.sort(groups);
+            const listItems = groups.map(group => (
                 <ListItem
                     key={group.id}
                     group={group}

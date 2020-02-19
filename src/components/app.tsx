@@ -417,18 +417,6 @@ export default class App extends React.Component<Props, State> {
         });
     }
 
-    private addPC() {
-        const party = this.state.parties.find(p => p.id === this.state.selectedPartyID);
-        if (party) {
-            const pc = Factory.createPC();
-            pc.name = 'new pc';
-            party.pcs.push(pc);
-            this.setState({
-                parties: this.state.parties
-            });
-        }
-    }
-
     private removePC(pc: PC) {
         const party = this.state.parties.find(p => p.id === this.state.selectedPartyID);
         if (party) {
@@ -440,17 +428,12 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
-    private sortPCs() {
-        const party = this.state.parties.find(p => p.id === this.state.selectedPartyID);
-        if (party) {
-            Utils.sort(party.pcs);
-            this.setState({
-                parties: this.state.parties
-            });
+    private editPC(pc: PC | null) {
+        if (!pc) {
+            pc = Factory.createPC();
+            pc.name = 'new pc';
         }
-    }
 
-    private editPC(pc: PC) {
         const copy = JSON.parse(JSON.stringify(pc));
         this.setState({
             drawer: {
@@ -478,12 +461,14 @@ export default class App extends React.Component<Props, State> {
             if (original) {
                 const index = party.pcs.indexOf(original);
                 party.pcs[index] = this.state.drawer.pc;
-                Utils.sort(party.pcs);
-                this.setState({
-                    parties: this.state.parties,
-                    drawer: null
-                });
+            } else {
+                party.pcs.push(this.state.drawer.pc);
             }
+            Utils.sort(party.pcs);
+            this.setState({
+                parties: this.state.parties,
+                drawer: null
+            });
         }
     }
 
@@ -518,18 +503,6 @@ export default class App extends React.Component<Props, State> {
         });
     }
 
-    private addMonster() {
-        const monster = Factory.createMonster();
-        monster.name = 'new monster';
-        const group = this.state.library.find(g => g.id === this.state.selectedMonsterGroupID);
-        if (group) {
-            group.monsters.push(monster);
-            this.setState({
-                library: this.state.library
-            });
-        }
-    }
-
     private removeMonster(monster: Monster) {
         const group = this.state.library.find(g => g.id === this.state.selectedMonsterGroupID);
         if (group) {
@@ -561,16 +534,6 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
-    private sortMonsters() {
-        const group = this.state.library.find(g => g.id === this.state.selectedMonsterGroupID);
-        if (group) {
-            Utils.sort(group.monsters);
-            this.setState({
-                library: this.state.library
-            });
-        }
-    }
-
     private moveToGroup(monster: Monster, groupID: string) {
         const sourceGroup = this.state.library.find(group => group.monsters.includes(monster));
         if (sourceGroup) {
@@ -589,7 +552,12 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
-    private editMonster(monster: Monster) {
+    private editMonster(monster: Monster | null) {
+        if (!monster) {
+            monster = Factory.createMonster();
+            monster.name = 'new monster';
+        }
+
         const copy = JSON.parse(JSON.stringify(monster));
         this.setState({
             drawer: {
@@ -605,21 +573,16 @@ export default class App extends React.Component<Props, State> {
         if (group) {
             const original = group.monsters.find(m => m.id === this.state.drawer.monster.id);
             if (original) {
-                // We are editing a monster
                 const index = group.monsters.indexOf(original);
                 group.monsters[index] = this.state.drawer.monster;
-                this.setState({
-                    library: this.state.library,
-                    drawer: null
-                });
             } else {
-                // We are adding a new monster
                 group.monsters.push(this.state.drawer.monster);
-                this.setState({
-                    library: this.state.library,
-                    drawer: null
-                });
             }
+            Utils.sort(group.monsters);
+            this.setState({
+                library: this.state.library,
+                drawer: null
+            });
         }
     }
 
@@ -701,18 +664,12 @@ export default class App extends React.Component<Props, State> {
 
     //#region Encounter screen
 
-    private addEncounter() {
-        const encounter = Factory.createEncounter();
-        encounter.name = 'new encounter';
-        const encounters = ([] as Encounter[]).concat(this.state.encounters, [encounter]);
-        Utils.sort(encounters);
+    private editEncounter(encounter: Encounter | null) {
+        if (!encounter) {
+            encounter = Factory.createEncounter();
+            encounter.name = 'new encounter';
+        }
 
-        this.setState({
-            encounters: encounters
-        });
-    }
-
-    private editEncounter(encounter: Encounter) {
         const copy = JSON.parse(JSON.stringify(encounter));
         this.setState({
             drawer: {
@@ -723,16 +680,20 @@ export default class App extends React.Component<Props, State> {
     }
 
     private saveEncounter() {
+        const encounters = this.state.encounters;
         const original = this.state.encounters.find(e => e.id === this.state.drawer.encounter.id);
         if (original) {
             const index = this.state.encounters.indexOf(original);
-            const encounters = this.state.encounters;
             encounters[index] = this.state.drawer.encounter;
-            this.setState({
-                encounters: encounters,
-                drawer: null
-            });
+        } else {
+            encounters.push(this.state.drawer.encounter);
         }
+
+        Utils.sort(encounters);
+        this.setState({
+            encounters: encounters,
+            drawer: null
+        });
     }
 
     private removeEncounter(encounter: Encounter) {
@@ -748,16 +709,6 @@ export default class App extends React.Component<Props, State> {
 
     //#region Map screen
 
-    private addMap() {
-        const map = Factory.createMap();
-        map.name = 'new map';
-        this.state.maps.push(map);
-
-        this.setState({
-            maps: this.state.maps
-        });
-    }
-
     private generateMap(type: string) {
         const map = Factory.createMap();
         map.name = 'new ' + type;
@@ -769,7 +720,12 @@ export default class App extends React.Component<Props, State> {
         });
     }
 
-    private editMap(map: Map) {
+    private editMap(map: Map | null) {
+        if (!map) {
+            map = Factory.createMap();
+            map.name = 'new map';
+        }
+
         const copy = JSON.parse(JSON.stringify(map));
         this.setState({
             drawer: {
@@ -780,16 +736,19 @@ export default class App extends React.Component<Props, State> {
     }
 
     private saveMap() {
+        const maps = this.state.maps;
         const original = this.state.maps.find(m => m.id === this.state.drawer.map.id);
         if (original) {
             const index = this.state.maps.indexOf(original);
-            const maps = this.state.maps;
             maps[index] = this.state.drawer.map;
-            this.setState({
-                maps: maps,
-                drawer: null
-            });
+        } else {
+            maps.push(this.state.drawer.map);
         }
+        Utils.sort(maps);
+        this.setState({
+            maps: maps,
+            drawer: null
+        });
     }
 
     private removeMap(map: Map) {
@@ -1894,11 +1853,10 @@ export default class App extends React.Component<Props, State> {
                             party={this.state.parties.find(p => p.id === this.state.selectedPartyID) as Party}
                             goBack={() => this.selectParty(null)}
                             removeParty={() => this.removeCurrentParty()}
-                            addPC={() => this.addPC()}
+                            addPC={() => this.editPC(null)}
                             editPC={pc => this.editPC(pc)}
                             importPC={pc => this.importPC(pc)}
                             removePC={pc => this.removePC(pc)}
-                            sortPCs={() => this.sortPCs()}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                             nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
                         />
@@ -1922,10 +1880,9 @@ export default class App extends React.Component<Props, State> {
                             library={this.state.library}
                             goBack={() => this.selectMonsterGroup(null)}
                             removeMonsterGroup={() => this.removeCurrentMonsterGroup()}
-                            addMonster={() => this.addMonster()}
+                            addMonster={() => this.editMonster(null)}
                             importMonster={() => this.importMonster()}
                             removeMonster={monster => this.removeMonster(monster)}
-                            sortMonsters={() => this.sortMonsters()}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                             nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
                             editMonster={combatant => this.editMonster(combatant)}
@@ -1951,7 +1908,7 @@ export default class App extends React.Component<Props, State> {
                     <EncounterListScreen
                         encounters={this.state.encounters}
                         hasMonsters={hasMonsters}
-                        addEncounter={() => this.addEncounter()}
+                        addEncounter={() => this.editEncounter(null)}
                         editEncounter={encounter => this.editEncounter(encounter)}
                         deleteEncounter={encounter => this.removeEncounter(encounter)}
                         runEncounter={encounter => this.createCombat(encounter)}
@@ -1964,7 +1921,7 @@ export default class App extends React.Component<Props, State> {
                 return (
                     <MapListScreen
                         maps={this.state.maps}
-                        addMap={() => this.addMap()}
+                        addMap={() => this.editMap(null)}
                         generateMap={(type) => this.generateMap(type)}
                         editMap={map => this.editMap(map)}
                         deleteMap={map => this.removeMap(map)}
