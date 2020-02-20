@@ -2060,13 +2060,13 @@ export default class App extends React.Component<Props, State> {
                     header = 'monster editor';
                     footer = (
                         <Row gutter={10}>
-                            <Col span={8}>
+                            <Col span={6}>
                                 <button onClick={() => this.saveMonster()}>save changes</button>
                             </Col>
-                            <Col span={8}>
+                            <Col span={6}>
                                 <button onClick={() => this.closeDrawer()}>discard changes</button>
                             </Col>
-                            <Col span={8}>
+                            <Col span={12}>
                                 <Checkbox
                                     label='advanced tools'
                                     checked={this.state.drawer.showSidebar}
@@ -2075,7 +2075,7 @@ export default class App extends React.Component<Props, State> {
                             </Col>
                         </Row>
                     );
-                    width = '75%';
+                    width = '85%';
                     break;
                 case 'monster-stat-block':
                     content = (

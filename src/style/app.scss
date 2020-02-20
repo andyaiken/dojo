@@ -378,11 +378,11 @@ button {
 .sidebar {
     background-color: $control;
 
-    &.left {
+    &.sidebar-left {
         border-right: 1px solid $control-border;
     }
 
-    &.right {
+    &.sidebar-right {
         border-left: 1px solid $control-border;
     }
 }
@@ -650,6 +650,12 @@ body,
             cursor: pointer;
             display: inline-block;
             vertical-align: middle;
+        }
+
+        .anticon {
+            font-size: 20px;
+            vertical-align: middle;
+            cursor: pointer;
         }
     }
 
@@ -1011,6 +1017,7 @@ body,
 
 .section {
     margin: 5px 0;
+    break-inside: avoid;
 
     &.centered {
         text-align: center;
@@ -1022,31 +1029,36 @@ body,
 
     .ability-scores {
         margin: 10px 0;
-        padding: 5px 0;
         background-color: $background;
         border: 1px solid $control-border;
         border-left-width: 5px;
+        text-align: center;
         cursor: pointer;
 
         &:hover {
             border-color: $highlight;
         }
 
-        .ability-score {
+        .ability-score-group {
             display: inline-block;
-            width: calc((100% - 1px) / 6);
-            padding: 0 5px;
+            column-width: 120px;
+
+            .ability-score {
+                display: inline-block;
+                width: calc((100% - 1px) / 3);
+                padding: 5px;
+
+                .ability-heading {
+                    text-align: center;
+                    font-weight: 600;
+                }
+
+                .ability-value {
+                    text-align: center;
+                    padding-top: 5px;
+                }
+            }
         }
-
-            .ability-heading {
-                text-align: center;
-                font-weight: 600;
-            }
-
-            .ability-value {
-                text-align: center;
-                padding-top: 5px;
-            }
     }
 
     &.key-stats {
@@ -1094,6 +1106,14 @@ body,
 
     .trait {
         break-inside: avoid-column;
+
+        &.trait-template {
+            cursor: pointer;
+
+            &:hover {
+                background-color: $highlight02;
+            }
+        }
     }
 }
 
@@ -1498,12 +1518,12 @@ body,
 }
 
 .trait-bar {
-    margin: 5px;
+    margin: 5px 0;
+    padding: 5px 0;
     cursor: pointer;
     z-index: 2000;
     font-size: 14px;
     font-weight: 600;
-    padding: 5px;
 
     &:hover, &.selected {
         background-color: $highlight01;

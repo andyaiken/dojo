@@ -52,7 +52,7 @@ export default class FilterPanel extends React.Component<Props> {
             }
 
             return (
-                <div>
+                <div style={{ marginTop: '-5px' }}>
                     <Textbox
                         text={this.props.filter.name}
                         placeholder='name'

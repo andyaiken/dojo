@@ -36,7 +36,7 @@ export default class MapListScreen extends React.Component<Props> {
 
             return (
                 <Row className='full-height'>
-                    <Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar left'>
+                    <Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar sidebar-left'>
                         <Note>
                             <div className='section'>on this page you can set up tactical maps</div>
                             <div className='section'>when you have created a map you can use it in the combat manager</div>

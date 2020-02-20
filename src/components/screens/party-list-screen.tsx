@@ -35,7 +35,7 @@ export default class PartyListScreen extends React.Component<Props> {
 
             return (
                 <Row className='full-height'>
-                    <Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar left'>
+                    <Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar sidebar-left'>
                         <Note>
                             <div className='section'>this page is where you can tell dojo all about your pcs</div>
                             <div className='section'>you can add a party for each of your gaming groups</div>

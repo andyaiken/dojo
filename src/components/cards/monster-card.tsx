@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Icon } from 'antd';
+
 import Frankenstein from '../../utils/frankenstein';
 import Utils from '../../utils/utils';
 
@@ -413,8 +415,8 @@ export default class MonsterCard extends React.Component<Props, State> {
             if (this.props.mode.indexOf('template') !== -1) {
                 if (this.props.mode.indexOf('overview') !== -1) {
                     stats = (
-                        <div>
-                        <PortraitPanel source={this.props.monster} />
+                        <div className='stats'>
+                            <PortraitPanel source={this.props.monster} />
                             <div className='section centered'>
                                 <i>{this.description()}</i>
                             </div>
@@ -436,7 +438,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                 }
                 if (this.props.mode.indexOf('abilities') !== -1) {
                     stats = (
-                        <div>
+                        <div className='stats'>
                             <div className='section'>
                                 <AbilityScorePanel combatant={this.props.monster} />
                             </div>
@@ -451,7 +453,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                 }
                 if (this.props.mode.indexOf('cbt-stats') !== -1) {
                     stats = (
-                        <div>
+                        <div className='stats'>
                             <div className='section'>
                                 <b>ac</b> {this.props.monster.ac}
                             </div>
@@ -488,7 +490,16 @@ export default class MonsterCard extends React.Component<Props, State> {
             if (this.props.mode.indexOf('combat') !== -1) {
                 // Don't show toggle button for combatant
             } else if (this.props.mode.indexOf('template') !== -1) {
-                // Don't show toggle button for template
+                if (this.props.mode.indexOf('add-button') !== -1) {
+                    toggle = (
+                        <Icon type='plus-circle' onClick={() => this.props.selectMonster(this.props.monster)} />
+                    );
+                }
+                if (this.props.mode.indexOf('remove-button') !== -1) {
+                    toggle = (
+                        <Icon type='minus-circle' onClick={() => this.props.deselectMonster(this.props.monster)} />
+                    );
+                }
             } else if (this.props.mode.indexOf('view full') !== -1) {
                 // Don't show toggle button if we're in 'full' mode
             } else {

@@ -37,7 +37,7 @@ interface State {
     page: 'overview' | 'abilities' | 'cbt-stats' | 'actions';
     showFilter: boolean;
     helpSection: string;
-    sidebar: 'similar' | 'scratchpad';
+    sidebar: 'similar' | 'all';
     similarFilter: {
         size: boolean,
         type: boolean,
@@ -100,7 +100,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         });
     }
 
-    private addToScratchpadList(monster: Monster) {
+    private addToScratchpad(monster: Monster) {
         const list = this.state.scratchpadList;
         list.push(monster);
         Utils.sort(list);
@@ -109,11 +109,26 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         });
     }
 
-    private removeFromScratchpadList(monster: Monster) {
+    private removeFromScratchpad(monster: Monster) {
         const index = this.state.scratchpadList.indexOf(monster);
         this.state.scratchpadList.splice(index, 1);
         this.setState({
             scratchpadList: this.state.scratchpadList
+        });
+    }
+
+    private addAllToScratchpad(monsters: Monster[]) {
+        const list = this.state.scratchpadList;
+        monsters.forEach(m => list.push(m));
+        Utils.sort(list);
+        this.setState({
+            scratchpadList: list
+        });
+    }
+
+    private clearScratchpad() {
+        this.setState({
+            scratchpadList: []
         });
     }
 
@@ -135,7 +150,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         }
     }
 
-    private getMonsters() {
+    private getSimilarMonsters() {
         const monsters: Monster[] = [];
         this.props.library.forEach(group => {
             group.monsters.forEach(monster => {
@@ -475,46 +490,21 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
         );
     }
 
-    private getMonsterCards(monsters: Monster[]) {
+    private getMonsterCards(monsters: Monster[], showAddButton: boolean) {
         const sorted = Utils.sort(monsters);
-        const monsterCards = sorted.map(m => {
+        return sorted.map(m => {
             return (
                 <div className='section' key={m.id}>
                     <MonsterCard
                         monster={m}
-                        mode={'template ' + this.state.page}
+                        mode={'template ' + this.state.page + ' ' + (showAddButton ? 'add-button' : 'remove-button')}
                         copyTrait={trait => this.copyTrait(trait)}
+                        selectMonster={monster => this.addToScratchpad(monster)}
+                        deselectMonster={monster => this.removeFromScratchpad(monster)}
                     />
                 </div>
             );
         }).filter(m => !!m);
-
-        if (monsterCards.length === 0) {
-            let info = '';
-            switch (this.state.sidebar) {
-                case 'similar':
-                    info = 'there are no monsters in your library which match the above criteria';
-                    break;
-                case 'scratchpad':
-                    info = 'your scratchpad list is empty; you can add monsters to it to see their stats here';
-                    break;
-            }
-
-            /* tslint:disable:max-line-length */
-            return (
-                <Note>
-                    <div className='section'>{info}</div>
-                    <div className='divider'/>
-                    <div className='section'>when there are monsters shown in this sidebar, you will see their combined stats on the left</div>
-                    <div className='section'>
-                        you can also quickly blend together all the monters in this list to create a new monster by clicking the <b>generate hybrid monster</b> button above
-                    </div>
-                </Note>
-            );
-            /* tslint:enable:max-line-length */
-        }
-
-        return monsterCards;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -544,13 +534,21 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             if (this.props.showSidebar) {
                 switch (this.state.sidebar) {
                     case 'similar':
-                        monsters = this.getMonsters();
+                        monsters = this.getSimilarMonsters();
                         break;
-                    case 'scratchpad':
-                        monsters = this.state.scratchpadList;
+                    case 'all':
+                        this.props.library.forEach(group => {
+                            group.monsters.forEach(m => {
+                                if (!monsters.includes(m) && this.matchMonster(m)) {
+                                    monsters.push(m);
+                                }
+                            });
+                        });
                         break;
                 }
             }
+            monsters = monsters.filter(m => !this.state.scratchpadList.find(lm => lm.id === m.id));
+            Utils.sort(monsters);
 
             let content = null;
             switch (this.state.page) {
@@ -599,7 +597,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             }
 
             let help = null;
-            if (this.props.showSidebar && (monsters.length > 1)) {
+            if (this.props.showSidebar && (this.state.scratchpadList.length > 0)) {
                 let selector = null;
                 if (this.getHelpOptionsForPage(this.state.page).length > 1) {
                     const options = this.getHelpOptionsForPage(this.state.page).map(s => {
@@ -623,9 +621,9 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
                 help = (
                     <div className='monster-help group-panel'>
-                        <div className='heading'>information from sidebar monsters</div>
+                        <div className='heading'>information from scratchpad monsters</div>
                         {selector}
-                        {this.getHelpSection(monsters)}
+                        {this.getHelpSection(this.state.scratchpadList)}
                     </div>
                 );
             }
@@ -667,51 +665,14 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                             </Expander>
                         );
                         break;
-                    case 'scratchpad':
-                        {
-                            const searchResults: Monster[] = [];
-                            this.props.library.forEach(group => {
-                                group.monsters.forEach(m => {
-                                    if (!monsters.includes(m) && this.matchMonster(m)) {
-                                        searchResults.push(m);
-                                    }
-                                });
-                            });
-                            Utils.sort(searchResults);
-                            let resultsRows = searchResults.map(m =>
-                                <button key={m.id} onClick={() => this.addToScratchpadList(m)}>{m.name}</button>
-                            );
-                            if (searchResults.length === 0) {
-                                resultsRows = [(
-                                    <Note key='none'>no monsters found</Note>
-                                )];
-                            }
-                            let removeSection = null;
-                            if (monsters.length > 0) {
-                                const deleteRows = monsters.map(m =>
-                                    <button key={m.id} onClick={() => this.removeFromScratchpadList(m)}>{m.name}</button>
-                                );
-                                removeSection = (
-                                    <Expander text='remove monsters from the list'>
-                                        {deleteRows}
-                                    </Expander>
-                                );
-                            }
-                            sidebarContent = (
-                                <div>
-                                    <Expander text='add monsters to the list'>
-                                        <FilterPanel
-                                            filter={this.state.scratchpadFilter}
-                                            changeValue={(type, value) => this.changeFilterValue(type, value)}
-                                            resetFilter={() => this.resetFilter()}
-                                        />
-                                        <div className='divider' />
-                                        {resultsRows}
-                                    </Expander>
-                                    {removeSection}
-                                </div>
-                            );
-                        }
+                    case 'all':
+                        sidebarContent = (
+                            <FilterPanel
+                                filter={this.state.scratchpadFilter}
+                                changeValue={(type, value) => this.changeFilterValue(type, value)}
+                                resetFilter={() => this.resetFilter()}
+                            />
+                        );
                         break;
                 }
                 const sidebarOptions = [
@@ -720,24 +681,84 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         text: 'similar'
                     },
                     {
-                        id: 'scratchpad',
-                        text: 'scratchpad'
+                        id: 'all',
+                        text: 'all'
                     }
                 ];
+                let emptyScratchpadNote = null;
+                if (this.state.scratchpadList.length === 0) {
+                    /* tslint:disable:max-line-length */
+                    emptyScratchpadNote = (
+                        <Note>
+                            <div className='section'>
+                                this is your <b>scratchpad</b> list; you can add monsters to it from the list to the right
+                            </div>
+                            <div className='section'>
+                                you might find this useful if you're creating a monster and want it to have similar abilities to other monsters
+                            </div>
+                            <div className='section'>
+                                when there are monsters in this list, their combined stats will be shown on the left
+                            </div>
+                            <div className='section'>
+                                you can also quickly blend together all the monters in this list to create a new monster by clicking the <b>generate hybrid monster</b> button above
+                            </div>
+                        </Note>
+                    );
+                    /* tslint:enable:max-line-length */
+                }
+                let emptyListNote = null;
+                if (monsters.length === 0) {
+                    emptyListNote = (
+                        <Note>
+                            <div className='section'>
+                                there are no monsters in your library which match the above criteria (or they are all in your scratchpad already)
+                            </div>
+                        </Note>
+                    );
+                }
                 sidebar = (
-                    <Col span={8} className='scrollable sidebar right'>
-                        <Tabs
-                            options={sidebarOptions}
-                            selectedID={this.state.sidebar}
-                            select={optionID => this.setState({sidebar: optionID as 'similar' | 'scratchpad'})}
-                        />
-                        {sidebarContent}
-                        <div className='divider'/>
-                        <button className={monsters.length < 2 ? 'disabled' : ''} onClick={() => this.spliceMonsters(monsters)}>
-                            generate hybrid monster
-                        </button>
-                        <div className='divider'/>
-                        {this.getMonsterCards(monsters)}
+                    <Col span={12} className='scrollable sidebar sidebar-right'>
+                        <Row gutter={5}>
+                            <Col span={12}>
+                                <Tabs
+                                    options={[{ id: 'scratch', text: 'scratchpad' }]}
+                                    selectedID={'scratch'}
+                                    select={() => null}
+                                />
+                                <button
+                                    className={this.state.scratchpadList.length < 2 ? 'disabled' : ''}
+                                    onClick={() => this.spliceMonsters(this.state.scratchpadList)}
+                                >
+                                    generate hybrid monster
+                                </button>
+                                <button
+                                    className={monsters.length === 0 ? 'disabled' : ''}
+                                    onClick={() => this.addAllToScratchpad(monsters)}
+                                >
+                                    add all from right
+                                </button>
+                                <button
+                                    className={this.state.scratchpadList.length === 0 ? 'disabled' : ''}
+                                    onClick={() => this.clearScratchpad()}
+                                >
+                                    clear scratchpad
+                                </button>
+                                <div className='divider'/>
+                                {this.getMonsterCards(this.state.scratchpadList, false)}
+                                {emptyScratchpadNote}
+                            </Col>
+                            <Col span={12}>
+                                <Tabs
+                                    options={sidebarOptions}
+                                    selectedID={this.state.sidebar}
+                                    select={optionID => this.setState({sidebar: optionID as 'similar' | 'all'})}
+                                />
+                                {sidebarContent}
+                                <div className='divider'/>
+                                {this.getMonsterCards(monsters, true)}
+                                {emptyListNote}
+                            </Col>
+                        </Row>
                     </Col>
                 );
             } else {
@@ -788,7 +809,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                 }
 
                 sidebar = (
-                    <Col span={8} className='scrollable sidebar right' style={{ padding: '5px' }}>
+                    <Col span={12} className='scrollable sidebar sidebar-right' style={{ padding: '5px' }}>
                         {stats}
                         {stats ? <div className='divider' /> : null}
                         <MonsterCard
@@ -801,7 +822,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
             return (
                 <Row className='full-height'>
-                    <Col span={16} className='scrollable'>
+                    <Col span={12} className='scrollable'>
                         <Tabs
                             options={pages}
                             selectedID={this.state.page}
@@ -843,7 +864,7 @@ class OverviewTab extends React.Component<OverviewTabProps> {
 
             return (
                 <Row gutter={10} key='overview'>
-                    <Col span={12}>
+                    <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                         <div className='subheading'>name</div>
                         <Textbox
                             text={this.props.monster.name}
@@ -880,7 +901,7 @@ class OverviewTab extends React.Component<OverviewTabProps> {
                             nudgeValue={delta => this.props.nudgeValue('challenge', delta)}
                         />
                     </Col>
-                    <Col span={12}>
+                    <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                         <div className='subheading'>speed</div>
                         <Textbox
                             text={this.props.monster.speed}
@@ -928,7 +949,7 @@ class AbilitiesTab extends React.Component<AbilitiesTabProps> {
         try {
             return (
                 <Row gutter={10} key='abilities'>
-                    <Col span={12}>
+                    <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                         <div className='subheading'>ability scores</div>
                         <AbilityScorePanel
                             edit={true}
@@ -936,7 +957,7 @@ class AbilitiesTab extends React.Component<AbilitiesTabProps> {
                             nudgeValue={(source, type, delta) => this.props.nudgeValue(type, delta)}
                         />
                     </Col>
-                    <Col span={12}>
+                    <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                         <div className='subheading'>saving throws</div>
                         <Textbox
                             text={this.props.monster.savingThrows}
@@ -968,7 +989,7 @@ class CombatTab extends React.Component<CombatTabProps> {
         try {
             return (
                 <Row gutter={10} key='cbt-stats'>
-                    <Col span={12}>
+                    <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                         <div className='subheading'>armor class</div>
                         <NumberSpin
                             source={this.props.monster}
@@ -985,7 +1006,7 @@ class CombatTab extends React.Component<CombatTabProps> {
                         <div className='subheading'>hit points</div>
                         <div className='hp-value'>{this.props.monster.hpMax} hp</div>
                     </Col>
-                    <Col span={12}>
+                    <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                         <div className='subheading'>damage resistances</div>
                         <Textbox
                             text={this.props.monster.damage.resist}
@@ -1068,13 +1089,10 @@ class TraitsTab extends React.Component<TraitsTabProps, TraitsTabState> {
 
     private createSection(traitsByType: { [id: string]: Trait[] }, type: string) {
         const traits = traitsByType[type];
-        if (traits.length === 0) {
-            return null;
-        }
 
         return (
             <div>
-                <div className='section heading'>{Utils.traitType(type, true)}</div>
+                <div className='section subheading'>{Utils.traitType(type, true)}</div>
                 <List
                     values={traits}
                     lockVertically={true}
@@ -1086,6 +1104,9 @@ class TraitsTab extends React.Component<TraitsTabProps, TraitsTabState> {
                         </div>
                     )}
                 />
+                <button onClick={() => this.props.addTrait(type as 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'lair')}>
+                    add a new {type}
+                </button>
             </div>
         );
     }
@@ -1118,12 +1139,7 @@ class TraitsTab extends React.Component<TraitsTabProps, TraitsTabState> {
 
             return (
                 <Row gutter={10}>
-                    <Col span={12}>
-                        <Dropdown
-                            options={options}
-                            placeholder='add a new...'
-                            select={id => this.props.addTrait(id as 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'lair')}
-                        />
+                    <Col span={10}>
                         {this.createSection(traitsByType, 'trait')}
                         {this.createSection(traitsByType, 'action')}
                         {this.createSection(traitsByType, 'bonus')}
@@ -1131,7 +1147,7 @@ class TraitsTab extends React.Component<TraitsTabProps, TraitsTabState> {
                         {this.createSection(traitsByType, 'legendary')}
                         {this.createSection(traitsByType, 'lair')}
                     </Col>
-                    <Col span={12}>
+                    <Col span={14}>
                         {selection}
                     </Col>
                 </Row>
@@ -1192,7 +1208,7 @@ class TraitEditorPanel extends React.Component<TraitEditorPanelProps> {
                     <Textbox
                         text={this.props.trait.text}
                         placeholder='details'
-                        minLines={5}
+                        minLines={10}
                         maxLines={20}
                         onChange={value => this.props.changeValue(this.props.trait, 'text', value)}
                     />
