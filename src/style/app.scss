@@ -269,6 +269,10 @@ button {
     right: 13px;
 }
 
+.ant-collapse-item-active:hover .ant-collapse-header {
+    background-color: $highlight01;
+}
+
 .ant-slider {
     margin: 10px 5px;
 }
@@ -798,7 +802,7 @@ body,
                     top: 5px;
                     right: 5px;
                     cursor: pointer;
-                    font-size: 15px;
+                    font-size: 16px;
 
                     &:hover {
                         background-color: $highlight02;

@@ -20,6 +20,7 @@ interface Props {
     addMonster: () => void;
     importMonster: () => void;
     removeMonster: (monster: Monster) => void;
+    viewMonster: (monster: Monster) => void;
     editMonster: (monster: Monster) => void;
     cloneMonster: (monster: Monster, name: string) => void;
     moveToGroup: (monster: Monster, groupID: string) => void;
@@ -43,6 +44,7 @@ export default class MonsterScreen extends React.Component<Props> {
                             nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
                             moveToGroup={(monster, groupID) => this.props.moveToGroup(monster, groupID)}
                             removeMonster={monster => this.props.removeMonster(monster)}
+                            viewMonster={monster => this.props.viewMonster(monster)}
                             editMonster={monster => this.props.editMonster(monster)}
                             cloneMonster={(monster, monsterName) => this.props.cloneMonster(monster, monsterName)}
                         />

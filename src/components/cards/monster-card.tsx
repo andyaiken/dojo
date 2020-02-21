@@ -28,6 +28,7 @@ interface Props {
     changeValue: (monster: any, field: string, value: any) => void;
     nudgeValue: (source: any, field: string, delta: number) => void;
     // Library
+    viewMonster: (monster: Monster) => void;
     editMonster: (monster: Monster) => void;
     removeMonster: (monster: Monster) => void;
     cloneMonster: (monster: Monster, name: string) => void;
@@ -55,6 +56,7 @@ export default class MonsterCard extends React.Component<Props, State> {
         library: null,
         changeValue: null,
         nudgeValue: null,
+        viewMonster: null,
         editMonster: null,
         removeMonster: null,
         cloneMonster: null,
@@ -174,6 +176,10 @@ export default class MonsterCard extends React.Component<Props, State> {
         const options = [];
 
         if (this.props.mode.indexOf('editable') !== -1) {
+            options.push(
+                <button key='view' onClick={() => this.props.viewMonster(this.props.monster)}>view monster</button>
+            );
+
             options.push(
                 <button key='edit' onClick={() => this.props.editMonster(this.props.monster)}>edit monster</button>
             );

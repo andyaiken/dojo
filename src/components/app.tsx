@@ -1863,8 +1863,8 @@ export default class App extends React.Component<Props, State> {
                             editPC={pc => this.editPC(pc)}
                             importPC={pc => this.importPC(pc)}
                             removePC={pc => this.removePC(pc)}
-                            changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
-                            nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
+                            changeValue={(pc, type, value) => this.changeValue(pc, type, value)}
+                            nudgeValue={(pc, type, delta) => this.nudgeValue(pc, type, delta)}
                         />
                     );
                 } else {
@@ -1889,11 +1889,12 @@ export default class App extends React.Component<Props, State> {
                             addMonster={() => this.editMonster(null)}
                             importMonster={() => this.importMonster()}
                             removeMonster={monster => this.removeMonster(monster)}
-                            changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
-                            nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
-                            editMonster={combatant => this.editMonster(combatant)}
-                            cloneMonster={(combatant, name) => this.cloneMonster(combatant, name)}
-                            moveToGroup={(combatant, groupID) => this.moveToGroup(combatant, groupID)}
+                            changeValue={(monster, type, value) => this.changeValue(monster, type, value)}
+                            nudgeValue={(monster, type, delta) => this.nudgeValue(monster, type, delta)}
+                            viewMonster={monster => this.setState({drawer: { type: 'monster-stat-block', monster: monster }})}
+                            editMonster={monster => this.editMonster(monster)}
+                            cloneMonster={(monster, name) => this.cloneMonster(monster, name)}
+                            moveToGroup={(monster, groupID) => this.moveToGroup(monster, groupID)}
                         />
                     );
                 } else {
