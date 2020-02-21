@@ -13,7 +13,7 @@ export default class MonsterInfoModal extends React.Component<Props> {
         try {
             return (
                 <div className='scrollable' style={{ padding: '10px' }}>
-                    <MonsterCard monster={this.props.monster} mode='view full'/>
+                    <MonsterCard monster={this.props.monster} />
                 </div>
             );
         } catch (ex) {

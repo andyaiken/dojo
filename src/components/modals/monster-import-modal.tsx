@@ -67,7 +67,7 @@ export default class MonsterImportModal extends React.Component<Props, State> {
                         <button onClick={() => this.analyse()}>analyse</button>
                     </Col>
                     <Col span={12} className='scrollable' style={{ padding: '5px' }}>
-                        <MonsterCard monster={this.state.monster} mode='view full' />
+                        <MonsterCard monster={this.state.monster} />
                     </Col>
                 </Row>
             );

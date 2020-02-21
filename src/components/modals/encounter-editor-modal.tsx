@@ -247,7 +247,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
                         monster={monster}
                         slot={slot}
                         encounter={this.props.encounter}
-                        mode={'view encounter'}
+                        mode={'encounter'}
                         library={this.props.library}
                         nudgeValue={(source, type, delta) => this.nudgeValue(source, type, delta)}
                         removeEncounterSlot={s => this.removeEncounterSlot(s, waveID)}
@@ -312,7 +312,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
                     monster={monster}
                     encounter={this.props.encounter}
                     library={this.props.library}
-                    mode={'view encounter'}
+                    mode={'encounter'}
                     addEncounterSlot={(combatant, waveID) => this.addEncounterSlot(combatant, waveID)}
                 />
             );

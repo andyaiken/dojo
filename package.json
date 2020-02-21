@@ -1,6 +1,6 @@
 {
     "name": "dojo",
-    "version": "6.3.0",
+    "version": "6.3.1",
     "license": "MIT",
     "repository": "https://github.com/andyaiken/dojo.git",
     "homepage": "https://andyaiken.github.io/dojo/",
@@ -21,7 +21,7 @@
         "react-scripts": "^3.4.0",
         "tslint": "^5.20.1",
         "tslint-react": "^3.6.0",
-        "typescript": "^3.7.5"
+        "typescript": "^3.8.2"
     },
     "scripts": {
         "update": "npm update && npm update --save-dev",

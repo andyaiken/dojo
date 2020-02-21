@@ -2342,7 +2342,21 @@ export default class App extends React.Component<Props, State> {
                     </div>
                 </Drawer>
             );
-            const rightDrawer = this.getDrawer();
+
+            const drawer = this.getDrawer();
+            const rightDrawer = (
+                <Drawer
+                    closable={false}
+                    maskClosable={drawer.closable}
+                    width={drawer.width}
+                    visible={drawer.content !== null}
+                    onClose={() => this.closeDrawer()}
+                >
+                    <div className='drawer-header'><div className='app-title'>{drawer.header}</div></div>
+                    <div className='drawer-content'>{drawer.content}</div>
+                    <div className='drawer-footer'>{drawer.footer}</div>
+                </Drawer>
+            );
 
             return (
                 <div className='dojo'>
@@ -2352,17 +2366,7 @@ export default class App extends React.Component<Props, State> {
                     </div>
                     {footer}
                     {leftDrawer}
-                    <Drawer
-                        closable={false}
-                        maskClosable={rightDrawer.closable}
-                        width={rightDrawer.width}
-                        visible={rightDrawer.content !== null}
-                        onClose={() => this.closeDrawer()}
-                    >
-                        <div className='drawer-header'><div className='app-title'>{rightDrawer.header}</div></div>
-                        <div className='drawer-content'>{rightDrawer.content}</div>
-                        <div className='drawer-footer'>{rightDrawer.footer}</div>
-                    </Drawer>
+                    {rightDrawer}
                 </div>
             );
         } catch (e) {

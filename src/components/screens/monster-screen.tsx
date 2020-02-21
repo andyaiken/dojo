@@ -37,7 +37,7 @@ export default class MonsterScreen extends React.Component<Props> {
                     cards.push(
                         <MonsterCard
                             monster={m}
-                            mode={'view editable'}
+                            mode={'editable'}
                             library={this.props.library}
                             changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
                             nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
