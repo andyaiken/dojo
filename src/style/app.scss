@@ -292,6 +292,20 @@ button {
     }
 }
 
+.ant-slider, .ant-slider:hover {
+    .ant-slider-track {
+        background-color: $highlight !important;
+    }
+
+    .ant-slider-handle {
+        border-color: $highlight !important;
+
+        &:focus {
+            box-shadow: 0 0 0 5px $highlight02;
+        }
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Helper classes
 
