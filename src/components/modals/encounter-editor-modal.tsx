@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Row } from 'antd';
+import { Col, InputNumber, Row } from 'antd';
 
 import Factory from '../../utils/factory';
 import Napoleon from '../../utils/napoleon';
@@ -12,8 +12,6 @@ import { Party } from '../../models/party';
 import MonsterCard from '../cards/monster-card';
 import ConfirmButton from '../controls/confirm-button';
 import Expander from '../controls/expander';
-import NumberSpin from '../controls/number-spin';
-import Selector from '../controls/selector';
 import Textbox from '../controls/textbox';
 import DifficultyChartPanel from '../panels/difficulty-chart-panel';
 import FilterPanel from '../panels/filter-panel';
@@ -31,7 +29,6 @@ interface State {
     encounter: Encounter;
     filter: MonsterFilter;
     randomEncounterXP: number;
-    randomEncounterStep: number;
 }
 
 export default class EncounterEditorModal extends React.Component<Props, State> {
@@ -41,20 +38,13 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
         this.state = {
             encounter: props.encounter,
             filter: Factory.createMonsterFilter(),
-            randomEncounterXP: 100,
-            randomEncounterStep: 100
+            randomEncounterXP: 1000
         };
     }
 
     private setRandomEncounterXP(value: number) {
         this.setState({
             randomEncounterXP: Math.max(0, value)
-        });
-    }
-
-    private setRandomEncounterStep(value: number) {
-        this.setState({
-            randomEncounterStep: value
         });
     }
 
@@ -391,19 +381,12 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
                         <div className='divider' />
                         <div className='section'>
                             <Expander text='build a random encounter'>
-                                <p>add random monsters to this encounter until its adjusted xp value is at least the following value</p>
-                                <NumberSpin
-                                    source={this.state}
-                                    name='randomEncounterXP'
-                                    label='xp'
-                                    nudgeValue={delta => this.setRandomEncounterXP(this.state.randomEncounterXP + (delta * this.state.randomEncounterStep))}
-                                />
-                                <Selector
-                                    options={['10', '100', '1000'].map(t => {
-                                        return { id: t, text: t };
-                                    })}
-                                    selectedID={this.state.randomEncounterStep.toString()}
-                                    select={optionID => this.setRandomEncounterStep(Number.parseInt(optionID, 10))}
+                                <p>add random monsters to this encounter until its (effective)) xp value is at least the following value</p>
+                                <InputNumber
+                                    value={this.state.randomEncounterXP}
+                                    min={0}
+                                    step={1000}
+                                    onChange={value => this.setRandomEncounterXP(value || 0)}
                                 />
                                 <button onClick={() => this.buildEncounter()}>build encounter</button>
                             </Expander>

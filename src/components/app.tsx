@@ -19,6 +19,7 @@ import AboutModal from './modals/about-modal';
 import AddCombatantsModal from './modals/add-combatants-modal';
 import CombatStartModal from './modals/combat-start-modal';
 import ConditionModal from './modals/condition-modal';
+import DemographicsModal from './modals/demographics-modal';
 import EncounterEditorModal from './modals/encounter-editor-modal';
 import LeaderboardModal from './modals/leaderboard-modal';
 import MapEditorModal from './modals/map-editor-modal';
@@ -658,6 +659,15 @@ export default class App extends React.Component<Props, State> {
                 }
             });
         }
+    }
+
+    private openDemographics(group: MonsterGroup | null) {
+        this.setState({
+            drawer: {
+                type: 'monster-demographics',
+                group: group
+            }
+        });
     }
 
     //#endregion
@@ -1886,6 +1896,7 @@ export default class App extends React.Component<Props, State> {
                             library={this.state.library}
                             goBack={() => this.selectMonsterGroup(null)}
                             removeMonsterGroup={() => this.removeCurrentMonsterGroup()}
+                            openDemographics={group => this.openDemographics(group)}
                             addMonster={() => this.editMonster(null)}
                             importMonster={() => this.importMonster()}
                             removeMonster={monster => this.removeMonster(monster)}
@@ -1907,6 +1918,7 @@ export default class App extends React.Component<Props, State> {
                             deleteMonsterGroup={group => this.removeMonsterGroup(group)}
                             addOpenGameContent={() => this.addOpenGameContent()}
                             openStatBlock={(groupName, monsterName) => this.openMonsterInfoModal(groupName, monsterName)}
+                            openDemographics={group => this.openDemographics(group)}
                         />
                     );
                 }
@@ -2099,6 +2111,15 @@ export default class App extends React.Component<Props, State> {
                             accept monster
                         </button>
                     );
+                    closable = true;
+                    break;
+                case 'monster-demographics':
+                    content = (
+                        <DemographicsModal
+                            groups={this.state.drawer.group ? [this.state.drawer.group] : this.state.library}
+                        />
+                    );
+                    header = 'demographics';
                     closable = true;
                     break;
                 case 'encounter':

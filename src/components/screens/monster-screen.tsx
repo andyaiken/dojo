@@ -17,6 +17,7 @@ interface Props {
     library: MonsterGroup[];
     goBack: () => void;
     removeMonsterGroup: () => void;
+    openDemographics: (group: MonsterGroup) => void;
     addMonster: () => void;
     importMonster: () => void;
     removeMonster: (monster: Monster) => void;
@@ -66,6 +67,7 @@ export default class MonsterScreen extends React.Component<Props> {
                             importMonster={() => this.props.importMonster()}
                             changeValue={(type, value) => this.props.changeValue(this.props.monsterGroup, type, value)}
                             removeMonsterGroup={() => this.props.removeMonsterGroup()}
+                            openDemographics={() => this.props.openDemographics(this.props.monsterGroup)}
                         />
                     </Col>
                     <Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
@@ -90,6 +92,7 @@ interface MonsterInfoProps {
     addMonster: () => void;
     importMonster: () => void;
     removeMonsterGroup: () => void;
+    openDemographics: () => void;
 }
 
 class MonsterInfo extends React.Component<MonsterInfoProps> {
@@ -115,6 +118,12 @@ class MonsterInfo extends React.Component<MonsterInfoProps> {
 
         return (
             <div className='group-panel'>
+                <div className='section'>
+                    <div className='subheading'>monsters</div>
+                </div>
+                <div className='section'>
+                    {this.props.monsterGroup.monsters.length}
+                </div>
                 <div className='section'>
                     <div className='subheading'>challenge rating</div>
                 </div>
@@ -143,6 +152,7 @@ class MonsterInfo extends React.Component<MonsterInfoProps> {
                     <div className='section'>
                         <button onClick={() => this.props.addMonster()}>add a new monster</button>
                         <button onClick={() => this.props.importMonster()}>import a monster</button>
+                        <button onClick={() => this.props.openDemographics()}>show demographics</button>
                         <ConfirmButton text='delete group' callback={() => this.props.removeMonsterGroup()} />
                         <div className='divider' />
                         <button onClick={() => this.props.goBack()}><Icon type='caret-left' style={{ fontSize: '10px' }} /> back to the list</button>

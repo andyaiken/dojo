@@ -31,7 +31,7 @@ export default class PCCard extends React.Component<Props> {
             if (this.props.mode.indexOf('edit') !== -1) {
                 options.push(<button key='edit' onClick={() => this.props.editPC(this.props.pc)}>edit pc</button>);
                 if (this.props.pc.url) {
-                    options.push(<button key='import' onClick={() => this.props.importPC(this.props.pc)}>update from d&amp;d beyond</button>);
+                    options.push(<button key='import' onClick={() => this.props.importPC(this.props.pc)}>update pc from d&amp;d beyond</button>);
                 }
                 if (this.props.pc.active) {
                     options.push(

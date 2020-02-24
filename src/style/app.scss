@@ -306,6 +306,23 @@ button {
     }
 }
 
+.ant-input-number {
+    width: 100%;
+    border-radius: 0;
+    border-left-width: 5px;
+    border-color: $control-border;
+    color: $foreground;
+
+    &:hover {
+        border-color: $highlight;
+    }
+
+    .ant-input-number-handler:hover .ant-input-number-handler-up-inner,
+    .ant-input-number-handler:hover .ant-input-number-handler-down-inner {
+        color: $highlight;
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Helper classes
 
@@ -593,10 +610,9 @@ body,
     }
 
     .title-bar-icon {
-        padding: 5px;
-        margin: 10px 5px;
+        padding: 10px;
+        margin: 5px;
         font-size: 20px;
-        border-radius: 50%;
         cursor: pointer;
 
         &:hover {
@@ -1558,31 +1574,6 @@ body,
         vertical-align: top;
         height: 20px;
         line-height: 20px;
-    }
-}
-
-.breakdown-bar {
-    padding-right: 5px;
-
-    .bar-text {
-        width: 60%;
-        height: 22px;
-        line-height: 22px;
-        display: inline-block;
-        vertical-align: middle;
-    }
-
-    .bar-value-container {
-        width: 40%;
-        height: 22px;
-        display: inline-block;
-        vertical-align: middle;
-
-        .bar-value {
-            height: 22px;
-            background-color: lightsteelblue;
-            border-right: 1px solid steelblue;
-        }
     }
 }
 

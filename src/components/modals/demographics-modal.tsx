@@ -8,14 +8,14 @@ import Selector from '../controls/selector';
 import ChartPanel from '../panels/chart-panel';
 
 interface Props {
-    library: MonsterGroup[];
+    groups: MonsterGroup[];
 }
 
 interface State {
     chart: string;
 }
 
-export default class DemographicsTool extends React.Component<Props, State> {
+export default class DemographicsModal extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -32,7 +32,7 @@ export default class DemographicsTool extends React.Component<Props, State> {
     public render() {
         try {
             const allMonsters: Monster[] = [];
-            this.props.library.forEach(group => group.monsters.forEach(monster => allMonsters.push(monster)));
+            this.props.groups.forEach(group => group.monsters.forEach(monster => allMonsters.push(monster)));
             if (allMonsters.length === 0) {
                 return null;
             }
@@ -87,7 +87,7 @@ export default class DemographicsTool extends React.Component<Props, State> {
             ];
 
             return (
-                <div>
+                <div className='scrollable' style={{ padding: '10px' }}>
                     <Selector
                         options={chartOptions}
                         selectedID={this.state.chart}

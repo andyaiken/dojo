@@ -3,9 +3,7 @@ import React from 'react';
 import { MonsterGroup } from '../../models/monster-group';
 
 import Selector from '../controls/selector';
-
 import BookTool from '../tools/book-tool';
-import DemographicsTool from '../tools/demographics-tool';
 import DieRollerTool from '../tools/die-roller-tool';
 import LanguageTool from '../tools/language-tool';
 import NameTool from '../tools/name-tool';
@@ -76,10 +74,6 @@ export default class ToolsModal extends React.Component<Props, State> {
                 {
                     id: 'oracle',
                     text: 'oracle'
-                },
-                {
-                    id: 'demographics',
-                    text: 'monster demographics'
                 }
             ];
 
@@ -130,10 +124,6 @@ export default class ToolsModal extends React.Component<Props, State> {
                         <OracleTool />
                     );
                     break;
-                case 'demographics':
-                    content = (
-                        <DemographicsTool library={this.props.library} />
-                    );
             }
 
             return (
