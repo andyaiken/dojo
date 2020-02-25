@@ -853,9 +853,6 @@ body,
     cursor: pointer;
 
     &.highlight {
-        cursor: default;
-        pointer-events: none;
-
         .header {
             background-color: black;
         }
@@ -1794,6 +1791,15 @@ body,
     &:hover {
         background-color: $highlight01;
     }
+}
+
+.multiple-combatant-row {
+    color: white;
+    background-color: #656565;
+    border-radius: 5px;
+    margin: 3px 0;
+    padding: 3px 5px;
+    position: relative;
 }
 
 .grabber {

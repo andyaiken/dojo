@@ -1168,14 +1168,16 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
-    private makeActive(combatant: Combatant) {
+    private makeActive(combatants: Combatant[]) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
-            const wasPending = combatant.pending;
+            const wasPending = combatants.some(c => c.pending);
 
-            combatant.pending = false;
-            combatant.active = true;
-            combatant.defeated = false;
+            combatants.forEach(c => {
+                c.pending = false;
+                c.active = true;
+                c.defeated = false;
+            });
 
             if (wasPending) {
                 this.sortCombatants(combat);
@@ -1187,30 +1189,33 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
-    private makeDefeated(combatant: Combatant) {
+    private makeDefeated(combatants: Combatant[]) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
-            combatant.pending = false;
-            combatant.active = false;
-            combatant.defeated = true;
+            combatants.forEach(c => {
+                c.pending = false;
+                c.active = false;
+                c.defeated = true;
 
-            if (combatant.type === 'monster') {
-                const current = combat.combatants.find(c => c.current);
-                if (current && (current.type === 'pc')) {
-                    const entry = Factory.createCombatReportEntry();
-                    entry.type = 'kill';
-                    entry.combatantID = current.id;
-                    combat.report.push(entry);
+                if (c.type === 'monster') {
+                    const current = combat.combatants.find(c => c.current);
+                    if (current && (current.type === 'pc')) {
+                        const entry = Factory.createCombatReportEntry();
+                        entry.type = 'kill';
+                        entry.combatantID = current.id;
+                        combat.report.push(entry);
+                    }
+
+                    // If this monster is on the map, remove them from it
+                    if (combat.map) {
+                        combat.map.items = combat.map.items.filter(item => item.id !== c.id);
+                    }
                 }
+            });
 
-                // If this monster is on the map, remove them from it
-                if (combat.map) {
-                    combat.map.items = combat.map.items.filter(item => item.id !== combatant.id);
-                }
-            }
-
-            if (combatant.current) {
-                this.endTurn(combatant);
+            const current = combatants.find(c => c.current);
+            if (current) {
+                this.endTurn(current);
             } else {
                 this.setState({
                     combats: this.state.combats
@@ -1308,19 +1313,21 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
-    private removeCombatant(combatant: Combatant) {
+    private removeCombatants(combatants: Combatant[]) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
-            const index = combat.combatants.indexOf(combatant);
-            combat.combatants.splice(index, 1);
+            combatants.forEach(c => {
+                const index = combat.combatants.indexOf(c);
+                combat.combatants.splice(index, 1);
 
-            if (combat.map) {
-                const item = combat.map.items.find(i => i.id === combatant.id);
-                if (item) {
-                    const n = combat.map.items.indexOf(item);
-                    combat.map.items.splice(n, 1);
+                if (combat.map) {
+                    const item = combat.map.items.find(i => i.id === c.id);
+                    if (item) {
+                        const n = combat.map.items.indexOf(item);
+                        combat.map.items.splice(n, 1);
+                    }
                 }
-            }
+            });
 
             this.setState({
                 combats: this.state.combats
@@ -1351,56 +1358,60 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
-    private mapMove(id: string, dir: string) {
+    private mapMove(ids: string[], dir: string) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-        if (combat && combat.map) {
-            const item = combat.map.items.find(i => i.id === id);
-            if (item) {
-                switch (dir) {
-                    case 'N':
-                        item.y -= 1;
-                        break;
-                    case 'NE':
-                        item.x += 1;
-                        item.y -= 1;
-                        break;
-                    case 'E':
-                        item.x += 1;
-                        break;
-                    case 'SE':
-                        item.x += 1;
-                        item.y += 1;
-                        break;
-                    case 'S':
-                        item.y += 1;
-                        break;
-                    case 'SW':
-                        item.x -= 1;
-                        item.y += 1;
-                        break;
-                    case 'W':
-                        item.x -= 1;
-                        break;
-                    case 'NW':
-                        item.x -= 1;
-                        item.y -= 1;
-                        break;
-                    default:
-                        // Do nothing
-                        break;
-                }
+        if (combat) {
+            ids.forEach(id => {
+                if (combat.map) {
+                    const item = combat.map.items.find(i => i.id === id);
+                    if (item) {
+                        switch (dir) {
+                            case 'N':
+                                item.y -= 1;
+                                break;
+                            case 'NE':
+                                item.x += 1;
+                                item.y -= 1;
+                                break;
+                            case 'E':
+                                item.x += 1;
+                                break;
+                            case 'SE':
+                                item.x += 1;
+                                item.y += 1;
+                                break;
+                            case 'S':
+                                item.y += 1;
+                                break;
+                            case 'SW':
+                                item.x -= 1;
+                                item.y += 1;
+                                break;
+                            case 'W':
+                                item.x -= 1;
+                                break;
+                            case 'NW':
+                                item.x -= 1;
+                                item.y -= 1;
+                                break;
+                            default:
+                                // Do nothing
+                                break;
+                        }
 
-                if (item.type === 'pc') {
-                    const entry = Factory.createCombatReportEntry();
-                    entry.type = 'movement';
-                    entry.combatantID = item.id;
-                    combat.report.push(entry);
+                        if (item.type === 'pc') {
+                            const entry = Factory.createCombatReportEntry();
+                            entry.type = 'movement';
+                            entry.combatantID = item.id;
+                            combat.report.push(entry);
+                        }
+                    }
                 }
+            });
 
-                this.setState({
-                    combats: this.state.combats
-                });
-            }
+            this.setState({
+                combats: this.state.combats
+            });
         }
     }
 
@@ -1463,18 +1474,22 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
-    private mapRemove(id: string) {
+    private mapRemove(ids: string[]) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-        if (combat && combat.map) {
-            const item = combat.map.items.find(i => i.id === id);
-            if (item) {
-                const index = combat.map.items.indexOf(item);
-                combat.map.items.splice(index, 1);
+        if (combat) {
+            ids.forEach(id => {
+                if (combat.map) {
+                    const item = combat.map.items.find(i => i.id === id);
+                    if (item) {
+                        const index = combat.map.items.indexOf(item);
+                        combat.map.items.splice(index, 1);
+                    }
+                }
+            });
 
-                this.setState({
-                    combats: this.state.combats
-                });
-            }
+            this.setState({
+                combats: this.state.combats
+            });
         }
     }
 
@@ -1573,20 +1588,22 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
-    private changeHP(combatant: Combatant & Monster, hp: number, temp: number, damage: number) {
+    private changeHP(values: {monster: Combatant & Monster, hp: number, temp: number, damage: number}[]) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
-            combatant.hp = hp;
-            combatant.hpTemp = temp;
+            values.forEach(v => {
+                v.monster.hp = v.hp;
+                v.monster.hpTemp = v.temp;
 
-            const current = combat.combatants.find(c => c.current);
-            if (current && (current.type === 'pc')) {
-                const entry = Factory.createCombatReportEntry();
-                entry.type = 'damage';
-                entry.combatantID = current.id;
-                entry.value = damage;
-                combat.report.push(entry);
-            }
+                const current = combat.combatants.find(c => c.current);
+                if (current && (current.type === 'pc')) {
+                    const entry = Factory.createCombatReportEntry();
+                    entry.type = 'damage';
+                    entry.combatantID = current.id;
+                    entry.value = v.damage;
+                    combat.report.push(entry);
+                }
+            });
 
             this.setState({
                 combats: this.state.combats
@@ -1718,43 +1735,47 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
-    private toggleTag(combatant: Combatant, tag: string) {
-        if (combatant.tags.includes(tag)) {
-            combatant.tags = combatant.tags.filter(t => t !== tag);
-        } else {
-            combatant.tags.push(tag);
-        }
+    private toggleTag(combatants: Combatant[], tag: string) {
+        combatants.forEach(c => {
+            if (c.tags.includes(tag)) {
+                c.tags = c.tags.filter(t => t !== tag);
+            } else {
+                c.tags.push(tag);
+            }
+        });
 
         this.setState({
             combats: this.state.combats
         });
     }
 
-    private toggleCondition(combatant: Combatant, condition: string) {
+    private toggleCondition(combatants: Combatant[], condition: string) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
-            const existing = combatant.conditions.find(c => c.name === condition);
-            if (existing) {
-                this.removeCondition(combatant, existing.id);
-            } else {
-                const cnd = Factory.createCondition();
-                cnd.name = condition;
-                combatant.conditions.push(cnd);
+            combatants.forEach(c => {
+                const existing = c.conditions.find(c => c.name === condition);
+                if (existing) {
+                    this.removeCondition(c, existing.id);
+                } else {
+                    const cnd = Factory.createCondition();
+                    cnd.name = condition;
+                    c.conditions.push(cnd);
 
-                combatant.conditions = Utils.sort(combatant.conditions, [{ field: 'name', dir: 'asc' }]);
+                    c.conditions = Utils.sort(c.conditions, [{ field: 'name', dir: 'asc' }]);
 
-                const current = combat.combatants.find(c => c.current);
-                if (current && (current.type === 'pc')) {
-                    const entry = Factory.createCombatReportEntry();
-                    entry.type = 'condition-add';
-                    entry.combatantID = current.id;
-                    combat.report.push(entry);
+                    const current = combat.combatants.find(c => c.current);
+                    if (current && (current.type === 'pc')) {
+                        const entry = Factory.createCombatReportEntry();
+                        entry.type = 'condition-add';
+                        entry.combatantID = current.id;
+                        combat.report.push(entry);
+                    }
                 }
+            });
 
-                this.setState({
-                    combats: this.state.combats
-                });
-            }
+            this.setState({
+                combats: this.state.combats
+            });
         }
     }
 
@@ -1961,10 +1982,10 @@ export default class App extends React.Component<Props, State> {
                             nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                             makeCurrent={combatant => this.makeCurrent(combatant, false)}
-                            makeActive={combatant => this.makeActive(combatant)}
-                            makeDefeated={combatant => this.makeDefeated(combatant)}
+                            makeActive={combatants => this.makeActive(combatants)}
+                            makeDefeated={combatants => this.makeDefeated(combatants)}
                             moveCombatant={(oldIndex, newIndex) => this.moveCombatant(oldIndex, newIndex)}
-                            removeCombatant={combatant => this.removeCombatant(combatant)}
+                            removeCombatants={combatants => this.removeCombatants(combatants)}
                             addCombatants={() => this.addToEncounter()}
                             addCompanion={companion => this.addCompanionToCombat(companion)}
                             addPC={(partyID, pcID) => this.addPCToEncounter(partyID, pcID)}
@@ -1974,15 +1995,15 @@ export default class App extends React.Component<Props, State> {
                             removeCondition={(combatant, conditionID) => this.removeCondition(combatant, conditionID)}
                             mapAdd={(combatant, x, y) => this.mapAdd(combatant, x, y)}
                             mapResize={(id, dir, dir2) => this.mapResize(id, dir, dir2)}
-                            mapMove={(id, dir) => this.mapMove(id, dir)}
-                            mapRemove={id => this.mapRemove(id)}
+                            mapMove={(ids, dir) => this.mapMove(ids, dir)}
+                            mapRemove={ids => this.mapRemove(ids)}
                             mapAddNote={itemID => this.mapAddNote(itemID)}
                             mapRemoveNote={itemID => this.mapRemoveNote(itemID)}
                             endTurn={combatant => this.endTurn(combatant)}
-                            changeHP={(combatant, hp, temp, damage) => this.changeHP(combatant, hp, temp, damage)}
+                            changeHP={values => this.changeHP(values)}
                             closeNotification={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
-                            toggleTag={(combatant, tag) => this.toggleTag(combatant, tag)}
-                            toggleCondition={(combatant, condition) => this.toggleCondition(combatant, condition)}
+                            toggleTag={(combatants, tag) => this.toggleTag(combatants, tag)}
+                            toggleCondition={(combatants, condition) => this.toggleCondition(combatants, condition)}
                             scatterCombatants={type => this.scatterCombatants(type)}
                             rotateMap={() => this.rotateMap()}
                             addOverlay={overlay => this.addMapItem(overlay)}

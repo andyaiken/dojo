@@ -26,8 +26,8 @@ interface Props {
     floatingItem: MapItem | null;
     combatants: Combatant[];
     showOverlay: boolean;
-    selectedItemID: string;
-    setSelectedItemID: (itemID: string | null) => void;
+    selectedItemIDs: string[];
+    itemSelected: (itemID: string | null, ctrl: boolean) => void;
     gridSquareEntered: (x: number, y: number) => void;
     gridSquareClicked: (x: number, y: number) => void;
 }
@@ -55,8 +55,8 @@ export default class MapPanel extends React.Component<Props> {
         floatingItem: null,
         combatants: null,
         showOverlay: false,
-        selectedItemID: null,
-        setSelectedItemID: null,
+        selectedItemIDs: [],
+        itemSelected: null,
         gridSquareEntered: null,
         gridSquareClicked: null
     };
@@ -191,8 +191,8 @@ export default class MapPanel extends React.Component<Props> {
                             note={this.props.mode !== 'combat-player' ? Mercator.getNote(this.props.map, i) : null}
                             style={tileStyle}
                             selectable={this.props.mode === 'edit'}
-                            selected={this.props.selectedItemID === i.id}
-                            select={id => this.props.mode === 'edit' ? this.props.setSelectedItemID(id) : null}
+                            selected={this.props.selectedItemIDs.includes(i.id)}
+                            select={(id, ctrl) => this.props.mode === 'edit' ? this.props.itemSelected(id, ctrl) : null}
                         />
                     );
                 });
@@ -211,8 +211,8 @@ export default class MapPanel extends React.Component<Props> {
                                 overlay={i}
                                 note={this.props.mode !== 'combat-player' ? Mercator.getNote(this.props.map, i) : null}
                                 style={overlayStyle}
-                                selected={this.props.selectedItemID === i.id}
-                                select={id => this.props.setSelectedItemID(id)}
+                                selected={this.props.selectedItemIDs.includes(i.id)}
+                                select={(id, ctrl) => this.props.itemSelected(id, ctrl)}
                             />
                         );
                     });
@@ -276,8 +276,8 @@ export default class MapPanel extends React.Component<Props> {
                                 showGauge={this.props.mode === 'combat'}
                                 showHidden={(this.props.mode === 'combat') || isPC}
                                 selectable={(this.props.mode === 'combat') || (this.props.mode === 'combat-player')}
-                                selected={this.props.selectedItemID ===  i.id}
-                                select={id => this.props.setSelectedItemID(id)}
+                                selected={this.props.selectedItemIDs.includes(i.id)}
+                                select={(id, ctrl) => this.props.itemSelected(id, ctrl)}
                             />
                         );
                     })
@@ -309,7 +309,7 @@ export default class MapPanel extends React.Component<Props> {
             const mapWidth = 1 + mapDimensions.maxX - mapDimensions.minX;
             const mapHeight = 1 + mapDimensions.maxY - mapDimensions.minY;
             return (
-                <div className={style} onClick={() => this.props.setSelectedItemID(null)}>
+                <div className={style} onClick={() => this.props.itemSelected(null, false)}>
                     <div className='grid' style={{ width: ((this.props.size * mapWidth) + 2) + 'px', height: ((this.props.size * mapHeight) + 2) + 'px' }}>
                         {tiles}
                         {overlays}
@@ -381,14 +381,14 @@ interface MapTileProps {
     style: MapItemStyle;
     selectable: boolean;
     selected: boolean;
-    select: (tileID: string) => void;
+    select: (tileID: string, ctrl: boolean) => void;
 }
 
 class MapTile extends React.Component<MapTileProps> {
     private select(e: React.MouseEvent) {
         if (this.props.selectable) {
             e.stopPropagation();
-            this.props.select(this.props.tile.id);
+            this.props.select(this.props.tile.id, e.ctrlKey);
         }
     }
 
@@ -623,13 +623,13 @@ interface MapOverlayProps {
     note: MapNote | null;
     style: MapItemStyle;
     selected: boolean;
-    select: (tileID: string) => void;
+    select: (tileID: string, ctrl: boolean) => void;
 }
 
 class MapOverlay extends React.Component<MapOverlayProps> {
     private select(e: React.MouseEvent) {
         e.stopPropagation();
-        this.props.select(this.props.overlay.id);
+        this.props.select(this.props.overlay.id, e.ctrlKey);
     }
 
     private getNoteText() {
@@ -682,14 +682,14 @@ interface MapTokenProps {
     showHidden: boolean;
     selectable: boolean;
     selected: boolean;
-    select: (tokenID: string) => void;
+    select: (tokenID: string, ctrl: boolean) => void;
 }
 
 class MapToken extends React.Component<MapTokenProps> {
     private select(e: React.MouseEvent) {
         if (this.props.selectable) {
             e.stopPropagation();
-            this.props.select(this.props.token.id);
+            this.props.select(this.props.token.id, e.ctrlKey);
         }
     }
 

@@ -48,10 +48,10 @@ interface Props {
     closeNotification: (notification: Notification, removeCondition: boolean) => void;
     mapAdd: (combatant: Combatant, x: number, y: number) => void;
     makeCurrent: (combatant: Combatant) => void;
-    makeActive: (combatant: Combatant) => void;
-    makeDefeated: (combatant: Combatant) => void;
+    makeActive: (combatants: Combatant[]) => void;
+    makeDefeated: (combatants: Combatant[]) => void;
     moveCombatant: (oldIndex: number, newIndex: number) => void;
-    removeCombatant: (combatant: Combatant) => void;
+    removeCombatants: (combatants: Combatant[]) => void;
     addCombatants: () => void;
     addCompanion: (companion: Companion | null) => void;
     addPC: (partyID: string, pcID: string) => void;
@@ -59,17 +59,17 @@ interface Props {
     addCondition: (combatant: Combatant) => void;
     editCondition: (combatant: Combatant, condition: Condition) => void;
     removeCondition: (combatant: Combatant, conditionID: string) => void;
-    mapMove: (id: string, dir: string) => void;
+    mapMove: (ids: string[], dir: string) => void;
     mapResize: (id: string, dir: string, dir2: 'out' | 'in') => void;
-    mapRemove: (id: string) => void;
+    mapRemove: (ids: string[]) => void;
     mapAddNote: (id: string) => void;
     mapRemoveNote: (id: string) => void;
     endTurn: (combatant: Combatant) => void;
-    changeHP: (combatant: Combatant & Monster, hp: number, temp: number, damage: number) => void;
+    changeHP: (values: {monster: Combatant & Monster, hp: number, temp: number, damage: number}[]) => void;
     changeValue: (source: {}, type: string, value: any) => void;
     nudgeValue: (source: {}, type: string, delta: number) => void;
-    toggleTag: (combatant: Combatant, tag: string) => void;
-    toggleCondition: (combatant: Combatant, condition: string) => void;
+    toggleTag: (combatants: Combatant[], tag: string) => void;
+    toggleCondition: (combatants: Combatant[], condition: string) => void;
     scatterCombatants: (type: 'pc' | 'monster') => void;
     rotateMap: () => void;
     addOverlay: (overlay: MapItem) => void;
@@ -79,7 +79,7 @@ interface Props {
 interface State {
     rightPanel: string;
     showDefeatedCombatants: boolean;
-    selectedItemID: string | null;
+    selectedItemIDs: string[];
     addingToMapID: string | null;
     addingOverlay: boolean;
     mapSize: number;
@@ -97,7 +97,7 @@ export default class CombatScreen extends React.Component<Props, State> {
         this.state = {
             rightPanel: 'selection',
             showDefeatedCombatants: false,
-            selectedItemID: null,           // The ID of the combatant or map item (overlay) that's selected
+            selectedItemIDs: [],            // The IDs of the combatants or map items that are selected
             addingToMapID: null,            // The ID of the combatant we're adding to the map
             addingOverlay: false,           // True if we're adding a custom overlay to the map
             mapSize: 30,
@@ -127,11 +127,28 @@ export default class CombatScreen extends React.Component<Props, State> {
         });
     }
 
-    private setSelectedItemID(id: string | null) {
+    private setSelectedItemIDs(ids: string[]) {
+        // Switch to selection view if we're selecting an item
+        const rightPanel = ids.length > 0 ? 'selection' : this.state.rightPanel;
         this.setState({
-            selectedItemID: id,
-            rightPanel: 'selection'
+            selectedItemIDs: ids,
+            rightPanel: rightPanel
         });
+    }
+
+    private toggleItemSelection(id: string | null, ctrl: boolean) {
+        if (id && ctrl) {
+            const ids = this.state.selectedItemIDs;
+            if (ids.includes(id)) {
+                const index = ids.indexOf(id);
+                ids.splice(index, 1);
+            } else {
+                ids.push(id);
+            }
+            this.setSelectedItemIDs(ids);
+        } else {
+            this.setSelectedItemIDs(id ? [id] : []);
+        }
     }
 
     private setAddingToMapID(id: string | null) {
@@ -190,14 +207,15 @@ export default class CombatScreen extends React.Component<Props, State> {
         }
     }
 
-    private defeatCombatant(combatant: Combatant) {
-        if (this.state.selectedItemID === combatant.id) {
-            this.setState({
-                selectedItemID: null
-            });
-        }
-
-        this.props.makeDefeated(combatant);
+    private defeatCombatants(combatants: Combatant[]) {
+        // Deselect any of these combatants who are currently selected...
+        const ids = combatants.map(c => c.id);
+        this.setState({
+            selectedItemIDs: this.state.selectedItemIDs.filter(id => !ids.includes(id))
+        }, () => {
+            // ... then mark them as defeated
+            this.props.makeDefeated(combatants);
+        });
     }
 
     private gridSquareClicked(x: number, y: number) {
@@ -226,7 +244,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                 rightPanel: 'selection',
                 addingOverlay: false,
                 addingToMapID: null,
-                selectedItemID: overlay.id
+                selectedItemIDs: [overlay.id]
             });
         }
     }
@@ -261,23 +279,23 @@ export default class CombatScreen extends React.Component<Props, State> {
                 let selection = combat.combatants
                     .filter(c => combat.map !== null ? combat.map.items.find(item => item.id === c.id) : false)
                     .filter(c => c.showOnMap)
-                    .find(c => c.id === this.state.selectedItemID);
-                if (!selection) {
+                    .filter(c => this.state.selectedItemIDs.includes(c.id));
+                if (selection.length === 0) {
                     selection = combat.combatants
                         .filter(c => combat.map !== null ? combat.map.items.find(item => item.id === c.id) : false)
                         .filter(c => c.showOnMap)
-                        .find(c => c.current);
+                        .filter(c => c.current);
                 }
 
-                if (selection) {
-                    const token = selection as ((Combatant & PC) | (Combatant & Monster));
+                if (selection.length === 1) {
+                    const token = selection[0] as ((Combatant & PC) | (Combatant & Monster));
                     controls = (
                         <div>
                             <div className='heading lowercase'>{token.displayName}</div>
                             <div className='section centered'>
                                 <Radial
                                     direction='eight'
-                                    click={dir => this.props.mapMove(token.id, dir)}
+                                    click={dir => this.props.mapMove([token.id], dir)}
                                 />
                             </div>
                             <div className='divider' />
@@ -295,7 +313,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                                         label='conc.'
                                         display='button'
                                         checked={token.tags.includes('conc')}
-                                        changeValue={value => this.props.toggleTag(token, 'conc')}
+                                        changeValue={value => this.props.toggleTag([token], 'conc')}
                                     />
                                 </Col>
                                 <Col span={8}>
@@ -303,7 +321,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                                         label='bane'
                                         display='button'
                                         checked={token.tags.includes('bane')}
-                                        changeValue={value => this.props.toggleTag(token, 'bane')}
+                                        changeValue={value => this.props.toggleTag([token], 'bane')}
                                     />
                                 </Col>
                                 <Col span={8}>
@@ -311,7 +329,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                                         label='bless'
                                         display='button'
                                         checked={token.tags.includes('bless')}
-                                        changeValue={value => this.props.toggleTag(token, 'bless')}
+                                        changeValue={value => this.props.toggleTag([token], 'bless')}
                                     />
                                 </Col>
                             </Row>
@@ -321,7 +339,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                                         label='prone'
                                         display='button'
                                         checked={token.conditions.some(c => c.name === 'prone')}
-                                        changeValue={value => this.props.toggleCondition(token, 'prone')}
+                                        changeValue={value => this.props.toggleCondition([token], 'prone')}
                                     />
                                 </Col>
                                 <Col span={8}>
@@ -329,7 +347,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                                         label='uncon.'
                                         display='button'
                                         checked={token.conditions.some(c => c.name === 'unconscious')}
-                                        changeValue={value => this.props.toggleCondition(token, 'unconscious')}
+                                        changeValue={value => this.props.toggleCondition([token], 'unconscious')}
                                     />
                                 </Col>
                                 <Col span={8}>
@@ -337,11 +355,19 @@ export default class CombatScreen extends React.Component<Props, State> {
                                         label='hidden'
                                         display='button'
                                         checked={!token.showOnMap}
-                                        changeValue={value => this.props.changeValue(token, 'showOnMap', !value)}
+                                        changeValue={value => this.props.changeValue([token], 'showOnMap', !value)}
                                     />
                                 </Col>
                             </Row>
                         </div>
+                    );
+                }
+
+                if (selection.length > 1) {
+                    controls = (
+                        <Note>
+                            <div className='section'>multiple items selected</div>
+                        </Note>
                     );
                 }
             }
@@ -356,8 +382,8 @@ export default class CombatScreen extends React.Component<Props, State> {
                                 mode='combat-player'
                                 size={this.state.playerView.mapSize}
                                 combatants={combat.combatants}
-                                selectedItemID={this.state.selectedItemID ? this.state.selectedItemID : undefined}
-                                setSelectedItemID={id => this.setSelectedItemID(id)}
+                                selectedItemIDs={this.state.selectedItemIDs}
+                                itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
                             />
                         </Col>
                         <Col xs={24} sm={24} md={12} lg={8} xl={6} className='scrollable'>
@@ -462,8 +488,8 @@ export default class CombatScreen extends React.Component<Props, State> {
 
     private getSelectedCombatant() {
         let selectedCombatant = null;
-        if (this.state.selectedItemID) {
-            const combatant = this.props.combat.combatants.find(c => c.id === this.state.selectedItemID);
+        if (this.state.selectedItemIDs.length === 1) {
+            const combatant = this.props.combat.combatants.find(c => c.id === this.state.selectedItemIDs[0]);
             if (combatant) {
                 if (combatant.current) {
                     selectedCombatant = (
@@ -474,21 +500,26 @@ export default class CombatScreen extends React.Component<Props, State> {
                         </Note>
                     );
                 } else {
-                    selectedCombatant = this.createCard(combatant);
+                    selectedCombatant = (
+                        <div>
+                            {this.createControls([combatant])}
+                            {this.createCard(combatant)}
+                        </div>
+                    );
                 }
             }
 
             if (!selectedCombatant && this.props.combat.map) {
-                const mapItem = this.props.combat.map.items.find(i => i.id === this.state.selectedItemID);
+                const mapItem = this.props.combat.map.items.find(i => i.id === this.state.selectedItemIDs[0]);
                 if (mapItem) {
                     const note = Mercator.getNote(this.props.combat.map, mapItem);
                     selectedCombatant = (
                         <MapItemCard
                             item={mapItem}
                             note={note}
-                            move={(item, dir) => this.props.mapMove(item.id, dir)}
+                            move={(item, dir) => this.props.mapMove([item.id], dir)}
                             resize={(item, dir, dir2) => this.props.mapResize(item.id, dir, dir2)}
-                            remove={item => this.props.mapRemove(item.id)}
+                            remove={item => this.props.mapRemove([item.id])}
                             addNote={itemID => this.props.mapAddNote(itemID)}
                             removeNote={itemID => this.props.mapRemoveNote(itemID)}
                             changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
@@ -497,6 +528,29 @@ export default class CombatScreen extends React.Component<Props, State> {
                     );
                 }
             }
+        }
+
+        if (this.state.selectedItemIDs.length > 1) {
+            const combatants = this.state.selectedItemIDs.map(id => this.props.combat.combatants.find(c => c.id === id)) as Combatant[];
+            Utils.sort(combatants, [{ field: 'displayName', dir: 'asc' }]);
+            selectedCombatant = (
+                <div>
+                    {this.createControls(combatants)}
+                    <Note>
+                        <div className='section'>multiple combatants are selected:</div>
+                        {combatants.map(c => (
+                            <div key={c.id} className='multiple-combatant-row'>
+                                {c.displayName}
+                                <Icon
+                                    type='close-circle'
+                                    style={{ float: 'right', fontSize: '18px' }}
+                                    onClick={() => this.toggleItemSelection(c.id, true)}
+                                />
+                            </div>
+                        ))}
+                    </Note>
+                </div>
+            );
         }
 
         if (!selectedCombatant) {
@@ -517,16 +571,16 @@ export default class CombatScreen extends React.Component<Props, State> {
             <PendingCombatantRow
                 key={combatant.id}
                 combatant={combatant}
-                select={c => this.setSelectedItemID(c.id)}
-                selected={combatant.id === this.state.selectedItemID}
+                select={(c, ctrl) => this.toggleItemSelection(c.id, ctrl)}
+                selected={this.state.selectedItemIDs.includes(combatant.id)}
                 nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
-                makeActive={c => this.props.makeActive(c)}
+                makeActive={c => this.props.makeActive([c])}
             />
         );
     }
 
     private createCombatantRow(combatant: Combatant, playerView: boolean) {
-        let selected = combatant.id === this.state.selectedItemID;
+        let selected = this.state.selectedItemIDs.includes(combatant.id);
         // If we're in player view, and there's no map, don't show selection
         if (playerView && !this.props.combat.map) {
             selected = false;
@@ -541,7 +595,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                         combat={this.props.combat as Combat}
                         selected={selected}
                         minimal={playerView}
-                        select={c => this.setSelectedItemID(c.id)}
+                        select={(c, ctrl) => this.toggleItemSelection(c.id, ctrl)}
                         addToMap={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
                     />
                 );
@@ -553,7 +607,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                         combat={this.props.combat as Combat}
                         selected={selected}
                         minimal={playerView}
-                        select={c => this.setSelectedItemID(c.id)}
+                        select={(c, ctrl) => this.toggleItemSelection(c.id, ctrl)}
                         addToMap={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
                     />
                 );
@@ -565,7 +619,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                         combat={this.props.combat as Combat}
                         selected={selected}
                         minimal={playerView}
-                        select={c => this.setSelectedItemID(c.id)}
+                        select={(c, ctrl) => this.toggleItemSelection(c.id, ctrl)}
                         addToMap={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
                     />
                 );
@@ -574,103 +628,54 @@ export default class CombatScreen extends React.Component<Props, State> {
         return null;
     }
 
-    private createCard(combatant: Combatant) {
-        let tactical = 'no-map';
-        if (this.props.combat.map) {
-            const onMap = this.props.combat.map.items.find(i => i.id === combatant.id);
-            tactical = onMap ? 'on-map' : 'off-map';
-        }
+    private createControls(combatants: Combatant[]) {
+        return (
+            <CombatControlsPanel
+                combatants={combatants}
+                combat={this.props.combat}
+                makeCurrent={combatant => this.props.makeCurrent(combatant)}
+                makeActive={combatants => this.props.makeActive(combatants)}
+                makeDefeated={combatants => this.defeatCombatants(combatants)}
+                removeCombatants={combatants => this.props.removeCombatants(combatants)}
+                changeHP={values => this.props.changeHP(values)}
+                addCondition={combatant => this.props.addCondition(combatant)}
+                editCondition={(combatant, condition) => this.props.editCondition(combatant, condition)}
+                removeCondition={(combatant, conditionID) => this.props.removeCondition(combatant, conditionID)}
+                nudgeConditionValue={(combatant, type, delta) => this.props.nudgeValue(combatant, type, delta)}
+                mapAdd={combatant => this.setAddingToMapID(this.state.addingToMapID ? null : combatant.id)}
+                mapMove={(combatants, dir) => this.props.mapMove(combatants.map(c => c.id), dir)}
+                mapRemove={combatants => this.props.mapRemove(combatants.map(c => c.id))}
+                toggleTag={(combatants, tag) => this.props.toggleTag(combatants, tag)}
+                toggleCondition={(combatants, condition) => this.props.toggleCondition(combatants, condition)}
+                addCompanion={companion => this.props.addCompanion(companion)}
+                changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
+                nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
+            />
+        );
+    }
 
+    private createCard(combatant: Combatant) {
         switch (combatant.type) {
             case 'pc':
                 return (
-                    <div>
-                        <CombatControlsPanel
-                            combatant={combatant}
-                            combat={this.props.combat as Combat}
-                            tactical={tactical as 'no-map' | 'on-map' | 'off-map'}
-                            makeCurrent={c => this.props.makeCurrent(c)}
-                            makeActive={c => this.props.makeActive(c)}
-                            makeDefeated={c => this.defeatCombatant(c)}
-                            removeCombatant={c => this.props.removeCombatant(c)}
-                            addCondition={c => this.props.addCondition(c)}
-                            editCondition={(c, condition) => this.props.editCondition(c, condition)}
-                            removeCondition={(c, conditionID) => this.props.removeCondition(c, conditionID)}
-                            nudgeConditionValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
-                            mapAdd={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
-                            mapMove={(c, dir) => this.props.mapMove(c.id, dir)}
-                            mapRemove={c => this.props.mapRemove(c.id)}
-                            toggleTag={(c, tag) => this.props.toggleTag(c, tag)}
-                            toggleCondition={(c, condition) => this.props.toggleCondition(c, condition)}
-                            addCompanion={companion => this.props.addCompanion(companion)}
-                            changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
-                            nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
-                        />
-                        <PCCard
-                            pc={combatant as Combatant & PC}
-                            mode={'combat'}
-                            changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
-                            nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
-                        />
-                    </div>
+                    <PCCard
+                        pc={combatant as Combatant & PC}
+                        mode={'combat'}
+                        changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
+                        nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
+                    />
                 );
             case 'monster':
                 return (
-                    <div>
-                        <CombatControlsPanel
-                            combatant={combatant}
-                            combat={this.props.combat as Combat}
-                            tactical={tactical as 'no-map' | 'on-map' | 'off-map'}
-                            makeCurrent={c => this.props.makeCurrent(c)}
-                            makeActive={c => this.props.makeActive(c)}
-                            makeDefeated={c => this.defeatCombatant(c)}
-                            removeCombatant={c => this.props.removeCombatant(c)}
-                            changeHP={(c, hp, temp, damage) => this.props.changeHP(c as Combatant & Monster, hp, temp, damage)}
-                            addCondition={c => this.props.addCondition(c)}
-                            editCondition={(c, condition) => this.props.editCondition(c, condition)}
-                            removeCondition={(c, conditionID) => this.props.removeCondition(c, conditionID)}
-                            nudgeConditionValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
-                            mapAdd={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
-                            mapMove={(c, dir) => this.props.mapMove(c.id, dir)}
-                            mapRemove={c => this.props.mapRemove(c.id)}
-                            toggleTag={(c, tag) => this.props.toggleTag(c, tag)}
-                            toggleCondition={(c, condition) => this.props.toggleCondition(c, condition)}
-                            changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
-                            nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
-                        />
-                        <MonsterCard
-                            monster={combatant as Combatant & Monster}
-                            mode={'combat'}
-                            changeValue={(c, type, value) => this.props.changeValue(c, type, value)}
-                            nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
-                        />
-                    </div>
+                    <MonsterCard
+                        monster={combatant as Combatant & Monster}
+                        mode={'combat'}
+                        changeValue={(c, type, value) => this.props.changeValue(c, type, value)}
+                        nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
+                    />
                 );
             case 'companion':
-                return (
-                    <div>
-                        <CombatControlsPanel
-                            combatant={combatant}
-                            combat={this.props.combat as Combat}
-                            tactical={tactical as 'no-map' | 'on-map' | 'off-map'}
-                            makeCurrent={c => this.props.makeCurrent(c)}
-                            makeActive={c => this.props.makeActive(c)}
-                            makeDefeated={c => this.defeatCombatant(c)}
-                            removeCombatant={c => this.props.removeCombatant(c)}
-                            addCondition={c => this.props.addCondition(c)}
-                            editCondition={(c, condition) => this.props.editCondition(c, condition)}
-                            removeCondition={(c, conditionID) => this.props.removeCondition(c, conditionID)}
-                            nudgeConditionValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
-                            mapAdd={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
-                            mapMove={(c, dir) => this.props.mapMove(c.id, dir)}
-                            mapRemove={c => this.props.mapRemove(c.id)}
-                            toggleTag={(c, tag) => this.props.toggleTag(c, tag)}
-                            toggleCondition={(c, condition) => this.props.toggleCondition(c, condition)}
-                            changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
-                            nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
-                        />
-                    </div>
-                );
+                return null;
         }
 
         return null;
@@ -689,7 +694,12 @@ export default class CombatScreen extends React.Component<Props, State> {
                     pending.push(this.createPendingRow(combatant));
                 } else {
                     if (combatant.current) {
-                        current = this.createCard(combatant);
+                        current = (
+                            <div>
+                                {this.createControls([combatant])}
+                                {this.createCard(combatant)}
+                            </div>
+                        );
                     }
                     if (combatant.active || (combatant.defeated && this.state.showDefeatedCombatants)) {
                         active.push(combatant);
@@ -765,8 +775,8 @@ export default class CombatScreen extends React.Component<Props, State> {
                         size={this.state.mapSize}
                         showOverlay={(this.state.addingToMapID !== null) || this.state.addingOverlay}
                         combatants={this.props.combat.combatants}
-                        selectedItemID={this.state.selectedItemID ? this.state.selectedItemID : undefined}
-                        setSelectedItemID={id => this.setSelectedItemID(id)}
+                        selectedItemIDs={this.state.selectedItemIDs}
+                        itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
                         gridSquareEntered={(x, y) => null}
                         gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
                     />
@@ -997,7 +1007,7 @@ class NotificationPanel extends React.Component<NotificationProps> {
 interface PendingCombatantRowProps {
     combatant: Combatant;
     selected: boolean;
-    select: (combatant: Combatant) => void;
+    select: (combatant: Combatant, ctrl: boolean) => void;
     nudgeValue: (combatant: Combatant, field: string, delta: number) => void;
     makeActive: (combatant: Combatant) => void;
 }
@@ -1014,7 +1024,7 @@ class PendingCombatantRow extends React.Component<PendingCombatantRowProps> {
     private onClick(e: React.MouseEvent) {
         e.stopPropagation();
         if (this.props.select) {
-            this.props.select(this.props.combatant);
+            this.props.select(this.props.combatant, e.ctrlKey);
         }
     }
 
@@ -1059,7 +1069,7 @@ interface PCRowProps {
     minimal: boolean;
     combat: Combat;
     selected: boolean;
-    select: (combatant: Combatant & PC) => void;
+    select: (combatant: Combatant & PC, ctrl: boolean) => void;
     addToMap: (combatant: Combatant & PC) => void;
 }
 
@@ -1082,8 +1092,8 @@ class PCRow extends React.Component<PCRowProps> {
 
     private onClick(e: React.MouseEvent) {
         e.stopPropagation();
-        if (!this.props.selected && this.props.select) {
-            this.props.select(this.props.combatant);
+        if (this.props.select) {
+            this.props.select(this.props.combatant, e.ctrlKey);
         }
     }
 
@@ -1203,7 +1213,7 @@ interface MonsterRowProps {
     minimal: boolean;
     combat: Combat;
     selected: boolean;
-    select: (combatant: Combatant & Monster) => void;
+    select: (combatant: Combatant & Monster, ctrl: boolean) => void;
     addToMap: (combatant: Combatant & Monster) => void;
 }
 
@@ -1226,8 +1236,8 @@ class MonsterRow extends React.Component<MonsterRowProps> {
 
     private onClick(e: React.MouseEvent) {
         e.stopPropagation();
-        if (!this.props.selected && this.props.select) {
-            this.props.select(this.props.combatant);
+        if (this.props.select) {
+            this.props.select(this.props.combatant, e.ctrlKey);
         }
     }
 
@@ -1366,7 +1376,7 @@ interface CompanionRowProps {
     minimal: boolean;
     combat: Combat;
     selected: boolean;
-    select: (combatant: Combatant) => void;
+    select: (combatant: Combatant, ctrl: boolean) => void;
     addToMap: (combatant: Combatant) => void;
 }
 
@@ -1389,8 +1399,8 @@ class CompanionRow extends React.Component<CompanionRowProps> {
 
     private onClick(e: React.MouseEvent) {
         e.stopPropagation();
-        if (!this.props.selected && this.props.select) {
-            this.props.select(this.props.combatant);
+        if (this.props.select) {
+            this.props.select(this.props.combatant, e.ctrlKey);
         }
     }
 
@@ -1655,23 +1665,22 @@ class MapItemCard extends React.Component<MapItemCardProps, MapItemCardState> {
 }
 
 interface CombatControlsPanelProps {
-    combatant: Combatant;
+    combatants: Combatant[];
     combat: Combat;
-    tactical: 'no-map' | 'on-map' | 'off-map';
     makeCurrent: (combatant: Combatant) => void;
-    makeActive: (combatant: Combatant) => void;
-    makeDefeated: (combatant: Combatant) => void;
+    makeActive: (combatants: Combatant[]) => void;
+    makeDefeated: (combatants: Combatant[]) => void;
     mapAdd: (combatant: Combatant) => void;
-    mapMove: (combatant: Combatant, dir: string) => void;
-    mapRemove: (combatant: Combatant) => void;
-    removeCombatant: (combatant: Combatant) => void;
-    changeHP: (combatant: Combatant & Monster, hp: number, tempHP: number, damage: number) => void;
+    mapMove: (combatants: Combatant[], dir: string) => void;
+    mapRemove: (combatants: Combatant[]) => void;
+    removeCombatants: (combatants: Combatant[]) => void;
+    changeHP: (values: {monster: Combatant & Monster, hp: number, temp: number, damage: number}[]) => void;
     addCondition: (combatant: Combatant) => void;
     editCondition: (combatant: Combatant, condition: Condition) => void;
     removeCondition: (combatant: Combatant, conditionID: string) => void;
     nudgeConditionValue: (condition: Condition, field: string, delta: number) => void;
-    toggleTag: (combatant: Combatant, tag: string) => void;
-    toggleCondition: (combatant: Combatant, condition: string) => void;
+    toggleTag: (combatants: Combatant[], tag: string) => void;
+    toggleCondition: (combatants: Combatant[], condition: string) => void;
     addCompanion: (companion: Companion) => void;
     changeValue: (monster: any, field: string, value: any) => void;
     nudgeValue: (source: any, field: string, delta: number) => void;
@@ -1683,11 +1692,6 @@ interface CombatControlsPanelState {
 }
 
 class CombatControlsPanel extends React.Component<CombatControlsPanelProps, CombatControlsPanelState> {
-    public static defaultProps = {
-        changeHP: null,
-        addCompanion: null
-    };
-
     constructor(props: CombatControlsPanelProps) {
         super(props);
 
@@ -1716,84 +1720,123 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
     }
 
     private heal() {
-        const monster = this.props.combatant as Combatant & Monster;
-
-        let hp = (monster.hp ? monster.hp : 0) + this.state.damageOrHealing;
-        hp = Math.min(hp, monster.hpMax);
+        const value = this.state.damageOrHealing;
 
         this.setState({
             damageOrHealing: 0
         }, () => {
-            this.props.changeHP(monster, hp, monster.hpTemp, 0);
+            const values = this.props.combatants.map(combatant => {
+                const monster = combatant as Combatant & Monster;
+
+                let hp = (monster.hp ? monster.hp : 0) + value;
+                hp = Math.min(hp, monster.hpMax);
+
+                return {
+                    monster: monster,
+                    hp: hp, 
+                    temp: monster.hpTemp,
+                    damage: 0
+                };
+            });
+
+            this.props.changeHP(values);
         });
     }
 
     private damage(factor: number = 1) {
-        const monster = this.props.combatant as Combatant & Monster;
-
-        let hp = (monster.hp ? monster.hp : 0);
-        let temp = monster.hpTemp;
-
-        const totalDamage = this.state.damageOrHealing;
-        let damage = Math.floor(totalDamage * factor);
-
-        // Take damage off temp HP first
-        const val = Math.min(damage, temp);
-        damage -= val;
-        temp -= val;
-
-        // Take the rest off HP
-        hp -= damage;
-        hp = Math.max(hp, 0);
+        const value = this.state.damageOrHealing;
 
         this.setState({
             damageOrHealing: 0
         }, () => {
-            this.props.changeHP(monster, hp, temp, totalDamage);
+            const values = this.props.combatants.map(combatant => {
+                const monster = combatant as Combatant & Monster;
+
+                let hp = (monster.hp ? monster.hp : 0);
+                let temp = monster.hpTemp;
+
+                const totalDamage = Math.floor(value * factor);
+                let damage = totalDamage;
+
+                // Take damage off temp HP first
+                const val = Math.min(damage, temp);
+                damage -= val;
+                temp -= val;
+
+                // Take the rest off HP
+                hp -= damage;
+                hp = Math.max(hp, 0);
+
+                return {
+                    monster: monster,
+                    hp: hp,
+                    temp: temp,
+                    damage: totalDamage
+                };
+            });
+
+            this.props.changeHP(values);
         });
     }
 
     private getMainSection() {
-        if (this.props.combatant.pending && !this.props.combatant.active && !this.props.combatant.defeated) {
+        if (this.props.combatants.every(c => c.pending)) {
             return (
                 <div className='section'>pending initiative entry</div>
             );
         }
 
-        if (!this.props.combatant.pending && this.props.combatant.active && !this.props.combatant.defeated) {
-            const options = [];
-            if (this.props.combatant.current) {
-                options.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(this.props.combatant)}>mark as defeated and end turn</button>);
+        if (this.props.combatants.every(c => c.active)) {
+            const actions = [];
+            if (this.props.combatants.every(c => c.current)) {
+                actions.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(this.props.combatants)}>mark as defeated and end turn</button>);
             } else {
-                options.push(<button key='makeCurrent' onClick={() => this.props.makeCurrent(this.props.combatant)}>start turn</button>);
-                options.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(this.props.combatant)}>mark as defeated</button>);
+                if (this.props.combatants.length === 1) {
+                    actions.push(<button key='makeCurrent' onClick={() => this.props.makeCurrent(this.props.combatants[0])}>start turn</button>);
+                }
+                actions.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(this.props.combatants)}>mark as defeated</button>);
             }
+
+            let notes = null;
+            if (this.props.combatants.length === 1) {
+                const combatant = this.props.combatants[0];
+                notes = (
+                    <Textbox
+                        text={combatant.note}
+                        placeholder='notes'
+                        minLines={3}
+                        maxLines={10}
+                        onChange={value => this.props.changeValue(combatant, 'note', value)}
+                    />
+                );
+            }
+
             return (
                 <div>
-                    {options}
+                    {actions}
                     <Row gutter={10}>
                         <Col span={8}>
                             <Checkbox
                                 label='conc.'
                                 display='button'
-                                checked={this.props.combatant.tags.includes('conc')}
-                                changeValue={value => this.props.toggleTag(this.props.combatant, 'conc')}
+                                checked={this.props.combatants.every(c => c.tags.includes('conc'))}
+                                changeValue={value => this.props.toggleTag(this.props.combatants, 'conc')}
                             />
                         </Col>
                         <Col span={8}>
                             <Checkbox
                                 label='bane'
                                 display='button'
-                                checked={this.props.combatant.tags.includes('bane')}
-                                changeValue={value => this.props.toggleTag(this.props.combatant, 'bane')}
+                                checked={this.props.combatants.every(c => c.tags.includes('bane'))}
+                                changeValue={value => this.props.toggleTag(this.props.combatants, 'bane')}
                             />
                         </Col>
                         <Col span={8}>
                             <Checkbox
                                 label='bless'
                                 display='button'
-                                checked={this.props.combatant.tags.includes('bless')}
-                                changeValue={value => this.props.toggleTag(this.props.combatant, 'bless')}
+                                checked={this.props.combatants.every(c => c.tags.includes('bless'))}
+                                changeValue={value => this.props.toggleTag(this.props.combatants, 'bless')}
                             />
                         </Col>
                     </Row>
@@ -1802,100 +1845,134 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                             <Checkbox
                                 label='prone'
                                 display='button'
-                                checked={this.props.combatant.conditions.some(c => c.name === 'prone')}
-                                changeValue={value => this.props.toggleCondition(this.props.combatant, 'prone')}
+                                checked={this.props.combatants.every(c => c.conditions.some(c => c.name === 'prone'))}
+                                changeValue={value => this.props.toggleCondition(this.props.combatants, 'prone')}
                             />
                         </Col>
                         <Col span={8}>
                             <Checkbox
                                 label='uncon.'
                                 display='button'
-                                checked={this.props.combatant.conditions.some(c => c.name === 'unconscious')}
-                                changeValue={value => this.props.toggleCondition(this.props.combatant, 'unconscious')}
+                                checked={this.props.combatants.every(c => c.conditions.some(c => c.name === 'unconscious'))}
+                                changeValue={value => this.props.toggleCondition(this.props.combatants, 'unconscious')}
                             />
                         </Col>
                         <Col span={8}>
                             <Checkbox
                                 label='hidden'
                                 display='button'
-                                checked={!this.props.combatant.showOnMap}
-                                disabled={this.props.tactical === 'no-map'}
-                                changeValue={value => this.props.changeValue(this.props.combatant, 'showOnMap', !value)}
+                                checked={!this.props.combatants.every(c => c.showOnMap)}
+                                disabled={!this.props.combat.map}
+                                changeValue={value => this.props.changeValue(this.props.combatants, 'showOnMap', !value)}
                             />
                         </Col>
                     </Row>
-                    <div>
-                        <Textbox
-                            text={this.props.combatant.note}
-                            placeholder='notes'
-                            minLines={3}
-                            maxLines={10}
-                            onChange={value => this.props.changeValue(this.props.combatant, 'note', value)}
-                        />
-                    </div>
+                    {notes}
                 </div>
             );
         }
 
-        if (!this.props.combatant.pending && !this.props.combatant.active && this.props.combatant.defeated) {
+        if (this.props.combatants.every(c => c.defeated)) {
             return (
-                <button onClick={() => this.props.makeActive(this.props.combatant)}>mark as active</button>
+                <button onClick={() => this.props.makeActive(this.props.combatants)}>mark as active</button>
             );
         }
 
+        // TODO: Return a helpful message
         return null;
     }
 
     private getHPSection() {
-        if (this.props.combatant.type !== 'monster') {
-            return;
+        if (!this.props.combatants.every(c => c.type === 'monster')) {
+            return null;
         }
 
-        const monster = this.props.combatant as Combatant & Monster;
+        let current = null;
+        if (this.props.combatants.length === 1) {
+            const monster = this.props.combatants[0] as Combatant & Monster;
+            current = (
+                <div>
+                    <NumberSpin
+                        source={monster}
+                        name='hp'
+                        label='hit points'
+                        factors={[1, 10]}
+                        nudgeValue={delta => this.props.nudgeValue(monster, 'hp', delta)}
+                    />
+                    <NumberSpin
+                        source={monster}
+                        name='hpTemp'
+                        label='temp hp'
+                        factors={[1, 10]}
+                        nudgeValue={delta => this.props.nudgeValue(monster, 'hpTemp', delta)}
+                    />
+                    <div className='divider' />
+                </div>
+            );
+        }
 
-        let btn = null;
-        if ((monster.hp !== null) && (monster.hp <= 0)) {
-            if (this.props.combatant.current) {
-                btn = (
-                    <button onClick={() => this.props.makeDefeated(this.props.combatant)}>
-                        mark as defeated and end turn
-                    </button>
-                );
-            } else {
-                btn = (
-                    <button onClick={() => this.props.makeDefeated(this.props.combatant)}>
-                        mark as defeated
-                    </button>
+        let modifiers = this.props.combatants.map(c => {
+            const monster = c as Combatant & Monster;
+            let r = null;
+            let v = null;
+            let i = null;
+            if (monster.damage.resist) {
+                r = (
+                    <div className='section'>
+                        <b>damage resistances</b> {monster.damage.resist} {this.props.combatants.length > 1 ? <i> - {c.displayName}</i> : null}
+                    </div>
                 );
             }
+            if (monster.damage.vulnerable) {
+                v = (
+                    <div className='section'>
+                        <b>damage vulnerabilities</b> {monster.damage.vulnerable} {this.props.combatants.length > 1 ? <i> - {c.displayName}</i> : null}
+                    </div>
+                );
+            }
+            if (monster.damage.immune) {
+                i = (
+                    <div className='section'>
+                        <b>damage immunities</b> {monster.damage.immune} {this.props.combatants.length > 1 ? <i> - {c.displayName}</i> : null}
+                    </div>
+                );
+            }
+            if (r || v || i) {
+                return (
+                    <div key={c.id}>
+                        {r}
+                        {v}
+                        {i}
+                    </div>
+                );
+            }
+            return null;
+        });
+
+        let btn = null;
+        const atZero = this.props.combatants.filter(c => (c.hp != null) && (c.hp <= 0));
+        if (atZero.length > 0) {
+            const txt = (atZero.length === 1) && (atZero[0].current) ? 'mark as defeated and end turn' : 'mark as defeated';
+            let names = null;
+            if (this.props.combatants.length > 1) {
+                names = (
+                    <ul>
+                        {atZero.map(c => <li key={c.id}>{c.displayName}</li>)}
+                    </ul>
+                );
+            }
+            btn = (
+                <button onClick={() => this.props.makeDefeated(atZero)}>
+                    {txt}
+                    {names}
+                </button>
+            );
         }
 
         return (
             <div>
-                <NumberSpin
-                    source={this.props.combatant}
-                    name='hp'
-                    label='hit points'
-                    factors={[1, 10]}
-                    nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'hp', delta)}
-                />
-                <NumberSpin
-                    source={this.props.combatant}
-                    name='hpTemp'
-                    label='temp hp'
-                    factors={[1, 10]}
-                    nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'hpTemp', delta)}
-                />
-                <div className='divider' />
-                <div className='section' style={{ display: monster.damage.resist !== '' ? '' : 'none' }}>
-                    <b>damage resistances</b> {monster.damage.resist}
-                </div>
-                <div className='section' style={{ display: monster.damage.vulnerable !== '' ? '' : 'none' }}>
-                    <b>damage vulnerabilities</b> {monster.damage.vulnerable}
-                </div>
-                <div className='section' style={{ display: monster.damage.immune !== '' ? '' : 'none' }}>
-                    <b>damage immunities</b> {monster.damage.immune}
-                </div>
+                {current}
+                {modifiers}
                 <NumberSpin
                     source={this.state}
                     name='damageOrHealing'
@@ -1922,179 +1999,205 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
     }
 
     private getConditionSection() {
-        let immunities = null;
-        if (this.props.combatant.type === 'monster') {
-            const monster = this.props.combatant as Combatant & Monster;
-            immunities = (
-                <div className='section' style={{ display: monster.conditionImmunities !== '' ? '' : 'none' }}>
-                    <b>condition immunities</b> {monster.conditionImmunities}
+        let immunities = this.props.combatants.map(c => {
+            if (c.type !== 'monster') {
+                return null;
+            }
+
+            const monster = c as Combatant & Monster;
+            if (!monster.conditionImmunities) {
+                return null;
+            }
+
+            return (
+                <div key={c.id} className='section'>
+                    <b>condition immunities</b> {monster.conditionImmunities} {this.props.combatants.length > 1 ? <i> - {c.displayName}</i> : null}
                 </div>
             );
+        });
+
+        let conditions = null;
+        if (this.props.combatants.length === 1) {
+            conditions = (
+                <ConditionsPanel
+                    combatant={this.props.combatants[0]}
+                    combat={this.props.combat}
+                    addCondition={() => this.props.addCondition(this.props.combatants[0])}
+                    editCondition={condition => this.props.editCondition(this.props.combatants[0], condition)}
+                    removeCondition={conditionID => this.props.removeCondition(this.props.combatants[0], conditionID)}
+                    nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
+                />
+            )
         }
+
         return (
             <div>
                 {immunities}
-                <ConditionsPanel
-                    combatant={this.props.combatant}
-                    combat={this.props.combat}
-                    addCondition={() => this.props.addCondition(this.props.combatant)}
-                    editCondition={condition => this.props.editCondition(this.props.combatant, condition)}
-                    removeCondition={conditionID => this.props.removeCondition(this.props.combatant, conditionID)}
-                    nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
-                />
+                {conditions}
             </div>
         );
     }
 
     private getMapSection() {
-        if (this.props.tactical === 'on-map') {
-            let distance = null;
-            if (!this.props.combatant.current && this.props.combat.map) {
-                const current = this.props.combat.combatants.find(c => c.current);
-                if (current) {
-                    const miCurrent = this.props.combat.map.items.find(mi => mi.id === current.id);
-                    const miThis = this.props.combat.map.items.find(mi => mi.id === this.props.combatant.id);
-                    if (miCurrent && miThis) {
-                        const sizeCurrent = Utils.miniSize(current.displaySize);
-                        const sizeThis = Utils.miniSize(this.props.combatant.displaySize);
-                        const rightCurrent = miCurrent.x + sizeCurrent - 1;
-                        const rightThis = miThis.x + sizeThis - 1;
-                        const bottomCurrent = miCurrent.y + sizeCurrent - 1;
-                        const bottomThis = miThis.y + sizeThis - 1;
-                        const dx = Math.max((miCurrent.x - rightThis - 1), (miThis.x - rightCurrent - 1), 0);
-                        const dy = Math.max((miCurrent.y - bottomThis - 1), (miThis.y - bottomCurrent - 1), 0);
-                        distance = (
-                            <div>
-                                <div className='section'>distance to {current.displayName}:</div>
-                                <ul>
-                                    <li className='section'>horizontal: {dx * 5} ft / {dx} squares</li>
-                                    <li className='section'>vertical: {dy * 5} ft / {dy} squares</li>
-                                </ul>
-                                <div className='divider'/>
-                            </div>
-                        );
-                    }
-                }
-            }
+        if (!this.props.combat.map) {
+            return null;
+        }
 
-            let auraDetails = null;
-            if (this.props.combatant.aura.radius > 0) {
-                const auraStyleOptions = [
-                    {
-                        id: 'square',
-                        text: 'square'
-                    },
-                    {
-                        id: 'rounded',
-                        text: 'rounded'
-                    },
-                    {
-                        id: 'circle',
-                        text: 'circle'
-                    }
-                ];
-                auraDetails = (
-                    <div>
-                        <Selector
-                            options={auraStyleOptions}
-                            selectedID={this.props.combatant.aura.style}
-                            select={optionID => this.props.changeValue(this.props.combatant.aura, 'style', optionID)}
+        const allOnMap = this.props.combatants.every(c => {
+            return this.props.combat.map && this.props.combat.map.items.find(i => i.id === c.id);
+        });
+        if (allOnMap) {
+            let altitude = null;
+            let aura = null;
+            if (this.props.combatants.length === 1) {
+                const combatant = this.props.combatants[0];
+                altitude = (
+                    <NumberSpin
+                        source={combatant}
+                        name='altitude'
+                        label='altitude'
+                        display={value => value + ' ft.'}
+                        nudgeValue={delta => this.props.nudgeValue(combatant, 'altitude', delta * 5)}
+                    />
+                );
+                let auraDetails = null;
+                if (combatant.aura.radius > 0) {
+                    const auraStyleOptions = [
+                        {
+                            id: 'square',
+                            text: 'square'
+                        },
+                        {
+                            id: 'rounded',
+                            text: 'rounded'
+                        },
+                        {
+                            id: 'circle',
+                            text: 'circle'
+                        }
+                    ];
+                    auraDetails = (
+                        <div>
+                            <Selector
+                                options={auraStyleOptions}
+                                selectedID={combatant.aura.style}
+                                select={optionID => this.props.changeValue(combatant.aura, 'style', optionID)}
+                            />
+                            <input
+                                type='color'
+                                value={combatant.aura.color}
+                                onChange={event => this.props.changeValue(combatant.aura, 'color', event.target.value)}
+                            />
+                        </div>
+                    );
+                }
+                aura = (
+                    <Expander text='aura'>
+                        <NumberSpin
+                            source={combatant.aura}
+                            name='radius'
+                            label='size'
+                            display={value => value + ' ft.'}
+                            nudgeValue={delta => this.props.nudgeValue(combatant.aura, 'radius', delta * 5)}
                         />
-                        <input
-                            type='color'
-                            value={this.props.combatant.aura.color}
-                            onChange={event => this.props.changeValue(this.props.combatant.aura, 'color', event.target.value)}
-                        />
-                    </div>
+                        {auraDetails}
+                    </Expander>
                 );
             }
 
             return (
                 <div>
-                    {distance}
                     <div className='section centered'>
                         <Radial
                             direction='eight'
-                            click={dir => this.props.mapMove(this.props.combatant, dir)}
+                            click={dir => this.props.mapMove(this.props.combatants, dir)}
                         />
                     </div>
                     <div className='divider' />
-                    <NumberSpin
-                        source={this.props.combatant}
-                        name='altitude'
-                        label='altitude'
-                        display={value => value + ' ft.'}
-                        nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'altitude', delta * 5)}
-                    />
-                    <Expander text='aura'>
-                        <NumberSpin
-                            source={this.props.combatant.aura}
-                            name='radius'
-                            label='size'
-                            display={value => value + ' ft.'}
-                            nudgeValue={delta => this.props.nudgeValue(this.props.combatant.aura, 'radius', delta * 5)}
-                        />
-                        {auraDetails}
-                    </Expander>
-                    <button onClick={() => this.props.mapRemove(this.props.combatant)}>remove from map</button>
+                    {altitude}
+                    {aura}
+                    <button onClick={() => this.props.mapRemove(this.props.combatants)}>remove from map</button>
                 </div>
             );
         }
 
-        return (
-            <button key='mapAdd' onClick={() => this.props.mapAdd(this.props.combatant)}>add to map</button>
-        );
+        if (this.props.combatants.length === 1) {
+            return (
+                <button key='mapAdd' onClick={() => this.props.mapAdd(this.props.combatants[0])}>add to map</button>
+            );
+        }
+
+        return null;
     }
 
     private getAdvancedSection() {
         let remove = null;
-        if (!this.props.combatant.current) {
+        if (this.props.combatants.every(c => !c.current)) {
             remove = (
-                <ConfirmButton text='remove from encounter' callback={() => this.props.removeCombatant(this.props.combatant)} />
+                <ConfirmButton text='remove from encounter' callback={() => this.props.removeCombatants(this.props.combatants)} />
             );
         }
 
-        let init = null;
-        if (!this.props.combatant.pending) {
-            init = (
-                <Expander text='change initiative score'>
-                    <p>adjusting initiative will re-sort the initiative order</p>
-                    <p>if you have manually changed the initiative order, your changes will be lost</p>
-                    <NumberSpin
-                        source={this.props.combatant}
-                        name='initiative'
-                        label='initiative'
-                        nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
+        let changeName = null;
+        let changeSize = null;
+        let changeInit = null;
+        if (this.props.combatants.length === 1) {
+            const combatant = this.props.combatants[0];
+            changeName = (
+                <Expander text='change name'>
+                    <Textbox
+                        text={combatant.displayName}
+                        onChange={value => this.props.changeValue(combatant, 'displayName', value)}
                     />
                 </Expander>
             );
+
+            changeSize = (
+                <Expander text='change size'>
+                    <NumberSpin
+                        source={combatant}
+                        name='displaySize'
+                        label='size'
+                        nudgeValue={delta => this.props.nudgeValue(combatant, 'displaySize', delta)}
+                    />
+                </Expander>
+            );
+
+            if (!combatant.pending) {
+                changeInit = (
+                    <Expander text='change initiative score'>
+                        <p>adjusting initiative will re-sort the initiative order</p>
+                        <p>if you have manually changed the initiative order, your changes will be lost</p>
+                        <NumberSpin
+                            source={combatant}
+                            name='initiative'
+                            label='initiative'
+                            nudgeValue={delta => this.props.nudgeValue(combatant, 'initiative', delta)}
+                        />
+                    </Expander>
+                );
+            }
         }
 
         let companions: JSX.Element[] = [];
-        if ((this.props.combatant.type === 'pc') && this.props.addCompanion) {
-            companions = (this.props.combatant as Combatant & PC).companions
-                .filter(comp => !this.props.combat.combatants.find(c => c.id === comp.id))
-                .map(comp => <button key={comp.id} onClick={() => this.props.addCompanion(comp)}>add {comp.name}</button>);
-        }
+        this.props.combatants
+            .filter(c => c.type === 'pc')
+            .forEach(pc => {
+                (pc as Combatant & PC).companions
+                    .filter(comp => !this.props.combat.combatants.find(c => c.id === comp.id))
+                    .forEach(comp => {
+                        companions.push(
+                            <button key={comp.id} onClick={() => this.props.addCompanion(comp)}>add {comp.name}</button>
+                        );
+                    });
+                });
 
         return (
             <div>
                 {remove}
-                <Expander text='change name'>
-                    <Textbox
-                        text={this.props.combatant.displayName}
-                        onChange={value => this.props.changeValue(this.props.combatant, 'displayName', value)}
-                    />
-                </Expander>
-                <Expander text='change size'>
-                    <NumberSpin
-                        source={this.props.combatant}
-                        name='displaySize'
-                        label='size'
-                        nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'displaySize', delta)}
-                    />
-                </Expander>
-                {init}
+                {changeName}
+                {changeSize}
+                {changeInit}
                 {companions}
             </div>
         );
@@ -2108,12 +2211,12 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                     text: m
                 };
             });
-            if (this.props.tactical === 'no-map') {
+            if (!this.props.combat.map) {
                 // No combat map, so remove the map option
                 views.splice(3, 1);
             }
-            if (this.props.changeHP === null) {
-                // Can't change hit points
+            if (!this.props.combatants.every(c => c.type === 'monster')) {
+                // Not everything is a monster, so can't change hit points
                 views.splice(1, 1);
             }
 
@@ -2141,9 +2244,11 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                     break;
             }
 
+            const name = this.props.combatants.length === 1 ? this.props.combatants[0].displayName : 'multiple combatants';
+
             return (
-                <div key={this.props.combatant.id} className='group-panel combat-controls'>
-                    <div className='subheading'>{this.props.combatant.displayName}</div>
+                <div className='group-panel combat-controls'>
+                    <div className='subheading'>{name}</div>
                     <Selector
                         options={views}
                         selectedID={currentView}
