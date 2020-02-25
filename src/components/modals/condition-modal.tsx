@@ -17,7 +17,7 @@ import Selector from '../controls/selector';
 
 interface Props {
     condition: Condition;
-    combatant: Combatant & Monster;
+    combatants: Combatant[];
     combat: Combat;
 }
 
@@ -55,7 +55,6 @@ export default class ConditionModal extends React.Component<Props, State> {
                 break;
             case 'combatant':
                 duration = Factory.createConditionDurationCombatant();
-                duration.combatantID = this.props.combatant.id;
                 break;
             case 'rounds':
                 duration = Factory.createConditionDurationRounds();
@@ -122,6 +121,16 @@ export default class ConditionModal extends React.Component<Props, State> {
                     }
                 }
 
+                const disabled = this.props.combatants
+                    .filter(combatant => combatant.type === 'monster')
+                    .some(combatant => {
+                        const c = combatant as Combatant & Monster;
+                        if (!c) {
+                            return false;
+                        }
+                        return c.conditionImmunities.indexOf(condition) !== -1;
+                    });
+
                 return {
                     id: condition,
                     text: condition,
@@ -133,7 +142,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                             </ul>
                         </div>
                     ),
-                    disabled: this.props.combatant.conditionImmunities ? this.props.combatant.conditionImmunities.indexOf(condition) !== -1 : false
+                    disabled: disabled
                 };
             });
 
@@ -220,18 +229,6 @@ export default class ConditionModal extends React.Component<Props, State> {
                     details: (
                         <div>
                             <div className='section'>
-                                <div className='subheading'>combatant</div>
-                                <Dropdown
-                                    options={combatantOptions}
-                                    selectedID={
-                                        (this.props.condition.duration as ConditionDurationCombatant)
-                                        ? (this.props.condition.duration as ConditionDurationCombatant).combatantID || undefined
-                                        : undefined
-                                    }
-                                    select={optionID => this.changeValue(this.props.condition.duration, 'combatantID', optionID)}
-                                />
-                            </div>
-                            <div className='section'>
                                 <div className='subheading'>start or end of the turn</div>
                                 <Selector
                                     options={pointOptions}
@@ -241,6 +238,18 @@ export default class ConditionModal extends React.Component<Props, State> {
                                         : null
                                     }
                                     select={optionID => this.changeValue(this.props.condition.duration, 'point', optionID)}
+                                />
+                            </div>
+                            <div className='section'>
+                                <div className='subheading'>combatant</div>
+                                <Dropdown
+                                    options={combatantOptions}
+                                    selectedID={
+                                        (this.props.condition.duration as ConditionDurationCombatant)
+                                        ? (this.props.condition.duration as ConditionDurationCombatant).combatantID || undefined
+                                        : undefined
+                                    }
+                                    select={optionID => this.changeValue(this.props.condition.duration, 'combatantID', optionID)}
                                 />
                             </div>
                         </div>

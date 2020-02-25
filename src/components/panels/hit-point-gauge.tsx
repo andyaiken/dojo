@@ -11,7 +11,7 @@ export default class HitPointGauge extends React.Component<Props> {
     public render() {
         try {
             const hpCurrent = this.props.combatant.hp || 0;
-            const hpMax = this.props.combatant.hpMax + this.props.combatant.hpTemp;
+            const hpMax = this.props.combatant.hpMax + (this.props.combatant.hpTemp ?? 0);
             const hpBloodied = this.props.combatant.hpMax / 2;
             const hpWidth = 100 * Math.max(hpCurrent, 0) / hpMax;
 
@@ -25,7 +25,7 @@ export default class HitPointGauge extends React.Component<Props> {
             }
 
             let hpTempBar = null;
-            if (this.props.combatant.hpTemp > 0) {
+            if ((this.props.combatant.hpTemp !== null) && (this.props.combatant.hpTemp > 0)) {
                 const hpTempWidth = 100 * Math.max(this.props.combatant.hpTemp, 0) / hpMax;
                 hpTempBar = <div className='bar temp' style={{ width: hpTempWidth + '%' }} />;
             }

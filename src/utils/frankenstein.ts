@@ -91,7 +91,6 @@ export default class Frankenstein {
         monster.abilityScores.cha = 10;
         monster.ac = 10;
         monster.hpMax = 0;
-        monster.hpTemp = 0;
         monster.hitDice = 1;
         monster.damage.resist = '';
         monster.damage.vulnerable = '';
@@ -130,7 +129,6 @@ export default class Frankenstein {
             },
             ac: monster.ac,
             hpMax: monster.hpMax,
-            hpTemp: monster.hpTemp,
             hitDice: monster.hitDice,
             damage: {
                 resist: monster.damage.resist,

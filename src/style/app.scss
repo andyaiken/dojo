@@ -858,6 +858,15 @@ body,
         }
     }
 
+    &.current {
+        background-color: #65006520;
+        pointer-events: none;
+
+        .header {
+            background-color: #650065;
+        }
+    }
+
     &.defeated {
         opacity: 0.5;
     }

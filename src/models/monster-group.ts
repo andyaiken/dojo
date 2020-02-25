@@ -23,7 +23,6 @@ export interface Monster {
     };
     ac: number;
     hpMax: number;
-    hpTemp: number;
     hitDice: number;
     damage: {
         resist: string;

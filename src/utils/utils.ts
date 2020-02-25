@@ -624,7 +624,7 @@ export default class Utils {
                     const combatantDuration = condition.duration as ConditionDurationCombatant;
                     const point = combatantDuration.point;
                     const c = combat.combatants.find(cmb => cmb.id === combatantDuration.combatantID) as (Combatant & PC) | (Combatant & Monster);
-                    const combatant = c ? (c.displayName || c.name || 'unnamed monster') + '\'s' : 'someone\'s';
+                    const combatant = c ? (c.displayName || c.name || 'unnamed monster') + '\'s' : 'their';
                     return 'until the ' + point + ' of ' + combatant + ' next turn';
                 case 'rounds':
                     const roundsDuration = condition.duration as ConditionDurationRounds;

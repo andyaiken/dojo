@@ -73,7 +73,6 @@ export default class Factory {
             },
             ac: 10,
             hpMax: 4,
-            hpTemp: 0,
             hitDice: 1,
             damage: {
                 resist: '',

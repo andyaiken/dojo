@@ -869,6 +869,7 @@ export default class App extends React.Component<Props, State> {
         combatant.showOnMap = true;
         combatant.initiative = 10;
         combatant.hp = null;
+        combatant.hpTemp = null;
         combatant.conditions = [];
         combatant.tags = [];
         combatant.note = '';
@@ -908,6 +909,7 @@ export default class App extends React.Component<Props, State> {
         combatant.displaySize = monster.size;
         combatant.showOnMap = true;
         combatant.hp = combatant.hpMax;
+        combatant.hpTemp = 0;
         combatant.conditions = [];
         combatant.tags = [];
         combatant.note = '';
@@ -934,6 +936,7 @@ export default class App extends React.Component<Props, State> {
                 showOnMap: true,
                 initiative: 10,
                 hp: null,
+                hpTemp: null,
                 conditions: [],
                 tags: [],
                 note: '',
@@ -1074,7 +1077,7 @@ export default class App extends React.Component<Props, State> {
                         switch (c.duration.type) {
                             case 'saves':
                                 // If it's my condition, and point is START, notify the user
-                                if (combat && combatant && (actor.id === combatant.id) && (c.duration.point === 'start')) {
+                                if (combatant && (actor.id === combatant.id) && (c.duration.point === 'start')) {
                                     combat.notifications.push({
                                         id: Utils.guid(),
                                         type: 'condition-save',
@@ -1085,7 +1088,7 @@ export default class App extends React.Component<Props, State> {
                                 break;
                             case 'combatant':
                                 // If this refers to me, and point is START, remove it
-                                if (combat && combatant && (c.duration.combatantID === combatant.id) && (c.duration.point === 'start')) {
+                                if (combatant && ((c.duration.combatantID === combatant.id) || (c.duration.combatantID === null)) && (c.duration.point === 'start')) {
                                     const index = actor.conditions.indexOf(c);
                                     actor.conditions.splice(index, 1);
                                     // Notify the user
@@ -1192,13 +1195,13 @@ export default class App extends React.Component<Props, State> {
     private makeDefeated(combatants: Combatant[]) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
+            const current = combatants.find(c => c.current);
             combatants.forEach(c => {
                 c.pending = false;
                 c.active = false;
                 c.defeated = true;
 
                 if (c.type === 'monster') {
-                    const current = combat.combatants.find(c => c.current);
                     if (current && (current.type === 'pc')) {
                         const entry = Factory.createCombatReportEntry();
                         entry.type = 'kill';
@@ -1213,7 +1216,6 @@ export default class App extends React.Component<Props, State> {
                 }
             });
 
-            const current = combatants.find(c => c.current);
             if (current) {
                 this.endTurn(current);
             } else {
@@ -1535,7 +1537,7 @@ export default class App extends React.Component<Props, State> {
                         switch (c.duration.type) {
                             case 'saves':
                                 // If it's my condition, and point is END, notify the user
-                                if (combat && (actor.id === combatant.id) && (c.duration.point === 'end')) {
+                                if ((actor.id === combatant.id) && (c.duration.point === 'end')) {
                                     const saveNotification = Factory.createNotification();
                                     saveNotification.type = 'condition-save';
                                     saveNotification.data = c;
@@ -1545,7 +1547,7 @@ export default class App extends React.Component<Props, State> {
                                 break;
                             case 'combatant':
                                 // If this refers to me, and point is END, remove it
-                                if (combat && (c.duration.combatantID === combatant.id) && (c.duration.point === 'end')) {
+                                if (((c.duration.combatantID === combatant.id) || (c.duration.combatantID === null)) && (c.duration.point === 'end')) {
                                     const n = actor.conditions.indexOf(c);
                                     actor.conditions.splice(n, 1);
                                     // Notify the user
@@ -1588,12 +1590,15 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
-    private changeHP(values: {monster: Combatant & Monster, hp: number, temp: number, damage: number}[]) {
+    private changeHP(values: {id: string, hp: number, temp: number, damage: number}[]) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
             values.forEach(v => {
-                v.monster.hp = v.hp;
-                v.monster.hpTemp = v.temp;
+                const combatant = combat.combatants.find(c => c.id === v.id);
+                if (combatant) {
+                    combatant.hp = v.hp;
+                    combatant.hpTemp = v.temp;
+                }
 
                 const current = combat.combatants.find(c => c.current);
                 if (current && (current.type === 'pc')) {
@@ -1611,7 +1616,7 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
-    private addCondition(combatant: Combatant) {
+    private addCondition(combatants: Combatant[]) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
             const condition = Factory.createCondition();
@@ -1621,7 +1626,7 @@ export default class App extends React.Component<Props, State> {
                 drawer: {
                     type: 'condition-add',
                     condition: condition,
-                    combatant: combatant,
+                    combatants: combatants,
                     combat: combat
                 }
             });
@@ -1631,19 +1636,20 @@ export default class App extends React.Component<Props, State> {
     private addConditionFromModal() {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
-            const conditions: Condition[] = this.state.drawer.combatant.conditions;
-            conditions.push(this.state.drawer.condition);
+            this.state.drawer.combatants.forEach((combatant: Combatant) => {
+                const condition: Condition = JSON.parse(JSON.stringify(this.state.drawer.condition));
+                condition.id = Utils.guid();
+                combatant.conditions.push(condition);
+                Utils.sort(combatant.conditions, [{ field: 'name', dir: 'asc' }]);
 
-            const current = combat.combatants.find(c => c.current);
-            if (current && (current.type === 'pc')) {
-                const entry = Factory.createCombatReportEntry();
-                entry.type = 'condition-add';
-                entry.combatantID = current.id;
-                combat.report.push(entry);
-            }
-
-            const combatant = this.state.drawer.combatant;
-            combatant.conditions = Utils.sort(conditions, [{ field: 'name', dir: 'asc' }]);
+                const current = combat.combatants.find(c => c.current);
+                if (current && (current.type === 'pc')) {
+                    const entry = Factory.createCombatReportEntry();
+                    entry.type = 'condition-add';
+                    entry.combatantID = current.id;
+                    combat.report.push(entry);
+                }
+            });
 
             this.setState({
                 combats: this.state.combats,
@@ -1659,7 +1665,7 @@ export default class App extends React.Component<Props, State> {
                 drawer: {
                     type: 'condition-edit',
                     condition: condition,
-                    combatant: combatant,
+                    combatants: [combatant],
                     combat: combat
                 }
             });
@@ -1667,42 +1673,38 @@ export default class App extends React.Component<Props, State> {
     }
 
     private editConditionFromModal() {
-        const conditions: Condition[] = this.state.drawer.combatant.conditions;
-        const original = conditions.find(c => c.id === this.state.drawer.condition.id);
-        if (original) {
-            const index = conditions.indexOf(original);
-            conditions[index] = this.state.drawer.condition;
+        this.state.drawer.combatants.forEach((combatant: Combatant) => {
+            const original = combatant.conditions.find(c => c.id === this.state.drawer.condition.id);
+            if (original) {
+                const index = combatant.conditions.indexOf(original);
+                combatant.conditions[index] = this.state.drawer.condition;
+                Utils.sort(combatant.conditions, [{ field: 'name', dir: 'asc' }]);
+            }
+        });
 
-            const combatant = this.state.drawer.combatant;
-            combatant.conditions = Utils.sort(conditions, [{ field: 'name', dir: 'asc' }]);
-
-            this.setState({
-                combats: this.state.combats,
-                drawer: null
-            });
-        }
+        this.setState({
+            combats: this.state.combats,
+            drawer: null
+        });
     }
 
-    private removeCondition(combatant: Combatant, conditionID: string) {
+    private removeCondition(combatant: Combatant, condition: Condition) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
-            const condition = combatant.conditions.find(c => c.id === conditionID);
-            if (condition) {
-                const index = combatant.conditions.indexOf(condition);
-                combatant.conditions.splice(index, 1);
+            const index = combatant.conditions.indexOf(condition);
+            combatant.conditions.splice(index, 1);
 
-                const current = combat.combatants.find(c => c.current);
-                if (current && (current.type === 'pc')) {
-                    const entry = Factory.createCombatReportEntry();
-                    entry.type = 'condition-remove';
-                    entry.combatantID = current.id;
-                    combat.report.push(entry);
-                }
-
-                this.setState({
-                    combats: this.state.combats
-                });
+            const current = combat.combatants.find(c => c.current);
+            if (current && (current.type === 'pc')) {
+                const entry = Factory.createCombatReportEntry();
+                entry.type = 'condition-remove';
+                entry.combatantID = current.id;
+                combat.report.push(entry);
             }
+
+            this.setState({
+                combats: this.state.combats
+            });
         }
     }
 
@@ -1753,9 +1755,9 @@ export default class App extends React.Component<Props, State> {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
             combatants.forEach(c => {
-                const existing = c.conditions.find(c => c.name === condition);
+                const existing = c.conditions.find(cond => cond.name === condition);
                 if (existing) {
-                    this.removeCondition(c, existing.id);
+                    this.removeCondition(c, existing);
                 } else {
                     const cnd = Factory.createCondition();
                     cnd.name = condition;
@@ -1763,7 +1765,7 @@ export default class App extends React.Component<Props, State> {
 
                     c.conditions = Utils.sort(c.conditions, [{ field: 'name', dir: 'asc' }]);
 
-                    const current = combat.combatants.find(c => c.current);
+                    const current = combat.combatants.find(combatant => combatant.current);
                     if (current && (current.type === 'pc')) {
                         const entry = Factory.createCombatReportEntry();
                         entry.type = 'condition-add';
@@ -1990,9 +1992,9 @@ export default class App extends React.Component<Props, State> {
                             addCompanion={companion => this.addCompanionToCombat(companion)}
                             addPC={(partyID, pcID) => this.addPCToEncounter(partyID, pcID)}
                             addWave={() => this.openWaveModal()}
-                            addCondition={combatant => this.addCondition(combatant)}
+                            addCondition={combatants => this.addCondition(combatants)}
                             editCondition={(combatant, condition) => this.editCondition(combatant, condition)}
-                            removeCondition={(combatant, conditionID) => this.removeCondition(combatant, conditionID)}
+                            removeCondition={(combatant, condition) => this.removeCondition(combatant, condition)}
                             mapAdd={(combatant, x, y) => this.mapAdd(combatant, x, y)}
                             mapResize={(id, dir, dir2) => this.mapResize(id, dir, dir2)}
                             mapMove={(ids, dir) => this.mapMove(ids, dir)}
@@ -2245,7 +2247,7 @@ export default class App extends React.Component<Props, State> {
                     content = (
                         <ConditionModal
                             condition={this.state.drawer.condition}
-                            combatant={this.state.drawer.combatant}
+                            combatants={this.state.drawer.combatants}
                             combat={this.state.drawer.combat}
                         />
                     );
@@ -2260,7 +2262,7 @@ export default class App extends React.Component<Props, State> {
                     content = (
                         <ConditionModal
                             condition={this.state.drawer.condition}
-                            combatant={this.state.drawer.combatant}
+                            combatants={this.state.drawer.combatants}
                             combat={this.state.drawer.combat}
                         />
                     );

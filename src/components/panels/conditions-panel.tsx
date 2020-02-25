@@ -10,33 +10,34 @@ import { Condition } from '../../models/condition';
 import NumberSpin from '../controls/number-spin';
 
 interface Props {
-    combatant: Combatant;
+    combatants: Combatant[];
     combat: Combat;
     nudgeConditionValue: (condition: Condition, field: string, delta: number) => void;
     addCondition: () => void;
-    editCondition: (condition: Condition) => void;
-    removeCondition: (conditionID: string) => void;
+    editCondition: (combatant: Combatant, condition: Condition) => void;
+    removeCondition: (combatant: Combatant, condition: Condition) => void;
 }
 
 export default class ConditionsPanel extends React.Component<Props> {
     public render() {
         try {
-            const conditions = [];
-            if (this.props.combatant.conditions) {
-                for (let n = 0; n !== this.props.combatant.conditions.length; ++n) {
-                    const c = this.props.combatant.conditions[n];
+            const conditions: JSX.Element[] = [];
+            this.props.combatants.forEach(combatant => {
+                combatant.conditions.forEach(condition => {
                     conditions.push(
                         <ConditionPanel
-                            key={n}
-                            condition={c}
+                            key={condition.id}
+                            condition={condition}
+                            combatant={combatant}
                             combat={this.props.combat}
-                            nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
-                            editCondition={condition => this.props.editCondition(condition)}
-                            removeCondition={conditionID => this.props.removeCondition(conditionID)}
+                            showCombatantName={this.props.combatants.length > 1}
+                            nudgeConditionValue={(c, type, delta) => this.props.nudgeConditionValue(c, type, delta)}
+                            editCondition={c => this.props.editCondition(combatant, c)}
+                            removeCondition={c => this.props.removeCondition(combatant, c)}
                         />
                     );
-                }
-            }
+                });
+            });
 
             return (
                 <div className='section'>
@@ -53,10 +54,12 @@ export default class ConditionsPanel extends React.Component<Props> {
 
 interface ConditionPanelProps {
     condition: Condition;
+    combatant: Combatant;
     combat: Combat;
+    showCombatantName: boolean;
     nudgeConditionValue: (condition: Condition, field: string, delta: number) => void;
     editCondition: (condition: Condition) => void;
-    removeCondition: (conditionID: string) => void;
+    removeCondition: (condition: Condition) => void;
 }
 
 class ConditionPanel extends React.Component<ConditionPanelProps> {
@@ -65,6 +68,9 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
             let name: string = this.props.condition.name || 'condition';
             if (this.props.condition.name === 'exhaustion') {
                 name += ' (' + this.props.condition.level + ')';
+            }
+            if (this.props.showCombatantName) {
+                name = this.props.combatant.displayName + ': ' + name;
             }
 
             let duration = null;
@@ -96,12 +102,10 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
 
             return (
                 <div className='group-panel condition-panel'>
-                    <div>
-                        <div className='condition-name'>{name}</div>
-                        <div className='condition-buttons'>
-                            <Icon type='edit' title='edit' onClick={() => this.props.editCondition(this.props.condition)} />
-                            <Icon type='close' title='remove' onClick={() => this.props.removeCondition(this.props.condition.id)} />
-                        </div>
+                    <div className='condition-name'>{name}</div>
+                    <div className='condition-buttons'>
+                        <Icon type='edit' title='edit' onClick={() => this.props.editCondition(this.props.condition)} />
+                        <Icon type='close' title='remove' onClick={() => this.props.removeCondition(this.props.condition)} />
                     </div>
                     {duration}
                     {description}

@@ -37,6 +37,7 @@ export interface Combatant {
     defeated: boolean;
     initiative: number | null;
     hp: number | null;
+    hpTemp: number | null;
     conditions: Condition[];
     tags: string[];
     note: string;

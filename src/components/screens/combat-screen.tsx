@@ -56,16 +56,16 @@ interface Props {
     addCompanion: (companion: Companion | null) => void;
     addPC: (partyID: string, pcID: string) => void;
     addWave: () => void;
-    addCondition: (combatant: Combatant) => void;
+    addCondition: (combatants: Combatant[]) => void;
     editCondition: (combatant: Combatant, condition: Condition) => void;
-    removeCondition: (combatant: Combatant, conditionID: string) => void;
+    removeCondition: (combatant: Combatant, condition: Condition) => void;
     mapMove: (ids: string[], dir: string) => void;
     mapResize: (id: string, dir: string, dir2: 'out' | 'in') => void;
     mapRemove: (ids: string[]) => void;
     mapAddNote: (id: string) => void;
     mapRemoveNote: (id: string) => void;
     endTurn: (combatant: Combatant) => void;
-    changeHP: (values: {monster: Combatant & Monster, hp: number, temp: number, damage: number}[]) => void;
+    changeHP: (values: {id: string, hp: number, temp: number, damage: number}[]) => void;
     changeValue: (source: {}, type: string, value: any) => void;
     nudgeValue: (source: {}, type: string, delta: number) => void;
     toggleTag: (combatants: Combatant[], tag: string) => void;
@@ -215,6 +215,17 @@ export default class CombatScreen extends React.Component<Props, State> {
         }, () => {
             // ... then mark them as defeated
             this.props.makeDefeated(combatants);
+        });
+    }
+
+    private removeCombatants(combatants: Combatant[]) {
+        // Deselect any of these combatants who are currently selected...
+        const ids = combatants.map(c => c.id);
+        this.setState({
+            selectedItemIDs: this.state.selectedItemIDs.filter(id => !ids.includes(id))
+        }, () => {
+            // ... then remove them
+            this.props.removeCombatants(combatants);
         });
     }
 
@@ -487,53 +498,25 @@ export default class CombatScreen extends React.Component<Props, State> {
     }
 
     private getSelectedCombatant() {
-        let selectedCombatant = null;
-        if (this.state.selectedItemIDs.length === 1) {
-            const combatant = this.props.combat.combatants.find(c => c.id === this.state.selectedItemIDs[0]);
-            if (combatant) {
-                if (combatant.current) {
-                    selectedCombatant = (
-                        <Note key='selected'>
-                            <div className='section'>
-                                <b>{combatant.displayName}</b> is selected; it is the current initiative holder
-                            </div>
-                        </Note>
-                    );
-                } else {
-                    selectedCombatant = (
-                        <div>
-                            {this.createControls([combatant])}
-                            {this.createCard(combatant)}
-                        </div>
-                    );
-                }
-            }
+        // Find which combatants we've selected, ignoring the current initiative holder
+        const combatants = this.state.selectedItemIDs
+            .map(id => this.props.combat.combatants.find(c => c.id === id))
+            .filter(c => !!c && !c.current) as Combatant[];
+        Utils.sort(combatants, [{ field: 'displayName', dir: 'asc' }]);
 
-            if (!selectedCombatant && this.props.combat.map) {
-                const mapItem = this.props.combat.map.items.find(i => i.id === this.state.selectedItemIDs[0]);
-                if (mapItem) {
-                    const note = Mercator.getNote(this.props.combat.map, mapItem);
-                    selectedCombatant = (
-                        <MapItemCard
-                            item={mapItem}
-                            note={note}
-                            move={(item, dir) => this.props.mapMove([item.id], dir)}
-                            resize={(item, dir, dir2) => this.props.mapResize(item.id, dir, dir2)}
-                            remove={item => this.props.mapRemove([item.id])}
-                            addNote={itemID => this.props.mapAddNote(itemID)}
-                            removeNote={itemID => this.props.mapRemoveNote(itemID)}
-                            changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
-                            nudgeValue={(source, field, delta) => this.props.nudgeValue(source, field, delta)}
-                        />
-                    );
-                }
-            }
+        // Have we selected a single combatant?
+        if (combatants.length === 1) {
+            return (
+                <div>
+                    {this.createControls(combatants)}
+                    {this.createCard(combatants[0])}
+                </div>
+            );
         }
 
-        if (this.state.selectedItemIDs.length > 1) {
-            const combatants = this.state.selectedItemIDs.map(id => this.props.combat.combatants.find(c => c.id === id)) as Combatant[];
-            Utils.sort(combatants, [{ field: 'displayName', dir: 'asc' }]);
-            selectedCombatant = (
+        // Have we selected multiple combatants?
+        if (combatants.length > 1) {
+            return (
                 <div>
                     {this.createControls(combatants)}
                     <Note>
@@ -543,7 +526,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                                 {c.displayName}
                                 <Icon
                                     type='close-circle'
-                                    style={{ float: 'right', fontSize: '18px' }}
+                                    style={{ float: 'right', padding: '2px 0', fontSize: '14px' }}
                                     onClick={() => this.toggleItemSelection(c.id, true)}
                                 />
                             </div>
@@ -553,17 +536,33 @@ export default class CombatScreen extends React.Component<Props, State> {
             );
         }
 
-        if (!selectedCombatant) {
-            selectedCombatant = (
-                <Note key='selected'>
-                    <div className='section'>
-                        select a pc or monster from the <b>initiative order</b> list to see its details here
-                    </div>
-                </Note>
-            );
+        // Have we selected a map item?
+        if (this.props.combat.map) {
+            const mapItem = this.props.combat.map.items.find(i => i.id === this.state.selectedItemIDs[0]);
+            if (mapItem) {
+                return (
+                    <MapItemCard
+                        item={mapItem}
+                        note={Mercator.getNote(this.props.combat.map, mapItem)}
+                        move={(item, dir) => this.props.mapMove([item.id], dir)}
+                        resize={(item, dir, dir2) => this.props.mapResize(item.id, dir, dir2)}
+                        remove={item => this.props.mapRemove([item.id])}
+                        addNote={itemID => this.props.mapAddNote(itemID)}
+                        removeNote={itemID => this.props.mapRemoveNote(itemID)}
+                        changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
+                        nudgeValue={(source, field, delta) => this.props.nudgeValue(source, field, delta)}
+                    />
+                );
+            }
         }
 
-        return selectedCombatant;
+        return (
+            <Note key='selected'>
+                <div className='section'>
+                    select a pc or monster from the <b>initiative order</b> list to see its details here
+                </div>
+            </Note>
+        );
     }
 
     private createPendingRow(combatant: Combatant) {
@@ -628,19 +627,19 @@ export default class CombatScreen extends React.Component<Props, State> {
         return null;
     }
 
-    private createControls(combatants: Combatant[]) {
+    private createControls(selectdCombatants: Combatant[]) {
         return (
             <CombatControlsPanel
-                combatants={combatants}
+                combatants={selectdCombatants}
                 combat={this.props.combat}
                 makeCurrent={combatant => this.props.makeCurrent(combatant)}
                 makeActive={combatants => this.props.makeActive(combatants)}
                 makeDefeated={combatants => this.defeatCombatants(combatants)}
-                removeCombatants={combatants => this.props.removeCombatants(combatants)}
+                removeCombatants={combatants => this.removeCombatants(combatants)}
                 changeHP={values => this.props.changeHP(values)}
-                addCondition={combatant => this.props.addCondition(combatant)}
+                addCondition={combatants => this.props.addCondition(combatants)}
                 editCondition={(combatant, condition) => this.props.editCondition(combatant, condition)}
-                removeCondition={(combatant, conditionID) => this.props.removeCondition(combatant, conditionID)}
+                removeCondition={(combatant, condition) => this.props.removeCondition(combatant, condition)}
                 nudgeConditionValue={(combatant, type, delta) => this.props.nudgeValue(combatant, type, delta)}
                 mapAdd={combatant => this.setAddingToMapID(this.state.addingToMapID ? null : combatant.id)}
                 mapMove={(combatants, dir) => this.props.mapMove(combatants.map(c => c.id), dir)}
@@ -903,6 +902,8 @@ export default class CombatScreen extends React.Component<Props, State> {
 
 //#region Helper classes
 
+//#region Notification
+
 interface NotificationProps {
     notification: Notification;
     close: (notification: Notification, removeCondition: boolean) => void;
@@ -1004,6 +1005,10 @@ class NotificationPanel extends React.Component<NotificationProps> {
     }
 }
 
+//#endregion
+
+//#region PendingCombatant
+
 interface PendingCombatantRowProps {
     combatant: Combatant;
     selected: boolean;
@@ -1064,6 +1069,10 @@ class PendingCombatantRow extends React.Component<PendingCombatantRowProps> {
     }
 }
 
+//#endregion
+
+//#region PCRow
+
 interface PCRowProps {
     combatant: Combatant & PC;
     minimal: boolean;
@@ -1100,7 +1109,10 @@ class PCRow extends React.Component<PCRowProps> {
     public render() {
         try {
             let style = 'combatant-row ' + this.props.combatant.type;
-            if (this.props.combatant.current || this.props.selected) {
+            if (this.props.combatant.current) {
+                style += ' current';
+            }
+            if (this.props.selected) {
                 style += ' highlight';
             }
             if (this.props.combatant.defeated) {
@@ -1208,6 +1220,10 @@ class PCRow extends React.Component<PCRowProps> {
     }
 }
 
+//#endregion
+
+//#region MonsterRow
+
 interface MonsterRowProps {
     combatant: Combatant & Monster;
     minimal: boolean;
@@ -1244,7 +1260,10 @@ class MonsterRow extends React.Component<MonsterRowProps> {
     public render() {
         try {
             let style = 'combatant-row ' + this.props.combatant.type;
-            if (this.props.combatant.current || this.props.selected) {
+            if (this.props.combatant.current) {
+                style += ' current';
+            }
+            if (this.props.selected) {
                 style += ' highlight';
             }
             if (this.props.combatant.defeated) {
@@ -1257,7 +1276,7 @@ class MonsterRow extends React.Component<MonsterRowProps> {
             }
 
             let hp = (this.props.combatant.hp ? this.props.combatant.hp : 0).toString();
-            if (this.props.combatant.hpTemp > 0) {
+            if ((this.props.combatant.hpTemp ?? 0) > 0) {
                 hp += '+' + this.props.combatant.hpTemp;
             }
 
@@ -1371,6 +1390,10 @@ class MonsterRow extends React.Component<MonsterRowProps> {
     }
 }
 
+//#endregion
+
+//#region CompanionRow
+
 interface CompanionRowProps {
     combatant: Combatant;
     minimal: boolean;
@@ -1407,7 +1430,10 @@ class CompanionRow extends React.Component<CompanionRowProps> {
     public render() {
         try {
             let style = 'combatant-row ' + this.props.combatant.type;
-            if (this.props.combatant.current || this.props.selected) {
+            if (this.props.combatant.current) {
+                style += ' current';
+            }
+            if (this.props.selected) {
                 style += ' highlight';
             }
             if (this.props.combatant.defeated) {
@@ -1496,6 +1522,10 @@ class CompanionRow extends React.Component<CompanionRowProps> {
         }
     }
 }
+
+//#endregion
+
+//#region MapItemCard
 
 interface MapItemCardProps {
     item: MapItem;
@@ -1664,6 +1694,10 @@ class MapItemCard extends React.Component<MapItemCardProps, MapItemCardState> {
     }
 }
 
+//#endregion
+
+//#region CombatControlsPanel
+
 interface CombatControlsPanelProps {
     combatants: Combatant[];
     combat: Combat;
@@ -1674,10 +1708,10 @@ interface CombatControlsPanelProps {
     mapMove: (combatants: Combatant[], dir: string) => void;
     mapRemove: (combatants: Combatant[]) => void;
     removeCombatants: (combatants: Combatant[]) => void;
-    changeHP: (values: {monster: Combatant & Monster, hp: number, temp: number, damage: number}[]) => void;
-    addCondition: (combatant: Combatant) => void;
+    changeHP: (values: {id: string, hp: number, temp: number, damage: number}[]) => void;
+    addCondition: (combatants: Combatant[]) => void;
     editCondition: (combatant: Combatant, condition: Condition) => void;
-    removeCondition: (combatant: Combatant, conditionID: string) => void;
+    removeCondition: (combatant: Combatant, condition: Condition) => void;
     nudgeConditionValue: (condition: Condition, field: string, delta: number) => void;
     toggleTag: (combatants: Combatant[], tag: string) => void;
     toggleCondition: (combatants: Combatant[], condition: string) => void;
@@ -1689,6 +1723,7 @@ interface CombatControlsPanelProps {
 interface CombatControlsPanelState {
     view: string;
     damageOrHealing: number;
+    damageMultipliers: { [id: string]: number };
 }
 
 class CombatControlsPanel extends React.Component<CombatControlsPanelProps, CombatControlsPanelState> {
@@ -1697,7 +1732,8 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
 
         this.state = {
             view: 'main',
-            damageOrHealing: 0
+            damageOrHealing: 0,
+            damageMultipliers: {}
         };
     }
 
@@ -1719,43 +1755,53 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
         });
     }
 
+    private setDamageMultiplier(id: string, multiplier: number) {
+        const multipliers = this.state.damageMultipliers;
+        multipliers[id] = multiplier;
+        this.setState({
+            damageMultipliers: multipliers
+        });
+    }
+
     private heal() {
         const value = this.state.damageOrHealing;
 
         this.setState({
             damageOrHealing: 0
         }, () => {
-            const values = this.props.combatants.map(combatant => {
+            const values: { id: string, hp: number, temp: number; damage: number }[] = [];
+            this.props.combatants.forEach(combatant => {
                 const monster = combatant as Combatant & Monster;
 
-                let hp = (monster.hp ? monster.hp : 0) + value;
+                let hp = (monster.hp ?? 0) + value;
                 hp = Math.min(hp, monster.hpMax);
 
-                return {
-                    monster: monster,
-                    hp: hp, 
-                    temp: monster.hpTemp,
+                values.push({
+                    id: monster.id,
+                    hp: hp,
+                    temp: monster.hpTemp ?? 0,
                     damage: 0
-                };
+                });
             });
 
             this.props.changeHP(values);
         });
     }
 
-    private damage(factor: number = 1) {
+    private damage() {
         const value = this.state.damageOrHealing;
 
         this.setState({
             damageOrHealing: 0
         }, () => {
-            const values = this.props.combatants.map(combatant => {
-                const monster = combatant as Combatant & Monster;
+            const values: { id: string, hp: number, temp: number; damage: number }[] = [];
+            this.props.combatants.forEach(combatant => {
+                const multiplier = this.state.damageMultipliers[combatant.id] ?? 1;
 
-                let hp = (monster.hp ? monster.hp : 0);
-                let temp = monster.hpTemp;
+                let hp = combatant.hp ?? 0;
+                let temp = combatant.hpTemp ?? 0;
 
-                const totalDamage = Math.floor(value * factor);
+                const totalDamage = Math.floor(value * multiplier);
                 let damage = totalDamage;
 
                 // Take damage off temp HP first
@@ -1767,12 +1813,12 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                 hp -= damage;
                 hp = Math.max(hp, 0);
 
-                return {
-                    monster: monster,
+                values.push({
+                    id: combatant.id,
                     hp: hp,
                     temp: temp,
                     damage: totalDamage
-                };
+                });
             });
 
             this.props.changeHP(values);
@@ -1845,7 +1891,7 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                             <Checkbox
                                 label='prone'
                                 display='button'
-                                checked={this.props.combatants.every(c => c.conditions.some(c => c.name === 'prone'))}
+                                checked={this.props.combatants.every(c => c.conditions.some(condition => condition.name === 'prone'))}
                                 changeValue={value => this.props.toggleCondition(this.props.combatants, 'prone')}
                             />
                         </Col>
@@ -1853,7 +1899,7 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                             <Checkbox
                                 label='uncon.'
                                 display='button'
-                                checked={this.props.combatants.every(c => c.conditions.some(c => c.name === 'unconscious'))}
+                                checked={this.props.combatants.every(c => c.conditions.some(condition => condition.name === 'unconscious'))}
                                 changeValue={value => this.props.toggleCondition(this.props.combatants, 'unconscious')}
                             />
                         </Col>
@@ -1878,8 +1924,11 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
             );
         }
 
-        // TODO: Return a helpful message
-        return null;
+        return (
+            <Note>
+                <div className='section'>multiple combatants are selected</div>
+            </Note>
+        );
     }
 
     private getHPSection() {
@@ -1911,7 +1960,7 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
             );
         }
 
-        let modifiers = this.props.combatants.map(c => {
+        const modifiers = this.props.combatants.map(c => {
             const monster = c as Combatant & Monster;
             let r = null;
             let v = null;
@@ -1949,7 +1998,57 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
             return null;
         });
 
-        let btn = null;
+        const degreeOptions = [
+            { id: 'half', text: 'half' },
+            { id: 'normal', text: 'normal' },
+            { id: 'double', text: 'double' }
+        ];
+        const degrees = this.props.combatants.map(c => {
+            let selected = 'normal';
+            const multiplier = this.state.damageMultipliers[c.id] ?? 1;
+            if (multiplier < 1) {
+                selected = 'half';
+            }
+            if (multiplier > 1) {
+                selected = 'double';
+            }
+            const selector = (
+                <Selector
+                    options={degreeOptions}
+                    selectedID={selected}
+                    disabled={this.state.damageOrHealing === 0}
+                    select={id => {
+                        let value = 1;
+                        if (id === 'half') {
+                            value = 0.5;
+                        }
+                        if (id === 'double') {
+                            value = 2;
+                        }
+                        this.setDamageMultiplier(c.id, value);
+                    }}
+                />
+            );
+            if (this.props.combatants.length === 1) {
+                return (
+                    <div key={c.id}>
+                        {selector}
+                    </div>
+                );
+            }
+            return (
+                <Row key={c.id} type='flex' align='middle'>
+                    <Col span={8}>
+                        <div>{c.displayName}</div>
+                    </Col>
+                    <Col span={16}>
+                        {selector}
+                    </Col>
+                </Row>
+            );
+        });
+
+        let defeatedBtn = null;
         const atZero = this.props.combatants.filter(c => (c.hp != null) && (c.hp <= 0));
         if (atZero.length > 0) {
             const txt = (atZero.length === 1) && (atZero[0].current) ? 'mark as defeated and end turn' : 'mark as defeated';
@@ -1961,7 +2060,7 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                     </ul>
                 );
             }
-            btn = (
+            defeatedBtn = (
                 <button onClick={() => this.props.makeDefeated(atZero)}>
                     {txt}
                     {names}
@@ -1980,26 +2079,24 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                     nudgeValue={delta => this.nudgeDamage(delta)}
                 />
                 <Row gutter={10}>
-                    <Col xs={24} sm={24} md={12} lg={12} xl={6}>
+                    <Col xs={24} sm={24} md={8} lg={8} xl={8}>
                         <button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.heal()}>heal</button>
                     </Col>
-                    <Col xs={24} sm={24} md={12} lg={12} xl={6}>
+                    <Col xs={24} sm={24} md={8} lg={8} xl={8}>
                         <button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.setDamage(0)}>reset</button>
                     </Col>
-                    <Col xs={24} sm={24} md={12} lg={12} xl={6}>
-                        <button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.damage(0.5)}>half damage</button>
-                    </Col>
-                    <Col xs={24} sm={24} md={12} lg={12} xl={6}>
+                    <Col xs={24} sm={24} md={8} lg={8} xl={8}>
                         <button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.damage()}>damage</button>
                     </Col>
                 </Row>
-                {btn}
+                {degrees}
+                {defeatedBtn}
             </div>
         );
     }
 
     private getConditionSection() {
-        let immunities = this.props.combatants.map(c => {
+        const conditionImmunities = this.props.combatants.map(c => {
             if (c.type !== 'monster') {
                 return null;
             }
@@ -2016,23 +2113,20 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
             );
         });
 
-        let conditions = null;
-        if (this.props.combatants.length === 1) {
-            conditions = (
-                <ConditionsPanel
-                    combatant={this.props.combatants[0]}
-                    combat={this.props.combat}
-                    addCondition={() => this.props.addCondition(this.props.combatants[0])}
-                    editCondition={condition => this.props.editCondition(this.props.combatants[0], condition)}
-                    removeCondition={conditionID => this.props.removeCondition(this.props.combatants[0], conditionID)}
-                    nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
-                />
-            )
-        }
+        const conditions = (
+            <ConditionsPanel
+                combatants={this.props.combatants}
+                combat={this.props.combat}
+                addCondition={() => this.props.addCondition(this.props.combatants)}
+                editCondition={(combatant, condition) => this.props.editCondition(combatant, condition)}
+                removeCondition={(combatant, condition) => this.props.removeCondition(combatant, condition)}
+                nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
+            />
+        );
 
         return (
             <div>
-                {immunities}
+                {conditionImmunities}
                 {conditions}
             </div>
         );
@@ -2179,7 +2273,7 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
             }
         }
 
-        let companions: JSX.Element[] = [];
+        const companions: JSX.Element[] = [];
         this.props.combatants
             .filter(c => c.type === 'pc')
             .forEach(pc => {
@@ -2264,5 +2358,7 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
         }
     }
 }
+
+//#endregion
 
 //#endregion
