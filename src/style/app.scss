@@ -847,24 +847,20 @@ body,
 // Combatant row
 
 .combatant-row {
-    margin: 5px;
+    margin: 5px 0 5px 10px;
     background-color: beige;
     border: 1px solid #656565;
     cursor: pointer;
 
-    &.highlight {
+    &.highlight, &.current {
         .header {
             background-color: black;
         }
     }
 
     &.current {
-        background-color: #65006520;
+        margin: 5px 10px 5px 0;
         pointer-events: none;
-
-        .header {
-            background-color: #650065;
-        }
     }
 
     &.defeated {
