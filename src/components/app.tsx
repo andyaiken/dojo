@@ -1195,24 +1195,23 @@ export default class App extends React.Component<Props, State> {
     private makeDefeated(combatants: Combatant[]) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
-            const current = combatants.find(c => c.current);
+            const current = combat.combatants.find(c => c.current);
+
             combatants.forEach(c => {
                 c.pending = false;
                 c.active = false;
                 c.defeated = true;
 
-                if (c.type === 'monster') {
-                    if (current && (current.type === 'pc')) {
-                        const entry = Factory.createCombatReportEntry();
-                        entry.type = 'kill';
-                        entry.combatantID = current.id;
-                        combat.report.push(entry);
-                    }
+                // If this monster is on the map, remove them from it
+                if (combat.map) {
+                    combat.map.items = combat.map.items.filter(item => item.id !== c.id);
+                }
 
-                    // If this monster is on the map, remove them from it
-                    if (combat.map) {
-                        combat.map.items = combat.map.items.filter(item => item.id !== c.id);
-                    }
+                if (current && (current.type === 'pc') && (c.type === 'monster')) {
+                    const entry = Factory.createCombatReportEntry();
+                    entry.type = 'kill';
+                    entry.combatantID = current.id;
+                    combat.report.push(entry);
                 }
             });
 
