@@ -114,8 +114,8 @@ class ListItem extends React.Component<ListItemProps> {
                             {pcs}
                         </div>
                         <div className='divider'/>
-                        <button onClick={() => this.props.open(this.props.party)}>open</button>
-                        <ConfirmButton text='delete' callback={() => this.props.delete(this.props.party)} />
+                        <button onClick={() => this.props.open(this.props.party)}>open party</button>
+                        <ConfirmButton text='delete party' callback={() => this.props.delete(this.props.party)} />
                     </div>
                 </div>
             );

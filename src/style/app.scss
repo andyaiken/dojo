@@ -337,7 +337,8 @@ button {
     overflow-y: auto;
 
     &.both-ways {
-        overflow: auto;
+        overflow-x: auto;
+        overflow-y: auto;
     }
 }
 
@@ -498,7 +499,8 @@ body,
     height: 100%;
     width: 100%;
     position: fixed;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 .dojo {
@@ -512,7 +514,8 @@ body,
     &.popout {
         
         .map-panel {
-            overflow: visible;
+            overflow-x: visible;
+            overflow-y: visible;
         }
     }
 }
@@ -674,7 +677,8 @@ body,
             display: inline-block;
             vertical-align: middle;
             white-space: nowrap;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: hidden;
             text-overflow: ellipsis;
         }
 
@@ -847,7 +851,7 @@ body,
 // Combatant row
 
 .combatant-row {
-    margin: 5px 0 5px 10px;
+    margin: 5px 10px;
     background-color: beige;
     border: 1px solid #656565;
     cursor: pointer;
@@ -858,8 +862,12 @@ body,
         }
     }
 
+    &.highlight {
+        margin: 5px 0 5px 20px;
+    }
+
     &.current {
-        margin: 5px 10px 5px 0;
+        margin: 5px 20px 5px 0;
         pointer-events: none;
     }
 
@@ -975,7 +983,8 @@ body,
 .hp-gauge {
     height: 5px;
     background-color: lightgrey;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: hidden;
 
     .bar {
         float: left;
@@ -1166,7 +1175,8 @@ body,
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 .map-panel {
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: auto;
 
     .grid {
         position: relative;
@@ -1190,11 +1200,13 @@ body,
 
     &.thumbnail {
         pointer-events: none;
-        overflow: hidden;
+        overflow-x: hidden;
+        overflow-y: hidden;
     }
 
     &.edit {
-        overflow: visible;
+        overflow-x: visible;
+        overflow-y: visible;
 
         .grid {
             border: 1px solid $control-border;

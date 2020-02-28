@@ -1962,36 +1962,47 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
 
         const modifiers = this.props.combatants.map(c => {
             const monster = c as Combatant & Monster;
-            let r = null;
-            let v = null;
-            let i = null;
+            let resist = null;
+            let vuln = null;
+            let immune = null;
+            let conc = null;
             if (monster.damage.resist) {
-                r = (
+                resist = (
                     <div className='section'>
                         <b>damage resistances</b> {monster.damage.resist} {this.props.combatants.length > 1 ? <i> - {c.displayName}</i> : null}
                     </div>
                 );
             }
             if (monster.damage.vulnerable) {
-                v = (
+                vuln = (
                     <div className='section'>
                         <b>damage vulnerabilities</b> {monster.damage.vulnerable} {this.props.combatants.length > 1 ? <i> - {c.displayName}</i> : null}
                     </div>
                 );
             }
             if (monster.damage.immune) {
-                i = (
+                immune = (
                     <div className='section'>
                         <b>damage immunities</b> {monster.damage.immune} {this.props.combatants.length > 1 ? <i> - {c.displayName}</i> : null}
                     </div>
                 );
             }
-            if (r || v || i) {
+            if (monster.tags.includes('conc')) {
+                conc = (
+                    <Note>
+                        <div className='section'>
+                            {monster.displayName} is <b>concentrating</b>, and will need to make a check if they take damage
+                        </div>
+                    </Note>
+                );
+            }
+            if (resist || vuln || immune || conc) {
                 return (
                     <div key={c.id}>
-                        {r}
-                        {v}
-                        {i}
+                        {resist}
+                        {vuln}
+                        {immune}
+                        {conc}
                     </div>
                 );
             }

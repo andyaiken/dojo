@@ -127,9 +127,9 @@ class ListItem extends React.Component<ListItemProps> {
                             {this.getMonsters()}
                         </div>
                         <div className='divider'/>
-                        <button onClick={() => this.props.open(this.props.group)}>open</button>
+                        <button onClick={() => this.props.open(this.props.group)}>open group</button>
                         <button onClick={() => this.props.openDemographics(this.props.group)}>demographics</button>
-                        <ConfirmButton text='delete' callback={() => this.props.delete(this.props.group)} />
+                        <ConfirmButton text='delete group' callback={() => this.props.delete(this.props.group)} />
                     </div>
                 </div>
             );

@@ -91,7 +91,8 @@
             height: 20px;
             width: calc(100% - 21px);
             line-height: 20px;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: hidden;
             text-overflow: ellipsis;
         }
 
@@ -126,7 +127,8 @@
             height: 25px;
             line-height: 25px;
             white-space: nowrap;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: hidden;
             text-overflow: ellipsis;
 
             &:hover {
@@ -322,7 +324,8 @@
         text-align: center;
         margin: 1px;
         padding: 3px;
-        overflow: hidden;
+        overflow-x: hidden;
+        overflow-y: hidden;
         text-overflow: ellipsis;
         cursor: pointer;
 
@@ -361,7 +364,8 @@
         font-weight: 600;
         letter-spacing: 1px;
         line-height: 24px;
-        overflow: hidden;
+        overflow-x: hidden;
+        overflow-y: hidden;
         text-overflow: ellipsis;
         cursor: pointer;
 
