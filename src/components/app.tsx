@@ -790,7 +790,7 @@ export default class App extends React.Component<Props, State> {
         setup.party = JSON.parse(JSON.stringify(party));
         setup.encounter = JSON.parse(JSON.stringify(encounter));
         if (enc) {
-            setup.monsterNames = Utils.getMonsterNames(enc);
+            setup.slotInfo = Utils.getCombatSlotData(enc);
         }
 
         this.setState({
@@ -827,10 +827,10 @@ export default class App extends React.Component<Props, State> {
 
                     for (let n = 0; n !== slot.count; ++n) {
                         let displayName = null;
-                        if (combatSetup.monsterNames) {
-                            const slotNames = combatSetup.monsterNames.find(names => names.id === slot.id);
-                            if (slotNames) {
-                                displayName = slotNames.names[n];
+                        if (combatSetup.slotInfo) {
+                            const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
+                            if (slotInfo) {
+                                displayName = slotInfo.members[n].name;
                             }
                         }
 
@@ -956,7 +956,7 @@ export default class App extends React.Component<Props, State> {
         if (combat) {
             const setup = Factory.createCombatSetup();
             setup.encounter = combat.encounter;
-            setup.monsterNames = Utils.getMonsterNames(combat.encounter);
+            setup.slotInfo = Utils.getCombatSlotData(combat.encounter);
 
             this.setState({
                 drawer: {
@@ -1244,10 +1244,10 @@ export default class App extends React.Component<Props, State> {
                             combatant.id = Utils.guid();
 
                             combatant.displayName = null;
-                            if (combatSetup.monsterNames) {
-                                const slotNames = combatSetup.monsterNames.find(names => names.id === slot.id);
+                            if (combatSetup.slotInfo) {
+                                const slotNames = combatSetup.slotInfo.find(info => info.id === slot.id);
                                 if (slotNames) {
-                                    combatant.displayName = slotNames.names[n];
+                                    combatant.displayName = slotNames.members[n].name;
                                 }
                             }
 

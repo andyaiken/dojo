@@ -9,8 +9,21 @@ export interface CombatSetup {
     encounter: Encounter | null;
     waveID: string | null;
     map: Map | null;
-    monsterNames: { id: string, names: string[] }[];
+    slotInfo: CombatSlotInfo[];
     encounterInitMode: 'manual' | 'individual' | 'group';
+}
+
+export interface CombatSlotInfo {
+    id: string;
+    hpGroup: number;
+    initGroup: number;
+    members: CombatSlotMember[];
+}
+
+export interface CombatSlotMember {
+    name: string;
+    hp: number;
+    init: number;
 }
 
 export interface Combat {

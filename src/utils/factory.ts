@@ -1,6 +1,6 @@
 import Utils from './utils';
 
-import { Combat, CombatReportEntry, CombatSetup, Notification } from '../models/combat';
+import { Combat, CombatReportEntry, CombatSetup, CombatSlotInfo, CombatSlotMember, Notification } from '../models/combat';
 import { Condition, ConditionDurationCombatant, ConditionDurationRounds, ConditionDurationSaves } from '../models/condition';
 import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../models/encounter';
 import { Map, MapItem, MapNote } from '../models/map';
@@ -179,8 +179,25 @@ export default class Factory {
             encounter: null,
             waveID: null,
             map: null,
-            monsterNames: [],
+            slotInfo: [],
             encounterInitMode: 'group'
+        };
+    }
+
+    public static createCombatSlotInfo(): CombatSlotInfo {
+        return {
+            id: '',
+            hpGroup: 0,
+            initGroup: 0,
+            members: []
+        };
+    }
+
+    public static createCombatSlotMember(): CombatSlotMember {
+        return {
+            name: '',
+            hp: 0,
+            init: 0
         };
     }
 

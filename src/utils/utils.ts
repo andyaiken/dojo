@@ -1,8 +1,9 @@
-﻿import { Combat, Combatant } from '../models/combat';
+﻿import { Combat, Combatant, CombatSlotInfo, CombatSlotMember } from '../models/combat';
 import { Condition, ConditionDurationCombatant, ConditionDurationRounds, ConditionDurationSaves } from '../models/condition';
 import { Encounter, EncounterWave } from '../models/encounter';
 import { Monster, MonsterGroup } from '../models/monster-group';
 import { PC } from '../models/party';
+import Factory from './factory';
 
 export default class Utils {
 
@@ -638,27 +639,36 @@ export default class Utils {
         return null;
     }
 
-    public static getMonsterNames(encounter: Encounter | EncounterWave | null): { id: string, names: string[] }[] {
-        const monsterNames: any[] = [];
+    public static getCombatSlotData(encounter: Encounter | EncounterWave | null): CombatSlotInfo[] {
+        const data: CombatSlotInfo[] = [];
         if (encounter) {
             encounter.slots.forEach(slot => {
-                const names: any[] = [];
+                const members: CombatSlotMember[] = [];
+                for (let n = 0; n !== slot.count; ++n) {
+                    members.push(Factory.createCombatSlotMember());
+                }
+
                 if (slot.count === 1) {
-                    names.push(slot.monsterName);
+                    members[0].name = slot.monsterName;
                 } else {
                     for (let n = 0; n !== slot.count; ++n) {
-                        names.push(slot.monsterName + ' ' + (n + 1));
+                        members[n].name = slot.monsterName + ' ' + (n + 1);
                     }
                 }
 
-                monsterNames.push({
+                // TODO: Set init based on init mode
+                // TODO: Set HP based on hp mode
+
+                data.push({
                     id: slot.id,
-                    names: names
+                    hpGroup: 0,
+                    initGroup: 0,
+                    members: members
                 });
             });
         }
 
-        return monsterNames;
+        return data;
     }
 
     public static getTagTitle(tag: string) {

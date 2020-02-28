@@ -63,7 +63,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
         const setup = this.state.combatSetup;
         const encounter = this.props.encounters.find(e => e.id === encounterID);
         setup.encounter = encounter ? JSON.parse(JSON.stringify(encounter)) : null;
-        setup.monsterNames = Utils.getMonsterNames(setup.encounter);
+        setup.slotInfo = Utils.getCombatSlotData(setup.encounter);
         this.setState({
             combatSetup: setup
         }, () => this.props.notify());
@@ -84,7 +84,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
         if (setup.encounter) {
             const wave = setup.encounter.waves.find(w => w.id === waveID);
             if (wave) {
-                setup.monsterNames = Utils.getMonsterNames(wave);
+                setup.slotInfo = Utils.getCombatSlotData(wave);
             }
         }
         this.setState({
@@ -114,7 +114,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
         Napoleon.buildEncounter(encounter, xp, filter, this.props.library, this.props.getMonster);
         const setup = this.state.combatSetup;
         setup.encounter = encounter;
-        setup.monsterNames = Utils.getMonsterNames(encounter);
+        setup.slotInfo = Utils.getCombatSlotData(encounter);
         this.setState({
             combatSetup: setup
         }, () => this.props.notify());
@@ -140,9 +140,9 @@ export default class CombatStartModal extends React.Component<Props, State> {
     }
 
     private changeName(slotID: string, index: number, name: string) {
-        const monsterNames = this.state.combatSetup.monsterNames.find(mn => mn.id === slotID);
+        const monsterNames = this.state.combatSetup.slotInfo.find(mn => mn.id === slotID);
         if (monsterNames) {
-            monsterNames.names[index] = name;
+            monsterNames.members[index].name = name;
             this.setState({
                 combatSetup: this.state.combatSetup
             });
@@ -157,7 +157,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                 // Change number
                 slot.count = Math.max(0, slot.count + delta);
                 // Reset names
-                setup.monsterNames = Utils.getMonsterNames(setup.encounter);
+                setup.slotInfo = Utils.getCombatSlotData(setup.encounter);
                 this.setState({
                     combatSetup: setup
                 });
@@ -690,31 +690,50 @@ class MonsterSection extends React.Component<MonsterSectionProps> {
                 return null;
             }
 
-            const names = this.props.combatSetup.monsterNames.map(slotNames => {
-                const slot = slotsContainer.slots.find(s => s.id === slotNames.id);
+            const slots = this.props.combatSetup.slotInfo.map(slotInfo => {
+                const slot = slotsContainer.slots.find(s => s.id === slotInfo.id);
                 if (slot) {
-                    const inputs = [];
-                    for (let n = 0; n !== slotNames.names.length; ++n) {
-                        inputs.push(
+                    const count = (
+                        <NumberSpin
+                            source={slot}
+                            name='count'
+                            nudgeValue={delta => this.props.nudgeCount(slot.id, delta)}
+                        />
+                    );
+
+                    const nameSections = [];
+                    for (let n = 0; n !== slotInfo.members.length; ++n) {
+                        const data = slotInfo.members[n];
+                        nameSections.push(
                             <Textbox
                                 key={n}
-                                text={slotNames.names[n]}
+                                text={data.name}
                                 onChange={value => this.props.changeName(slot.id, n, value)}
                             />
                         );
                     }
+
+                    // TODO: Add init options for this slot
+                    // Option: individually / as a group
+                    // Option: manual / auto-rolled
+                    // Value number spinner
+                    // Reroll button
+                    // Slider
+
+                    // TODO: Add HP options for this slot
+                    // Option: manual / auto-rolled / typical
+                    // Value number spinner
+                    // Reroll button
+                    // Slider
+
                     return (
-                        <div key={slotNames.id} className='name-row'>
+                        <div key={slotInfo.id} className='name-row'>
                             <div className='name-label'>
                                 {slot.monsterName}
                             </div>
                             <div className='name-inputs'>
-                                <NumberSpin
-                                    source={slot}
-                                    name='count'
-                                    nudgeValue={delta => this.props.nudgeCount(slot.id, delta)}
-                                />
-                                {inputs}
+                                {count}
+                                {nameSections}
                             </div>
                         </div>
                     );
@@ -725,7 +744,7 @@ class MonsterSection extends React.Component<MonsterSectionProps> {
             return (
                 <div>
                     <div className='heading'>monsters</div>
-                    <div>{names}</div>
+                    <div>{slots}</div>
                 </div>
             );
         }
