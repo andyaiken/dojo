@@ -10,13 +10,14 @@ export interface CombatSetup {
     waveID: string | null;
     map: Map | null;
     slotInfo: CombatSlotInfo[];
-    encounterInitMode: 'manual' | 'individual' | 'group';
 }
 
 export interface CombatSlotInfo {
     id: string;
-    hpGroup: number;
-    initGroup: number;
+    useGroupHP: boolean,
+    useGroupInit: boolean,
+    hp: number;
+    init: number;
     members: CombatSlotMember[];
 }
 

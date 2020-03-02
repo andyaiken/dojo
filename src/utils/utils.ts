@@ -656,15 +656,9 @@ export default class Utils {
                     }
                 }
 
-                // TODO: Set init based on init mode
-                // TODO: Set HP based on hp mode
-
-                data.push({
-                    id: slot.id,
-                    hpGroup: 0,
-                    initGroup: 0,
-                    members: members
-                });
+                const slotInfo = Factory.createCombatSlotInfo();
+                slotInfo.id = slot.id;
+                data.push(slotInfo);
             });
         }
 

@@ -7,7 +7,7 @@ import Mercator from '../../utils/mercator';
 import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
-import { CombatSetup } from '../../models/combat';
+import { CombatSetup, CombatSlotInfo } from '../../models/combat';
 import { Encounter, EncounterSlot } from '../../models/encounter';
 import { Map } from '../../models/map';
 import { Monster, MonsterGroup } from '../../models/monster-group';
@@ -131,14 +131,6 @@ export default class CombatStartModal extends React.Component<Props, State> {
         }, () => this.props.notify());
     }
 
-    private setEncounterInitMode(mode: 'manual' | 'individual' | 'group') {
-        const setup = this.state.combatSetup;
-        setup.encounterInitMode = mode;
-        this.setState({
-            combatSetup: setup
-        });
-    }
-
     private changeName(slotID: string, index: number, name: string) {
         const monsterNames = this.state.combatSetup.slotInfo.find(mn => mn.id === slotID);
         if (monsterNames) {
@@ -201,11 +193,6 @@ export default class CombatStartModal extends React.Component<Props, State> {
                             encounters={this.props.encounters}
                             getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
                         />
-                        <InitiativeSection
-                            combatSetup={this.state.combatSetup}
-                            parties={this.props.parties}
-                            setEncounterInitMode={mode => this.setEncounterInitMode(mode)}
-                        />
                         <MonsterSection
                             combatSetup={this.state.combatSetup}
                             parties={this.props.parties}
@@ -226,11 +213,6 @@ export default class CombatStartModal extends React.Component<Props, State> {
 
                 rightSection = (
                     <div>
-                        <InitiativeSection
-                            combatSetup={this.state.combatSetup}
-                            parties={this.props.parties}
-                            setEncounterInitMode={mode => this.setEncounterInitMode(mode)}
-                        />
                         <MonsterSection
                             combatSetup={this.state.combatSetup}
                             parties={this.props.parties}
@@ -596,60 +578,6 @@ class DifficultySection extends React.Component<DifficultySectionProps> {
     }
 }
 
-interface InitiativeSectionProps {
-    combatSetup: CombatSetup;
-    parties: Party[];
-    setEncounterInitMode: (mode: 'manual' | 'individual' | 'group') => void;
-}
-
-class InitiativeSection extends React.Component<InitiativeSectionProps> {
-    public render() {
-        if (!this.props.combatSetup.encounter) {
-            return (
-                <div>
-                    <div className='heading'>initiative</div>
-                    <div className='section'>select an encounter to see initiative options here.</div>
-                </div>
-            );
-        }
-
-        if (!this.props.parties && !this.props.combatSetup.waveID) {
-            return (
-                <div>
-                    <div className='heading'>monsters</div>
-                    <div className='section'>select a wave to see initiative options here.</div>
-                </div>
-            );
-        }
-
-        const initOptions = [
-            {
-                id: 'manual',
-                text: 'enter manually'
-            },
-            {
-                id: 'individual',
-                text: 'roll individually'
-            },
-            {
-                id: 'group',
-                text: 'roll in groups'
-            }
-        ];
-
-        return (
-            <div>
-                <div className='heading'>initiative</div>
-                <Selector
-                    options={initOptions}
-                    selectedID={this.props.combatSetup.encounterInitMode}
-                    select={optionID => this.props.setEncounterInitMode(optionID as 'manual' | 'individual' | 'group')}
-                />
-            </div>
-        );
-    }
-}
-
 interface MonsterSectionProps {
     combatSetup: CombatSetup;
     parties: Party[];
@@ -692,53 +620,18 @@ class MonsterSection extends React.Component<MonsterSectionProps> {
 
             const slots = this.props.combatSetup.slotInfo.map(slotInfo => {
                 const slot = slotsContainer.slots.find(s => s.id === slotInfo.id);
-                if (slot) {
-                    const count = (
-                        <NumberSpin
-                            source={slot}
-                            name='count'
-                            nudgeValue={delta => this.props.nudgeCount(slot.id, delta)}
-                        />
-                    );
-
-                    const nameSections = [];
-                    for (let n = 0; n !== slotInfo.members.length; ++n) {
-                        const data = slotInfo.members[n];
-                        nameSections.push(
-                            <Textbox
-                                key={n}
-                                text={data.name}
-                                onChange={value => this.props.changeName(slot.id, n, value)}
-                            />
-                        );
-                    }
-
-                    // TODO: Add init options for this slot
-                    // Option: individually / as a group
-                    // Option: manual / auto-rolled
-                    // Value number spinner
-                    // Reroll button
-                    // Slider
-
-                    // TODO: Add HP options for this slot
-                    // Option: manual / auto-rolled / typical
-                    // Value number spinner
-                    // Reroll button
-                    // Slider
-
-                    return (
-                        <div key={slotInfo.id} className='name-row'>
-                            <div className='name-label'>
-                                {slot.monsterName}
-                            </div>
-                            <div className='name-inputs'>
-                                {count}
-                                {nameSections}
-                            </div>
-                        </div>
-                    );
+                if (!slot) {
+                    return null;
                 }
-                return null;
+                return (
+                    <MonsterSlotSection
+                        key={slotInfo.id}
+                        slotInfo={slotInfo}
+                        slot={slot}
+                        changeName={(slotID, index, name) => this.props.changeName(slotID, index, name)}
+                        nudgeCount={(slotID, delta) => this.props.nudgeCount(slotID, delta)}
+                    />
+                );
             });
 
             return (
@@ -750,5 +643,120 @@ class MonsterSection extends React.Component<MonsterSectionProps> {
         }
 
         return null;
+    }
+}
+
+interface MonsterSlotSectionProps {
+    slotInfo: CombatSlotInfo;
+    slot: EncounterSlot;
+    changeName: (slotID: string, index: number, name: string) => void;
+    nudgeCount: (slotID: string, delta: number) => void;
+}
+
+interface MonsterSlotSectionState {
+    view: string;
+}
+
+class MonsterSlotSection extends React.Component<MonsterSlotSectionProps, MonsterSlotSectionState> {
+    constructor(props: MonsterSlotSectionProps) {
+        super(props);
+        this.state = {
+            view: 'init'
+        };
+    }
+
+    private setView(view: string) {
+        this.setState({
+            view: view
+        });
+    }
+
+    private getInitSection() {
+        // TODO: One value for all (checkbox, default TRUE)
+
+        // TODO: auto-rolled / manual (default auto)
+        // Reroll button
+        // Slider (bonus+1 - bonus+20)
+
+        return (
+            <div>
+                Initiative
+            </div>
+        );
+    }
+
+    private getHPSection() {
+        // TODO: One value for all (checkbox, default TRUE)
+
+        // Option: auto-rolled /  manual / typical (default typical)
+        // Reroll button
+        // Slider (min to max)
+
+        return (
+            <div>
+                HP
+            </div>
+        );
+    }
+
+    private getNameSection() {
+        const nameSections = [];
+
+        for (let n = 0; n !== this.props.slotInfo.members.length; ++n) {
+            const data = this.props.slotInfo.members[n];
+            nameSections.push(
+                <Textbox
+                    key={n}
+                    text={data.name}
+                    onChange={value => this.props.changeName(this.props.slot.id, n, value)}
+                />
+            );
+        }
+
+        return nameSections;
+    }
+
+    public render() {
+        let selector = null;
+        const showSelector = false;
+        if (showSelector) {
+            const options = ['init', 'hp', 'names'].map(s => {
+                return { id: s, text: s };
+            });
+            selector = (
+                <Selector options={options} selectedID={this.state.view} select={id => this.setView(id)} />
+            );
+        }
+
+        let content = null;
+        switch (this.state.view) {
+            case 'init':
+                content = this.getInitSection();
+                break;
+            case 'hp':
+                content = this.getHPSection();
+                break;
+            case 'names':
+                content = this.getNameSection();
+                break;
+        }
+
+        return (
+            <Row gutter={10}>
+                <Col span={10}>
+                    <div className='subheading'>{this.props.slot.monsterName}</div>
+                    <div className='divider' />
+                    <NumberSpin
+                        source={this.props.slot}
+                        name='count'
+                        nudgeValue={delta => this.props.nudgeCount(this.props.slot.id, delta)}
+                    />
+                </Col>
+                <Col span={14}>
+                    {selector}
+                    {content}
+                </Col>
+            </Row>
+        );
     }
 }

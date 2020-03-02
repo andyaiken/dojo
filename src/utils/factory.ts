@@ -179,16 +179,17 @@ export default class Factory {
             encounter: null,
             waveID: null,
             map: null,
-            slotInfo: [],
-            encounterInitMode: 'group'
+            slotInfo: []
         };
     }
 
     public static createCombatSlotInfo(): CombatSlotInfo {
         return {
             id: '',
-            hpGroup: 0,
-            initGroup: 0,
+            useGroupHP: true,
+            useGroupInit: true,
+            hp: 0,
+            init: 0,
             members: []
         };
     }

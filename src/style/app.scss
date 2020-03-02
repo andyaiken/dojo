@@ -1697,27 +1697,6 @@ body,
             }
         }
     }
-
-    .name-row {
-        margin: 5px 0;
-        border-left: 5px solid $control-border;
-    
-        &:hover {
-            border-color: $highlight;
-        }
-    
-        .name-label {
-            display: inline-block;
-            width: 50%;
-            padding-left: 8px;
-        }
-    
-        .name-inputs {
-            display: inline-block;
-            vertical-align: middle;
-            width: 50%;
-        }
-    }
 }
 
 .drawer-footer {

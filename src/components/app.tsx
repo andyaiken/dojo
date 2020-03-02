@@ -823,7 +823,7 @@ export default class App extends React.Component<Props, State> {
             combat.encounter.slots.forEach(slot => {
                 const monster = this.getMonster(slot.monsterName, slot.monsterGroupName);
                 if (monster) {
-                    const groupInitRoll = Utils.dieRoll();
+                    const initRoll = Utils.dieRoll();
 
                     for (let n = 0; n !== slot.count; ++n) {
                         let displayName = null;
@@ -834,7 +834,7 @@ export default class App extends React.Component<Props, State> {
                             }
                         }
 
-                        this.addMonsterToCombat(monster, combat, displayName, combatSetup.encounterInitMode, groupInitRoll);
+                        this.addMonsterToCombat(monster, combat, initRoll, displayName);
                     }
                 } else {
                     combat.issues.push('unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName);
@@ -881,33 +881,23 @@ export default class App extends React.Component<Props, State> {
 
     private addMonsterToCombat(
         monster: Monster,
-        combat: Combat, displayName: string | null = null,
-        initMode: 'manual' | 'individual' | 'group' = 'individual',
-        groupInitRoll: number = 0) {
+        combat: Combat,
+        initRoll: number,
+        displayName: string | null = null) {
 
         const combatant = JSON.parse(JSON.stringify(monster));
         combatant.id = Utils.guid();
 
-        switch (initMode) {
-            case 'group':
-                combatant.initiative = Utils.modifierValue(monster.abilityScores.dex) + groupInitRoll;
-                break;
-            case 'individual':
-                combatant.initiative = Utils.modifierValue(monster.abilityScores.dex) + Utils.dieRoll();
-                break;
-            default:
-                combatant.initiative = 10;
-                break;
-        }
-
         combatant.current = false;
-        combatant.pending = (initMode === 'manual');
-        combatant.active = (initMode !== 'manual');
+        combatant.pending = false;
+        combatant.active = true;
         combatant.defeated = false;
 
         combatant.displayName = displayName;
         combatant.displaySize = monster.size;
         combatant.showOnMap = true;
+
+        combatant.initiative = Utils.modifierValue(monster.abilityScores.dex) + initRoll;
         combatant.hp = combatant.hpMax;
         combatant.hpTemp = 0;
         combatant.conditions = [];
@@ -986,13 +976,13 @@ export default class App extends React.Component<Props, State> {
             this.state.drawer.combatantSlots.forEach((slot: EncounterSlot) => {
                 const m = this.getMonster(slot.monsterName, slot.monsterGroupName);
                 if (m) {
-                    const roll = Utils.dieRoll();
+                    const initRoll = Utils.dieRoll();
                     for (let n = 0; n !== slot.count; ++n) {
                         let displayName = m.name;
                         if (slot.count > 1) {
                             displayName += ' ' + (n + 1);
                         }
-                        this.addMonsterToCombat(m, combat, displayName, 'group', roll);
+                        this.addMonsterToCombat(m, combat, initRoll, displayName);
                     }
                 }
             });
@@ -1238,8 +1228,6 @@ export default class App extends React.Component<Props, State> {
                         const groupRoll = Utils.dieRoll();
 
                         for (let n = 0; n !== slot.count; ++n) {
-                            const singleRoll = Utils.dieRoll();
-
                             const combatant = JSON.parse(JSON.stringify(monster));
                             combatant.id = Utils.guid();
 
@@ -1253,27 +1241,13 @@ export default class App extends React.Component<Props, State> {
 
                             combatant.displaySize = monster.size;
 
-                            switch (combatSetup.encounterInitMode) {
-                                case 'manual':
-                                    combatant.initiative = 10;
-                                    break;
-                                case 'group':
-                                    combatant.initiative = init + groupRoll;
-                                    break;
-                                case 'individual':
-                                    combatant.initiative = init + singleRoll;
-                                    break;
-                                default:
-                                    // Do nothing
-                                    break;
-                            }
-
                             combatant.showOnMap = true;
                             combatant.current = false;
                             combatant.pending = (this.state.drawer.combatSetup.encounterInitMode === 'manual');
                             combatant.active = (this.state.drawer.combatSetup.encounterInitMode !== 'manual');
                             combatant.defeated = false;
 
+                            combatant.initiative = init + groupRoll;
                             combatant.hp = combatant.hpMax;
                             combatant.conditions = [];
                             combatant.tags = [];
