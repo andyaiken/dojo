@@ -144,20 +144,20 @@ export default class MonsterCard extends React.Component<Props, State> {
     }
 
     private getHP() {
-        if (this.props.monster.hitDice === 0) {
-            return this.props.monster.hpMax.toString();
+        const combatant = this.props.monster as Monster & Combatant;
+        if (combatant.hpCurrent !== undefined) {
+            let current = (combatant.hpCurrent ?? 0).toString();
+
+            if ((combatant.hpTemp ?? 0) > 0) {
+                current += '+' + combatant.hpTemp;
+            }
+
+            return current;
         }
 
-        const die = Utils.hitDieType(this.props.monster.size);
-        const conMod = Utils.modifierValue(this.props.monster.abilityScores.con) * this.props.monster.hitDice;
-        let conModStr = '';
-        if (conMod > 0) {
-            conModStr = ' +' + conMod;
-        }
-        if (conMod < 0) {
-            conModStr = ' ' + conMod;
-        }
-        return this.props.monster.hpMax + ' (' + this.props.monster.hitDice + 'd' + die + conModStr + ')';
+        const hp = Frankenstein.getTypicalHP(this.props.monster);
+        const str = Frankenstein.getTypicalHPString(this.props.monster);
+        return hp + ' (' + str + ')';
     }
 
     private statSection(text: string, value: string) {

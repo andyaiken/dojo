@@ -289,7 +289,7 @@ export default class App extends React.Component<Props, State> {
 
     private changeValue(combatant: any, type: string, value: any) {
         switch (type) {
-            case 'hp':
+            case 'hpCurrent':
                 value = Math.min(value, combatant.hpMax);
                 value = Math.max(value, 0);
                 break;
@@ -790,7 +790,7 @@ export default class App extends React.Component<Props, State> {
         setup.party = JSON.parse(JSON.stringify(party));
         setup.encounter = JSON.parse(JSON.stringify(encounter));
         if (enc) {
-            setup.slotInfo = Utils.getCombatSlotData(enc);
+            setup.slotInfo = Utils.getCombatSlotData(enc, this.state.library);
         }
 
         this.setState({
@@ -822,20 +822,11 @@ export default class App extends React.Component<Props, State> {
 
             combat.encounter.slots.forEach(slot => {
                 const monster = this.getMonster(slot.monsterName, slot.monsterGroupName);
-                if (monster) {
-                    const initRoll = Utils.dieRoll();
-
-                    for (let n = 0; n !== slot.count; ++n) {
-                        let displayName = null;
-                        if (combatSetup.slotInfo) {
-                            const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
-                            if (slotInfo) {
-                                displayName = slotInfo.members[n].name;
-                            }
-                        }
-
-                        this.addMonsterToCombat(monster, combat, initRoll, displayName);
-                    }
+                const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
+                if (monster && slotInfo) {
+                    slotInfo.members.forEach(m => {
+                        this.addMonsterToCombat(monster, combat, m.init, m.hp, m.name);
+                    });
                 } else {
                     combat.issues.push('unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName);
                 }
@@ -857,7 +848,7 @@ export default class App extends React.Component<Props, State> {
     }
 
     private addPCToCombat(pc: PC, combat: Combat) {
-        const combatant = JSON.parse(JSON.stringify(pc));
+        const combatant: Combatant = JSON.parse(JSON.stringify(pc));
 
         combatant.current = false;
         combatant.pending = true;
@@ -868,7 +859,8 @@ export default class App extends React.Component<Props, State> {
         combatant.displaySize = pc.size;
         combatant.showOnMap = true;
         combatant.initiative = 10;
-        combatant.hp = null;
+        combatant.hpMax = null;
+        combatant.hpCurrent = null;
         combatant.hpTemp = null;
         combatant.conditions = [];
         combatant.tags = [];
@@ -882,10 +874,11 @@ export default class App extends React.Component<Props, State> {
     private addMonsterToCombat(
         monster: Monster,
         combat: Combat,
-        initRoll: number,
-        displayName: string | null = null) {
+        init: number,
+        hp: number,
+        name: string) {
 
-        const combatant = JSON.parse(JSON.stringify(monster));
+        const combatant: Combatant = JSON.parse(JSON.stringify(monster));
         combatant.id = Utils.guid();
 
         combatant.current = false;
@@ -893,12 +886,13 @@ export default class App extends React.Component<Props, State> {
         combatant.active = true;
         combatant.defeated = false;
 
-        combatant.displayName = displayName;
+        combatant.displayName = name;
         combatant.displaySize = monster.size;
         combatant.showOnMap = true;
 
-        combatant.initiative = Utils.modifierValue(monster.abilityScores.dex) + initRoll;
-        combatant.hp = combatant.hpMax;
+        combatant.initiative = init;
+        combatant.hpMax = hp;
+        combatant.hpCurrent = hp;
         combatant.hpTemp = 0;
         combatant.conditions = [];
         combatant.tags = [];
@@ -925,7 +919,8 @@ export default class App extends React.Component<Props, State> {
                 displaySize: 'medium',
                 showOnMap: true,
                 initiative: 10,
-                hp: null,
+                hpMax: null,
+                hpCurrent: null,
                 hpTemp: null,
                 conditions: [],
                 tags: [],
@@ -946,7 +941,7 @@ export default class App extends React.Component<Props, State> {
         if (combat) {
             const setup = Factory.createCombatSetup();
             setup.encounter = combat.encounter;
-            setup.slotInfo = Utils.getCombatSlotData(combat.encounter);
+            setup.slotInfo = Utils.getCombatSlotData(combat.encounter, this.state.library);
 
             this.setState({
                 drawer: {
@@ -976,13 +971,14 @@ export default class App extends React.Component<Props, State> {
             this.state.drawer.combatantSlots.forEach((slot: EncounterSlot) => {
                 const m = this.getMonster(slot.monsterName, slot.monsterGroupName);
                 if (m) {
-                    const initRoll = Utils.dieRoll();
+                    const init = Utils.dieRoll() + Utils.modifierValue(m.abilityScores.dex);
+                    const hp = Frankenstein.getTypicalHP(m);
                     for (let n = 0; n !== slot.count; ++n) {
                         let displayName = m.name;
                         if (slot.count > 1) {
                             displayName += ' ' + (n + 1);
                         }
-                        this.addMonsterToCombat(m, combat, initRoll, displayName);
+                        this.addMonsterToCombat(m, combat, init, hp, displayName);
                     }
                 }
             });
@@ -1569,7 +1565,7 @@ export default class App extends React.Component<Props, State> {
             values.forEach(v => {
                 const combatant = combat.combatants.find(c => c.id === v.id);
                 if (combatant) {
-                    combatant.hp = v.hp;
+                    combatant.hpCurrent = v.hp;
                     combatant.hpTemp = v.temp;
                 }
 

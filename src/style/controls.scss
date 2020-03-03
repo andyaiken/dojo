@@ -25,7 +25,7 @@
     }
 
     &.switch .checkbox-label {
-        width: calc(100% - 35px);
+        width: calc(100% - 40px);
     }
 
     &.switch .toggle-container {
@@ -34,6 +34,7 @@
         height: 20px;
         width: 30px;
         padding: 2px;
+        margin-left: 5px;
         background-color: $control-border;
 
         .toggle {

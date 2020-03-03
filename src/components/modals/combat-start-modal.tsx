@@ -1,18 +1,20 @@
 import React from 'react';
 
-import { Col, Row } from 'antd';
+import { Col, Icon, Row, Slider } from 'antd';
 
 import Factory from '../../utils/factory';
+import Frankenstein from '../../utils/frankenstein';
 import Mercator from '../../utils/mercator';
 import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
-import { CombatSetup, CombatSlotInfo } from '../../models/combat';
+import { CombatSetup, CombatSlotInfo, CombatSlotMember } from '../../models/combat';
 import { Encounter, EncounterSlot } from '../../models/encounter';
 import { Map } from '../../models/map';
 import { Monster, MonsterGroup } from '../../models/monster-group';
 import { Party } from '../../models/party';
 
+import Checkbox from '../controls/checkbox';
 import Dropdown from '../controls/dropdown';
 import NumberSpin from '../controls/number-spin';
 import Selector from '../controls/selector';
@@ -63,7 +65,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
         const setup = this.state.combatSetup;
         const encounter = this.props.encounters.find(e => e.id === encounterID);
         setup.encounter = encounter ? JSON.parse(JSON.stringify(encounter)) : null;
-        setup.slotInfo = Utils.getCombatSlotData(setup.encounter);
+        setup.slotInfo = Utils.getCombatSlotData(setup.encounter, this.props.library);
         this.setState({
             combatSetup: setup
         }, () => this.props.notify());
@@ -84,7 +86,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
         if (setup.encounter) {
             const wave = setup.encounter.waves.find(w => w.id === waveID);
             if (wave) {
-                setup.slotInfo = Utils.getCombatSlotData(wave);
+                setup.slotInfo = Utils.getCombatSlotData(wave, this.props.library);
             }
         }
         this.setState({
@@ -114,7 +116,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
         Napoleon.buildEncounter(encounter, xp, filter, this.props.library, this.props.getMonster);
         const setup = this.state.combatSetup;
         setup.encounter = encounter;
-        setup.slotInfo = Utils.getCombatSlotData(encounter);
+        setup.slotInfo = Utils.getCombatSlotData(encounter, this.props.library);
         this.setState({
             combatSetup: setup
         }, () => this.props.notify());
@@ -131,14 +133,23 @@ export default class CombatStartModal extends React.Component<Props, State> {
         }, () => this.props.notify());
     }
 
-    private changeName(slotID: string, index: number, name: string) {
-        const monsterNames = this.state.combatSetup.slotInfo.find(mn => mn.id === slotID);
-        if (monsterNames) {
-            monsterNames.members[index].name = name;
-            this.setState({
-                combatSetup: this.state.combatSetup
-            });
+    private changeValue(source: any, field: string, value: any) {
+        source[field] = value;
+
+        // If we're changing init or hp on the slot, change each slot member too
+        const slotInfo = source as CombatSlotInfo;
+        if (slotInfo.members) {
+            if (field === 'init') {
+                slotInfo.members.forEach(m => m.init = value);
+            }
+            if (field === 'hp') {
+                slotInfo.members.forEach(m => m.hp = value);
+            }
         }
+
+        this.setState({
+            combatSetup: this.state.combatSetup
+        });
     }
 
     private nudgeCount(slotID: string, delta: number) {
@@ -149,7 +160,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
                 // Change number
                 slot.count = Math.max(0, slot.count + delta);
                 // Reset names
-                setup.slotInfo = Utils.getCombatSlotData(setup.encounter);
+                setup.slotInfo = Utils.getCombatSlotData(setup.encounter, this.props.library);
                 this.setState({
                     combatSetup: setup
                 });
@@ -196,7 +207,8 @@ export default class CombatStartModal extends React.Component<Props, State> {
                         <MonsterSection
                             combatSetup={this.state.combatSetup}
                             parties={this.props.parties}
-                            changeName={(slotID, index, name) => this.changeName(slotID, index, name)}
+                            getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
+                            changeValue={(source, field, value) => this.changeValue(source, field, value)}
                             nudgeCount={(slotID, delta) => this.nudgeCount(slotID, delta)}
                         />
                     </div>
@@ -216,7 +228,8 @@ export default class CombatStartModal extends React.Component<Props, State> {
                         <MonsterSection
                             combatSetup={this.state.combatSetup}
                             parties={this.props.parties}
-                            changeName={(slotID, index, name) => this.changeName(slotID, index, name)}
+                            getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
+                            changeValue={(source, field, value) => this.changeValue(source, field, value)}
                             nudgeCount={(slotID, delta) => this.nudgeCount(slotID, delta)}
                         />
                     </div>
@@ -581,17 +594,35 @@ class DifficultySection extends React.Component<DifficultySectionProps> {
 interface MonsterSectionProps {
     combatSetup: CombatSetup;
     parties: Party[];
-    changeName: (slotID: string, index: number, name: string) => void;
+    getMonster: (monsterName: string, groupName: string) => Monster | null;
+    changeValue: (source: any, field: string, value: any) => void;
     nudgeCount: (slotID: string, delta: number) => void;
 }
 
-class MonsterSection extends React.Component<MonsterSectionProps> {
+interface MonsterSectionState {
+    view: string;
+}
+
+class MonsterSection extends React.Component<MonsterSectionProps, MonsterSectionState> {
+    constructor(props: MonsterSectionProps) {
+        super(props);
+        this.state = {
+            view: 'init'
+        };
+    }
+
+    private setView(view: string) {
+        this.setState({
+            view: view
+        });
+    }
+
     public render() {
         if (!this.props.combatSetup.encounter) {
             return (
                 <div>
                     <div className='heading'>monsters</div>
-                    <div className='section'>select an encounter to see monster options here.</div>
+                    <div className='section'>select an encounter to see monster information here.</div>
                 </div>
             );
         }
@@ -600,7 +631,7 @@ class MonsterSection extends React.Component<MonsterSectionProps> {
             return (
                 <div>
                     <div className='heading'>monsters</div>
-                    <div className='section'>select a wave to see monster options here.</div>
+                    <div className='section'>select a wave to see monster information here.</div>
                 </div>
             );
         }
@@ -618,17 +649,27 @@ class MonsterSection extends React.Component<MonsterSectionProps> {
                 return null;
             }
 
+            const options = ['init', 'hit points', 'names', 'count'].map(s => {
+                return { id: s, text: s };
+            });
+
             const slots = this.props.combatSetup.slotInfo.map(slotInfo => {
-                const slot = slotsContainer.slots.find(s => s.id === slotInfo.id);
-                if (!slot) {
+                const encounterSlot = slotsContainer.slots.find(s => s.id === slotInfo.id);
+                if (!encounterSlot) {
+                    return null;
+                }
+                const monster = this.props.getMonster(encounterSlot.monsterName, encounterSlot.monsterGroupName);
+                if (!monster) {
                     return null;
                 }
                 return (
                     <MonsterSlotSection
                         key={slotInfo.id}
                         slotInfo={slotInfo}
-                        slot={slot}
-                        changeName={(slotID, index, name) => this.props.changeName(slotID, index, name)}
+                        encounterSlot={encounterSlot}
+                        monster={monster}
+                        view={this.state.view}
+                        changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
                         nudgeCount={(slotID, delta) => this.props.nudgeCount(slotID, delta)}
                     />
                 );
@@ -637,6 +678,8 @@ class MonsterSection extends React.Component<MonsterSectionProps> {
             return (
                 <div>
                     <div className='heading'>monsters</div>
+                    <Selector options={options} selectedID={this.state.view} select={id => this.setView(id)} />
+                    <div className='divider' />
                     <div>{slots}</div>
                 </div>
             );
@@ -648,115 +691,193 @@ class MonsterSection extends React.Component<MonsterSectionProps> {
 
 interface MonsterSlotSectionProps {
     slotInfo: CombatSlotInfo;
-    slot: EncounterSlot;
-    changeName: (slotID: string, index: number, name: string) => void;
+    encounterSlot: EncounterSlot;
+    monster: Monster;
+    view: string;
+    changeValue: (source: any, field: string, value: any) => void;
     nudgeCount: (slotID: string, delta: number) => void;
 }
 
-interface MonsterSlotSectionState {
-    view: string;
-}
-
-class MonsterSlotSection extends React.Component<MonsterSlotSectionProps, MonsterSlotSectionState> {
-    constructor(props: MonsterSlotSectionProps) {
-        super(props);
-        this.state = {
-            view: 'init'
-        };
+class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
+    private rollInit(data: CombatSlotMember | null) {
+        const roll = Utils.dieRoll();
+        const bonus = Utils.modifierValue(this.props.monster.abilityScores.dex);
+        this.props.changeValue(data ?? this.props.slotInfo, 'init', roll + bonus);
     }
 
-    private setView(view: string) {
-        this.setState({
-            view: view
-        });
+    private rollHP(data: CombatSlotMember | null) {
+        const dieType = Utils.hitDieType(this.props.monster.size);
+        const roll = Utils.dieRoll(dieType, this.props.monster.hitDice);
+        const bonus = Utils.modifierValue(this.props.monster.abilityScores.con) * this.props.monster.hitDice;
+        this.props.changeValue(data ?? this.props.slotInfo, 'hp', roll + bonus);
+    }
+
+    private getValueSection(min: number, max: number, source: any, field: string, roll: () => void) {
+        return (
+            <Row align='middle'>
+                <Col span={20}>
+                    <Slider
+                        min={min}
+                        max={max}
+                        value={source[field]}
+                        onChange={value => this.props.changeValue(source, field, value)}
+                    />
+                </Col>
+                <Col span={4}>
+                    <div className='combatant-value'>
+                        {source[field]}
+                        <Icon type='redo' onClick={() => roll()}/>
+                    </div>
+                </Col>
+            </Row>
+        );
     }
 
     private getInitSection() {
-        // TODO: One value for all (checkbox, default TRUE)
+        let checkbox = null;
+        if (this.props.encounterSlot.count > 1) {
+            checkbox = (
+                <Checkbox
+                    label='roll initiative once for this group'
+                    checked={this.props.slotInfo.useGroupInit}
+                    changeValue={value => this.props.changeValue(this.props.slotInfo, 'useGroupInit', value)}
+                />
+            );
+        }
 
-        // TODO: auto-rolled / manual (default auto)
-        // Reroll button
-        // Slider (bonus+1 - bonus+20)
+        const bonus = Utils.modifierValue(this.props.monster.abilityScores.dex);
+        const min = 1 + bonus;
+        const max = 20 + bonus;
+
+        const sections = [];
+        if (this.props.slotInfo.useGroupInit) {
+            sections.push(
+                <div key='init'>
+                    {this.getValueSection(min, max, this.props.slotInfo, 'init', () => this.rollInit(null))}
+                </div>
+            );
+        } else {
+            this.props.slotInfo.members.forEach(data => {
+                sections.push(
+                    <div key={data.id}>
+                        <div className='combatant-name'>{data.name}</div>
+                        {this.getValueSection(min, max, data, 'init', () => this.rollInit(data))}
+                    </div>
+                );
+            });
+        }
 
         return (
             <div>
-                Initiative
+                {checkbox}
+                {sections}
             </div>
         );
     }
 
     private getHPSection() {
-        // TODO: One value for all (checkbox, default TRUE)
+        let checkbox = null;
+        if (this.props.encounterSlot.count > 1) {
+            checkbox = (
+                <Checkbox
+                    label='roll hit points once for this group'
+                    checked={this.props.slotInfo.useGroupHP}
+                    changeValue={value => this.props.changeValue(this.props.slotInfo, 'useGroupHP', value)}
+                />
+            );
+        }
 
-        // Option: auto-rolled /  manual / typical (default typical)
-        // Reroll button
-        // Slider (min to max)
+        const typical = Frankenstein.getTypicalHP(this.props.monster);
+        const bonus = Utils.modifierValue(this.props.monster.abilityScores.con) * this.props.monster.hitDice;
+        const min = this.props.monster.hitDice + bonus;
+        const max = (this.props.monster.hitDice * Utils.hitDieType(this.props.monster.size)) + bonus;
+
+        const sections = [];
+        if (this.props.slotInfo.useGroupHP) {
+            sections.push(
+                <div key='hp'>
+                    {this.getValueSection(min, max, this.props.slotInfo, 'hp', () => this.rollHP(null))}
+                    <button
+                        className={this.props.slotInfo.hp !== typical ? '' : 'disabled'}
+                        onClick={() => this.props.changeValue(this.props.slotInfo, 'hp', typical)}
+                    >
+                        reset to average hp
+                    </button>
+                </div>
+            );
+        } else {
+            this.props.slotInfo.members.forEach(data => {
+                sections.push(
+                    <div key={data.id}>
+                        <div className='combatant-name'>{data.name}</div>
+                        {this.getValueSection(min, max, data, 'hp', () => this.rollHP(data))}
+                        <button
+                            className={data.hp !== typical ? '' : 'disabled'}
+                            onClick={() => this.props.changeValue(data, 'hp', typical)}
+                        >
+                            reset to average hp
+                        </button>
+                    </div>
+                );
+            });
+        }
 
         return (
             <div>
-                HP
+                {checkbox}
+                {sections}
             </div>
         );
     }
 
     private getNameSection() {
-        const nameSections = [];
-
-        for (let n = 0; n !== this.props.slotInfo.members.length; ++n) {
-            const data = this.props.slotInfo.members[n];
-            nameSections.push(
+        return this.props.slotInfo.members.map(data => {
+            return (
                 <Textbox
-                    key={n}
+                    key={data.id}
                     text={data.name}
-                    onChange={value => this.props.changeName(this.props.slot.id, n, value)}
+                    onChange={value => this.props.changeValue(data, 'name', value)}
                 />
             );
-        }
+        });
+    }
 
-        return nameSections;
+    public getCountSection() {
+        return (
+            <NumberSpin
+                source={this.props.encounterSlot}
+                name='count'
+                nudgeValue={delta => this.props.nudgeCount(this.props.encounterSlot.id, delta)}
+            />
+        );
     }
 
     public render() {
-        let selector = null;
-        const showSelector = false;
-        if (showSelector) {
-            const options = ['init', 'hp', 'names'].map(s => {
-                return { id: s, text: s };
-            });
-            selector = (
-                <Selector options={options} selectedID={this.state.view} select={id => this.setView(id)} />
-            );
-        }
-
+        let header = this.props.encounterSlot.monsterName;
         let content = null;
-        switch (this.state.view) {
+        switch (this.props.view) {
             case 'init':
+                header += ' (1d20 ' + Utils.modifier(this.props.monster.abilityScores.dex) + ')';
                 content = this.getInitSection();
                 break;
-            case 'hp':
+            case 'hit points':
+                header += ' (' + Frankenstein.getTypicalHPString(this.props.monster) + ')';
                 content = this.getHPSection();
                 break;
             case 'names':
                 content = this.getNameSection();
                 break;
+            case 'count':
+                content = this.getCountSection();
+                break;
         }
 
         return (
-            <Row gutter={10}>
-                <Col span={10}>
-                    <div className='subheading'>{this.props.slot.monsterName}</div>
-                    <div className='divider' />
-                    <NumberSpin
-                        source={this.props.slot}
-                        name='count'
-                        nudgeValue={delta => this.props.nudgeCount(this.props.slot.id, delta)}
-                    />
-                </Col>
-                <Col span={14}>
-                    {selector}
-                    {content}
-                </Col>
-            </Row>
+            <div className='group-panel combatant-setup'>
+                <div className='subheading'>{header}</div>
+                <div className='divider' />
+                {content}
+            </div>
         );
     }
 }

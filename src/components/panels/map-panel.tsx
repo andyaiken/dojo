@@ -778,11 +778,11 @@ class MapToken extends React.Component<MapTokenProps> {
                 }
 
                 if (this.props.combatant.type === 'monster' && this.props.showGauge) {
-                    const monster = this.props.combatant as Combatant & Monster;
-                    const current = monster.hp || 0;
-                    if (current < monster.hpMax) {
+                    const current = this.props.combatant.hpCurrent || 0;
+                    const max = this.props.combatant.hpMax || 0;
+                    if (current < max) {
                         hpGauge = (
-                            <HitPointGauge combatant={monster} />
+                            <HitPointGauge combatant={this.props.combatant} />
                         );
                     }
                 }

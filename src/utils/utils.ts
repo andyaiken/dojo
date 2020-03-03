@@ -1,9 +1,10 @@
-﻿import { Combat, Combatant, CombatSlotInfo, CombatSlotMember } from '../models/combat';
+﻿import { Combat, Combatant, CombatSlotInfo } from '../models/combat';
 import { Condition, ConditionDurationCombatant, ConditionDurationRounds, ConditionDurationSaves } from '../models/condition';
 import { Encounter, EncounterWave } from '../models/encounter';
 import { Monster, MonsterGroup } from '../models/monster-group';
 import { PC } from '../models/party';
 import Factory from './factory';
+import Frankenstein from './frankenstein';
 
 export default class Utils {
 
@@ -639,26 +640,39 @@ export default class Utils {
         return null;
     }
 
-    public static getCombatSlotData(encounter: Encounter | EncounterWave | null): CombatSlotInfo[] {
+    public static getCombatSlotData(encounter: Encounter | EncounterWave | null, library: MonsterGroup[]): CombatSlotInfo[] {
         const data: CombatSlotInfo[] = [];
         if (encounter) {
             encounter.slots.forEach(slot => {
-                const members: CombatSlotMember[] = [];
-                for (let n = 0; n !== slot.count; ++n) {
-                    members.push(Factory.createCombatSlotMember());
-                }
+                const group = library.find(g => g.name === slot.monsterGroupName);
+                if (group) {
+                    const monster = group?.monsters.find(m => m.name === slot.monsterName);
+                    if (monster) {
+                        const slotInfo = Factory.createCombatSlotInfo();
+                        slotInfo.id = slot.id;
 
-                if (slot.count === 1) {
-                    members[0].name = slot.monsterName;
-                } else {
-                    for (let n = 0; n !== slot.count; ++n) {
-                        members[n].name = slot.monsterName + ' ' + (n + 1);
+                        // Roll initiative and set default HP
+                        slotInfo.init = Utils.dieRoll() + Utils.modifierValue(monster.abilityScores.dex);
+                        slotInfo.hp = Frankenstein.getTypicalHP(monster);
+
+                        for (let n = 0; n !== slot.count; ++n) {
+                            const slotMember = Factory.createCombatSlotMember();
+                            slotMember.init = slotInfo.init;
+                            slotMember.hp = slotInfo.hp;
+                            slotMember.name = slot.monsterName;
+                            slotInfo.members.push(slotMember);
+                        }
+
+                        if (slot.count > 1) {
+                            for (let n = 0; n !== slot.count; ++n) {
+                                slotInfo.members[n].name = slot.monsterName + ' ' + (n + 1);
+                            }
+                        }
+
+                        data.push(slotInfo);
                     }
                 }
 
-                const slotInfo = Factory.createCombatSlotInfo();
-                slotInfo.id = slot.id;
-                data.push(slotInfo);
             });
         }
 

@@ -1275,7 +1275,7 @@ class MonsterRow extends React.Component<MonsterRowProps> {
                 grabber = <PortraitPanel source={this.props.combatant} inline={true} grabber={true} />;
             }
 
-            let hp = (this.props.combatant.hp ? this.props.combatant.hp : 0).toString();
+            let hp = (this.props.combatant.hpCurrent ?? 0).toString();
             if ((this.props.combatant.hpTemp ?? 0) > 0) {
                 hp += '+' + this.props.combatant.hpTemp;
             }
@@ -1771,15 +1771,15 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
         }, () => {
             const values: { id: string, hp: number, temp: number; damage: number }[] = [];
             this.props.combatants.forEach(combatant => {
-                const monster = combatant as Combatant & Monster;
+                const hpMax = (combatant.hpMax ?? 0);
 
-                let hp = (monster.hp ?? 0) + value;
-                hp = Math.min(hp, monster.hpMax);
+                let hp = (combatant.hpCurrent ?? 0) + value;
+                hp = Math.min(hp, hpMax);
 
                 values.push({
-                    id: monster.id,
+                    id: combatant.id,
                     hp: hp,
-                    temp: monster.hpTemp ?? 0,
+                    temp: combatant.hpTemp ?? 0,
                     damage: 0
                 });
             });
@@ -1798,7 +1798,7 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
             this.props.combatants.forEach(combatant => {
                 const multiplier = this.state.damageMultipliers[combatant.id] ?? 1;
 
-                let hp = combatant.hp ?? 0;
+                let hp = combatant.hpCurrent ?? 0;
                 let temp = combatant.hpTemp ?? 0;
 
                 const totalDamage = Math.floor(value * multiplier);
@@ -1943,10 +1943,10 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                 <div>
                     <NumberSpin
                         source={monster}
-                        name='hp'
+                        name='hpCurrent'
                         label='hit points'
                         factors={[1, 10]}
-                        nudgeValue={delta => this.props.nudgeValue(monster, 'hp', delta)}
+                        nudgeValue={delta => this.props.nudgeValue(monster, 'hpCurrent', delta)}
                     />
                     <NumberSpin
                         source={monster}
@@ -2060,7 +2060,7 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
         });
 
         let defeatedBtn = null;
-        const atZero = this.props.combatants.filter(c => (c.hp != null) && (c.hp <= 0));
+        const atZero = this.props.combatants.filter(c => (c.hpCurrent != null) && (c.hpCurrent <= 0));
         if (atZero.length > 0) {
             const txt = (atZero.length === 1) && (atZero[0].current) ? 'mark as defeated and end turn' : 'mark as defeated';
             let names = null;

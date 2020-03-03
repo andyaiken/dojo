@@ -29,6 +29,27 @@ export default class Frankenstein {
         return sizeAndType + align + cr;
     }
 
+    public static getTypicalHP(monster: Monster) {
+        const sides = Utils.hitDieType(monster.size);
+        const hpPerDie = ((sides + 1) / 2) + Utils.modifierValue(monster.abilityScores.con);
+        return Math.floor(monster.hitDice * hpPerDie);
+    }
+
+    public static getTypicalHPString(monster: Monster) {
+        const die = Utils.hitDieType(monster.size);
+        const conMod = Utils.modifierValue(monster.abilityScores.con) * monster.hitDice;
+
+        let conModStr = '';
+        if (conMod > 0) {
+            conModStr = ' +' + conMod;
+        }
+        if (conMod < 0) {
+            conModStr = ' ' + conMod;
+        }
+
+        return monster.hitDice + 'd' + die + conModStr;
+    }
+
     public static nudgeValue(target: Monster, field: string, delta: number) {
         let source: any = target;
         let value: any = null;
@@ -62,14 +83,6 @@ export default class Frankenstein {
         tokens.forEach(token => {
             if (token === tokens[tokens.length - 1]) {
                 source[token] = value;
-
-                if ((field === 'abilityScores.con') || (field === 'size') || (field === 'hitDice')) {
-                    const sides = Utils.hitDieType(target.size);
-                    const conMod = Math.floor((target.abilityScores.con - 10) / 2);
-                    const hpPerDie = ((sides + 1) / 2) + conMod;
-                    const hp = Math.floor(target.hitDice * hpPerDie);
-                    target.hpMax = hp;
-                }
             } else {
                 source = source[token];
             }
@@ -90,7 +103,6 @@ export default class Frankenstein {
         monster.abilityScores.wis = 10;
         monster.abilityScores.cha = 10;
         monster.ac = 10;
-        monster.hpMax = 0;
         monster.hitDice = 1;
         monster.damage.resist = '';
         monster.damage.vulnerable = '';
@@ -128,7 +140,6 @@ export default class Frankenstein {
                 cha: monster.abilityScores.cha
             },
             ac: monster.ac,
-            hpMax: monster.hpMax,
             hitDice: monster.hitDice,
             damage: {
                 resist: monster.damage.resist,
@@ -167,7 +178,6 @@ export default class Frankenstein {
         monster.alignment = data.alignment;
         monster.challenge = Utils.parseChallenge(data.challenge_rating);
         monster.ac = data.armor_class;
-        monster.hpMax = data.hit_points;
         monster.speed = data.speed;
         monster.senses = data.senses;
         monster.languages = data.languages;
@@ -399,7 +409,6 @@ export default class Frankenstein {
                         monster.ac = Number.parseInt(value, 10);
                         break;
                     case 'hit points':
-                        monster.hpMax = Number.parseInt(value, 10);
                         const extra = (attr.getElementsByClassName('mon-stat-block__attribute-data-extra')[0] as HTMLElement).innerText.toLowerCase().trim();
                         monster.hitDice = Number.parseInt(extra.substring(1, extra.indexOf('d')), 10);
                         break;

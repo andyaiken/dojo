@@ -72,7 +72,6 @@ export default class Factory {
                 cha: 10
             },
             ac: 10,
-            hpMax: 4,
             hitDice: 1,
             damage: {
                 resist: '',
@@ -196,6 +195,7 @@ export default class Factory {
 
     public static createCombatSlotMember(): CombatSlotMember {
         return {
+            id: Utils.guid(),
             name: '',
             hp: 0,
             init: 0

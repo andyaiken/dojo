@@ -1008,7 +1008,7 @@ class CombatTab extends React.Component<CombatTabProps> {
                             nudgeValue={delta => this.props.nudgeValue('hitDice', delta)}
                         />
                         <div className='subheading'>hit points</div>
-                        <div className='hp-value'>{this.props.monster.hpMax} hp</div>
+                        <div className='hp-value'>{Frankenstein.getTypicalHP(this.props.monster)} hp</div>
                     </Col>
                     <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                         <div className='subheading'>damage resistances</div>

@@ -14,14 +14,15 @@ export interface CombatSetup {
 
 export interface CombatSlotInfo {
     id: string;
-    useGroupHP: boolean,
-    useGroupInit: boolean,
+    useGroupHP: boolean;
+    useGroupInit: boolean;
     hp: number;
     init: number;
     members: CombatSlotMember[];
 }
 
 export interface CombatSlotMember {
+    id: string;
     name: string;
     hp: number;
     init: number;
@@ -50,7 +51,8 @@ export interface Combatant {
     active: boolean;
     defeated: boolean;
     initiative: number | null;
-    hp: number | null;
+    hpMax: number | null;
+    hpCurrent: number | null;
     hpTemp: number | null;
     conditions: Condition[];
     tags: string[];
