@@ -229,10 +229,19 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
                 );
             }
 
+            if (partySelection) {
+                return (
+                    <div className='group-panel'>
+                        <div className='subheading'>difficulty</div>
+                        {partySelection}
+                        {xpThresholds}
+                        {diffSection}
+                    </div>
+                );
+            }
+
             return (
-                <div className='group-panel'>
-                    <div className='subheading'>difficulty</div>
-                    {partySelection}
+                <div>
                     {xpThresholds}
                     {diffSection}
                 </div>

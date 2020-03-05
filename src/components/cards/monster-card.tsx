@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Icon } from 'antd';
+import { Icon, Tag } from 'antd';
 
 import Frankenstein from '../../utils/frankenstein';
 import Utils from '../../utils/utils';
@@ -18,8 +18,6 @@ import AbilityScorePanel from '../panels/ability-score-panel';
 import PortraitPanel from '../panels/portrait-panel';
 import TraitsPanel from '../panels/traits-panel';
 import InfoCard from './info-card';
-
-import arrow from '../../resources/icons/down-arrow.svg';
 
 interface Props {
     monster: Monster | (Monster & Combatant);
@@ -46,7 +44,6 @@ interface Props {
 }
 
 interface State {
-    showDetails: boolean;
     cloneName: string;
 }
 
@@ -91,7 +88,6 @@ export default class MonsterCard extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            showDetails: false,
             cloneName: props.monster.name + ' copy'
         };
     }
@@ -100,28 +96,6 @@ export default class MonsterCard extends React.Component<Props, State> {
         this.setState({
             cloneName: cloneName
         });
-    }
-
-    private toggleDetails() {
-        this.setState({
-            showDetails: !this.state.showDetails
-        });
-    }
-
-    private canExpand() {
-        if (this.canSelect()) {
-            return false;
-        }
-
-        if (this.props.mode.indexOf('combat') !== -1) {
-            return false;
-        }
-
-        if (this.props.mode.indexOf('full') !== -1) {
-            return false;
-        }
-
-        return true;
     }
 
     private canSelect() {
@@ -170,6 +144,29 @@ export default class MonsterCard extends React.Component<Props, State> {
                 <b>{text}</b> {value}
             </div>
         );
+    }
+
+    private getTags() {
+        const tags = [];
+
+        let size = this.props.monster.size;
+        const combatant = this.props.monster as Combatant;
+        if (combatant) {
+            size = combatant.displaySize || size;
+        }
+        let sizeAndType = (size + ' ' + this.props.monster.category).toLowerCase();
+        if (this.props.monster.tag) {
+            sizeAndType += ' (' + this.props.monster.tag.toLowerCase() + ')';
+        }
+        tags.push(<Tag key='tag-main'>{sizeAndType}</Tag>);
+
+        if (this.props.monster.alignment) {
+            tags.push(<Tag key='tag-align'>{this.props.monster.alignment.toLowerCase()}</Tag>);
+        }
+
+        tags.push(<Tag key='tag-cr'>cr {Utils.challenge(this.props.monster.challenge)}</Tag>);
+
+        return tags;
     }
 
     private getButtons() {
@@ -310,13 +307,9 @@ export default class MonsterCard extends React.Component<Props, State> {
                 );
             }
 
-            const showDetails = this.state.showDetails
-                || (this.props.mode.indexOf('full') !== -1)
-                || (this.props.mode.indexOf('combat') !== -1);
-
-            let details = null;
-            if (showDetails) {
-                details = (
+            let statBlock = null;
+            if ((this.props.mode.indexOf('full') !== -1) || (this.props.mode.indexOf('combat') !== -1)) {
+                statBlock = (
                     <div>
                         <div className='divider' />
                         <div className='section'>
@@ -348,10 +341,10 @@ export default class MonsterCard extends React.Component<Props, State> {
                 <div className='stats'>
                     <PortraitPanel source={this.props.monster} />
                     <div className='section centered'>
-                        <i>{Frankenstein.getDescription(this.props.monster)}</i>
+                        {this.getTags()}
                     </div>
                     {slotSection}
-                    {details}
+                    {statBlock}
                 </div>
             );
         } else {
@@ -360,7 +353,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                     <div className='stats'>
                         <PortraitPanel source={this.props.monster} />
                         <div className='section centered'>
-                            <i>{Frankenstein.getDescription(this.props.monster)}</i>
+                            {this.getTags()}
                         </div>
                         <div className='divider' />
                         {this.statSection('speed', this.props.monster.speed)}
@@ -408,17 +401,6 @@ export default class MonsterCard extends React.Component<Props, State> {
     }
 
     private getIcon() {
-        if (this.canExpand()) {
-            return (
-                <img
-                    className={this.state.showDetails ? 'image rotate' : 'image'}
-                    src={arrow}
-                    alt='arrow'
-                    onClick={() => this.toggleDetails()}
-                />
-            );
-        }
-
         if (this.canSelect()) {
             if (this.props.mode.indexOf('selected') !== -1) {
                 return (

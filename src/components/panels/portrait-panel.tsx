@@ -1,10 +1,11 @@
 import React from 'react';
 
+import { Icon } from 'antd';
+
 import { Monster } from '../../models/monster-group';
 import { PC } from '../../models/party';
 
-import clear from '../../resources/icons/x.svg';
-import none from '../../resources/images/no-portrait.png';
+import noPortrait from '../../resources/images/no-portrait.png';
 
 interface Props {
     source: PC | Monster;
@@ -26,11 +27,11 @@ export default class PortraitPanel extends React.Component<Props> {
         let clearBtn = null;
         if (this.props.source.portrait) {
             clearBtn = (
-                <img className='clear' src={clear} onClick={() => this.props.clear()} alt='clear' />
+                <Icon type='close-circle' onClick={() => this.props.clear()} />
             );
         }
 
-        let src = none;
+        let src = noPortrait;
         const data = localStorage.getItem('image-' + this.props.source.portrait);
         if (data) {
             const image = JSON.parse(data);

@@ -63,7 +63,7 @@ export default class TraitsPanel extends React.Component<Props> {
         }
 
         return (
-            <div className='section'>
+            <div>
                 <div className='section subheading'>{Utils.traitType(type, true)}</div>
                 {info}
                 {traits}

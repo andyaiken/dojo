@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Icon, Row, Slider } from 'antd';
+import { Col, Icon, Row, Slider, Tag } from 'antd';
 import { List } from 'react-movable';
 import Showdown from 'showdown';
 
@@ -1087,13 +1087,13 @@ class PCRow extends React.Component<PCRowProps> {
         minimal: false
     };
 
-    private getInformationText() {
+    private getInformationTag() {
         if (this.props.combatant.current) {
-            return 'current turn';
+            return <Tag className='info'>current turn</Tag>;
         }
 
         if (this.props.selected) {
-            return 'selected';
+            return <Tag className='info'>selected</Tag>;
         }
 
         return null;
@@ -1122,17 +1122,6 @@ class PCRow extends React.Component<PCRowProps> {
             let grabber = <Icon type='menu' className='grabber small' data-movable-handle={true} />;
             if (this.props.combatant.portrait) {
                 grabber = <PortraitPanel source={this.props.combatant} inline={true} grabber={true} />;
-            }
-
-            let desc = null;
-            if (!this.props.minimal) {
-                const race = this.props.combatant.race || 'unknown race';
-                const cls = this.props.combatant.classes || 'unknown class';
-                desc = (
-                    <div className='section lowercase'>
-                        {race + ' ' + cls + ', level ' + this.props.combatant.level}
-                    </div>
-                );
             }
 
             const notes = [];
@@ -1205,10 +1194,9 @@ class PCRow extends React.Component<PCRowProps> {
                             {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
                             {this.props.combatant.player ? ' / ' + this.props.combatant.player : ''}
                         </div>
-                        <span className='info'>{this.getInformationText()}</span>
+                        {this.getInformationTag()}
                     </div>
                     <div className='content'>
-                        {desc}
                         {notes}
                     </div>
                 </div>
@@ -1238,13 +1226,13 @@ class MonsterRow extends React.Component<MonsterRowProps> {
         minimal: false
     };
 
-    private getInformationText() {
+    private getInformationTag() {
         if (this.props.combatant.current) {
-            return 'current turn';
+            return <Tag className='info'>current turn</Tag>;
         }
 
         if (this.props.selected) {
-            return 'selected';
+            return <Tag className='info'>selected</Tag>;
         }
 
         return null;
@@ -1375,7 +1363,7 @@ class MonsterRow extends React.Component<MonsterRowProps> {
                         <div className='name'>
                             {this.props.combatant.displayName || this.props.combatant.name || 'combatant'}
                         </div>
-                        <span className='info'>{this.getInformationText()}</span>
+                        {this.getInformationTag()}
                     </div>
                     <div className='content'>
                         {dmInfo}
@@ -1408,13 +1396,13 @@ class CompanionRow extends React.Component<CompanionRowProps> {
         minimal: false
     };
 
-    private getInformationText() {
+    private getInformationTag() {
         if (this.props.combatant.current) {
-            return 'current turn';
+            return <Tag className='info'>current turn</Tag>;
         }
 
         if (this.props.selected) {
-            return 'selected';
+            return <Tag className='info'>selected</Tag>;
         }
 
         return null;
@@ -1509,7 +1497,7 @@ class CompanionRow extends React.Component<CompanionRowProps> {
                         <div className='name'>
                             {this.props.combatant.displayName || 'combatant'}
                         </div>
-                        <span className='info'>{this.getInformationText()}</span>
+                        {this.getInformationTag()}
                     </div>
                     <div className='content'>
                         {notes}

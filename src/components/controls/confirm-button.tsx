@@ -1,11 +1,8 @@
 import React from 'react';
 
-import warning from '../../resources/icons/warning.svg';
-
 interface Props {
     text: string;
     callback: () => void;
-    details: string;
     disabled: boolean;
 }
 
@@ -15,7 +12,6 @@ interface State {
 
 export default class ConfirmButton extends React.Component<Props, State> {
     public static defaultProps = {
-        details: null,
         disabled: false
     };
 
@@ -26,15 +22,19 @@ export default class ConfirmButton extends React.Component<Props, State> {
         };
     }
 
-    private toggle() {
+    private toggle(e: React.MouseEvent) {
+        e.stopPropagation();
         this.setState({
             pressed: !this.state.pressed
         });
     }
 
     private perform() {
-        this.toggle();
-        this.props.callback();
+        this.setState({
+            pressed: false
+        }, () => {
+            this.props.callback();
+        });
     }
 
     public render() {
@@ -42,27 +42,13 @@ export default class ConfirmButton extends React.Component<Props, State> {
             let content = null;
             if (this.state.pressed) {
                 content = (
-                    <div>
-                        <div className='title'>{this.props.text} - are you sure?</div>
-                        <img className='image' src={warning} alt='warning' />
-                        {this.props.details ? <div className='details'>{this.props.details}</div> : null}
-                        <div className='confirmation'>
-                            <div className='destructive' onClick={() => this.perform()}>yes</div>
-                            <div className='non-destructive' onClick={() => this.toggle()}>no</div>
-                        </div>
-                    </div>
-                );
-            } else {
-                content = (
-                    <div>
-                        <div className='title'>{this.props.text}</div>
-                        <img className='image' src={warning} alt='warning' />
-                    </div>
+                    <button className='danger' onClick={() => this.perform()}>confirm</button>
                 );
             }
 
             return (
-                <button className={this.props.disabled ? 'disabled' : ''} onClick={() => this.toggle()}>
+                <button className={this.props.disabled ? 'danger disabled' : 'danger'} onClick={e => this.toggle(e)}>
+                    <div>{this.props.text}</div>
                     {content}
                 </button>
             );

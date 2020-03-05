@@ -101,13 +101,16 @@ button {
     text-align: left;
     font-size: 12px;
     font-weight: 600;
-    color: $foreground;
     background-color: $background;
     border: 1px solid $control-border;
     border-left-width: 5px;
     margin: 5px 0;
     padding: 5px 9px 5px 10px;
     cursor: pointer;
+
+    &.danger:hover {
+        border-color: rgb(170, 0, 0);
+    }
 
     &.link {
         display: unset;
@@ -147,30 +150,6 @@ button {
         padding: 5px 0;
     }
 
-    .destructive,
-    .non-destructive {
-        background-color: $background;
-        border: 1px solid $control-border;
-        border-left-width: 5px;
-        margin: 3px 0;
-        padding: 5px 8px;
-        height: 32px;
-        line-height: 18px;
-        cursor: pointer;
-    }
-
-    .destructive {
-        border-color: rgb(170, 0, 0);
-
-        &:hover {
-            background-color: rgba(255, 0, 0, 0.3);
-        }
-    }
-
-    .non-destructive:hover {
-        border-color: $highlight;
-    }
-
     .title {
         width: calc(100% - 22px);
         display: inline-block;
@@ -186,10 +165,6 @@ button {
         vertical-align: middle;
         opacity: 0;
     }
-
-    .confirmation {
-        padding-top: 10px;
-    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -203,7 +178,6 @@ button {
     padding: 0;
     font-size: 12px;
     height: 100%;
-    color: $foreground;
     user-select: none;
     font-family: 'Open Sans', 'Segoe UI', sans-serif;
 }
@@ -213,7 +187,6 @@ button {
     border-radius: 0;
     border-color: $control-border;
     border-left-width: 5px;
-    color: $foreground;
     margin: 5px 0;
 
     &:hover {
@@ -249,24 +222,22 @@ button {
 .ant-collapse > .ant-collapse-item > .ant-collapse-header {
     padding: 5px 10px;
     font-weight: 600;
+    line-height: 20px;
+    color: unset;
 
     .collapse-header-text {
         width: calc(100% - 22px);
     }
 }
 
-.ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content {
-    color: $foreground;
-
-    & > .ant-collapse-content-box {
-        padding: 0 10px 5px 10px;
-        overflow-y: auto;
-    }
+.ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
+    padding: 0 10px 5px 10px;
+    overflow-y: auto;
 }
 
 .ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow {
     font-size: 16px;
-    right: 13px;
+    right: 10px;
 }
 
 .ant-collapse-item-active:hover .ant-collapse-header {
@@ -311,7 +282,6 @@ button {
     border-radius: 0;
     border-left-width: 5px;
     border-color: $control-border;
-    color: $foreground;
 
     &:hover {
         border-color: $highlight;
@@ -402,7 +372,6 @@ button {
     font-weight: 600;
     font-size: 15px;
     padding-top: 3px;
-    color: #656565;
 }
 
 .divider {
@@ -438,7 +407,8 @@ button {
     pointer-events: none;
 }
 
-.image.rotate {
+.image.rotate,
+.anticon.rotate {
     transform: rotate(-180deg);
 }
 
@@ -507,7 +477,6 @@ body,
     font-family: 'Open Sans', 'Segoe UI', sans-serif;
     font-size: 12px;
     background-color: $background;
-    color: $foreground;
     box-sizing: border-box;
     user-select: none;
 
@@ -532,7 +501,6 @@ body,
     font-family: 'Open Sans', 'Segoe UI', sans-serif;
     font-size: 12px;
     background-color: $background;
-    color: $foreground;
     box-sizing: border-box;
     user-select: none;
     transition-duration: 0s;
@@ -559,13 +527,9 @@ body,
             width: calc(100% - 20px);
             display: inline-block;
         }
-    
-        .image {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            display: inline-block;
-            margin-bottom: 3px;
+
+        > .anticon {
+            font-size: 16px;
         }
     }
 }
@@ -862,10 +826,6 @@ body,
         }
     }
 
-    &.highlight {
-        margin: 5px 0 5px 20px;
-    }
-
     &.current {
         margin: 5px 20px 5px 0;
         pointer-events: none;
@@ -893,9 +853,7 @@ body,
 
         .info {
             float: right;
-            font-size: 12px;
             height: 20px;
-            line-height: 20px;
         }
     }
 
@@ -1565,11 +1523,15 @@ body,
                 border-color: $highlight;
                 background-color: $highlight01;
             }
+        }
 
-            &.clear {
-                width: 20px;
-                height: 20px;
-                border: none;
+        .anticon {
+            margin-left: 5px;
+            font-size: 15px;
+
+            &:hover {
+                border-color: $highlight;
+                background-color: $highlight01;
             }
         }
     }

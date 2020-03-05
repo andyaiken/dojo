@@ -1,7 +1,6 @@
 import React from 'react';
 
-import ellipsis from '../../resources/icons/ellipsis.svg';
-import clear from '../../resources/icons/x.svg';
+import { Icon } from 'antd';
 
 interface Props {
     options: { id: string; text: string; disabled?: boolean }[];
@@ -65,14 +64,13 @@ export default class Dropdown extends React.Component<Props, State> {
                 option = this.props.options.find(o => o.id === this.props.selectedID);
             }
 
+            const canClear = option && this.props.clear;
             content.push(
                 <div key='selection' className='dropdown-top' title={option ? option.text : this.props.placeholder}>
                     <div className='item-text'>{option ? option.text : this.props.placeholder}</div>
-                    <img
-                        className={option && this.props.clear ? 'clear' : 'arrow'}
-                        alt={option && this.props.clear ? 'clear' : 'arrow'}
-                        src={option && this.props.clear ? clear : ellipsis}
-                        onClick={e => option && this.props.clear ? this.clear(e) : null}
+                    <Icon
+                        type={canClear ? 'close-circle' : 'ellipsis'}
+                        onClick={e => canClear ? this.clear(e) : null}
                     />
                 </div>
             );

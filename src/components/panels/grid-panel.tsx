@@ -1,8 +1,6 @@
 import React from 'react';
 
-import { Col, Row } from 'antd';
-
-import arrow from '../../resources/icons/down-arrow-black.svg';
+import { Col, Icon, Row } from 'antd';
 
 interface Props {
     content: (JSX.Element | null)[];
@@ -47,9 +45,9 @@ export default class GridPanel extends React.Component<Props, State> {
             if (this.props.heading) {
                 let toggle = null;
                 if (this.props.showToggle) {
-                    const style = this.state.showContent ? 'image rotate' : 'image';
+                    const style = this.state.showContent ? 'rotate' : '';
                     toggle = (
-                        <img className={style} src={arrow} alt='arrow' onClick={() => this.toggleContentVisible()} />
+                        <Icon type='down-circle' className={style} onClick={() => this.toggleContentVisible()} />
                     );
                 }
 
