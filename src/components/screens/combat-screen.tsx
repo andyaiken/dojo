@@ -70,6 +70,7 @@ interface Props {
     nudgeValue: (source: {}, type: string, delta: number) => void;
     toggleTag: (combatants: Combatant[], tag: string) => void;
     toggleCondition: (combatants: Combatant[], condition: string) => void;
+    toggleHidden: (combatants: Combatant[]) => void;
     scatterCombatants: (type: 'pc' | 'monster') => void;
     rotateMap: () => void;
     addOverlay: (overlay: MapItem) => void;
@@ -646,6 +647,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                 mapRemove={combatants => this.props.mapRemove(combatants.map(c => c.id))}
                 toggleTag={(combatants, tag) => this.props.toggleTag(combatants, tag)}
                 toggleCondition={(combatants, condition) => this.props.toggleCondition(combatants, condition)}
+                toggleHidden={combatants => this.props.toggleHidden(combatants)}
                 addCompanion={companion => this.props.addCompanion(companion)}
                 changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
                 nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
@@ -1018,9 +1020,9 @@ interface PendingCombatantRowProps {
 }
 
 class PendingCombatantRow extends React.Component<PendingCombatantRowProps> {
-    private getInformationText() {
+    private getInformationTag() {
         if (this.props.selected) {
-            return 'selected';
+            return <Tag className='info'>selected</Tag>;
         }
 
         return null;
@@ -1035,7 +1037,7 @@ class PendingCombatantRow extends React.Component<PendingCombatantRowProps> {
 
     public render() {
         try {
-            let style = 'combatant-row ' + this.props.combatant.type;
+            let style = 'initiative-list-item ' + this.props.combatant.type;
             if (this.props.combatant.current || this.props.selected) {
                 style += ' highlight';
             }
@@ -1049,7 +1051,7 @@ class PendingCombatantRow extends React.Component<PendingCombatantRowProps> {
                         <div className='name'>
                             {c.displayName || c.name || 'combatant'}
                         </div>
-                        <span className='info'>{this.getInformationText()}</span>
+                        {this.getInformationTag()}
                     </div>
                     <div className='content'>
                         <NumberSpin
@@ -1108,7 +1110,7 @@ class PCRow extends React.Component<PCRowProps> {
 
     public render() {
         try {
-            let style = 'combatant-row ' + this.props.combatant.type;
+            let style = 'initiative-list-item ' + this.props.combatant.type;
             if (this.props.combatant.current) {
                 style += ' current';
             }
@@ -1128,7 +1130,7 @@ class PCRow extends React.Component<PCRowProps> {
             if (this.props.combat.map) {
                 if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
                     notes.push(
-                        <Note key='not-on-map' white={true}>
+                        <Note key='not-on-map'>
                             <span>not on the map</span>
                             <Icon
                                 type='environment'
@@ -1140,13 +1142,13 @@ class PCRow extends React.Component<PCRowProps> {
                 }
                 if (!this.props.combatant.showOnMap) {
                     notes.push(
-                        <Note key='hidden' white={true}>hidden</Note>
+                        <Note key='hidden'>hidden</Note>
                     );
                 }
             }
             this.props.combatant.tags.forEach(tag => {
                 notes.push(
-                    <Note key={tag} white={true}>
+                    <Note key={tag}>
                         <div className='condition'>
                             <div className='condition-name'>{Utils.getTagTitle(tag)}</div>
                             {Utils.getTagDescription(tag)}
@@ -1169,7 +1171,7 @@ class PCRow extends React.Component<PCRowProps> {
                         description.push(<div key={n} className='condition-text'>{text[n]}</div>);
                     }
                     notes.push(
-                        <Note key={c.id} white={true}>
+                        <Note key={c.id}>
                             <div className='condition'>
                                 <div className='condition-name'>{name}</div>
                                 {description}
@@ -1180,7 +1182,7 @@ class PCRow extends React.Component<PCRowProps> {
             }
             if (this.props.combatant.note) {
                 notes.push(
-                    <Note key='text' white={true}>
+                    <Note key='text'>
                         <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.combatant.note) }} />
                     </Note>
                 );
@@ -1247,7 +1249,7 @@ class MonsterRow extends React.Component<MonsterRowProps> {
 
     public render() {
         try {
-            let style = 'combatant-row ' + this.props.combatant.type;
+            let style = 'initiative-list-item ' + this.props.combatant.type;
             if (this.props.combatant.current) {
                 style += ' current';
             }
@@ -1279,7 +1281,7 @@ class MonsterRow extends React.Component<MonsterRowProps> {
             if (this.props.combat.map) {
                 if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
                     notes.push(
-                        <Note key='not-on-map' white={true}>
+                        <Note key='not-on-map'>
                             <span>not on the map</span>
                             <Icon
                                 type='environment'
@@ -1291,13 +1293,13 @@ class MonsterRow extends React.Component<MonsterRowProps> {
                 }
                 if (!this.props.combatant.showOnMap) {
                     notes.push(
-                        <Note key='hidden' white={true}>hidden</Note>
+                        <Note key='hidden'>hidden</Note>
                     );
                 }
             }
             this.props.combatant.tags.forEach(tag => {
                 notes.push(
-                    <Note key={tag} white={true}>
+                    <Note key={tag}>
                         <div className='condition'>
                             <div className='condition-name'>{Utils.getTagTitle(tag)}</div>
                             {Utils.getTagDescription(tag)}
@@ -1320,7 +1322,7 @@ class MonsterRow extends React.Component<MonsterRowProps> {
                         description.push(<div key={n} className='condition-text'>{text[n]}</div>);
                     }
                     notes.push(
-                        <Note key={c.id} white={true}>
+                        <Note key={c.id}>
                             <div className='condition'>
                                 <div className='condition-name'>{name}</div>
                                 {description}
@@ -1331,7 +1333,7 @@ class MonsterRow extends React.Component<MonsterRowProps> {
             }
             if (this.props.combatant.note) {
                 notes.push(
-                    <Note key='text' white={true}>
+                    <Note key='text'>
                         <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.combatant.note) }} />
                     </Note>
                 );
@@ -1417,7 +1419,7 @@ class CompanionRow extends React.Component<CompanionRowProps> {
 
     public render() {
         try {
-            let style = 'combatant-row ' + this.props.combatant.type;
+            let style = 'initiative-list-item ' + this.props.combatant.type;
             if (this.props.combatant.current) {
                 style += ' current';
             }
@@ -1432,7 +1434,7 @@ class CompanionRow extends React.Component<CompanionRowProps> {
             if (this.props.combat.map) {
                 if (!this.props.combatant.pending && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
                     notes.push(
-                        <Note key='not-on-map' white={true}>
+                        <Note key='not-on-map'>
                             <span>not on the map</span>
                             <Icon
                                 type='environment'
@@ -1444,13 +1446,13 @@ class CompanionRow extends React.Component<CompanionRowProps> {
                 }
                 if (!this.props.combatant.showOnMap) {
                     notes.push(
-                        <Note key='hidden' white={true}>hidden</Note>
+                        <Note key='hidden'>hidden</Note>
                     );
                 }
             }
             this.props.combatant.tags.forEach(tag => {
                 notes.push(
-                    <Note key={tag} white={true}>
+                    <Note key={tag}>
                         <div className='condition'>
                             <div className='condition-name'>{Utils.getTagTitle(tag)}</div>
                             {Utils.getTagDescription(tag)}
@@ -1473,7 +1475,7 @@ class CompanionRow extends React.Component<CompanionRowProps> {
                         description.push(<div key={n} className='condition-text'>{text[n]}</div>);
                     }
                     notes.push(
-                        <Note key={c.id} white={true}>
+                        <Note key={c.id}>
                             <div className='condition'>
                                 <div className='condition-name'>{name}</div>
                                 {description}
@@ -1484,7 +1486,7 @@ class CompanionRow extends React.Component<CompanionRowProps> {
             }
             if (this.props.combatant.note) {
                 notes.push(
-                    <Note key='text' white={true}>
+                    <Note key='text'>
                         <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.combatant.note) }} />
                     </Note>
                 );
@@ -1703,6 +1705,7 @@ interface CombatControlsPanelProps {
     nudgeConditionValue: (condition: Condition, field: string, delta: number) => void;
     toggleTag: (combatants: Combatant[], tag: string) => void;
     toggleCondition: (combatants: Combatant[], condition: string) => void;
+    toggleHidden: (combatants: Combatant[]) => void;
     addCompanion: (companion: Companion) => void;
     changeValue: (monster: any, field: string, value: any) => void;
     nudgeValue: (source: any, field: string, delta: number) => void;
@@ -1831,77 +1834,67 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                 actions.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(this.props.combatants)}>mark as defeated</button>);
             }
 
-            let notes = null;
-            if (this.props.combatants.length === 1) {
-                const combatant = this.props.combatants[0];
-                notes = (
-                    <Textbox
-                        text={combatant.note}
-                        placeholder='notes'
-                        minLines={3}
-                        maxLines={10}
-                        onChange={value => this.props.changeValue(combatant, 'note', value)}
-                    />
-                );
+            const engaged: JSX.Element[] = [];
+            if (this.props.combatants.every(c => c.type !== 'pc')) {
+                const pcs = this.props.combat.combatants.filter(c => c.type === 'pc');
+                pcs.forEach(pc => {
+                    const tag = 'engaged:' + pc.displayName;
+                    engaged.push(
+                        <Tag.CheckableTag
+                            key={pc.id}
+                            checked={this.props.combatants.every(c => c.tags.includes(tag))}
+                            onChange={() => this.props.toggleTag(this.props.combatants, tag)}
+                        >
+                            {pc.displayName}
+                        </Tag.CheckableTag>
+                    );
+                });
             }
 
             return (
                 <div>
                     {actions}
-                    <Row gutter={10}>
-                        <Col span={8}>
-                            <Checkbox
-                                label='conc.'
-                                display='button'
-                                checked={this.props.combatants.every(c => c.tags.includes('conc'))}
-                                changeValue={value => this.props.toggleTag(this.props.combatants, 'conc')}
-                            />
-                        </Col>
-                        <Col span={8}>
-                            <Checkbox
-                                label='bane'
-                                display='button'
-                                checked={this.props.combatants.every(c => c.tags.includes('bane'))}
-                                changeValue={value => this.props.toggleTag(this.props.combatants, 'bane')}
-                            />
-                        </Col>
-                        <Col span={8}>
-                            <Checkbox
-                                label='bless'
-                                display='button'
-                                checked={this.props.combatants.every(c => c.tags.includes('bless'))}
-                                changeValue={value => this.props.toggleTag(this.props.combatants, 'bless')}
-                            />
-                        </Col>
-                    </Row>
-                    <Row gutter={10}>
-                        <Col span={8}>
-                            <Checkbox
-                                label='prone'
-                                display='button'
-                                checked={this.props.combatants.every(c => c.conditions.some(condition => condition.name === 'prone'))}
-                                changeValue={value => this.props.toggleCondition(this.props.combatants, 'prone')}
-                            />
-                        </Col>
-                        <Col span={8}>
-                            <Checkbox
-                                label='uncon.'
-                                display='button'
-                                checked={this.props.combatants.every(c => c.conditions.some(condition => condition.name === 'unconscious'))}
-                                changeValue={value => this.props.toggleCondition(this.props.combatants, 'unconscious')}
-                            />
-                        </Col>
-                        <Col span={8}>
-                            <Checkbox
-                                label='hidden'
-                                display='button'
-                                checked={!this.props.combatants.every(c => c.showOnMap)}
-                                disabled={!this.props.combat.map}
-                                changeValue={value => this.props.changeValue(this.props.combatants, 'showOnMap', !value)}
-                            />
-                        </Col>
-                    </Row>
-                    {notes}
+                    <div className='section'>
+                        <b>quick tags: </b>
+                        <Tag.CheckableTag
+                            checked={this.props.combatants.every(c => c.tags.includes('conc'))}
+                            onChange={() => this.props.toggleTag(this.props.combatants, 'conc')}
+                        >
+                            concentrating
+                        </Tag.CheckableTag>
+                        <Tag.CheckableTag
+                            checked={this.props.combatants.every(c => c.tags.includes('bane'))}
+                            onChange={() => this.props.toggleTag(this.props.combatants, 'bane')}
+                        >
+                            bane
+                        </Tag.CheckableTag>
+                        <Tag.CheckableTag
+                            checked={this.props.combatants.every(c => c.tags.includes('bless'))}
+                            onChange={() => this.props.toggleTag(this.props.combatants, 'bless')}
+                        >
+                            bless
+                        </Tag.CheckableTag>
+                        <Tag.CheckableTag
+                            checked={this.props.combatants.every(c => c.conditions.some(condition => condition.name === 'prone'))}
+                            onChange={() => this.props.toggleCondition(this.props.combatants, 'prone')}
+                        >
+                            prone
+                        </Tag.CheckableTag>
+                        <Tag.CheckableTag
+                            checked={this.props.combatants.every(c => c.conditions.some(condition => condition.name === 'unconscious'))}
+                            onChange={() => this.props.toggleCondition(this.props.combatants, 'unconscious')}
+                        >
+                            unconscious
+                        </Tag.CheckableTag>
+                        <Tag.CheckableTag
+                            checked={!this.props.combatants.every(c => c.showOnMap)}
+                            className={this.props.combat.map ? '' : 'disabled'}
+                            onChange={() => this.props.toggleHidden(this.props.combatants)}
+                        >
+                            hidden
+                        </Tag.CheckableTag>
+                        {engaged}
+                    </div>
                 </div>
             );
         }
@@ -2285,6 +2278,20 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                     });
                 });
 
+        let notes = null;
+        if (this.props.combatants.length === 1) {
+            const combatant = this.props.combatants[0];
+            notes = (
+                <Textbox
+                    text={combatant.note}
+                    placeholder='notes'
+                    minLines={3}
+                    maxLines={10}
+                    onChange={value => this.props.changeValue(combatant, 'note', value)}
+                />
+            );
+        }
+
         return (
             <div>
                 {remove}
@@ -2292,6 +2299,7 @@ class CombatControlsPanel extends React.Component<CombatControlsPanelProps, Comb
                 {changeSize}
                 {changeInit}
                 {companions}
+                {notes}
             </div>
         );
     }

@@ -7,7 +7,7 @@
 b,
 strong {
     font-weight: 600;
-    color: black;
+    color: rgba(0, 0, 0, 0.8);
 }
 
 h1 {
@@ -290,6 +290,31 @@ button {
     .ant-input-number-handler:hover .ant-input-number-handler-up-inner,
     .ant-input-number-handler:hover .ant-input-number-handler-down-inner {
         color: $highlight;
+    }
+}
+
+.ant-tag {
+    margin: 1px;
+    border-color: $control-border;
+
+    &:hover {
+        opacity: 1;
+    }
+
+    &.ant-tag-checkable {
+        border-color: $control-border;
+        cursor: pointer;
+
+        &.ant-tag-checkable:not(.ant-tag-checkable-checked):hover {
+            border-color: $highlight;
+            color: $highlight;
+        }
+
+        &.ant-tag-checkable-checked {
+            border-color: $highlight;
+            background-color: $highlight;
+            color: $background;
+        }
     }
 }
 
@@ -814,21 +839,31 @@ body,
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Combatant row
 
-.combatant-row {
-    margin: 5px 10px;
-    background-color: beige;
-    border: 1px solid #656565;
+.initiative-list-item {
+    margin: 5px 0;
+    border-left: 5px solid $control-border;
     cursor: pointer;
 
-    &.highlight, &.current {
+    &:hover {
+        border-color: $highlight;
+    }
+
+    &.highlight {
+        border-color: $highlight;
+
         .header {
-            background-color: black;
+            background-color: $highlight02;
         }
     }
 
     &.current {
-        margin: 5px 20px 5px 0;
+        border-color: $highlight;
         pointer-events: none;
+
+        .header {
+            background-color: $highlight;
+            color: $background;
+        }
     }
 
     &.defeated {
@@ -836,19 +871,14 @@ body,
     }
 
     .header {
-        color: $background;
-        background-color: #656565;
-        font-size: 15px;
-        font-weight: 600;
-        line-height: 20px;
-        height: 30px;
         padding: 5px;
+        font-weight: 600;
+        background-color: $highlight01;
 
         .name {
             display: inline-block;
-            vertical-align: top;
-            height: 20px;
-            line-height: 20px;
+            height: 22px;
+            line-height: 22px;
         }
 
         .info {
@@ -859,10 +889,6 @@ body,
 
     .content {
         padding: 0 5px;
-
-        .hp-gauge {
-            margin-bottom: 5px;
-        }
 
         .condition {
             .condition-name {
@@ -878,21 +904,12 @@ body,
         .icon-button {
             float: right;
             font-size: 14px;
-            border-radius: 50%;
             padding: 2px;
 
             &:hover {
                 background-color: $highlight01;
             }
         }
-    }
-
-    .companion {
-        border: 1px solid #2E86C1;
-        border-left-width: 5px;
-        font-weight: 600;
-        padding: 5px;
-        margin: 5px 3px;
     }
 }
 
@@ -939,14 +956,13 @@ body,
 // HP gauge
 
 .hp-gauge {
-    height: 5px;
-    background-color: lightgrey;
-    overflow-x: hidden;
-    overflow-y: hidden;
+    height: 10px;
+    padding-bottom: 5px;
 
     .bar {
         float: left;
         height: 100%;
+        transition: none;
 
         &.unhurt {
             background-color: green;
@@ -1784,16 +1800,13 @@ body,
 }
 
 .grabber {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
     margin-right: 5px;
     cursor: ns-resize;
     display: inline-block;
     vertical-align: top;
 
     &.small {
-        font-size: 14px;
+        font-size: 15px;
         padding: 3px 0;
     }
 }

@@ -1201,7 +1201,8 @@ export default class App extends React.Component<Props, State> {
                 }
             });
 
-            if (current) {
+            // If the current combatant is one of those being defeated, end its turn
+            if (current && combatants.find(c => c.id === current.id)) {
                 this.endTurn(current);
             } else {
                 this.setState({
@@ -1750,6 +1751,16 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
+    private toggleHidden(combatants: Combatant[]) {
+        combatants.forEach(c => {
+            c.showOnMap = !c.showOnMap;
+        });
+
+        this.setState({
+            combats: this.state.combats
+        });
+    }
+
     private scatterCombatants(type: 'pc' | 'monster') {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat && combat.map) {
@@ -1975,6 +1986,7 @@ export default class App extends React.Component<Props, State> {
                             closeNotification={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
                             toggleTag={(combatants, tag) => this.toggleTag(combatants, tag)}
                             toggleCondition={(combatants, condition) => this.toggleCondition(combatants, condition)}
+                            toggleHidden={combatants => this.toggleHidden(combatants)}
                             scatterCombatants={type => this.scatterCombatants(type)}
                             rotateMap={() => this.rotateMap()}
                             addOverlay={overlay => this.addMapItem(overlay)}
@@ -2183,6 +2195,7 @@ export default class App extends React.Component<Props, State> {
                     content = (
                         <CombatStartModal
                             combatSetup={this.state.drawer.combatSetup}
+                            library={this.state.library}
                             getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
                             notify={() => this.setState({drawer: this.state.drawer})}
                         />

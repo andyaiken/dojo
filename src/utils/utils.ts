@@ -646,7 +646,7 @@ export default class Utils {
             encounter.slots.forEach(slot => {
                 const group = library.find(g => g.name === slot.monsterGroupName);
                 if (group) {
-                    const monster = group?.monsters.find(m => m.name === slot.monsterName);
+                    const monster = group.monsters.find(m => m.name === slot.monsterName);
                     if (monster) {
                         const slotInfo = Factory.createCombatSlotInfo();
                         slotInfo.id = slot.id;
@@ -680,6 +680,10 @@ export default class Utils {
     }
 
     public static getTagTitle(tag: string) {
+        if (tag.startsWith('engaged')) {
+            return 'engaged';
+        }
+
         switch (tag) {
             case 'conc':
                 return 'concentrating';
@@ -693,6 +697,11 @@ export default class Utils {
     }
 
     public static getTagDescription(tag: string) {
+        if (tag.startsWith('engaged')) {
+            const tokens = tag.split(':');
+            return 'engaged with ' + tokens[1];
+        }
+
         switch (tag) {
             case 'conc':
                 return 'if damaged, must make con save (dc is half damage taken or 10, whichever is higher) or lose concentration';
