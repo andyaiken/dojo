@@ -23,7 +23,7 @@ export default class SkillsTool extends React.Component<Props, State> {
     }
 
     private async fetchData() {
-        const response = await fetch('./data/skills.md');
+        const response = await fetch('/dojo/data/skills.md');
         const text = await response.text();
         this.setState({
             source: text

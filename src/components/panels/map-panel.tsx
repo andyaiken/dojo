@@ -803,9 +803,16 @@ class MapToken extends React.Component<MapTokenProps> {
                     );
                 }
 
-                const hasConditions = this.props.combatant.conditions && (this.props.combatant.conditions.length > 0);
-                const hasTags = this.props.combatant.tags && (this.props.combatant.tags.length > 0);
-                if (hasConditions || hasTags) {
+                let things = 0;
+                if (this.props.combatant.conditions) {
+                    things += this.props.combatant.conditions.length;
+                }
+                if (this.props.combatant.tags) {
+                    things += this.props.combatant.tags
+                        .filter(t => !t.startsWith('engaged'))
+                        .length;
+                }
+                if (things > 0) {
                     conditionsBadge = (
                         <div className='conditions'>
                             <Icon type='star' theme='twoTone' twoToneColor='#3c78dc' />

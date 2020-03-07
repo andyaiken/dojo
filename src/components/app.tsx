@@ -34,7 +34,6 @@ import SearchModal from './modals/search-modal';
 import ToolsModal from './modals/tools-modal';
 import PageFooter from './panels/page-footer';
 import PageHeader from './panels/page-header';
-import PageNavigation from './panels/page-navigation';
 import CombatListScreen from './screens/combat-list-screen';
 import CombatScreen from './screens/combat-screen';
 import EncounterListScreen from './screens/encounter-list-screen';
@@ -44,8 +43,6 @@ import MonsterListScreen from './screens/monster-list-screen';
 import MonsterScreen from './screens/monster-screen';
 import PartyListScreen from './screens/party-list-screen';
 import PartyScreen from './screens/party-screen';
-
-import pkg from '../../package.json';
 
 interface Props {
 }
@@ -609,7 +606,7 @@ export default class App extends React.Component<Props, State> {
     }
 
     private addOpenGameContent() {
-        fetch('./data/monsters.json')
+        fetch('/dojo/data/monsters.json')
             .then(response => response.json())
             .then(json => {
                 json.forEach((data: any) => {
@@ -2329,7 +2326,6 @@ export default class App extends React.Component<Props, State> {
             const header = this.state.maximized ? null : (
                 <PageHeader
                     view={this.state.view}
-                    openMenu={() => this.toggleNavigation()}
                     openDrawer={type => this.openToolsDrawer(type)}
                 />
             );
@@ -2340,50 +2336,7 @@ export default class App extends React.Component<Props, State> {
                 />
             );
 
-            const leftDrawer = (
-                <Drawer
-                    placement={'left'}
-                    closable={false}
-                    maskClosable={true}
-                    width={'25%'}
-                    visible={this.state.navigation}
-                    onClose={() => this.toggleNavigation()}
-                >
-                    <div className='drawer-header' />
-                    <div className='drawer-content'>
-                        <PageNavigation
-                            parties={this.state.parties}
-                            library={this.state.library}
-                            encounters={this.state.encounters}
-                            maps={this.state.maps}
-                            combats={this.state.combats}
-                            openParty={id => this.selectPartyByID(id)}
-                            openMonsterGroup={id => this.selectMonsterGroupByID(id)}
-                            openEncounter={id => this.selectEncounterByID(id)}
-                            openMap={id => this.selectMapByID(id)}
-                            openCombat={id => this.selectCombatByID(id)}
-                        />
-                    </div>
-                    <div className='drawer-footer'>
-                        <div style={{ padding: '10px 0' }}>version <b>{pkg.version}</b></div>
-                    </div>
-                </Drawer>
-            );
-
             const drawer = this.getDrawer();
-            const rightDrawer = (
-                <Drawer
-                    closable={false}
-                    maskClosable={drawer.closable}
-                    width={drawer.width}
-                    visible={drawer.content !== null}
-                    onClose={() => this.closeDrawer()}
-                >
-                    <div className='drawer-header'><div className='app-title'>{drawer.header}</div></div>
-                    <div className='drawer-content'>{drawer.content}</div>
-                    <div className='drawer-footer'>{drawer.footer}</div>
-                </Drawer>
-            );
 
             return (
                 <div className='dojo'>
@@ -2392,8 +2345,17 @@ export default class App extends React.Component<Props, State> {
                         {this.getContent()}
                     </div>
                     {footer}
-                    {leftDrawer}
-                    {rightDrawer}
+                    <Drawer
+                        closable={false}
+                        maskClosable={drawer.closable}
+                        width={drawer.width}
+                        visible={drawer.content !== null}
+                        onClose={() => this.closeDrawer()}
+                    >
+                        <div className='drawer-header'><div className='app-title'>{drawer.header}</div></div>
+                        <div className='drawer-content'>{drawer.content}</div>
+                        <div className='drawer-footer'>{drawer.footer}</div>
+                    </Drawer>
                 </div>
             );
         } catch (e) {

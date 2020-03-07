@@ -59,6 +59,27 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ConfirmButton
+
+button.danger {
+    &:hover {
+        border-color: rgb(170, 0, 0);
+    }
+
+    .confirm {
+        height: 32px;
+        border: 1px solid $control-border;
+        border-left-width: 5px;
+        margin: 5px 0;
+        padding: 5px 9px 5px 10px;  
+        
+        &:hover {
+            border-color: $highlight;
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Dropdown
 
 .dropdown {
@@ -347,7 +368,6 @@
 // Tabs
 
 .tabs {
-    margin: 5px 0;
     margin: 15px 0;
     background-color: transparent;
 

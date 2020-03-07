@@ -108,10 +108,6 @@ button {
     padding: 5px 9px 5px 10px;
     cursor: pointer;
 
-    &.danger:hover {
-        border-color: rgb(170, 0, 0);
-    }
-
     &.link {
         display: unset;
         width: unset;
@@ -563,34 +559,12 @@ body,
 
 .page-header {
     height: 50px;
-    padding: 10px 5px;
+    padding: 10px;
     background-color: $header-background;
     border-bottom: 1px solid $control-border;
 
-    .menu-icon {
-        display: inline-block;
-        vertical-align: top;
-        padding: 5px;
-        margin: 0 5px;
-        font-size: 20px;
-        cursor: pointer;
-
-        &:hover {
-            background-color: $highlight02;
-        }
-    }
-
     .app-title {
-        display: inline-block;
-        vertical-align: top;
-        padding: 5px;
-        height: 30px;
-        line-height: 20px;
-        font-size: 20px;
-        font-weight: 600;
         color: $header-foreground;
-        border-left: 3px solid $header-foreground;
-        text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
     }
 
     .drawer-icons {
@@ -598,16 +572,16 @@ body,
         right: 5px;
         top: 0;
         height: 50px;
-    }
 
-    .title-bar-icon {
-        padding: 10px;
-        margin: 5px;
-        font-size: 20px;
-        cursor: pointer;
+        .title-bar-icon {
+            padding: 5px;
+            margin: 10px;
+            font-size: 20px;
+            cursor: pointer;
 
-        &:hover {
-            background-color: $highlight02;
+            &:hover {
+                background-color: $highlight02;
+            }
         }
     }
 }
@@ -1399,6 +1373,7 @@ body,
         .ant-collapse-header {
             font-size: 20px;
             font-weight: normal;
+            padding: 10px;
         }
     }
 

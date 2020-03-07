@@ -23,7 +23,7 @@ export default class ActionsTool extends React.Component<Props, State> {
     }
 
     private async fetchData() {
-        const response = await fetch('./data/actions.md');
+        const response = await fetch('/dojo/data/actions.md');
         const text = await response.text();
         this.setState({
             source: text

@@ -119,7 +119,7 @@ export default class LanguageTool extends React.Component<Props, State> {
     }
 
     private async addLanguage(language: string) {
-        const response = await fetch('./data/langs/' + language + '.txt');
+        const response = await fetch('/dojo/data/langs/' + language + '.txt');
         this.state.sources[language] = await response.text();
         this.setState({
             sources: this.state.sources

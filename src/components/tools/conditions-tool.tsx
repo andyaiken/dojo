@@ -23,7 +23,7 @@ export default class ConditionsTool extends React.Component<Props, State> {
     }
 
     private async fetchData() {
-        const response = await fetch('./data/conditions.md');
+        const response = await fetch('/dojo/data/conditions.md');
         const text = await response.text();
         this.setState({
             source: text

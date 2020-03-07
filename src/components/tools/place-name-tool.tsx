@@ -21,7 +21,7 @@ export default class PlaceNameTool extends React.Component<Props, State> {
     }
 
     private async fetchData() {
-        const response = await fetch('./data/places.txt');
+        const response = await fetch('/dojo/data/places.txt');
         const text = await response.text();
         this.setState({
             source: text
