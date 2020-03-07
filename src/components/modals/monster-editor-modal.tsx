@@ -652,8 +652,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
             const details = Utils.challengeDetails().find(x => x.cr === this.state.monster.challenge);
             if (details) {
                 stats = (
-                    <div className='group-panel'>
-                        <div className='subheading'>suggested stats</div>
+                    <Expander text='suggested stats'>
                         <div className='section'>
                             <Row>
                                 <Col span={16}>challenge</Col>
@@ -690,7 +689,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                                 <Col span={8} className='statistic-value'>{details.save}</Col>
                             </Row>
                         </div>
-                    </div>
+                    </Expander>
                 );
             }
 
