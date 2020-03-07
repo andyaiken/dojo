@@ -9,7 +9,7 @@ interface Props {
 
 export default class PageHeader extends React.Component<Props> {
     public render() {
-        //try {
+        // try {
             return (
                 <div className='page-header'>
                     <div className='app-title app-name'>dojo</div>
@@ -21,9 +21,9 @@ export default class PageHeader extends React.Component<Props> {
                     </div>
                 </div>
             );
-        //} catch (e) {
-        //    console.error(e);
-        //    return <div className='render-error'/>;
-        //}
+        // } catch (e) {
+        //     console.error(e);
+        //     return <div className='render-error'/>;
+        // }
     }
 }
