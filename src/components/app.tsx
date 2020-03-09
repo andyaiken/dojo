@@ -5,18 +5,18 @@ import { Col, Drawer, Row } from 'antd';
 import Factory from '../utils/factory';
 import Frankenstein from '../utils/frankenstein';
 import Mercator from '../utils/mercator';
+import Napoleon from '../utils/napoleon';
 import Utils from '../utils/utils';
 
 import { Combat, Combatant, CombatSetup, Notification } from '../models/combat';
 import { Condition } from '../models/condition';
-import { Encounter, EncounterSlot } from '../models/encounter';
+import { Encounter } from '../models/encounter';
 import { Map, MapItem } from '../models/map';
 import { Monster, MonsterGroup } from '../models/monster-group';
 import { Companion, Party, PC } from '../models/party';
 
 import Checkbox from './controls/checkbox';
 import AboutModal from './modals/about-modal';
-import AddCombatantsModal from './modals/add-combatants-modal';
 import CombatStartModal from './modals/combat-start-modal';
 import ConditionModal from './modals/condition-modal';
 import DemographicsModal from './modals/demographics-modal';
@@ -49,9 +49,7 @@ interface Props {
 
 interface State {
     view: string;
-    navigation: boolean;
     drawer: any;
-    maximized: boolean;
 
     parties: Party[];
     library: MonsterGroup[];
@@ -141,9 +139,7 @@ export default class App extends React.Component<Props, State> {
 
         this.state = {
             view: 'home',
-            navigation: false,
             drawer: null,
-            maximized: false,
             parties: parties,
             library: library,
             encounters: encounters,
@@ -182,18 +178,6 @@ export default class App extends React.Component<Props, State> {
         });
     }
 
-    private toggleNavigation() {
-        this.setState({
-            navigation: !this.state.navigation
-        });
-    }
-
-    private toggleMaximized() {
-        this.setState({
-            maximized: !this.state.maximized
-        });
-    }
-
     private closeDrawer() {
         this.setState({
             drawer: null
@@ -216,7 +200,6 @@ export default class App extends React.Component<Props, State> {
         this.save();
         this.setState({
             view: 'parties',
-            navigation: false,
             selectedPartyID: id
         });
     }
@@ -225,7 +208,6 @@ export default class App extends React.Component<Props, State> {
         this.save();
         this.setState({
             view: 'library',
-            navigation: false,
             selectedMonsterGroupID: id
         });
     }
@@ -233,16 +215,14 @@ export default class App extends React.Component<Props, State> {
     private selectEncounterByID(id: string | null) {
         this.save();
         this.setState({
-            view: 'encounters',
-            navigation: false
+            view: 'encounters'
         });
     }
 
     private selectMapByID(id: string | null) {
         this.save();
         this.setState({
-            view: 'maps',
-            navigation: false
+            view: 'maps'
         });
     }
 
@@ -253,7 +233,6 @@ export default class App extends React.Component<Props, State> {
         } else {
             this.setState({
                 view: 'combat',
-                navigation: false,
                 selectedCombatID: id
             });
         }
@@ -326,7 +305,7 @@ export default class App extends React.Component<Props, State> {
         if (type === 'initiative') {
             if (!(combatant as Combatant).pending) {
                 const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-                this.sortCombatants(combat as Combat);
+                Napoleon.sortCombatants(combat as Combat);
             }
         }
 
@@ -770,6 +749,8 @@ export default class App extends React.Component<Props, State> {
 
     //#region Combat screen
 
+    // Start combat
+
     private createCombat(encounter: Encounter | null = null, partyID: string | null = null) {
         let party = this.state.parties.length === 1 ? this.state.parties[0] : null;
         if (partyID) {
@@ -814,7 +795,7 @@ export default class App extends React.Component<Props, State> {
 
             // Add a copy of each PC to the encounter
             combatSetup.party.pcs.filter(pc => pc.active).forEach(pc => {
-                this.addPCToCombat(pc, combat);
+                Napoleon.addPCToCombat(combat, pc);
             });
 
             combat.encounter.slots.forEach(slot => {
@@ -822,14 +803,14 @@ export default class App extends React.Component<Props, State> {
                 const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
                 if (monster && slotInfo) {
                     slotInfo.members.forEach(m => {
-                        this.addMonsterToCombat(monster, combat, m.init, m.hp, m.name);
+                        Napoleon.addMonsterToCombat(combat, monster, m.init, m.hp, m.name);
                     });
                 } else {
                     combat.issues.push('unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName);
                 }
             });
 
-            this.sortCombatants(combat);
+            Napoleon.sortCombatants(combat);
 
             if (combatSetup.map) {
                 combat.map = JSON.parse(JSON.stringify(combatSetup.map));
@@ -844,96 +825,9 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
-    private addPCToCombat(pc: PC, combat: Combat) {
-        const combatant: Combatant = JSON.parse(JSON.stringify(pc));
+    // Add a wave
 
-        combatant.current = false;
-        combatant.pending = true;
-        combatant.active = false;
-        combatant.defeated = false;
-
-        combatant.displayName = pc.name;
-        combatant.displaySize = pc.size;
-        combatant.showOnMap = true;
-        combatant.initiative = 10;
-        combatant.hpMax = null;
-        combatant.hpCurrent = null;
-        combatant.hpTemp = null;
-        combatant.conditions = [];
-        combatant.tags = [];
-        combatant.note = '';
-        combatant.altitude = 0;
-        combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
-
-        combat.combatants.push(combatant);
-    }
-
-    private addMonsterToCombat(
-        monster: Monster,
-        combat: Combat,
-        init: number,
-        hp: number,
-        name: string) {
-
-        const combatant: Combatant = JSON.parse(JSON.stringify(monster));
-        combatant.id = Utils.guid();
-
-        combatant.current = false;
-        combatant.pending = false;
-        combatant.active = true;
-        combatant.defeated = false;
-
-        combatant.displayName = name;
-        combatant.displaySize = monster.size;
-        combatant.showOnMap = true;
-
-        combatant.initiative = init;
-        combatant.hpMax = hp;
-        combatant.hpCurrent = hp;
-        combatant.hpTemp = 0;
-        combatant.conditions = [];
-        combatant.tags = [];
-        combatant.note = '';
-        combatant.altitude = 0;
-        combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
-
-        combat.combatants.push(combatant);
-    }
-
-    private addCompanionToCombat(companion: Companion | null) {
-        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-        if (combat) {
-            const combatant: Combatant = {
-                id: companion ? companion.id : Utils.guid(),
-                type: 'companion',
-
-                current: false,
-                pending: true,
-                active: false,
-                defeated: false,
-
-                displayName: companion ? companion.name : 'companion',
-                displaySize: 'medium',
-                showOnMap: true,
-                initiative: 10,
-                hpMax: null,
-                hpCurrent: null,
-                hpTemp: null,
-                conditions: [],
-                tags: [],
-                note: '',
-                altitude: 0,
-                aura: { radius: 0, style: 'rounded', color: '#005080' }
-            };
-
-            combat.combatants.push(combatant);
-            this.setState({
-                combats: this.state.combats
-            });
-        }
-    }
-
-    private openWaveModal() {
+    private openAddWaveModal() {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
             const setup = Factory.createCombatSetup();
@@ -949,38 +843,120 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
-    private addToEncounter() {
+    private addWaveToCombat() {
+        const combatSetup: CombatSetup = this.state.drawer.combatSetup;
+        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+        if (combatSetup && combatSetup.encounter && combat) {
+            const wave = combatSetup.encounter.waves.find(w => w.id === combatSetup.waveID);
+            if (wave) {
+                wave.slots.forEach(slot => {
+                    const monster = this.getMonster(slot.monsterName, slot.monsterGroupName);
+                    if (monster) {
+                        const init = parseInt(Utils.modifier(monster.abilityScores.dex), 10);
+                        const groupRoll = Utils.dieRoll();
+
+                        for (let n = 0; n !== slot.count; ++n) {
+                            const combatant = JSON.parse(JSON.stringify(monster));
+                            combatant.id = Utils.guid();
+
+                            combatant.displayName = null;
+                            if (combatSetup.slotInfo) {
+                                const slotNames = combatSetup.slotInfo.find(info => info.id === slot.id);
+                                if (slotNames) {
+                                    combatant.displayName = slotNames.members[n].name;
+                                }
+                            }
+
+                            combatant.displaySize = monster.size;
+
+                            combatant.showOnMap = true;
+                            combatant.current = false;
+                            combatant.pending = (this.state.drawer.combatSetup.encounterInitMode === 'manual');
+                            combatant.active = (this.state.drawer.combatSetup.encounterInitMode !== 'manual');
+                            combatant.defeated = false;
+
+                            combatant.initiative = init + groupRoll;
+                            combatant.hp = combatant.hpMax;
+                            combatant.conditions = [];
+                            combatant.tags = [];
+                            combatant.altitude = 0;
+                            combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
+
+                            if (combat) {
+                                combat.combatants.push(combatant);
+                            }
+                        }
+                    } else {
+                        if (combat) {
+                            const issue = 'unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName;
+                            combat.issues.push(issue);
+                        }
+                    }
+                });
+
+                Napoleon.sortCombatants(combat);
+
+                this.setState({
+                    combats: this.state.combats,
+                    drawer: null
+                });
+            }
+        }
+    }
+
+    // Add combatants
+
+    private openAddCombatantModal() {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
+            const setup = Factory.createCombatSetup();
+            setup.encounter = Factory.createEncounter();
+            setup.slotInfo = Utils.getCombatSlotData(setup.encounter, this.state.library);
+
             this.setState({
                 drawer: {
                     type: 'combat-add-combatants',
-                    combatantSlots: [],
-                    combat: combat
+                    combatSetup: setup
                 }
             });
         }
     }
 
-    private addCombatantsFromModal() {
+    private addMonsterToAddCombatantsModal(monster: Monster) {
+        const combatSetup = this.state.drawer.combatSetup;
+        if (combatSetup && combatSetup.encounter) {
+            const group = Utils.getMonsterGroup(monster, this.state.library);
+            const slot = Factory.createEncounterSlot();
+            slot.id = monster.id;
+            slot.monsterName = monster.name;
+            slot.monsterGroupName = group.name;
+            combatSetup.encounter.slots.push(slot);
+
+            combatSetup.slotInfo = Utils.getCombatSlotData(combatSetup.encounter, this.state.library);
+
+            this.setState({
+                drawer: this.state.drawer
+            });
+        }
+    }
+
+    private addCombatantsToCombat() {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-        if (combat) {
-            this.state.drawer.combatantSlots.forEach((slot: EncounterSlot) => {
-                const m = this.getMonster(slot.monsterName, slot.monsterGroupName);
-                if (m) {
-                    const init = Utils.dieRoll() + Utils.modifierValue(m.abilityScores.dex);
-                    const hp = Frankenstein.getTypicalHP(m);
-                    for (let n = 0; n !== slot.count; ++n) {
-                        let displayName = m.name;
-                        if (slot.count > 1) {
-                            displayName += ' ' + (n + 1);
-                        }
-                        this.addMonsterToCombat(m, combat, init, hp, displayName);
-                    }
+        const combatSetup: CombatSetup = this.state.drawer.combatSetup;
+        if (combat && combatSetup && combatSetup.encounter) {
+            combatSetup.encounter.slots.forEach(slot => {
+                const monster = this.getMonster(slot.monsterName, slot.monsterGroupName);
+                const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
+                if (monster && slotInfo) {
+                    slotInfo.members.forEach(m => {
+                        Napoleon.addMonsterToCombat(combat, monster, m.init, m.hp, m.name);
+                    });
+                } else {
+                    combat.issues.push('unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName);
                 }
             });
 
-            this.sortCombatants(combat);
+            Napoleon.sortCombatants(combat);
 
             this.setState({
                 combats: this.state.combats,
@@ -989,6 +965,8 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
+    // Add a PC / add a companion
+
     private addPCToEncounter(partyID: string, pcID: string) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
@@ -996,7 +974,7 @@ export default class App extends React.Component<Props, State> {
             if (party) {
                 const pc = party.pcs.find(item => item.id === pcID);
                 if (pc) {
-                    this.addPCToCombat(pc, combat);
+                    Napoleon.addPCToCombat(combat, pc);
                     this.setState({
                         combats: this.state.combats
                     });
@@ -1004,6 +982,18 @@ export default class App extends React.Component<Props, State> {
             }
         }
     }
+
+    private addCompanionToEncounter(companion: Companion | null) {
+        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+        if (combat) {
+            Napoleon.addCompanionToCombat(combat, companion);
+            this.setState({
+                combats: this.state.combats
+            });
+        }
+    }
+
+    // Combat management
 
     private pauseCombat() {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
@@ -1013,8 +1003,7 @@ export default class App extends React.Component<Props, State> {
             combat.report.push(entry);
 
             this.setState({
-                selectedCombatID: null,
-                maximized: false
+                selectedCombatID: null
             });
         }
     }
@@ -1029,26 +1018,29 @@ export default class App extends React.Component<Props, State> {
         });
     }
 
-    private endCurrentCombat() {
-        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+    private endCombat(combat: Combat | null = null) {
+        if (!combat) {
+            const cbt = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+            if (cbt) {
+                combat = cbt;
+            }
+        }
+
         if (combat) {
-            this.endCombat(combat);
+            const entry = Factory.createCombatReportEntry();
+            entry.type = 'combat-end';
+            combat.report.push(entry);
+
+            const index = this.state.combats.indexOf(combat);
+            this.state.combats.splice(index, 1);
+            this.setState({
+                combats: this.state.combats,
+                selectedCombatID: null
+            });
         }
     }
 
-    private endCombat(combat: Combat) {
-        const entry = Factory.createCombatReportEntry();
-        entry.type = 'combat-end';
-        combat.report.push(entry);
-
-        const index = this.state.combats.indexOf(combat);
-        this.state.combats.splice(index, 1);
-        this.setState({
-            combats: this.state.combats,
-            selectedCombatID: null,
-            maximized: false
-        });
-    }
+    // Combatant management
 
     private makeCurrent(combatant: Combatant | null, newRound: boolean) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
@@ -1166,7 +1158,7 @@ export default class App extends React.Component<Props, State> {
             });
 
             if (wasPending) {
-                this.sortCombatants(combat);
+                Napoleon.sortCombatants(combat);
             }
 
             this.setState({
@@ -1209,67 +1201,6 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
-    private addWaveToCombat() {
-        const combatSetup: CombatSetup = this.state.drawer.combatSetup;
-        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-        if (combatSetup && combatSetup.encounter && combat) {
-            const wave = combatSetup.encounter.waves.find(w => w.id === combatSetup.waveID);
-            if (wave) {
-                wave.slots.forEach(slot => {
-                    const monster = this.getMonster(slot.monsterName, slot.monsterGroupName);
-                    if (monster) {
-                        const init = parseInt(Utils.modifier(monster.abilityScores.dex), 10);
-                        const groupRoll = Utils.dieRoll();
-
-                        for (let n = 0; n !== slot.count; ++n) {
-                            const combatant = JSON.parse(JSON.stringify(monster));
-                            combatant.id = Utils.guid();
-
-                            combatant.displayName = null;
-                            if (combatSetup.slotInfo) {
-                                const slotNames = combatSetup.slotInfo.find(info => info.id === slot.id);
-                                if (slotNames) {
-                                    combatant.displayName = slotNames.members[n].name;
-                                }
-                            }
-
-                            combatant.displaySize = monster.size;
-
-                            combatant.showOnMap = true;
-                            combatant.current = false;
-                            combatant.pending = (this.state.drawer.combatSetup.encounterInitMode === 'manual');
-                            combatant.active = (this.state.drawer.combatSetup.encounterInitMode !== 'manual');
-                            combatant.defeated = false;
-
-                            combatant.initiative = init + groupRoll;
-                            combatant.hp = combatant.hpMax;
-                            combatant.conditions = [];
-                            combatant.tags = [];
-                            combatant.altitude = 0;
-                            combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
-
-                            if (combat) {
-                                combat.combatants.push(combatant);
-                            }
-                        }
-                    } else {
-                        if (combat) {
-                            const issue = 'unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName;
-                            combat.issues.push(issue);
-                        }
-                    }
-                });
-
-                this.sortCombatants(combat);
-
-                this.setState({
-                    combats: this.state.combats,
-                    drawer: null
-                });
-            }
-        }
-    }
-
     private moveCombatant(oldIndex: number, newIndex: number) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
@@ -1303,6 +1234,158 @@ export default class App extends React.Component<Props, State> {
             });
         }
     }
+
+    private endTurn(combatant: Combatant) {
+        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+        if (combat) {
+            if (combatant.type === 'pc') {
+                const entry = Factory.createCombatReportEntry();
+                entry.type = 'turn-end';
+                entry.combatantID = combatant.id;
+                combat.report.push(entry);
+            }
+
+            // Handle end-of-turn conditions
+            combat.combatants.filter(actor => actor.conditions).forEach(actor => {
+                actor.conditions.forEach(c => {
+                    if (c.duration) {
+                        switch (c.duration.type) {
+                            case 'saves':
+                                // If it's my condition, and point is END, notify the user
+                                if ((actor.id === combatant.id) && (c.duration.point === 'end')) {
+                                    const saveNotification = Factory.createNotification();
+                                    saveNotification.type = 'condition-save';
+                                    saveNotification.data = c;
+                                    saveNotification.combatant = combatant as Combatant & Monster;
+                                    combat.notifications.push(saveNotification);
+                                }
+                                break;
+                            case 'combatant':
+                                // If this refers to me, and point is END, remove it
+                                if (((c.duration.combatantID === combatant.id) || (c.duration.combatantID === null)) && (c.duration.point === 'end')) {
+                                    const n = actor.conditions.indexOf(c);
+                                    actor.conditions.splice(n, 1);
+                                    // Notify the user
+                                    const endNotification = Factory.createNotification();
+                                    endNotification.type = 'condition-end';
+                                    endNotification.data = c;
+                                    endNotification.combatant = combatant as Combatant & Monster;
+                                    combat.notifications.push(endNotification);
+                                }
+                                break;
+                            case 'rounds':
+                                // We check this at the beginning of each turn, not at the end
+                                break;
+                            default:
+                                // Do nothing
+                                break;
+                        }
+                    }
+                });
+            });
+
+            const active = combat.combatants.filter(c => {
+                return c.current || (!c.pending && c.active && !c.defeated);
+            });
+            if (active.length === 0) {
+                // There's no-one left in the fight
+                this.makeCurrent(null, false);
+            } else if ((active.length === 1) && (active[0].defeated)) {
+                // The only person in the fight is me, and I'm defeated
+                this.makeCurrent(null, false);
+            } else {
+                let index = active.indexOf(combatant) + 1;
+                let newRound = false;
+                if (index >= active.length) {
+                    index = 0;
+                    newRound = true;
+                }
+                this.makeCurrent(active[index], newRound);
+            }
+        }
+    }
+
+    private changeHP(values: {id: string, hp: number, temp: number, damage: number}[]) {
+        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+        if (combat) {
+            values.forEach(v => {
+                const combatant = combat.combatants.find(c => c.id === v.id);
+                if (combatant) {
+                    combatant.hpCurrent = v.hp;
+                    combatant.hpTemp = v.temp;
+                }
+
+                const current = combat.combatants.find(c => c.current);
+                if (current && (current.type === 'pc')) {
+                    const entry = Factory.createCombatReportEntry();
+                    entry.type = 'damage';
+                    entry.combatantID = current.id;
+                    entry.value = v.damage;
+                    combat.report.push(entry);
+                }
+            });
+
+            this.setState({
+                combats: this.state.combats
+            });
+        }
+    }
+
+    private toggleTag(combatants: Combatant[], tag: string) {
+        combatants.forEach(c => {
+            if (c.tags.includes(tag)) {
+                c.tags = c.tags.filter(t => t !== tag);
+            } else {
+                c.tags.push(tag);
+            }
+        });
+
+        this.setState({
+            combats: this.state.combats
+        });
+    }
+
+    private toggleCondition(combatants: Combatant[], condition: string) {
+        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+        if (combat) {
+            combatants.forEach(c => {
+                const existing = c.conditions.find(cond => cond.name === condition);
+                if (existing) {
+                    this.removeCondition(c, existing);
+                } else {
+                    const cnd = Factory.createCondition();
+                    cnd.name = condition;
+                    c.conditions.push(cnd);
+
+                    c.conditions = Utils.sort(c.conditions, [{ field: 'name', dir: 'asc' }]);
+
+                    const current = combat.combatants.find(combatant => combatant.current);
+                    if (current && (current.type === 'pc')) {
+                        const entry = Factory.createCombatReportEntry();
+                        entry.type = 'condition-add';
+                        entry.combatantID = current.id;
+                        combat.report.push(entry);
+                    }
+                }
+            });
+
+            this.setState({
+                combats: this.state.combats
+            });
+        }
+    }
+
+    private toggleHidden(combatants: Combatant[]) {
+        combatants.forEach(c => {
+            c.showOnMap = !c.showOnMap;
+        });
+
+        this.setState({
+            combats: this.state.combats
+        });
+    }
+
+    // Map methods
 
     private mapAdd(combatant: Combatant, x: number, y: number) {
         const item = Factory.createMapItem();
@@ -1487,101 +1570,40 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
-    private endTurn(combatant: Combatant) {
+    private scatterCombatants(type: 'pc' | 'monster') {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-        if (combat) {
-            if (combatant.type === 'pc') {
-                const entry = Factory.createCombatReportEntry();
-                entry.type = 'turn-end';
-                entry.combatantID = combatant.id;
-                combat.report.push(entry);
-            }
-
-            // Handle end-of-turn conditions
-            combat.combatants.filter(actor => actor.conditions).forEach(actor => {
-                actor.conditions.forEach(c => {
-                    if (c.duration) {
-                        switch (c.duration.type) {
-                            case 'saves':
-                                // If it's my condition, and point is END, notify the user
-                                if ((actor.id === combatant.id) && (c.duration.point === 'end')) {
-                                    const saveNotification = Factory.createNotification();
-                                    saveNotification.type = 'condition-save';
-                                    saveNotification.data = c;
-                                    saveNotification.combatant = combatant as Combatant & Monster;
-                                    combat.notifications.push(saveNotification);
-                                }
-                                break;
-                            case 'combatant':
-                                // If this refers to me, and point is END, remove it
-                                if (((c.duration.combatantID === combatant.id) || (c.duration.combatantID === null)) && (c.duration.point === 'end')) {
-                                    const n = actor.conditions.indexOf(c);
-                                    actor.conditions.splice(n, 1);
-                                    // Notify the user
-                                    const endNotification = Factory.createNotification();
-                                    endNotification.type = 'condition-end';
-                                    endNotification.data = c;
-                                    endNotification.combatant = combatant as Combatant & Monster;
-                                    combat.notifications.push(endNotification);
-                                }
-                                break;
-                            case 'rounds':
-                                // We check this at the beginning of each turn, not at the end
-                                break;
-                            default:
-                                // Do nothing
-                                break;
-                        }
-                    }
-                });
-            });
-
-            const active = combat.combatants.filter(c => {
-                return c.current || (!c.pending && c.active && !c.defeated);
-            });
-            if (active.length === 0) {
-                // There's no-one left in the fight
-                this.makeCurrent(null, false);
-            } else if ((active.length === 1) && (active[0].defeated)) {
-                // The only person in the fight is me, and I'm defeated
-                this.makeCurrent(null, false);
-            } else {
-                let index = active.indexOf(combatant) + 1;
-                let newRound = false;
-                if (index >= active.length) {
-                    index = 0;
-                    newRound = true;
-                }
-                this.makeCurrent(active[index], newRound);
-            }
-        }
-    }
-
-    private changeHP(values: {id: string, hp: number, temp: number, damage: number}[]) {
-        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-        if (combat) {
-            values.forEach(v => {
-                const combatant = combat.combatants.find(c => c.id === v.id);
-                if (combatant) {
-                    combatant.hpCurrent = v.hp;
-                    combatant.hpTemp = v.temp;
-                }
-
-                const current = combat.combatants.find(c => c.current);
-                if (current && (current.type === 'pc')) {
-                    const entry = Factory.createCombatReportEntry();
-                    entry.type = 'damage';
-                    entry.combatantID = current.id;
-                    entry.value = v.damage;
-                    combat.report.push(entry);
-                }
-            });
+        if (combat && combat.map) {
+            Mercator.scatterCombatants(combat, type);
 
             this.setState({
                 combats: this.state.combats
             });
         }
     }
+
+    private rotateMap() {
+        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+        if (combat && combat.map) {
+            Mercator.rotateMap(combat.map);
+
+            this.setState({
+                combats: this.state.combats
+            });
+        }
+    }
+
+    private addMapItem(item: MapItem) {
+        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+        if (combat && combat.map) {
+            combat.map.items.push(item);
+
+            this.setState({
+                combats: this.state.combats
+            });
+        }
+    }
+
+    // Conditions
 
     private addCondition(combatants: Combatant[]) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
@@ -1675,17 +1697,7 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
-    private sortCombatants(combat: Combat) {
-        combat.combatants.sort((a, b) => {
-            // First sort by initiative, descending
-            if (a.initiative && b.initiative && (a.initiative < b.initiative)) { return 1; }
-            if (a.initiative && b.initiative && (a.initiative > b.initiative)) { return -1; }
-            // Then sort by name, ascending
-            if (a.displayName < b.displayName) { return -1; }
-            if (a.displayName > b.displayName) { return 1; }
-            return 0;
-        });
-    }
+    /// Miscellaneous methods
 
     private closeNotification(notification: Notification, removeCondition: boolean) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
@@ -1697,93 +1709,6 @@ export default class App extends React.Component<Props, State> {
                 const conditionIndex = notification.combatant.conditions.indexOf(notification.data as Condition);
                 notification.combatant.conditions.splice(conditionIndex, 1);
             }
-
-            this.setState({
-                combats: this.state.combats
-            });
-        }
-    }
-
-    private toggleTag(combatants: Combatant[], tag: string) {
-        combatants.forEach(c => {
-            if (c.tags.includes(tag)) {
-                c.tags = c.tags.filter(t => t !== tag);
-            } else {
-                c.tags.push(tag);
-            }
-        });
-
-        this.setState({
-            combats: this.state.combats
-        });
-    }
-
-    private toggleCondition(combatants: Combatant[], condition: string) {
-        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-        if (combat) {
-            combatants.forEach(c => {
-                const existing = c.conditions.find(cond => cond.name === condition);
-                if (existing) {
-                    this.removeCondition(c, existing);
-                } else {
-                    const cnd = Factory.createCondition();
-                    cnd.name = condition;
-                    c.conditions.push(cnd);
-
-                    c.conditions = Utils.sort(c.conditions, [{ field: 'name', dir: 'asc' }]);
-
-                    const current = combat.combatants.find(combatant => combatant.current);
-                    if (current && (current.type === 'pc')) {
-                        const entry = Factory.createCombatReportEntry();
-                        entry.type = 'condition-add';
-                        entry.combatantID = current.id;
-                        combat.report.push(entry);
-                    }
-                }
-            });
-
-            this.setState({
-                combats: this.state.combats
-            });
-        }
-    }
-
-    private toggleHidden(combatants: Combatant[]) {
-        combatants.forEach(c => {
-            c.showOnMap = !c.showOnMap;
-        });
-
-        this.setState({
-            combats: this.state.combats
-        });
-    }
-
-    private scatterCombatants(type: 'pc' | 'monster') {
-        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-        if (combat && combat.map) {
-            Mercator.scatterCombatants(combat, type);
-
-            this.setState({
-                combats: this.state.combats
-            });
-        }
-    }
-
-    private rotateMap() {
-        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-        if (combat && combat.map) {
-            Mercator.rotateMap(combat.map);
-
-            this.setState({
-                combats: this.state.combats
-            });
-        }
-    }
-
-    private addMapItem(item: MapItem) {
-        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-        if (combat && combat.map) {
-            combat.map.items.push(item);
 
             this.setState({
                 combats: this.state.combats
@@ -1954,10 +1879,8 @@ export default class App extends React.Component<Props, State> {
                             combat={this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat}
                             parties={this.state.parties}
                             encounters={this.state.encounters}
-                            maximized={this.state.maximized}
-                            maximize={() => this.toggleMaximized()}
                             pauseCombat={() => this.pauseCombat()}
-                            endCombat={() => this.endCurrentCombat()}
+                            endCombat={() => this.endCombat()}
                             nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                             makeCurrent={combatant => this.makeCurrent(combatant, false)}
@@ -1965,10 +1888,10 @@ export default class App extends React.Component<Props, State> {
                             makeDefeated={combatants => this.makeDefeated(combatants)}
                             moveCombatant={(oldIndex, newIndex) => this.moveCombatant(oldIndex, newIndex)}
                             removeCombatants={combatants => this.removeCombatants(combatants)}
-                            addCombatants={() => this.addToEncounter()}
-                            addCompanion={companion => this.addCompanionToCombat(companion)}
+                            addCombatants={() => this.openAddCombatantModal()}
+                            addCompanion={companion => this.addCompanionToEncounter(companion)}
                             addPC={(partyID, pcID) => this.addPCToEncounter(partyID, pcID)}
-                            addWave={() => this.openWaveModal()}
+                            addWave={() => this.openAddWaveModal()}
                             addCondition={combatants => this.addCondition(combatants)}
                             editCondition={(combatant, condition) => this.editCondition(combatant, condition)}
                             removeCondition={(combatant, condition) => this.removeCondition(combatant, condition)}
@@ -2167,6 +2090,7 @@ export default class App extends React.Component<Props, State> {
                 case 'combat-start':
                     content = (
                         <CombatStartModal
+                            type='start'
                             combatSetup={this.state.drawer.combatSetup}
                             parties={this.state.parties}
                             library={this.state.library}
@@ -2191,6 +2115,7 @@ export default class App extends React.Component<Props, State> {
                 case 'combat-wave':
                     content = (
                         <CombatStartModal
+                            type='add-wave'
                             combatSetup={this.state.drawer.combatSetup}
                             library={this.state.library}
                             getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
@@ -2211,15 +2136,25 @@ export default class App extends React.Component<Props, State> {
                     break;
                 case 'combat-add-combatants':
                     content = (
-                        <AddCombatantsModal
-                            combatantSlots={this.state.drawer.combatantSlots}
+                        <CombatStartModal
+                            type='add-combatants'
+                            combatSetup={this.state.drawer.combatSetup}
                             library={this.state.library}
+                            getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
+                            addMonster={monster => this.addMonsterToAddCombatantsModal(monster)}
+                            notify={() => this.setState({drawer: this.state.drawer})}
                         />
                     );
                     header = 'add combatants';
                     footer = (
-                        <button onClick={() => this.addCombatantsFromModal()}>add combatants</button>
+                        <button
+                            className={this.state.drawer.combatSetup.encounter !== null ? '' : 'disabled'}
+                            onClick={() => this.addCombatantsToCombat()}
+                        >
+                            add combatants
+                        </button>
                     );
+                    width = '75%';
                     closable = true;
                     break;
                 case 'condition-add':
@@ -2323,28 +2258,21 @@ export default class App extends React.Component<Props, State> {
 
     public render() {
         try {
-            const header = this.state.maximized ? null : (
-                <PageHeader
-                    view={this.state.view}
-                    openDrawer={type => this.openToolsDrawer(type)}
-                />
-            );
-            const footer = this.state.maximized ? null : (
-                <PageFooter
-                    view={this.state.view}
-                    setView={view => this.setView(view)}
-                />
-            );
-
             const drawer = this.getDrawer();
 
             return (
                 <div className='dojo'>
-                    {header}
-                    <div className={this.state.maximized ? 'page-content maximized' : 'page-content'}>
+                    <PageHeader
+                        view={this.state.view}
+                        openDrawer={type => this.openToolsDrawer(type)}
+                    />
+                    <div className='page-content'>
                         {this.getContent()}
                     </div>
-                    {footer}
+                    <PageFooter
+                        view={this.state.view}
+                        setView={view => this.setView(view)}
+                    />
                     <Drawer
                         closable={false}
                         maskClosable={drawer.closable}

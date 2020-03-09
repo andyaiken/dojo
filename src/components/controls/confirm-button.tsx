@@ -42,10 +42,7 @@ export default class ConfirmButton extends React.Component<Props, State> {
             let content = null;
             if (this.state.pressed) {
                 content = (
-                    <div>
-                        <div>note: this is irreversible</div>
-                        <div className='confirm' onClick={() => this.perform()}>confirm</div>
-                    </div>
+                    <div className='confirm' onClick={() => this.perform()}>confirm</div>
                 );
             }
 

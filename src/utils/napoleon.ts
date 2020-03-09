@@ -7,6 +7,7 @@ import Utils from './utils';
 import { Combat, Combatant } from '../models/combat';
 import { Encounter, EncounterSlot, MonsterFilter } from '../models/encounter';
 import { Monster, MonsterGroup } from '../models/monster-group';
+import { Companion, PC } from '../models/party';
 
 export default class Napoleon {
     public static getMonsterCount(encounter: Encounter) {
@@ -166,5 +167,94 @@ export default class Napoleon {
         }
 
         return true;
+    }
+
+    public static sortCombatants(combat: Combat) {
+        combat.combatants.sort((a, b) => {
+            // First sort by initiative, descending
+            if (a.initiative && b.initiative && (a.initiative < b.initiative)) { return 1; }
+            if (a.initiative && b.initiative && (a.initiative > b.initiative)) { return -1; }
+            // Then sort by name, ascending
+            if (a.displayName < b.displayName) { return -1; }
+            if (a.displayName > b.displayName) { return 1; }
+            return 0;
+        });
+    }
+
+    public static addPCToCombat(combat: Combat, pc: PC) {
+        const combatant: Combatant = JSON.parse(JSON.stringify(pc));
+
+        combatant.current = false;
+        combatant.pending = true;
+        combatant.active = false;
+        combatant.defeated = false;
+
+        combatant.displayName = pc.name;
+        combatant.displaySize = pc.size;
+        combatant.showOnMap = true;
+        combatant.initiative = 10;
+        combatant.hpMax = null;
+        combatant.hpCurrent = null;
+        combatant.hpTemp = null;
+        combatant.conditions = [];
+        combatant.tags = [];
+        combatant.note = '';
+        combatant.altitude = 0;
+        combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
+
+        combat.combatants.push(combatant);
+    }
+
+    public static addMonsterToCombat(combat: Combat, monster: Monster, init: number, hp: number, name: string) {
+        const combatant: Combatant = JSON.parse(JSON.stringify(monster));
+        combatant.id = Utils.guid();
+
+        combatant.current = false;
+        combatant.pending = false;
+        combatant.active = true;
+        combatant.defeated = false;
+
+        combatant.displayName = name;
+        combatant.displaySize = monster.size;
+        combatant.showOnMap = true;
+
+        combatant.initiative = init;
+        combatant.hpMax = hp;
+        combatant.hpCurrent = hp;
+        combatant.hpTemp = 0;
+        combatant.conditions = [];
+        combatant.tags = [];
+        combatant.note = '';
+        combatant.altitude = 0;
+        combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
+
+        combat.combatants.push(combatant);
+    }
+
+    public static addCompanionToCombat(combat: Combat, companion: Companion | null) {
+        const combatant: Combatant = {
+            id: companion ? companion.id : Utils.guid(),
+            type: 'companion',
+
+            current: false,
+            pending: true,
+            active: false,
+            defeated: false,
+
+            displayName: companion ? companion.name : 'companion',
+            displaySize: 'medium',
+            showOnMap: true,
+            initiative: 10,
+            hpMax: null,
+            hpCurrent: null,
+            hpTemp: null,
+            conditions: [],
+            tags: [],
+            note: '',
+            altitude: 0,
+            aura: { radius: 0, style: 'rounded', color: '#005080' }
+        };
+
+        combat.combatants.push(combatant);
     }
 }

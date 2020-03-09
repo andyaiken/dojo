@@ -9,26 +9,31 @@ import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
 import { CombatSetup, CombatSlotInfo, CombatSlotMember } from '../../models/combat';
-import { Encounter, EncounterSlot } from '../../models/encounter';
+import { Encounter, EncounterSlot, MonsterFilter } from '../../models/encounter';
 import { Map } from '../../models/map';
 import { Monster, MonsterGroup } from '../../models/monster-group';
 import { Party } from '../../models/party';
 
+import MonsterCard from '../cards/monster-card';
 import Checkbox from '../controls/checkbox';
 import Dropdown from '../controls/dropdown';
 import NumberSpin from '../controls/number-spin';
 import Selector from '../controls/selector';
 import Textbox from '../controls/textbox';
 import DifficultyChartPanel from '../panels/difficulty-chart-panel';
+import FilterPanel from '../panels/filter-panel';
 import MapPanel from '../panels/map-panel';
+import Note from '../panels/note';
 
 interface Props {
+    type: 'start' | 'add-wave' | 'add-combatants';
     combatSetup: CombatSetup;
     parties: Party[];
     library: MonsterGroup[];
     encounters: Encounter[];
     maps: Map[];
     getMonster: (monsterName: string, groupName: string) => Monster | null;
+    addMonster: (monster: Monster) => void;
     notify: () => void;
 }
 
@@ -39,9 +44,9 @@ interface State {
 export default class CombatStartModal extends React.Component<Props, State> {
     public static defaultProps = {
         parties: null,
-        library: null,
         encounters: null,
-        maps: null
+        maps: null,
+        addMonster: null
     };
 
     constructor(props: Props) {
@@ -173,67 +178,93 @@ export default class CombatStartModal extends React.Component<Props, State> {
             let leftSection = null;
             let rightSection = null;
 
-            if (this.props.parties) {
-                leftSection = (
-                    <div>
-                        <PartySection
-                            combatSetup={this.state.combatSetup}
-                            parties={this.props.parties}
-                            setPartyID={id => this.setPartyID(id)}
-                        />
-                        <EncounterSection
-                            combatSetup={this.state.combatSetup}
-                            encounters={this.props.encounters}
-                            setEncounterID={id => this.setEncounterID(id)}
-                            generateEncounter={diff => this.generateEncounter(diff)}
-                        />
-                        <MapSection
-                            combatSetup={this.state.combatSetup}
-                            maps={this.props.maps}
-                            setMapID={id => this.setMapID(id)}
-                            generateMap={type => this.generateMap(type)}
-                        />
-                    </div>
-                );
-
-                rightSection = (
-                    <div>
-                        <DifficultySection
-                            combatSetup={this.state.combatSetup}
-                            parties={this.props.parties}
-                            encounters={this.props.encounters}
-                            getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
-                        />
-                        <MonsterSection
-                            combatSetup={this.state.combatSetup}
-                            parties={this.props.parties}
-                            getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
-                            changeValue={(source, field, value) => this.changeValue(source, field, value)}
-                            nudgeCount={(slotID, delta) => this.nudgeCount(slotID, delta)}
-                        />
-                    </div>
-                );
-            } else {
-                leftSection = (
-                    <div>
-                        <WaveSection
-                            combatSetup={this.state.combatSetup}
-                            setWaveID={id => this.setWaveID(id)}
-                        />
-                    </div>
-                );
-
-                rightSection = (
-                    <div>
-                        <MonsterSection
-                            combatSetup={this.state.combatSetup}
-                            parties={this.props.parties}
-                            getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
-                            changeValue={(source, field, value) => this.changeValue(source, field, value)}
-                            nudgeCount={(slotID, delta) => this.nudgeCount(slotID, delta)}
-                        />
-                    </div>
-                );
+            switch (this.props.type) {
+                case 'start':
+                    leftSection = (
+                        <div>
+                            <PartySection
+                                combatSetup={this.state.combatSetup}
+                                parties={this.props.parties}
+                                setPartyID={id => this.setPartyID(id)}
+                            />
+                            <EncounterSection
+                                combatSetup={this.state.combatSetup}
+                                encounters={this.props.encounters}
+                                setEncounterID={id => this.setEncounterID(id)}
+                                generateEncounter={diff => this.generateEncounter(diff)}
+                            />
+                            <MapSection
+                                combatSetup={this.state.combatSetup}
+                                maps={this.props.maps}
+                                setMapID={id => this.setMapID(id)}
+                                generateMap={type => this.generateMap(type)}
+                            />
+                        </div>
+                    );
+                    rightSection = (
+                        <div>
+                            <DifficultySection
+                                combatSetup={this.state.combatSetup}
+                                parties={this.props.parties}
+                                encounters={this.props.encounters}
+                                getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
+                            />
+                            <MonsterSection
+                                type={this.props.type}
+                                combatSetup={this.state.combatSetup}
+                                parties={this.props.parties}
+                                getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
+                                changeValue={(source, field, value) => this.changeValue(source, field, value)}
+                                nudgeCount={(slotID, delta) => this.nudgeCount(slotID, delta)}
+                            />
+                        </div>
+                    );
+                    break;
+                case 'add-wave':
+                    leftSection = (
+                        <div>
+                            <WaveSection
+                                combatSetup={this.state.combatSetup}
+                                setWaveID={id => this.setWaveID(id)}
+                            />
+                        </div>
+                    );
+                    rightSection = (
+                        <div>
+                            <MonsterSection
+                                type={this.props.type}
+                                combatSetup={this.state.combatSetup}
+                                parties={this.props.parties}
+                                getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
+                                changeValue={(source, field, value) => this.changeValue(source, field, value)}
+                                nudgeCount={(slotID, delta) => this.nudgeCount(slotID, delta)}
+                            />
+                        </div>
+                    );
+                    break;
+                case 'add-combatants':
+                    leftSection = (
+                        <div>
+                            <MonsterSelectionSection
+                                combatSetup={this.state.combatSetup}
+                                library={this.props.library}
+                                addMonster={monster => this.props.addMonster(monster)}
+                            />
+                        </div>
+                    );
+                    rightSection = (
+                        <div>
+                            <MonsterSection
+                                type={this.props.type}
+                                combatSetup={this.state.combatSetup}
+                                parties={this.props.parties}
+                                getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
+                                changeValue={(source, field, value) => this.changeValue(source, field, value)}
+                                nudgeCount={(slotID, delta) => this.nudgeCount(slotID, delta)}
+                            />
+                        </div>
+                    );
+                    break;
             }
 
             return (
@@ -276,26 +307,24 @@ class PartySection extends React.Component<PartySectionProps> {
 
         let partyContent = null;
         if (this.props.combatSetup.party) {
-            const pcs = this.props.combatSetup.party.pcs.filter(pc => pc.active);
-
-            const pcSections = pcs.map(pc =>
+            const pcSections = this.props.combatSetup.party.pcs.filter(pc => pc.active).map(pc =>
                 (
-                    <li key={pc.id}>
+                    <div key={pc.id} className='group-panel'>
                         {pc.name || 'unnamed pc'} (level {pc.level})
-                    </li>
+                    </div>
                 )
             );
 
             if (pcSections.length === 0) {
                 pcSections.push(
-                    <li key={'empty'}>no pcs</li>
+                    <Note key={'empty'}>no pcs</Note>
                 );
             }
 
             partyContent = (
                 <div>
                     <div className='subheading'>pcs</div>
-                    <ul>{pcSections}</ul>
+                    {pcSections}
                 </div>
             );
         }
@@ -373,13 +402,15 @@ class EncounterSection extends React.Component<EncounterSectionProps> {
                     name += ' (x' + slot.count + ')';
                 }
                 return (
-                    <li key={slot.id}>{name}</li>
+                    <div key={slot.id} className='group-panel'>
+                        {name}
+                    </div>
                 );
             });
 
             if (monsterSections.length === 0) {
                 monsterSections.push(
-                    <li key={'empty'}>no monsters</li>
+                    <Note key={'empty'}>no monsters</Note>
                 );
             }
 
@@ -394,14 +425,16 @@ class EncounterSection extends React.Component<EncounterSectionProps> {
                         name += ' x' + slot.count;
                     }
                     return (
-                        <li key={slot.id}>{name}</li>
+                        <div key={slot.id} className='group-panel'>
+                            {name}
+                        </div>
                     );
                 });
 
                 return (
                     <div key={wave.id}>
                         <div className='subheading'>{wave.name || 'unnamed wave'}</div>
-                        <ul>{waveMonsters}</ul>
+                        {waveMonsters}
                     </div>
                 );
             });
@@ -409,7 +442,7 @@ class EncounterSection extends React.Component<EncounterSectionProps> {
             encounterContent = (
                 <div>
                     <div className='subheading'>monsters</div>
-                    <ul>{monsterSections}</ul>
+                    {monsterSections}
                     {waves}
                 </div>
             );
@@ -523,20 +556,22 @@ class WaveSection extends React.Component<WaveSectionProps> {
                             name += ' (x' + slot.count + ')';
                         }
                         return (
-                            <li key={slot.id}>{name}</li>
+                            <div key={slot.id} className='group-panel'>
+                                {name}
+                            </div>
                         );
                     });
 
                     if (monsterSections.length === 0) {
                         monsterSections.push(
-                            <li key={'empty'}>no monsters</li>
+                            <Note key={'empty'}>no monsters</Note>
                         );
                     }
 
                     waveContent = (
                         <div>
                             <div className='subheading'>monsters</div>
-                            <ul>{monsterSections}</ul>
+                            {monsterSections}
                         </div>
                     );
                 }
@@ -556,6 +591,93 @@ class WaveSection extends React.Component<WaveSectionProps> {
                 </div>
             );
         }
+    }
+}
+
+interface MonsterSelectionSectionProps {
+    combatSetup: CombatSetup;
+    library: MonsterGroup[];
+    addMonster: (monster: Monster) => void;
+}
+
+interface MonsterSelectionSectionState {
+    filter: MonsterFilter;
+}
+
+class MonsterSelectionSection extends React.Component<MonsterSelectionSectionProps, MonsterSelectionSectionState> {
+    constructor(props: MonsterSelectionSectionProps) {
+        super(props);
+        this.state = {
+            filter: Factory.createMonsterFilter()
+        };
+    }
+
+    private changeFilterValue(type: 'name' | 'challenge' | 'category' | 'size', value: any) {
+        const filter = this.state.filter as any;
+        if (type === 'challenge') {
+            filter.challengeMin = value[0];
+            filter.challengeMax = value[1];
+        } else {
+            filter[type] = value;
+        }
+        this.setState({
+            filter: filter
+        });
+    }
+
+    private resetFilter() {
+        this.setState({
+            filter: Factory.createMonsterFilter()
+        });
+    }
+
+    private matchMonster(monster: Monster) {
+        return Napoleon.matchMonster(monster, this.state.filter);
+    }
+
+    public render() {
+        const monsters: Monster[] = [];
+        this.props.library.forEach(group => {
+            group.monsters.forEach(monster => {
+                if (this.matchMonster(monster)) {
+                    monsters.push(monster);
+                }
+            });
+        });
+        monsters.sort((a, b) => {
+            if (a.name < b.name) { return -1; }
+            if (a.name > b.name) { return 1; }
+            return 0;
+        });
+
+        const selectedIDs = this.props.combatSetup.slotInfo.map(s => s.id);
+
+        let allCombatants: JSX.Element | JSX.Element[] = monsters.filter(m => !selectedIDs.includes(m.id)).map(m => {
+            return (
+                <MonsterCard key={m.id} monster={m} mode='candidate' selectMonster={monster => this.props.addMonster(monster)} />
+            );
+        });
+        if (allCombatants.length === 0) {
+            allCombatants = (
+                <Note>
+                    <div className='section'>
+                        there are no monsters that match the above criteria (or you have already selected them all)
+                    </div>
+                </Note>
+            );
+        }
+
+        return (
+            <div>
+                <div className='heading'>monsters</div>
+                <FilterPanel
+                    filter={this.state.filter}
+                    changeValue={(type, value) => this.changeFilterValue(type, value)}
+                    resetFilter={() => this.resetFilter()}
+                />
+                {allCombatants}
+            </div>
+        );
     }
 }
 
@@ -592,6 +714,7 @@ class DifficultySection extends React.Component<DifficultySectionProps> {
 }
 
 interface MonsterSectionProps {
+    type: 'start' | 'add-wave' | 'add-combatants';
     combatSetup: CombatSetup;
     parties: Party[];
     getMonster: (monsterName: string, groupName: string) => Monster | null;
@@ -618,7 +741,7 @@ class MonsterSection extends React.Component<MonsterSectionProps, MonsterSection
     }
 
     public render() {
-        if (!this.props.combatSetup.encounter) {
+        if ((this.props.type === 'start') && !this.props.combatSetup.encounter) {
             return (
                 <div>
                     <div className='heading'>monsters</div>
@@ -627,11 +750,20 @@ class MonsterSection extends React.Component<MonsterSectionProps, MonsterSection
             );
         }
 
-        if (!this.props.parties && !this.props.combatSetup.waveID) {
+        if ((this.props.type === 'add-wave') && !this.props.combatSetup.waveID) {
             return (
                 <div>
                     <div className='heading'>monsters</div>
                     <div className='section'>select a wave to see monster information here.</div>
+                </div>
+            );
+        }
+
+        if ((this.props.type === 'add-combatants') && (this.props.combatSetup.encounter?.slots.length === 0)) {
+            return (
+                <div>
+                    <div className='heading'>monsters</div>
+                    <div className='section'>add monsters to see their information here.</div>
                 </div>
             );
         }

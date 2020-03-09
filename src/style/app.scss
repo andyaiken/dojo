@@ -290,7 +290,7 @@ button {
 }
 
 .ant-tag {
-    margin: 1px;
+    margin: 1px 2px;
     border-color: $control-border;
 
     &:hover {
@@ -384,7 +384,7 @@ button {
 .heading {
     border-bottom: 1px solid $control-border;
     margin-bottom: 10px;
-    padding: 5px 10px;
+    padding: 5px;
     font-size: 20px;
     font-weight: 600;
 }
@@ -541,8 +541,6 @@ body,
 
 .grid-panel {
     > .heading {
-        font-size: 20px;
-
         > .title {
             width: calc(100% - 20px);
             display: inline-block;
