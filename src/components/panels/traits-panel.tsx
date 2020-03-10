@@ -1,4 +1,6 @@
 import React from 'react';
+
+import { Icon } from 'antd';
 import Showdown from 'showdown';
 
 import Utils from '../../utils/utils';
@@ -7,7 +9,6 @@ import { Combatant } from '../../models/combat';
 import { Monster, Trait, TRAIT_TYPES } from '../../models/monster-group';
 
 import Note from '../panels/note';
-import { Icon } from 'antd';
 
 const showdown = new Showdown.Converter();
 
@@ -79,7 +80,7 @@ export default class TraitsPanel extends React.Component<Props> {
                                         {icons}
                                     </div>
                                 </div>
-                            )
+                            );
                         }
                     }
                     /* tslint:disable:max-line-length */

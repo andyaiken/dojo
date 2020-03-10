@@ -88,7 +88,7 @@ export default class App extends React.Component<Props, State> {
                 library.forEach(group => {
                     group.monsters.forEach(m => {
                         if (m.legendaryActions === undefined) {
-                            const value = m.traits.some(t => t.type === 'legendary') ? 3 : 0
+                            const value = m.traits.some(t => t.type === 'legendary') ? 3 : 0;
                             m.legendaryActions = value;
                         }
                     });
