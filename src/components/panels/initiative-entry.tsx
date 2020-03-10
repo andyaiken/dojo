@@ -175,16 +175,16 @@ export default class InitiativeEntry extends React.Component<Props> {
                 style += ' defeated';
             }
 
-            let grabber = <Icon type='menu' className='grabber small' data-movable-handle={true} />;
+            let portrait = null;
             const pcOrMonster = this.props.combatant as (Combatant & Monster) | (Combatant & PC);
             if (pcOrMonster.portrait) {
-                grabber = <PortraitPanel source={pcOrMonster} inline={true} grabber={true} />;
+                portrait = <PortraitPanel source={pcOrMonster} inline={true} />;
             }
 
             return (
                 <div className={style} onClick={e => this.onClick(e)}>
                     <div className='header'>
-                        {grabber}
+                        {portrait}
                         <div className='name'>
                             {this.props.combatant.displayName || 'combatant'}
                         </div>

@@ -181,6 +181,21 @@ export default class Napoleon {
         });
     }
 
+    public static combatHasLairActions(combat: Combat) {
+        let hasLair = false;
+
+        combat.combatants
+            .filter(c => !c.pending && c.active && !c.defeated)
+            .forEach(c => {
+                const monster = c as (Combatant & Monster);
+                if (monster && monster.traits && monster.traits.some(t => t.type === 'lair')) {
+                    hasLair = true;
+                }
+            });
+
+        return hasLair;
+    }
+
     public static addPCToCombat(combat: Combat, pc: PC) {
         const combatant: Combatant = JSON.parse(JSON.stringify(pc));
 
@@ -245,6 +260,33 @@ export default class Napoleon {
             displaySize: 'medium',
             showOnMap: true,
             initiative: 10,
+            hpMax: null,
+            hpCurrent: null,
+            hpTemp: null,
+            conditions: [],
+            tags: [],
+            note: '',
+            altitude: 0,
+            aura: { radius: 0, style: 'rounded', color: '#005080' }
+        };
+
+        combat.combatants.push(combatant);
+    }
+
+    public static addPlaceholderToCombat(combat: Combat) {
+        const combatant: Combatant = {
+            id: Utils.guid(),
+            type: 'placeholder',
+
+            current: false,
+            pending: false,
+            active: true,
+            defeated: false,
+
+            displayName: 'lair actions',
+            displaySize: 'medium',
+            showOnMap: true,
+            initiative: 20,
             hpMax: null,
             hpCurrent: null,
             hpTemp: null,

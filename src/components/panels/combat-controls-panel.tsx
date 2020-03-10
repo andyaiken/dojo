@@ -580,8 +580,6 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
             if (!combatant.pending) {
                 changeInit = (
                     <Expander text='change initiative score'>
-                        <p>adjusting initiative will re-sort the initiative order</p>
-                        <p>if you have manually changed the initiative order, your changes will be lost</p>
                         <NumberSpin
                             source={combatant}
                             name='initiative'

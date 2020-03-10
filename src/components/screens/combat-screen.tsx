@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { Col, Icon, Row } from 'antd';
-import { List } from 'react-movable';
 import Showdown from 'showdown';
 
 import Factory from '../../utils/factory';
@@ -49,7 +48,6 @@ interface Props {
     makeDefeated: (combatants: Combatant[]) => void;
     useTrait: (combatant: Combatant & Monster, trait: Trait) => void;
     rechargeTrait: (combatant: Combatant & Monster, trait: Trait) => void;
-    moveCombatant: (oldIndex: number, newIndex: number) => void;
     removeCombatants: (combatants: Combatant[]) => void;
     addCombatants: () => void;
     addCompanion: (companion: Companion | null) => void;
@@ -200,7 +198,15 @@ export default class CombatScreen extends React.Component<Props, State> {
         if (current) {
             this.props.endTurn(current);
         } else {
-            const first = this.props.combat.combatants.find(c => c.active);
+            const first = this.props.combat.combatants
+                .filter(c => {
+                    if (c.type === 'placeholder') {
+                        return Napoleon.combatHasLairActions(this.props.combat);
+                    }
+
+                    return true;
+                })
+                .find(c => c.active);
             if (first) {
                 this.props.makeCurrent(first);
             }
@@ -267,23 +273,18 @@ export default class CombatScreen extends React.Component<Props, State> {
             return null;
         }
 
-        const init = combat.combatants
+        const initList = combat.combatants
             .filter(c => (c.type === 'pc') || c.showOnMap)
-            .filter(combatant => !combatant.pending && combatant.active && !combatant.defeated);
+            .filter(c => !c.pending && c.active && !c.defeated)
+            .filter(c => {
+                if (c.type === 'placeholder') {
+                    return Napoleon.combatHasLairActions(this.props.combat);
+                }
 
-        const initList = (
-            <List
-                values={init}
-                lockVertically={true}
-                onChange={({ oldIndex, newIndex }) => this.props.moveCombatant(oldIndex, newIndex)}
-                renderList={({ children, props }) => <div {...props}>{children}</div>}
-                renderItem={({ value, props, isDragged }) => (
-                    <div {...props} className={isDragged ? 'dragged' : ''}>
-                        {this.createCombatantRow(value, true)}
-                    </div>
-                )}
-            />
-        );
+                return true;
+            })
+            .map(c => this.createCombatantRow(c, true));
+
         if (combat.map) {
             let controls = null;
             if (combat.map && this.state.playerView.showControls) {
@@ -504,6 +505,17 @@ export default class CombatScreen extends React.Component<Props, State> {
             .filter(c => !!c && !c.current) as Combatant[];
         Utils.sort(combatants, [{ field: 'displayName', dir: 'asc' }]);
 
+        // Have we selected any placeholders?
+        // If we have, just show the info for the first one
+        const selectedPlaceholders = combatants.filter(c => c.type === 'placeholder');
+        if (selectedPlaceholders.length > 0) {
+            return (
+                <div>
+                    {this.createCard(selectedPlaceholders[0])}
+                </div>
+            );
+        }
+
         // Have we selected a single combatant?
         if (combatants.length === 1) {
             return (
@@ -587,10 +599,14 @@ export default class CombatScreen extends React.Component<Props, State> {
         );
     }
 
-    private createControls(selectdCombatants: Combatant[]) {
+    private createControls(selectedCombatants: Combatant[]) {
+        if (selectedCombatants.some(c => c.type === 'placeholder')) {
+            return null;
+        }
+
         return (
             <CombatControlsPanel
-                combatants={selectdCombatants}
+                combatants={selectedCombatants}
                 combat={this.props.combat}
                 makeCurrent={combatant => this.props.makeCurrent(combatant)}
                 makeActive={combatants => this.props.makeActive(combatants)}
@@ -636,6 +652,29 @@ export default class CombatScreen extends React.Component<Props, State> {
                 );
             case 'companion':
                 return null;
+            case 'placeholder':
+                const lair: JSX.Element[] = [];
+                this.props.combat.combatants.forEach(c => {
+                    const monster = c as (Combatant & Monster);
+                    if (monster && monster.traits && monster.traits.some(t => t.type === 'lair')) {
+                        lair.push(
+                            <div className='card monster' key={'lair ' + monster.id}>
+                                <div className='heading'>
+                                    <div className='title'>{monster.name}</div>
+                                </div>
+                                <div className='card-content'>
+                                    <TraitsPanel
+                                        combatant={monster}
+                                        mode='lair'
+                                        useTrait={trait => this.props.useTrait(monster, trait)}
+                                        rechargeTrait={trait => this.props.rechargeTrait(monster, trait)}
+                                    />
+                                </div>
+                            </div>
+                        );
+                    }
+                });
+                return lair;
         }
 
         return null;
@@ -688,9 +727,18 @@ export default class CombatScreen extends React.Component<Props, State> {
                 );
             }
 
-            let initHelp = null;
+            const initList = active
+                .filter(c => {
+                    if (c.type === 'placeholder') {
+                        return Napoleon.combatHasLairActions(this.props.combat);
+                    }
+
+                    return true;
+                })
+                .map(c => this.createCombatantRow(c, false));
+
             if (!current) {
-                initHelp = (
+                initList.unshift(
                     /* tslint:disable:max-line-length */
                     <Note key='init-help'>
                         <div className='section'>these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right)</div>
@@ -706,21 +754,6 @@ export default class CombatScreen extends React.Component<Props, State> {
                     </Note>
                 );
             }
-
-            const initList = (
-                <List
-                    key='init-list'
-                    values={active}
-                    lockVertically={true}
-                    onChange={({ oldIndex, newIndex }) => this.props.moveCombatant(oldIndex, newIndex)}
-                    renderList={({ children, props }) => <div {...props}>{children}</div>}
-                    renderItem={({ value, props, isDragged }) => (
-                        <div {...props} className={isDragged ? 'dragged' : ''}>
-                            {this.createCombatantRow(value, false)}
-                        </div>
-                    )}
-                />
-            );
 
             let notificationSection = null;
             if (this.props.combat.notifications.length > 0) {
@@ -755,45 +788,29 @@ export default class CombatScreen extends React.Component<Props, State> {
                 );
             }
 
-            const special: JSX.Element[] = [];
-            this.props.combat.combatants.forEach(c => {
-                const monster = c as (Combatant & Monster);
-                const legendary = monster && monster.traits && monster.traits.some(t => t.type === 'legendary') && !monster.current;
-                if (legendary) {
-                    special.push(
-                        <div className='card monster' key={'leg ' + monster.id}>
-                            <div className='heading'><div className='title'>{monster.name}</div></div>
-                            <div className='card-content'>
-                                <TraitsPanel
-                                    combatant={monster}
-                                    mode='legendary'
-                                    useTrait={trait => this.props.useTrait(monster, trait)}
-                                    rechargeTrait={trait => this.props.rechargeTrait(monster, trait)}
-                                />
+            const legendary: JSX.Element[] = [];
+            this.props.combat.combatants
+                .filter(c => !c.pending && c.active && !c.defeated)
+                .forEach(c => {
+                    const monster = c as (Combatant & Monster);
+                    if (monster && monster.traits && monster.traits.some(t => t.type === 'legendary') && !monster.current) {
+                        legendary.push(
+                            <div className='card monster' key={'leg ' + monster.id}>
+                                <div className='heading'>
+                                    <div className='title'>{monster.name}</div>
+                                </div>
+                                <div className='card-content'>
+                                    <TraitsPanel
+                                        combatant={monster}
+                                        mode='legendary'
+                                        useTrait={trait => this.props.useTrait(monster, trait)}
+                                        rechargeTrait={trait => this.props.rechargeTrait(monster, trait)}
+                                    />
+                                </div>
                             </div>
-                        </div>
-                    );
-                }
-            });
-            this.props.combat.combatants.forEach(c => {
-                const monster = c as (Combatant & Monster);
-                const lair = monster && monster.traits && monster.traits.some(t => t.type === 'lair');
-                if (lair) {
-                    special.push(
-                        <div className='card monster' key={'lair ' + monster.id}>
-                            <div className='heading'><div className='title'>{monster.name}</div></div>
-                            <div className='card-content'>
-                                <TraitsPanel
-                                    combatant={monster}
-                                    mode='lair'
-                                    useTrait={trait => this.props.useTrait(monster, trait)}
-                                    rechargeTrait={trait => this.props.rechargeTrait(monster, trait)}
-                                />
-                            </div>
-                        </div>
-                    );
-                }
-            });
+                        );
+                    }
+                });
 
             const rightPanelOptions = ['selection', 'tools'].map(option => {
                 return { id: option, text: option };
@@ -852,8 +869,8 @@ export default class CombatScreen extends React.Component<Props, State> {
                                 showToggle={true}
                             />
                             <GridPanel
-                                heading={'don\'t forget'}
-                                content={special}
+                                heading={'legendary actions'}
+                                content={legendary}
                                 columns={1}
                                 showToggle={true}
                             />
@@ -865,7 +882,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                             />
                             <GridPanel
                                 heading='initiative order'
-                                content={[initHelp, initList]}
+                                content={initList}
                                 columns={1}
                                 showToggle={true}
                             />

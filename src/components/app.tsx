@@ -807,6 +807,9 @@ export default class App extends React.Component<Props, State> {
                 }
             });
 
+            // Add an Init 20 item
+            Napoleon.addPlaceholderToCombat(combat);
+
             Napoleon.sortCombatants(combat);
 
             if (combatSetup.map) {
@@ -1214,18 +1217,6 @@ export default class App extends React.Component<Props, State> {
         });
     }
 
-    private moveCombatant(oldIndex: number, newIndex: number) {
-        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-        if (combat) {
-            const c = combat.combatants.splice(oldIndex, 1);
-            combat.combatants.splice(newIndex, 0, ...c);
-
-            this.setState({
-                combats: this.state.combats
-            });
-        }
-    }
-
     private removeCombatants(combatants: Combatant[]) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
@@ -1297,9 +1288,17 @@ export default class App extends React.Component<Props, State> {
                 });
             });
 
-            const active = combat.combatants.filter(c => {
-                return c.current || (!c.pending && c.active && !c.defeated);
-            });
+            const active = combat.combatants
+                .filter(c => {
+                    return c.current || (!c.pending && c.active && !c.defeated);
+                })
+                .filter(c => {
+                    if (c.type === 'placeholder') {
+                        return Napoleon.combatHasLairActions(combat);
+                    }
+
+                    return true;
+                });
             if (active.length === 0) {
                 // There's no-one left in the fight
                 this.makeCurrent(null, false);
@@ -1901,7 +1900,6 @@ export default class App extends React.Component<Props, State> {
                             makeDefeated={combatants => this.makeDefeated(combatants)}
                             useTrait={(combatant, trait) => this.useTrait(combatant, trait)}
                             rechargeTrait={(combatant, trait) => this.rechargeTrait(combatant, trait)}
-                            moveCombatant={(oldIndex, newIndex) => this.moveCombatant(oldIndex, newIndex)}
                             removeCombatants={combatants => this.removeCombatants(combatants)}
                             addCombatants={() => this.openAddCombatantModal()}
                             addCompanion={companion => this.addCompanionToEncounter(companion)}
