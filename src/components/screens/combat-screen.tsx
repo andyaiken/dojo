@@ -47,6 +47,8 @@ interface Props {
     makeCurrent: (combatant: Combatant) => void;
     makeActive: (combatants: Combatant[]) => void;
     makeDefeated: (combatants: Combatant[]) => void;
+    useTrait: (combatant: Combatant & Monster, trait: Trait) => void;
+    rechargeTrait: (combatant: Combatant & Monster, trait: Trait) => void;
     moveCombatant: (oldIndex: number, newIndex: number) => void;
     removeCombatants: (combatants: Combatant[]) => void;
     addCombatants: () => void;
@@ -628,8 +630,8 @@ export default class CombatScreen extends React.Component<Props, State> {
                     <MonsterCard
                         monster={combatant as Combatant & Monster}
                         mode={'combat'}
-                        changeValue={(c, type, value) => this.props.changeValue(c, type, value)}
-                        nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
+                        useTrait={trait => this.props.useTrait(combatant as Combatant & Monster, trait)}
+                        rechargeTrait={trait => this.props.rechargeTrait(combatant as Combatant & Monster, trait)}
                     />
                 );
             case 'companion':
@@ -757,16 +759,35 @@ export default class CombatScreen extends React.Component<Props, State> {
             this.props.combat.combatants.forEach(c => {
                 const monster = c as (Combatant & Monster);
                 const legendary = monster && monster.traits && monster.traits.some(t => t.type === 'legendary') && !monster.current;
-                const lair = monster && monster.traits && monster.traits.some(t => t.type === 'lair');
-                if (legendary || lair) {
+                if (legendary) {
                     special.push(
-                        <div className='card monster' key={monster.id}>
+                        <div className='card monster' key={'leg ' + monster.id}>
                             <div className='heading'><div className='title'>{monster.name}</div></div>
                             <div className='card-content'>
                                 <TraitsPanel
                                     combatant={monster}
-                                    mode='combat-special'
-                                    changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
+                                    mode='legendary'
+                                    useTrait={trait => this.props.useTrait(monster, trait)}
+                                    rechargeTrait={trait => this.props.rechargeTrait(monster, trait)}
+                                />
+                            </div>
+                        </div>
+                    );
+                }
+            });
+            this.props.combat.combatants.forEach(c => {
+                const monster = c as (Combatant & Monster);
+                const lair = monster && monster.traits && monster.traits.some(t => t.type === 'lair');
+                if (lair) {
+                    special.push(
+                        <div className='card monster' key={'lair ' + monster.id}>
+                            <div className='heading'><div className='title'>{monster.name}</div></div>
+                            <div className='card-content'>
+                                <TraitsPanel
+                                    combatant={monster}
+                                    mode='lair'
+                                    useTrait={trait => this.props.useTrait(monster, trait)}
+                                    rechargeTrait={trait => this.props.rechargeTrait(monster, trait)}
                                 />
                             </div>
                         </div>

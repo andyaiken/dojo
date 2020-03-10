@@ -23,7 +23,6 @@ interface Props {
     monster: Monster | (Monster & Combatant);
     mode: string;
     library: MonsterGroup[];
-    changeValue: (monster: any, field: string, value: any) => void;
     nudgeValue: (source: any, field: string, delta: number) => void;
     // Library
     viewMonster: (monster: Monster) => void;
@@ -41,6 +40,9 @@ interface Props {
     removeEncounterSlot: (slot: EncounterSlot) => void;
     swapEncounterSlot: (slot: EncounterSlot, groupName: string, monsterName: string) => void;
     moveToWave: (slot: EncounterSlot, current: EncounterSlot[], waveID: string) => void;
+    // Combat
+    useTrait: (trait: Trait) => void;
+    rechargeTrait: (trait: Trait) => void;
 }
 
 interface State {
@@ -51,7 +53,6 @@ export default class MonsterCard extends React.Component<Props, State> {
     public static defaultProps = {
         mode: 'full',
         library: null,
-        changeValue: null,
         nudgeValue: null,
         viewMonster: null,
         editMonster: null,
@@ -82,7 +83,9 @@ export default class MonsterCard extends React.Component<Props, State> {
         removeCondition: null,
         nudgeConditionValue: null,
         toggleTag: null,
-        toggleCondition: null
+        toggleCondition: null,
+        useTrait: null,
+        rechargeTrait: null
     };
 
     constructor(props: Props) {
@@ -331,7 +334,8 @@ export default class MonsterCard extends React.Component<Props, State> {
                         <TraitsPanel
                             combatant={this.props.monster}
                             mode={this.props.mode.indexOf('combat') !== -1 ? 'combat' : 'view'}
-                            changeValue={(trait, field, value) => this.props.changeValue(trait, field, value)}
+                            useTrait={trait => this.props.useTrait(trait)}
+                            rechargeTrait={trait => this.props.rechargeTrait(trait)}
                         />
                     </div>
                 );

@@ -37,6 +37,7 @@ export interface Monster {
     traits: Trait[];
     conditionImmunities: string;
     portrait: string;
+    legendaryActions: number;
 }
 
 export interface Trait {

@@ -1008,6 +1008,12 @@ class CombatTab extends React.Component<CombatTabProps> {
                         />
                         <div className='subheading'>hit points</div>
                         <div className='hp-value'>{Frankenstein.getTypicalHP(this.props.monster)} hp</div>
+                        <div className='subheading'>legendary actions</div>
+                        <NumberSpin
+                            source={this.props.monster}
+                            name='legendaryActions'
+                            nudgeValue={delta => this.props.nudgeValue('legendaryActions', delta)}
+                        />
                     </Col>
                     <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                         <div className='subheading'>damage resistances</div>

@@ -51,6 +51,9 @@ export default class Frankenstein {
                 newValue = (value ? value : 0) + delta;
                 break;
         }
+
+        newValue = Math.max(newValue, 0);
+
         Frankenstein.changeValue(target, field, newValue);
     }
 
@@ -140,7 +143,8 @@ export default class Frankenstein {
                 };
             }),
             conditionImmunities: monster.conditionImmunities,
-            portrait: monster.portrait
+            portrait: monster.portrait,
+            legendaryActions: 0
         };
     }
 

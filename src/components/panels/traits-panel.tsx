@@ -7,58 +7,106 @@ import { Combatant } from '../../models/combat';
 import { Monster, Trait, TRAIT_TYPES } from '../../models/monster-group';
 
 import Note from '../panels/note';
+import { Icon } from 'antd';
 
 const showdown = new Showdown.Converter();
 
 interface Props {
     combatant: Monster | (Combatant & Monster);
-    mode: 'view' | 'template' | 'combat' | 'combat-special';
+    mode: 'view' | 'template' | 'combat' | 'legendary' | 'lair';
     copyTrait: (trait: Trait) => void;
-    changeValue: (trait: Trait, field: string, value: any) => void;
+    useTrait: (trait: Trait) => void;
+    rechargeTrait: (trait: Trait) => void;
 }
 
 export default class TraitsPanel extends React.Component<Props> {
     public static defaultProps = {
         mode: 'view',
         copyTrait: null,
-        changeValue: null
+        useTrait: null,
+        rechargeTrait: null
     };
 
-    private createTraitPanel(trait: Trait) {
-        return (
-            <TraitPanel
-                key={trait.id}
-                trait={trait}
-                mode={this.props.mode}
-                changeValue={(action, type, value) => this.props.changeValue(action, type, value)}
-                copyTrait={action => this.props.copyTrait(action)}
-            />
-        );
-    }
-
-    private createSection(traitsByType: { [id: string]: JSX.Element[] }, type: string, showInfo: boolean = false) {
+    private createSection(traitsByType: { [id: string]: JSX.Element[] }, type: string) {
         const traits = traitsByType[type];
         if (traits.length === 0) {
             return null;
         }
 
-        let info: JSX.Element | null = null;
-        if (showInfo) {
+        let info = null;
+        if ((this.props.mode === 'legendary') || (this.props.mode === 'lair')) {
             switch (type) {
                 case 'legendary':
+                    let count = null;
+                    let usage = null;
+                    if (this.props.combatant.legendaryActions > 0) {
+                        count = (
+                            <div>
+                                <div><b>{this.props.combatant.legendaryActions}</b> legendary actions per round</div>
+                                <div className='divider' />
+                            </div>
+                        );
+                        if (this.props.mode === 'legendary') {
+                            let used = 0;
+                            this.props.combatant.traits.filter(t => (t.type === 'legendary') && (t.uses > 0)).forEach(t => {
+                                let value = 1;
+                                if (t.usage) {
+                                    // Action usage might be: '[costs|counts as] N [legendary actions|actions]'
+                                    const found = t.usage.toLowerCase().match(/\D*(\d*)\D*/);
+                                    if (found) {
+                                        value = parseInt(found[1], 10);
+                                    }
+                                }
+                                used += value;
+                            });
+                            used = Math.min(used, this.props.combatant.legendaryActions);
+                            const unused = Math.max(this.props.combatant.legendaryActions - used, 0);
+                            const icons = [];
+                            for (let n = 0; n !== used; ++n) {
+                                icons.push(
+                                    <Icon key={'used ' + n} type='crown' theme='filled' />
+                                );
+                            }
+                            for (let n = 0; n !== unused; ++n) {
+                                icons.push(
+                                    <Icon key={'unused ' + n} type='crown' />
+                                );
+                            }
+                            usage = (
+                                <div>
+                                    <div className='divider' />
+                                    <div className='section centered legendary-usage'>
+                                        {icons}
+                                    </div>
+                                </div>
+                            )
+                        }
+                    }
                     /* tslint:disable:max-line-length */
                     info = (
                         <Note white={true}>
+                            {count}
                             one legendary action can be used at the end of each other combatant's turn; spent actions are refreshed at the start of the monster's turn
+                            {usage}
                         </Note>
                     );
                     /* tslint:enable:max-line-length */
                     break;
                 case 'lair':
                     info = (
-                        <Note white={true}>one lair action can be taken each round on initiative 20</Note>
+                        <Note white={true}>
+                            one lair action can be taken each round on initiative 20
+                        </Note>
                     );
                     break;
+            }
+        } else {
+            if (type === 'legendary') {
+                info = (
+                    <Note white={true}>
+                        <b>{this.props.combatant.legendaryActions}</b> legendary actions per round
+                    </Note>
+                );
             }
         }
 
@@ -74,16 +122,17 @@ export default class TraitsPanel extends React.Component<Props> {
     public render() {
         try {
             const traitsByType: { [id: string]: JSX.Element[] } = {};
-
             TRAIT_TYPES.forEach(type => {
-                const list: JSX.Element[] = [];
-                const traits = this.props.combatant.traits.filter(t => t.type === type);
-                for (let n = 0; n !== traits.length; ++n) {
-                    const trait = traits[n];
-                    list.push(this.createTraitPanel(trait));
-                }
-
-                traitsByType[type] = list;
+                traitsByType[type] = this.props.combatant.traits.filter(t => t.type === type).map(trait => (
+                    <TraitPanel
+                        key={trait.id}
+                        trait={trait}
+                        mode={this.props.mode}
+                        copyTrait={action => this.props.copyTrait(action)}
+                        useTrait={action => this.props.useTrait(action)}
+                        rechargeTrait={action => this.props.rechargeTrait(action)}
+                    />
+                ));
             });
 
             if (this.props.combatant.traits.length === 0) {
@@ -103,11 +152,18 @@ export default class TraitsPanel extends React.Component<Props> {
                 );
             }
 
-            if (this.props.mode === 'combat-special') {
+            if (this.props.mode === 'legendary') {
                 return (
                     <div>
-                        {this.createSection(traitsByType, 'legendary', true)}
-                        {this.createSection(traitsByType, 'lair', true)}
+                        {this.createSection(traitsByType, 'legendary')}
+                    </div>
+                );
+            }
+
+            if (this.props.mode === 'lair') {
+                return (
+                    <div>
+                        {this.createSection(traitsByType, 'lair')}
                     </div>
                 );
             }
@@ -131,9 +187,10 @@ export default class TraitsPanel extends React.Component<Props> {
 
 interface TraitPanelProps {
     trait: Trait;
-    mode: 'view' | 'template' | 'combat' | 'combat-special';
-    changeValue: (trait: Trait, field: string, value: any) => void;
+    mode: 'view' | 'template' | 'combat' | 'legendary' | 'lair';
     copyTrait: (trait: Trait) => void;
+    useTrait: (trait: Trait) => void;
+    rechargeTrait: (trait: Trait) => void;
 }
 
 class TraitPanel extends React.Component<TraitPanelProps> {
@@ -181,16 +238,16 @@ class TraitPanel extends React.Component<TraitPanelProps> {
                         </div>
                     );
                 case 'combat':
-                case 'combat-special':
+                case 'legendary':
+                case 'lair':
                     let style = '';
                     let usage = null;
                     if (maxUses > 0) {
-                        const isTapped = this.props.trait.uses >= maxUses;
-                        if (isTapped) {
+                        if (this.props.trait.uses >= maxUses) {
                             style = 'strikethrough';
-                            usage = <button onClick={() => this.props.changeValue(this.props.trait, 'uses', 0)}>recharge</button>;
+                            usage = <button onClick={() => this.props.rechargeTrait(this.props.trait)}>recharge</button>;
                         } else {
-                            usage = <button onClick={() => this.props.changeValue(this.props.trait, 'uses', this.props.trait.uses + 1)}>use</button>;
+                            usage = <button onClick={() => this.props.useTrait(this.props.trait)}>use</button>;
                         }
                     }
                     return (

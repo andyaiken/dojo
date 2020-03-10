@@ -41,8 +41,6 @@ export default class MonsterScreen extends React.Component<Props> {
                             monster={m}
                             mode={'editable'}
                             library={this.props.library}
-                            changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
-                            nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
                             moveToGroup={(monster, groupID) => this.props.moveToGroup(monster, groupID)}
                             removeMonster={monster => this.props.removeMonster(monster)}
                             viewMonster={monster => this.props.viewMonster(monster)}

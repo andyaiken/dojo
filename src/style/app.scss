@@ -1015,6 +1015,11 @@ body,
         }
     }
 
+    &.legendary-usage .anticon {
+        font-size: 20px;
+        margin: 0 10px;
+    }
+
     .ability-scores {
         margin: 10px 0;
         background-color: $background;

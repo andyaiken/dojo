@@ -86,7 +86,8 @@ export default class Factory {
             equipment: '',
             traits: [],
             conditionImmunities: '',
-            portrait: ''
+            portrait: '',
+            legendaryActions: 0
         };
     }
 

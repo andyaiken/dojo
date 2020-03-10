@@ -12,7 +12,7 @@ import { Combat, Combatant, CombatSetup, Notification } from '../models/combat';
 import { Condition } from '../models/condition';
 import { Encounter } from '../models/encounter';
 import { Map, MapItem } from '../models/map';
-import { Monster, MonsterGroup } from '../models/monster-group';
+import { Monster, MonsterGroup, Trait } from '../models/monster-group';
 import { Companion, Party, PC } from '../models/party';
 
 import Checkbox from './controls/checkbox';
@@ -84,6 +84,15 @@ export default class App extends React.Component<Props, State> {
             const str = window.localStorage.getItem('data-library');
             if (str) {
                 library = JSON.parse(str);
+
+                library.forEach(group => {
+                    group.monsters.forEach(m => {
+                        if (m.legendaryActions === undefined) {
+                            const value = m.traits.some(t => t.type === 'legendary') ? 3 : 0
+                            m.legendaryActions = value;
+                        }
+                    });
+                });
             }
         } catch (ex) {
             console.error('Could not parse JSON: ', ex);
@@ -224,18 +233,6 @@ export default class App extends React.Component<Props, State> {
         this.setState({
             view: 'maps'
         });
-    }
-
-    private selectCombatByID(id: string | null) {
-        this.save();
-        if ((this.state.selectedCombatID !== null) && (id === null)) {
-            this.pauseCombat();
-        } else {
-            this.setState({
-                view: 'combat',
-                selectedCombatID: id
-            });
-        }
     }
 
     private resetAll() {
@@ -1201,6 +1198,22 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
+    private useTrait(combatant: Combatant & Monster, trait: Trait) {
+        trait.uses += 1;
+
+        this.setState({
+            combats: this.state.combats
+        });
+    }
+
+    private rechargeTrait(combatant: Combatant & Monster, trait: Trait) {
+        trait.uses = 0;
+
+        this.setState({
+            combats: this.state.combats
+        });
+    }
+
     private moveCombatant(oldIndex: number, newIndex: number) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
@@ -1886,6 +1899,8 @@ export default class App extends React.Component<Props, State> {
                             makeCurrent={combatant => this.makeCurrent(combatant, false)}
                             makeActive={combatants => this.makeActive(combatants)}
                             makeDefeated={combatants => this.makeDefeated(combatants)}
+                            useTrait={(combatant, trait) => this.useTrait(combatant, trait)}
+                            rechargeTrait={(combatant, trait) => this.rechargeTrait(combatant, trait)}
                             moveCombatant={(oldIndex, newIndex) => this.moveCombatant(oldIndex, newIndex)}
                             removeCombatants={combatants => this.removeCombatants(combatants)}
                             addCombatants={() => this.openAddCombatantModal()}
