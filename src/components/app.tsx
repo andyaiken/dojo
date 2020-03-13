@@ -25,12 +25,12 @@ import LeaderboardModal from './modals/leaderboard-modal';
 import MapEditorModal from './modals/map-editor-modal';
 import MonsterEditorModal from './modals/monster-editor-modal';
 import MonsterImportModal from './modals/monster-import-modal';
-import MonsterInfoModal from './modals/monster-info-modal';
 import PartyImportModal from './modals/party-import-modal';
 import PCEditorModal from './modals/pc-editor-modal';
 import PCUpdateModal from './modals/pc-update-modal';
 import ReferenceModal from './modals/reference-modal';
 import SearchModal from './modals/search-modal';
+import StatBlockModal from './modals/stat-block-modal';
 import ToolsModal from './modals/tools-modal';
 import PageFooter from './panels/page-footer';
 import PageHeader from './panels/page-header';
@@ -620,18 +620,6 @@ export default class App extends React.Component<Props, State> {
                     library: this.state.library
                 });
             });
-    }
-
-    private openMonsterInfoModal(groupName: string, monsterName: string) {
-        const monster = this.getMonster(monsterName, groupName);
-        if (monster) {
-            this.setState({
-                drawer: {
-                    type: 'monster-stat-block',
-                    monster: monster
-                }
-            });
-        }
     }
 
     private openDemographics(group: MonsterGroup | null) {
@@ -1822,6 +1810,7 @@ export default class App extends React.Component<Props, State> {
                             importParty={() => this.importParty()}
                             selectParty={party => this.selectParty(party)}
                             deleteParty={party => this.removeParty(party)}
+                            openStatBlock={pc => this.setState({drawer: { type: 'stat-block', source: pc }})}
                         />
                     );
                 }
@@ -1839,7 +1828,7 @@ export default class App extends React.Component<Props, State> {
                             removeMonster={monster => this.removeMonster(monster)}
                             changeValue={(monster, type, value) => this.changeValue(monster, type, value)}
                             nudgeValue={(monster, type, delta) => this.nudgeValue(monster, type, delta)}
-                            viewMonster={monster => this.setState({drawer: { type: 'monster-stat-block', monster: monster }})}
+                            viewMonster={monster => this.setState({drawer: { type: 'stat-block', source: monster }})}
                             editMonster={monster => this.editMonster(monster)}
                             cloneMonster={(monster, name) => this.cloneMonster(monster, name)}
                             moveToGroup={(monster, groupID) => this.moveToGroup(monster, groupID)}
@@ -1854,7 +1843,7 @@ export default class App extends React.Component<Props, State> {
                             selectMonsterGroup={group => this.selectMonsterGroup(group)}
                             deleteMonsterGroup={group => this.removeMonsterGroup(group)}
                             addOpenGameContent={() => this.addOpenGameContent()}
-                            openStatBlock={(groupName, monsterName) => this.openMonsterInfoModal(groupName, monsterName)}
+                            openStatBlock={monster => this.setState({drawer: { type: 'stat-block', source: monster }})}
                             openDemographics={group => this.openDemographics(group)}
                         />
                     );
@@ -1871,7 +1860,7 @@ export default class App extends React.Component<Props, State> {
                         runEncounter={(encounter, partyID) => this.createCombat(encounter, partyID)}
                         getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
                         setView={view => this.setView(view)}
-                        openStatBlock={(groupName, monsterName) => this.openMonsterInfoModal(groupName, monsterName)}
+                        openStatBlock={monster => this.setState({drawer: { type: 'stat-block', source: monster }})}
                     />
                 );
             case 'maps':
@@ -1935,6 +1924,7 @@ export default class App extends React.Component<Props, State> {
                             createCombat={() => this.createCombat()}
                             resumeCombat={combat => this.resumeCombat(combat)}
                             deleteCombat={combat => this.endCombat(combat)}
+                            openStatBlock={combatant => this.setState({drawer: { type: 'stat-block', source: combatant }})}
                             setView={view => this.setView(view)}
                         />
                     );
@@ -2027,10 +2017,10 @@ export default class App extends React.Component<Props, State> {
                     );
                     width = '85%';
                     break;
-                case 'monster-stat-block':
+                case 'stat-block':
                     content = (
-                        <MonsterInfoModal
-                            monster={this.state.drawer.monster}
+                        <StatBlockModal
+                            source={this.state.drawer.source}
                         />
                     );
                     header = 'monster';

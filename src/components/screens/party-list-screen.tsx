@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Col, Row } from 'antd';
+import { Col, Icon, Row } from 'antd';
 
 import Utils from '../../utils/utils';
 
@@ -17,6 +17,7 @@ interface Props {
     importParty: () => void;
     selectParty: (party: Party) => void;
     deleteParty: (party: Party) => void;
+    openStatBlock: (pc: PC) => void;
 }
 
 export default class PartyListScreen extends React.Component<Props> {
@@ -30,6 +31,7 @@ export default class PartyListScreen extends React.Component<Props> {
                     party={p}
                     open={party => this.props.selectParty(party)}
                     delete={party => this.props.deleteParty(party)}
+                    openStatBlock={pc => this.props.openStatBlock(pc)}
                 />
             ));
 
@@ -65,6 +67,7 @@ interface ListItemProps {
     party: Party;
     open: (party: Party) => void;
     delete: (party: Party) => void;
+    openStatBlock: (pc: PC) => void;
 }
 
 class ListItem extends React.Component<ListItemProps> {
@@ -82,6 +85,7 @@ class ListItem extends React.Component<ListItemProps> {
                 <div key={pc.id} className='combatant-row'>
                     <PortraitPanel source={pc} inline={true}/>
                     <div className='name'>{this.getText(pc)}</div>
+                    <Icon className='info-icon' type='info-circle' onClick={() => this.props.openStatBlock(pc)} />
                 </div>
             ));
             if (pcs.length === 0) {
@@ -97,6 +101,7 @@ class ListItem extends React.Component<ListItemProps> {
                     <div key={pc.id} className='combatant-row'>
                         <PortraitPanel source={pc} inline={true}/>
                         <div className='name'>{this.getText(pc)}</div>
+                        <Icon className='info-icon' type='info-circle' onClick={() => this.props.openStatBlock(pc)} />
                     </div>
                 ));
             }

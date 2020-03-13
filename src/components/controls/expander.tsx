@@ -23,6 +23,7 @@ export default class Expander extends React.Component<Props> {
                 <Collapse
                     className={style}
                     bordered={false}
+                    defaultActiveKey={[]}
                     expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
                     expandIconPosition={'right'}
                 >

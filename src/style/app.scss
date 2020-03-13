@@ -227,7 +227,7 @@ button {
 }
 
 .ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
-    padding: 0 10px 5px 10px;
+    padding: 5px 10px;
     overflow-y: auto;
 }
 
@@ -368,7 +368,7 @@ button {
     font-size: 20px;
     font-weight: 600;
     color: $header-foreground;
-    border-left: 3px solid $header-foreground;
+    border-left: 5px solid $header-foreground;
     text-transform: uppercase;
     text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
     letter-spacing: 2px;
@@ -568,12 +568,12 @@ body,
     .drawer-icons {
         position: absolute;
         right: 5px;
-        top: 0;
-        height: 50px;
+        top: 10px;
+        height: 30px;
 
         .title-bar-icon {
             padding: 5px;
-            margin: 10px;
+            margin: 0 5px;
             font-size: 20px;
             cursor: pointer;
 
@@ -597,7 +597,7 @@ body,
         border: 1px solid transparent;
         cursor: pointer;
         height: 39px;
-        line-height: 38px;
+        line-height: 35px;
         width: calc(((100% - 1px) / 5) - 10px);
         font-size: 14px;
         color: $header-foreground;

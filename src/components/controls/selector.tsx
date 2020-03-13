@@ -40,7 +40,7 @@ export default class Selector extends React.Component<Props> {
 
             const rowSections = rowContents.map(row => {
                 const index = rowContents.indexOf(row);
-                return <div key={index}>{row}</div>;
+                return <div key={index} className='selector-row'>{row}</div>;
             });
 
             return (

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Tag } from 'antd';
+
 import { Combatant } from '../../models/combat';
 import { PC } from '../../models/party';
 
@@ -49,10 +51,6 @@ export default class PCCard extends React.Component<Props> {
                 options.push(<ConfirmButton key='remove' text='delete pc' callback={() => this.props.removePC(this.props.pc)} />);
             }
 
-            const desc = (this.props.pc.race || 'unknown race')
-                + ' ' + (this.props.pc.classes || 'unknown class')
-                + ', level ' + this.props.pc.level;
-
             let companions = null;
             if (this.props.pc.companions.length > 0) {
                 companions = this.props.pc.companions.map(companion => (
@@ -75,10 +73,12 @@ export default class PCCard extends React.Component<Props> {
                         <div className='stats'>
                             <PortraitPanel source={this.props.pc} />
                             <div className='section centered lowercase'>
-                                <i>{desc}</i>
-                                <div style={{ display: this.props.pc.url ? '' : 'none' }}>
-                                    <a href={this.props.pc.url} target='_blank' rel='noopener noreferrer'>d&amp;d beyond sheet</a>
-                                </div>
+                                <Tag>{this.props.pc.race || 'unknown race'}</Tag>
+                                <Tag>{this.props.pc.classes || 'unknown class'}</Tag>
+                                <Tag>{'level ' + this.props.pc.level}</Tag>
+                            </div>
+                            <div className='section centered' style={{ display: this.props.pc.url ? '' : 'none' }}>
+                                <a href={this.props.pc.url} target='_blank' rel='noopener noreferrer'>d&amp;d beyond sheet</a>
                             </div>
                             <div className='divider' />
                             <div className='section subheading'>languages</div>

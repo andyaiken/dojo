@@ -26,10 +26,17 @@ interface Props {
     runEncounter: (encounter: Encounter, partyID: string) => void;
     getMonster: (monsterName: string, groupName: string) => Monster | null;
     setView: (view: string) => void;
-    openStatBlock: (groupName: string, monsterName: string) => void;
+    openStatBlock: (monster: Monster) => void;
 }
 
 export default class EncounterListScreen extends React.Component<Props> {
+    private openStatBlock(slot: EncounterSlot) {
+        const monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
+        if (monster) {
+            this.props.openStatBlock(monster);
+        }
+    }
+
     public render() {
         try {
             if (!this.props.hasMonsters) {
@@ -66,7 +73,7 @@ export default class EncounterListScreen extends React.Component<Props> {
                     edit={encounter => this.props.editEncounter(encounter)}
                     delete={encounter => this.props.deleteEncounter(encounter)}
                     run={(encounter, partyID) => this.props.runEncounter(encounter, partyID)}
-                    openStatBlock={slot => this.props.openStatBlock(slot.monsterGroupName, slot.monsterName)}
+                    openStatBlock={slot => this.openStatBlock(slot)}
                     getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
                 />
             ));

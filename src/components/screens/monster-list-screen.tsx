@@ -4,7 +4,7 @@ import { Col, Icon, Row } from 'antd';
 
 import Utils from '../../utils/utils';
 
-import { MonsterGroup } from '../../models/monster-group';
+import { Monster, MonsterGroup } from '../../models/monster-group';
 
 import ConfirmButton from '../controls/confirm-button';
 import GridPanel from '../panels/grid-panel';
@@ -19,7 +19,7 @@ interface Props {
     selectMonsterGroup: (group: MonsterGroup) => void;
     deleteMonsterGroup: (group: MonsterGroup) => void;
     addOpenGameContent: () => void;
-    openStatBlock: (groupName: string, monsterName: string) => void;
+    openStatBlock: (monster: Monster) => void;
     openDemographics: (group: MonsterGroup | null) => void;
 }
 
@@ -52,7 +52,7 @@ export default class MonsterListScreen extends React.Component<Props> {
                     group={group}
                     open={grp => this.props.selectMonsterGroup(grp)}
                     delete={grp => this.props.deleteMonsterGroup(grp)}
-                    openStatBlock={(groupName, monsterName) => this.props.openStatBlock(groupName, monsterName)}
+                    openStatBlock={monster => this.props.openStatBlock(monster)}
                     openDemographics={grp => this.props.openDemographics(grp)}
                 />
             ));
@@ -88,7 +88,7 @@ interface ListItemProps {
     group: MonsterGroup;
     open: (group: MonsterGroup) => void;
     delete: (group: MonsterGroup) => void;
-    openStatBlock: (groupName: string, monsterName: string) => void;
+    openStatBlock: (monster: Monster) => void;
     openDemographics: (group: MonsterGroup) => void;
 }
 
@@ -98,7 +98,7 @@ class ListItem extends React.Component<ListItemProps> {
             <div key={m.id} className='combatant-row'>
                 <PortraitPanel source={m} inline={true}/>
                 <div className='name'>{m.name || 'unnamed monster'}</div>
-                <Icon className='info-icon' type='info-circle' onClick={() => this.props.openStatBlock(this.props.group.name, m.name)} />
+                <Icon className='info-icon' type='info-circle' onClick={() => this.props.openStatBlock(m)} />
             </div>
         ));
         if (monsters.length === 0) {

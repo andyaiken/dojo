@@ -22,6 +22,7 @@ interface Props {
     createCombat: () => void;
     resumeCombat: (combat: Combat) => void;
     deleteCombat: (combat: Combat) => void;
+    openStatBlock: (combatant: Combatant) => void;
     setView: (view: string) => void;
 }
 
@@ -74,6 +75,7 @@ export default class CombatListScreen extends React.Component<Props> {
                     combat={c}
                     resume={combat => this.props.resumeCombat(combat)}
                     delete={combat => this.props.deleteCombat(combat)}
+                    openStatBlock={combatant => this.props.openStatBlock(combatant)}
                 />
             ));
 
@@ -108,6 +110,7 @@ interface ListItemProps {
     combat: Combat;
     resume: (combat: Combat) => void;
     delete: (combat: Combat) => void;
+    openStatBlock: (combatant: Combatant) => void;
 }
 
 class ListItem extends React.Component<ListItemProps> {
@@ -134,6 +137,7 @@ class ListItem extends React.Component<ListItemProps> {
                     <div key={c.id} className='combatant-row'>
                         <PortraitPanel source={c as (Combatant & PC) | (Combatant & Monster)} inline={true}/>
                         <div className='name'>{c.displayName}</div>
+                        <Icon className='info-icon' type='info-circle' onClick={() => this.props.openStatBlock(c)} />
                     </div>
                 ));
 
