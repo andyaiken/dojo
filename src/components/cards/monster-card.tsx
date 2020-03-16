@@ -1,6 +1,6 @@
+import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { Tag } from 'antd';
 import React from 'react';
-
-import { Icon, Tag } from 'antd';
 
 import Frankenstein from '../../utils/frankenstein';
 import Utils from '../../utils/utils';
@@ -408,11 +408,11 @@ export default class MonsterCard extends React.Component<Props, State> {
         if (this.canSelect()) {
             if (this.props.mode.indexOf('selected') !== -1) {
                 return (
-                    <Icon type='minus-circle' onClick={() => this.props.deselectMonster(this.props.monster)} />
+                    <MinusCircleOutlined onClick={() => this.props.deselectMonster(this.props.monster)} />
                 );
             } else {
                 return (
-                    <Icon type='plus-circle' onClick={() => this.props.selectMonster(this.props.monster)} />
+                    <PlusCircleOutlined onClick={() => this.props.selectMonster(this.props.monster)} />
                 );
             }
         }

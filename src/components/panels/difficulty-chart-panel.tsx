@@ -1,6 +1,5 @@
-import React from 'react';
-
 import { Col, Row } from 'antd';
+import React from 'react';
 
 import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';

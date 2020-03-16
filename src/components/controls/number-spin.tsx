@@ -1,6 +1,5 @@
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import React from 'react';
-
-import { Icon } from 'antd';
 
 interface Props {
     source: any;
@@ -55,7 +54,7 @@ export default class NumberSpin extends React.Component<Props> {
                         onTouchEnd={e => this.touchEnd(e, -1 * factor)}
                         onClick={e => this.click(e, -1 * factor)}
                     >
-                        {factor === 1 ? <Icon type='minus' /> : <div>{factor}</div>}
+                        {factor === 1 ? <MinusOutlined /> : <div>{factor}</div>}
                     </div>
                 );
 
@@ -66,7 +65,7 @@ export default class NumberSpin extends React.Component<Props> {
                         onTouchEnd={e => this.touchEnd(e, +1 * factor)}
                         onClick={e => this.click(e, +1 * factor)}
                     >
-                        {factor === 1 ? <Icon type='plus' /> : <div>{factor}</div>}
+                        {factor === 1 ? <PlusOutlined /> : <div>{factor}</div>}
                     </div>
                 );
             });

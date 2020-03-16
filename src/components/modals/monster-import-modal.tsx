@@ -1,6 +1,5 @@
-import React from 'react';
-
 import { Col, Row } from 'antd';
+import React from 'react';
 
 import Frankenstein from '../../utils/frankenstein';
 

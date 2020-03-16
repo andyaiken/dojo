@@ -1,6 +1,6 @@
+import { CheckCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { Col, Row } from 'antd';
 import React from 'react';
-
-import { Col, Icon, Row } from 'antd';
 
 import Utils from '../../utils/utils';
 
@@ -32,7 +32,7 @@ export default class CombatListScreen extends React.Component<Props> {
             if (!this.props.hasPCs || !this.props.hasMonsters) {
                 /* tslint:disable:max-line-length */
                 return (
-                    <Row type='flex' justify='center' align='middle' className='scrollable'>
+                    <Row align='middle' justify='center' className='scrollable'>
                         <Col xs={20} sm={18} md={16} lg={12} xl={10}>
                             <Readaloud>
                                 <div className='section'>
@@ -43,13 +43,13 @@ export default class CombatListScreen extends React.Component<Props> {
                                         <span className={this.props.hasPCs ? 'strikethrough' : ''}>
                                             define a party of pcs in the <button className='link' onClick={() => this.props.setView('parties')}>pcs screen</button>
                                         </span>
-                                        {this.props.hasPCs ? <Icon type='check-circle' title='done' style={{ marginLeft: '5px' }}/> : null}
+                                        {this.props.hasPCs ? <CheckCircleOutlined title='done' style={{ marginLeft: '5px' }}/> : null}
                                     </li>
                                     <li>
                                         <span className={this.props.hasMonsters ? 'strikethrough' : ''}>
                                             add some monsters in the <button className='link' onClick={() => this.props.setView('library')}>monsters screen</button>
                                         </span>
-                                        {this.props.hasMonsters ? <Icon type='check-circle' title='done' style={{ marginLeft: '5px' }}/> : null}
+                                        {this.props.hasMonsters ? <CheckCircleOutlined title='done' style={{ marginLeft: '5px' }}/> : null}
                                     </li>
                                 </ul>
                                 <div className='divider'/>
@@ -137,7 +137,7 @@ class ListItem extends React.Component<ListItemProps> {
                     <div key={c.id} className='combatant-row'>
                         <PortraitPanel source={c as (Combatant & PC) | (Combatant & Monster)} inline={true}/>
                         <div className='name'>{c.displayName}</div>
-                        <Icon className='info-icon' type='info-circle' onClick={() => this.props.openStatBlock(c)} />
+                        <InfoCircleOutlined className='info-icon' onClick={() => this.props.openStatBlock(c)} />
                     </div>
                 ));
 

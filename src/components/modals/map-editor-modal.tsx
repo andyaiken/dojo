@@ -1,6 +1,5 @@
-import React from 'react';
-
 import { Col, Drawer, Row } from 'antd';
+import React from 'react';
 
 import Factory from '../../utils/factory';
 import Mercator from '../../utils/mercator';

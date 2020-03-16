@@ -1,11 +1,12 @@
 {
     "name": "dojo",
-    "version": "8.6.0",
+    "version": "8.7.0",
     "license": "MIT",
     "repository": "https://github.com/andyaiken/dojo.git",
     "homepage": "https://andyaiken.github.io/dojo/",
     "dependencies": {
-        "antd": "^3.26.13",
+        "@ant-design/icons": "^4.0.2",
+        "antd": "^4.0.3",
         "react": "^16.13.0",
         "react-dom": "^16.13.0",
         "react-movable": "^2.4.2",

@@ -1,6 +1,6 @@
+import { DownSquareTwoTone, StarTwoTone, UpSquareTwoTone } from '@ant-design/icons';
+import { Tooltip } from 'antd';
 import React from 'react';
-
-import { Icon, Tooltip } from 'antd';
 import Showdown from 'showdown';
 
 import Factory from '../../utils/factory';
@@ -790,7 +790,7 @@ class MapToken extends React.Component<MapTokenProps> {
                 if (this.props.combatant.altitude > 0) {
                     altitudeBadge = (
                         <div className='badge'>
-                            <Icon type='up-square' theme='twoTone' twoToneColor='#3c78dc' />
+                            <UpSquareTwoTone twoToneColor='#3c78dc' />
                         </div>
                     );
                 }
@@ -798,7 +798,7 @@ class MapToken extends React.Component<MapTokenProps> {
                 if (this.props.combatant.altitude < 0) {
                     altitudeBadge = (
                         <div className='badge'>
-                            <Icon type='down-square' theme='twoTone' twoToneColor='#3c78dc' />
+                            <DownSquareTwoTone twoToneColor='#3c78dc' />
                         </div>
                     );
                 }
@@ -815,7 +815,7 @@ class MapToken extends React.Component<MapTokenProps> {
                 if (things > 0) {
                     conditionsBadge = (
                         <div className='conditions'>
-                            <Icon type='star' theme='twoTone' twoToneColor='#3c78dc' />
+                            <StarTwoTone twoToneColor='#3c78dc' />
                         </div>
                     );
                 }

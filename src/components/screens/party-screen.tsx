@@ -1,6 +1,6 @@
+import { CaretLeftOutlined } from '@ant-design/icons';
+import { Col, Row } from 'antd';
 import React from 'react';
-
-import { Col, Icon, Row } from 'antd';
 
 import { Party, PC } from '../../models/party';
 
@@ -199,7 +199,7 @@ class PartyInfo extends React.Component<PartyInfoProps> {
                         <button onClick={() => this.props.addPC()}>add a new pc</button>
                         <ConfirmButton text='delete party' callback={() => this.props.removeParty()} />
                         <div className='divider' />
-                        <button onClick={() => this.props.goBack()}><Icon type='caret-left' style={{ fontSize: '10px' }} /> back to the list</button>
+                        <button onClick={() => this.props.goBack()}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>
                     </div>
                 </div>
             );

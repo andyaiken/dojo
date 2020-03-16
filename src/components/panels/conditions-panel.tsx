@@ -1,6 +1,5 @@
+import { CloseOutlined, EditOutlined } from '@ant-design/icons';
 import React from 'react';
-
-import { Icon } from 'antd';
 
 import Utils from '../../utils/utils';
 
@@ -104,8 +103,8 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
                 <div className='group-panel condition-panel'>
                     <div className='condition-name'>{name}</div>
                     <div className='condition-buttons'>
-                        <Icon type='edit' title='edit' onClick={() => this.props.editCondition(this.props.condition)} />
-                        <Icon type='close' title='remove' onClick={() => this.props.removeCondition(this.props.condition)} />
+                        <EditOutlined title='edit' onClick={() => this.props.editCondition(this.props.condition)} />
+                        <CloseOutlined title='remove' onClick={() => this.props.removeCondition(this.props.condition)} />
                     </div>
                     {duration}
                     {description}

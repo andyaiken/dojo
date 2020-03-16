@@ -1,6 +1,6 @@
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { Col, Row } from 'antd';
 import React from 'react';
-
-import { Col, Icon, Row } from 'antd';
 
 import Utils from '../../utils/utils';
 
@@ -85,7 +85,7 @@ class ListItem extends React.Component<ListItemProps> {
                 <div key={pc.id} className='combatant-row'>
                     <PortraitPanel source={pc} inline={true}/>
                     <div className='name'>{this.getText(pc)}</div>
-                    <Icon className='info-icon' type='info-circle' onClick={() => this.props.openStatBlock(pc)} />
+                    <InfoCircleOutlined className='info-icon' onClick={() => this.props.openStatBlock(pc)} />
                 </div>
             ));
             if (pcs.length === 0) {
@@ -101,7 +101,7 @@ class ListItem extends React.Component<ListItemProps> {
                     <div key={pc.id} className='combatant-row'>
                         <PortraitPanel source={pc} inline={true}/>
                         <div className='name'>{this.getText(pc)}</div>
-                        <Icon className='info-icon' type='info-circle' onClick={() => this.props.openStatBlock(pc)} />
+                        <InfoCircleOutlined className='info-icon' onClick={() => this.props.openStatBlock(pc)} />
                     </div>
                 ));
             }

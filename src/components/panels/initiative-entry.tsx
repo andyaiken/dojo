@@ -1,6 +1,6 @@
+import { EnvironmentOutlined } from '@ant-design/icons';
+import { Tag } from 'antd';
 import React from 'react';
-
-import { Icon, Tag } from 'antd';
 import Showdown from 'showdown';
 
 import { Combat, Combatant } from '../../models/combat';
@@ -96,11 +96,7 @@ export default class InitiativeEntry extends React.Component<Props> {
             notes.push(
                 <Note key='not-on-map'>
                     <span>not on the map</span>
-                    <Icon
-                        type='environment'
-                        className='icon-button'
-                        onClick={() => this.props.addToMap(this.props.combatant)}
-                    />
+                    <EnvironmentOutlined className='icon-button' onClick={() => this.props.addToMap(this.props.combatant)} />
                 </Note>
             );
         }

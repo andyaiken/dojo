@@ -1,6 +1,5 @@
+import { CrownFilled, CrownOutlined } from '@ant-design/icons';
 import React from 'react';
-
-import { Icon } from 'antd';
 import Showdown from 'showdown';
 
 import Utils from '../../utils/utils';
@@ -65,12 +64,12 @@ export default class TraitsPanel extends React.Component<Props> {
                             const icons = [];
                             for (let n = 0; n !== used; ++n) {
                                 icons.push(
-                                    <Icon key={'used ' + n} type='crown' theme='filled' />
+                                    <CrownFilled key={'used ' + n} />
                                 );
                             }
                             for (let n = 0; n !== unused; ++n) {
                                 icons.push(
-                                    <Icon key={'unused ' + n} type='crown' />
+                                    <CrownOutlined key={'unused ' + n} />
                                 );
                             }
                             usage = (

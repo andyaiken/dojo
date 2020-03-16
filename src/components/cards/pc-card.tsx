@@ -1,6 +1,5 @@
-import React from 'react';
-
 import { Tag } from 'antd';
+import React from 'react';
 
 import { Combatant } from '../../models/combat';
 import { PC } from '../../models/party';

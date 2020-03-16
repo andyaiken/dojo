@@ -1,6 +1,6 @@
+import { CloseCircleOutlined } from '@ant-design/icons';
+import { Col, Row } from 'antd';
 import React from 'react';
-
-import { Col, Icon, Row } from 'antd';
 import Showdown from 'showdown';
 
 import Factory from '../../utils/factory';
@@ -536,8 +536,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                         {combatants.map(c => (
                             <div key={c.id} className='multiple-combatant-row'>
                                 {c.displayName}
-                                <Icon
-                                    type='close-circle'
+                                <CloseCircleOutlined
                                     style={{ float: 'right', padding: '2px 0', fontSize: '14px' }}
                                     onClick={() => this.toggleItemSelection(c.id, true)}
                                 />

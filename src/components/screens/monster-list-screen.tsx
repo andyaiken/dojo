@@ -1,6 +1,6 @@
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { Col, Row } from 'antd';
 import React from 'react';
-
-import { Col, Icon, Row } from 'antd';
 
 import Utils from '../../utils/utils';
 
@@ -29,7 +29,7 @@ export default class MonsterListScreen extends React.Component<Props> {
             if (!this.props.hasMonsters) {
                 /* tslint:disable:max-line-length */
                 return (
-                    <Row type='flex' justify='center' align='middle' className='scrollable'>
+                    <Row align='middle' justify='center' className='scrollable'>
                         <Col xs={20} sm={18} md={16} lg={12} xl={10}>
                             <Readaloud>
                                 <div className='section'>
@@ -98,7 +98,7 @@ class ListItem extends React.Component<ListItemProps> {
             <div key={m.id} className='combatant-row'>
                 <PortraitPanel source={m} inline={true}/>
                 <div className='name'>{m.name || 'unnamed monster'}</div>
-                <Icon className='info-icon' type='info-circle' onClick={() => this.props.openStatBlock(m)} />
+                <InfoCircleOutlined className='info-icon' onClick={() => this.props.openStatBlock(m)} />
             </div>
         ));
         if (monsters.length === 0) {

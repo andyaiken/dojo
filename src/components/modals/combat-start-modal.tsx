@@ -1,6 +1,6 @@
+import { RedoOutlined } from '@ant-design/icons';
+import { Col, Row, Slider } from 'antd';
 import React from 'react';
-
-import { Col, Icon, Row, Slider } from 'antd';
 
 import Factory from '../../utils/factory';
 import Frankenstein from '../../utils/frankenstein';
@@ -858,7 +858,7 @@ class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
                 <Col span={4}>
                     <div className='combatant-value'>
                         {source[field]}
-                        <Icon type='redo' onClick={() => roll()}/>
+                        <RedoOutlined onClick={() => roll()}/>
                     </div>
                 </Col>
             </Row>

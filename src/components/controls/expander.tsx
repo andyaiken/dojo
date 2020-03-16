@@ -1,6 +1,6 @@
+import { DownCircleOutlined } from '@ant-design/icons';
+import { Collapse } from 'antd';
 import React from 'react';
-
-import { Collapse, Icon } from 'antd';
 
 interface Props {
     text: string;
@@ -24,7 +24,7 @@ export default class Expander extends React.Component<Props> {
                     className={style}
                     bordered={false}
                     defaultActiveKey={[]}
-                    expandIcon={p => <Icon type='down-circle' rotate={p.isActive ? -180 : 0} />}
+                    expandIcon={p => <DownCircleOutlined rotate={p.isActive ? -180 : 0} />}
                     expandIconPosition={'right'}
                 >
                     <Collapse.Panel key='one' header={<div className='collapse-header-text'>{this.props.text}</div>}>

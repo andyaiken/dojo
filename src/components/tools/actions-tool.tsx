@@ -1,6 +1,6 @@
+import { LoadingOutlined } from '@ant-design/icons';
+import { Spin } from 'antd';
 import React from 'react';
-
-import { Icon, Spin } from 'antd';
 
 import Showdown from 'showdown';
 const showdown = new Showdown.Converter();
@@ -36,10 +36,8 @@ export default class ActionsTool extends React.Component<Props, State> {
                 this.fetchData();
             }
 
-            const icon = <Icon type='loading' style={{ fontSize: 20, marginTop: 100 }} spin={true} />;
-
             return (
-                <Spin spinning={this.state.source === null} indicator={icon}>
+                <Spin spinning={this.state.source === null} indicator={<LoadingOutlined style={{ fontSize: 20, marginTop: 100 }} />}>
                     <div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.state.source || '') }} />
                 </Spin>
             );

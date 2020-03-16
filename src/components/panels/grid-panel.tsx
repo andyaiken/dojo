@@ -1,6 +1,6 @@
+import { DownCircleOutlined } from '@ant-design/icons';
+import { Col, Row } from 'antd';
 import React from 'react';
-
-import { Col, Icon, Row } from 'antd';
 
 interface Props {
     content: (JSX.Element | null)[];
@@ -47,7 +47,7 @@ export default class GridPanel extends React.Component<Props, State> {
                 if (this.props.showToggle) {
                     const style = this.state.showContent ? 'rotate' : '';
                     toggle = (
-                        <Icon type='down-circle' className={style} onClick={() => this.toggleContentVisible()} />
+                        <DownCircleOutlined className={style} onClick={() => this.toggleContentVisible()} />
                     );
                 }
 
@@ -80,7 +80,7 @@ export default class GridPanel extends React.Component<Props, State> {
                 }
 
                 content = (
-                    <Row type='flex' align='top'>
+                    <Row align='top'>
                         {items.map(item => (
                             <Col key={items.indexOf(item)} xs={span.xs} sm={span.sm} md={span.md} lg={span.lg} xl={span.xl}>
                                 {item}

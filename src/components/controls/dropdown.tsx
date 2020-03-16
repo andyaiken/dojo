@@ -1,6 +1,5 @@
+import { CloseCircleOutlined, EllipsisOutlined } from '@ant-design/icons';
 import React from 'react';
-
-import { Icon } from 'antd';
 
 interface Props {
     options: { id: string; text: string; disabled?: boolean }[];
@@ -68,10 +67,7 @@ export default class Dropdown extends React.Component<Props, State> {
             content.push(
                 <div key='selection' className='dropdown-top' title={option ? option.text : this.props.placeholder}>
                     <div className='item-text'>{option ? option.text : this.props.placeholder}</div>
-                    <Icon
-                        type={canClear ? 'close-circle' : 'ellipsis'}
-                        onClick={e => canClear ? this.clear(e) : null}
-                    />
+                    {canClear ? <CloseCircleOutlined onClick={e => this.clear(e)} /> : <EllipsisOutlined />}
                 </div>
             );
 

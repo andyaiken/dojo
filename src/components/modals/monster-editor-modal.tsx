@@ -1,6 +1,6 @@
+import { MenuOutlined } from '@ant-design/icons';
+import { Col, Drawer, Row } from 'antd';
 import React from 'react';
-
-import { Col, Drawer, Icon, Row } from 'antd';
 import { List } from 'react-movable';
 
 import Factory from '../../utils/factory';
@@ -1179,7 +1179,7 @@ class TraitBarPanel extends React.Component<TraitBarProps> {
         try {
             return (
                 <div className={this.props.isSelected ? 'trait-bar selected' : 'trait-bar'} onClick={() => this.props.select(this.props.trait.id)}>
-                    <Icon type='menu' className='grabber small' data-movable-handle={true} />
+                    <MenuOutlined className='grabber small' data-movable-handle={true} />
                     <div className='name'>
                         {this.props.trait.name || 'unnamed ' + Utils.traitType(this.props.trait.type, false)}
                     </div>

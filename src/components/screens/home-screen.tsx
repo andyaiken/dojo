@@ -1,6 +1,5 @@
-import React from 'react';
-
 import { Col, Row } from 'antd';
+import React from 'react';
 
 import Readaloud from '../panels/readaloud';
 
@@ -11,7 +10,7 @@ export default class HomeScreen extends React.Component<Props> {
     public render() {
         // try {
             return (
-                <Row type='flex' justify='center' align='middle' className='scrollable'>
+                <Row align='middle' justify='center' className='scrollable'>
                     <Col xs={20} sm={18} md={16} lg={12} xl={10}>
                         <Readaloud>
                             <div className='heading'>welcome to <span className='app-name'>dojo</span></div>

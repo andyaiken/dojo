@@ -1,6 +1,5 @@
-import React from 'react';
-
 import { Input } from 'antd';
+import React from 'react';
 
 interface Props {
     text: string;

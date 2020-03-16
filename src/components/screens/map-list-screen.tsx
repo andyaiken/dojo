@@ -1,6 +1,5 @@
-import React from 'react';
-
 import { Col, Row } from 'antd';
+import React from 'react';
 
 import Utils from '../../utils/utils';
 
@@ -80,7 +79,7 @@ class ListItem extends React.Component<ListItemProps> {
                         </div>
                     </div>
                     <div className='card-content'>
-                        <Row type='flex' justify='center' align='middle' className='fixed-height'>
+                        <Row align='middle' justify='center' className='fixed-height'>
                             <Col span={24}>
                                 <MapPanel
                                     map={this.props.map}

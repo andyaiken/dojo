@@ -1,6 +1,6 @@
+import { CaretLeftOutlined } from '@ant-design/icons';
+import { Col, Row } from 'antd';
 import React from 'react';
-
-import { Col, Icon, Row } from 'antd';
 
 import Utils from '../../utils/utils';
 
@@ -153,7 +153,7 @@ class MonsterInfo extends React.Component<MonsterInfoProps> {
                         <button onClick={() => this.props.openDemographics()}>show demographics</button>
                         <ConfirmButton text='delete group' callback={() => this.props.removeMonsterGroup()} />
                         <div className='divider' />
-                        <button onClick={() => this.props.goBack()}><Icon type='caret-left' style={{ fontSize: '10px' }} /> back to the list</button>
+                        <button onClick={() => this.props.goBack()}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>
                     </div>
                 </div>
             );

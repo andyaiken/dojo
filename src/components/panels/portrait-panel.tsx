@@ -1,6 +1,5 @@
+import { CloseCircleOutlined } from '@ant-design/icons';
 import React from 'react';
-
-import { Icon } from 'antd';
 
 import { Monster } from '../../models/monster-group';
 import { PC } from '../../models/party';
@@ -25,7 +24,7 @@ export default class PortraitPanel extends React.Component<Props> {
         let clearBtn = null;
         if (this.props.source.portrait) {
             clearBtn = (
-                <Icon type='close-circle' onClick={() => this.props.clear()} />
+                <CloseCircleOutlined onClick={() => this.props.clear()} />
             );
         }
 

@@ -1,6 +1,5 @@
-import React from 'react';
-
 import { Col, Row, Tag } from 'antd';
+import React from 'react';
 
 import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
@@ -357,7 +356,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                 );
             }
             return (
-                <Row key={c.id} type='flex' align='middle'>
+                <Row key={c.id} align='middle' justify='center'>
                     <Col span={8}>
                         <div>{c.displayName}</div>
                     </Col>

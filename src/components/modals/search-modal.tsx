@@ -1,6 +1,5 @@
-import React from 'react';
-
 import { Input } from 'antd';
+import React from 'react';
 
 import Sherlock from '../../utils/sherlock';
 import Utils from '../../utils/utils';
