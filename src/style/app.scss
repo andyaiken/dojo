@@ -853,7 +853,8 @@ body,
         }
     }
 
-    &.highlight {
+    &.highlight,
+    &.current {
         border-color: $highlight;
 
         .header {
@@ -862,13 +863,7 @@ body,
     }
 
     &.current {
-        border-color: $highlight;
-        margin-bottom: 20px;
         pointer-events: none;
-
-        .header {
-            background-color: $highlight02;
-        }
     }
 
     &.defeated {
@@ -877,7 +872,7 @@ body,
 
     .header {
         height: 35px;
-        padding: 5px;
+        padding: 5px 8px;
         display: flex;
         align-items: center;
 
@@ -914,6 +909,10 @@ body,
             }
         }
     }
+}
+
+.next-up {
+    margin: 15px 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1051,6 +1050,10 @@ body,
     &.legendary-usage .anticon {
         font-size: 20px;
         margin: 0 10px;
+    }
+
+    &.small-text {
+        font-size: 10px;
     }
 
     .ability-scores {

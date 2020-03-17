@@ -293,8 +293,18 @@ export default class CombatScreen extends React.Component<Props, State> {
 
                 return true;
             });
+        const current = activeCombatants.some(c => c.current);
+        const initCount = activeCombatants.length;
         const initList = this.orderCombatants(activeCombatants)
             .map(c => this.createCombatantRow(c, true));
+        if (current) {
+            if (initCount > 1) {
+                initList.splice(1, 0, <div key='next1' className='section centered small-text'>next up</div>);
+            }
+            if (initCount > 2) {
+                initList.splice(3, 0, <div key='next2' className='section centered small-text'>then</div>);
+            }
+        }
 
         if (this.props.combat.map) {
             let controls = null;
@@ -397,7 +407,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 
             return (
                 <Popout title='Encounter' closeWindow={() => this.setPlayerViewOpen(false)}>
-                    <Row>
+                    <Row className='full-height'>
                         <Col xs={24} sm={24} md={12} lg={16} xl={18} className='scrollable both-ways'>
                             <MapPanel
                                 key='map'
@@ -745,8 +755,17 @@ export default class CombatScreen extends React.Component<Props, State> {
 
                     return true;
                 });
+            const initCount = activeCombatants.length;
             const initList = this.orderCombatants(activeCombatants)
                 .map(c => this.createCombatantRow(c, false));
+            if (current) {
+                if (initCount > 1) {
+                    initList.splice(1, 0, <div key='next1' className='section centered small-text'>next up</div>);
+                }
+                if (initCount > 2) {
+                    initList.splice(3, 0, <div key='next2' className='section centered small-text'>then</div>);
+                }
+            }
 
             if (!current) {
                 initList.unshift(

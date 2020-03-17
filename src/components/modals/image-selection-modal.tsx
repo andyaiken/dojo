@@ -123,7 +123,7 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
 
             return (
                 <div className='full-height'>
-                    <div className='drawer-header'><div className='text'>select image</div></div>
+                    <div className='drawer-header'><div className='app-title'>select image</div></div>
                     <div className='drawer-content'>
                         <div className='scrollable'>
                             <button onClick={() => (document.getElementById('file-upload') as HTMLElement).click()}>add a new image</button>
