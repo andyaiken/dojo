@@ -199,6 +199,38 @@ button {
     border-color: $highlight;
 }
 
+span.textbox.ant-input-affix-wrapper,
+span.ant-input-search.ant-input-affix-wrapper {
+        padding: 0;
+    border: 1px solid $control-border;
+    border-left-width: 5px;
+    border-radius: 0;
+
+    & > input.ant-input {
+        padding: 0 8px;
+        margin: 0px;
+        height: 30px;
+    }
+
+    .ant-input-suffix {
+        margin-right: 4px;
+
+        .anticon {
+            margin-top: 8px;
+        }
+    }
+
+    &:hover {
+        border-color: $highlight;
+    }
+}
+
+span.textbox.ant-input-affix-wrapper-focused,
+span.ant-input-search.ant-input-affix-wrapper-focused {
+    box-shadow: none;
+    border-color: $highlight;
+}
+
 .ant-collapse {
     font-size: 12px;
 }
@@ -808,8 +840,9 @@ body,
 // Combatant row
 
 .initiative-list-item {
+    border: 0 solid $control-border;
+    border-left-width: 5px;
     margin: 5px 0;
-    border-left: 5px solid $control-border;
     cursor: pointer;
 
     &:hover {
@@ -830,12 +863,11 @@ body,
 
     &.current {
         border-color: $highlight;
+        margin-bottom: 20px;
         pointer-events: none;
 
         .header {
-            background-color: $highlight;
-            color: $background;
-            font-weight: 600;
+            background-color: $highlight02;
         }
     }
 
@@ -844,21 +876,22 @@ body,
     }
 
     .header {
+        height: 35px;
         padding: 5px;
+        display: flex;
+        align-items: center;
+
         .name {
             display: inline-block;
             height: 22px;
             line-height: 22px;
-        }
-
-        .info {
-            float: right;
-            height: 20px;
+            flex-grow: 1;
+            font-weight: 600;
         }
     }
 
     .content {
-        padding: 0 5px;
+        padding-left: 5px;
 
         .condition {
             .condition-name {

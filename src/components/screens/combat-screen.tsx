@@ -266,14 +266,24 @@ export default class CombatScreen extends React.Component<Props, State> {
         }
     }
 
+    private orderCombatants(combatants: Combatant[]) {
+        const current = combatants.find(c => c.current);
+        if (!current) {
+            return combatants;
+        }
+
+        const index = combatants.indexOf(current);
+        return combatants.splice(index).concat(combatants);
+    }
+
     //#region Rendering helper methods
 
-    private getPlayerView(combat: Combat) {
+    private getPlayerView() {
         if (!this.state.playerView.open) {
             return null;
         }
 
-        const initList = combat.combatants
+        const activeCombatants = this.props.combat.combatants
             .filter(c => (c.type === 'pc') || c.showOnMap)
             .filter(c => !c.pending && c.active && !c.defeated)
             .filter(c => {
@@ -282,19 +292,20 @@ export default class CombatScreen extends React.Component<Props, State> {
                 }
 
                 return true;
-            })
+            });
+        const initList = this.orderCombatants(activeCombatants)
             .map(c => this.createCombatantRow(c, true));
 
-        if (combat.map) {
+        if (this.props.combat.map) {
             let controls = null;
-            if (combat.map && this.state.playerView.showControls) {
-                let selection = combat.combatants
-                    .filter(c => combat.map !== null ? combat.map.items.find(item => item.id === c.id) : false)
+            if (this.props.combat.map && this.state.playerView.showControls) {
+                let selection = this.props.combat.combatants
+                    .filter(c => this.props.combat.map !== null ? this.props.combat.map.items.find(item => item.id === c.id) : false)
                     .filter(c => c.showOnMap)
                     .filter(c => this.state.selectedItemIDs.includes(c.id));
                 if (selection.length === 0) {
-                    selection = combat.combatants
-                        .filter(c => combat.map !== null ? combat.map.items.find(item => item.id === c.id) : false)
+                    selection = this.props.combat.combatants
+                        .filter(c => this.props.combat.map !== null ? this.props.combat.map.items.find(item => item.id === c.id) : false)
                         .filter(c => c.showOnMap)
                         .filter(c => c.current);
                 }
@@ -390,10 +401,10 @@ export default class CombatScreen extends React.Component<Props, State> {
                         <Col xs={24} sm={24} md={12} lg={16} xl={18} className='scrollable both-ways'>
                             <MapPanel
                                 key='map'
-                                map={combat.map}
+                                map={this.props.combat.map}
                                 mode='combat-player'
                                 size={this.state.playerView.mapSize}
-                                combatants={combat.combatants}
+                                combatants={this.props.combat.combatants}
                                 selectedItemIDs={this.state.selectedItemIDs}
                                 itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
                             />
@@ -726,14 +737,15 @@ export default class CombatScreen extends React.Component<Props, State> {
                 );
             }
 
-            const initList = active
+            const activeCombatants = active
                 .filter(c => {
                     if (c.type === 'placeholder') {
                         return Napoleon.combatHasLairActions(this.props.combat);
                     }
 
                     return true;
-                })
+                });
+            const initList = this.orderCombatants(activeCombatants)
                 .map(c => this.createCombatantRow(c, false));
 
             if (!current) {
@@ -891,7 +903,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                             {rightContent}
                         </Col>
                     </Row>
-                    {this.getPlayerView(this.props.combat)}
+                    {this.getPlayerView()}
                 </div>
             );
         } catch (e) {
