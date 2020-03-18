@@ -220,6 +220,9 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                         >
                             hidden
                         </Tag.CheckableTag>
+                    </div>
+                    <div className='section'>
+                        <b>engaged with: </b>
                         {engaged}
                     </div>
                 </div>

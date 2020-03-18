@@ -1052,8 +1052,11 @@ body,
         margin: 0 10px;
     }
 
-    &.small-text {
-        font-size: 10px;
+    &.init-separator {
+        background-color: $header-background-05;
+        font-weight: 600;
+        padding: 5px 0;
+        margin: 10px 40px;
     }
 
     .ability-scores {
@@ -1120,11 +1123,6 @@ body,
     .input-label {
         padding-top: 5px;
         font-weight: 600;
-    }
-
-    &.small-text {
-        font-size: 10px;
-        font-weight: normal;
     }
 
     .statistic-value {

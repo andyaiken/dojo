@@ -65,6 +65,15 @@ export default class InitiativeEntry extends React.Component<Props> {
 
         const notes = [];
 
+        if (this.props.combatant.type === 'pc') {
+            const pc = this.props.combatant as (Combatant & PC);
+            if (pc.player) {
+                notes.push(
+                    <div key='player' className='section'>{pc.player}</div>
+                );
+            }
+        }
+
         // HP, AC stats
         if ((this.props.combatant.type === 'monster') && !this.props.minimal) {
             const monster = this.props.combatant as (Combatant & Monster);
@@ -91,6 +100,31 @@ export default class InitiativeEntry extends React.Component<Props> {
             );
         }
 
+        // Engaged tags
+        const engaged: string[] = [];
+        this.props.combatant.tags.filter(tag => tag.startsWith('engaged')).forEach(tag => {
+            engaged.push(Utils.getTagDescription(tag));
+        });
+        if (engaged.length > 0) {
+            notes.push(
+                <Note key='engaged'>
+                    <div>engaged with: {engaged.join(', ')}</div>
+                </Note>
+            );
+        }
+
+        // Other tags
+        this.props.combatant.tags.filter(tag => !tag.startsWith('engaged')).forEach(tag => {
+            notes.push(
+                <Note key={tag}>
+                    <div className='condition'>
+                        <div className='condition-name'>{Utils.getTagTitle(tag)}</div>
+                        {Utils.getTagDescription(tag)}
+                    </div>
+                </Note>
+            );
+        });
+
         // Not on the map
         if (this.props.combat.map && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
             notes.push(
@@ -107,18 +141,6 @@ export default class InitiativeEntry extends React.Component<Props> {
                 <Note key='hidden'>hidden</Note>
             );
         }
-
-        // Tags
-        this.props.combatant.tags.forEach(tag => {
-            notes.push(
-                <Note key={tag}>
-                    <div className='condition'>
-                        <div className='condition-name'>{Utils.getTagTitle(tag)}</div>
-                        {Utils.getTagDescription(tag)}
-                    </div>
-                </Note>
-            );
-        });
 
         // Conditions
         if (this.props.combatant.conditions) {

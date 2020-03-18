@@ -699,7 +699,7 @@ export default class Utils {
     public static getTagDescription(tag: string) {
         if (tag.startsWith('engaged')) {
             const tokens = tag.split(':');
-            return 'engaged with ' + tokens[1];
+            return tokens[1];
         }
 
         switch (tag) {

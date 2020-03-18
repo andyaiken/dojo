@@ -299,10 +299,10 @@ export default class CombatScreen extends React.Component<Props, State> {
             .map(c => this.createCombatantRow(c, true));
         if (current) {
             if (initCount > 1) {
-                initList.splice(1, 0, <div key='next1' className='section centered small-text'>next up</div>);
+                initList.splice(1, 0, <div key='next1' className='section centered init-separator'>next up</div>);
             }
             if (initCount > 2) {
-                initList.splice(3, 0, <div key='next2' className='section centered small-text'>then</div>);
+                initList.splice(3, 0, <div key='next2' className='section centered init-separator'>then</div>);
             }
         }
 
@@ -760,10 +760,10 @@ export default class CombatScreen extends React.Component<Props, State> {
                 .map(c => this.createCombatantRow(c, false));
             if (current) {
                 if (initCount > 1) {
-                    initList.splice(1, 0, <div key='next1' className='section centered small-text'>next up</div>);
+                    initList.splice(1, 0, <div key='next1' className='section centered init-separator'>next up</div>);
                 }
                 if (initCount > 2) {
-                    initList.splice(3, 0, <div key='next2' className='section centered small-text'>then</div>);
+                    initList.splice(3, 0, <div key='next2' className='section centered init-separator'>then</div>);
                 }
             }
 
