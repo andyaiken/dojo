@@ -1,3 +1,4 @@
+import { CopyOutlined, SoundOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
@@ -266,9 +267,7 @@ export default class LanguageTool extends React.Component<Props, State> {
                             <button onClick={() => this.random()}>random sources</button>
                         </Col>
                     </Row>
-                    <div className='language-output'>
-                        {output}
-                    </div>
+                    {output}
                 </div>
             );
         } catch (ex) {
@@ -285,25 +284,31 @@ interface GeneratedTextProps {
 
 class GeneratedText extends React.Component<GeneratedTextProps> {
     private copy(e: React.MouseEvent) {
-        e.preventDefault();
+        e.stopPropagation();
         navigator.clipboard.writeText(this.props.text);
     }
 
     private say(e: React.MouseEvent) {
-        e.preventDefault();
+        e.stopPropagation();
         Ustinov.say(this.props.text, this.props.languages);
     }
 
     public render() {
         try {
             return (
-                <Expander text={this.props.text.toLowerCase()}>
-                    <button onClick={e => this.copy(e)}>copy to clipboard</button>
-                    <button onClick={e => this.say(e)}>say</button>
-                    <div className='section'>
-                        <b>note:</b> speech may not work consistently on all platforms
+                <div className='generated-item'>
+                    <div className='text-section'>
+                        {this.props.text.toLowerCase()}
                     </div>
-                </Expander>
+                    <div className='icon-section'>
+                        <div>
+                            <CopyOutlined title='copy' onClick={e => this.copy(e)} />
+                        </div>
+                        <div>
+                            <SoundOutlined title='say' onClick={e => this.say(e)} />
+                        </div>
+                    </div>
+                </div>
             );
         } catch (ex) {
             console.error(ex);

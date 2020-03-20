@@ -27,7 +27,7 @@ interface State {
     canSearch: boolean;
 }
 
-export default class SearchModal extends React.Component<Props, State> {
+export default class SearchSidebar extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
@@ -182,7 +182,7 @@ export default class SearchModal extends React.Component<Props, State> {
             }
 
             return (
-                <div className='scrollable' style={{ padding: '10px' }}>
+                <div>
                     <Input.Search
                         placeholder='search'
                         allowClear={true}

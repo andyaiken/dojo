@@ -1,3 +1,4 @@
+import { CopyOutlined } from '@ant-design/icons';
 import React from 'react';
 
 import Shakespeare from '../../utils/shakespeare';
@@ -7,7 +8,7 @@ interface Props {
 
 interface State {
     source: string | null;
-    output: string[];
+    values: string[];
 }
 
 export default class PlaceNameTool extends React.Component<Props, State> {
@@ -16,7 +17,7 @@ export default class PlaceNameTool extends React.Component<Props, State> {
 
         this.state = {
             source: null,
-            output: []
+            values: []
         };
     }
 
@@ -31,7 +32,7 @@ export default class PlaceNameTool extends React.Component<Props, State> {
     private generate() {
         Shakespeare.initModel([this.state.source as string]);
         this.setState({
-            output: Shakespeare.generate(10).map(l => l.line)
+            values: Shakespeare.generate(10).map(l => l.line)
         });
     }
 
@@ -42,11 +43,9 @@ export default class PlaceNameTool extends React.Component<Props, State> {
             }
 
             const output = [];
-            for (let n = 0; n !== this.state.output.length; ++n) {
+            for (let n = 0; n !== this.state.values.length; ++n) {
                 output.push(
-                    <div key={n} className='section large'>
-                        {this.state.output[n]}
-                    </div>
+                    <GeneratedItem key={n} text={this.state.values[n]} />
                 );
             }
 
@@ -56,6 +55,35 @@ export default class PlaceNameTool extends React.Component<Props, State> {
                     <button onClick={() => this.generate()}>generate</button>
                     <div className='language-output'>
                         {output}
+                    </div>
+                </div>
+            );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
+        }
+    }
+}
+
+interface GeneratedItemProps {
+    text: string;
+}
+
+class GeneratedItem extends React.Component<GeneratedItemProps> {
+    private copy(e: React.MouseEvent) {
+        e.stopPropagation();
+        navigator.clipboard.writeText(this.props.text);
+    }
+
+    public render() {
+        try {
+            return (
+                <div className='generated-item'>
+                    <div className='text-section'>
+                        {this.props.text.toLowerCase()}
+                    </div>
+                    <div className='icon-section'>
+                        <CopyOutlined title='copy' onClick={e => this.copy(e)} />
                     </div>
                 </div>
             );

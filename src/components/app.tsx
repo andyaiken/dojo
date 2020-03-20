@@ -27,10 +27,7 @@ import MonsterImportModal from './modals/monster-import-modal';
 import PartyImportModal from './modals/party-import-modal';
 import PCEditorModal from './modals/pc-editor-modal';
 import PCUpdateModal from './modals/pc-update-modal';
-import ReferenceModal from './modals/reference-modal';
-import SearchModal from './modals/search-modal';
 import StatBlockModal from './modals/stat-block-modal';
-import ToolsModal from './modals/tools-modal';
 import PageFooter from './panels/page-footer';
 import PageHeader from './panels/page-header';
 import CombatListScreen from './screens/combat-list-screen';
@@ -42,6 +39,9 @@ import MonsterListScreen from './screens/monster-list-screen';
 import MonsterScreen from './screens/monster-screen';
 import PartyListScreen from './screens/party-list-screen';
 import PartyScreen from './screens/party-screen';
+import ReferenceSidebar from './sidebars/reference-sidebar';
+import SearchSidebar from './sidebars/search-sidebar';
+import ToolsSidebar from './sidebars/tools-sidebar';
 
 interface Props {
 }
@@ -49,6 +49,7 @@ interface Props {
 interface State {
     view: string;
     drawer: any;
+    sidebar: string | null;
 
     parties: Party[];
     library: MonsterGroup[];
@@ -148,6 +149,7 @@ export default class App extends React.Component<Props, State> {
         this.state = {
             view: 'home',
             drawer: null,
+            sidebar: null,
             parties: parties,
             library: library,
             encounters: encounters,
@@ -175,6 +177,12 @@ export default class App extends React.Component<Props, State> {
         this.save();
         this.setState({
             view: view
+        });
+    }
+
+    private setSidebar(view: string | null) {
+        this.setState({
+            sidebar: view
         });
     }
 
@@ -1933,6 +1941,46 @@ export default class App extends React.Component<Props, State> {
         return null;
     }
 
+    private getSidebar() {
+        if (!this.state.sidebar) {
+            return null;
+        }
+
+        let content = null;
+        switch (this.state.sidebar) {
+            case 'tools':
+                content = (
+                    <ToolsSidebar library={this.state.library} />
+                );
+                break;
+            case 'reference':
+                content = (
+                    <ReferenceSidebar />
+                );
+                break;
+            case 'search':
+                content = (
+                    <SearchSidebar
+                        parties={this.state.parties}
+                        library={this.state.library}
+                        encounters={this.state.encounters}
+                        maps={this.state.maps}
+                        openParty={id => this.selectPartyByID(id)}
+                        openGroup={id => this.selectMonsterGroupByID(id)}
+                        openEncounter={id => this.selectEncounterByID(id)}
+                        openMap={id => this.selectMapByID(id)}
+                    />
+                );
+                break;
+        }
+
+        return (
+            <div className='sidebar sidebar-right scrollable'>
+                {content}
+            </div>
+        );
+    }
+
     private getDrawer() {
         let content = null;
         let header = null;
@@ -2204,49 +2252,16 @@ export default class App extends React.Component<Props, State> {
                     header = 'leaderboard';
                     closable = true;
                     break;
-                case 'tools':
-                    content = (
-                        <ToolsModal
-                            library={this.state.library}
-                        />
-                    );
-                    header = 'dm tools';
-                    closable = true;
-                    break;
-                case 'reference':
-                    content = (
-                        <ReferenceModal
-                        />
-                    );
-                    header = 'reference';
-                    closable = true;
-                    break;
-                case 'search':
-                    content = (
-                        <SearchModal
-                            parties={this.state.parties}
-                            library={this.state.library}
-                            encounters={this.state.encounters}
-                            maps={this.state.maps}
-                            openParty={id => this.selectPartyByID(id)}
-                            openGroup={id => this.selectMonsterGroupByID(id)}
-                            openEncounter={id => this.selectEncounterByID(id)}
-                            openMap={id => this.selectMapByID(id)}
-                        />
-                    );
-                    header = 'search';
-                    closable = true;
-                    break;
-                case 'about':
-                    content = (
-                        <AboutModal
-                            resetAll={() => this.resetAll()}
-                        />
-                    );
-                    header = 'about';
-                    closable = true;
-                    break;
-            }
+                    case 'about':
+                        content = (
+                            <AboutModal
+                                resetAll={() => this.resetAll()}
+                            />
+                        );
+                        header = 'about';
+                        closable = true;
+                        break;
+                }
         }
 
         return {
@@ -2260,16 +2275,19 @@ export default class App extends React.Component<Props, State> {
 
     public render() {
         try {
+            const sidebar = this.getSidebar();
             const drawer = this.getDrawer();
 
             return (
                 <div className='dojo'>
                     <PageHeader
-                        view={this.state.view}
+                        sidebar={this.state.sidebar}
+                        setSidebar={type => this.setSidebar(type)}
                         openDrawer={type => this.openToolsDrawer(type)}
                     />
                     <div className='page-content'>
-                        {this.getContent()}
+                        <div className='content'>{this.getContent()}</div>
+                        {sidebar}
                     </div>
                     <PageFooter
                         view={this.state.view}

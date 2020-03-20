@@ -13,7 +13,7 @@ interface State {
     view: string;
 }
 
-export default class ReferenceModal extends React.Component<Props, State> {
+export default class ReferenceSidebar extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
@@ -65,7 +65,7 @@ export default class ReferenceModal extends React.Component<Props, State> {
             }
 
             return (
-                <div className='tools scrollable' style={{ padding: '10px' }}>
+                <div>
                     <Selector
                         options={options}
                         selectedID={this.state.view}

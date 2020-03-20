@@ -1,3 +1,4 @@
+import { CopyOutlined } from '@ant-design/icons';
 import React from 'react';
 
 import Shakespeare from '../../utils/shakespeare';
@@ -37,9 +38,7 @@ export default class BookTool extends React.Component<Props, State> {
             const values = [];
             for (let n = 0; n !== this.state.values.length; ++n) {
                 values.push(
-                    <div key={n} className='section large'>
-                        {this.state.values[n].toLowerCase()}
-                    </div>
+                    <GeneratedItem key={n} text={this.state.values[n]} />
                 );
             }
 
@@ -48,6 +47,35 @@ export default class BookTool extends React.Component<Props, State> {
                     <div className='subheading'>book titles</div>
                     <button onClick={() => this.generate()}>generate</button>
                     {values}
+                </div>
+            );
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
+        }
+    }
+}
+
+interface GeneratedItemProps {
+    text: string;
+}
+
+class GeneratedItem extends React.Component<GeneratedItemProps> {
+    private copy(e: React.MouseEvent) {
+        e.stopPropagation();
+        navigator.clipboard.writeText(this.props.text);
+    }
+
+    public render() {
+        try {
+            return (
+                <div className='generated-item'>
+                    <div className='text-section'>
+                        {this.props.text.toLowerCase()}
+                    </div>
+                    <div className='icon-section'>
+                        <CopyOutlined title='copy' onClick={e => this.copy(e)} />
+                    </div>
                 </div>
             );
         } catch (ex) {

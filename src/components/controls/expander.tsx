@@ -3,7 +3,7 @@ import { Collapse } from 'antd';
 import React from 'react';
 
 interface Props {
-    text: string;
+    text: string | JSX.Element;
     disabled: boolean;
 }
 

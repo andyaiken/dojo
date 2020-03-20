@@ -842,7 +842,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                     }
                 });
 
-            const rightPanelOptions = ['selection', 'tools'].map(option => {
+            const rightPanelOptions = ['selection', 'menu'].map(option => {
                 return { id: option, text: option };
             });
 
@@ -853,8 +853,8 @@ export default class CombatScreen extends React.Component<Props, State> {
                     rightHeading = 'selected combatant';
                     rightContent = this.getSelectedCombatant();
                     break;
-                case 'tools':
-                    rightHeading = 'tools';
+                case 'menu':
+                    rightHeading = 'menu';
                     rightContent = this.getTools();
                     break;
             }

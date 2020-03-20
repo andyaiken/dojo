@@ -16,10 +16,10 @@ export default class NPCTool extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            description: Shakespeare.generateNPC(),
-            physical: Shakespeare.generateNPCPhysical(),
-            mental: Shakespeare.generateNPCMental(),
-            speech: Shakespeare.generateNPCSpeech()
+            description: '',
+            physical: '',
+            mental: '',
+            speech: ''
         };
     }
 
@@ -38,10 +38,10 @@ export default class NPCTool extends React.Component<Props, State> {
                 <div>
                     <div className='subheading'>npc description</div>
                     <button onClick={() => this.generate()}>generate</button>
-                    <div className='section large'>{this.state.description}</div>
-                    {this.state.physical ? <div className='section large'>physical: {this.state.physical}</div> : null}
-                    {this.state.mental ? <div className='section large'>personality: {this.state.mental}</div> : null}
-                    {this.state.speech ? <div className='section large'>speech: {this.state.speech}</div> : null}
+                    <div className='generated-item'>{this.state.description}</div>
+                    {this.state.physical ? <div className='generated-item'>physical: {this.state.physical}</div> : null}
+                    {this.state.mental ? <div className='generated-item'>personality: {this.state.mental}</div> : null}
+                    {this.state.speech ? <div className='generated-item'>speech: {this.state.speech}</div> : null}
                 </div>
             );
         } catch (ex) {

@@ -432,6 +432,15 @@ span.ant-input-search.ant-input-affix-wrapper-focused {
     border-top: 1px solid $control-border;
 }
 
+.vertical-divider {
+    display: inline-block;
+    vertical-align: top;
+    height: 100%;
+    width: 3px;
+    margin: 0 10px;
+    background-color: $control-border;
+}
+
 .sidebar {
     background-color: rgb(240, 240, 240);
 
@@ -541,14 +550,6 @@ body,
     }
 }
 
-.page-content {
-    height: calc(100% - 100px);
-
-    &.maximized {
-        height: 100%;
-    }
-}
-
 .dragged {
     font-family: 'Open Sans', 'Segoe UI', sans-serif;
     font-size: 12px;
@@ -610,8 +611,78 @@ body,
             cursor: pointer;
 
             &:hover {
-                background-color: $highlight02;
+                background-color: $highlight01;
             }
+
+            &.selected {
+                background-color: $highlight02;
+                color: $highlight;
+            }
+        }
+    }
+}
+
+.page-content {
+    height: calc(100% - 100px);
+    display: flex;
+    flex-direction: row;
+
+    .content {
+        flex-grow: 1;
+        flex-shrink: 0;
+        flex-basis: 0;
+    }
+
+    .sidebar {
+        flex-grow: 0;
+        flex-shrink: 0;
+        flex-basis: 400px;
+        padding: 10px;
+
+        .language-options {
+            .checkbox {
+                margin: 3px;
+            }
+        }
+    
+        .generated-item {
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+            padding: 5px 0;
+
+            .text-section {
+                flex-grow: 1;
+                flex-shrink: 0;
+                flex-basis: 0;
+            }
+
+            .icon-section {
+                flex-grow: 0;
+                flex-shrink: 0;
+                flex-basis: auto;
+
+                .anticon {
+                    padding: 5px;
+
+                    &:hover {
+                        background-color: $highlight02;
+                    }
+                }
+            }
+        }
+        
+        .die-rolls {
+            text-align: center;
+            font-weight: 600;
+            padding-top: 20px;
+        }
+    
+        .die-result {
+            text-align: center;
+            font-size: 50px;
+            font-weight: 600;
+            padding-top: 20px;
         }
     }
 }
@@ -1399,41 +1470,6 @@ body,
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-.tools {
-    .language-options {
-        .checkbox {
-            margin: 3px;
-        }
-    }
-
-    .language-output {
-        .ant-collapse-header {
-            font-size: 20px;
-            font-weight: normal;
-            padding: 10px;
-        }
-    }
-
-    .large {
-        font-size: 20px;
-        line-height: 25px;
-        margin: 15px 0;
-    }
-
-    .die-rolls {
-        text-align: center;
-        font-weight: 600;
-        padding-top: 20px;
-    }
-
-    .die-result {
-        text-align: center;
-        font-size: 50px;
-        font-weight: 600;
-        padding-top: 20px;
-    }
-}
-
 .group-panel {
     border-left: 5px solid #c3c3c3;
     background: $background;
@@ -1841,6 +1877,7 @@ body,
             backface-visibility: hidden;
             border: 1px solid $control-border;
             border-radius: 15px;
+            background-color: beige;
             cursor: pointer;
 
             &:hover {
@@ -1852,7 +1889,7 @@ body,
             text-align: center;
             font-size: 150px;
             background-color: $control-border;
-            color: $background;
+            color: beige;
 
             &:hover {
                 background-color: $highlight;
@@ -1860,12 +1897,13 @@ body,
         }
 
         .oracle-card-back {
-            padding: 15px;
+            padding: 10px;
             transform: rotateY(180deg);
 
             .oracle-card-name {
                 font-weight: 600;
                 font-size: 14px;
+                height: 45px;
                 margin-bottom: 10px;
                 text-align: center;
             }
@@ -1875,10 +1913,6 @@ body,
                 height: 20px;
                 margin-bottom: 20px;
                 text-align: center;
-            }
-
-            .oracle-card-meaning {
-                font-size: 14px;
             }
         }
     }

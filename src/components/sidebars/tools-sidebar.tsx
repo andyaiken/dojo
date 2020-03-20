@@ -21,7 +21,7 @@ interface State {
     view: string;
 }
 
-export default class ToolsModal extends React.Component<Props, State> {
+export default class ToolsSidebar extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
@@ -127,7 +127,7 @@ export default class ToolsModal extends React.Component<Props, State> {
             }
 
             return (
-                <div className='tools scrollable' style={{ padding: '10px' }}>
+                <div>
                     <Selector
                         options={options}
                         selectedID={this.state.view}
