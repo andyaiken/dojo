@@ -13,13 +13,23 @@ import Textbox from '../controls/textbox';
 
 interface Props {
     filter: MonsterFilter;
+    noTopMargin: boolean;
     changeValue: (type: 'name' | 'challenge' | 'category' | 'size', value: any) => void;
     resetFilter: () => void;
 }
 
 export default class FilterPanel extends React.Component<Props> {
+    public static defaultProps = {
+        noTopMargin: false
+    };
+
     public render() {
         try {
+            const style: React.CSSProperties = {};
+            if (this.props.noTopMargin) {
+                style.marginTop = '-5px';
+            }
+
             const sizes = ['all sizes'].concat(SIZE_TYPES);
             const sizeOptions = sizes.map(size => ({ id: size, text: size }));
 
@@ -51,7 +61,7 @@ export default class FilterPanel extends React.Component<Props> {
             }
 
             return (
-                <div style={{ marginTop: '-5px' }}>
+                <div style={style}>
                     <Textbox
                         text={this.props.filter.name}
                         placeholder='name'

@@ -349,7 +349,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 
             return (
                 <Row className='full-height'>
-                    <Col span={8} className='scrollable'>
+                    <Col span={8} className='scrollable sidebar sidebar-left'>
                         <div className='section'>
                             <div className='subheading'>encounter name</div>
                             <Textbox

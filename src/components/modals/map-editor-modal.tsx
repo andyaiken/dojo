@@ -494,7 +494,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
 
             return (
                 <Row className='full-height'>
-                    <Col span={8} className='scrollable'>
+                    <Col span={8} className='scrollable sidebar sidebar-left'>
                         {tools}
                     </Col>
                     <Col span={16} className='scrollable both-ways'>

@@ -11,7 +11,7 @@ export default class HomeScreen extends React.Component<Props> {
         // try {
             return (
                 <Row align='middle' justify='center' className='scrollable'>
-                    <Col xs={20} sm={18} md={16} lg={12} xl={10}>
+                    <Col span={16}>
                         <Readaloud>
                             <div className='heading'>welcome to <span className='app-name'>dojo</span></div>
                             <div className='divider' />
@@ -30,7 +30,8 @@ export default class HomeScreen extends React.Component<Props> {
                             <div className='divider' />
                             <div className='section'>
                                 use the buttons at the bottom of the screen to explore the app's main features,
-                                or press the dm tools button at the top right for additional dm tools
+                                or press the <i>dm tools</i> button at the top right for additional tools
+                                like a die roller and some useful random generators
                             </div>
                         </Readaloud>
                     </Col>

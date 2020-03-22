@@ -346,6 +346,11 @@ span.ant-input-search.ant-input-affix-wrapper-focused {
     }
 }
 
+.ant-carousel .slick-slide {
+    height: 160px;
+    overflow: hidden;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Helper classes
 
@@ -782,6 +787,13 @@ body,
 
         .divider {
             border-color: #006500;
+        }
+
+        .card-content {
+    
+            .stats {
+                column-count: 1;
+            }
         }
     }
 
@@ -1521,6 +1533,10 @@ body,
     }
 }
 
+.grid-panel {
+    padding-bottom: 10px;
+}
+
 .readaloud {
     margin: 25px 10px;
     padding: 0 5px;
@@ -1530,6 +1546,7 @@ body,
     border-image: url("../resources/images/readaloud.png") 11;
     border-image-outset: 9px 0;
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+    font-size: 15px;
 
     .heading {
         border: none;

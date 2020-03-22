@@ -553,6 +553,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                     sidebarContent = (
                         <FilterPanel
                             filter={this.state.scratchpadFilter}
+                            noTopMargin={true}
                             changeValue={(type, value) => this.changeFilterValue(type, value)}
                             resetFilter={() => this.resetFilter()}
                         />

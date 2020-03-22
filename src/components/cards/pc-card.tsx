@@ -90,11 +90,11 @@ export default class PCCard extends React.Component<Props> {
                                 <div><b>investigation</b> {this.props.pc.passiveInvestigation}</div>
                                 <div><b>perception</b> {this.props.pc.passivePerception}</div>
                             </div>
-                        </div>
-                        <div style={{ display: this.props.pc.companions.length > 0 ? '' : 'none' }}>
-                            <div className='section subheading'>companions</div>
-                            <div className='section'>
-                                {companions}
+                            <div style={{ display: this.props.pc.companions.length > 0 ? '' : 'none' }}>
+                                <div className='section subheading'>companions</div>
+                                <div className='section'>
+                                    {companions}
+                                </div>
                             </div>
                         </div>
                         <div style={{ display: options.length > 0 ? '' : 'none' }}>
