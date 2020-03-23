@@ -438,10 +438,8 @@ span.ant-input-search.ant-input-affix-wrapper-focused {
 }
 
 .vertical-divider {
-    display: inline-block;
-    vertical-align: top;
-    height: 100%;
-    width: 3px;
+    height: 35px;
+    width: 2px;
     margin: 0 10px;
     background-color: $control-border;
 }
@@ -594,26 +592,24 @@ body,
 // Page Header / Page Footer
 
 .page-header {
+    display: flex;
+    align-items: center;
     height: 50px;
-    padding: 10px;
+    padding: 0 10px;
     background-color: $header-background;
     border-bottom: 1px solid $control-border;
 
     .app-title {
+        flex-grow: 1;
         color: $header-foreground;
     }
 
     .drawer-icons {
-        position: absolute;
-        right: 5px;
-        top: 10px;
-        height: 30px;
 
         .title-bar-icon {
             padding: 5px;
             margin: 0 5px;
             font-size: 20px;
-            cursor: pointer;
 
             &:hover {
                 background-color: $highlight01;
@@ -693,32 +689,45 @@ body,
 }
 
 .page-footer {
-    height: 50px;
+    padding: 0 10px;
     text-align: center;
     background-color: $header-background;
     border-top: 1px solid $control-border;
+    display: flex;
+    align-items: center;
 
     .navigator-item {
-        display: inline-block;
-        vertical-align: middle;
-        margin: 5px;
-        border: 1px solid transparent;
+        flex-grow: 1;
+        flex-shrink: 1;
+        flex-basis: 0;
+        border-top: 3px solid transparent;
         cursor: pointer;
-        height: 39px;
-        line-height: 35px;
-        width: calc(((100% - 1px) / 5) - 10px);
-        font-size: 14px;
+        height: 49px;
+        line-height: 42px;
+        font-size: 16px;
         color: $header-foreground;
 
         &.selected {
-            background-color: $control-border;
+            border-color: $highlight;
+            font-weight: 600;
             pointer-events: none;
         }
 
-        &.selected,
         &:hover {
             border-color: $control-border;
-            font-weight: 600;
+        }
+    }
+
+    .anticon {
+        flex-grow: 0;
+        flex-shrink: 0;
+        flex-basis: auto;
+        margin: 5px;
+        padding: 5px;
+        font-size: 20px;
+
+        &:hover {
+            background-color: $highlight01;
         }
     }
 }

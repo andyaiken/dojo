@@ -2283,7 +2283,6 @@ export default class App extends React.Component<Props, State> {
                     <PageHeader
                         sidebar={this.state.sidebar}
                         setSidebar={type => this.setSidebar(type)}
-                        openDrawer={type => this.openToolsDrawer(type)}
                     />
                     <div className='page-content'>
                         <div className='content'>{this.getContent()}</div>
@@ -2292,6 +2291,7 @@ export default class App extends React.Component<Props, State> {
                     <PageFooter
                         view={this.state.view}
                         setView={view => this.setView(view)}
+                        openDrawer={type => this.openToolsDrawer(type)}
                     />
                     <Drawer
                         closable={false}
