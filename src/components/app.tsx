@@ -1,5 +1,5 @@
 import { Col, Drawer, Row } from 'antd';
-import React from 'react';
+import React, { ErrorInfo } from 'react';
 
 import Factory from '../utils/factory';
 import Frankenstein from '../utils/frankenstein';
@@ -39,6 +39,7 @@ import MonsterListScreen from './screens/monster-list-screen';
 import MonsterScreen from './screens/monster-screen';
 import PartyListScreen from './screens/party-list-screen';
 import PartyScreen from './screens/party-screen';
+import GeneratorsSidebar from './sidebars/generators-sidebar';
 import ReferenceSidebar from './sidebars/reference-sidebar';
 import SearchSidebar from './sidebars/search-sidebar';
 import ToolsSidebar from './sidebars/tools-sidebar';
@@ -1041,62 +1042,63 @@ export default class App extends React.Component<Props, State> {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
             // Handle start-of-turn conditions
-            combat.combatants.filter(actor => actor.conditions).forEach(actor => {
-                actor.conditions.forEach(c => {
-                    if (c.duration) {
-                        switch (c.duration.type) {
-                            case 'saves':
-                                // If it's my condition, and point is START, notify the user
-                                if (combatant && (actor.id === combatant.id) && (c.duration.point === 'start')) {
-                                    combat.notifications.push({
-                                        id: Utils.guid(),
-                                        type: 'condition-save',
-                                        data: c,
-                                        combatant: combatant as Combatant & Monster
-                                    });
-                                }
-                                break;
-                            case 'combatant':
-                                // If this refers to me, and point is START, remove it
-                                if (combatant && ((c.duration.combatantID === combatant.id) || (c.duration.combatantID === null)) && (c.duration.point === 'start')) {
-                                    const index = actor.conditions.indexOf(c);
-                                    actor.conditions.splice(index, 1);
-                                    // Notify the user
-                                    combat.notifications.push({
-                                        id: Utils.guid(),
-                                        type: 'condition-end',
-                                        data: c,
-                                        combatant: combatant as Combatant & Monster
-                                    });
-                                }
-                                break;
-                            case 'rounds':
-                                // If it's my condition, decrement the condition
-                                if (combatant && (actor.id === combatant.id)) {
-                                    c.duration.count -= 1;
-                                }
-                                // If it's now at 0, remove it
-                                if (c.duration.count === 0) {
-                                    const n = actor.conditions.indexOf(c);
-                                    actor.conditions.splice(n, 1);
-                                    if (combat) {
+            combat.combatants.filter(actor => actor.conditions)
+                .forEach(actor => {
+                    actor.conditions.forEach(c => {
+                        if (c.duration) {
+                            switch (c.duration.type) {
+                                case 'saves':
+                                    // If it's my condition, and point is START, notify the user
+                                    if (combatant && (actor.id === combatant.id) && (c.duration.point === 'start')) {
+                                        combat.notifications.push({
+                                            id: Utils.guid(),
+                                            type: 'condition-save',
+                                            data: c,
+                                            combatant: actor
+                                        });
+                                    }
+                                    break;
+                                case 'combatant':
+                                    // If this refers to me, and point is START, remove it
+                                    if (combatant && ((c.duration.combatantID === combatant.id) || (c.duration.combatantID === null)) && (c.duration.point === 'start')) {
+                                        const index = actor.conditions.indexOf(c);
+                                        actor.conditions.splice(index, 1);
                                         // Notify the user
                                         combat.notifications.push({
                                             id: Utils.guid(),
                                             type: 'condition-end',
                                             data: c,
-                                            combatant: combatant as Combatant & Monster
+                                            combatant: actor
                                         });
                                     }
-                                }
-                                break;
-                            default:
-                                // Do nothing
-                                break;
+                                    break;
+                                case 'rounds':
+                                    // If it's my condition, decrement the condition
+                                    if (combatant && (actor.id === combatant.id)) {
+                                        c.duration.count -= 1;
+                                    }
+                                    // If it's now at 0, remove it
+                                    if (c.duration.count === 0) {
+                                        const n = actor.conditions.indexOf(c);
+                                        actor.conditions.splice(n, 1);
+                                        if (combat) {
+                                            // Notify the user
+                                            combat.notifications.push({
+                                                id: Utils.guid(),
+                                                type: 'condition-end',
+                                                data: c,
+                                                combatant: actor
+                                            });
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    // Do nothing
+                                    break;
+                            }
                         }
-                    }
+                    });
                 });
-            });
 
             // Handle recharging traits
             if (combatant && (combatant.type === 'monster')) {
@@ -1107,7 +1109,7 @@ export default class App extends React.Component<Props, State> {
                             id: Utils.guid(),
                             type: 'trait-recharge',
                             data: t,
-                            combatant: combatant as Combatant & Monster
+                            combatant: combatant
                         });
                     });
                 (combatant as Combatant & Monster).traits
@@ -1245,43 +1247,44 @@ export default class App extends React.Component<Props, State> {
             }
 
             // Handle end-of-turn conditions
-            combat.combatants.filter(actor => actor.conditions).forEach(actor => {
-                actor.conditions.forEach(c => {
-                    if (c.duration) {
-                        switch (c.duration.type) {
-                            case 'saves':
-                                // If it's my condition, and point is END, notify the user
-                                if ((actor.id === combatant.id) && (c.duration.point === 'end')) {
-                                    const saveNotification = Factory.createNotification();
-                                    saveNotification.type = 'condition-save';
-                                    saveNotification.data = c;
-                                    saveNotification.combatant = combatant as Combatant & Monster;
-                                    combat.notifications.push(saveNotification);
-                                }
-                                break;
-                            case 'combatant':
-                                // If this refers to me, and point is END, remove it
-                                if (((c.duration.combatantID === combatant.id) || (c.duration.combatantID === null)) && (c.duration.point === 'end')) {
-                                    const n = actor.conditions.indexOf(c);
-                                    actor.conditions.splice(n, 1);
-                                    // Notify the user
-                                    const endNotification = Factory.createNotification();
-                                    endNotification.type = 'condition-end';
-                                    endNotification.data = c;
-                                    endNotification.combatant = combatant as Combatant & Monster;
-                                    combat.notifications.push(endNotification);
-                                }
-                                break;
-                            case 'rounds':
-                                // We check this at the beginning of each turn, not at the end
-                                break;
-                            default:
-                                // Do nothing
-                                break;
+            combat.combatants.filter(actor => actor.conditions)
+                .forEach(actor => {
+                    actor.conditions.forEach(c => {
+                        if (c.duration) {
+                            switch (c.duration.type) {
+                                case 'saves':
+                                    // If it's my condition, and point is END, notify the user
+                                    if ((actor.id === combatant.id) && (c.duration.point === 'end')) {
+                                        const saveNotification = Factory.createNotification();
+                                        saveNotification.type = 'condition-save';
+                                        saveNotification.data = c;
+                                        saveNotification.combatant = actor;
+                                        combat.notifications.push(saveNotification);
+                                    }
+                                    break;
+                                case 'combatant':
+                                    // If this refers to me, and point is END, remove it
+                                    if (((c.duration.combatantID === combatant.id) || (c.duration.combatantID === null)) && (c.duration.point === 'end')) {
+                                        const n = actor.conditions.indexOf(c);
+                                        actor.conditions.splice(n, 1);
+                                        // Notify the user
+                                        const endNotification = Factory.createNotification();
+                                        endNotification.type = 'condition-end';
+                                        endNotification.data = c;
+                                        endNotification.combatant = actor;
+                                        combat.notifications.push(endNotification);
+                                    }
+                                    break;
+                                case 'rounds':
+                                    // We check this at the beginning of each turn, not at the end
+                                    break;
+                                default:
+                                    // Do nothing
+                                    break;
+                            }
                         }
-                    }
+                    });
                 });
-            });
 
             const active = combat.combatants
                 .filter(c => {
@@ -1948,16 +1951,6 @@ export default class App extends React.Component<Props, State> {
 
         let content = null;
         switch (this.state.sidebar) {
-            case 'tools':
-                content = (
-                    <ToolsSidebar library={this.state.library} />
-                );
-                break;
-            case 'reference':
-                content = (
-                    <ReferenceSidebar />
-                );
-                break;
             case 'search':
                 content = (
                     <SearchSidebar
@@ -1972,10 +1965,25 @@ export default class App extends React.Component<Props, State> {
                     />
                 );
                 break;
+            case 'tools':
+                content = (
+                    <ToolsSidebar />
+                );
+                break;
+            case 'generators':
+                content = (
+                    <GeneratorsSidebar />
+                );
+                break;
+            case 'reference':
+                content = (
+                    <ReferenceSidebar />
+                );
+                break;
         }
 
         return (
-            <div className='sidebar sidebar-right scrollable'>
+            <div className='sidebar sidebar-right'>
                 {content}
             </div>
         );
@@ -2135,7 +2143,7 @@ export default class App extends React.Component<Props, State> {
                             </Col>
                         </Row>
                     );
-                    width = '100%';
+                    width = '85%';
                     break;
                 case 'combat-start':
                     content = (
@@ -2280,30 +2288,40 @@ export default class App extends React.Component<Props, State> {
 
             return (
                 <div className='dojo'>
-                    <PageHeader
-                        sidebar={this.state.sidebar}
-                        setSidebar={type => this.setSidebar(type)}
-                    />
+                    <ErrorBoundary>
+                        <PageHeader
+                            sidebar={this.state.sidebar}
+                            setSidebar={type => this.setSidebar(type)}
+                        />
+                    </ErrorBoundary>
                     <div className='page-content'>
-                        <div className='content'>{this.getContent()}</div>
-                        {sidebar}
+                        <ErrorBoundary>
+                            <div className='content'>{this.getContent()}</div>
+                        </ErrorBoundary>
+                        <ErrorBoundary>
+                            {sidebar}
+                        </ErrorBoundary>
                     </div>
-                    <PageFooter
-                        view={this.state.view}
-                        setView={view => this.setView(view)}
-                        openDrawer={type => this.openToolsDrawer(type)}
-                    />
-                    <Drawer
-                        closable={false}
-                        maskClosable={drawer.closable}
-                        width={drawer.width}
-                        visible={drawer.content !== null}
-                        onClose={() => this.closeDrawer()}
-                    >
-                        <div className='drawer-header'><div className='app-title'>{drawer.header}</div></div>
-                        <div className='drawer-content'>{drawer.content}</div>
-                        <div className='drawer-footer'>{drawer.footer}</div>
-                    </Drawer>
+                    <ErrorBoundary>
+                        <PageFooter
+                            view={this.state.view}
+                            setView={view => this.setView(view)}
+                            openDrawer={type => this.openToolsDrawer(type)}
+                        />
+                    </ErrorBoundary>
+                    <ErrorBoundary>
+                        <Drawer
+                            closable={false}
+                            maskClosable={drawer.closable}
+                            width={drawer.width}
+                            visible={drawer.content !== null}
+                            onClose={() => this.closeDrawer()}
+                        >
+                            <div className='drawer-header'><div className='app-title'>{drawer.header}</div></div>
+                            <div className='drawer-content'>{drawer.content}</div>
+                            <div className='drawer-footer'>{drawer.footer}</div>
+                        </Drawer>
+                    </ErrorBoundary>
                 </div>
             );
         } catch (e) {
@@ -2313,4 +2331,42 @@ export default class App extends React.Component<Props, State> {
     }
 
     //#endregion
+}
+
+interface ErrorBoundaryProps {
+    //
+}
+
+interface ErrorBoundaryState {
+    hasError: boolean;
+}
+
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+    constructor(props: ErrorBoundaryProps) {
+        super(props);
+        this.state = { hasError: false };
+    }
+
+    protected static getDerivedStateFromError(error: any) {
+        return {
+            hasError: true
+        };
+    }
+
+    public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+        console.error(error.name);
+        console.error(error.message);
+        console.error(error.stack);
+        console.error(errorInfo.componentStack);
+    }
+
+    public render() {
+        if (this.state.hasError) {
+            return (
+                <div className='render-error' />
+            );
+        }
+
+        return this.props.children;
+    }
 }

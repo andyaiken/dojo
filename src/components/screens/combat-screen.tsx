@@ -523,7 +523,7 @@ export default class CombatScreen extends React.Component<Props, State> {
         // Find which combatants we've selected, ignoring the current initiative holder
         const combatants = this.state.selectedItemIDs
             .map(id => this.props.combat.combatants.find(c => c.id === id))
-            .filter(c => !!c && !c.current) as Combatant[];
+            .filter(c => !!c) as Combatant[];
         Utils.sort(combatants, [{ field: 'displayName', dir: 'asc' }]);
 
         // Have we selected any placeholders?
@@ -534,6 +534,17 @@ export default class CombatScreen extends React.Component<Props, State> {
                 <div>
                     {this.createCard(selectedPlaceholders[0])}
                 </div>
+            );
+        }
+
+        // Have we selected only the current combatant?
+        if ((combatants.length > 0) && combatants.every(c => c.current)) {
+            return (
+                <Note>
+                    <div className='section'>
+                        you've selected the current initiative holder
+                    </div>
+                </Note>
             );
         }
 
@@ -589,7 +600,7 @@ export default class CombatScreen extends React.Component<Props, State> {
         }
 
         return (
-            <Note key='selected'>
+            <Note>
                 <div className='section'>
                     select a pc or monster from the <b>initiative order</b> list to see its details here
                 </div>

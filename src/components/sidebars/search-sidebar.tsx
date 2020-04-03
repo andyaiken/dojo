@@ -182,15 +182,19 @@ export default class SearchSidebar extends React.Component<Props, State> {
             }
 
             return (
-                <div>
-                    <Input.Search
-                        placeholder='search'
-                        allowClear={true}
-                        onChange={e => this.setSearchTerm(e.target.value)}
-                        onSearch={value => this.setSearchTerm(value)}
-                    />
-                    <div className='divider' />
-                    {results}
+                <div className='sidebar-container'>
+                    <div className='sidebar-header'>
+                        <Input.Search
+                            value={this.state.text}
+                            placeholder='search'
+                            allowClear={true}
+                            onChange={e => this.setSearchTerm(e.target.value)}
+                            onSearch={value => this.setSearchTerm(value)}
+                        />
+                    </div>
+                    <div className='sidebar-content'>
+                        {results}
+                    </div>
                 </div>
             );
         } catch (ex) {

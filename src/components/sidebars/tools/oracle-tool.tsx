@@ -1,7 +1,7 @@
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import Utils from '../../utils/utils';
+import Utils from '../../../utils/utils';
 
 interface OracleCard {
     id: string;
@@ -155,7 +155,6 @@ export default class OracleTool extends React.Component<Props, State> {
 
             return (
                 <div>
-                    <div className='subheading'>oracle</div>
                     <button onClick={() => this.drawCards(3)}>draw cards</button>
                     <Row>
                         {cards}

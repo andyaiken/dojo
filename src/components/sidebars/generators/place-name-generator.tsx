@@ -1,52 +1,60 @@
 import { CopyOutlined } from '@ant-design/icons';
 import React from 'react';
 
-import Shakespeare from '../../utils/shakespeare';
+import Shakespeare from '../../../utils/shakespeare';
 
 interface Props {
 }
 
 interface State {
+    source: string | null;
     values: string[];
 }
 
-export default class TreasureTool extends React.Component<Props, State> {
+export default class PlaceNameTool extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
+
         this.state = {
+            source: null,
             values: []
         };
     }
 
-    private generate() {
-        const values: string[] = [];
-        while (values.length < 10) {
-            const v = Shakespeare.generateTreasure();
-            if (!values.includes(v)) {
-                values.push(v);
-            }
-        }
-        values.sort();
-
+    private async fetchData() {
+        const response = await fetch('/dojo/data/places.txt');
+        const text = await response.text();
         this.setState({
-            values: values
+            source: text
+        });
+    }
+
+    private generate() {
+        Shakespeare.initModel([this.state.source as string]);
+        this.setState({
+            values: Shakespeare.generate(10).map(l => l.line)
         });
     }
 
     public render() {
         try {
-            const values = [];
+            if (!this.state.source) {
+                this.fetchData();
+            }
+
+            const output = [];
             for (let n = 0; n !== this.state.values.length; ++n) {
-                values.push(
+                output.push(
                     <GeneratedItem key={n} text={this.state.values[n]} />
                 );
             }
 
             return (
                 <div>
-                    <div className='subheading'>treasure</div>
                     <button onClick={() => this.generate()}>generate</button>
-                    {values}
+                    <div className='language-output'>
+                        {output}
+                    </div>
                 </div>
             );
         } catch (ex) {

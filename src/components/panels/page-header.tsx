@@ -1,4 +1,4 @@
-import { BookOutlined, SearchOutlined, ToolOutlined } from '@ant-design/icons';
+import { BookOutlined, BulbOutlined, SearchOutlined, ToolOutlined } from '@ant-design/icons';
 import React from 'react';
 
 interface Props {
@@ -12,23 +12,27 @@ export default class PageHeader extends React.Component<Props> {
             return (
                 <div className='page-header'>
                     <div className='app-title app-name'>dojo</div>
-                    <div className='drawer-icons'>
-                        <SearchOutlined
-                            className={this.props.sidebar === 'search' ? 'title-bar-icon selected' : 'title-bar-icon'}
-                            title='search'
-                            onClick={() => this.props.setSidebar(this.props.sidebar === 'search' ? null : 'search')}
-                        />
-                        <ToolOutlined
-                            className={this.props.sidebar === 'tools' ? 'title-bar-icon selected' : 'title-bar-icon'}
-                            title='dm tools'
-                            onClick={() => this.props.setSidebar(this.props.sidebar === 'tools' ? null : 'tools')}
-                        />
-                        <BookOutlined
-                            className={this.props.sidebar === 'reference' ? 'title-bar-icon selected' : 'title-bar-icon'}
-                            title='reference'
-                            onClick={() => this.props.setSidebar(this.props.sidebar === 'reference' ? null : 'reference')}
-                        />
-                    </div>
+                    <div className='vertical-divider' />
+                    <SearchOutlined
+                        className={this.props.sidebar === 'search' ? 'title-bar-icon selected' : 'title-bar-icon'}
+                        title='search'
+                        onClick={() => this.props.setSidebar(this.props.sidebar === 'search' ? null : 'search')}
+                    />
+                    <ToolOutlined
+                        className={this.props.sidebar === 'tools' ? 'title-bar-icon selected' : 'title-bar-icon'}
+                        title='dm tools'
+                        onClick={() => this.props.setSidebar(this.props.sidebar === 'tools' ? null : 'tools')}
+                    />
+                    <BulbOutlined
+                        className={this.props.sidebar === 'generators' ? 'title-bar-icon selected' : 'title-bar-icon'}
+                        title='random generators'
+                        onClick={() => this.props.setSidebar(this.props.sidebar === 'generators' ? null : 'generators')}
+                    />
+                    <BookOutlined
+                        className={this.props.sidebar === 'reference' ? 'title-bar-icon selected' : 'title-bar-icon'}
+                        title='reference'
+                        onClick={() => this.props.setSidebar(this.props.sidebar === 'reference' ? null : 'reference')}
+                    />
                 </div>
             );
         } catch (e) {

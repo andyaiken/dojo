@@ -53,13 +53,17 @@ export default class PCUpdateModal extends React.Component<Props, State> {
                 <Row className='full-height'>
                     <Col span={12} className='scrollable'>
                         <Note>
-                            <div>go to the following link</div>
-                            <div>
+                            <div className='section'>
+                                go to the following link
+                            </div>
+                            <div className='section'>
                                 <a href={url} target='_blank' rel='noopener noreferrer'>
                                     {url}
                                 </a>
                             </div>
-                            <div>copy the data into the clipboard, paste it into the box below, and press the analyse button</div>
+                            <div className='section'>
+                                copy the data into the clipboard, paste it into the box below, and press the analyse button
+                            </div>
                         </Note>
                         <Textbox
                             text={this.state.source}

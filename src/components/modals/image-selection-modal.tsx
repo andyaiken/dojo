@@ -113,6 +113,7 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
                 images.unshift(
                     <Input.Search
                         key='search'
+                        value={this.state.filter}
                         placeholder='search for an image'
                         allowClear={true}
                         onChange={e => this.setFilter(e.target.value)}

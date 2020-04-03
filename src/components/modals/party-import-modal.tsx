@@ -48,14 +48,20 @@ export default class PartyImportModal extends React.Component<Props, State> {
                 <Row className='full-height'>
                     <Col span={12} className='scrollable'>
                         <Note>
-                            <div>go to the following link to find the party you want to import</div>
-                            <div>
+                            <div className='section'>
+                                go to the following link to find the party you want to import
+                            </div>
+                            <div className='section'>
                                 <a href='https://www.dndbeyond.com/my-campaigns' target='_blank' rel='noopener noreferrer'>
                                     https://www.dndbeyond.com/my-campaigns
                                 </a>
                             </div>
-                            <div>then right-click on the page and select <b>view page source</b></div>
-                            <div>copy the entire page source into the clipboard, paste it into the box below, and press the analyse button</div>
+                            <div className='section'>
+                                then right-click on the page and select <b>view page source</b>
+                            </div>
+                            <div className='section'>
+                                copy the entire page source into the clipboard, paste it into the box below, and press the analyse button
+                            </div>
                         </Note>
                         <Textbox
                             text={this.state.source}

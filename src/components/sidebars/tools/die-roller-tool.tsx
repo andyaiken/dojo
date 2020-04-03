@@ -2,11 +2,11 @@ import React from 'react';
 
 import { Col, Row } from 'antd';
 
-import Utils from '../../utils/utils';
+import Utils from '../../../utils/utils';
 
-import Checkbox from '../controls/checkbox';
-import NumberSpin from '../controls/number-spin';
-import Selector from '../controls/selector';
+import Checkbox from '../../controls/checkbox';
+import NumberSpin from '../../controls/number-spin';
+import Selector from '../../controls/selector';
 
 interface Props {
 }

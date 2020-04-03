@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Shakespeare from '../../utils/shakespeare';
+import Shakespeare from '../../../utils/shakespeare';
 
 interface Props {
 }
@@ -36,7 +36,6 @@ export default class NPCTool extends React.Component<Props, State> {
         try {
             return (
                 <div>
-                    <div className='subheading'>npc description</div>
                     <button onClick={() => this.generate()}>generate</button>
                     <div className='generated-item'>{this.state.description}</div>
                     {this.state.physical ? <div className='generated-item'>physical: {this.state.physical}</div> : null}

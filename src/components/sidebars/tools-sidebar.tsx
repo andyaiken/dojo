@@ -1,20 +1,11 @@
 import React from 'react';
 
-import { MonsterGroup } from '../../models/monster-group';
-
 import Selector from '../controls/selector';
-import BookTool from '../tools/book-tool';
-import DieRollerTool from '../tools/die-roller-tool';
-import LanguageTool from '../tools/language-tool';
-import NameTool from '../tools/name-tool';
-import NPCTool from '../tools/npc-tool';
-import OracleTool from '../tools/oracle-tool';
-import PlaceNameTool from '../tools/place-name-tool';
-import PotionTool from '../tools/potion-tool';
-import TreasureTool from '../tools/treasure-tool';
+import DieRollerTool from './tools/die-roller-tool';
+import LanguageTool from './tools/language-tool';
+import OracleTool from './tools/oracle-tool';
 
 interface Props {
-    library: MonsterGroup[];
 }
 
 interface State {
@@ -45,31 +36,7 @@ export default class ToolsSidebar extends React.Component<Props, State> {
                 },
                 {
                     id: 'language',
-                    text: 'language generator'
-                },
-                {
-                    id: 'name',
-                    text: 'name generator'
-                },
-                {
-                    id: 'book',
-                    text: 'book title generator'
-                },
-                {
-                    id: 'potion',
-                    text: 'potion generator'
-                },
-                {
-                    id: 'treasure',
-                    text: 'treasure generator'
-                },
-                {
-                    id: 'place',
-                    text: 'place name generator'
-                },
-                {
-                    id: 'npc',
-                    text: 'npc generator'
+                    text: 'language blender'
                 },
                 {
                     id: 'oracle',
@@ -89,36 +56,6 @@ export default class ToolsSidebar extends React.Component<Props, State> {
                         <LanguageTool />
                     );
                     break;
-                case 'name':
-                    content = (
-                        <NameTool />
-                    );
-                    break;
-                case 'book':
-                    content = (
-                        <BookTool />
-                    );
-                    break;
-                case 'potion':
-                    content = (
-                        <PotionTool />
-                    );
-                    break;
-                case 'treasure':
-                    content = (
-                        <TreasureTool />
-                    );
-                    break;
-                case 'place':
-                    content = (
-                        <PlaceNameTool />
-                    );
-                    break;
-                case 'npc':
-                    content = (
-                        <NPCTool />
-                    );
-                    break;
                 case 'oracle':
                     content = (
                         <OracleTool />
@@ -127,15 +64,18 @@ export default class ToolsSidebar extends React.Component<Props, State> {
             }
 
             return (
-                <div>
-                    <Selector
-                        options={options}
-                        selectedID={this.state.view}
-                        itemsPerRow={3}
-                        select={optionID => this.setView(optionID)}
-                    />
-                    <div className='divider' />
-                    {content}
+                <div className='sidebar-container'>
+                    <div className='sidebar-header'>
+                        <Selector
+                            options={options}
+                            selectedID={this.state.view}
+                            itemsPerRow={3}
+                            select={optionID => this.setView(optionID)}
+                        />
+                    </div>
+                    <div className='sidebar-content'>
+                        {content}
+                    </div>
                 </div>
             );
         } catch (ex) {

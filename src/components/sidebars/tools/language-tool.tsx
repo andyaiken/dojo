@@ -2,13 +2,13 @@ import { CopyOutlined, SoundOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import Shakespeare from '../../utils/shakespeare';
-import Ustinov from '../../utils/ustinov';
+import Shakespeare from '../../../utils/shakespeare';
+import Ustinov from '../../../utils/ustinov';
 
-import Checkbox from '../controls/checkbox';
-import Expander from '../controls/expander';
-import Selector from '../controls/selector';
-import GridPanel from '../panels/grid-panel';
+import Checkbox from '../../controls/checkbox';
+import Expander from '../../controls/expander';
+import Selector from '../../controls/selector';
+import GridPanel from '../../panels/grid-panel';
 
 interface Props {
 }
@@ -219,6 +219,7 @@ export default class LanguageTool extends React.Component<Props, State> {
                             key={lang}
                             label={lang}
                             checked={isSelected}
+                            display='button'
                             changeValue={value => value ? this.addLanguage(lang) : this.removeLanguage(lang)}
                         />
                     );
@@ -253,7 +254,9 @@ export default class LanguageTool extends React.Component<Props, State> {
                     />
                     <div className='divider' />
                     <Expander text={'selected languages: ' + selectedLanguages}>
-                        <GridPanel content={languages} />
+                        <div className='language-options'>
+                            <GridPanel columns={3} content={languages} />
+                        </div>
                     </Expander>
                     <div className='divider' />
                     <Row gutter={10}>

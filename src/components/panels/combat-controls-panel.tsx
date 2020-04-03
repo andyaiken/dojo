@@ -55,12 +55,6 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
         };
     }
 
-    private setDamage(value: number) {
-        this.setState({
-            damageOrHealing: value
-        });
-    }
-
     private nudgeDamage(delta: number) {
         this.setState({
             damageOrHealing: Math.max(this.state.damageOrHealing + delta, 0)
@@ -177,6 +171,15 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                     );
                 });
             }
+            let engagedSection = null;
+            if (engaged.length > 0) {
+                engagedSection = (
+                    <div className='section'>
+                        <b>engaged with: </b>
+                        {engaged}
+                    </div>
+                );
+            }
 
             return (
                 <div>
@@ -221,10 +224,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                             hidden
                         </Tag.CheckableTag>
                     </div>
-                    <div className='section'>
-                        <b>engaged with: </b>
-                        {engaged}
-                    </div>
+                    {engagedSection}
                 </div>
             );
         }
@@ -338,7 +338,6 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                 <Selector
                     options={degreeOptions}
                     selectedID={selected}
-                    disabled={this.state.damageOrHealing === 0}
                     select={id => {
                         let value = 1;
                         if (id === 'half') {
@@ -401,14 +400,15 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                     nudgeValue={delta => this.nudgeDamage(delta)}
                 />
                 <Row gutter={10}>
-                    <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-                        <button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.heal()}>heal</button>
+                    <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                        <button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.heal()}>
+                            heal
+                        </button>
                     </Col>
-                    <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-                        <button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.setDamage(0)}>reset</button>
-                    </Col>
-                    <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-                        <button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.damage()}>damage</button>
+                    <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                        <button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.damage()}>
+                            damage
+                        </button>
                     </Col>
                 </Row>
                 {degrees}
