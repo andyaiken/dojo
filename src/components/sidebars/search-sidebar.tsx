@@ -36,7 +36,7 @@ export default class SearchSidebar extends React.Component<Props, State> {
 
     private setSearchTerm(text: string) {
         this.setState({
-            text: text,
+            text: text
         });
     }
 
