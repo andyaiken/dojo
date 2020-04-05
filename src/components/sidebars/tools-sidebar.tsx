@@ -66,6 +66,7 @@ export default class ToolsSidebar extends React.Component<Props, State> {
             return (
                 <div className='sidebar-container'>
                     <div className='sidebar-header'>
+                        <div className='heading'>tools</div>
                         <Selector
                             options={options}
                             selectedID={this.state.view}

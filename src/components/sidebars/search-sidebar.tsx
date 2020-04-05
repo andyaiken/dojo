@@ -2,7 +2,6 @@ import { Input } from 'antd';
 import React from 'react';
 
 import Sherlock from '../../utils/sherlock';
-import Utils from '../../utils/utils';
 
 import { Encounter } from '../../models/encounter';
 import { Map } from '../../models/map';
@@ -24,7 +23,6 @@ interface Props {
 
 interface State {
     text: string;
-    canSearch: boolean;
 }
 
 export default class SearchSidebar extends React.Component<Props, State> {
@@ -32,150 +30,128 @@ export default class SearchSidebar extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            text: '',
-            canSearch: true
+            text: ''
         };
     }
-
-    private allowSearch = Utils.debounce(() => {
-        this.setState({
-            canSearch: true
-        });
-    });
 
     private setSearchTerm(text: string) {
         this.setState({
             text: text,
-            canSearch: false
-        }, () => this.allowSearch());
+        });
     }
 
     public render() {
         try {
             const results = [];
-            if (!this.state.canSearch) {
-                results.push(
-                    <Note key='pending'>
-                        searching...
-                    </Note>
-                );
-            } else {
-                if (this.state.text.length > 2) {
-                    this.props.parties.filter(party => Sherlock.matchParty(this.state.text, party)).forEach(party => {
-                        const pcs: JSX.Element[] = [];
-                        party.pcs.filter(pc => Sherlock.matchPC(this.state.text, pc)).forEach(pc => {
-                            const companions: JSX.Element[] = [];
-                            pc.companions.filter(comp => Sherlock.matchCompanion(this.state.text, comp)).forEach(comp => {
-                                companions.push(
-                                    <div key={comp.id} className='group-panel'>
-                                        <div className='section'>{comp.name}</div>
-                                    </div>
-                                );
-                            });
-                            pcs.push(
-                                <div key={pc.id} className='group-panel'>
-                                    <div className='section'>{pc.name}</div>
-                                    {companions}
+            if (this.state.text.length > 2) {
+                this.props.parties.filter(party => Sherlock.matchParty(this.state.text, party)).forEach(party => {
+                    const pcs: JSX.Element[] = [];
+                    party.pcs.filter(pc => Sherlock.matchPC(this.state.text, pc)).forEach(pc => {
+                        const companions: JSX.Element[] = [];
+                        pc.companions.filter(comp => Sherlock.matchCompanion(this.state.text, comp)).forEach(comp => {
+                            companions.push(
+                                <div key={comp.id} className='group-panel'>
+                                    <div className='section'>{comp.name}</div>
                                 </div>
                             );
                         });
-                        results.push(
-                            <div key={party.id} className='group-panel clickable' onClick={() => this.props.openParty(party.id)}>
-                                <div className='section'>{party.name}</div>
-                                {pcs}
+                        pcs.push(
+                            <div key={pc.id} className='group-panel'>
+                                <div className='section'>{pc.name}</div>
+                                {companions}
                             </div>
                         );
                     });
+                    results.push(
+                        <div key={party.id} className='group-panel clickable' onClick={() => this.props.openParty(party.id)}>
+                            <div className='section'>{party.name}</div>
+                            {pcs}
+                        </div>
+                    );
+                });
 
-                    this.props.library.filter(group => Sherlock.matchGroup(this.state.text, group)).forEach(group => {
-                        const monsters: JSX.Element[] = [];
-                        group.monsters.filter(monster => Sherlock.matchMonster(this.state.text, monster)).forEach(monster => {
-                            const traits: JSX.Element[] = [];
-                            monster.traits.filter(trait => Sherlock.matchTrait(this.state.text, trait)).forEach(trait => {
-                                traits.push(
-                                    <div key={trait.id} className='group-panel'>
-                                        <div className='section'>{trait.name}</div>
-                                    </div>
-                                );
-                            });
-                            monsters.push(
-                                <div key={monster.id} className='group-panel'>
-                                    <div className='section'>{monster.name}</div>
-                                    {traits}
+                this.props.library.filter(group => Sherlock.matchGroup(this.state.text, group)).forEach(group => {
+                    const monsters: JSX.Element[] = [];
+                    group.monsters.filter(monster => Sherlock.matchMonster(this.state.text, monster)).forEach(monster => {
+                        const traits: JSX.Element[] = [];
+                        monster.traits.filter(trait => Sherlock.matchTrait(this.state.text, trait)).forEach(trait => {
+                            traits.push(
+                                <div key={trait.id} className='group-panel'>
+                                    <div className='section'>{trait.name}</div>
                                 </div>
                             );
                         });
-                        results.push(
-                            <div key={group.id} className='group-panel clickable' onClick={() => this.props.openGroup(group.id)}>
-                                <div className='section'>{group.name}</div>
-                                {monsters}
+                        monsters.push(
+                            <div key={monster.id} className='group-panel'>
+                                <div className='section'>{monster.name}</div>
+                                {traits}
                             </div>
                         );
                     });
+                    results.push(
+                        <div key={group.id} className='group-panel clickable' onClick={() => this.props.openGroup(group.id)}>
+                            <div className='section'>{group.name}</div>
+                            {monsters}
+                        </div>
+                    );
+                });
 
-                    this.props.encounters.filter(encounter => Sherlock.matchEncounter(this.state.text, encounter)).forEach(encounter => {
-                        const slots: JSX.Element[] = [];
-                        encounter.slots.filter(slot => Sherlock.matchEncounterSlot(this.state.text, slot)).forEach(slot => {
-                            slots.push(
+                this.props.encounters.filter(encounter => Sherlock.matchEncounter(this.state.text, encounter)).forEach(encounter => {
+                    const slots: JSX.Element[] = [];
+                    encounter.slots.filter(slot => Sherlock.matchEncounterSlot(this.state.text, slot)).forEach(slot => {
+                        slots.push(
+                            <div key={slot.id} className='group-panel'>
+                                <div className='section'>{slot.monsterName}</div>
+                            </div>
+                        );
+                    });
+                    const waves: JSX.Element[] = [];
+                    encounter.waves.filter(wave => Sherlock.matchEncounterWave(this.state.text, wave)).forEach(wave => {
+                        const waveSlots: JSX.Element[] = [];
+                        wave.slots.filter(slot => Sherlock.matchEncounterSlot(this.state.text, slot)).forEach(slot => {
+                            waveSlots.push(
                                 <div key={slot.id} className='group-panel'>
                                     <div className='section'>{slot.monsterName}</div>
                                 </div>
                             );
                         });
-                        const waves: JSX.Element[] = [];
-                        encounter.waves.filter(wave => Sherlock.matchEncounterWave(this.state.text, wave)).forEach(wave => {
-                            const waveSlots: JSX.Element[] = [];
-                            wave.slots.filter(slot => Sherlock.matchEncounterSlot(this.state.text, slot)).forEach(slot => {
-                                waveSlots.push(
-                                    <div key={slot.id} className='group-panel'>
-                                        <div className='section'>{slot.monsterName}</div>
-                                    </div>
-                                );
-                            });
-                            waves.push(
-                                <div key={wave.id} className='group-panel'>
-                                    <div className='section'>{wave.name}</div>
-                                    {waveSlots}
-                                </div>
-                            );
-                        });
-                        results.push(
-                            <div key={encounter.id} className='group-panel clickable' onClick={() => this.props.openEncounter(encounter.id)}>
-                                <div className='section'>{encounter.name}</div>
-                                {slots}
-                                {waves}
+                        waves.push(
+                            <div key={wave.id} className='group-panel'>
+                                <div className='section'>{wave.name}</div>
+                                {waveSlots}
                             </div>
                         );
                     });
+                    results.push(
+                        <div key={encounter.id} className='group-panel clickable' onClick={() => this.props.openEncounter(encounter.id)}>
+                            <div className='section'>{encounter.name}</div>
+                            {slots}
+                            {waves}
+                        </div>
+                    );
+                });
 
-                    this.props.maps.filter(map => Sherlock.matchMap(this.state.text, map)).forEach(map => {
-                        const notes: JSX.Element[] = [];
-                        map.notes.filter(note => Sherlock.matchMapNote(this.state.text, note)).forEach(note => {
-                            notes.push(
-                                <div key={note.id} className='group-panel'>
-                                    <div className='section'>map note</div>
-                                </div>
-                            );
-                        });
-                        results.push(
-                            <div key={map.id} className='group-panel clickable' onClick={() => this.props.openMap(map.id)}>
-                                <div className='section'>{map.name}</div>
-                                {notes}
+                this.props.maps.filter(map => Sherlock.matchMap(this.state.text, map)).forEach(map => {
+                    const notes: JSX.Element[] = [];
+                    map.notes.filter(note => Sherlock.matchMapNote(this.state.text, note)).forEach(note => {
+                        notes.push(
+                            <div key={note.id} className='group-panel'>
+                                <div className='section'>map note</div>
                             </div>
                         );
                     });
+                    results.push(
+                        <div key={map.id} className='group-panel clickable' onClick={() => this.props.openMap(map.id)}>
+                            <div className='section'>{map.name}</div>
+                            {notes}
+                        </div>
+                    );
+                });
 
-                    if (results.length === 0) {
-                        results.push(
-                            <Note key='empty'>
-                                nothing found
-                            </Note>
-                        );
-                    }
-                } else {
+                if (results.length === 0) {
                     results.push(
                         <Note key='empty'>
-                            enter your search term above
+                            nothing found
                         </Note>
                     );
                 }
@@ -184,9 +160,10 @@ export default class SearchSidebar extends React.Component<Props, State> {
             return (
                 <div className='sidebar-container'>
                     <div className='sidebar-header'>
+                        <div className='heading'>search</div>
                         <Input.Search
                             value={this.state.text}
-                            placeholder='search'
+                            placeholder='enter your search term here'
                             allowClear={true}
                             onChange={e => this.setSearchTerm(e.target.value)}
                             onSearch={value => this.setSearchTerm(value)}

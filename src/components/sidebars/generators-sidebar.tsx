@@ -93,6 +93,7 @@ export default class GeneratorsSidebar extends React.Component<Props, State> {
             return (
                 <div className='sidebar-container'>
                     <div className='sidebar-header'>
+                        <div className='heading'>generators</div>
                         <Selector
                             options={options}
                             selectedID={this.state.view}

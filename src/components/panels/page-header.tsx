@@ -20,12 +20,12 @@ export default class PageHeader extends React.Component<Props> {
                     />
                     <ToolOutlined
                         className={this.props.sidebar === 'tools' ? 'title-bar-icon selected' : 'title-bar-icon'}
-                        title='dm tools'
+                        title='tools'
                         onClick={() => this.props.setSidebar(this.props.sidebar === 'tools' ? null : 'tools')}
                     />
                     <BulbOutlined
                         className={this.props.sidebar === 'generators' ? 'title-bar-icon selected' : 'title-bar-icon'}
-                        title='random generators'
+                        title='generators'
                         onClick={() => this.props.setSidebar(this.props.sidebar === 'generators' ? null : 'generators')}
                     />
                     <BookOutlined
