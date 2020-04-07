@@ -12,11 +12,11 @@ import MonsterCard from '../cards/monster-card';
 import ConfirmButton from '../controls/confirm-button';
 import Expander from '../controls/expander';
 import Textbox from '../controls/textbox';
-import StatBlockModal from './stat-block-modal';
 import DifficultyChartPanel from '../panels/difficulty-chart-panel';
 import FilterPanel from '../panels/filter-panel';
 import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
+import StatBlockModal from './stat-block-modal';
 
 interface Props {
     encounter: Encounter;
@@ -248,7 +248,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
                         mode={'encounter'}
                         library={this.props.library}
                         nudgeValue={(source, type, delta) => this.nudgeValue(source, type, delta)}
-                        viewMonster={monster => this.setSelectedMonster(monster)}
+                        viewMonster={m => this.setSelectedMonster(m)}
                         removeEncounterSlot={s => this.removeEncounterSlot(s, waveID)}
                         swapEncounterSlot={(s, groupName, monsterName) => this.swapEncounterSlot(s, waveID, groupName, monsterName)}
                         moveToWave={(s, current, id) => this.moveToWave(s, current, id)}
@@ -312,7 +312,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
                     encounter={this.props.encounter}
                     library={this.props.library}
                     mode={'encounter'}
-                    viewMonster={monster => this.setSelectedMonster(monster)}
+                    viewMonster={m => this.setSelectedMonster(m)}
                     addEncounterSlot={(combatant, waveID) => this.addEncounterSlot(combatant, waveID)}
                 />
             );
