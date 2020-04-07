@@ -8,12 +8,16 @@ import MonsterCard from '../cards/monster-card';
 import PCCard from '../cards/pc-card';
 
 interface Props {
-    source: PC | Monster | (Combatant & PC) | (Combatant & Monster);
+    source: PC | Monster | (Combatant & PC) | (Combatant & Monster) | null;
 }
 
 export default class StatBlockModal extends React.Component<Props> {
     public render() {
         try {
+            if (!this.props.source) {
+                return null;
+            }
+
             let content = null;
             switch (this.props.source.type) {
                 case 'pc':

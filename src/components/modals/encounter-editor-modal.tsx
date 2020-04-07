@@ -1,4 +1,4 @@
-import { Col, InputNumber, Row } from 'antd';
+import { Col, Drawer, InputNumber, Row } from 'antd';
 import React from 'react';
 
 import Factory from '../../utils/factory';
@@ -12,6 +12,7 @@ import MonsterCard from '../cards/monster-card';
 import ConfirmButton from '../controls/confirm-button';
 import Expander from '../controls/expander';
 import Textbox from '../controls/textbox';
+import StatBlockModal from './stat-block-modal';
 import DifficultyChartPanel from '../panels/difficulty-chart-panel';
 import FilterPanel from '../panels/filter-panel';
 import GridPanel from '../panels/grid-panel';
@@ -27,6 +28,7 @@ interface Props {
 interface State {
     encounter: Encounter;
     filter: MonsterFilter;
+    selectedMonster: Monster | null;
     randomEncounterXP: number;
 }
 
@@ -37,8 +39,15 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
         this.state = {
             encounter: props.encounter,
             filter: Factory.createMonsterFilter(),
+            selectedMonster: null,
             randomEncounterXP: 1000
         };
+    }
+
+    private setSelectedMonster(monster: Monster | null) {
+        this.setState({
+            selectedMonster: monster
+        });
     }
 
     private setRandomEncounterXP(value: number) {
@@ -239,6 +248,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
                         mode={'encounter'}
                         library={this.props.library}
                         nudgeValue={(source, type, delta) => this.nudgeValue(source, type, delta)}
+                        viewMonster={monster => this.setSelectedMonster(monster)}
                         removeEncounterSlot={s => this.removeEncounterSlot(s, waveID)}
                         swapEncounterSlot={(s, groupName, monsterName) => this.swapEncounterSlot(s, waveID, groupName, monsterName)}
                         moveToWave={(s, current, id) => this.moveToWave(s, current, id)}
@@ -302,6 +312,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
                     encounter={this.props.encounter}
                     library={this.props.library}
                     mode={'encounter'}
+                    viewMonster={monster => this.setSelectedMonster(monster)}
                     addEncounterSlot={(combatant, waveID) => this.addEncounterSlot(combatant, waveID)}
                 />
             );
@@ -401,6 +412,9 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
                         {waveSlots}
                         {this.getLibrarySection()}
                     </Col>
+                    <Drawer visible={!!this.state.selectedMonster} width='50%' closable={false} onClose={() => this.setSelectedMonster(null)}>
+                        <StatBlockModal source={this.state.selectedMonster} />
+                    </Drawer>
                 </Row>
             );
         } catch (e) {
