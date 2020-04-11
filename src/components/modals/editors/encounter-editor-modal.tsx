@@ -1,22 +1,22 @@
 import { Col, Drawer, InputNumber, Row } from 'antd';
 import React from 'react';
 
-import Factory from '../../utils/factory';
-import Napoleon from '../../utils/napoleon';
+import Factory from '../../../utils/factory';
+import Napoleon from '../../../utils/napoleon';
 
-import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../../models/encounter';
-import { Monster, MonsterGroup } from '../../models/monster-group';
-import { Party } from '../../models/party';
+import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../../../models/encounter';
+import { Monster, MonsterGroup } from '../../../models/monster-group';
+import { Party } from '../../../models/party';
 
-import MonsterCard from '../cards/monster-card';
-import ConfirmButton from '../controls/confirm-button';
-import Expander from '../controls/expander';
-import Textbox from '../controls/textbox';
-import DifficultyChartPanel from '../panels/difficulty-chart-panel';
-import FilterPanel from '../panels/filter-panel';
-import GridPanel from '../panels/grid-panel';
-import Note from '../panels/note';
-import StatBlockModal from './stat-block-modal';
+import MonsterCard from '../../cards/monster-card';
+import ConfirmButton from '../../controls/confirm-button';
+import Expander from '../../controls/expander';
+import Textbox from '../../controls/textbox';
+import DifficultyChartPanel from '../../panels/difficulty-chart-panel';
+import FilterPanel from '../../panels/filter-panel';
+import GridPanel from '../../panels/grid-panel';
+import Note from '../../panels/note';
+import StatBlockModal from '../stat-block-modal';
 
 interface Props {
     encounter: Encounter;
@@ -391,7 +391,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
                         <div className='divider' />
                         <div className='section'>
                             <Expander text='build a random encounter'>
-                                <p>add random monsters to this encounter until its (effective)) xp value is at least the following value</p>
+                                <p>add random monsters to this encounter until its (effective) xp value is at least the following value</p>
                                 <InputNumber
                                     value={this.state.randomEncounterXP}
                                     min={0}

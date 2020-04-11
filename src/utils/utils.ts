@@ -83,6 +83,15 @@ export default class Utils {
         return value + ' B';
     }
 
+    public static saveFile(filename: string, data: any) {
+        const json = JSON.stringify(data, null, '\t');
+        const blob = new Blob([json], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.download = filename;
+        a.href = window.URL.createObjectURL(blob);
+        a.click();
+    }
+
     public static modifierValue(score: number): number {
         return Math.floor((score - 10) / 2);
     }

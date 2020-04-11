@@ -19,14 +19,15 @@ import AboutModal from './modals/about-modal';
 import CombatStartModal from './modals/combat-start-modal';
 import ConditionModal from './modals/condition-modal';
 import DemographicsModal from './modals/demographics-modal';
-import EncounterEditorModal from './modals/encounter-editor-modal';
+import EncounterEditorModal from './modals/editors/encounter-editor-modal';
+import MapEditorModal from './modals/editors/map-editor-modal';
+import MonsterEditorModal from './modals/editors/monster-editor-modal';
+import PCEditorModal from './modals/editors/pc-editor-modal';
+import MonsterGroupImportModal from './modals/import/monster-group-import-modal';
+import MonsterImportModal from './modals/import/monster-import-modal';
+import PartyImportModal from './modals/import/party-import-modal';
+import PCImportModal from './modals/import/pc-import-modal';
 import LeaderboardModal from './modals/leaderboard-modal';
-import MapEditorModal from './modals/map-editor-modal';
-import MonsterEditorModal from './modals/monster-editor-modal';
-import MonsterImportModal from './modals/monster-import-modal';
-import PartyImportModal from './modals/party-import-modal';
-import PCEditorModal from './modals/pc-editor-modal';
-import PCUpdateModal from './modals/pc-update-modal';
 import StatBlockModal from './modals/stat-block-modal';
 import PageFooter from './panels/page-footer';
 import PageHeader from './panels/page-header';
@@ -35,8 +36,8 @@ import CombatScreen from './screens/combat-screen';
 import EncounterListScreen from './screens/encounter-list-screen';
 import HomeScreen from './screens/home-screen';
 import MapListScreen from './screens/map-list-screen';
+import MonsterGroupScreen from './screens/monster-group-screen';
 import MonsterListScreen from './screens/monster-list-screen';
-import MonsterScreen from './screens/monster-screen';
 import PartyListScreen from './screens/party-list-screen';
 import PartyScreen from './screens/party-screen';
 import GeneratorsSidebar from './sidebars/generators-sidebar';
@@ -425,7 +426,28 @@ export default class App extends React.Component<Props, State> {
         });
     }
 
-    private importPC(pc: PC) {
+    private importPC() {
+        this.setState({
+            drawer: {
+                type: 'import-pc',
+                pc: Factory.createPC()
+            }
+        });
+    }
+
+    private acceptImportedPC() {
+        const party = this.state.parties.find(p => p.id === this.state.selectedPartyID);
+        if (party) {
+            party.pcs.push(this.state.drawer.pc);
+            Utils.sort(party.pcs);
+            this.setState({
+                parties: this.state.parties,
+                drawer: null
+            });
+        }
+    }
+
+    private updatePC(pc: PC) {
         const copy = JSON.parse(JSON.stringify(pc));
         this.setState({
             drawer: {
@@ -469,6 +491,23 @@ export default class App extends React.Component<Props, State> {
         });
     }
 
+    private importMonsterGroup() {
+        this.setState({
+            drawer: {
+                type: 'import-group',
+                group: Factory.createMonsterGroup()
+            }
+        });
+    }
+
+    private acceptImportedGroup() {
+        this.state.library.push(this.state.drawer.group);
+        this.setState({
+            library: this.state.library,
+            drawer: null
+        });
+    }
+
     private removeCurrentMonsterGroup() {
         const group = this.state.library.find(g => g.id === this.state.selectedMonsterGroupID);
         if (group) {
@@ -509,6 +548,7 @@ export default class App extends React.Component<Props, State> {
         const group = this.state.library.find(g => g.id === this.state.selectedMonsterGroupID);
         if (group) {
             group.monsters.push(this.state.drawer.monster);
+            Utils.sort(group.monsters);
             this.setState({
                 library: this.state.library,
                 drawer: null
@@ -1805,8 +1845,9 @@ export default class App extends React.Component<Props, State> {
                             goBack={() => this.selectParty(null)}
                             removeParty={() => this.removeCurrentParty()}
                             addPC={() => this.editPC(null)}
+                            importPC={() => this.importPC()}
                             editPC={pc => this.editPC(pc)}
-                            importPC={pc => this.importPC(pc)}
+                            updatePC={pc => this.updatePC(pc)}
                             removePC={pc => this.removePC(pc)}
                             changeValue={(pc, type, value) => this.changeValue(pc, type, value)}
                             nudgeValue={(pc, type, delta) => this.nudgeValue(pc, type, delta)}
@@ -1827,7 +1868,7 @@ export default class App extends React.Component<Props, State> {
             case 'library':
                 if (this.state.selectedMonsterGroupID) {
                     return (
-                        <MonsterScreen
+                        <MonsterGroupScreen
                             monsterGroup={this.state.library.find(g => g.id === this.state.selectedMonsterGroupID) as MonsterGroup}
                             library={this.state.library}
                             goBack={() => this.selectMonsterGroup(null)}
@@ -1850,6 +1891,7 @@ export default class App extends React.Component<Props, State> {
                             library={this.state.library}
                             hasMonsters={hasMonsters}
                             addMonsterGroup={() => this.addMonsterGroup()}
+                            importMonsterGroup={() => this.importMonsterGroup()}
                             selectMonsterGroup={group => this.selectMonsterGroup(group)}
                             deleteMonsterGroup={group => this.removeMonsterGroup(group)}
                             addOpenGameContent={() => this.addOpenGameContent()}
@@ -1998,6 +2040,15 @@ export default class App extends React.Component<Props, State> {
 
         if (this.state.drawer) {
             switch (this.state.drawer.type) {
+                case 'stat-block':
+                    content = (
+                        <StatBlockModal
+                            source={this.state.drawer.source}
+                        />
+                    );
+                    header = 'monster';
+                    closable = true;
+                    break;
                 case 'import-party':
                     content = (
                         <PartyImportModal
@@ -2030,9 +2081,23 @@ export default class App extends React.Component<Props, State> {
                         </Row>
                     );
                     break;
+                case 'import-pc':
+                    content = (
+                        <PCImportModal
+                            pc={this.state.drawer.pc}
+                        />
+                    );
+                    header = 'import pc';
+                    footer = (
+                        <button onClick={() => this.acceptImportedPC()}>
+                            accept pc
+                        </button>
+                    );
+                    closable = true;
+                    break;
                 case 'update-pc':
                     content = (
-                        <PCUpdateModal
+                        <PCImportModal
                             pc={this.state.drawer.pc}
                         />
                     );
@@ -2044,6 +2109,20 @@ export default class App extends React.Component<Props, State> {
                     );
                     closable = true;
                     break;
+                case 'import-group':
+                        content = (
+                            <MonsterGroupImportModal
+                                group={this.state.drawer.group}
+                            />
+                        );
+                        header = 'import monster group';
+                        footer = (
+                            <button onClick={() => this.acceptImportedGroup()}>
+                                accept group
+                            </button>
+                        );
+                        closable = true;
+                        break;
                 case 'monster':
                     content = (
                         <MonsterEditorModal
@@ -2071,15 +2150,6 @@ export default class App extends React.Component<Props, State> {
                         </Row>
                     );
                     width = '85%';
-                    break;
-                case 'stat-block':
-                    content = (
-                        <StatBlockModal
-                            source={this.state.drawer.source}
-                        />
-                    );
-                    header = 'monster';
-                    closable = true;
                     break;
                 case 'import-monster':
                     content = (

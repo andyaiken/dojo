@@ -1,45 +1,74 @@
-import { Col, Row } from 'antd';
+import { Carousel, Col, Row } from 'antd';
 import React from 'react';
-
-import Readaloud from '../panels/readaloud';
 
 interface Props {
 }
 
 export default class HomeScreen extends React.Component<Props> {
     public render() {
-        // try {
+        try {
+            /* tslint:disable:max-line-length */
+            const carousel = (
+                <Carousel>
+                    <div key='prologue'>
+                        <p className='heading'>welcome to <span className='app-name'>dojo</span></p>
+                        <p><span className='app-name'>dojo</span> is an app for dms of <a href='https://www.wizards.com/dnd' target='_blank' rel='noopener noreferrer'>dungeons and dragons fifth edition</a></p>
+                        <p>with <span className='app-name'>dojo</span> you can...</p>
+                    </div>
+                    <div key='monster'>
+                        <p className='heading'>build unique, challenging monsters</p>
+                        <ul>
+                            <li>watch the stat block change as you design your monster</li>
+                            <li>see a list of similar monsters to help kickstart your creativity (or show you typical stat values for the type of monster you're creating)</li>
+                            <li>build an entirely random monster with a single click</li>
+                        </ul>
+                    </div>
+                    <div key='encounter'>
+                        <p className='heading'>create encounters of just the right difficulty</p>
+                        <ul>
+                            <li>quickly add monsters to your encounter and see its xp value and difficulty level change</li>
+                            <li>split your encounter into multiple waves</li>
+                            <li>let <span className='app-name'>dojo</span> build a random encounter on the fly</li>
+                        </ul>
+                    </div>
+                    <div key='map'>
+                        <p className='heading'>design intricate tactical maps</p>
+                        <ul>
+                            <li>create a dungeon map by quickly adding rooms, doors, corridors, and stairs</li>
+                            <li>for something a little more fancy, you can upload your own battlemap images</li>
+                            <li>generate an entire random dungeon map with one click</li>
+                        </ul>
+                    </div>
+                    <div key='combat'>
+                        <p className='heading'>run combat without the book-keeping</p>
+                        <ul>
+                            <li>see the initiative list at a glance - and share it with players in a separate window</li>
+                            <li>track monster hit points and rechargable actions</li>
+                            <li>track conditions, their durations, and the effects they impose</li>
+                            <li>if you're using a tactical map, <span className='app-name'>dojo</span> keeps track of everyone's location</li>
+                        </ul>
+                    </div>
+                    <div key='epilogue'>
+                        <p className='heading'>to get started</p>
+                        <p>use the buttons at the bottom of the screen to explore <span className='app-name'>dojo</span>'s main features</p>
+                        <p>or press the buttons at the top right for additional tools like a die roller, some useful random generators, and rules references</p>
+                    </div>
+                </Carousel>
+            );
+            /* tslint:enable:max-line-length */
+
             return (
                 <Row align='middle' justify='center' className='scrollable'>
-                    <Col span={16}>
-                        <Readaloud>
-                            <div className='heading'>welcome to <span className='app-name'>dojo</span></div>
-                            <div className='divider' />
-                            <div className='section'>
-                                <span className='app-name'>dojo</span> is an app for dms of dungeons and dragons fifth edition
-                            </div>
-                            <div className='section'>
-                                with this app you can:
-                            </div>
-                            <ul>
-                                <li>build unique, challenging monsters</li>
-                                <li>create encounters of just the right difficulty for your players</li>
-                                <li>design intricate tactical maps - or have the app generate them for you</li>
-                                <li>run combat without the book-keeping</li>
-                            </ul>
-                            <div className='divider' />
-                            <div className='section'>
-                                use the buttons at the bottom of the screen to explore the app's main features,
-                                or press the buttons at the top right for additional tools
-                                like a die roller and some useful random generators
-                            </div>
-                        </Readaloud>
+                    <Col span={24}>
+                        <div className='section centered'>
+                            {carousel}
+                        </div>
                     </Col>
                 </Row>
             );
-        // } catch (ex) {
-        //     console.error(ex);
-        //     return <div className='render-error'/>;
-        // }
+        } catch (ex) {
+            console.error(ex);
+            return <div className='render-error'/>;
+        }
     }
 }

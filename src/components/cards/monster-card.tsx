@@ -28,6 +28,7 @@ interface Props {
     viewMonster: (monster: Monster) => void;
     editMonster: (monster: Monster) => void;
     removeMonster: (monster: Monster) => void;
+    exportMonster: (monster: Monster) => void;
     cloneMonster: (monster: Monster, name: string) => void;
     moveToGroup: (monster: Monster, group: string) => void;
     copyTrait: (trait: Trait) => void;
@@ -57,6 +58,7 @@ export default class MonsterCard extends React.Component<Props, State> {
         viewMonster: null,
         editMonster: null,
         removeMonster: null,
+        exportMonster: null,
         cloneMonster: null,
         moveToGroup: null,
         copyTrait: null,
@@ -182,6 +184,10 @@ export default class MonsterCard extends React.Component<Props, State> {
 
             options.push(
                 <button key='edit' onClick={() => this.props.editMonster(this.props.monster)}>edit monster</button>
+            );
+
+            options.push(
+                <button key='export' onClick={() => this.props.exportMonster(this.props.monster)}>export monster</button>
             );
 
             options.push(

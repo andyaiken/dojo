@@ -1,22 +1,22 @@
 import { Col, Drawer, Row } from 'antd';
 import React from 'react';
 
-import Factory from '../../utils/factory';
-import Mercator from '../../utils/mercator';
-import Utils from '../../utils/utils';
+import Factory from '../../../utils/factory';
+import Mercator from '../../../utils/mercator';
+import Utils from '../../../utils/utils';
 
-import { DOORWAY_TYPES, Map, MapItem, MapNote, STAIRWAY_TYPES, TERRAIN_TYPES } from '../../models/map';
+import { DOORWAY_TYPES, Map, MapItem, MapNote, STAIRWAY_TYPES, TERRAIN_TYPES } from '../../../models/map';
 
-import ConfirmButton from '../controls/confirm-button';
-import Dropdown from '../controls/dropdown';
-import NumberSpin from '../controls/number-spin';
-import Radial from '../controls/radial';
-import RadioGroup from '../controls/radio-group';
-import Selector from '../controls/selector';
-import Textbox from '../controls/textbox';
-import MapPanel from '../panels/map-panel';
-import Note from '../panels/note';
-import ImageSelectionModal from './image-selection-modal';
+import ConfirmButton from '../../controls/confirm-button';
+import Dropdown from '../../controls/dropdown';
+import NumberSpin from '../../controls/number-spin';
+import Radial from '../../controls/radial';
+import RadioGroup from '../../controls/radio-group';
+import Selector from '../../controls/selector';
+import Textbox from '../../controls/textbox';
+import MapPanel from '../../panels/map-panel';
+import Note from '../../panels/note';
+import ImageSelectionModal from '../image-selection-modal';
 
 interface Props {
     map: Map;

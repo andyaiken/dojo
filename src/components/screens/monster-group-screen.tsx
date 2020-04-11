@@ -29,7 +29,12 @@ interface Props {
     nudgeValue: (source: any, field: string, value: number) => void;
 }
 
-export default class MonsterScreen extends React.Component<Props> {
+export default class MonsterGroupScreen extends React.Component<Props> {
+    private export(monster: Monster) {
+        const filename = monster.name + '.monster';
+        Utils.saveFile(filename, monster);
+    }
+
     public render() {
         try {
             const cards: JSX.Element[] = [];
@@ -45,6 +50,7 @@ export default class MonsterScreen extends React.Component<Props> {
                             removeMonster={monster => this.props.removeMonster(monster)}
                             viewMonster={monster => this.props.viewMonster(monster)}
                             editMonster={monster => this.props.editMonster(monster)}
+                            exportMonster={monster => this.export(monster)}
                             cloneMonster={(monster, monsterName) => this.props.cloneMonster(monster, monsterName)}
                         />
                     );
@@ -58,7 +64,7 @@ export default class MonsterScreen extends React.Component<Props> {
             return (
                 <Row className='full-height'>
                     <Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar sidebar-left'>
-                        <MonsterInfo
+                        <MonsterGroupInfo
                             monsterGroup={this.props.monsterGroup}
                             goBack={() => this.props.goBack()}
                             addMonster={() => this.props.addMonster()}
@@ -83,7 +89,7 @@ export default class MonsterScreen extends React.Component<Props> {
     }
 }
 
-interface MonsterInfoProps {
+interface MonsterGroupInfoProps {
     monsterGroup: MonsterGroup;
     goBack: () => void;
     changeValue: (field: string, value: string) => void;
@@ -93,7 +99,7 @@ interface MonsterInfoProps {
     openDemographics: () => void;
 }
 
-class MonsterInfo extends React.Component<MonsterInfoProps> {
+class MonsterGroupInfo extends React.Component<MonsterGroupInfoProps> {
     private getSummary() {
         if (this.props.monsterGroup.monsters.length === 0) {
             return (
@@ -132,6 +138,11 @@ class MonsterInfo extends React.Component<MonsterInfoProps> {
         );
     }
 
+    private export() {
+        const filename = this.props.monsterGroup.name + '.monstergroup';
+        Utils.saveFile(filename, this.props.monsterGroup);
+    }
+
     public render() {
         try {
             return (
@@ -151,6 +162,7 @@ class MonsterInfo extends React.Component<MonsterInfoProps> {
                         <button onClick={() => this.props.addMonster()}>add a new monster</button>
                         <button onClick={() => this.props.importMonster()}>import a monster</button>
                         <button onClick={() => this.props.openDemographics()}>show demographics</button>
+                        <button onClick={() => this.export()}>export group</button>
                         <ConfirmButton text='delete group' callback={() => this.props.removeMonsterGroup()} />
                         <div className='divider' />
                         <button onClick={() => this.props.goBack()}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>

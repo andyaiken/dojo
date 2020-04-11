@@ -16,6 +16,7 @@ interface Props {
     library: MonsterGroup[];
     hasMonsters: boolean;
     addMonsterGroup: () => void;
+    importMonsterGroup: () => void;
     selectMonsterGroup: (group: MonsterGroup) => void;
     deleteMonsterGroup: (group: MonsterGroup) => void;
     addOpenGameContent: () => void;
@@ -53,7 +54,6 @@ export default class MonsterListScreen extends React.Component<Props> {
                     open={grp => this.props.selectMonsterGroup(grp)}
                     delete={grp => this.props.deleteMonsterGroup(grp)}
                     openStatBlock={monster => this.props.openStatBlock(monster)}
-                    openDemographics={grp => this.props.openDemographics(grp)}
                 />
             ));
 
@@ -70,6 +70,7 @@ export default class MonsterListScreen extends React.Component<Props> {
                             <div className='section'>to start adding monsters, press the <b>create a new monster group</b> button</div>
                         </Note>
                         <button onClick={() => this.props.addMonsterGroup()}>create a new monster group</button>
+                        <button onClick={() => this.props.importMonsterGroup()}>import a monster group</button>
                         <button onClick={() => this.props.openDemographics(null)}>show demographics</button>
                     </Col>
                     <Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
@@ -89,7 +90,6 @@ interface ListItemProps {
     open: (group: MonsterGroup) => void;
     delete: (group: MonsterGroup) => void;
     openStatBlock: (monster: Monster) => void;
-    openDemographics: (group: MonsterGroup) => void;
 }
 
 class ListItem extends React.Component<ListItemProps> {
@@ -128,7 +128,6 @@ class ListItem extends React.Component<ListItemProps> {
                         </div>
                         <div className='divider'/>
                         <button onClick={() => this.props.open(this.props.group)}>open group</button>
-                        <button onClick={() => this.props.openDemographics(this.props.group)}>demographics</button>
                         <ConfirmButton text='delete group' callback={() => this.props.delete(this.props.group)} />
                     </div>
                 </div>

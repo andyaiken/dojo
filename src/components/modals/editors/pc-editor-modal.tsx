@@ -1,15 +1,15 @@
 import { Col, Drawer, Row } from 'antd';
 import React from 'react';
 
-import Factory from '../../utils/factory';
-import Utils from '../../utils/utils';
+import Factory from '../../../utils/factory';
+import Utils from '../../../utils/utils';
 
-import { PC } from '../../models/party';
+import { PC } from '../../../models/party';
 
-import NumberSpin from '../controls/number-spin';
-import Textbox from '../controls/textbox';
-import PortraitPanel from '../panels/portrait-panel';
-import ImageSelectionModal from './image-selection-modal';
+import NumberSpin from '../../controls/number-spin';
+import Textbox from '../../controls/textbox';
+import PortraitPanel from '../../panels/portrait-panel';
+import ImageSelectionModal from '../image-selection-modal';
 
 interface Props {
     pc: PC;

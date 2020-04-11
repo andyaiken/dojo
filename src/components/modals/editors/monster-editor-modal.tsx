@@ -3,28 +3,28 @@ import { Col, Drawer, Row } from 'antd';
 import React from 'react';
 import { List } from 'react-movable';
 
-import Factory from '../../utils/factory';
-import Frankenstein from '../../utils/frankenstein';
-import Napoleon from '../../utils/napoleon';
-import Shakespeare from '../../utils/shakespeare';
-import Utils from '../../utils/utils';
+import Factory from '../../../utils/factory';
+import Frankenstein from '../../../utils/frankenstein';
+import Napoleon from '../../../utils/napoleon';
+import Shakespeare from '../../../utils/shakespeare';
+import Utils from '../../../utils/utils';
 
-import { MonsterFilter } from '../../models/encounter';
-import { CATEGORY_TYPES, Monster, MonsterGroup, Trait, TRAIT_TYPES } from '../../models/monster-group';
+import { MonsterFilter } from '../../../models/encounter';
+import { CATEGORY_TYPES, Monster, MonsterGroup, Trait, TRAIT_TYPES } from '../../../models/monster-group';
 
-import MonsterCard from '../cards/monster-card';
-import Checkbox from '../controls/checkbox';
-import Dropdown from '../controls/dropdown';
-import Expander from '../controls/expander';
-import NumberSpin from '../controls/number-spin';
-import Selector from '../controls/selector';
-import Tabs from '../controls/tabs';
-import Textbox from '../controls/textbox';
-import AbilityScorePanel from '../panels/ability-score-panel';
-import FilterPanel from '../panels/filter-panel';
-import Note from '../panels/note';
-import PortraitPanel from '../panels/portrait-panel';
-import ImageSelectionModal from './image-selection-modal';
+import MonsterCard from '../../cards/monster-card';
+import Checkbox from '../../controls/checkbox';
+import Dropdown from '../../controls/dropdown';
+import Expander from '../../controls/expander';
+import NumberSpin from '../../controls/number-spin';
+import Selector from '../../controls/selector';
+import Tabs from '../../controls/tabs';
+import Textbox from '../../controls/textbox';
+import AbilityScorePanel from '../../panels/ability-score-panel';
+import FilterPanel from '../../panels/filter-panel';
+import Note from '../../panels/note';
+import PortraitPanel from '../../panels/portrait-panel';
+import ImageSelectionModal from '../image-selection-modal';
 
 interface Props {
     monster: Monster;

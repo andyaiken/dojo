@@ -347,9 +347,41 @@ span.ant-input-search.ant-input-affix-wrapper-focused {
     }
 }
 
-.ant-carousel .slick-slide {
-    height: 160px;
-    overflow: hidden;
+.ant-upload.ant-upload-drag {
+    background-color: $background;
+    border: 1px solid $control-border;
+    border-left-width: 5px;
+    border-radius: 0;
+
+    &:not(.ant-upload-disabled):hover {
+        border-color: $highlight;
+        color: $highlight;
+    }
+
+    p.ant-upload-drag-icon .anticon {
+        color: $control-border;
+    }
+}
+
+.ant-carousel {
+    width: 600px;
+    font-size: 15px;
+
+    .slick-dots li {
+        button {
+            background-color: $highlight;
+            min-height: 5px;
+        }
+
+        &.slick-active button {
+            background-color: $highlight;
+        }
+    }
+
+    .slick-slide {
+        height: 250px;
+        overflow: hidden;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -650,7 +682,7 @@ body,
                 flex-grow: 0;
                 flex-shrink: 0;
                 flex-basis: auto;
-                padding: 10px;
+                padding: 0 10px 10px 10px;
             }
 
             .sidebar-content {
@@ -1156,11 +1188,16 @@ body,
     margin: 5px 0;
     break-inside: avoid;
 
+    &.intro {
+        font-size: 16px;
+    }
+
     &.centered {
         text-align: center;
 
         &>* {
             margin: 0 auto;
+            text-align: left;
         }
     }
 
