@@ -21,6 +21,7 @@ export default class HomeScreen extends React.Component<Props> {
                             <li>watch the stat block change as you design your monster</li>
                             <li>see a list of similar monsters to help kickstart your creativity (or show you typical stat values for the type of monster you're creating)</li>
                             <li>build an entirely random monster with a single click</li>
+                            <li>easily import any monster from <a href='https://dnd.wizards.com/articles/features/basicrules' target='_blank' rel='noopener noreferrer'>the basic rules</a> or from <a href='https://www.dndbeyond.com' target='_blank' rel='noopener noreferrer'>d&amp;d beyond</a></li>
                         </ul>
                     </div>
                     <div key='encounter'>
@@ -35,7 +36,7 @@ export default class HomeScreen extends React.Component<Props> {
                         <p className='heading'>design intricate tactical maps</p>
                         <ul>
                             <li>create a dungeon map by quickly adding rooms, doors, corridors, and stairs</li>
-                            <li>for something a little more fancy, you can upload your own battlemap images</li>
+                            <li>for something a little more fancy, you can upload your own battlemap images - even animated images</li>
                             <li>generate an entire random dungeon map with one click</li>
                         </ul>
                     </div>

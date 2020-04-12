@@ -460,25 +460,26 @@ export default class MapEditorModal extends React.Component<Props, State> {
                             </div>
                             :
                             <div>
+                                <div className='section subheading'>add a... </div>
                                 <Row gutter={10}>
                                     <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-                                        <button className='image-button' onClick={() => this.setAddingTile('room')}>
-                                            add a room
+                                        <button onClick={() => this.setAddingTile('room')}>
+                                            room tile
                                         </button>
                                     </Col>
                                     <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-                                        <button className='image-button' onClick={() => this.setAddingTile('corridor')}>
-                                            add a corridor
+                                        <button onClick={() => this.setAddingTile('corridor')}>
+                                            corridor tile
                                         </button>
                                     </Col>
                                     <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-                                        <button className='image-button' onClick={() => this.setAddingTile('door')}>
-                                            add a door
+                                        <button onClick={() => this.setAddingTile('door')}>
+                                            door tile
                                         </button>
                                     </Col>
                                     <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-                                        <button className='image-button' onClick={() => this.setAddingTile('stairs')}>
-                                            add stairs
+                                        <button onClick={() => this.setAddingTile('stairs')}>
+                                            stairs tile
                                         </button>
                                     </Col>
                                 </Row>

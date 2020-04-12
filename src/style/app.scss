@@ -60,16 +60,18 @@ li {
 }
 
 a {
+    background-color: $highlight01;
     color: $highlight;
     text-decoration: none;
     font-weight: 600;
-
-    &:hover {
-        background-color: $highlight01;
-    }
+    padding: 0 3px;
 
     &:visited {
         color: $highlight;
+    }
+
+    &:hover {
+        background-color: $highlight02;
     }
 }
 
@@ -368,18 +370,16 @@ span.ant-input-search.ant-input-affix-wrapper-focused {
     font-size: 15px;
 
     .slick-dots li {
-        button {
-            background-color: $highlight;
-            min-height: 5px;
-        }
+        height: 15px;
 
-        &.slick-active button {
-            background-color: $highlight;
+        button {
+            background: $highlight !important;
+            min-height: 5px;
         }
     }
 
     .slick-slide {
-        height: 250px;
+        height: 280px;
         overflow: hidden;
     }
 }
