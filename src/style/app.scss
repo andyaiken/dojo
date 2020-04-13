@@ -373,8 +373,12 @@ span.ant-input-search.ant-input-affix-wrapper-focused {
         height: 15px;
 
         button {
-            background: $highlight !important;
+            background: $control-border;
             min-height: 5px;
+        }
+
+        &.slick-active button {
+            background-color: $highlight;
         }
     }
 
