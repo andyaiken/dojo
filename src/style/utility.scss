@@ -1,0 +1,53 @@
+.full-height {
+    height: 100%;
+}
+
+.scrollable {
+    height: 100%;
+    padding: 0 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    &.both-ways {
+        overflow-x: auto;
+        overflow-y: auto;
+    }
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.lowercase {
+    text-transform: lowercase;
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.strikethrough {
+    text-decoration: line-through;
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+h1,
+.heading {
+    border-bottom: 1px solid $control-border;
+    margin-bottom: 10px;
+    padding: 5px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+h2,
+.subheading {
+    font-weight: 600;
+    font-size: 15px;
+}

@@ -1,0 +1,28 @@
+.condition-panel {
+    .condition-name {
+        font-weight: 600;
+        display: inline-block;
+        vertical-align: top;
+        width: calc(100% - 70px);
+        height: 25px;
+        line-height: 25px;
+        font-size: 14px;
+    }
+
+    .condition-buttons {
+        display: inline-block;
+        vertical-align: top;
+
+        .anticon {
+            margin: 0 5px;
+            padding: 5px;
+            font-size: 15px;
+            border-radius: 100%;
+            cursor: pointer;
+
+            &:hover {
+                background-color: $highlight01;
+            }
+        }
+    }
+}

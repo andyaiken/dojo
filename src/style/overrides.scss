@@ -1,0 +1,381 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Standard Overrides
+
+b,
+strong {
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+input[type=text],
+input[type=color] {
+    user-select: text;
+    margin: 5px 0;
+    padding: 5px 8px;
+    border: 1px solid $control-border;
+    width: 100%;
+    border-radius: 0;
+    font-size: 12px;
+
+    &:hover,
+    &:focus {
+        border-color: $highlight;
+    }
+}
+
+input[type=text],
+input[type=color] {
+    height: 32px;
+    border-left-width: 5px;
+}
+
+input[type=color] {
+    padding: 0 2px;
+    background-color: $background;
+}
+
+ul, ol {
+    padding-left: 20px;
+    margin: 5px 0;
+}
+
+li {
+    margin: 5px 0;
+    list-style-type: square;
+}
+
+a {
+    background-color: $highlight01;
+    color: $highlight;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0 3px;
+
+    &:visited {
+        color: $highlight;
+    }
+
+    &:hover {
+        background-color: $highlight02;
+    }
+}
+
+table {
+    border-spacing: 0;
+    width: 100%;
+
+    th, td {
+        padding: 5px;
+    }
+
+    tbody tr:nth-child(odd) {
+        background-color: #E0E5C1;
+    }
+
+    tbody tr:nth-child(even) {
+        background-color: #FFFFFF;
+    }
+}
+
+:focus {
+    outline: none;
+}
+
+button {
+    display: block;
+    min-height: 32px;
+    width: 100%;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    background-color: $background;
+    border: 1px solid $control-border;
+    border-left-width: 5px;
+    margin: 5px 0;
+    padding: 5px 9px 5px 10px;
+    cursor: pointer;
+
+    &.link {
+        display: unset;
+        width: unset;
+        background-color: unset;
+        border: unset;
+        padding: unset;
+        margin: unset;
+        min-height: unset;
+        color: $highlight;
+
+        &:hover {
+            background-color: $highlight01;
+        }
+    }
+
+    &.image-button {
+        height: 50px;
+    }
+
+    &:hover {
+        border-color: $highlight;
+
+        .image {
+            opacity: 1;
+        }
+    }
+
+    &.disabled {
+        background-color: $background;
+        border-color: $control-border;
+        cursor: default;
+    }
+
+    .details {
+        margin: 3px 0;
+        padding: 5px 0;
+    }
+
+    .title {
+        width: calc(100% - 22px);
+        display: inline-block;
+        vertical-align: middle;
+        min-height: 16px;
+        line-height: 15px;
+    }
+
+    .image {
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        vertical-align: middle;
+        opacity: 0;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Ant Overrides
+
+.ant-drawer-wrapper-body {
+    height: 100%;
+}
+
+.ant-drawer-body {
+    padding: 0;
+    font-size: 12px;
+    height: 100%;
+    user-select: none;
+    font-family: 'Open Sans', 'Segoe UI', sans-serif;
+}
+
+.ant-input {
+    font-size: 12px;
+    border-radius: 0;
+    border-color: $control-border;
+    border-left-width: 5px;
+    margin: 5px 0;
+
+    &:hover {
+        border-color: $highlight;
+    }
+
+    &:focus {
+        border-color: $highlight;
+        box-shadow: none;
+    }
+}
+
+.ant-input-affix-wrapper:hover .ant-input:not(.ant-input-disabled) {
+    border-color: $highlight;
+}
+
+span.textbox.ant-input-affix-wrapper,
+span.ant-input-search.ant-input-affix-wrapper {
+    padding: 0;
+    border: 1px solid $control-border;
+    border-left-width: 5px;
+    border-radius: 0;
+    margin: 5px 0;
+
+    & > input.ant-input {
+        padding: 0 8px;
+        margin: 0px;
+        height: 30px;
+    }
+
+    .ant-input-suffix {
+        margin-right: 4px;
+
+        .anticon {
+            margin-top: 8px;
+        }
+    }
+
+    &:hover {
+        border-color: $highlight;
+    }
+}
+
+span.textbox.ant-input-affix-wrapper-focused,
+span.ant-input-search.ant-input-affix-wrapper-focused {
+    box-shadow: none;
+    border-color: $highlight;
+}
+
+.ant-collapse {
+    font-size: 12px;
+}
+
+.ant-collapse-borderless > .ant-collapse-item {
+    margin: 5px 0;
+    background-color: $background;
+    border: 1px solid $control-border;
+    border-radius: 0;
+    border-left-width: 5px;
+
+    &:hover {
+        border-color: $highlight;
+    }
+}
+
+.ant-collapse > .ant-collapse-item > .ant-collapse-header {
+    padding: 5px 10px;
+    font-weight: 600;
+    line-height: 20px;
+    color: unset;
+
+    .collapse-header-text {
+        width: calc(100% - 22px);
+    }
+}
+
+.ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
+    padding: 5px 10px;
+    overflow-y: auto;
+}
+
+.ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow {
+    font-size: 16px;
+    right: 10px;
+}
+
+.ant-collapse-item-active:hover .ant-collapse-header {
+    background-color: $highlight01;
+}
+
+.ant-slider {
+    margin: 10px 5px;
+}
+
+.ant-tooltip {
+    font-size: 12px;
+    line-height: 12px;
+    user-select: none;
+
+    .ant-tooltip-inner {
+        border-radius: 0;
+        opacity: 0.95;
+
+        b, strong {
+            color: $background;
+        }
+    }
+}
+
+.ant-slider, .ant-slider:hover {
+    .ant-slider-track {
+        background-color: $highlight !important;
+    }
+
+    .ant-slider-handle {
+        border-color: $highlight !important;
+
+        &:focus {
+            box-shadow: 0 0 0 5px $highlight02;
+        }
+    }
+}
+
+.ant-input-number {
+    width: 100%;
+    border-radius: 0;
+    border-left-width: 5px;
+    border-color: $control-border;
+
+    &:hover,
+    &:focus {
+        box-shadow: none;
+        border-color: $highlight;
+    }
+
+    .ant-input-number-handler:hover .ant-input-number-handler-up-inner,
+    .ant-input-number-handler:hover .ant-input-number-handler-down-inner {
+        color: $highlight;
+    }
+}
+
+.ant-input-number-focused {
+    box-shadow: none;
+    border-color: $highlight;
+}
+
+.ant-tag {
+    margin: 1px 2px;
+    border-color: $control-border;
+
+    &:hover {
+        opacity: 1;
+    }
+
+    &.ant-tag-checkable {
+        border-color: $control-border;
+        cursor: pointer;
+
+        &.ant-tag-checkable:not(.ant-tag-checkable-checked):hover {
+            border-color: $highlight;
+            color: $highlight;
+        }
+
+        &.ant-tag-checkable-checked {
+            border-color: $highlight;
+            background-color: $highlight;
+            color: $background;
+        }
+    }
+}
+
+.ant-upload.ant-upload-drag {
+    background-color: $background;
+    border: 1px solid $control-border;
+    border-left-width: 5px;
+    border-radius: 0;
+
+    &:not(.ant-upload-disabled):hover {
+        border-color: $highlight;
+        color: $highlight;
+    }
+
+    p.ant-upload-drag-icon .anticon {
+        color: $control-border;
+    }
+}
+
+.ant-carousel {
+    width: 600px;
+    font-size: 15px;
+
+    .slick-dots li {
+        height: 15px;
+
+        button {
+            background: $control-border;
+            min-height: 5px;
+        }
+
+        &.slick-active button {
+            background-color: $highlight;
+        }
+    }
+
+    .slick-slide {
+        height: 280px;
+        overflow: hidden;
+    }
+}

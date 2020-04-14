@@ -1,0 +1,45 @@
+.difficulty-gauge {
+    margin: 5px 0;
+    padding: 1px 3px;
+    border: 1px solid $control-border;
+    background-color: $background;
+
+    .bar-container {
+        margin: 2px 0;
+        height: 5px;
+        position: relative;
+
+        .bar {
+            height: 5px;
+            position: absolute;
+
+            &.trivial {
+                background-color: lightgreen;
+            }
+            &.easy {
+                background-color: green;
+            }
+            &.medium {
+                background-color: orange;
+            }
+            &.hard {
+                background-color: crimson;
+            }
+            &.deadly {
+                background-color: black
+            }
+        }
+    }
+
+    .encounter-container {
+        position: relative;
+
+        .encounter {
+            width: 1%;
+            height: 35px;
+            top: -36px;
+            position: absolute;
+            background-color: royalblue;
+        }
+    }
+}

@@ -1180,7 +1180,7 @@ class TraitBarPanel extends React.Component<TraitBarProps> {
         try {
             return (
                 <div className={this.props.isSelected ? 'trait-bar selected' : 'trait-bar'} onClick={() => this.props.select(this.props.trait.id)}>
-                    <MenuOutlined className='grabber small' data-movable-handle={true} />
+                    <MenuOutlined className='grabber' data-movable-handle={true} />
                     <div className='name'>
                         {this.props.trait.name || 'unnamed ' + Utils.traitType(this.props.trait.type, false)}
                     </div>

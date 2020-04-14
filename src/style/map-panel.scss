@@ -1,0 +1,240 @@
+.map-panel {
+    overflow-x: auto;
+    overflow-y: auto;
+
+    .grid {
+        position: relative;
+        margin: 0 auto;
+
+        .grid-square {
+            position: absolute;
+            background-color: rgba(0, 60, 200, 0.2);
+            transition: none;
+
+            &.grid-overlay {
+                opacity: 0.5;
+                cursor: pointer;
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    &.thumbnail {
+        pointer-events: none;
+        overflow-x: hidden;
+        overflow-y: hidden;
+    }
+
+    &.edit {
+        overflow-x: visible;
+        overflow-y: visible;
+
+        .grid {
+            border: 1px solid $control-border;
+            background-color: #B8C7F4;
+            margin: 15px auto;
+        }
+
+        .tile:hover {
+            border-color: $highlight;
+        }
+    }
+
+    &.combat,
+    &.combat-player {
+
+        .overlay:hover, .token:hover {
+            border-color: $highlight;
+        }
+    }
+
+    &.combat {
+        padding: 10px 0;
+    }
+
+    &.combat-player {
+        padding: 20px;
+    }
+}
+
+.tile {
+    position: absolute;
+    border: 1px solid darkgrey;
+    background-color: lightgrey;
+
+    &.default {
+        background-image: url("../resources/images/map-tiles/default.jpg");
+    }
+
+    &.cavern {
+        background-image: url("../resources/images/map-tiles/cavern.jpg");
+    }
+
+    &.dirt {
+        background-image: url("../resources/images/map-tiles/dirt.jpg");
+    }
+
+    &.flagstone {
+        background-image: url("../resources/images/map-tiles/flagstone.jpg");
+    }
+
+    &.floorboard {
+        background-image: url("../resources/images/map-tiles/floorboard.jpg");
+    }
+
+    &.grassland {
+        background-image: url("../resources/images/map-tiles/grassland.jpg");
+    }
+
+    &.pit {
+        background-image: url("../resources/images/map-tiles/pit.jpg");
+    }
+
+    &.sand {
+        background-image: url("../resources/images/map-tiles/sand.jpg");
+    }
+
+    &.snow {
+        background-image: url("../resources/images/map-tiles/snow.jpg");
+    }
+
+    &.water {
+        background-image: url("../resources/images/map-tiles/water.jpg");
+    }
+
+    &.selected {
+        border-color: $highlight;
+    }
+
+    .custom-image {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    .tile-content {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+
+        .thick {
+            stroke: rgb(100, 100, 100);
+            stroke-width: 20%;
+        }
+
+        .medium {
+            stroke: rgb(100, 100, 100);
+            stroke-width: 10%;
+        }
+
+        .thin {
+            stroke: rgb(100, 100, 100);
+            stroke-width: 5%;
+        }
+
+        .outline {
+            fill: rgb(255, 255, 255);
+        }
+
+        .filled {
+            fill: rgb(100, 100, 100);
+        }
+    }
+}
+
+.overlay {
+    position: absolute;
+    border: 1px solid darkgrey;
+    background-color: lightgrey;
+
+    &.selected {
+        border-color: $highlight;
+    }
+}
+
+.aura {
+    position: absolute;
+    background-color: #005080;
+    opacity: 0.2;
+    pointer-events: none;
+}
+
+.token {
+    position: absolute;
+    background-color: #000065;
+    border: 1px solid $control-border;
+    box-shadow: inset 0 0 6px 3px rgba(0, 0, 0, 0.1);
+
+    &.monster {
+        background-color: #650000;
+    }
+
+    &.pc {
+        background-color: #006500;
+    }
+
+    &.current {
+        background-color: white;
+        box-shadow: 0 0 10px 3px black;
+
+        & .initials {
+            color: black;
+            font-weight: 600;
+        }
+    }
+
+    &.selected {
+        border-color: $highlight;
+        box-shadow: 0 0 10px 3px black;
+    }
+
+    &.hidden {
+        opacity: 0.3;
+    }
+
+    .portrait {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .initials {
+        font-size: 8px;
+        text-transform: uppercase;
+        color: white;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .hp-gauge {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -1px;
+    }
+
+    .badge {
+        position: absolute;
+        top: -4px;
+        left: -4px;
+        font-size: 15px;
+        z-index: 5;
+    }
+
+    .conditions {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        animation: loadingCircle 10s infinite linear;
+        z-index: 5;
+    }
+}

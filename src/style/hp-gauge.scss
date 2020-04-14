@@ -1,0 +1,25 @@
+.hp-gauge {
+    height: 5px;
+
+    .bar {
+        float: left;
+        height: 100%;
+        transition: none;
+
+        &.unhurt {
+            background-color: green;
+        }
+
+        &.injured {
+            background-color: orange;
+        }
+
+        &.bloodied {
+            background-color: crimson;
+        }
+
+        &.temp {
+            background-color: royalblue;
+        }
+    }
+}

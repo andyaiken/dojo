@@ -324,9 +324,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                 statBlock = (
                     <div>
                         <div className='divider' />
-                        <div className='section'>
-                            <AbilityScorePanel combatant={this.props.monster} />
-                        </div>
+                        <AbilityScorePanel combatant={this.props.monster} />
                         {this.statSection('ac', this.props.monster.ac.toString())}
                         {this.statSection('hp', this.getHP())}
                         {this.statSection('saving throws', this.props.monster.savingThrows)}
@@ -379,9 +377,7 @@ export default class MonsterCard extends React.Component<Props, State> {
             if (this.props.mode.indexOf('abilities') !== -1) {
                 stats = (
                     <div className='stats'>
-                        <div className='section'>
-                            <AbilityScorePanel combatant={this.props.monster} />
-                        </div>
+                        <AbilityScorePanel combatant={this.props.monster} />
                         {this.statSection('saving throws', this.props.monster.savingThrows)}
                         {this.statSection('skills', this.props.monster.skills)}
                     </div>

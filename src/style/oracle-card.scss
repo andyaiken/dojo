@@ -1,0 +1,65 @@
+.oracle-card {
+    height: 250px;
+    perspective: 1000px;
+    margin: 10px 5px;
+
+    .oracle-card-inner {
+        position: relative;
+        height: 100%;
+        transition: transform 0.5s;
+        transform-style: preserve-3d;
+
+        .oracle-card-front,
+        .oracle-card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            backface-visibility: hidden;
+            border: 1px solid $control-border;
+            border-radius: 15px;
+            background-color: beige;
+            cursor: pointer;
+
+            &:hover {
+                border-color: $highlight;
+            }
+        }
+
+        .oracle-card-front {
+            text-align: center;
+            font-size: 150px;
+            background-color: $control-border;
+            color: $background;
+
+            &:hover {
+                background-color: $highlight;
+            }
+        }
+
+        .oracle-card-back {
+            padding: 10px;
+            transform: rotateY(180deg);
+
+            .oracle-card-name {
+                font-weight: 600;
+                font-size: 14px;
+                height: 45px;
+                margin-bottom: 10px;
+                text-align: center;
+            }
+
+            .oracle-card-reversed {
+                font-size: 10px;
+                height: 20px;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+        }
+    }
+
+    &.flipped .oracle-card-inner {
+        transform: rotateY(180deg);
+    }
+}

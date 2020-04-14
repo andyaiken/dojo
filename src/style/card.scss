@@ -1,0 +1,204 @@
+.card {
+    background-color: #F5F5F5;
+    border: 1px solid #656565;
+    margin: 5px;
+
+    .heading {
+        height: 35px;
+        font-size: 15px;
+        margin: 0;
+        padding: 5px 0 5px 8px;
+        border-bottom: none;
+        background-color: #656565;
+        color: $background;
+
+        .title {
+            width: calc(100% - 25px);
+            display: inline-block;
+            vertical-align: middle;
+            white-space: nowrap;
+            overflow-x: hidden;
+            overflow-y: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .image {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .anticon {
+            font-size: 20px;
+            vertical-align: middle;
+            cursor: pointer;
+        }
+    }
+
+    .hp-gauge {
+        margin: 5px 0 10px 0;
+    }
+
+    .divider {
+        border-color: #656565;
+    }
+
+    &.pc {
+        border: 1px solid #006500;
+        background-color: beige;
+
+        .heading {
+            background-color: #006500;
+        }
+
+        .subheading {
+            color: #006500;
+        }
+
+        .divider {
+            border-color: #006500;
+        }
+
+        .card-content {
+    
+            .stats {
+                column-count: 1;
+            }
+        }
+    }
+
+    &.monster {
+        border: 1px solid #650000;
+        background-color: beige;
+
+        .heading {
+            background-color: #650000;
+        }
+
+        .subheading {
+            color: #650000;
+        }
+
+        .divider {
+            border-color: #650000;
+        }
+    }
+
+    &.encounter {
+        border: 1px solid #006565;
+        background-color: beige;
+
+        .heading {
+            background-color: #006565;
+        }
+
+        .subheading {
+            color: #006565;
+        }
+
+        .divider {
+            border-color: #006565;
+        }
+    }
+
+    &.map {
+        border: 1px solid #000065;
+        background-color: beige;
+
+        .heading {
+            background-color: #000065;
+        }
+
+        .subheading {
+            color: #000065;
+        }
+
+        .divider {
+            border-color: #000065;
+        }
+    }
+
+    &.combat {
+        border: 1px solid #650065;
+        background-color: beige;
+
+        .heading {
+            background-color: #650065;
+        }
+
+        .subheading {
+            color: #650065;
+        }
+
+        .divider {
+            border-color: #650065;
+        }
+    }
+
+    &.error {
+        background-color: red;
+        color: $background;
+
+        .subheading, b, strong {
+            color: $background;
+        }
+
+        .divider {
+            border-color: $background;
+        }
+    }
+
+    .card-content {
+        padding: 5px 10px;
+
+        .stats {
+            column-width: 220px;
+            column-count: 2;
+        }
+
+        .trait {
+            break-inside: avoid-column;
+    
+            &.trait-template {
+                cursor: pointer;
+    
+                &:hover {
+                    background-color: $highlight02;
+                }
+            }
+        }
+
+        .fixed-height {
+            height: 200px;
+            overflow-y: auto;
+
+            .combatant-row {
+                margin: 3px 0;
+                padding: 3px 5px;
+                position: relative;
+                border-left: 5px solid $control-border;
+
+                .name {
+                    display: inline-block;
+                    vertical-align: top;
+                    padding: 1px 0;
+                    min-height: 20px;
+                }
+
+                .info-icon {
+                    position: absolute;
+                    top: 2px;
+                    right: 2px;
+                    font-size: 16px;
+                    padding: 3px;
+
+                    &:hover {
+                        background-color: $highlight01;
+                    }
+                }
+            }
+        }
+    }
+}

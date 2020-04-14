@@ -1,0 +1,152 @@
+.combat-top-row {
+    height: 50px;
+    padding: 4px 0;
+    background-color: rgb(110, 110, 110);
+
+    .statistic {
+        height: 42px;
+        line-height: 42px;
+        font-size: 15px;
+        text-align: center;
+        color: $header-foreground;
+    }
+}
+
+.combat-main {
+    height: calc(100% - 50px);
+}
+
+.multiple-combatant-row {
+    color: white;
+    background-color: #656565;
+    border-radius: 5px;
+    margin: 3px 0;
+    padding: 3px 5px;
+    position: relative;
+}
+
+.initiative-list-item {
+    border: 0 solid $control-border;
+    border-left-width: 5px;
+    margin: 5px 0;
+    cursor: pointer;
+
+    &:hover,
+    &.highlight,
+    &.current {
+        border-color: $highlight;
+    }
+
+    &.current {
+        pointer-events: none;
+
+        .header {
+            .name {
+                font-size: 20px;
+            }
+        }
+    }
+
+    &.defeated {
+        opacity: 0.5;
+    }
+
+    .header {
+        height: 35px;
+        padding: 5px 8px;
+        background-color: $highlight01;
+        display: flex;
+        align-items: center;
+
+        .name {
+            display: inline-block;
+            height: 22px;
+            line-height: 22px;
+            flex-grow: 1;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+    }
+
+    .content {
+        padding-left: 5px;
+
+        .key-stats {
+    
+            .key-stat {
+                display: inline-block;
+                width: calc((100% - 1px) / 2);
+                text-align: center;
+    
+                .stat-value {
+                    display: inline-block;
+                    vertical-align: top;
+                    height: 30px;
+                    line-height: 30px;
+                    font-weight: 600;
+                    font-size: 25px;
+                }
+    
+                .stat-label {
+                    display: inline-block;
+                    vertical-align: top;
+                    height: 30px;
+                    line-height: 30px;
+                    font-weight: 600;
+                    padding: 0 5px;
+                }
+            }
+        }
+
+        .condition {
+            .condition-name {
+                font-weight: 600;
+            }
+
+            .condition-text {
+                font-size: 11px;
+                margin: 2px 0;
+            }
+        }
+
+        .icon-button {
+            float: right;
+            font-size: 14px;
+            padding: 2px;
+            pointer-events: all;
+
+            &:hover {
+                background-color: $highlight01;
+            }
+        }
+    }
+}
+
+.next-up {
+    margin: 15px 0;
+}
+
+.notifications {
+    position: sticky;
+    z-index: 15;
+    top: 0;
+    background-color: transparent;
+    padding: 1px 5px 0 5px;
+}
+
+.legendary-usage .anticon {
+    font-size: 20px;
+    margin: 0 15px !important;
+}
+
+.init-separator {
+    background-color: rgba(220, 220, 220, 0.5);
+    font-weight: 600;
+    padding: 5px 0;
+    margin: 10px 40px !important;
+}
