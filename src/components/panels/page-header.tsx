@@ -1,9 +1,10 @@
-import { BookOutlined, BulbOutlined, SearchOutlined, ToolOutlined } from '@ant-design/icons';
+import { BookOutlined, BulbOutlined, InfoCircleOutlined, SearchOutlined, ToolOutlined } from '@ant-design/icons';
 import React from 'react';
 
 interface Props {
     sidebar: string | null;
     setSidebar: (type: string | null) => void;
+    openDrawer: (type: string) => void;
 }
 
 export default class PageHeader extends React.Component<Props> {
@@ -32,6 +33,12 @@ export default class PageHeader extends React.Component<Props> {
                         className={this.props.sidebar === 'reference' ? 'title-bar-icon selected' : 'title-bar-icon'}
                         title='reference'
                         onClick={() => this.props.setSidebar(this.props.sidebar === 'reference' ? null : 'reference')}
+                    />
+                    <div className='vertical-divider' />
+                    <InfoCircleOutlined
+                        className='title-bar-icon'
+                        title='about'
+                        onClick={() => this.props.openDrawer('about')}
                     />
                 </div>
             );

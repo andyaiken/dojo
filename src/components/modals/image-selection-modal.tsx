@@ -1,4 +1,5 @@
-import { Input } from 'antd';
+import { FileOutlined } from '@ant-design/icons';
+import { Input, Upload } from 'antd';
 import React from 'react';
 
 import Sherlock from '../../utils/sherlock';
@@ -58,29 +59,27 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
         });
     }
 
-    private onFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
-        if (e.target.files) {
-            const reader = new FileReader();
-            reader.onload = progress => {
-                if (progress.target) {
-                    const content = progress.target.result as string;
-                    const image = {
-                        id: Utils.guid(),
-                        name:  file.name,
-                        data: content
-                    };
+    private readFile(file: File) {
+        const reader = new FileReader();
+        reader.onload = progress => {
+            if (progress.target) {
+                const content = progress.target.result as string;
+                const image = {
+                    id: Utils.guid(),
+                    name:  file.name,
+                    data: content
+                };
 
-                    const json = JSON.stringify(image);
-                    localStorage.setItem('image-' + image.id, json);
+                const json = JSON.stringify(image);
+                localStorage.setItem('image-' + image.id, json);
 
-                    this.setState({
-                        images: this.listImages()
-                    });
-                }
-            };
-            const file = e.target.files[0];
-            reader.readAsDataURL(file);
-        }
+                this.setState({
+                    images: this.listImages()
+                });
+            }
+        };
+        reader.readAsDataURL(file);
+        return false;
     }
 
     private delete(id: string) {
@@ -127,14 +126,16 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
                     <div className='drawer-header'><div className='app-title'>select image</div></div>
                     <div className='drawer-content'>
                         <div className='scrollable'>
-                            <button onClick={() => (document.getElementById('file-upload') as HTMLElement).click()}>add a new image</button>
-                            <input
-                                type='file'
-                                id='file-upload'
-                                accept='image/*'
-                                style={{ display: 'none' }}
-                                onChange={e => this.onFileSelected(e)}
-                            />
+                            <div>
+                                <Upload.Dragger accept='image/*' showUploadList={false} beforeUpload={file => this.readFile(file)}>
+                                    <p className='ant-upload-drag-icon'>
+                                        <FileOutlined />
+                                    </p>
+                                    <p className='ant-upload-text'>
+                                        click here, or drag a file here, to upload it
+                                    </p>
+                                </Upload.Dragger>
+                            </div>
                             {images}
                         </div>
                     </div>

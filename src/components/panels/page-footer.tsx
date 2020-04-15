@@ -1,10 +1,8 @@
-import { InfoCircleOutlined } from '@ant-design/icons';
 import React from 'react';
 
 interface Props {
     view: string;
     setView: (view: string) => void;
-    openDrawer: (type: string) => void;
 }
 
 export default class PageFooter extends React.Component<Props> {
@@ -23,8 +21,6 @@ export default class PageFooter extends React.Component<Props> {
                     <div className={encounterStyle} onClick={() => this.props.setView('encounters')}>encounters</div>
                     <div className={mapStyle} onClick={() => this.props.setView('maps')}>maps</div>
                     <div className={combatStyle} onClick={() => this.props.setView('combat')}>combat</div>
-                    <div className='vertical-divider' />
-                    <InfoCircleOutlined title='about' onClick={() => this.props.openDrawer('about')} />
                 </div>
             );
         } catch (e) {

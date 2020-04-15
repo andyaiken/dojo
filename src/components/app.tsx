@@ -2330,16 +2330,17 @@ export default class App extends React.Component<Props, State> {
                     header = 'leaderboard';
                     closable = true;
                     break;
-                    case 'about':
-                        content = (
-                            <AboutModal
-                                resetAll={() => this.resetAll()}
-                            />
-                        );
-                        header = 'about';
-                        closable = true;
-                        break;
-                }
+                case 'about':
+                    content = (
+                        <AboutModal
+                            resetAll={() => this.resetAll()}
+                        />
+                    );
+                    header = 'about';
+                    width = '35%';
+                    closable = true;
+                    break;
+            }
         }
 
         return {
@@ -2362,6 +2363,7 @@ export default class App extends React.Component<Props, State> {
                         <PageHeader
                             sidebar={this.state.sidebar}
                             setSidebar={type => this.setSidebar(type)}
+                            openDrawer={type => this.openToolsDrawer(type)}
                         />
                     </ErrorBoundary>
                     <div className='page-content'>
@@ -2376,7 +2378,6 @@ export default class App extends React.Component<Props, State> {
                         <PageFooter
                             view={this.state.view}
                             setView={view => this.setView(view)}
-                            openDrawer={type => this.openToolsDrawer(type)}
                         />
                     </ErrorBoundary>
                     <ErrorBoundary>

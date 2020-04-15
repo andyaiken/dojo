@@ -346,6 +346,7 @@ span.ant-input-search.ant-input-affix-wrapper-focused {
     border: 1px solid $control-border;
     border-left-width: 5px;
     border-radius: 0;
+    margin: 5px 0;
 
     &:not(.ant-upload-disabled):hover {
         border-color: $highlight;
@@ -362,11 +363,12 @@ span.ant-input-search.ant-input-affix-wrapper-focused {
     font-size: 15px;
 
     .slick-dots li {
-        height: 15px;
+        height: 16px;
 
         button {
             background: $control-border;
-            min-height: 5px;
+            min-height: 6px;
+            border-radius: 3px;
         }
 
         &.slick-active button {
@@ -376,6 +378,7 @@ span.ant-input-search.ant-input-affix-wrapper-focused {
 
     .slick-slide {
         height: 280px;
+        padding-left: 20px;
         overflow: hidden;
     }
 }
