@@ -10,7 +10,9 @@ import Shakespeare from '../../../utils/shakespeare';
 import Utils from '../../../utils/utils';
 
 import { MonsterFilter } from '../../../models/encounter';
+import { Map } from '../../../models/map';
 import { CATEGORY_TYPES, Monster, MonsterGroup, Trait, TRAIT_TYPES } from '../../../models/monster-group';
+import { Party } from '../../../models/party';
 
 import MonsterCard from '../../cards/monster-card';
 import Checkbox from '../../controls/checkbox';
@@ -28,7 +30,9 @@ import ImageSelectionModal from '../image-selection-modal';
 
 interface Props {
     monster: Monster;
+    parties: Party[];
     library: MonsterGroup[];
+    maps: Map[];
     showSidebar: boolean;
 }
 
@@ -837,7 +841,13 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                     </Col>
                     {this.getSidebar()}
                     <Drawer visible={this.state.showImageSelection} closable={false} onClose={() => this.toggleImageSelection()}>
-                        <ImageSelectionModal select={id => this.changeValue('portrait', id)} cancel={() => this.toggleImageSelection()} />
+                        <ImageSelectionModal
+                            parties={this.props.parties}
+                            library={this.props.library}
+                            maps={this.props.maps}
+                            select={id => this.changeValue('portrait', id)}
+                            cancel={() => this.toggleImageSelection()}
+                        />
                     </Drawer>
                 </Row>
             );

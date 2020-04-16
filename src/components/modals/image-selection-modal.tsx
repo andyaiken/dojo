@@ -5,9 +5,16 @@ import React from 'react';
 import Sherlock from '../../utils/sherlock';
 import Utils from '../../utils/utils';
 
+import { Map } from '../../models/map';
+import { MonsterGroup } from '../../models/monster-group';
+import { Party } from '../../models/party';
+
 import Note from '../panels/note';
 
 interface Props {
+    parties: Party[];
+    library: MonsterGroup[];
+    maps: Map[];
     select: (id: string) => void;
     cancel: () => void;
 }
@@ -94,13 +101,40 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
         try {
             const images = this.state.images
                 .filter(img => Sherlock.match(this.state.filter, img.name))
-                .map(img => (
-                    <div key={img.id}>
-                        <div className='subheading'>{img.name}</div>
-                        <img className='selectable-image' src={img.data} alt={img.name} onClick={() => this.props.select(img.id)} />
-                        <button onClick={() => this.delete(img.id)}>delete this image</button>
-                    </div>
-                ));
+                .map(img => {
+                    // Work out if the image is used in a PC, a monster, or a map tile
+                    let used = false;
+                    this.props.parties.forEach(party => {
+                        if (party.pcs.find(pc => pc.portrait === img.id)) {
+                            used = true;
+                        }
+                    });
+                    this.props.library.forEach(group => {
+                        if (group.monsters.find(monster => monster.portrait === img.id)) {
+                            used = true;
+                        }
+                    });
+                    this.props.maps.forEach(map => {
+                        if (map.items.find(mi => mi.customBackground === img.id)) {
+                            used = true;
+                        }
+                    });
+
+                    let deleteBtn = null;
+                    if (!used) {
+                        deleteBtn = (
+                            <button onClick={() => this.delete(img.id)}>delete this image</button>
+                        );
+                    }
+
+                    return (
+                        <div key={img.id} className='group-panel'>
+                            <div className='subheading'>{img.name}</div>
+                            <img className='section selectable-image' src={img.data} alt={img.name} onClick={() => this.props.select(img.id)} />
+                            {deleteBtn}
+                        </div>
+                    );
+                });
 
             if (images.length === 0) {
                 images.push(

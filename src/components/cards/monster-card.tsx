@@ -452,7 +452,9 @@ export default class MonsterCard extends React.Component<Props, State> {
             return (
                 <div className='card monster'>
                     <div className='heading'>
-                        <div className='title'>{name}</div>
+                        <div className='title' title={name}>
+                            {name}
+                        </div>
                         {this.getIcon()}
                     </div>
                     <div className='card-content'>

@@ -1,17 +1,42 @@
-import { Col, Row } from 'antd';
+import { Col, Drawer, Row } from 'antd';
 import React from 'react';
 
 import Utils from '../../utils/utils';
 
+import { Map } from '../../models/map';
+import { MonsterGroup } from '../../models/monster-group';
+import { Party } from '../../models/party';
+
 import ConfirmButton from '../controls/confirm-button';
+import ImageSelectionModal from './image-selection-modal';
 
 import pkg from '../../../package.json';
 
 interface Props {
+    parties: Party[];
+    library: MonsterGroup[];
+    maps: Map[];
     resetAll: () => void;
 }
 
-export default class AboutModal extends React.Component<Props> {
+interface State {
+    showImages: boolean;
+}
+
+export default class AboutModal extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            showImages: false
+        };
+    }
+
+    private toggleImages() {
+        this.setState({
+            showImages: !this.state.showImages
+        });
+    }
+
     public render() {
         try {
             let data = 0;
@@ -62,6 +87,7 @@ export default class AboutModal extends React.Component<Props> {
                     <div className='section'>this will reset the entire app and cannot be undone</div>
                     <div className='section'>use it at your own risk</div>
                     <ConfirmButton text='clear all data' callback={() => this.props.resetAll()} />
+                    <button onClick={() => this.toggleImages()}>show images</button>
                     <div className='divider'/>
                     <div className='subheading'>data</div>
                     <div className='section'>
@@ -78,6 +104,15 @@ export default class AboutModal extends React.Component<Props> {
                             <Col span={8} className='statistic-value'>{Utils.toData(images)}</Col>
                         </Row>
                     </div>
+                    <Drawer visible={this.state.showImages} closable={false} onClose={() => this.toggleImages()}>
+                        <ImageSelectionModal
+                            parties={this.props.parties}
+                            library={this.props.library}
+                            maps={this.props.maps}
+                            select={() => null}
+                            cancel={() => this.toggleImages()}
+                        />
+                    </Drawer>
                 </div>
             );
             /* tslint:enable:max-line-length */

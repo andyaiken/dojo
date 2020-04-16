@@ -25,7 +25,7 @@ export default class HomeScreen extends React.Component<Props> {
                         </ul>
                     </div>
                     <div key='encounter'>
-                        <p className='heading'>create encounters of just the right difficulty</p>
+                        <p className='heading'>create rewarding encounters</p>
                         <ul>
                             <li>quickly add monsters to your encounter and see its xp value and difficulty level change</li>
                             <li>split your encounter into multiple waves</li>

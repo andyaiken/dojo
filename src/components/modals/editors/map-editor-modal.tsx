@@ -6,6 +6,8 @@ import Mercator from '../../../utils/mercator';
 import Utils from '../../../utils/utils';
 
 import { DOORWAY_TYPES, Map, MapItem, MapNote, STAIRWAY_TYPES, TERRAIN_TYPES } from '../../../models/map';
+import { MonsterGroup } from '../../../models/monster-group';
+import { Party } from '../../../models/party';
 
 import ConfirmButton from '../../controls/confirm-button';
 import Dropdown from '../../controls/dropdown';
@@ -20,6 +22,9 @@ import ImageSelectionModal from '../image-selection-modal';
 
 interface Props {
     map: Map;
+    parties: Party[];
+    library: MonsterGroup[];
+    maps: Map[];
 }
 
 interface State {
@@ -518,7 +523,13 @@ export default class MapEditorModal extends React.Component<Props, State> {
                         />
                     </Col>
                     <Drawer visible={this.state.showImageSelection} closable={false} onClose={() => this.toggleImageSelection()}>
-                        <ImageSelectionModal select={id => this.setCustomImage(id)} cancel={() => this.toggleImageSelection()} />
+                        <ImageSelectionModal
+                            parties={this.props.parties}
+                            library={this.props.library}
+                            maps={this.props.maps}
+                            select={id => this.setCustomImage(id)}
+                            cancel={() => this.toggleImageSelection()}
+                        />
                     </Drawer>
                 </Row>
             );

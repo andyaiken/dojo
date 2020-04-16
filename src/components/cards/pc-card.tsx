@@ -67,7 +67,7 @@ export default class PCCard extends React.Component<Props> {
             return (
                 <div className='card pc'>
                     <div className='heading'>
-                        <div className='title'>
+                        <div className='title' title={name}>
                             {name}
                         </div>
                     </div>
