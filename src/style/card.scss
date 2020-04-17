@@ -175,10 +175,11 @@
             overflow-y: auto;
 
             .combatant-row {
-                margin: 3px 0;
+                margin: 5px 0;
                 padding: 3px 5px;
                 position: relative;
                 border-left: 5px solid $control-border;
+                cursor: pointer;
 
                 .name {
                     display: inline-block;
@@ -187,16 +188,9 @@
                     min-height: 20px;
                 }
 
-                .info-icon {
-                    position: absolute;
-                    top: 2px;
-                    right: 2px;
-                    font-size: 16px;
-                    padding: 3px;
-
-                    &:hover {
-                        background-color: $highlight01;
-                    }
+                &:hover {
+                    border-color: $highlight;
+                    background-color: $highlight01;
                 }
             }
         }

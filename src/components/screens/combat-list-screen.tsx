@@ -1,4 +1,4 @@
-import { CheckCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
@@ -134,10 +134,9 @@ class ListItem extends React.Component<ListItemProps> {
                 .filter(c => c.active)
                 .filter(c => c.type !== 'placeholder')
                 .map(c => (
-                    <div key={c.id} className='combatant-row'>
+                    <div key={c.id} className='combatant-row' onClick={() => this.props.openStatBlock(c)}>
                         <PortraitPanel source={c as (Combatant & PC) | (Combatant & Monster)} inline={true}/>
                         <div className='name'>{c.displayName}</div>
-                        <InfoCircleOutlined className='info-icon' onClick={() => this.props.openStatBlock(c)} />
                     </div>
                 ));
 

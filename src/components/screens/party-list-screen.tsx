@@ -1,4 +1,3 @@
-import { InfoCircleOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
@@ -82,10 +81,9 @@ class ListItem extends React.Component<ListItemProps> {
     public render() {
         try {
             const pcs = this.props.party.pcs.filter(pc => pc.active).map(pc => (
-                <div key={pc.id} className='combatant-row'>
+                <div key={pc.id} className='combatant-row' onClick={() => this.props.openStatBlock(pc)}>
                     <PortraitPanel source={pc} inline={true}/>
                     <div className='name'>{this.getText(pc)}</div>
-                    <InfoCircleOutlined className='info-icon' onClick={() => this.props.openStatBlock(pc)} />
                 </div>
             ));
             if (pcs.length === 0) {
@@ -98,10 +96,9 @@ class ListItem extends React.Component<ListItemProps> {
                     <div key='inactive' className='subheading'>inactive pcs</div>
                 );
                 inactive.forEach(pc => pcs.push(
-                    <div key={pc.id} className='combatant-row'>
+                    <div key={pc.id} className='combatant-row' onClick={() => this.props.openStatBlock(pc)}>
                         <PortraitPanel source={pc} inline={true}/>
                         <div className='name'>{this.getText(pc)}</div>
-                        <InfoCircleOutlined className='info-icon' onClick={() => this.props.openStatBlock(pc)} />
                     </div>
                 ));
             }

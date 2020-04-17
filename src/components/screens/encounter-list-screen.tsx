@@ -1,4 +1,4 @@
-import { CheckCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
@@ -140,10 +140,9 @@ class ListItem extends React.Component<ListItemProps> {
     public render() {
         try {
             const slots = this.props.encounter.slots.map(slot => (
-                <div key={slot.id} className='combatant-row'>
+                <div key={slot.id} className='combatant-row' onClick={() => this.props.openStatBlock(slot)}>
                     {this.getPortrait(slot)}
                     {this.getText(slot)}
-                    <InfoCircleOutlined className='info-icon' onClick={() => this.props.openStatBlock(slot)} />
                 </div>
             ));
             if (slots.length === 0) {
@@ -154,10 +153,9 @@ class ListItem extends React.Component<ListItemProps> {
                 slots.push(<div key={'name ' + wave.id} className='section subheading'>{wave.name || 'unnamed wave'}</div>);
                 wave.slots.forEach(slot => {
                     slots.push(
-                        <div key={slot.id} className='combatant-row'>
+                        <div key={slot.id} className='combatant-row' onClick={() => this.props.openStatBlock(slot)}>
                             {this.getPortrait(slot)}
                             {this.getText(slot)}
-                            <InfoCircleOutlined className='info-icon' onClick={() => this.props.openStatBlock(slot)} />
                         </div>
                     );
                 });

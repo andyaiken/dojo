@@ -1,4 +1,3 @@
-import { InfoCircleOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
@@ -95,10 +94,9 @@ interface ListItemProps {
 class ListItem extends React.Component<ListItemProps> {
     private getMonsters() {
         const monsters = this.props.group.monsters.map(m => (
-            <div key={m.id} className='combatant-row'>
+            <div key={m.id} className='combatant-row' onClick={() => this.props.openStatBlock(m)}>
                 <PortraitPanel source={m} inline={true}/>
                 <div className='name'>{m.name || 'unnamed monster'}</div>
-                <InfoCircleOutlined className='info-icon' onClick={() => this.props.openStatBlock(m)} />
             </div>
         ));
         if (monsters.length === 0) {
