@@ -14,7 +14,6 @@ import Dropdown from '../controls/dropdown';
 import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
 import PortraitPanel from '../panels/portrait-panel';
-import Readaloud from '../panels/readaloud';
 
 interface Props {
     encounters: Encounter[];
@@ -44,7 +43,7 @@ export default class EncounterListScreen extends React.Component<Props> {
                 return (
                     <Row align='middle' justify='center' className='scrollable'>
                         <Col xs={20} sm={18} md={16} lg={12} xl={10}>
-                            <Readaloud>
+                            <Note>
                                 <div className='section'>
                                     this screen is for building encounters, but before you can do that you need to do these things first:
                                 </div>
@@ -56,7 +55,7 @@ export default class EncounterListScreen extends React.Component<Props> {
                                         {this.props.hasMonsters ? <CheckCircleOutlined title='done' style={{ marginLeft: '5px' }}/> : null}
                                     </li>
                                 </ul>
-                            </Readaloud>
+                            </Note>
                         </Col>
                     </Row>
                 );

@@ -13,7 +13,6 @@ import GridPanel from '../panels/grid-panel';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 import PortraitPanel from '../panels/portrait-panel';
-import Readaloud from '../panels/readaloud';
 
 interface Props {
     combats: Combat[];
@@ -34,7 +33,7 @@ export default class CombatListScreen extends React.Component<Props> {
                 return (
                     <Row align='middle' justify='center' className='scrollable'>
                         <Col xs={20} sm={18} md={16} lg={12} xl={10}>
-                            <Readaloud>
+                            <Note>
                                 <div className='section'>
                                     this screen is for running combat encounters, but before you can do that you need to do these things first:
                                 </div>
@@ -60,7 +59,7 @@ export default class CombatListScreen extends React.Component<Props> {
                                 <div className='section'>
                                     if you want to use a tactical map, you can either build one in the <button className='link' onClick={() => this.props.setView('maps')}>maps screen</button>, or you can generate a random one here
                                 </div>
-                            </Readaloud>
+                            </Note>
                         </Col>
                     </Row>
                 );
