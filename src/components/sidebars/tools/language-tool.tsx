@@ -258,18 +258,16 @@ export default class LanguageTool extends React.Component<Props, State> {
                             <GridPanel columns={3} content={languages} />
                         </div>
                     </Expander>
-                    <div className='divider' />
                     <Row gutter={10}>
-                        <Col span={8}>
-                            <button className={allowGenerate ? '' : 'disabled'} onClick={() => this.generate()}>generate text</button>
-                        </Col>
-                        <Col span={8}>
-                            <button className={allowReset ? '' : 'disabled'} onClick={() => this.reset()}>reset</button>
-                        </Col>
-                        <Col span={8}>
+                        <Col span={12}>
                             <button onClick={() => this.random()}>random sources</button>
                         </Col>
+                        <Col span={12}>
+                            <button className={allowReset ? '' : 'disabled'} onClick={() => this.reset()}>reset</button>
+                        </Col>
                     </Row>
+                    <div className='divider' />
+                    <button className={allowGenerate ? '' : 'disabled'} onClick={() => this.generate()}>generate text</button>
                     {output}
                 </div>
             );
