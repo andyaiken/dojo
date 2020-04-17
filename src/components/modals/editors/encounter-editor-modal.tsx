@@ -290,11 +290,20 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
     }
 
     private getLibrarySection() {
+        const containers: { slots: EncounterSlot[] }[] = [ this.state.encounter ];
+        this.state.encounter.waves.forEach(wave => containers.push(wave));
+
         const monsters: Monster[] = [];
         this.props.library.forEach(group => {
             group.monsters.forEach(monster => {
                 if (Napoleon.matchMonster(monster, this.state.filter)) {
-                    monsters.push(monster);
+                    const inAll = containers
+                        .every(container => !!container.slots
+                            .find(slot => (slot.monsterGroupName === group.name) && (slot.monsterName === monster.name))
+                        );
+                    if (!inAll) {
+                        monsters.push(monster);
+                    }
                 }
             });
         });

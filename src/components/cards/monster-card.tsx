@@ -17,7 +17,6 @@ import Textbox from '../controls/textbox';
 import AbilityScorePanel from '../panels/ability-score-panel';
 import PortraitPanel from '../panels/portrait-panel';
 import TraitsPanel from '../panels/traits-panel';
-import InfoCard from './info-card';
 
 interface Props {
     monster: Monster | (Monster & Combatant);
@@ -428,22 +427,6 @@ export default class MonsterCard extends React.Component<Props, State> {
     public render() {
         try {
             const buttons = this.getButtons();
-            if ((buttons.length === 0) && (this.props.mode.indexOf('encounter') !== -1)) {
-                // We can't add this monster to the encounter
-                return (
-                    <InfoCard
-                        heading={(
-                            <div className='heading'>
-                                <div className='title'>{this.props.monster.name}</div>
-                            </div>
-                        )}
-                    >
-                        <div className='section'>
-                            <i>this monster is already part of this encounter</i>
-                        </div>
-                    </InfoCard>
-                );
-            }
 
             const name = (this.props.monster as Combatant ? (this.props.monster as Combatant).displayName : null)
                 || this.props.monster.name
