@@ -260,7 +260,7 @@ export default class LanguageTool extends React.Component<Props, State> {
                     </Expander>
                     <Row gutter={10}>
                         <Col span={12}>
-                            <button onClick={() => this.random()}>random sources</button>
+                            <button onClick={() => this.random()}>random languages</button>
                         </Col>
                         <Col span={12}>
                             <button className={allowReset ? '' : 'disabled'} onClick={() => this.reset()}>reset</button>
