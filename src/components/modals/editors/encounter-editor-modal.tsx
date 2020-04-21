@@ -212,6 +212,10 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
         let value: number = source[field];
         value += delta;
 
+        if (field === 'count') {
+            value = Math.max(value, 1);
+        }
+
         this.changeValue(source, field, value);
     }
 
