@@ -93,7 +93,7 @@ export default class MapPanel extends React.Component<Props> {
                     let miniSize = 1;
                     const m = c as Combatant & Monster;
                     if (m) {
-                        miniSize = Utils.miniSize(m.size);
+                        miniSize = Math.max(Utils.miniSize(m.size), 1);
                     }
                     const minX = mi.x - sizeInSquares;
                     const maxX = mi.x + (miniSize - 1) + sizeInSquares;
@@ -228,7 +228,7 @@ export default class MapPanel extends React.Component<Props> {
                         const mi = items.find(i => i.id === c.id);
                         if (mi) {
                             const sizeInSquares = c.aura.radius / 5;
-                            const miniSize = Utils.miniSize(c.displaySize);
+                            const miniSize = Math.max(Utils.miniSize(c.displaySize), 1);
                             const dim = (sizeInSquares * 2) + miniSize;
                             const auraStyle = this.getStyle(mi.x - sizeInSquares, mi.y - sizeInSquares, dim, dim, c.aura.style, mapDimensions);
                             auraStyle.backgroundColor = c.aura.color;
