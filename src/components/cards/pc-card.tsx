@@ -83,6 +83,10 @@ export default class PCCard extends React.Component<Props> {
                                 <a href={this.props.pc.url} target='_blank' rel='noopener noreferrer'>d&amp;d beyond sheet</a>
                             </div>
                             <div className='divider' />
+                            <div className='section subheading'>size</div>
+                            <div className='section'>
+                                {this.props.pc.size}
+                            </div>
                             <div className='section subheading'>languages</div>
                             <div className='section'>
                                 {this.props.pc.languages || '-'}
