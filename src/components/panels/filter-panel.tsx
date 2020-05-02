@@ -1,4 +1,4 @@
-import { Input, Slider } from 'antd';
+import { Slider } from 'antd';
 import React from 'react';
 
 import Napoleon from '../../utils/napoleon';
@@ -9,6 +9,7 @@ import { CATEGORY_TYPES, SIZE_TYPES } from '../../models/monster-group';
 import Dropdown from '../controls/dropdown';
 import Expander from '../controls/expander';
 import Selector from '../controls/selector';
+import Textbox from '../controls/textbox';
 
 interface Props {
     filter: MonsterFilter;
@@ -61,13 +62,11 @@ export default class FilterPanel extends React.Component<Props> {
 
             return (
                 <div style={style}>
-                    <Input.Search
+                    <Textbox
                         key='search'
-                        value={this.props.filter.name}
+                        text={this.props.filter.name}
                         placeholder='filter by name'
-                        allowClear={true}
-                        onChange={e => this.props.changeValue('name', e.target.value)}
-                        onSearch={value => this.props.changeValue('name', value)}
+                        onChange={value => this.props.changeValue('name', value)}
                     />
                     <Expander text={'showing ' + Napoleon.getFilterDescription(this.props.filter)}>
                         <Slider

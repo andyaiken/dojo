@@ -78,30 +78,23 @@ class ListItem extends React.Component<ListItemProps> {
         return name;
     }
 
+    private getPCs() {
+        if (this.props.party.pcs.length === 0) {
+            return (
+                <div className='section'>no pcs</div>
+            );
+        }
+
+        return this.props.party.pcs.map(pc => (
+            <div key={pc.id} className={pc.active ? 'combatant-row' : 'combatant-row inactive'} onClick={() => this.props.openStatBlock(pc)}>
+                <PortraitPanel source={pc} inline={true}/>
+                <div className='name'>{this.getText(pc)}</div>
+            </div>
+        ));
+    }
+
     public render() {
         try {
-            const pcs = this.props.party.pcs.filter(pc => pc.active).map(pc => (
-                <div key={pc.id} className='combatant-row' onClick={() => this.props.openStatBlock(pc)}>
-                    <PortraitPanel source={pc} inline={true}/>
-                    <div className='name'>{this.getText(pc)}</div>
-                </div>
-            ));
-            if (pcs.length === 0) {
-                pcs.push(<div key='empty' className='section'>no pcs</div>);
-            }
-
-            const inactive = this.props.party.pcs.filter(pc => !pc.active);
-            if (inactive.length > 0) {
-                pcs.push(
-                    <div key='inactive' className='subheading'>inactive pcs</div>
-                );
-                inactive.forEach(pc => pcs.push(
-                    <div key={pc.id} className='combatant-row' onClick={() => this.props.openStatBlock(pc)}>
-                        <PortraitPanel source={pc} inline={true}/>
-                        <div className='name'>{this.getText(pc)}</div>
-                    </div>
-                ));
-            }
 
             return (
                 <div className='card pc'>
@@ -112,8 +105,7 @@ class ListItem extends React.Component<ListItemProps> {
                     </div>
                     <div className='card-content'>
                         <div className='fixed-height'>
-                            <div className='subheading'>pcs</div>
-                            {pcs}
+                            {this.getPCs()}
                         </div>
                         <div className='divider'/>
                         <button onClick={() => this.props.open(this.props.party)}>open party</button>

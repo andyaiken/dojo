@@ -92,22 +92,18 @@ interface ListItemProps {
 
 class ListItem extends React.Component<ListItemProps> {
     private getMonsters() {
-        const monsters = this.props.group.monsters.map(m => (
+        if (this.props.group.monsters.length === 0) {
+            return (
+                <div className='section'>no monsters</div>
+            );
+        }
+
+        return this.props.group.monsters.map(m => (
             <div key={m.id} className='combatant-row' onClick={() => this.props.openStatBlock(m)}>
                 <PortraitPanel source={m} inline={true}/>
                 <div className='name'>{m.name || 'unnamed monster'}</div>
             </div>
         ));
-        if (monsters.length === 0) {
-            monsters.push(<div key='empty' className='section'>no monsters</div>);
-        }
-
-        return (
-            <div>
-                <div className='subheading'>monsters</div>
-                {monsters}
-            </div>
-        );
     }
 
     public render() {

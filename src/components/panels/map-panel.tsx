@@ -772,8 +772,9 @@ class MapToken extends React.Component<MapTokenProps> {
                         <img className='portrait' src={src} alt={name} />
                     );
                 } else {
+                    const inits = name.toUpperCase().replace(/[^A-Z]/, '').split(' ').map(s => s[0]);
                     content = (
-                        <div className='initials'>{name.split(' ').map(s => s[0])}</div>
+                        <div className='initials'>{inits}</div>
                     );
                 }
 

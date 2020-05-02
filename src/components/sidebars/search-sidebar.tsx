@@ -1,4 +1,3 @@
-import { Input } from 'antd';
 import React from 'react';
 
 import Sherlock from '../../utils/sherlock';
@@ -8,6 +7,7 @@ import { Map } from '../../models/map';
 import { MonsterGroup } from '../../models/monster-group';
 import { Party } from '../../models/party';
 
+import Textbox from '../controls/textbox';
 import Note from '../panels/note';
 
 interface Props {
@@ -161,12 +161,11 @@ export default class SearchSidebar extends React.Component<Props, State> {
                 <div className='sidebar-container'>
                     <div className='sidebar-header'>
                         <div className='heading'>search</div>
-                        <Input.Search
-                            value={this.state.text}
+                        <Textbox
+                            text={this.state.text}
                             placeholder='enter your search term here'
-                            allowClear={true}
-                            onChange={e => this.setSearchTerm(e.target.value)}
-                            onSearch={value => this.setSearchTerm(value)}
+                            minLength={3}
+                            onChange={value => this.setSearchTerm(value)}
                         />
                     </div>
                     <div className='sidebar-content'>

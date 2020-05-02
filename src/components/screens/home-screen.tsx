@@ -9,7 +9,7 @@ export default class HomeScreen extends React.Component<Props> {
         try {
             /* tslint:disable:max-line-length */
             const carousel = (
-                <Carousel>
+                <Carousel autoplay={true} autoplaySpeed={10 * 1000}>
                     <div key='prologue'>
                         <p className='heading'>welcome to <span className='app-name'>dojo</span></p>
                         <p><span className='app-name'>dojo</span> is an app for dms of <a href='https://www.wizards.com/dnd' target='_blank' rel='noopener noreferrer'>dungeons and dragons fifth edition</a></p>

@@ -87,7 +87,7 @@ export default class DemographicsModal extends React.Component<Props, State> {
             ];
 
             return (
-                <div className='scrollable' style={{ padding: '10px' }}>
+                <div className='scrollable padded'>
                     <Selector
                         options={chartOptions}
                         selectedID={this.state.chart}

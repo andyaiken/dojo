@@ -103,8 +103,7 @@ export default class PartyImportModal extends React.Component<Props, State> {
                             <Textbox
                                 text={this.state.source}
                                 placeholder='paste page source here'
-                                minLines={10}
-                                maxLines={10}
+                                multiLine={true}
                                 onChange={value => this.setSource(value)}
                             />
                             <button onClick={() => this.analyse()}>analyse</button>

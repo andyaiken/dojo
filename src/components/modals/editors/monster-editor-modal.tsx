@@ -1228,8 +1228,7 @@ class TraitEditorPanel extends React.Component<TraitEditorPanelProps> {
                     <Textbox
                         text={this.props.trait.text}
                         placeholder='details'
-                        minLines={10}
-                        maxLines={20}
+                        multiLine={true}
                         onChange={value => this.props.changeValue(this.props.trait, 'text', value)}
                     />
                     <div className='divider' />

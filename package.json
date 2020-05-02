@@ -1,20 +1,21 @@
 {
     "name": "dojo",
-    "version": "8.9.7",
+    "version": "8.9.8",
     "license": "MIT",
     "repository": "https://github.com/andyaiken/dojo.git",
     "homepage": "https://andyaiken.github.io/dojo/",
     "dependencies": {
         "@ant-design/icons": "^4.1.0",
-        "antd": "^4.1.5",
+        "antd": "^4.2.0",
         "react": "^16.13.1",
+        "react-debounce-input": "^3.2.2",
         "react-dom": "^16.13.1",
         "react-movable": "^2.4.2",
         "showdown": "^1.9.1"
     },
     "devDependencies": {
         "@types/react": "^16.9.34",
-        "@types/react-dom": "^16.9.6",
+        "@types/react-dom": "^16.9.7",
         "@types/showdown": "^1.9.3",
         "gh-pages": "^2.2.0",
         "node-sass": "^4.14.0",

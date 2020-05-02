@@ -717,8 +717,7 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
                     <Textbox
                         text={this.props.note.text}
                         placeholder='details'
-                        minLines={5}
-                        maxLines={10}
+                        multiLine={true}
                         onChange={value => this.props.changeValue(this.props.note, 'text', value)}
                     />
                     <button onClick={() => this.props.removeNote(this.props.tile.id)}>remove note from this tile</button>

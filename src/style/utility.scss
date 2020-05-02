@@ -12,6 +12,10 @@
         overflow-x: auto;
         overflow-y: auto;
     }
+
+    &.padded {
+        padding: 10px;
+    }
 }
 
 .left {

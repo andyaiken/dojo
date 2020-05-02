@@ -1,11 +1,11 @@
-import { Input } from 'antd';
 import React from 'react';
+import { DebounceInput } from 'react-debounce-input';
 
 interface Props {
     text: string;
     placeholder: string;
-    minLines: number;
-    maxLines: number;
+    multiLine: boolean;
+    minLength: number;
     disabled: boolean;
     onChange: (value: string) => void;
 }
@@ -13,36 +13,40 @@ interface Props {
 export default class Textbox extends React.Component<Props> {
     public static defaultProps = {
         placeholder: '',
-        minLines: 1,
-        maxLines: 1,
+        multiLine: false,
+        minLength: 0,
         disabled: false
     };
 
     public render() {
         try {
-            let style = 'textbox';
+            let style = '';
             if (this.props.disabled) {
-                style += ' disabled';
+                style = 'disabled';
             }
 
-            if (this.props.maxLines > 1) {
+            if (this.props.multiLine) {
                 return (
-                    <Input.TextArea
+                    <DebounceInput
+                        element={'textarea'}
+                        minLength={this.props.minLength}
+                        debounceTimeout={500}
                         className={style}
                         value={this.props.text}
                         placeholder={this.props.placeholder}
-                        autoSize={{ minRows: this.props.minLines, maxRows: this.props.maxLines }}
+                        rows={10}
                         onChange={event => this.props.onChange(event.target.value)}
                     />
                 );
             }
 
             return (
-                <Input
+                <DebounceInput
+                    minLength={this.props.minLength}
+                    debounceTimeout={500}
                     className={style}
                     value={this.props.text}
                     placeholder={this.props.placeholder}
-                    allowClear={true}
                     onChange={event => this.props.onChange(event.target.value)}
                 />
             );

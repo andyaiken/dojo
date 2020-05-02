@@ -10,12 +10,12 @@ strong {
 input[type=text],
 input[type=color] {
     user-select: text;
+    height: 32px;
     margin: 5px 0;
     padding: 5px 8px;
     border: 1px solid $control-border;
+    border-left-width: 5px;
     width: 100%;
-    border-radius: 0;
-    font-size: 12px;
 
     &:hover,
     &:focus {
@@ -23,15 +23,22 @@ input[type=color] {
     }
 }
 
-input[type=text],
-input[type=color] {
-    height: 32px;
-    border-left-width: 5px;
-}
-
 input[type=color] {
     padding: 0 2px;
     background-color: $background;
+}
+
+textarea {
+    margin: 5px 0;
+    padding: 5px 8px;
+    border: 1px solid $control-border;
+    border-left-width: 5px;
+    width: 100%;
+
+    &:hover,
+    &:focus {
+        border-color: $highlight;
+    }
 }
 
 ul, ol {
@@ -175,60 +182,6 @@ button {
     height: 100%;
     user-select: none;
     font-family: 'Open Sans', 'Segoe UI', sans-serif;
-}
-
-.ant-input {
-    font-size: 12px;
-    border-radius: 0;
-    border-color: $control-border;
-    border-left-width: 5px;
-    margin: 5px 0;
-
-    &:hover {
-        border-color: $highlight;
-    }
-
-    &:focus {
-        border-color: $highlight;
-        box-shadow: none;
-    }
-}
-
-.ant-input-affix-wrapper:hover .ant-input:not(.ant-input-disabled) {
-    border-color: $highlight;
-}
-
-span.textbox.ant-input-affix-wrapper,
-span.ant-input-search.ant-input-affix-wrapper {
-    padding: 0;
-    border: 1px solid $control-border;
-    border-left-width: 5px;
-    border-radius: 0;
-    margin: 5px 0;
-
-    & > input.ant-input {
-        padding: 0 8px;
-        margin: 0px;
-        height: 30px;
-    }
-
-    .ant-input-suffix {
-        margin-right: 4px;
-
-        .anticon {
-            margin-top: 8px;
-        }
-    }
-
-    &:hover {
-        border-color: $highlight;
-    }
-}
-
-span.textbox.ant-input-affix-wrapper-focused,
-span.ant-input-search.ant-input-affix-wrapper-focused {
-    box-shadow: none;
-    border-color: $highlight;
 }
 
 .ant-collapse {

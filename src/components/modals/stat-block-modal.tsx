@@ -29,7 +29,7 @@ export default class StatBlockModal extends React.Component<Props> {
             }
 
             return (
-                <div className='scrollable' style={{ padding: '10px' }}>
+                <div className='scrollable padded'>
                     {content}
                 </div>
             );

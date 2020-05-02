@@ -171,7 +171,7 @@
         }
 
         .fixed-height {
-            height: 200px;
+            height: 194px;
             overflow-y: auto;
 
             .combatant-row {
@@ -186,6 +186,14 @@
                     vertical-align: top;
                     padding: 1px 0;
                     min-height: 20px;
+                }
+
+                &.inactive {
+                    opacity: 0.5;
+
+                    .name {
+                        text-decoration: line-through;
+                    }
                 }
 
                 &:hover {

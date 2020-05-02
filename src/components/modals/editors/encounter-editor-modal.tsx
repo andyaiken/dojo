@@ -33,6 +33,10 @@ interface State {
 }
 
 export default class EncounterEditorModal extends React.Component<Props, State> {
+
+    // We store this so we don't have to recalculate the list on every render
+    private libraryMonsters: Monster[] | null;
+
     constructor(props: Props) {
         super(props);
 
@@ -42,6 +46,8 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
             selectedMonster: null,
             randomEncounterXP: 1000
         };
+
+        this.libraryMonsters = null;
     }
 
     private setSelectedMonster(monster: Monster | null) {
@@ -227,12 +233,15 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
         } else {
             filter[type] = value;
         }
+
+        this.libraryMonsters = null;
         this.setState({
             filter: filter
         });
     }
 
     private resetFilter() {
+        this.libraryMonsters = null;
         this.setState({
             filter: Factory.createMonsterFilter()
         });
@@ -293,7 +302,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
         return cards;
     }
 
-    private getLibrarySection() {
+    private getLibraryMonsters() {
         const containers: { slots: EncounterSlot[] }[] = [ this.state.encounter ];
         this.state.encounter.waves.forEach(wave => containers.push(wave));
 
@@ -311,13 +320,22 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
                 }
             });
         });
+
         monsters.sort((a, b) => {
             if (a.name < b.name) { return -1; }
             if (a.name > b.name) { return 1; }
             return 0;
         });
 
-        const libraryCards = monsters.map(monster => {
+        return monsters;
+    }
+
+    private getLibrarySection() {
+        if (this.libraryMonsters === null) {
+            this.libraryMonsters = this.getLibraryMonsters();
+        }
+
+        const cards = this.libraryMonsters.map(monster => {
             return (
                 <MonsterCard
                     key={monster.id}
@@ -331,16 +349,17 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
             );
         });
 
-        if (libraryCards.length === 0) {
-            libraryCards.push(
-                <Note><p>there are no monsters that meet the criteria <i>{Napoleon.getFilterDescription(this.state.filter)}</i></p></Note>
+        if (cards.length === 0) {
+            const desc = Napoleon.getFilterDescription(this.state.filter);
+            cards.push(
+                <Note key='empty'><p>there are no monsters that meet the criteria <i>{desc}</i></p></Note>
             );
         }
 
         return (
             <GridPanel
                 heading='monster library'
-                content={libraryCards}
+                content={cards}
                 columns={3}
                 showToggle={true}
             />

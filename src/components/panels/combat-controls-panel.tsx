@@ -613,8 +613,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                 <Textbox
                     text={combatant.note}
                     placeholder='notes'
-                    minLines={3}
-                    maxLines={10}
+                    multiLine={true}
                     onChange={value => this.props.changeValue(combatant, 'note', value)}
                 />
             );

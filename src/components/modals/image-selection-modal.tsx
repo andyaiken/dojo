@@ -1,5 +1,5 @@
 import { FileOutlined } from '@ant-design/icons';
-import { Input, Upload } from 'antd';
+import { Upload } from 'antd';
 import React from 'react';
 
 import Sherlock from '../../utils/sherlock';
@@ -9,6 +9,7 @@ import { Map } from '../../models/map';
 import { MonsterGroup } from '../../models/monster-group';
 import { Party } from '../../models/party';
 
+import Textbox from '../controls/textbox';
 import Note from '../panels/note';
 
 interface Props {
@@ -144,13 +145,11 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
 
             if (this.state.images.length > 0) {
                 images.unshift(
-                    <Input.Search
+                    <Textbox
                         key='search'
-                        value={this.state.filter}
+                        text={this.state.filter}
                         placeholder='search for an image'
-                        allowClear={true}
-                        onChange={e => this.setFilter(e.target.value)}
-                        onSearch={value => this.setFilter(value)}
+                        onChange={value => this.setFilter(value)}
                     />
                 );
             }
