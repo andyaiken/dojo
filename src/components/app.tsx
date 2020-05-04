@@ -288,6 +288,9 @@ export default class App extends React.Component<Props, State> {
             case 'hitDice':
                 value = Math.max(value, 1);
                 break;
+            case 'radius':
+                value = Math.max(value, 0);
+                break;
             default:
                 // Do nothing
                 break;
