@@ -197,7 +197,7 @@ export default class Napoleon {
     }
 
     public static addPCToCombat(combat: Combat, pc: PC) {
-        const combatant: Combatant = JSON.parse(JSON.stringify(pc));
+        const combatant: Combatant = JSON.parse(JSON.stringify(pc)) as Combatant & PC;
 
         combatant.current = false;
         combatant.pending = true;
@@ -221,7 +221,7 @@ export default class Napoleon {
     }
 
     public static addMonsterToCombat(combat: Combat, monster: Monster, init: number, hp: number, name: string) {
-        const combatant: Combatant = JSON.parse(JSON.stringify(monster));
+        const combatant: Combatant = JSON.parse(JSON.stringify(monster)) as Combatant & Monster;
         combatant.id = Utils.guid();
 
         combatant.current = false;

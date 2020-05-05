@@ -890,46 +890,13 @@ export default class App extends React.Component<Props, State> {
             if (wave) {
                 wave.slots.forEach(slot => {
                     const monster = this.getMonster(slot.monsterName, slot.monsterGroupName);
-                    if (monster) {
-                        const init = parseInt(Utils.modifier(monster.abilityScores.dex), 10);
-                        const groupRoll = Utils.dieRoll();
-
-                        for (let n = 0; n !== slot.count; ++n) {
-                            const combatant = JSON.parse(JSON.stringify(monster));
-                            combatant.id = Utils.guid();
-
-                            combatant.displayName = null;
-                            if (combatSetup.slotInfo) {
-                                const slotNames = combatSetup.slotInfo.find(info => info.id === slot.id);
-                                if (slotNames) {
-                                    combatant.displayName = slotNames.members[n].name;
-                                }
-                            }
-
-                            combatant.displaySize = monster.size;
-
-                            combatant.showOnMap = true;
-                            combatant.current = false;
-                            combatant.pending = (this.state.drawer.combatSetup.encounterInitMode === 'manual');
-                            combatant.active = (this.state.drawer.combatSetup.encounterInitMode !== 'manual');
-                            combatant.defeated = false;
-
-                            combatant.initiative = init + groupRoll;
-                            combatant.hp = combatant.hpMax;
-                            combatant.conditions = [];
-                            combatant.tags = [];
-                            combatant.altitude = 0;
-                            combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
-
-                            if (combat) {
-                                combat.combatants.push(combatant);
-                            }
-                        }
+                    const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
+                    if (monster && slotInfo) {
+                        slotInfo.members.forEach(m => {
+                            Napoleon.addMonsterToCombat(combat, monster, m.init, m.hp, m.name);
+                        });
                     } else {
-                        if (combat) {
-                            const issue = 'unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName;
-                            combat.issues.push(issue);
-                        }
+                        combat.issues.push('unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName);
                     }
                 });
 
