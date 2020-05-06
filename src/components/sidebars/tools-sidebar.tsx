@@ -41,7 +41,7 @@ export default class ToolsSidebar extends React.Component<Props, State> {
                 },
                 {
                     id: 'language',
-                    text: 'language blender'
+                    text: 'language'
                 },
                 {
                     id: 'oracle',
@@ -80,7 +80,7 @@ export default class ToolsSidebar extends React.Component<Props, State> {
                         <Selector
                             options={options}
                             selectedID={this.state.view}
-                            itemsPerRow={3}
+                            itemsPerRow={4}
                             select={optionID => this.setView(optionID)}
                         />
                     </div>
