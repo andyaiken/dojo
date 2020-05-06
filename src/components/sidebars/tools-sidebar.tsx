@@ -2,6 +2,7 @@ import React from 'react';
 
 import Selector from '../controls/selector';
 import DieRollerTool from './tools/die-roller-tool';
+import HandoutTool from './tools/handout-tool';
 import LanguageTool from './tools/language-tool';
 import OracleTool from './tools/oracle-tool';
 
@@ -35,6 +36,10 @@ export default class ToolsSidebar extends React.Component<Props, State> {
                     text: 'die roller'
                 },
                 {
+                    id: 'handout',
+                    text: 'handout'
+                },
+                {
                     id: 'language',
                     text: 'language blender'
                 },
@@ -49,6 +54,11 @@ export default class ToolsSidebar extends React.Component<Props, State> {
                 case 'die':
                     content = (
                         <DieRollerTool />
+                    );
+                    break;
+                case 'handout':
+                    content = (
+                        <HandoutTool />
                     );
                     break;
                 case 'language':

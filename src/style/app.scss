@@ -198,11 +198,17 @@ p,
     }
 }
 
-.selectable-image {
-    cursor: pointer;
+.selectable-image,
+.nonselectable-image {
     border: 1px solid $control-border;
     padding: 5px;
     width: 100%;
+    object-fit: contain;
+    max-height: 100%;
+}
+
+.selectable-image {
+    cursor: pointer;
 
     &:hover {
         border-color: $highlight;
