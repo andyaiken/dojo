@@ -38,6 +38,7 @@ export default class HomeScreen extends React.Component<Props> {
                             <li>create a dungeon map by quickly adding rooms, doors, corridors, and stairs</li>
                             <li>for something a little more fancy, you can upload your own battlemap images - even animated images</li>
                             <li>generate an entire random dungeon map with one click</li>
+                            <li>add fog of war and then show your maps to your players</li>
                         </ul>
                     </div>
                     <div key='combat'>

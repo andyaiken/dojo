@@ -34,6 +34,7 @@ export interface Combat {
     encounter: Encounter;
     combatants: Combatant[];
     map: Map | null;
+    fog: { x: number, y: number }[];
     round: number;
     notifications: Notification[];
     issues: string[];

@@ -140,6 +140,10 @@ export default class App extends React.Component<Props, State> {
                         }
                     }
 
+                    if (combat.fog === undefined) {
+                        combat.fog = [];
+                    }
+
                     if (combat.report === undefined) {
                         combat.report = [];
                     }
@@ -1622,6 +1626,17 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
+    private setFog(fog: { x: number, y: number }[]) {
+        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+        if (combat) {
+            combat.fog = fog;
+
+            this.setState({
+                combats: this.state.combats
+            });
+        }
+    }
+
     private addMapItem(item: MapItem) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat && combat.map) {
@@ -1944,6 +1959,7 @@ export default class App extends React.Component<Props, State> {
                             toggleHidden={combatants => this.toggleHidden(combatants)}
                             scatterCombatants={type => this.scatterCombatants(type)}
                             rotateMap={() => this.rotateMap()}
+                            setFog={fog => this.setFog(fog)}
                             addOverlay={overlay => this.addMapItem(overlay)}
                             showLeaderboard={() => this.showLeaderboard()}
                         />

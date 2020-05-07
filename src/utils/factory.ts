@@ -210,6 +210,7 @@ export default class Factory {
             encounter: Factory.createEncounter(),
             combatants: [],
             map: null,
+            fog: [],
             round: 1,
             notifications: [],
             issues: [],

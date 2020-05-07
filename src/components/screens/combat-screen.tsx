@@ -70,6 +70,7 @@ interface Props {
     toggleHidden: (combatants: Combatant[]) => void;
     scatterCombatants: (type: 'pc' | 'monster') => void;
     rotateMap: () => void;
+    setFog: (fog: { x: number, y: number }[]) => void;
     addOverlay: (overlay: MapItem) => void;
     showLeaderboard: () => void;
 }
@@ -80,6 +81,7 @@ interface State {
     selectedItemIDs: string[];
     addingToMapID: string | null;
     addingOverlay: boolean;
+    addingFog: boolean;
     mapSize: number;
     playerView: {
         open: boolean;
@@ -98,6 +100,7 @@ export default class CombatScreen extends React.Component<Props, State> {
             selectedItemIDs: [],            // The IDs of the combatants or map items that are selected
             addingToMapID: null,            // The ID of the combatant we're adding to the map
             addingOverlay: false,           // True if we're adding a custom overlay to the map
+            addingFog: false,
             mapSize: 30,
             playerView: {
                 open: false,
@@ -152,15 +155,44 @@ export default class CombatScreen extends React.Component<Props, State> {
     private setAddingToMapID(id: string | null) {
         this.setState({
             addingToMapID: id,
-            addingOverlay: false
+            addingOverlay: false,
+            addingFog: false
         });
     }
 
     private toggleAddingOverlay() {
         this.setState({
             addingOverlay: !this.state.addingOverlay,
-            addingToMapID: null
+            addingToMapID: null,
+            addingFog: false
         });
+    }
+
+    private toggleAddingFog() {
+        this.setState({
+            addingOverlay: false,
+            addingToMapID: null,
+            addingFog: !this.state.addingFog
+        });
+    }
+
+    private fillFog() {
+        if (this.props.combat.map) {
+            const fog: { x: number, y: number }[] = [];
+            const dims = Mercator.mapDimensions(this.props.combat.map);
+            if (dims) {
+                for (let x = dims.minX; x <= dims.maxX; ++x) {
+                    for (let y = dims.minY; y <= dims.maxY; ++y) {
+                        fog.push({ x: x, y: y });
+                    }
+                }
+                this.props.setFog(fog);
+            }
+        }
+    }
+
+    private clearFog() {
+        this.props.setFog([]);
     }
 
     private nudgeMapSize(value: number) {
@@ -264,6 +296,17 @@ export default class CombatScreen extends React.Component<Props, State> {
                 selectedItemIDs: [overlay.id]
             });
         }
+
+        if (this.state.addingFog) {
+            const fog = this.props.combat.fog;
+            const index = fog.findIndex(i => (i.x === x) && (i.y === y));
+            if (index === -1) {
+                fog.push({ x: x, y: y });
+            } else {
+                fog.splice(index, 1);
+            }
+            this.props.setFog(fog);
+        }
     }
 
     private orderCombatants(combatants: Combatant[]) {
@@ -299,10 +342,10 @@ export default class CombatScreen extends React.Component<Props, State> {
             .map(c => this.createCombatantRow(c, true));
         if (current) {
             if (initCount > 1) {
-                initList.splice(1, 0, <div key='next1' className='section centered init-separator'>next up</div>);
+                initList.splice(1, 0, <div key='next1' className='section init-separator'>next up</div>);
             }
             if (initCount > 2) {
-                initList.splice(3, 0, <div key='next2' className='section centered init-separator'>then</div>);
+                initList.splice(3, 0, <div key='next2' className='section init-separator'>then</div>);
             }
         }
 
@@ -416,6 +459,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                                 size={this.state.playerView.mapSize}
                                 combatants={this.props.combat.combatants}
                                 selectedItemIDs={this.state.selectedItemIDs}
+                                fog={this.props.combat.fog}
                                 itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
                             />
                         </Col>
@@ -487,6 +531,17 @@ export default class CombatScreen extends React.Component<Props, State> {
                         checked={this.state.addingOverlay}
                         changeValue={() => this.toggleAddingOverlay()}
                     />
+                    <Checkbox
+                        label='edit fog of war'
+                        checked={this.state.addingFog}
+                        changeValue={() => this.toggleAddingFog()}
+                    />
+                    <button onClick={() => this.fillFog()}>
+                        fill fog of war
+                    </button>
+                    <button className={this.props.combat.fog.length === 0 ? 'disabled' : ''} onClick={() => this.clearFog()}>
+                        clear fog of war
+                    </button>
                     <NumberSpin
                         source={this.state}
                         name={'mapSize'}
@@ -771,10 +826,10 @@ export default class CombatScreen extends React.Component<Props, State> {
                 .map(c => this.createCombatantRow(c, false));
             if (current) {
                 if (initCount > 1) {
-                    initList.splice(1, 0, <div key='next1' className='section centered init-separator'>next up</div>);
+                    initList.splice(1, 0, <div key='next1' className='section init-separator'>next up</div>);
                 }
                 if (initCount > 2) {
-                    initList.splice(3, 0, <div key='next2' className='section centered init-separator'>then</div>);
+                    initList.splice(3, 0, <div key='next2' className='section init-separator'>then</div>);
                 }
             }
 
@@ -822,6 +877,8 @@ export default class CombatScreen extends React.Component<Props, State> {
                         showOverlay={(this.state.addingToMapID !== null) || this.state.addingOverlay}
                         combatants={this.props.combat.combatants}
                         selectedItemIDs={this.state.selectedItemIDs}
+                        editFog={this.state.addingFog}
+                        fog={this.props.combat.fog}
                         itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
                         gridSquareEntered={(x, y) => null}
                         gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}

@@ -8,16 +8,27 @@
 
         .grid-square {
             position: absolute;
-            background-color: rgba(0, 60, 200, 0.2);
-            transition: none;
 
-            &.grid-overlay {
-                opacity: 0.5;
+            &.drag-overlay {
+                background-color: rgba(0, 60, 200, 0.1);
                 cursor: pointer;
 
                 &:hover {
-                    opacity: 1;
+                    background-color: rgba(0, 60, 200, 0.2);
                 }
+            }
+
+            &.fog-overlay {
+                cursor: pointer;
+
+                &:hover {
+                    background-color: rgba(0, 60, 200, 0.2);
+                }
+            }
+
+            &.fog {
+                background-color: black;
+                box-shadow: 0 0 10px 2px black;
             }
         }
     }
@@ -46,13 +57,19 @@
     &.combat,
     &.combat-player {
 
-        .overlay:hover, .token:hover {
+        .overlay:hover,
+        .token:hover {
             border-color: $highlight;
         }
     }
 
     &.combat {
         padding: 10px 0;
+
+        .fog {
+            opacity: 0.6;
+            box-shadow: none !important;
+        }
     }
 
     &.combat-player {

@@ -392,7 +392,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 
             return (
                 <Row className='full-height'>
-                    <Col span={8} className='scrollable sidebar sidebar-left'>
+                    <Col span={6} className='scrollable sidebar sidebar-left'>
                         <div className='section'>
                             <div className='subheading'>encounter name</div>
                             <Textbox
@@ -435,7 +435,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
                             <ConfirmButton text='clear encounter' callback={() => this.clearEncounter()} />
                         </div>
                     </Col>
-                    <Col span={16} className='scrollable'>
+                    <Col span={18} className='scrollable'>
                         <GridPanel
                             columns={3}
                             content={this.getMonsterCards(this.props.encounter.slots, null)}
