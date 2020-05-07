@@ -2,6 +2,7 @@ import { FileOutlined } from '@ant-design/icons';
 import { Upload } from 'antd';
 import React from 'react';
 
+import Checkbox from '../../controls/checkbox';
 import Note from '../../panels/note';
 import Popout from '../../panels/popout';
 
@@ -58,7 +59,7 @@ export default class HandoutTool extends React.Component<Props, State> {
     private getPlayerView() {
         if (this.state.playerViewOpen) {
             return (
-                <Popout title='Encounter' closeWindow={() => this.setPlayerViewOpen(false)}>
+                <Popout title='Handout' closeWindow={() => this.setPlayerViewOpen(false)}>
                     <img
                         className='nonselectable-image'
                         src={this.state.data || ''}
@@ -82,7 +83,11 @@ export default class HandoutTool extends React.Component<Props, State> {
                             src={this.state.data || ''}
                             alt={this.state.filename || ''}
                         />
-                        <button onClick={() => this.setPlayerViewOpen(true)}>open player view</button>
+                        <Checkbox
+                            label='show player view'
+                            checked={this.state.playerViewOpen}
+                            changeValue={value => this.setPlayerViewOpen(value)}
+                        />
                         <button onClick={() => this.clear()}>change handout</button>
                     </div>
                 );

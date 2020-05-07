@@ -15,6 +15,7 @@ interface Props {
     maps: Map[];
     addMap: () => void;
     generateMap: (type: string) => void;
+    viewMap: (map: Map) => void;
     editMap: (map: Map) => void;
     deleteMap: (map: Map) => void;
 }
@@ -28,6 +29,7 @@ export default class MapListScreen extends React.Component<Props> {
                 <ListItem
                     key={map.id}
                     map={map}
+                    viewMap={m => this.props.viewMap(m)}
                     editMap={m => this.props.editMap(m)}
                     removeMap={m => this.props.deleteMap(m)}
                 />
@@ -64,6 +66,7 @@ export default class MapListScreen extends React.Component<Props> {
 
 interface ListItemProps {
     map: Map;
+    viewMap: (map: Map) => void;
     editMap: (map: Map) => void;
     removeMap: (map: Map) => void;
 }
@@ -89,6 +92,7 @@ class ListItem extends React.Component<ListItemProps> {
                             </Col>
                         </Row>
                         <div className='divider'/>
+                        <button onClick={() => this.props.viewMap(this.props.map)}>view map</button>
                         <button onClick={() => this.props.editMap(this.props.map)}>edit map</button>
                         <ConfirmButton text='delete map' callback={() => this.props.removeMap(this.props.map)} />
                     </div>

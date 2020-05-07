@@ -309,7 +309,7 @@ export default class MapPanel extends React.Component<Props> {
             const mapWidth = 1 + mapDimensions.maxX - mapDimensions.minX;
             const mapHeight = 1 + mapDimensions.maxY - mapDimensions.minY;
             return (
-                <div className={style} onClick={() => this.props.itemSelected(null, false)}>
+                <div className={style} onClick={() => this.props.itemSelected ? this.props.itemSelected(null, false) : null}>
                     <div className='grid' style={{ width: ((this.props.size * mapWidth) + 2) + 'px', height: ((this.props.size * mapHeight) + 2) + 'px' }}>
                         {tiles}
                         {overlays}

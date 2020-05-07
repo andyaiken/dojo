@@ -28,6 +28,7 @@ import MonsterImportModal from './modals/import/monster-import-modal';
 import PartyImportModal from './modals/import/party-import-modal';
 import PCImportModal from './modals/import/pc-import-modal';
 import LeaderboardModal from './modals/leaderboard-modal';
+import MapDisplayModal from './modals/map-display-modal';
 import StatBlockModal from './modals/stat-block-modal';
 import PageFooter from './panels/page-footer';
 import PageHeader from './panels/page-header';
@@ -742,6 +743,15 @@ export default class App extends React.Component<Props, State> {
         });
     }
 
+    private viewMap(map: Map) {
+        this.setState({
+            drawer: {
+                type: 'map-view',
+                map: map
+            }
+        });
+    }
+
     private editMap(map: Map | null) {
         if (!map) {
             map = Factory.createMap();
@@ -751,7 +761,7 @@ export default class App extends React.Component<Props, State> {
         const copy = JSON.parse(JSON.stringify(map));
         this.setState({
             drawer: {
-                type: 'map',
+                type: 'map-edit',
                 map: copy
             }
         });
@@ -1891,6 +1901,7 @@ export default class App extends React.Component<Props, State> {
                         maps={this.state.maps}
                         addMap={() => this.editMap(null)}
                         generateMap={(type) => this.generateMap(type)}
+                        viewMap={map => this.viewMap(map)}
                         editMap={map => this.editMap(map)}
                         deleteMap={map => this.removeMap(map)}
                     />
@@ -2171,7 +2182,17 @@ export default class App extends React.Component<Props, State> {
                     );
                     width = '75%';
                     break;
-                case 'map':
+                case 'map-view':
+                    content = (
+                        <MapDisplayModal
+                            map={this.state.drawer.map}
+                        />
+                    );
+                    header = 'map';
+                    width = '70%';
+                    closable = true;
+                    break;
+                case 'map-edit':
                     content = (
                         <MapEditorModal
                             map={this.state.drawer.map}
