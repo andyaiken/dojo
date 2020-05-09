@@ -179,6 +179,7 @@ export default class Factory {
             encounter: null,
             waveID: null,
             map: null,
+            fog: [],
             slotInfo: []
         };
     }

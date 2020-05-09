@@ -9,6 +9,7 @@ export interface CombatSetup {
     encounter: Encounter | null;
     waveID: string | null;
     map: Map | null;
+    fog: { x: number, y: number }[];
     slotInfo: CombatSlotInfo[];
 }
 

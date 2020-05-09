@@ -23,6 +23,7 @@ import Popout from '../panels/popout';
 interface Props {
     map: Map;
     parties: Party[];
+    startCombat: (partyID: string | null, map: Map, fog: { x: number, y: number }[]) => void;
 }
 
 interface State {
@@ -33,6 +34,7 @@ interface State {
     editFog: boolean;
     selectedCombatantIDs: string[];
     fog: { x: number, y: number }[];
+    partyID: string | null;
     combatants: Combatant[];
 }
 
@@ -47,6 +49,7 @@ export default class MapDisplayModal extends React.Component<Props, State> {
             editFog: false,
             selectedCombatantIDs: [],
             fog: [],
+            partyID: null,
             combatants: []
         };
     }
@@ -119,6 +122,7 @@ export default class MapDisplayModal extends React.Component<Props, State> {
 
         this.setState({
             map: this.state.map,
+            partyID: party ? party.id : null,
             combatants: combatants
         });
     }
@@ -437,6 +441,7 @@ export default class MapDisplayModal extends React.Component<Props, State> {
                                 nudgeValue={delta => this.nudgeMapSize(delta * 3)}
                             />
                             <button onClick={() => this.rotateMap()}>rotate map</button>
+                            <button onClick={() => this.props.startCombat(this.state.partyID, this.state.map, this.state.fog)}>start encounter</button>
                         </div>
                         <div className='divider' />
                         <div className='section'>

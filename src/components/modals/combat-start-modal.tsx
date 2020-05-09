@@ -39,6 +39,9 @@ interface Props {
 
 interface State {
     combatSetup: CombatSetup;
+    partyFixed: boolean;
+    encounterFixed: boolean;
+    mapFixed: boolean;
 }
 
 export default class CombatStartModal extends React.Component<Props, State> {
@@ -53,7 +56,10 @@ export default class CombatStartModal extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            combatSetup: props.combatSetup
+            combatSetup: props.combatSetup,
+            partyFixed: !!props.combatSetup.party,
+            encounterFixed: !!props.combatSetup.encounter,
+            mapFixed: !!props.combatSetup.map
         };
     }
 
@@ -185,17 +191,20 @@ export default class CombatStartModal extends React.Component<Props, State> {
                             <PartySection
                                 combatSetup={this.state.combatSetup}
                                 parties={this.props.parties}
+                                fixed={this.state.partyFixed}
                                 setPartyID={id => this.setPartyID(id)}
                             />
                             <EncounterSection
                                 combatSetup={this.state.combatSetup}
                                 encounters={this.props.encounters}
+                                fixed={this.state.encounterFixed}
                                 setEncounterID={id => this.setEncounterID(id)}
                                 generateEncounter={diff => this.generateEncounter(diff)}
                             />
                             <MapSection
                                 combatSetup={this.state.combatSetup}
                                 maps={this.props.maps}
+                                fixed={this.state.mapFixed}
                                 setMapID={id => this.setMapID(id)}
                                 generateMap={type => this.generateMap(type)}
                             />
@@ -287,6 +296,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
 interface PartySectionProps {
     combatSetup: CombatSetup;
     parties: Party[];
+    fixed: boolean;
     setPartyID: (id: string | null) => void;
 }
 
@@ -298,22 +308,33 @@ class PartySection extends React.Component<PartySectionProps> {
             );
         }
 
-        const partyOptions = this.props.parties.map(party => {
-            return {
-                id: party.id,
-                text: party.name || 'unnamed party'
-            };
-        });
+        let dropdown = null;
+        if (!this.props.fixed) {
+            const partyOptions = this.props.parties.map(party => {
+                return {
+                    id: party.id,
+                    text: party.name || 'unnamed party'
+                };
+            });
+
+            dropdown = (
+                <Dropdown
+                    options={partyOptions}
+                    placeholder='select a party'
+                    selectedID={this.props.combatSetup.party ? this.props.combatSetup.party.id : undefined}
+                    select={optionID => this.props.setPartyID(optionID)}
+                    clear={() => this.props.setPartyID(null)}
+                />
+            );
+        }
 
         let partyContent = null;
         if (this.props.combatSetup.party) {
-            const pcSections = this.props.combatSetup.party.pcs.filter(pc => pc.active).map(pc =>
-                (
-                    <div key={pc.id} className='group-panel'>
-                        {pc.name || 'unnamed pc'} (level {pc.level})
-                    </div>
-                )
-            );
+            const pcSections = this.props.combatSetup.party.pcs.filter(pc => pc.active).map(pc => (
+                <div key={pc.id} className='group-panel'>
+                    {pc.name || 'unnamed pc'} (level {pc.level})
+                </div>
+            ));
 
             if (pcSections.length === 0) {
                 pcSections.push(
@@ -332,13 +353,7 @@ class PartySection extends React.Component<PartySectionProps> {
         return (
             <div>
                 <div className='heading'>party</div>
-                <Dropdown
-                    options={partyOptions}
-                    placeholder='select a party'
-                    selectedID={this.props.combatSetup.party ? this.props.combatSetup.party.id : undefined}
-                    select={optionID => this.props.setPartyID(optionID)}
-                    clear={() => this.props.setPartyID(null)}
-                />
+                {dropdown}
                 {partyContent}
             </div>
         );
@@ -348,6 +363,7 @@ class PartySection extends React.Component<PartySectionProps> {
 interface EncounterSectionProps {
     combatSetup: CombatSetup;
     encounters: Encounter[];
+    fixed: boolean;
     setEncounterID: (id: string | null) => void;
     generateEncounter: (diff: string) => void;
 }
@@ -356,11 +372,13 @@ class EncounterSection extends React.Component<EncounterSectionProps> {
     public render() {
         let tools = null;
         if (this.props.combatSetup.encounter) {
-            tools = (
-                <div>
-                    <button onClick={() => this.props.setEncounterID(null)}>choose a different encounter</button>
-                </div>
-            );
+            if (!this.props.fixed) {
+                tools = (
+                    <div>
+                        <button onClick={() => this.props.setEncounterID(null)}>choose a different encounter</button>
+                    </div>
+                );
+            }
         } else {
             let selector = null;
             if (this.props.encounters.length > 0) {
@@ -461,6 +479,7 @@ class EncounterSection extends React.Component<EncounterSectionProps> {
 interface MapSectionProps {
     combatSetup: CombatSetup;
     maps: Map[];
+    fixed: boolean;
     setMapID: (id: string | null) => void;
     generateMap: (type: string) => void;
 }
@@ -469,11 +488,13 @@ class MapSection extends React.Component<MapSectionProps> {
     public render() {
         let tools = null;
         if (this.props.combatSetup.map) {
-            tools = (
-                <div>
-                    <button onClick={() => this.props.setMapID(null)}>choose a different map</button>
-                </div>
-            );
+            if (!this.props.fixed) {
+                tools = (
+                    <div>
+                        <button onClick={() => this.props.setMapID(null)}>choose a different map</button>
+                    </div>
+                );
+            }
         } else {
             let selector = null;
             if (this.props.maps.length > 0) {

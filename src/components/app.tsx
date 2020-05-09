@@ -802,7 +802,12 @@ export default class App extends React.Component<Props, State> {
 
     // Start combat
 
-    private createCombat(encounter: Encounter | null = null, partyID: string | null = null) {
+    private createCombat(
+        encounter: Encounter | null = null,
+        partyID: string | null = null,
+        map: Map | null = null,
+        fog: { x: number, y: number }[] = []
+        ) {
         let party = this.state.parties.length === 1 ? this.state.parties[0] : null;
         if (partyID) {
             const p = this.state.parties.find(par => par.id === partyID);
@@ -821,6 +826,10 @@ export default class App extends React.Component<Props, State> {
         if (enc) {
             setup.slotInfo = Utils.getCombatSlotData(enc, this.state.library);
         }
+        if (map) {
+            setup.map = map;
+        }
+        setup.fog = fog;
 
         this.setState({
             drawer: {
@@ -868,6 +877,7 @@ export default class App extends React.Component<Props, State> {
 
             if (combatSetup.map) {
                 combat.map = JSON.parse(JSON.stringify(combatSetup.map));
+                combat.fog = combatSetup.fog;
             }
 
             this.setState({
@@ -2202,6 +2212,7 @@ export default class App extends React.Component<Props, State> {
                         <MapDisplayModal
                             map={this.state.drawer.map}
                             parties={this.state.parties}
+                            startCombat={(partyID, map, fog) => this.createCombat(null, partyID, map, fog)}
                         />
                     );
                     header = this.state.drawer.map.name;
