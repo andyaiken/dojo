@@ -31,7 +31,7 @@ interface State {
     playerMapSize: number;
     playerViewOpen: boolean;
     editFog: boolean;
-    selectedCombatantID: string | null;
+    selectedCombatantIDs: string[];
     fog: { x: number, y: number }[];
     combatants: Combatant[];
 }
@@ -45,7 +45,7 @@ export default class MapDisplayModal extends React.Component<Props, State> {
             playerMapSize: 50,
             playerViewOpen: false,
             editFog: false,
-            selectedCombatantID: null,
+            selectedCombatantIDs: [],
             fog: [],
             combatants: []
         };
@@ -72,14 +72,14 @@ export default class MapDisplayModal extends React.Component<Props, State> {
     private toggleEditFog() {
         this.setState({
             editFog: !this.state.editFog,
-            selectedCombatantID: null
+            selectedCombatantIDs: []
         });
     }
 
-    private setSelectedCombatantID(id: string | null) {
+    private setSelectedCombatantIDs(ids: string[]) {
         this.setState({
             editFog: false,
-            selectedCombatantID: id
+            selectedCombatantIDs: ids
         });
     }
 
@@ -144,60 +144,79 @@ export default class MapDisplayModal extends React.Component<Props, State> {
         });
     }
 
-    private mapMove(combatant: Combatant, dir: string) {
-        const item = this.state.map.items.find(i => i.id === combatant.id);
-        if (item) {
-            switch (dir) {
-                case 'N':
-                    item.y -= 1;
-                    break;
-                case 'NE':
-                    item.x += 1;
-                    item.y -= 1;
-                    break;
-                case 'E':
-                    item.x += 1;
-                    break;
-                case 'SE':
-                    item.x += 1;
-                    item.y += 1;
-                    break;
-                case 'S':
-                    item.y += 1;
-                    break;
-                case 'SW':
-                    item.x -= 1;
-                    item.y += 1;
-                    break;
-                case 'W':
-                    item.x -= 1;
-                    break;
-                case 'NW':
-                    item.x -= 1;
-                    item.y -= 1;
-                    break;
-                default:
-                    // Do nothing
-                    break;
+    private toggleItemSelection(id: string | null, ctrl: boolean) {
+        if (id && ctrl) {
+            const ids = this.state.selectedCombatantIDs;
+            if (ids.includes(id)) {
+                const index = ids.indexOf(id);
+                ids.splice(index, 1);
+            } else {
+                ids.push(id);
             }
-
-            this.setState({
-                map: this.state.map
-            });
+            this.setSelectedCombatantIDs(ids);
+        } else {
+            this.setSelectedCombatantIDs(id ? [id] : []);
         }
     }
 
-    private mapRemove(combatant: Combatant) {
-        const item = this.state.map.items.find(i => i.id === combatant.id);
-        if (item) {
-            const index = this.state.map.items.indexOf(item);
-            this.state.map.items.splice(index, 1);
+    private mapMove(combatants: Combatant[], dir: string) {
+        combatants.forEach(combatant => {
+            const item = this.state.map.items.find(i => i.id === combatant.id);
+            if (item) {
+                switch (dir) {
+                    case 'N':
+                        item.y -= 1;
+                        break;
+                    case 'NE':
+                        item.x += 1;
+                        item.y -= 1;
+                        break;
+                    case 'E':
+                        item.x += 1;
+                        break;
+                    case 'SE':
+                        item.x += 1;
+                        item.y += 1;
+                        break;
+                    case 'S':
+                        item.y += 1;
+                        break;
+                    case 'SW':
+                        item.x -= 1;
+                        item.y += 1;
+                        break;
+                    case 'W':
+                        item.x -= 1;
+                        break;
+                    case 'NW':
+                        item.x -= 1;
+                        item.y -= 1;
+                        break;
+                    default:
+                        // Do nothing
+                        break;
+                }
+            }
+        });
 
-            this.setState({
-                map: this.state.map,
-                selectedCombatantID: null
-            });
-        }
+        this.setState({
+            map: this.state.map
+        });
+    }
+
+    private mapRemove(combatants: Combatant[]) {
+        combatants.forEach(combatant => {
+            const item = this.state.map.items.find(i => i.id === combatant.id);
+            if (item) {
+                const index = this.state.map.items.indexOf(item);
+                this.state.map.items.splice(index, 1);
+            }
+        });
+
+        this.setState({
+            map: this.state.map,
+            selectedCombatantIDs: []
+        });
     }
 
     private changeValue(source: any, field: string, value: any) {
@@ -216,8 +235,9 @@ export default class MapDisplayModal extends React.Component<Props, State> {
     }
 
     private gridSquareClicked(x: number, y: number, playerView: boolean) {
-        const combatant = this.state.combatants.find(c => c.id === this.state.selectedCombatantID);
-        if (combatant) {
+        const combatant = this.state.combatants.find(c => c.id === this.state.selectedCombatantIDs[0]);
+        const mapItem = this.state.map.items.find(i => i.id === this.state.selectedCombatantIDs[0]);
+        if (combatant && !mapItem) {
 
             const item = Factory.createMapItem();
             item.id = combatant.id;
@@ -256,19 +276,21 @@ export default class MapDisplayModal extends React.Component<Props, State> {
     }
 
     private getMap(playerView: boolean) {
+        const adding = (this.state.selectedCombatantIDs.length === 1) && !this.state.map.items.find(i => i.id === this.state.selectedCombatantIDs[0]);
+
         return (
             <MapPanel
                 map={this.state.map}
                 mode={playerView ? 'combat-player' : 'combat'}
                 size={playerView ? this.state.playerMapSize : this.state.mapSize}
                 combatants={this.state.combatants}
-                showOverlay={!!this.state.selectedCombatantID && !this.state.map.items.find(i => i.id === this.state.selectedCombatantID)}
-                selectedItemIDs={this.state.selectedCombatantID ? [this.state.selectedCombatantID] : []}
+                showOverlay={adding}
+                selectedItemIDs={this.state.selectedCombatantIDs}
                 fog={this.state.fog}
                 editFog={this.state.editFog && !playerView}
                 gridSquareEntered={() => null}
                 gridSquareClicked={(x, y) => this.gridSquareClicked(x, y, playerView)}
-                itemSelected={item => this.setSelectedCombatantID(item)}
+                itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
             />
         );
     }
@@ -276,68 +298,78 @@ export default class MapDisplayModal extends React.Component<Props, State> {
     public render() {
         try {
             let sidebar = null;
-            const selection = this.state.combatants.find(c => c.id === this.state.selectedCombatantID);
-            const item = this.state.map.items.find(i => i.id === this.state.selectedCombatantID);
-            if (selection && item) {
-                let auraDetails = null;
-                if (selection.aura.radius > 0) {
-                    const auraStyleOptions = [
-                        {
-                            id: 'square',
-                            text: 'square'
-                        },
-                        {
-                            id: 'rounded',
-                            text: 'rounded'
-                        },
-                        {
-                            id: 'circle',
-                            text: 'circle'
-                        }
-                    ];
-                    auraDetails = (
+
+            const selection = this.state.combatants.filter(c => this.state.selectedCombatantIDs.includes(c.id));
+            const items = this.state.map.items.filter(i => this.state.selectedCombatantIDs.includes(i.id));
+            if ((selection.length > 0) && (items.length === selection.length)) {
+                let altitudeAndAura = null;
+                if (selection.length === 1) {
+                    let auraDetails = null;
+                    if (selection[0].aura.radius > 0) {
+                        const auraStyleOptions = [
+                            {
+                                id: 'square',
+                                text: 'square'
+                            },
+                            {
+                                id: 'rounded',
+                                text: 'rounded'
+                            },
+                            {
+                                id: 'circle',
+                                text: 'circle'
+                            }
+                        ];
+                        auraDetails = (
+                            <div>
+                                <Selector
+                                    options={auraStyleOptions}
+                                    selectedID={selection[0].aura.style}
+                                    select={optionID => this.changeValue(selection[0].aura, 'style', optionID)}
+                                />
+                                <input
+                                    type='color'
+                                    value={selection[0].aura.color}
+                                    onChange={event => this.changeValue(selection[0].aura, 'color', event.target.value)}
+                                />
+                            </div>
+                        );
+                    }
+
+                    altitudeAndAura = (
                         <div>
-                            <Selector
-                                options={auraStyleOptions}
-                                selectedID={selection.aura.style}
-                                select={optionID => this.changeValue(selection.aura, 'style', optionID)}
+                            <div className='divider' />
+                            <NumberSpin
+                                source={selection[0]}
+                                name='altitude'
+                                label='altitude'
+                                display={value => value + ' ft.'}
+                                nudgeValue={delta => this.nudgeValue(selection[0], 'altitude', delta * 5)}
                             />
-                            <input
-                                type='color'
-                                value={selection.aura.color}
-                                onChange={event => this.changeValue(selection.aura, 'color', event.target.value)}
-                            />
+                            <Expander text='aura'>
+                                <NumberSpin
+                                    source={selection[0].aura}
+                                    name='radius'
+                                    label='size'
+                                    display={value => value + ' ft.'}
+                                    nudgeValue={delta => this.nudgeValue(selection[0].aura, 'radius', delta * 5)}
+                                />
+                                {auraDetails}
+                            </Expander>
                         </div>
                     );
                 }
 
                 sidebar = (
                     <div className='section'>
-                        <div className='subheading'>{selection.displayName}</div>
+                        <div className='subheading'>{selection.length === 1 ? selection[0].displayName : 'multiple tokens'}</div>
                         <div className='section centered'>
                             <Radial
                                 direction='eight'
                                 click={dir => this.mapMove(selection, dir)}
                             />
                         </div>
-                        <div className='divider' />
-                        <NumberSpin
-                            source={selection}
-                            name='altitude'
-                            label='altitude'
-                            display={value => value + ' ft.'}
-                            nudgeValue={delta => this.nudgeValue(selection, 'altitude', delta * 5)}
-                        />
-                        <Expander text='aura'>
-                            <NumberSpin
-                                source={selection.aura}
-                                name='radius'
-                                label='size'
-                                display={value => value + ' ft.'}
-                                nudgeValue={delta => this.nudgeValue(selection.aura, 'radius', delta * 5)}
-                            />
-                            {auraDetails}
-                        </Expander>
+                        {altitudeAndAura}
                         <div className='divider' />
                         <button onClick={() => this.mapRemove(selection)}>remove from map</button>
                     </div>
@@ -349,7 +381,7 @@ export default class MapDisplayModal extends React.Component<Props, State> {
                         .filter(pc => !this.state.map.items.find(i => i.id === pc.id))
                         .map(pc => {
                             let note = null;
-                            if (this.state.selectedCombatantID === pc.id) {
+                            if (this.state.selectedCombatantIDs.includes(pc.id)) {
                                 note = (
                                     <Note>
                                         click on the map to place this person
@@ -358,7 +390,7 @@ export default class MapDisplayModal extends React.Component<Props, State> {
                             }
                             return (
                                 <div key={pc.id} className='group-panel clickable'>
-                                    <div onClick={() => this.setSelectedCombatantID(pc.id)}>{pc.displayName}</div>
+                                    <div onClick={() => this.setSelectedCombatantIDs([pc.id])}>{pc.displayName}</div>
                                     {note}
                                 </div>
                             );
