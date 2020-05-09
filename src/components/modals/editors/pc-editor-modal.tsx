@@ -86,7 +86,7 @@ export default class PCEditorModal extends React.Component<Props, State> {
     public render() {
         try {
             const companions = this.state.pc.companions.map(comp => (
-                <Row gutter={10} className='companion' key={comp.id}>
+                <Row gutter={10} className='companion-list-item' key={comp.id}>
                     <Col span={16}>
                         <Textbox
                             text={comp.name}

@@ -196,8 +196,8 @@ export default class Napoleon {
         return hasLair;
     }
 
-    public static addPCToCombat(combat: Combat, pc: PC) {
-        const combatant: Combatant = JSON.parse(JSON.stringify(pc)) as Combatant & PC;
+    public static convertPCToCombatant(pc: PC) {
+        const combatant = JSON.parse(JSON.stringify(pc)) as Combatant & PC;
 
         combatant.current = false;
         combatant.pending = true;
@@ -217,11 +217,11 @@ export default class Napoleon {
         combatant.altitude = 0;
         combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
 
-        combat.combatants.push(combatant);
+        return combatant;
     }
 
-    public static addMonsterToCombat(combat: Combat, monster: Monster, init: number, hp: number, name: string) {
-        const combatant: Combatant = JSON.parse(JSON.stringify(monster)) as Combatant & Monster;
+    public static convertMonsterToCombatant(monster: Monster, init: number, hp: number, name: string) {
+        const combatant = JSON.parse(JSON.stringify(monster)) as Combatant & Monster;
         combatant.id = Utils.guid();
 
         combatant.current = false;
@@ -243,10 +243,10 @@ export default class Napoleon {
         combatant.altitude = 0;
         combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
 
-        combat.combatants.push(combatant);
+        return combatant;
     }
 
-    public static addCompanionToCombat(combat: Combat, companion: Companion | null) {
+    public static convertCompanionToCombatant(companion: Companion | null) {
         const combatant: Combatant = {
             id: companion ? companion.id : Utils.guid(),
             type: 'companion',
@@ -270,10 +270,10 @@ export default class Napoleon {
             aura: { radius: 0, style: 'rounded', color: '#005080' }
         };
 
-        combat.combatants.push(combatant);
+        return combatant;
     }
 
-    public static addPlaceholderToCombat(combat: Combat) {
+    public static convertPlaceholderToCombatant() {
         const combatant: Combatant = {
             id: Utils.guid(),
             type: 'placeholder',
@@ -297,6 +297,6 @@ export default class Napoleon {
             aura: { radius: 0, style: 'rounded', color: '#005080' }
         };
 
-        combat.combatants.push(combatant);
+        return combatant;
     }
 }

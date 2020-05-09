@@ -748,10 +748,11 @@ export default class App extends React.Component<Props, State> {
     }
 
     private viewMap(map: Map) {
+        const copy = JSON.parse(JSON.stringify(map));
         this.setState({
             drawer: {
                 type: 'map-view',
-                map: map
+                map: copy
             }
         });
     }
@@ -845,7 +846,7 @@ export default class App extends React.Component<Props, State> {
 
             // Add a copy of each PC to the encounter
             combatSetup.party.pcs.filter(pc => pc.active).forEach(pc => {
-                Napoleon.addPCToCombat(combat, pc);
+                combat.combatants.push(Napoleon.convertPCToCombatant(pc));
             });
 
             combat.encounter.slots.forEach(slot => {
@@ -853,7 +854,7 @@ export default class App extends React.Component<Props, State> {
                 const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
                 if (monster && slotInfo) {
                     slotInfo.members.forEach(m => {
-                        Napoleon.addMonsterToCombat(combat, monster, m.init, m.hp, m.name);
+                        combat.combatants.push(Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name));
                     });
                 } else {
                     combat.issues.push('unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName);
@@ -861,7 +862,7 @@ export default class App extends React.Component<Props, State> {
             });
 
             // Add an Init 20 item
-            Napoleon.addPlaceholderToCombat(combat);
+            combat.combatants.push(Napoleon.convertPlaceholderToCombatant());
 
             Napoleon.sortCombatants(combat);
 
@@ -907,7 +908,7 @@ export default class App extends React.Component<Props, State> {
                     const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
                     if (monster && slotInfo) {
                         slotInfo.members.forEach(m => {
-                            Napoleon.addMonsterToCombat(combat, monster, m.init, m.hp, m.name);
+                            combat.combatants.push(Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name));
                         });
                     } else {
                         combat.issues.push('unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName);
@@ -969,7 +970,7 @@ export default class App extends React.Component<Props, State> {
                 const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
                 if (monster && slotInfo) {
                     slotInfo.members.forEach(m => {
-                        Napoleon.addMonsterToCombat(combat, monster, m.init, m.hp, m.name);
+                        combat.combatants.push(Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name));
                     });
                 } else {
                     combat.issues.push('unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName);
@@ -994,7 +995,7 @@ export default class App extends React.Component<Props, State> {
             if (party) {
                 const pc = party.pcs.find(item => item.id === pcID);
                 if (pc) {
-                    Napoleon.addPCToCombat(combat, pc);
+                    combat.combatants.push(Napoleon.convertPCToCombatant(pc));
                     this.setState({
                         combats: this.state.combats
                     });
@@ -1006,7 +1007,7 @@ export default class App extends React.Component<Props, State> {
     private addCompanionToEncounter(companion: Companion | null) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
-            Napoleon.addCompanionToCombat(combat, companion);
+            combat.combatants.push(Napoleon.convertCompanionToCombatant(companion));
             this.setState({
                 combats: this.state.combats
             });
@@ -1427,10 +1428,8 @@ export default class App extends React.Component<Props, State> {
         item.type = combatant.type as 'pc' | 'monster' | 'companion';
         item.x = x;
         item.y = y;
-        let size = 1;
-        if (combatant.type === 'monster') {
-            size = Utils.miniSize((combatant as Combatant & Monster).size);
-        }
+
+        const size = Utils.miniSize(combatant.displaySize);
         item.height = size;
         item.width = size;
 
@@ -2043,7 +2042,7 @@ export default class App extends React.Component<Props, State> {
                             source={this.state.drawer.source}
                         />
                     );
-                    header = 'monster';
+                    header = this.state.drawer.source.name;
                     closable = true;
                     break;
                 case 'import-party':
@@ -2202,9 +2201,10 @@ export default class App extends React.Component<Props, State> {
                     content = (
                         <MapDisplayModal
                             map={this.state.drawer.map}
+                            parties={this.state.parties}
                         />
                     );
-                    header = 'map';
+                    header = this.state.drawer.map.name;
                     width = '70%';
                     closable = true;
                     break;
