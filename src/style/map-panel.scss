@@ -83,11 +83,14 @@
     position: absolute;
     border: 1px solid darkgrey;
     background-color: lightgrey;
+    /*
+    // This causes a compilation error when deploying, for some reason
     transition:
         left 0.2s ease-in-out,
         top 0.2s ease-in-out,
         width 0.2s ease-in-out,
         height 0.2s ease-in-out;
+    */
 
     &.default {
         background-image: url("../resources/images/map-tiles/default.jpg");
