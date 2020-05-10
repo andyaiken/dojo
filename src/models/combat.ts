@@ -47,7 +47,7 @@ export interface Combatant {
     type: string;
     displayName: string;
     displaySize: string;
-    showOnMap: boolean;
+    showOnMap: boolean;     // Whether or not the combatant is hidden
     current: boolean;
     pending: boolean;
     active: boolean;

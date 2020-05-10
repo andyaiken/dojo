@@ -40,7 +40,7 @@ interface Props {
     parties: Party[];
     encounters: Encounter[];
     pauseCombat: () => void;
-    endCombat: () => void;
+    endCombat: (goToMap: boolean) => void;
     closeNotification: (notification: Notification, removeCondition: boolean) => void;
     mapAdd: (combatant: Combatant, x: number, y: number) => void;
     makeCurrent: (combatant: Combatant) => void;
@@ -57,7 +57,6 @@ interface Props {
     editCondition: (combatant: Combatant, condition: Condition) => void;
     removeCondition: (combatant: Combatant, condition: Condition) => void;
     mapMove: (ids: string[], dir: string) => void;
-    mapResize: (id: string, dir: string, dir2: 'out' | 'in') => void;
     mapRemove: (ids: string[]) => void;
     mapAddNote: (id: string) => void;
     mapRemoveNote: (id: string) => void;
@@ -330,16 +329,21 @@ export default class CombatScreen extends React.Component<Props, State> {
             .filter(c => (c.type === 'pc') || c.showOnMap)
             .filter(c => !c.pending && c.active && !c.defeated)
             .filter(c => {
+                if ((c.type === 'monster') && (!!this.props.combat.map)) {
+                    // Only show this monster if it's on the map
+                    return !!this.props.combat.map.items.find(i => i.id === c.id);
+                }
+                return true;
+            })
+            .filter(c => {
                 if (c.type === 'placeholder') {
                     return Napoleon.combatHasLairActions(this.props.combat);
                 }
-
                 return true;
             });
         const current = activeCombatants.some(c => c.current);
         const initCount = activeCombatants.length;
-        const initList = this.orderCombatants(activeCombatants)
-            .map(c => this.createCombatantRow(c, true));
+        const initList = this.orderCombatants(activeCombatants).map(c => this.createCombatantRow(c, true));
         if (current) {
             if (initCount > 1) {
                 initList.splice(1, 0, <div key='next1' className='section init-separator'>next up</div>);
@@ -369,10 +373,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                         <div>
                             <div className='heading lowercase'>{token.displayName}</div>
                             <div className='section centered'>
-                                <Radial
-                                    direction='eight'
-                                    click={dir => this.props.mapMove([token.id], dir)}
-                                />
+                                <Radial click={dir => this.props.mapMove([token.id], dir)} />
                             </div>
                             <div className='divider' />
                             <NumberSpin
@@ -448,6 +449,32 @@ export default class CombatScreen extends React.Component<Props, State> {
                 }
             }
 
+            let viewport = null;
+            if (this.props.combat.fog.length > 0) {
+                const dims = Mercator.mapDimensions(this.props.combat.map);
+                if (dims) {
+                    // Invert the fog
+                    const visible: { x: number, y: number }[] = [];
+                    for (let x = dims.minX; x <= dims.maxX; ++x) {
+                        for (let y = dims.minY; y <= dims.maxY; ++y) {
+                            if (!this.props.combat.fog.find(f => (f.x === x) && (f.y === y))) {
+                                visible.push({ x: x, y: y });
+                            }
+                        }
+                    }
+                    if (visible.length > 0) {
+                        const xs = visible.map(f => f.x);
+                        const ys = visible.map(f => f.y);
+                        viewport = {
+                            minX: Math.min(...xs),
+                            maxX: Math.max(...xs),
+                            minY: Math.min(...ys),
+                            maxY: Math.max(...ys)
+                        };
+                    }
+                }
+            }
+
             return (
                 <Popout title='Encounter' closeWindow={() => this.setPlayerViewOpen(false)}>
                     <Row className='full-height'>
@@ -457,6 +484,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                                 map={this.props.combat.map}
                                 mode='combat-player'
                                 size={this.state.playerView.mapSize}
+                                viewport={viewport}
                                 combatants={this.props.combat.combatants}
                                 selectedItemIDs={this.state.selectedItemIDs}
                                 fog={this.props.combat.fog}
@@ -484,8 +512,12 @@ export default class CombatScreen extends React.Component<Props, State> {
     }
 
     private getTools() {
-        let wavesAvailable = false;
-        wavesAvailable = !!this.props.combat.encounter && (this.props.combat.encounter.waves.length > 0);
+        let exitToMap = null;
+        if (this.props.combat.map) {
+            exitToMap = (
+                <ConfirmButton text='end combat and open map' callback={() => this.props.endCombat(true)} />
+            );
+        }
 
         const parties: Party[] = [];
         this.props.combat.combatants.filter(c => c.type === 'pc').forEach(pc => {
@@ -504,24 +536,40 @@ export default class CombatScreen extends React.Component<Props, State> {
                 }
             });
         });
+        let addPCs = null;
+        if (pcOptions.length > 0) {
+            addPCs = (
+                <Expander text='add pcs'>
+                    {pcOptions}
+                </Expander>
+            );
+        }
 
-        return (
-            <div>
-                <div className='subheading'>encounter</div>
-                <button onClick={() => this.props.pauseCombat()}>pause combat</button>
-                <ConfirmButton text='end combat' callback={() => this.props.endCombat()} />
-                <button onClick={() => this.props.showLeaderboard()}>leaderboard</button>
-                <div className='subheading'>combatants</div>
-                <Checkbox
-                    label='show defeated combatants'
-                    checked={this.state.showDefeatedCombatants}
-                    changeValue={() => this.toggleShowDefeatedCombatants()}
-                />
-                <button onClick={() => this.props.addCombatants()}>add combatants</button>
-                {pcOptions.length > 0 ? <Expander text='add pcs'>{pcOptions}</Expander> : null}
-                <button onClick={() => this.props.addWave()} style={{ display: wavesAvailable ? 'block' : 'none' }}>add wave</button>
-                <button onClick={() => this.props.addCompanion(null)}>add a companion</button>
-                <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
+        let addWave = null;
+        if (!!this.props.combat.encounter && (this.props.combat.encounter.waves.length > 0)) {
+            addWave = (
+                <button onClick={() => this.props.addWave()}>add wave</button>
+            );
+        }
+
+        let map = null;
+        if (!!this.props.combat.map) {
+            let fog = null;
+            if (this.state.addingFog) {
+                fog = (
+                    <div>
+                        <button onClick={() => this.fillFog()}>
+                            fill fog of war
+                        </button>
+                        <button className={this.props.combat.fog.length === 0 ? 'disabled' : ''} onClick={() => this.clearFog()}>
+                            clear fog of war
+                        </button>
+                    </div>
+                );
+            }
+
+            map = (
+                <div>
                     <div className='subheading'>map</div>
                     <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
                     <button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
@@ -536,12 +584,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                         checked={this.state.addingFog}
                         changeValue={() => this.toggleAddingFog()}
                     />
-                    <button onClick={() => this.fillFog()}>
-                        fill fog of war
-                    </button>
-                    <button className={this.props.combat.fog.length === 0 ? 'disabled' : ''} onClick={() => this.clearFog()}>
-                        clear fog of war
-                    </button>
+                    {fog}
                     <NumberSpin
                         source={this.state}
                         name={'mapSize'}
@@ -549,20 +592,18 @@ export default class CombatScreen extends React.Component<Props, State> {
                         nudgeValue={delta => this.nudgeMapSize(delta * 3)}
                     />
                 </div>
-                <div className='subheading'>player view</div>
-                <Checkbox
-                    label='show player view'
-                    checked={this.state.playerView.open}
-                    changeValue={value => this.setPlayerViewOpen(value)}
-                />
-                <div style={{ display: this.props.combat.map ? 'block' : 'none' }}>
+            );
+        }
+
+        let playerView = null;
+        if (this.props.combat.map && this.state.playerView.open) {
+            playerView = (
+                <div>
                     <Checkbox
                         label='show map controls'
                         checked={this.state.playerView.showControls}
                         changeValue={value => this.setPlayerViewShowControls(value)}
                     />
-                </div>
-                <div style={{ display: (this.props.combat.map && this.state.playerView.open) ? 'block' : 'none' }}>
                     <NumberSpin
                         source={this.state.playerView}
                         name={'mapSize'}
@@ -570,6 +611,34 @@ export default class CombatScreen extends React.Component<Props, State> {
                         nudgeValue={delta => this.nudgePlayerViewMapSize(delta * 3)}
                     />
                 </div>
+            );
+        }
+
+        return (
+            <div>
+                <div className='subheading'>encounter</div>
+                <button onClick={() => this.props.pauseCombat()}>pause combat</button>
+                <ConfirmButton text='end combat' callback={() => this.props.endCombat(false)} />
+                {exitToMap}
+                <button onClick={() => this.props.showLeaderboard()}>show leaderboard</button>
+                <div className='subheading'>combatants</div>
+                <Checkbox
+                    label='show defeated combatants'
+                    checked={this.state.showDefeatedCombatants}
+                    changeValue={() => this.toggleShowDefeatedCombatants()}
+                />
+                <button onClick={() => this.props.addCombatants()}>add combatants</button>
+                {addPCs}
+                {addWave}
+                <button onClick={() => this.props.addCompanion(null)}>add a companion</button>
+                {map}
+                <div className='subheading'>player view</div>
+                <Checkbox
+                    label='show player view'
+                    checked={this.state.playerView.open}
+                    changeValue={value => this.setPlayerViewOpen(value)}
+                />
+                {playerView}
             </div>
         );
     }
@@ -643,7 +712,6 @@ export default class CombatScreen extends React.Component<Props, State> {
                         item={mapItem}
                         note={Mercator.getNote(this.props.combat.map, mapItem)}
                         move={(item, dir) => this.props.mapMove([item.id], dir)}
-                        resize={(item, dir, dir2) => this.props.mapResize(item.id, dir, dir2)}
                         remove={item => this.props.mapRemove([item.id])}
                         addNote={itemID => this.props.mapAddNote(itemID)}
                         removeNote={itemID => this.props.mapRemoveNote(itemID)}

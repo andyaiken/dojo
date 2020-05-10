@@ -524,10 +524,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
             return (
                 <div>
                     <div className='section centered'>
-                        <Radial
-                            direction='eight'
-                            click={dir => this.props.mapMove(this.props.combatants, dir)}
-                        />
+                        <Radial click={dir => this.props.mapMove(this.props.combatants, dir)} />
                     </div>
                     <div className='divider' />
                     {altitude}

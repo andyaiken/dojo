@@ -23,6 +23,7 @@ interface Props {
     map: Map;
     mode: 'edit' | 'thumbnail' | 'combat' | 'combat-player';
     size: number;
+    viewport: MapDimensions | null;
     floatingItem: MapItem | null;
     combatants: Combatant[];
     showOverlay: boolean;
@@ -54,6 +55,7 @@ interface MapItemStyle {
 
 export default class MapPanel extends React.Component<Props> {
     public static defaultProps = {
+        viewport: null,
         floatingItem: null,
         combatants: [],
         showOverlay: false,
@@ -66,28 +68,34 @@ export default class MapPanel extends React.Component<Props> {
     };
 
     private getMapDimensions(border: number): MapDimensions | null {
-        let dimensions: MapDimensions | null = null;
+        let dimensions: MapDimensions | null = this.props.viewport;
 
-        this.props.map.items.filter(i => {
-            if (this.props.mode === 'edit') {
-                return i.type === 'tile';
-            }
-            return true;
-        }).forEach(i => {
-            if (!dimensions) {
-                dimensions = {
-                    minX: i.x,
-                    maxX: i.x + i.width - 1,
-                    minY: i.y,
-                    maxY: i.y + i.height - 1
-                };
-            } else {
-                dimensions.minX = Math.min(dimensions.minX, i.x);
-                dimensions.maxX = Math.max(dimensions.maxX, i.x + i.width - 1);
-                dimensions.minY = Math.min(dimensions.minY, i.y);
-                dimensions.maxY = Math.max(dimensions.maxY, i.y + i.height - 1);
-            }
-        });
+        if (!dimensions) {
+            // We haven't been given a viewport, so show all the tiles
+
+            const tiles = this.props.map.items.filter(i => {
+                if (this.props.mode === 'edit') {
+                    return i.type === 'tile';
+                }
+                return true;
+            });
+
+            tiles.forEach(i => {
+                if (!dimensions) {
+                    dimensions = {
+                        minX: i.x,
+                        maxX: i.x + i.width - 1,
+                        minY: i.y,
+                        maxY: i.y + i.height - 1
+                    };
+                } else {
+                    dimensions.minX = Math.min(dimensions.minX, i.x);
+                    dimensions.maxX = Math.max(dimensions.maxX, i.x + i.width - 1);
+                    dimensions.minY = Math.min(dimensions.minY, i.y);
+                    dimensions.maxY = Math.max(dimensions.maxY, i.y + i.height - 1);
+                }
+            });
+        }
 
         if (this.props.combatants) {
             this.props.combatants.filter(c => c.aura.radius > 0).forEach(c => {

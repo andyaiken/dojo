@@ -5,6 +5,7 @@
     .grid {
         position: relative;
         margin: 0 auto;
+        overflow: hidden;
 
         .grid-square {
             position: absolute;
@@ -82,6 +83,11 @@
     position: absolute;
     border: 1px solid darkgrey;
     background-color: lightgrey;
+    transition:
+        left 0.2s ease-in-out,
+        top 0.2s ease-in-out,
+        width 0.2s ease-in-out,
+        height 0.2s ease-in-out;
 
     &.default {
         background-image: url("../resources/images/map-tiles/default.jpg");
@@ -167,6 +173,11 @@
     position: absolute;
     border: 1px solid darkgrey;
     background-color: lightgrey;
+    transition:
+        left 0.2s ease-in-out,
+        top 0.2s ease-in-out,
+        width 0.2s ease-in-out,
+        height 0.2s ease-in-out;
 
     &.selected {
         border-color: $highlight;
@@ -178,6 +189,11 @@
     background-color: #005080;
     opacity: 0.2;
     pointer-events: none;
+    transition:
+        left 0.2s ease-in-out,
+        top 0.2s ease-in-out,
+        width 0.2s ease-in-out,
+        height 0.2s ease-in-out;
 }
 
 .token {
@@ -185,6 +201,11 @@
     background-color: #000065;
     border: 1px solid $control-border;
     box-shadow: inset 0 0 6px 3px rgba(0, 0, 0, 0.1);
+    transition:
+        left 0.2s ease-in-out,
+        top 0.2s ease-in-out,
+        width 0.2s ease-in-out,
+        height 0.2s ease-in-out;
 
     &.monster {
         background-color: #650000;

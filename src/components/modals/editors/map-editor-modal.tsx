@@ -253,20 +253,6 @@ export default class MapEditorModal extends React.Component<Props, State> {
         });
     }
 
-    private resizeMapItem(item: MapItem, dir: string, dir2: 'in' | 'out') {
-        switch (dir2) {
-            case 'in':
-                this.smallMapItem(item, dir);
-                break;
-            case 'out':
-                this.bigMapItem(item, dir);
-                break;
-            default:
-                // Do nothing
-                break;
-        }
-    }
-
     private rotateMapItem(item: MapItem) {
         const tmp = item.width;
         item.width = item.height;
@@ -427,7 +413,6 @@ export default class MapEditorModal extends React.Component<Props, State> {
                             changeValue={(source, field, value) => this.changeValue(source, field, value)}
                             nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
                             move={(tile, dir) => this.moveMapItem(tile, dir)}
-                            resize={(tile, dir, dir2) => this.resizeMapItem(tile, dir, dir2)}
                             clone={tile => this.cloneMapItem(tile)}
                             pickUp={tile => this.pickUpMapItem(tile)}
                             remove={tile => this.removeMapItem(tile)}
@@ -489,6 +474,12 @@ export default class MapEditorModal extends React.Component<Props, State> {
                                     </Col>
                                 </Row>
                                 <div className='divider' />
+                                <NumberSpin
+                                    source={this.state}
+                                    name={'mapSize'}
+                                    display={() => 'zoom'}
+                                    nudgeValue={delta => this.nudgeMapSize(delta * 3)}
+                                />
                                 <button onClick={() => this.generate('room')}>add a random room</button>
                                 <button onClick={() => this.rotateMap()}>rotate the map</button>
                                 <ConfirmButton text='clear all tiles' callback={() => this.clearMap()} />
@@ -504,12 +495,6 @@ export default class MapEditorModal extends React.Component<Props, State> {
                         {tools}
                     </Col>
                     <Col span={18} className='scrollable both-ways'>
-                        <NumberSpin
-                            source={this.state}
-                            name={'mapSize'}
-                            display={() => 'zoom'}
-                            nudgeValue={delta => this.nudgeMapSize(delta * 3)}
-                        />
                         <MapPanel
                             map={this.state.map}
                             mode='edit'
@@ -547,7 +532,6 @@ interface MapTileCardProps {
     changeValue: (source: any, field: string, value: any) => void;
     nudgeValue: (source: any, field: string, delta: number) => void;
     move: (tile: MapItem, dir: string) => void;
-    resize: (tile: MapItem, dir: string, dir2: 'in' | 'out') => void;
     clone: (tile: MapItem) => void;
     pickUp: (tile: MapItem) => void;
     remove: (tile: MapItem) => void;
@@ -581,7 +565,7 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
             <div>
                 <div className='subheading'>move</div>
                 <div className='section centered'>
-                    <Radial direction='eight' click={dir => this.props.move(this.props.tile, dir)} />
+                    <Radial click={dir => this.props.move(this.props.tile, dir)} />
                 </div>
                 <div className='subheading'>size</div>
                 <div className='section'>{this.props.tile.width * 5} ft x {this.props.tile.height * 5} ft</div>

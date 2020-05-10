@@ -752,7 +752,10 @@ export default class App extends React.Component<Props, State> {
         this.setState({
             drawer: {
                 type: 'map-view',
-                map: copy
+                map: copy,
+                fog: [],
+                partyID: null,
+                combatants: []
             }
         });
     }
@@ -1049,7 +1052,7 @@ export default class App extends React.Component<Props, State> {
         });
     }
 
-    private endCombat(combat: Combat | null = null) {
+    private endCombat(combat: Combat | null = null, goToMap: boolean = false) {
         if (!combat) {
             const cbt = this.state.combats.find(c => c.id === this.state.selectedCombatID);
             if (cbt) {
@@ -1067,6 +1070,49 @@ export default class App extends React.Component<Props, State> {
             this.setState({
                 combats: this.state.combats,
                 selectedCombatID: null
+            }, () => {
+                if (combat && combat.map && goToMap) {
+                    const combatants = combat.combatants.filter(c => (c.type === 'pc') || (c.type === 'companion'));
+
+                    // See if we can work out the party ID from the combatants
+                    let partyID = null;
+                    const pcs = combat.combatants.filter(c => c.type === 'pc');
+                    if (pcs.length > 0) {
+                        const party = this.state.parties.find(p => p.pcs.find(pc1 => pc1.id === pcs[0].id));
+                        if (party) {
+                            partyID = party.id;
+
+                            // Make sure there's no-one missing
+                            party.pcs.forEach(pc => {
+                                if (!combatants.find(c => c.id === pc.id)) {
+                                    // Add this PC
+                                    combatants.push(Napoleon.convertPCToCombatant(pc));
+                                }
+
+                                pc.companions.forEach(comp => {
+                                    if (!combatants.find(c => c.id === comp.id)) {
+                                        // Add this companion
+                                        combatants.push(Napoleon.convertCompanionToCombatant(comp));
+                                    }
+                                });
+                            });
+                        }
+                    }
+
+                    Utils.sort(combatants, [{ field: 'displayName', dir: 'asc' }]);
+
+                    // Go to map view
+                    this.setState({
+                        view: 'maps',
+                        drawer: {
+                            type: 'map-view',
+                            map: combat.map,
+                            fog: combat.fog,
+                            partyID: partyID,
+                            combatants: combatants
+                        }
+                    });
+                }
             });
         }
     }
@@ -1510,65 +1556,6 @@ export default class App extends React.Component<Props, State> {
         }
     }
 
-    private mapResize(id: string, dir: string, dir2: 'out' | 'in') {
-        const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-        if (combat && combat.map) {
-            const item = combat.map.items.find(i => i.id === id);
-            if (item) {
-                switch (dir2) {
-                    case 'in':
-                        switch (dir) {
-                            case 'N':
-                                if (item.height > 1) {
-                                    item.y += 1;
-                                    item.height -= 1;
-                                }
-                                break;
-                            case 'E':
-                                if (item.width > 1) {
-                                    item.width -= 1;
-                                }
-                                break;
-                            case 'S':
-                                if (item.height > 1) {
-                                    item.height -= 1;
-                                }
-                                break;
-                            case 'W':
-                                if (item.width > 1) {
-                                    item.x += 1;
-                                    item.width -= 1;
-                                }
-                                break;
-                        }
-                        break;
-                    case 'out':
-                        switch (dir) {
-                            case 'N':
-                                item.y -= 1;
-                                item.height += 1;
-                                break;
-                            case 'E':
-                                item.width += 1;
-                                break;
-                            case 'S':
-                                item.height += 1;
-                                break;
-                            case 'W':
-                                item.x -= 1;
-                                item.width += 1;
-                                break;
-                        }
-                        break;
-                }
-
-                this.setState({
-                    combats: this.state.combats
-                });
-            }
-        }
-    }
-
     private mapRemove(ids: string[]) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
@@ -1938,7 +1925,7 @@ export default class App extends React.Component<Props, State> {
                             parties={this.state.parties}
                             encounters={this.state.encounters}
                             pauseCombat={() => this.pauseCombat()}
-                            endCombat={() => this.endCombat()}
+                            endCombat={goToMap => this.endCombat(null, goToMap)}
                             nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
                             changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
                             makeCurrent={combatant => this.makeCurrent(combatant, false)}
@@ -1955,7 +1942,6 @@ export default class App extends React.Component<Props, State> {
                             editCondition={(combatant, condition) => this.editCondition(combatant, condition)}
                             removeCondition={(combatant, condition) => this.removeCondition(combatant, condition)}
                             mapAdd={(combatant, x, y) => this.mapAdd(combatant, x, y)}
-                            mapResize={(id, dir, dir2) => this.mapResize(id, dir, dir2)}
                             mapMove={(ids, dir) => this.mapMove(ids, dir)}
                             mapRemove={ids => this.mapRemove(ids)}
                             mapAddNote={itemID => this.mapAddNote(itemID)}
@@ -2211,6 +2197,9 @@ export default class App extends React.Component<Props, State> {
                     content = (
                         <MapDisplayModal
                             map={this.state.drawer.map}
+                            fog={this.state.drawer.fog}
+                            partyID={this.state.drawer.partyID}
+                            combatants={this.state.drawer.combatants}
                             parties={this.state.parties}
                             startCombat={(partyID, map, fog) => this.createCombat(null, partyID, map, fog)}
                         />

@@ -22,6 +22,9 @@ import Popout from '../panels/popout';
 
 interface Props {
     map: Map;
+    fog: { x: number, y: number }[];
+    partyID: string | null;
+    combatants: Combatant[];
     parties: Party[];
     startCombat: (partyID: string | null, map: Map, fog: { x: number, y: number }[]) => void;
 }
@@ -48,9 +51,9 @@ export default class MapDisplayModal extends React.Component<Props, State> {
             playerViewOpen: false,
             editFog: false,
             selectedCombatantIDs: [],
-            fog: [],
-            partyID: null,
-            combatants: []
+            fog: props.fog,
+            partyID: props.partyID,
+            combatants: props.combatants
         };
     }
 
@@ -119,6 +122,8 @@ export default class MapDisplayModal extends React.Component<Props, State> {
                 });
             });
         }
+
+        Utils.sort(combatants, [{ field: 'displayName', dir: 'asc' }]);
 
         this.setState({
             map: this.state.map,
@@ -282,11 +287,38 @@ export default class MapDisplayModal extends React.Component<Props, State> {
     private getMap(playerView: boolean) {
         const adding = (this.state.selectedCombatantIDs.length === 1) && !this.state.map.items.find(i => i.id === this.state.selectedCombatantIDs[0]);
 
+        let viewport = null;
+        if (playerView && (this.state.fog.length > 0)) {
+            const dims = Mercator.mapDimensions(this.state.map);
+            if (dims) {
+                // Invert the fog
+                const visible: { x: number, y: number }[] = [];
+                for (let x = dims.minX; x <= dims.maxX; ++x) {
+                    for (let y = dims.minY; y <= dims.maxY; ++y) {
+                        if (!this.state.fog.find(f => (f.x === x) && (f.y === y))) {
+                            visible.push({ x: x, y: y });
+                        }
+                    }
+                }
+                if (visible.length > 0) {
+                    const xs = visible.map(f => f.x);
+                    const ys = visible.map(f => f.y);
+                    viewport = {
+                        minX: Math.min(...xs),
+                        maxX: Math.max(...xs),
+                        minY: Math.min(...ys),
+                        maxY: Math.max(...ys)
+                    };
+                }
+            }
+        }
+
         return (
             <MapPanel
                 map={this.state.map}
                 mode={playerView ? 'combat-player' : 'combat'}
                 size={playerView ? this.state.playerMapSize : this.state.mapSize}
+                viewport={viewport}
                 combatants={this.state.combatants}
                 showOverlay={adding}
                 selectedItemIDs={this.state.selectedCombatantIDs}
@@ -368,10 +400,7 @@ export default class MapDisplayModal extends React.Component<Props, State> {
                     <div className='section'>
                         <div className='subheading'>{selection.length === 1 ? selection[0].displayName : 'multiple tokens'}</div>
                         <div className='section centered'>
-                            <Radial
-                                direction='eight'
-                                click={dir => this.mapMove(selection, dir)}
-                            />
+                            <Radial click={dir => this.mapMove(selection, dir)} />
                         </div>
                         {altitudeAndAura}
                         <div className='divider' />
@@ -430,6 +459,18 @@ export default class MapDisplayModal extends React.Component<Props, State> {
                     );
                 }
 
+                let playerMapSection = null;
+                if (this.state.playerViewOpen) {
+                    playerMapSection = (
+                        <NumberSpin
+                            source={this.state}
+                            name={'playerMapSize'}
+                            display={() => 'zoom'}
+                            nudgeValue={delta => this.nudgePlayerMapSize(delta * 3)}
+                        />
+                    );
+                }
+
                 sidebar = (
                     <div>
                         <div className='section'>
@@ -462,12 +503,7 @@ export default class MapDisplayModal extends React.Component<Props, State> {
                                 checked={this.state.playerViewOpen}
                                 changeValue={value => this.setPlayerViewOpen(value)}
                             />
-                            <NumberSpin
-                                source={this.state}
-                                name={'playerMapSize'}
-                                display={() => 'zoom'}
-                                nudgeValue={delta => this.nudgePlayerMapSize(delta * 3)}
-                            />
+                            {playerMapSection}
                         </div>
                     </div>
                 );

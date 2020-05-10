@@ -12,7 +12,6 @@ interface Props {
     item: MapItem;
     note: MapNote | null;
     move: (item: MapItem, dir: string) => void;
-    resize: (item: MapItem, dir: string, dir2: 'in' | 'out') => void;
     remove: (item: MapItem) => void;
     addNote: (itemID: string) => void;
     removeNote: (itemID: string) => void;
@@ -43,12 +42,25 @@ export default class MapItemCard extends React.Component<Props, State> {
             <div>
                 <div className='subheading'>move</div>
                 <div className='section centered'>
-                    <Radial direction='eight' click={dir => this.props.move(this.props.item, dir)} />
+                    <Radial click={dir => this.props.move(this.props.item, dir)} />
                 </div>
                 <div style={{ display: this.props.item.type === 'overlay' ? 'block' : 'none' }}>
-                    <div className='subheading'>resize</div>
-                    <div className='section centered'>
-                        <Radial direction='both' click={(dir, dir2) => this.props.resize(this.props.item, dir, dir2 as 'in' | 'out')} />
+                    <div className='subheading'>size</div>
+                    <div className='section'>
+                        <NumberSpin
+                            source={this.props.item}
+                            name='width'
+                            label='width'
+                            display={value => value + ' sq'}
+                            nudgeValue={delta => this.props.nudgeValue(this.props.item, 'width', delta)}
+                        />
+                        <NumberSpin
+                            source={this.props.item}
+                            name='height'
+                            label='height'
+                            display={value => value + ' sq'}
+                            nudgeValue={delta => this.props.nudgeValue(this.props.item, 'height', delta)}
+                        />
                     </div>
                 </div>
             </div>
