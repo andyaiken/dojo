@@ -5,10 +5,9 @@ import Utils from '../../utils/utils';
 
 import { Monster, MonsterGroup } from '../../models/monster-group';
 
-import ConfirmButton from '../controls/confirm-button';
+import MonsterGroupCard from '../cards/monster-group-card';
 import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
-import PortraitPanel from '../panels/portrait-panel';
 
 interface Props {
     library: MonsterGroup[];
@@ -46,7 +45,7 @@ export default class MonsterListScreen extends React.Component<Props> {
             const groups = this.props.library;
             Utils.sort(groups);
             const listItems = groups.map(group => (
-                <ListItem
+                <MonsterGroupCard
                     key={group.id}
                     group={group}
                     open={grp => this.props.selectMonsterGroup(grp)}
@@ -75,55 +74,6 @@ export default class MonsterListScreen extends React.Component<Props> {
                         <GridPanel heading='monster groups' content={listItems} />
                     </Col>
                 </Row>
-            );
-        } catch (e) {
-            console.error(e);
-            return <div className='render-error'/>;
-        }
-    }
-}
-
-interface ListItemProps {
-    group: MonsterGroup;
-    open: (group: MonsterGroup) => void;
-    delete: (group: MonsterGroup) => void;
-    openStatBlock: (monster: Monster) => void;
-}
-
-class ListItem extends React.Component<ListItemProps> {
-    private getMonsters() {
-        if (this.props.group.monsters.length === 0) {
-            return (
-                <div className='section'>no monsters</div>
-            );
-        }
-
-        return this.props.group.monsters.map(m => (
-            <div key={m.id} className='combatant-row' onClick={() => this.props.openStatBlock(m)}>
-                <PortraitPanel source={m} inline={true}/>
-                <div className='name'>{m.name || 'unnamed monster'}</div>
-            </div>
-        ));
-    }
-
-    public render() {
-        try {
-            return (
-                <div className='card monster'>
-                    <div className='heading'>
-                        <div className='title'>
-                            {this.props.group.name || 'unnamed group'}
-                        </div>
-                    </div>
-                    <div className='card-content'>
-                        <div className='fixed-height'>
-                            {this.getMonsters()}
-                        </div>
-                        <div className='divider'/>
-                        <button onClick={() => this.props.open(this.props.group)}>open group</button>
-                        <ConfirmButton text='delete group' callback={() => this.props.delete(this.props.group)} />
-                    </div>
-                </div>
             );
         } catch (e) {
             console.error(e);

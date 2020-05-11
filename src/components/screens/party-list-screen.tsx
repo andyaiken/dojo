@@ -5,10 +5,9 @@ import Utils from '../../utils/utils';
 
 import { Party, PC } from '../../models/party';
 
-import ConfirmButton from '../controls/confirm-button';
+import PartyCard from '../cards/party-card';
 import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
-import PortraitPanel from '../panels/portrait-panel';
 
 interface Props {
     parties: Party[];
@@ -25,7 +24,7 @@ export default class PartyListScreen extends React.Component<Props> {
             const parties = this.props.parties;
             Utils.sort(parties);
             const listItems = parties.map(p => (
-                <ListItem
+                <PartyCard
                     key={p.id}
                     party={p}
                     open={party => this.props.selectParty(party)}
@@ -54,64 +53,6 @@ export default class PartyListScreen extends React.Component<Props> {
                         <GridPanel heading='parties' content={listItems} />
                     </Col>
                 </Row>
-            );
-        } catch (e) {
-            console.error(e);
-            return <div className='render-error'/>;
-        }
-    }
-}
-
-interface ListItemProps {
-    party: Party;
-    open: (party: Party) => void;
-    delete: (party: Party) => void;
-    openStatBlock: (pc: PC) => void;
-}
-
-class ListItem extends React.Component<ListItemProps> {
-    private getText(pc: PC) {
-        let name = pc.name || 'unnamed pc';
-        if (pc.player) {
-            name += ' (' + pc.player + ')';
-        }
-        return name;
-    }
-
-    private getPCs() {
-        if (this.props.party.pcs.length === 0) {
-            return (
-                <div className='section'>no pcs</div>
-            );
-        }
-
-        return this.props.party.pcs.map(pc => (
-            <div key={pc.id} className={pc.active ? 'combatant-row' : 'combatant-row inactive'} onClick={() => this.props.openStatBlock(pc)}>
-                <PortraitPanel source={pc} inline={true}/>
-                <div className='name'>{this.getText(pc)}</div>
-            </div>
-        ));
-    }
-
-    public render() {
-        try {
-
-            return (
-                <div className='card pc'>
-                    <div className='heading'>
-                        <div className='title'>
-                            {this.props.party.name || 'unnamed party'}
-                        </div>
-                    </div>
-                    <div className='card-content'>
-                        <div className='fixed-height'>
-                            {this.getPCs()}
-                        </div>
-                        <div className='divider'/>
-                        <button onClick={() => this.props.open(this.props.party)}>open party</button>
-                        <ConfirmButton text='delete party' callback={() => this.props.delete(this.props.party)} />
-                    </div>
-                </div>
             );
         } catch (e) {
             console.error(e);

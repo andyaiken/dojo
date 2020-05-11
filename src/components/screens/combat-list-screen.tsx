@@ -5,14 +5,10 @@ import React from 'react';
 import Utils from '../../utils/utils';
 
 import { Combat, Combatant } from '../../models/combat';
-import { Monster } from '../../models/monster-group';
-import { PC } from '../../models/party';
 
-import ConfirmButton from '../controls/confirm-button';
+import CombatCard from '../cards/combat-card';
 import GridPanel from '../panels/grid-panel';
-import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
-import PortraitPanel from '../panels/portrait-panel';
 
 interface Props {
     combats: Combat[];
@@ -69,7 +65,7 @@ export default class CombatListScreen extends React.Component<Props> {
             const combats = this.props.combats;
             Utils.sort(combats);
             const listItems = combats.map(c => (
-                <ListItem
+                <CombatCard
                     key={c.id}
                     combat={c}
                     resume={combat => this.props.resumeCombat(combat)}
@@ -97,67 +93,6 @@ export default class CombatListScreen extends React.Component<Props> {
                         <GridPanel heading='combats' content={listItems} />
                     </Col>
                 </Row>
-            );
-        } catch (e) {
-            console.error(e);
-            return <div className='render-error'/>;
-        }
-    }
-}
-
-interface ListItemProps {
-    combat: Combat;
-    resume: (combat: Combat) => void;
-    delete: (combat: Combat) => void;
-    openStatBlock: (combatant: Combatant) => void;
-}
-
-class ListItem extends React.Component<ListItemProps> {
-    public render() {
-        try {
-            let map = null;
-            if (this.props.combat.map) {
-                map = (
-                    <div className='section'>
-                        <MapPanel
-                            map={this.props.combat.map}
-                            mode='thumbnail'
-                            size={12}
-                            combatants={this.props.combat.combatants}
-                        />
-                    </div>
-                );
-            }
-
-            const list = this.props.combat.combatants
-                .filter(c => c.active)
-                .filter(c => c.type !== 'placeholder')
-                .map(c => (
-                    <div key={c.id} className='combatant-row' onClick={() => this.props.openStatBlock(c)}>
-                        <PortraitPanel source={c as (Combatant & PC) | (Combatant & Monster)} inline={true}/>
-                        <div className='name'>{c.displayName}</div>
-                    </div>
-                ));
-
-            return (
-                <div className='card combat'>
-                    <div className='heading'>
-                        <div className='title'>
-                            {this.props.combat.name || 'unnamed combat'}
-                        </div>
-                    </div>
-                    <div className='card-content'>
-                        <div className='fixed-height'>
-                            <div className='section'>paused at round {this.props.combat.round}</div>
-                            {map}
-                            <div className='subheading'>initiative order</div>
-                            {list}
-                        </div>
-                        <div className='divider'/>
-                        <button onClick={() => this.props.resume(this.props.combat)}>resume combat</button>
-                        <ConfirmButton text='delete combat' callback={() => this.props.delete(this.props.combat)} />
-                    </div>
-                </div>
             );
         } catch (e) {
             console.error(e);

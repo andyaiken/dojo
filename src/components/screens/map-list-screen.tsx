@@ -5,10 +5,9 @@ import Utils from '../../utils/utils';
 
 import { Map } from '../../models/map';
 
-import ConfirmButton from '../controls/confirm-button';
+import MapCard from '../cards/map-card';
 import Expander from '../controls/expander';
 import GridPanel from '../panels/grid-panel';
-import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 
 interface Props {
@@ -26,7 +25,7 @@ export default class MapListScreen extends React.Component<Props> {
             const maps = this.props.maps;
             Utils.sort(maps);
             const listItems = maps.map(map => (
-                <ListItem
+                <MapCard
                     key={map.id}
                     map={map}
                     viewMap={m => this.props.viewMap(m)}
@@ -56,47 +55,6 @@ export default class MapListScreen extends React.Component<Props> {
                         <GridPanel heading='maps' content={listItems} />
                     </Col>
                 </Row>
-            );
-        } catch (e) {
-            console.error(e);
-            return <div className='render-error'/>;
-        }
-    }
-}
-
-interface ListItemProps {
-    map: Map;
-    viewMap: (map: Map) => void;
-    editMap: (map: Map) => void;
-    removeMap: (map: Map) => void;
-}
-
-class ListItem extends React.Component<ListItemProps> {
-    public render() {
-        try {
-            return (
-                <div className='card map'>
-                    <div className='heading'>
-                        <div className='title'>
-                            {this.props.map.name || 'unnamed map'}
-                        </div>
-                    </div>
-                    <div className='card-content'>
-                        <Row align='middle' justify='center' className='fixed-height'>
-                            <Col span={24}>
-                                <MapPanel
-                                    map={this.props.map}
-                                    mode='thumbnail'
-                                    size={12}
-                                />
-                            </Col>
-                        </Row>
-                        <div className='divider'/>
-                        <button onClick={() => this.props.viewMap(this.props.map)}>view map</button>
-                        <button onClick={() => this.props.editMap(this.props.map)}>edit map</button>
-                        <ConfirmButton text='delete map' callback={() => this.props.removeMap(this.props.map)} />
-                    </div>
-                </div>
             );
         } catch (e) {
             console.error(e);
