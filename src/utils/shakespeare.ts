@@ -159,9 +159,32 @@ export default class Shakespeare {
     }
 
     private static getMultipleValues(list: string[]) {
-        const items = [];
-        while (Utils.randomNumber(3) !== 0) {
-            items.push(list[Utils.randomNumber(list.length)]);
+        let count = 1;
+        switch (Utils.randomNumber(10)) {
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                count = 1;
+                break;
+            case 5:
+            case 6:
+            case 7:
+                count = 2;
+                break;
+            case 8:
+            case 9:
+                count = 3;
+                break;
+        }
+
+        const items: string[] = [];
+        while (items.length < count) {
+            const item = list[Utils.randomNumber(list.length)];
+            if (!items.includes(item)) {
+                items.push(item);
+            }
         }
         return items.join(', ');
     }

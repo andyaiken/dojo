@@ -23,6 +23,7 @@ import EncounterEditorModal from './modals/editors/encounter-editor-modal';
 import MapEditorModal from './modals/editors/map-editor-modal';
 import MonsterEditorModal from './modals/editors/monster-editor-modal';
 import PCEditorModal from './modals/editors/pc-editor-modal';
+import MapImportModal from './modals/import/map-import-modal';
 import MonsterGroupImportModal from './modals/import/monster-group-import-modal';
 import MonsterImportModal from './modals/import/monster-import-modal';
 import PartyImportModal from './modals/import/party-import-modal';
@@ -787,6 +788,24 @@ export default class App extends React.Component<Props, State> {
         Utils.sort(maps);
         this.setState({
             maps: maps,
+            drawer: null
+        });
+    }
+
+    private importMap() {
+        const map = Factory.createMap();
+        this.setState({
+            drawer: {
+                type: 'import-map',
+                map: map
+            }
+        });
+    }
+
+    private acceptImportedMap() {
+        this.state.maps.push(this.state.drawer.map);
+        this.setState({
+            maps: this.state.maps,
             drawer: null
         });
     }
@@ -1911,6 +1930,7 @@ export default class App extends React.Component<Props, State> {
                     <MapListScreen
                         maps={this.state.maps}
                         addMap={() => this.editMap(null)}
+                        importMap={() => this.importMap()}
                         generateMap={(type) => this.generateMap(type)}
                         viewMap={map => this.viewMap(map)}
                         editMap={map => this.editMap(map)}
@@ -2229,6 +2249,21 @@ export default class App extends React.Component<Props, State> {
                         </Row>
                     );
                     width = '85%';
+                    break;
+                case 'import-map':
+                    content = (
+                        <MapImportModal
+                            map={this.state.drawer.map}
+                        />
+                    );
+                    header = 'import map';
+                    footer = (
+                        <button onClick={() => this.acceptImportedMap()}>
+                            accept map
+                        </button>
+                    );
+                    width = '70%';
+                    closable = true;
                     break;
                 case 'combat-start':
                     content = (

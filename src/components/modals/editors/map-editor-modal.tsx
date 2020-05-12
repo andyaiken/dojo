@@ -499,6 +499,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
                             map={this.state.map}
                             mode='edit'
                             size={this.state.mapSize}
+                            paddingSquares={4}
                             selectedItemIDs={this.state.selectedTileID ? [this.state.selectedTileID] : []}
                             showOverlay={!!this.state.addingTile}
                             floatingItem={this.state.addingTile}

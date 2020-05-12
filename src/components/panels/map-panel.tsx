@@ -24,6 +24,7 @@ interface Props {
     mode: 'edit' | 'thumbnail' | 'combat' | 'combat-player';
     size: number;
     viewport: MapDimensions | null;
+    paddingSquares: number;
     floatingItem: MapItem | null;
     combatants: Combatant[];
     showOverlay: boolean;
@@ -56,6 +57,7 @@ interface MapItemStyle {
 export default class MapPanel extends React.Component<Props> {
     public static defaultProps = {
         viewport: null,
+        paddingSquares: 0,
         floatingItem: null,
         combatants: [],
         showOverlay: false,
@@ -67,7 +69,7 @@ export default class MapPanel extends React.Component<Props> {
         gridSquareClicked: null
     };
 
-    private getMapDimensions(border: number): MapDimensions | null {
+    private getMapDimensions(): MapDimensions | null {
         let dimensions: MapDimensions | null = this.props.viewport;
 
         if (!dimensions) {
@@ -137,10 +139,10 @@ export default class MapPanel extends React.Component<Props> {
         }
 
         // Apply the border
-        dimensions.minX -= border;
-        dimensions.maxX += border;
-        dimensions.minY -= border;
-        dimensions.maxY += border;
+        dimensions.minX -= this.props.paddingSquares;
+        dimensions.maxX += this.props.paddingSquares;
+        dimensions.minY -= this.props.paddingSquares;
+        dimensions.maxY += this.props.paddingSquares;
 
         return dimensions;
     }
@@ -177,8 +179,7 @@ export default class MapPanel extends React.Component<Props> {
 
     public render() {
         try {
-            const border = (this.props.mode === 'edit') ? 4 : 0;
-            const mapDimensions = this.getMapDimensions(border);
+            const mapDimensions = this.getMapDimensions();
             if (!mapDimensions) {
                 return (
                     <div className='section centered'>(blank map)</div>

@@ -52,9 +52,8 @@ export default class PlaceNameTool extends React.Component<Props, State> {
             return (
                 <div>
                     <button onClick={() => this.generate()}>generate</button>
-                    <div className='language-output'>
-                        {output}
-                    </div>
+                    {output.length > 0 ? <div className='divider' /> : null}
+                    {output}
                 </div>
             );
         } catch (ex) {
@@ -77,7 +76,7 @@ class GeneratedItem extends React.Component<GeneratedItemProps> {
     public render() {
         try {
             return (
-                <div className='generated-item'>
+                <div className='generated-item group-panel clickable'>
                     <div className='text-section'>
                         {this.props.text.toLowerCase()}
                     </div>

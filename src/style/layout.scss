@@ -91,18 +91,23 @@
             display: flex;
             align-items: center;
             font-size: 18px;
-            padding: 5px 0;
+            padding: 5px 10px;
 
             .text-section {
                 flex-grow: 1;
                 flex-shrink: 0;
                 flex-basis: 0;
+
+                .smaller {
+                    font-size: 15px;
+                }
             }
 
             .icon-section {
                 flex-grow: 0;
                 flex-shrink: 0;
                 flex-basis: auto;
+                opacity: 0;
 
                 .anticon {
                     padding: 5px;
@@ -111,6 +116,10 @@
                         background-color: $highlight02;
                     }
                 }
+            }
+
+            &:hover .icon-section {
+                opacity: 1;
             }
         }
         

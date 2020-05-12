@@ -60,6 +60,7 @@ export default class SimpleGenerator extends React.Component<Props, State> {
             return (
                 <div>
                     <button onClick={() => this.generate()}>generate</button>
+                    {values.length > 0 ? <div className='divider' /> : null}
                     {values}
                 </div>
             );
@@ -83,7 +84,7 @@ class GeneratedItem extends React.Component<GeneratedItemProps> {
     public render() {
         try {
             return (
-                <div className='generated-item'>
+                <div className='generated-item group-panel clickable'>
                     <div className='text-section'>
                         {this.props.text.toLowerCase()}
                     </div>

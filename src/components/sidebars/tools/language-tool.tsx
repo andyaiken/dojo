@@ -279,7 +279,7 @@ class GeneratedText extends React.Component<GeneratedTextProps> {
     public render() {
         try {
             return (
-                <div className='generated-item'>
+                <div className='generated-item group-panel clickable'>
                     <div className='text-section'>
                         {this.props.text.toLowerCase()}
                     </div>

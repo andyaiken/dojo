@@ -52,7 +52,7 @@ export default class GeneratorsSidebar extends React.Component<Props, State> {
                 },
                 {
                     id: 'npc',
-                    text: 'npcs'
+                    text: 'npc'
                 }
             ];
 

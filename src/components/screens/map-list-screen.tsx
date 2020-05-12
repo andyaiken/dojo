@@ -13,6 +13,7 @@ import Note from '../panels/note';
 interface Props {
     maps: Map[];
     addMap: () => void;
+    importMap: () => void;
     generateMap: (type: string) => void;
     viewMap: (map: Map) => void;
     editMap: (map: Map) => void;
@@ -46,6 +47,7 @@ export default class MapListScreen extends React.Component<Props> {
                             <div className='section'>to start a new map, press the <b>create a new map</b> button</div>
                         </Note>
                         <button onClick={() => this.props.addMap()}>create a new map</button>
+                        <button onClick={() => this.props.importMap()}>import a map image</button>
                         <Expander text='map generator'>
                             <button onClick={() => this.props.generateMap('dungeon')}>create a new dungeon map</button>
                             <button onClick={() => this.props.generateMap('delve')}>create a new delve map</button>
