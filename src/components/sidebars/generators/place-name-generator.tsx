@@ -76,7 +76,7 @@ class GeneratedItem extends React.Component<GeneratedItemProps> {
     public render() {
         try {
             return (
-                <div className='generated-item group-panel clickable'>
+                <div className='generated-item group-panel'>
                     <div className='text-section'>
                         {this.props.text.toLowerCase()}
                     </div>

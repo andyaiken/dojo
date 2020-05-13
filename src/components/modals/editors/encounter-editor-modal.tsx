@@ -428,7 +428,10 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
                                     value={this.state.randomEncounterXP}
                                     min={0}
                                     step={1000}
-                                    onChange={value => this.setRandomEncounterXP(value || 0)}
+                                    onChange={value => {
+                                        const val = parseInt((value ?? 0).toString(), 10);
+                                        this.setRandomEncounterXP(val);
+                                    }}
                                 />
                                 <button onClick={() => this.buildEncounter()}>build encounter</button>
                             </Expander>

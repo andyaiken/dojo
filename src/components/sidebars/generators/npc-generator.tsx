@@ -37,7 +37,7 @@ export default class NPCTool extends React.Component<Props, State> {
             let item = null;
             if (!!this.state.description) {
                 item = (
-                    <div className='generated-item group-panel clickable'>
+                    <div className='generated-item group-panel'>
                         <div className='text-section'>
                             <div><b>npc:</b> {this.state.description}</div>
                             <div className='divider' />

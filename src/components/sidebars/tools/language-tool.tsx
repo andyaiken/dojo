@@ -279,7 +279,7 @@ class GeneratedText extends React.Component<GeneratedTextProps> {
     public render() {
         try {
             return (
-                <div className='generated-item group-panel clickable'>
+                <div className='generated-item group-panel'>
                     <div className='text-section'>
                         {this.props.text.toLowerCase()}
                     </div>
@@ -288,7 +288,7 @@ class GeneratedText extends React.Component<GeneratedTextProps> {
                             <CopyOutlined title='copy' onClick={e => this.copy(e)} />
                         </div>
                         <div>
-                            <SoundOutlined title='say' onClick={e => this.say(e)} />
+                            <SoundOutlined title='say (experimental)' onClick={e => this.say(e)} />
                         </div>
                     </div>
                 </div>
