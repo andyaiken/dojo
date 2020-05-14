@@ -15,7 +15,6 @@ import { Monster, MonsterGroup, Trait } from '../models/monster-group';
 import { Companion, Party, PC } from '../models/party';
 
 import Checkbox from './controls/checkbox';
-import AboutModal from './modals/about-modal';
 import CombatStartModal from './modals/combat-start-modal';
 import ConditionModal from './modals/condition-modal';
 import DemographicsModal from './modals/demographics-modal';
@@ -42,6 +41,7 @@ import MonsterGroupScreen from './screens/monster-group-screen';
 import MonsterListScreen from './screens/monster-list-screen';
 import PartyListScreen from './screens/party-list-screen';
 import PartyScreen from './screens/party-screen';
+import AboutSidebar from './sidebars/about-sidebar';
 import GeneratorsSidebar from './sidebars/generators-sidebar';
 import ReferenceSidebar from './sidebars/reference-sidebar';
 import SearchSidebar from './sidebars/search-sidebar';
@@ -191,14 +191,6 @@ export default class App extends React.Component<Props, State> {
     private setSidebar(view: string | null) {
         this.setState({
             sidebar: view
-        });
-    }
-
-    private openToolsDrawer(type: string) {
-        this.setState({
-            drawer: {
-                type: type
-            }
         });
     }
 
@@ -2005,6 +1997,21 @@ export default class App extends React.Component<Props, State> {
 
         let content = null;
         switch (this.state.sidebar) {
+            case 'tools':
+                content = (
+                    <ToolsSidebar />
+                );
+                break;
+            case 'generators':
+                content = (
+                    <GeneratorsSidebar />
+                );
+                break;
+            case 'reference':
+                content = (
+                    <ReferenceSidebar />
+                );
+                break;
             case 'search':
                 content = (
                     <SearchSidebar
@@ -2019,19 +2026,14 @@ export default class App extends React.Component<Props, State> {
                     />
                 );
                 break;
-            case 'tools':
+            case 'about':
                 content = (
-                    <ToolsSidebar />
-                );
-                break;
-            case 'generators':
-                content = (
-                    <GeneratorsSidebar />
-                );
-                break;
-            case 'reference':
-                content = (
-                    <ReferenceSidebar />
+                    <AboutSidebar
+                        parties={this.state.parties}
+                        library={this.state.library}
+                        maps={this.state.maps}
+                        resetAll={() => this.resetAll()}
+                    />
                 );
                 break;
         }
@@ -2380,18 +2382,6 @@ export default class App extends React.Component<Props, State> {
                     header = 'leaderboard';
                     closable = true;
                     break;
-                case 'about':
-                    content = (
-                        <AboutModal
-                            parties={this.state.parties}
-                            library={this.state.library}
-                            maps={this.state.maps}
-                            resetAll={() => this.resetAll()}
-                        />
-                    );
-                    header = 'about';
-                    closable = true;
-                    break;
             }
         }
 
@@ -2415,7 +2405,6 @@ export default class App extends React.Component<Props, State> {
                         <PageHeader
                             sidebar={this.state.sidebar}
                             setSidebar={type => this.setSidebar(type)}
-                            openDrawer={type => this.openToolsDrawer(type)}
                         />
                     </ErrorBoundary>
                     <div className='page-content'>

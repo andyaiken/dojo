@@ -18,17 +18,16 @@
     display: flex;
     align-items: center;
     height: 50px;
-    padding: 0 10px;
     background-color: $header-background;
     color: $header-foreground;
 
     .app-title {
         flex-grow: 1;
+        margin: 0 10px;
     }
 
     .title-bar-icon {
-        padding: 5px;
-        margin: 0 5px;
+        padding: 15px;
         font-size: 20px;
 
         &:hover {

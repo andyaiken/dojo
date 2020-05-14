@@ -89,7 +89,7 @@ hr,
 
 .vertical-divider {
     height: 35px;
-    width: 2px;
+    width: 3px;
     margin: 0 10px;
     background-color: $control-border;
 }
@@ -162,13 +162,23 @@ hr,
     padding-bottom: 10px;
 
     > .heading {
+        display: flex;
+        align-items: center;
+
         > .title {
-            width: calc(100% - 20px);
-            display: inline-block;
+            flex-grow: 1;
+            flex-shrink: 1;
         }
 
         > .anticon {
-            font-size: 16px;
+            flex-basis: 28px;
+            font-size: 18px;
+            padding: 5px;
+            margin: 0 5px;
+
+            &.selected {
+                background-color: $highlight02;
+            }
         }
     }
 }

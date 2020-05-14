@@ -4,7 +4,6 @@ import React from 'react';
 interface Props {
     sidebar: string | null;
     setSidebar: (type: string | null) => void;
-    openDrawer: (type: string) => void;
 }
 
 export default class PageHeader extends React.Component<Props> {
@@ -13,12 +12,6 @@ export default class PageHeader extends React.Component<Props> {
             return (
                 <div className='page-header'>
                     <div className='app-title app-name'>dojo</div>
-                    <div className='vertical-divider' />
-                    <SearchOutlined
-                        className={this.props.sidebar === 'search' ? 'title-bar-icon selected' : 'title-bar-icon'}
-                        title='search'
-                        onClick={() => this.props.setSidebar(this.props.sidebar === 'search' ? null : 'search')}
-                    />
                     <ToolOutlined
                         className={this.props.sidebar === 'tools' ? 'title-bar-icon selected' : 'title-bar-icon'}
                         title='tools'
@@ -34,11 +27,15 @@ export default class PageHeader extends React.Component<Props> {
                         title='reference'
                         onClick={() => this.props.setSidebar(this.props.sidebar === 'reference' ? null : 'reference')}
                     />
-                    <div className='vertical-divider' />
+                    <SearchOutlined
+                        className={this.props.sidebar === 'search' ? 'title-bar-icon selected' : 'title-bar-icon'}
+                        title='search'
+                        onClick={() => this.props.setSidebar(this.props.sidebar === 'search' ? null : 'search')}
+                    />
                     <InfoCircleOutlined
-                        className='title-bar-icon'
+                        className={this.props.sidebar === 'about' ? 'title-bar-icon selected' : 'title-bar-icon'}
                         title='about'
-                        onClick={() => this.props.openDrawer('about')}
+                        onClick={() => this.props.setSidebar(this.props.sidebar === 'about' ? null : 'about')}
                     />
                 </div>
             );

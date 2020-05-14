@@ -1,4 +1,4 @@
-import { DownCircleOutlined } from '@ant-design/icons';
+import { DownCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
@@ -7,30 +7,40 @@ interface Props {
     columns: number;
     heading: string;
     showToggle: boolean;
+    controls: JSX.Element | JSX.Element[] | null;
 }
 
 interface State {
     showContent: boolean;
+    showControls: boolean;
 }
 
 export default class GridPanel extends React.Component<Props, State> {
     public static defaultProps = {
         columns: 0,
         heading: null,
-        showToggle: false
+        showToggle: false,
+        controls: null
     };
 
     constructor(props: Props) {
         super(props);
 
         this.state = {
-            showContent: true
+            showContent: true,
+            showControls: false
         };
     }
 
     private toggleContentVisible() {
         this.setState({
             showContent: !this.state.showContent
+        });
+    }
+
+    private toggleControlsVisible() {
+        this.setState({
+            showControls: !this.state.showControls
         });
     }
 
@@ -43,20 +53,39 @@ export default class GridPanel extends React.Component<Props, State> {
 
             let heading = null;
             if (this.props.heading) {
-                let toggle = null;
+                let controlsIcon = null;
+                if (this.props.controls && this.state.showContent) {
+                    controlsIcon = (
+                        <SettingOutlined
+                            className={this.state.showControls ? 'selected' : ''}
+                            title='controls'
+                            onClick={() => this.toggleControlsVisible()}
+                        />
+                    );
+                }
+
+                let toggleIcon = null;
                 if (this.props.showToggle) {
-                    const style = this.state.showContent ? 'rotate' : '';
-                    toggle = (
-                        <DownCircleOutlined className={style} onClick={() => this.toggleContentVisible()} />
+                    toggleIcon = (
+                        <DownCircleOutlined
+                            className={this.state.showContent ? 'rotate' : ''}
+                            onClick={() => this.toggleContentVisible()}
+                        />
                     );
                 }
 
                 heading = (
                     <div className='heading fixed-top'>
                         <div className='title'>{this.props.heading}</div>
-                        {toggle}
+                        {controlsIcon}
+                        {toggleIcon}
                     </div>
                 );
+            }
+
+            let controls = null;
+            if (this.props.controls && this.state.showControls && this.state.showContent) {
+                controls = this.props.controls;
             }
 
             let content = null;
@@ -93,6 +122,7 @@ export default class GridPanel extends React.Component<Props, State> {
             return (
                 <div className='grid-panel'>
                     {heading}
+                    {controls}
                     {content}
                 </div>
             );

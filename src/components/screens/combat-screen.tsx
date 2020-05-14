@@ -552,49 +552,6 @@ export default class CombatScreen extends React.Component<Props, State> {
             );
         }
 
-        let map = null;
-        if (!!this.props.combat.map) {
-            let fog = null;
-            if (this.state.addingFog) {
-                fog = (
-                    <div>
-                        <button onClick={() => this.fillFog()}>
-                            fill fog of war
-                        </button>
-                        <button className={this.props.combat.fog.length === 0 ? 'disabled' : ''} onClick={() => this.clearFog()}>
-                            clear fog of war
-                        </button>
-                    </div>
-                );
-            }
-
-            map = (
-                <div>
-                    <div className='subheading'>map</div>
-                    <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
-                    <button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
-                    <Checkbox
-                        label={this.state.addingOverlay ? 'click on the map to add the item, or click here to cancel' : 'add token / overlay'}
-                        display='button'
-                        checked={this.state.addingOverlay}
-                        changeValue={() => this.toggleAddingOverlay()}
-                    />
-                    <Checkbox
-                        label='edit fog of war'
-                        checked={this.state.addingFog}
-                        changeValue={() => this.toggleAddingFog()}
-                    />
-                    {fog}
-                    <NumberSpin
-                        source={this.state}
-                        name={'mapSize'}
-                        display={() => 'zoom'}
-                        nudgeValue={delta => this.nudgeMapSize(delta * 3)}
-                    />
-                </div>
-            );
-        }
-
         let playerView = null;
         if (this.props.combat.map && this.state.playerView.open) {
             playerView = (
@@ -622,16 +579,10 @@ export default class CombatScreen extends React.Component<Props, State> {
                 {exitToMap}
                 <button onClick={() => this.props.showLeaderboard()}>show leaderboard</button>
                 <div className='subheading'>combatants</div>
-                <Checkbox
-                    label='show defeated combatants'
-                    checked={this.state.showDefeatedCombatants}
-                    changeValue={() => this.toggleShowDefeatedCombatants()}
-                />
                 <button onClick={() => this.props.addCombatants()}>add combatants</button>
                 {addPCs}
                 {addWave}
                 <button onClick={() => this.props.addCompanion(null)}>add a companion</button>
-                {map}
                 <div className='subheading'>player view</div>
                 <Checkbox
                     label='show player view'
@@ -1045,12 +996,52 @@ export default class CombatScreen extends React.Component<Props, State> {
                                 content={[mapSection]}
                                 columns={1}
                                 showToggle={true}
+                                controls={(
+                                    <div className='group-panel'>
+                                        <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
+                                        <button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
+                                        <Checkbox
+                                            label={this.state.addingOverlay ? 'click on the map to add the item, or click here to cancel' : 'add token / overlay'}
+                                            display='button'
+                                            checked={this.state.addingOverlay}
+                                            changeValue={() => this.toggleAddingOverlay()}
+                                        />
+                                        <Checkbox
+                                            label='edit fog of war'
+                                            checked={this.state.addingFog}
+                                            changeValue={() => this.toggleAddingFog()}
+                                        />
+                                        <div style={{ display: this.state.addingFog ? '' : 'none' }}>
+                                            <button onClick={() => this.fillFog()}>
+                                                fill fog of war
+                                            </button>
+                                            <button className={this.props.combat.fog.length === 0 ? 'disabled' : ''} onClick={() => this.clearFog()}>
+                                                clear fog of war
+                                            </button>
+                                        </div>
+                                        <NumberSpin
+                                            source={this.state}
+                                            name={'mapSize'}
+                                            display={() => 'zoom'}
+                                            nudgeValue={delta => this.nudgeMapSize(delta * 3)}
+                                        />
+                                    </div>
+                                )}
                             />
                             <GridPanel
                                 heading='initiative order'
                                 content={initList}
                                 columns={1}
                                 showToggle={true}
+                                controls={(
+                                    <div className='group-panel'>
+                                        <Checkbox
+                                            label='show defeated combatants'
+                                            checked={this.state.showDefeatedCombatants}
+                                            changeValue={() => this.toggleShowDefeatedCombatants()}
+                                        />
+                                    </div>
+                                )}
                             />
                         </Col>
                         <Col span={8} className='scrollable'>
