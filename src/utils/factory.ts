@@ -41,7 +41,8 @@ export default class Factory {
     public static createCompanion(): Companion {
         return {
             id: Utils.guid(),
-            name: ''
+            name: '',
+            monsterID: null
         };
     }
 

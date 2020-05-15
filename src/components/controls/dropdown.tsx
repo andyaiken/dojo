@@ -1,6 +1,10 @@
 import { CloseCircleOutlined, EllipsisOutlined } from '@ant-design/icons';
 import React from 'react';
 
+import Sherlock from '../../utils/sherlock';
+
+import Textbox from './textbox';
+
 interface Props {
     options: { id: string; text: string; disabled?: boolean }[];
     select: (optionID: string) => void;
@@ -12,6 +16,7 @@ interface Props {
 
 interface State {
     open: boolean;
+    filterText: string;
 }
 
 export default class Dropdown extends React.Component<Props, State> {
@@ -26,7 +31,8 @@ export default class Dropdown extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            open: false
+            open: false,
+            filterText: ''
         };
     }
 
@@ -34,6 +40,12 @@ export default class Dropdown extends React.Component<Props, State> {
         e.stopPropagation();
         this.setState({
             open: !this.state.open
+        });
+    }
+
+    private setFilterText(text: string) {
+        this.setState({
+            filterText: text
         });
     }
 
@@ -74,10 +86,28 @@ export default class Dropdown extends React.Component<Props, State> {
             if (this.state.open) {
                 style += ' open';
 
+                let filter = null;
+                if (this.props.options.length > 20) {
+                    filter = (
+                        <div className='dropdown-filter' onClick={e => e.stopPropagation()}>
+                            <Textbox
+                                text={this.state.filterText}
+                                placeholder='search this list...'
+                                onChange={value => this.setFilterText(value)}
+                            />
+                        </div>
+                    );
+                }
+
                 const items = this.props.options.map(o => {
                     if (o.text === null) {
                         return <div key={o.id} className='divider' />;
                     } else {
+                        const matches = Sherlock.match(this.state.filterText, o.text);
+                        if (!matches) {
+                            return null;
+                        }
+
                         return (
                             <DropdownOption
                                 key={o.id}
@@ -87,10 +117,11 @@ export default class Dropdown extends React.Component<Props, State> {
                             />
                         );
                     }
-                });
+                }).filter(item => !!item);
 
                 content.push(
                     <div key='options' className='dropdown-options'>
+                        {filter}
                         {items}
                     </div>
                 );

@@ -26,4 +26,5 @@ export interface PC {
 export interface Companion {
     id: string;
     name: string;
+    monsterID: string | null;
 }

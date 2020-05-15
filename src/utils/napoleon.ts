@@ -247,28 +247,28 @@ export default class Napoleon {
     }
 
     public static convertCompanionToCombatant(companion: Companion | null) {
-        const combatant: Combatant = {
-            id: companion ? companion.id : Utils.guid(),
-            type: 'companion',
+        const combatant = JSON.parse(JSON.stringify(companion)) as Combatant & Companion;
+        combatant.id = companion ? companion.id : Utils.guid();
+        combatant.type = 'companion';
 
-            current: false,
-            pending: true,
-            active: false,
-            defeated: false,
+        combatant.current = false;
+        combatant.pending = true;
+        combatant.active = false;
+        combatant.defeated = false;
 
-            displayName: companion ? companion.name : 'companion',
-            displaySize: 'medium',
-            showOnMap: true,
-            initiative: 10,
-            hpMax: null,
-            hpCurrent: null,
-            hpTemp: null,
-            conditions: [],
-            tags: [],
-            note: '',
-            altitude: 0,
-            aura: { radius: 0, style: 'rounded', color: '#005080' }
-        };
+        combatant.displayName = companion ? companion.name : 'companion';
+        combatant.displaySize = 'medium';
+        combatant.showOnMap = true;
+
+        combatant.initiative = 10;
+        combatant.hpMax = null;
+        combatant.hpCurrent = null;
+        combatant.hpTemp = null;
+        combatant.conditions = [];
+        combatant.tags = [];
+        combatant.note = '';
+        combatant.altitude = 0;
+        combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
 
         return combatant;
     }

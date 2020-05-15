@@ -1,3 +1,4 @@
+import { DeleteOutlined } from '@ant-design/icons';
 import { Col, Drawer, Row } from 'antd';
 import React from 'react';
 
@@ -8,6 +9,7 @@ import { Map } from '../../../models/map';
 import { MonsterGroup } from '../../../models/monster-group';
 import { Party, PC } from '../../../models/party';
 
+import Dropdown from '../../controls/dropdown';
 import NumberSpin from '../../controls/number-spin';
 import Textbox from '../../controls/textbox';
 import PortraitPanel from '../../panels/portrait-panel';
@@ -85,18 +87,36 @@ export default class PCEditorModal extends React.Component<Props, State> {
 
     public render() {
         try {
+            const monsterOptions: { id: string, text: string }[] = [];
+            this.props.library.forEach(group => {
+                group.monsters.forEach(monster => {
+                    monsterOptions.push({
+                        id: monster.id,
+                        text: monster.name
+                    });
+                });
+            });
+            Utils.sort(monsterOptions, [{ field: 'text', dir: 'asc' }]);
+
             const companions = this.state.pc.companions.map(comp => (
-                <Row gutter={10} className='companion-list-item' key={comp.id}>
-                    <Col span={16}>
+                <div className='group-panel companion-list-item' key={comp.id}>
+                    <div className='companion-fields'>
                         <Textbox
                             text={comp.name}
                             onChange={value => this.changeValue(comp, 'name', value)}
                         />
-                    </Col>
-                    <Col span={8}>
-                        <button onClick={() => this.removeCompanion(comp.id)}>delete</button>
-                    </Col>
-                </Row>
+                        <Dropdown
+                            options={monsterOptions}
+                            placeholder='select a stat block'
+                            selectedID={comp.monsterID || undefined}
+                            select={value => this.changeValue(comp, 'monsterID', value)}
+                            clear={() => this.changeValue(comp, 'monsterID', null)}
+                        />
+                    </div>
+                    <div className='companion-actions'>
+                        <DeleteOutlined onClick={() => this.removeCompanion(comp.id)} />
+                    </div>
+                </div>
             ));
 
             if (companions.length === 0) {

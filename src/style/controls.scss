@@ -139,6 +139,10 @@ button.danger {
         box-shadow: 0 3px 5px 0 rgba(220, 220, 220, 0.5);
         z-index: 20;
 
+        .dropdown-filter {
+            margin: 0 5px;
+        }
+
         .dropdown-option {
             margin: 5px;
             padding-left: 5px;

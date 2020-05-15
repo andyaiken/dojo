@@ -12,7 +12,7 @@ import { Combat, Combatant, Notification } from '../../models/combat';
 import { Condition, ConditionDurationSaves } from '../../models/condition';
 import { Encounter } from '../../models/encounter';
 import { MapItem } from '../../models/map';
-import { Monster, Trait } from '../../models/monster-group';
+import { Monster, MonsterGroup, Trait } from '../../models/monster-group';
 import { Companion, Party, PC } from '../../models/party';
 
 import MapItemCard from '../cards/map-item-card';
@@ -38,6 +38,7 @@ showdown.setOption('tables', true);
 interface Props {
     combat: Combat;
     parties: Party[];
+    library: MonsterGroup[];
     encounters: Encounter[];
     pauseCombat: () => void;
     endCombat: (goToMap: boolean) => void;
@@ -756,7 +757,19 @@ export default class CombatScreen extends React.Component<Props, State> {
                     />
                 );
             case 'companion':
-                return null;
+                let card = null;
+                const comp = combatant as Combatant & Companion;
+                if (comp.monsterID) {
+                    this.props.library.forEach(group => {
+                        const monster = group.monsters.find(m => m.id === comp.monsterID);
+                        if (monster) {
+                            card = (
+                                <MonsterCard monster={monster} />
+                            );
+                        }
+                    });
+                }
+                return card;
             case 'placeholder':
                 const lair: JSX.Element[] = [];
                 this.props.combat.combatants.forEach(c => {

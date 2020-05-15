@@ -1935,6 +1935,7 @@ export default class App extends React.Component<Props, State> {
                         <CombatScreen
                             combat={this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat}
                             parties={this.state.parties}
+                            library={this.state.library}
                             encounters={this.state.encounters}
                             pauseCombat={() => this.pauseCombat()}
                             endCombat={goToMap => this.endCombat(null, goToMap)}

@@ -19,10 +19,27 @@
     }
 
     .companion-list-item {
-        border: 1px solid $control-border;
-        background-color: #FAF7EA;
-        margin: 5px 0 !important;
-        padding: 5px 0;
+        display: flex;
+        align-items: center;
+
+        .companion-fields {
+            flex-grow: 1;
+            flex-shrink: 1;
+        }
+
+        .companion-actions {
+            flex-basis: auto;
+            margin-left: 10px;
+
+            .anticon {
+                padding: 5px;
+                font-size: 20px;
+
+                &:hover {
+                    background-color: $highlight02;
+                }
+            }
+        }
     }
 
     .monster-help {
