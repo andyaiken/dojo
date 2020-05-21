@@ -3,8 +3,8 @@ import React from 'react';
 interface Props {
     options: { id: string; text: string; disabled?: boolean }[];
     selectedID: string | null;
-    select: (optionID: string) => void;
     disabled: boolean;
+    onSelect: (optionID: string) => void;
 }
 
 export default class Tabs extends React.Component<Props> {
@@ -21,7 +21,7 @@ export default class Tabs extends React.Component<Props> {
                         option={option}
                         selected={option.id === this.props.selectedID}
                         count={this.props.options.length}
-                        select={(optionID: string) => this.props.select(optionID)}
+                        onSelect={(optionID: string) => this.props.onSelect(optionID)}
                     />
                 );
             });
@@ -42,14 +42,14 @@ interface TabProps {
     option: { id: string; text: string; disabled?: boolean };
     selected: boolean;
     count: number;
-    select: (optionID: string) => void;
+    onSelect: (optionID: string) => void;
 }
 
 class Tab extends React.Component<TabProps> {
     private click(e: React.MouseEvent) {
         e.stopPropagation();
         if (!this.props.option.disabled) {
-            this.props.select(this.props.option.id);
+            this.props.onSelect(this.props.option.id);
         }
     }
 

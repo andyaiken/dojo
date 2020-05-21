@@ -7,11 +7,11 @@ import Textbox from './textbox';
 
 interface Props {
     options: { id: string; text: string; disabled?: boolean }[];
-    select: (optionID: string) => void;
-    clear: () => void;
-    selectedID: string;
+    selectedID: string | null;
     placeholder: string;
     disabled: boolean;
+    onSelect: (optionID: string) => void;
+    onClear: () => void;
 }
 
 interface State {
@@ -24,7 +24,7 @@ export default class Dropdown extends React.Component<Props, State> {
         selectedID: null,
         placeholder: 'select...',
         disabled: false,
-        clear: null
+        onClear: null
     };
 
     constructor(props: Props) {
@@ -53,12 +53,12 @@ export default class Dropdown extends React.Component<Props, State> {
         this.setState({
             open: false
         });
-        this.props.select(optionID);
+        this.props.onSelect(optionID);
     }
 
     private clear(e: React.MouseEvent) {
         e.stopPropagation();
-        this.props.clear();
+        this.props.onClear();
     }
 
     public render() {
@@ -75,7 +75,7 @@ export default class Dropdown extends React.Component<Props, State> {
                 option = this.props.options.find(o => o.id === this.props.selectedID);
             }
 
-            const canClear = option && this.props.clear;
+            const canClear = option && this.props.onClear;
             content.push(
                 <div key='selection' className='dropdown-top' title={option ? option.text : this.props.placeholder}>
                     <div className='item-text'>{option ? option.text : this.props.placeholder}</div>

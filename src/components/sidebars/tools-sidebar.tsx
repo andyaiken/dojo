@@ -81,7 +81,7 @@ export default class ToolsSidebar extends React.Component<Props, State> {
                             options={options}
                             selectedID={this.state.view}
                             itemsPerRow={4}
-                            select={optionID => this.setView(optionID)}
+                            onSelect={optionID => this.setView(optionID)}
                         />
                     </div>
                     <div className='sidebar-content'>

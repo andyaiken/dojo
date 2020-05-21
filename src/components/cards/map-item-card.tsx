@@ -42,7 +42,7 @@ export default class MapItemCard extends React.Component<Props, State> {
             <div>
                 <div className='subheading'>move</div>
                 <div className='section centered'>
-                    <Radial click={dir => this.props.move(this.props.item, dir)} />
+                    <Radial onClick={dir => this.props.move(this.props.item, dir)} />
                 </div>
                 <div style={{ display: this.props.item.type === 'overlay' ? 'block' : 'none' }}>
                     <div className='subheading'>size</div>
@@ -51,15 +51,15 @@ export default class MapItemCard extends React.Component<Props, State> {
                             source={this.props.item}
                             name='width'
                             label='width'
-                            display={value => value + ' sq'}
-                            nudgeValue={delta => this.props.nudgeValue(this.props.item, 'width', delta)}
+                            onNudgeValue={delta => this.props.nudgeValue(this.props.item, 'width', delta)}
+                            onFormatValue={value => value + ' sq'}
                         />
                         <NumberSpin
                             source={this.props.item}
                             name='height'
                             label='height'
-                            display={value => value + ' sq'}
-                            nudgeValue={delta => this.props.nudgeValue(this.props.item, 'height', delta)}
+                            onNudgeValue={delta => this.props.nudgeValue(this.props.item, 'height', delta)}
+                            onFormatValue={value => value + ' sq'}
                         />
                     </div>
                 </div>
@@ -82,14 +82,14 @@ export default class MapItemCard extends React.Component<Props, State> {
                 <Selector
                     options={typeOptions}
                     selectedID={this.props.item.type}
-                    select={optionID => this.props.changeValue(this.props.item, 'type', optionID)}
+                    onSelect={optionID => this.props.changeValue(this.props.item, 'type', optionID)}
                 />
                 <div style={{ display: this.props.item.type === 'overlay' ? 'block' : 'none' }}>
                     <div className='subheading'>shape</div>
                     <Selector
                         options={styleOptions}
                         selectedID={this.props.item.style}
-                        select={optionID => this.props.changeValue(this.props.item, 'style', optionID)}
+                        onSelect={optionID => this.props.changeValue(this.props.item, 'style', optionID)}
                     />
                     <div className='subheading'>color</div>
                     <input
@@ -111,7 +111,7 @@ export default class MapItemCard extends React.Component<Props, State> {
                     <NumberSpin
                         source={this.props.item}
                         name='size'
-                        nudgeValue={delta => this.props.nudgeValue(this.props.item, 'size', delta)}
+                        onNudgeValue={delta => this.props.nudgeValue(this.props.item, 'size', delta)}
                     />
                 </div>
             </div>
@@ -168,7 +168,7 @@ export default class MapItemCard extends React.Component<Props, State> {
                         <Selector
                             options={options}
                             selectedID={this.state.view}
-                            select={optionID => this.setView(optionID)}
+                            onSelect={optionID => this.setView(optionID)}
                         />
                         <div className='divider' />
                         {content}

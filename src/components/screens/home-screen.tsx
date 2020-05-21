@@ -1,4 +1,4 @@
-import { Carousel, Col, Row } from 'antd';
+import { Carousel, Row } from 'antd';
 import React from 'react';
 
 interface Props {
@@ -45,8 +45,9 @@ export default class HomeScreen extends React.Component<Props> {
                         <p className='heading'>run combat without the book-keeping</p>
                         <ul>
                             <li>see the initiative list at a glance - and share it with players in a separate window</li>
-                            <li>track monster hit points and rechargable actions</li>
+                            <li>track monster hit points, rechargable actions, and legendary actions</li>
                             <li>track conditions, their durations, and the effects they impose</li>
+                            <li>easily handle mounted combat</li>
                             <li>if you're using a tactical map, <span className='app-name'>dojo</span> keeps track of everyone's location</li>
                         </ul>
                     </div>
@@ -61,11 +62,9 @@ export default class HomeScreen extends React.Component<Props> {
 
             return (
                 <Row align='middle' justify='center' className='scrollable'>
-                    <Col span={24}>
-                        <div className='section centered'>
-                            {carousel}
-                        </div>
-                    </Col>
+                    <div className='group-panel'>
+                        {carousel}
+                    </div>
                 </Row>
             );
         } catch (ex) {

@@ -2,7 +2,7 @@ import React from 'react';
 
 interface Props {
     view: string;
-    setView: (view: string) => void;
+    onSelectView: (view: string) => void;
 }
 
 export default class PageFooter extends React.Component<Props> {
@@ -16,11 +16,11 @@ export default class PageFooter extends React.Component<Props> {
 
             return (
                 <div className='page-footer'>
-                    <div className={partiesStyle} onClick={() => this.props.setView('parties')}>pcs</div>
-                    <div className={libraryStyle} onClick={() => this.props.setView('library')}>monsters</div>
-                    <div className={encounterStyle} onClick={() => this.props.setView('encounters')}>encounters</div>
-                    <div className={mapStyle} onClick={() => this.props.setView('maps')}>maps</div>
-                    <div className={combatStyle} onClick={() => this.props.setView('combat')}>combat</div>
+                    <div className={partiesStyle} onClick={() => this.props.onSelectView('parties')}>pcs</div>
+                    <div className={libraryStyle} onClick={() => this.props.onSelectView('library')}>monsters</div>
+                    <div className={encounterStyle} onClick={() => this.props.onSelectView('encounters')}>encounters</div>
+                    <div className={mapStyle} onClick={() => this.props.onSelectView('maps')}>maps</div>
+                    <div className={combatStyle} onClick={() => this.props.onSelectView('combat')}>combat</div>
                 </div>
             );
         } catch (e) {

@@ -89,7 +89,7 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
                             source={this.props.condition}
                             name='level'
                             label='level'
-                            nudgeValue={delta => this.props.nudgeConditionValue(this.props.condition, 'level', delta)}
+                            onNudgeValue={delta => this.props.nudgeConditionValue(this.props.condition, 'level', delta)}
                         />
                     </div>
                 );

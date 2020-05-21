@@ -138,14 +138,14 @@ export default class DieRollerTool extends React.Component<Props, State> {
                             <Checkbox
                                 label='advantage'
                                 checked={this.state.options.includes('advantage')}
-                                changeValue={value => this.toggleOption('advantage')}
+                                onChecked={value => this.toggleOption('advantage')}
                             />
                         </Col>
                         <Col span={12}>
                             <Checkbox
                                 label='disadvantage'
                                 checked={this.state.options.includes('disadvantage')}
-                                changeValue={value => this.toggleOption('disadvantage')}
+                                onChecked={value => this.toggleOption('disadvantage')}
                             />
                         </Col>
                     </Row>
@@ -157,14 +157,14 @@ export default class DieRollerTool extends React.Component<Props, State> {
                             <Checkbox
                                 label='drop lowest'
                                 checked={this.state.options.includes('drop lowest')}
-                                changeValue={value => this.toggleOption('drop lowest')}
+                                onChecked={value => this.toggleOption('drop lowest')}
                             />
                         </Col>
                         <Col span={12}>
                             <Checkbox
                                 label='drop highest'
                                 checked={this.state.options.includes('drop highest')}
-                                changeValue={value => this.toggleOption('drop highest')}
+                                onChecked={value => this.toggleOption('drop highest')}
                             />
                         </Col>
                     </Row>
@@ -191,14 +191,14 @@ export default class DieRollerTool extends React.Component<Props, State> {
                     <Selector
                         options={options}
                         selectedID={this.state.dice}
-                        select={optionID => this.setDice(optionID)}
+                        onSelect={optionID => this.setDice(optionID)}
                     />
                     <div className='subheading'>number of dice to roll</div>
                     <NumberSpin
                         source={this.state}
                         name='count'
-                        display={count => count + 'd' + this.state.dice}
-                        nudgeValue={delta => this.nudgeCount(delta)}
+                        onNudgeValue={delta => this.nudgeCount(delta)}
+                        onFormatValue={count => count + 'd' + this.state.dice}
                     />
                     {optionsSection ? <div className='subheading'>options</div> : null}
                     {optionsSection}

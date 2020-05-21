@@ -3,14 +3,10 @@ import React from 'react';
 interface Props {
     items: { id: string; text: string; details?: JSX.Element | string; disabled?: boolean }[];
     selectedItemID: string | null;
-    select: (itemID: string) => void;
+    onSelect: (itemID: string) => void;
 }
 
 export default class RadioGroup extends React.Component<Props> {
-    public static defaultProps = {
-        // No default property values
-    };
-
     public render() {
         try {
             const content = this.props.items.map(item => {
@@ -19,7 +15,7 @@ export default class RadioGroup extends React.Component<Props> {
                         key={item.id}
                         item={item}
                         selected={this.props.selectedItemID === item.id}
-                        select={(itemID: string) => this.props.select(itemID)}
+                        onSelect={(itemID: string) => this.props.onSelect(itemID)}
                     />
                 );
             });
@@ -39,10 +35,15 @@ export default class RadioGroup extends React.Component<Props> {
 interface RadioGroupItemProps {
     item: { id: string; text: string; details?: JSX.Element | string; disabled?: boolean };
     selected: boolean;
-    select: (itemID: string) => void;
+    onSelect: (itemID: string) => void;
 }
 
 class RadioGroupItem extends React.Component<RadioGroupItemProps> {
+    private click(e: React.MouseEvent) {
+        e.stopPropagation();
+        this.props.onSelect(this.props.item.id);
+    }
+
     public render() {
         try {
             let style = 'radio-item';
@@ -64,7 +65,7 @@ class RadioGroupItem extends React.Component<RadioGroupItemProps> {
             }
 
             return (
-                <div className={style} onClick={() => this.props.select(this.props.item.id)}>
+                <div className={style} onClick={e => this.click(e)}>
                     <div className='radio-item-text'>{this.props.item.text}</div>
                     {details}
                 </div>

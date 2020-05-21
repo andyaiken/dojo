@@ -198,7 +198,7 @@ export default class LanguageTool extends React.Component<Props, State> {
                                 label={lang}
                                 checked={isSelected}
                                 display='button'
-                                changeValue={value => value ? this.addLanguage(lang) : this.removeLanguage(lang)}
+                                onChecked={value => value ? this.addLanguage(lang) : this.removeLanguage(lang)}
                             />
                         );
                     });
@@ -245,7 +245,7 @@ export default class LanguageTool extends React.Component<Props, State> {
                         options={presetOptions}
                         selectedID={this.state.preset}
                         itemsPerRow={3}
-                        select={optionID => this.usePreset(optionID)}
+                        onSelect={optionID => this.usePreset(optionID)}
                     />
                     {custom}
                     <div className='divider' />

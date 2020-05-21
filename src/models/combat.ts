@@ -65,6 +65,8 @@ export interface Combatant {
         style: 'square' | 'rounded' | 'circle';
         color: string;
     };
+    mountID: string | null;
+    mountType: 'controlled' | 'independent';
 }
 
 export interface Notification {

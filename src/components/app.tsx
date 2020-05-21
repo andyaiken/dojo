@@ -133,6 +133,12 @@ export default class App extends React.Component<Props, State> {
                         if (c.note === undefined) {
                             c.note = '';
                         }
+                        if (c.mountID === undefined) {
+                            c.mountID = null;
+                        }
+                        if (c.mountType === undefined) {
+                            c.mountType = 'controlled';
+                        }
                     });
 
                     if (combat.map) {
@@ -313,6 +319,13 @@ export default class App extends React.Component<Props, State> {
             if (!(combatant as Combatant).pending) {
                 const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
                 Napoleon.sortCombatants(combat as Combat);
+            }
+        }
+
+        if (type === 'mountID') {
+            const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+            if (combat) {
+                this.setMountPositions(combat);
             }
         }
 
@@ -1266,7 +1279,23 @@ export default class App extends React.Component<Props, State> {
                 c.active = false;
                 c.defeated = true;
 
-                // If this monster is on the map, remove them from it
+                c.mountID = null;
+                c.mountType = 'controlled';
+
+                // If anyone is mounted on this combatant, dismount them
+                combat.combatants.forEach(cmb => {
+                    if (cmb.mountID === c.id) {
+                        cmb.mountID = null;
+                        cmb.mountType = 'controlled';
+                    }
+                });
+
+                // If anyone is engaged with this combatant, remove that
+                combat.combatants.forEach(cmb => {
+                    cmb.tags = cmb.tags.filter(t => t !== 'engaged:' + c.displayName);
+                });
+
+                // If this combatant is on the map, remove them from it
                 if (combat.map) {
                     combat.map.items = combat.map.items.filter(item => item.id !== c.id);
                 }
@@ -1312,6 +1341,19 @@ export default class App extends React.Component<Props, State> {
             combatants.forEach(c => {
                 const index = combat.combatants.indexOf(c);
                 combat.combatants.splice(index, 1);
+
+                // If anyone is mounted on this combatant, dismount them
+                combat.combatants.forEach(cmb => {
+                    if (cmb.mountID === c.id) {
+                        cmb.mountID = null;
+                        cmb.mountType = 'controlled';
+                    }
+                });
+
+                // If anyone is engaged with this combatant, remove that
+                combat.combatants.forEach(cmb => {
+                    cmb.tags = cmb.tags.filter(t => t !== 'engaged:' + c.displayName);
+                });
 
                 if (combat.map) {
                     const item = combat.map.items.find(i => i.id === c.id);
@@ -1378,10 +1420,12 @@ export default class App extends React.Component<Props, State> {
                     });
                 });
 
+            const controlledMounts = combat.combatants
+                .filter(c => !!c.mountID && (c.mountType === 'controlled'))
+                .map(c => c.mountID || '');
             const active = combat.combatants
-                .filter(c => {
-                    return c.current || (!c.pending && c.active && !c.defeated);
-                })
+                .filter(c => !controlledMounts.includes(c.id))
+                .filter(c => c.current || (!c.pending && c.active && !c.defeated))
                 .filter(c => {
                     if (c.type === 'placeholder') {
                         return Napoleon.combatHasLairActions(combat);
@@ -1490,19 +1534,36 @@ export default class App extends React.Component<Props, State> {
     // Map methods
 
     private mapAdd(combatant: Combatant, x: number, y: number) {
-        const item = Factory.createMapItem();
-        item.id = combatant.id;
-        item.type = combatant.type as 'pc' | 'monster' | 'companion';
-        item.x = x;
-        item.y = y;
-
-        const size = Utils.miniSize(combatant.displaySize);
-        item.height = size;
-        item.width = size;
-
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-        if (combat && combat.map) {
-            combat.map.items.push(item);
+        if (combat) {
+            const combatants = [combatant];
+            if (!!combatant.mountID) {
+                const mount = combat.combatants.find(cmb => cmb.id === combatant.mountID);
+                if (mount) {
+                    combatants.push(mount);
+                }
+            }
+            combatants.forEach(c => {
+                if (combat.map) {
+                    // Make sure no-one is already on the map
+                    const ids = combatants.map(cbt => cbt.id);
+                    combat.map.items = combat.map.items.filter(i => !ids.includes(i.id));
+                }
+
+                const item = Factory.createMapItem();
+                item.id = c.id;
+                item.type = c.type as 'pc' | 'monster' | 'companion';
+                item.x = x;
+                item.y = y;
+
+                const size = Utils.miniSize(c.displaySize);
+                item.height = size;
+                item.width = size;
+
+                if (combat.map) {
+                    combat.map.items.push(item);
+                }
+            });
 
             this.setState({
                 combats: this.state.combats
@@ -1561,6 +1622,8 @@ export default class App extends React.Component<Props, State> {
                 }
             });
 
+            this.setMountPositions(combat);
+
             this.setState({
                 combats: this.state.combats
             });
@@ -1570,7 +1633,15 @@ export default class App extends React.Component<Props, State> {
     private mapRemove(ids: string[]) {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat) {
+            const allIDs = [...ids];
             ids.forEach(id => {
+                const combatant = combat.combatants.find(cbt => cbt.id === id);
+                if (combatant && combatant.mountID) {
+                    allIDs.push(combatant.mountID);
+                }
+            });
+
+            allIDs.forEach(id => {
                 if (combat.map) {
                     const item = combat.map.items.find(i => i.id === id);
                     if (item) {
@@ -1615,6 +1686,7 @@ export default class App extends React.Component<Props, State> {
         const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
         if (combat && combat.map) {
             Mercator.scatterCombatants(combat, type);
+            this.setMountPositions(combat);
 
             this.setState({
                 combats: this.state.combats
@@ -1653,6 +1725,22 @@ export default class App extends React.Component<Props, State> {
                 combats: this.state.combats
             });
         }
+    }
+
+    private setMountPositions(combat: Combat) {
+        combat.combatants.forEach(c => {
+            if (c.mountID) {
+                if (combat.map) {
+                    // Set mount location to equal rider location
+                    const riderItem = combat.map.items.find(i => i.id === c.id);
+                    const mountItem = combat.map.items.find(i => i.id === c.mountID);
+                    if (riderItem && mountItem) {
+                        mountItem.x = riderItem.x;
+                        mountItem.y = riderItem.y;
+                    }
+                }
+            }
+        });
     }
 
     // Conditions
@@ -2164,7 +2252,7 @@ export default class App extends React.Component<Props, State> {
                                 <Checkbox
                                     label='advanced tools'
                                     checked={this.state.drawer.showSidebar}
-                                    changeValue={() => this.toggleShowSidebar()}
+                                    onChecked={() => this.toggleShowSidebar()}
                                 />
                             </Col>
                         </Row>
@@ -2405,7 +2493,7 @@ export default class App extends React.Component<Props, State> {
                     <ErrorBoundary>
                         <PageHeader
                             sidebar={this.state.sidebar}
-                            setSidebar={type => this.setSidebar(type)}
+                            onSelectSidebar={type => this.setSidebar(type)}
                         />
                     </ErrorBoundary>
                     <div className='page-content'>
@@ -2419,7 +2507,7 @@ export default class App extends React.Component<Props, State> {
                     <ErrorBoundary>
                         <PageFooter
                             view={this.state.view}
-                            setView={view => this.setView(view)}
+                            onSelectView={view => this.setView(view)}
                         />
                     </ErrorBoundary>
                     <ErrorBoundary>

@@ -1,12 +1,15 @@
 import { Col, Row, Tag } from 'antd';
 import React from 'react';
 
+import Utils from '../../utils/utils';
+
 import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { Monster } from '../../models/monster-group';
 import { Companion, PC } from '../../models/party';
 
 import ConfirmButton from '../controls/confirm-button';
+import Dropdown from '../controls/dropdown';
 import Expander from '../controls/expander';
 import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
@@ -34,7 +37,7 @@ interface Props {
     toggleCondition: (combatants: Combatant[], condition: string) => void;
     toggleHidden: (combatants: Combatant[]) => void;
     addCompanion: (companion: Companion) => void;
-    changeValue: (monster: any, field: string, value: any) => void;
+    changeValue: (source: any, field: string, value: any) => void;
     nudgeValue: (source: any, field: string, delta: number) => void;
 }
 
@@ -150,7 +153,10 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                 actions.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(this.props.combatants)}>mark as defeated and end turn</button>);
             } else {
                 if (this.props.combatants.length === 1) {
-                    actions.push(<button key='makeCurrent' onClick={() => this.props.makeCurrent(this.props.combatants[0])}>start turn</button>);
+                    const isMount = !!this.props.combat.combatants.find(c => c.mountID === this.props.combatants[0].id);
+                    if (!isMount) {
+                        actions.push(<button key='makeCurrent' onClick={() => this.props.makeCurrent(this.props.combatants[0])}>start turn</button>);
+                    }
                 }
                 actions.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(this.props.combatants)}>mark as defeated</button>);
             }
@@ -257,14 +263,14 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                         name='hpCurrent'
                         label='hit points'
                         factors={[1, 10]}
-                        nudgeValue={delta => this.props.nudgeValue(monster, 'hpCurrent', delta)}
+                        onNudgeValue={delta => this.props.nudgeValue(monster, 'hpCurrent', delta)}
                     />
                     <NumberSpin
                         source={monster}
                         name='hpTemp'
                         label='temp hp'
                         factors={[1, 10]}
-                        nudgeValue={delta => this.props.nudgeValue(monster, 'hpTemp', delta)}
+                        onNudgeValue={delta => this.props.nudgeValue(monster, 'hpTemp', delta)}
                     />
                     <div className='divider' />
                 </div>
@@ -338,7 +344,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                 <Selector
                     options={degreeOptions}
                     selectedID={selected}
-                    select={id => {
+                    onSelect={id => {
                         let value = 1;
                         if (id === 'half') {
                             value = 0.5;
@@ -397,7 +403,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                     source={this.state}
                     name='damageOrHealing'
                     factors={[1, 10]}
-                    nudgeValue={delta => this.nudgeDamage(delta)}
+                    onNudgeValue={delta => this.nudgeDamage(delta)}
                 />
                 <Row gutter={10}>
                     <Col xs={24} sm={24} md={12} lg={12} xl={12}>
@@ -472,8 +478,8 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                         source={combatant}
                         name='altitude'
                         label='altitude'
-                        display={value => value + ' ft.'}
-                        nudgeValue={delta => this.props.nudgeValue(combatant, 'altitude', delta * 5)}
+                        onNudgeValue={delta => this.props.nudgeValue(combatant, 'altitude', delta * 5)}
+                        onFormatValue={value => value + ' ft.'}
                     />
                 );
                 let auraDetails = null;
@@ -497,7 +503,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                             <Selector
                                 options={auraStyleOptions}
                                 selectedID={combatant.aura.style}
-                                select={optionID => this.props.changeValue(combatant.aura, 'style', optionID)}
+                                onSelect={optionID => this.props.changeValue(combatant.aura, 'style', optionID)}
                             />
                             <input
                                 type='color'
@@ -513,8 +519,8 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                             source={combatant.aura}
                             name='radius'
                             label='size'
-                            display={value => value + ' ft.'}
-                            nudgeValue={delta => this.props.nudgeValue(combatant.aura, 'radius', delta * 5)}
+                            onNudgeValue={delta => this.props.nudgeValue(combatant.aura, 'radius', delta * 5)}
+                            onFormatValue={value => value + ' ft.'}
                         />
                         {auraDetails}
                     </Expander>
@@ -524,7 +530,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
             return (
                 <div>
                     <div className='section centered'>
-                        <Radial click={dir => this.props.mapMove(this.props.combatants, dir)} />
+                        <Radial onClick={dir => this.props.mapMove(this.props.combatants, dir)} />
                     </div>
                     <div className='divider' />
                     {altitude}
@@ -547,13 +553,14 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
         let remove = null;
         if (this.props.combatants.every(c => !c.current)) {
             remove = (
-                <ConfirmButton text='remove from encounter' callback={() => this.props.removeCombatants(this.props.combatants)} />
+                <ConfirmButton text='remove from encounter' onConfirm={() => this.props.removeCombatants(this.props.combatants)} />
             );
         }
 
         let changeName = null;
         let changeSize = null;
         let changeInit = null;
+        let mountedCombat = null;
         if (this.props.combatants.length === 1) {
             const combatant = this.props.combatants[0];
             changeName = (
@@ -571,7 +578,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                         source={combatant}
                         name='displaySize'
                         label='size'
-                        nudgeValue={delta => this.props.nudgeValue(combatant, 'displaySize', delta)}
+                        onNudgeValue={delta => this.props.nudgeValue(combatant, 'displaySize', delta)}
                     />
                 </Expander>
             );
@@ -583,8 +590,62 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                             source={combatant}
                             name='initiative'
                             label='initiative'
-                            nudgeValue={delta => this.props.nudgeValue(combatant, 'initiative', delta)}
+                            onNudgeValue={delta => this.props.nudgeValue(combatant, 'initiative', delta)}
                         />
+                    </Expander>
+                );
+            }
+
+            const rider = this.props.combat.combatants.find(c => c.mountID === combatant.id);
+            if (!rider) {
+                const currentMountIDs = this.props.combat.combatants
+                    .filter(c => c.id !== combatant.id)
+                    .filter(c => !!c.mountID).map(c => c.mountID);
+                const mountOptions = this.props.combat.combatants
+                    .filter(c => c.id !== combatant.id)             // Don't include me
+                    .filter(c => c.type !== 'placeholder')          // Don't include placeholders
+                    .filter(c => !c.mountID)                        // Don't include anyone that's mounted
+                    .filter(c => !currentMountIDs.includes(c.id))   // Don't include anyone that is a mount for anyone else
+                    .map(c => ({ id: c.id, text: c.displayName }));
+                Utils.sort(mountOptions, [{ field: 'text', dir: 'asc' }]);
+                let mountSelector = null;
+                if (mountOptions.length > 0) {
+                    mountSelector = (
+                        <div>
+                            <div className='subheading'>mounted on:</div>
+                            <Dropdown
+                                options={mountOptions}
+                                selectedID={combatant.mountID}
+                                onSelect={id => this.props.changeValue(combatant, 'mountID', id)}
+                                onClear={() => this.props.changeValue(combatant, 'mountID', null)}
+                            />
+                        </div>
+                    );
+                } else {
+                    mountSelector = (
+                        <Note>
+                            no mounts available
+                        </Note>
+                    );
+                }
+                let mountType = null;
+                if (!!combatant.mountID) {
+                    const mountTypeOptions = ['controlled', 'independent'].map(o => ({ id: o, text: o }));
+                    mountType = (
+                        <div>
+                            <div className='subheading'>mount is:</div>
+                            <Selector
+                                options={mountTypeOptions}
+                                selectedID={combatant.mountType}
+                                onSelect={id => this.props.changeValue(combatant, 'mountType', id)}
+                            />
+                        </div>
+                    );
+                }
+                mountedCombat = (
+                    <Expander text='mounted combat'>
+                        {mountSelector}
+                        {mountType}
                     </Expander>
                 );
             }
@@ -622,6 +683,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                 {changeName}
                 {changeSize}
                 {changeInit}
+                {mountedCombat}
                 {companions}
                 {notes}
             </div>
@@ -636,8 +698,14 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                     text: m
                 };
             });
-            if (!this.props.combat.map) {
-                // No combat map, so remove the map option
+            const controlledMounts = this.props.combat.combatants
+                .filter(c => !!c.mountID && (c.mountType === 'controlled'))
+                .map(c => c.mountID || '');
+            if (!this.props.combat.map || this.props.combatants.some(c => controlledMounts.includes(c.id))) {
+                // Either:
+                // No combat map
+                // Some selected combatants are controlled mounts
+                // ... so remove the map option
                 views.splice(3, 1);
             }
             if (!this.props.combatants.every(c => c.type === 'monster')) {
@@ -677,7 +745,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                     <Selector
                         options={views}
                         selectedID={currentView}
-                        select={option => this.setView(option)}
+                        onSelect={option => this.setView(option)}
                     />
                     <div className='divider' />
                     {content}

@@ -526,29 +526,29 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                             <Checkbox
                                 label={'size ' + this.state.monster.size}
                                 checked={this.state.similarFilter.size}
-                                changeValue={value => this.toggleMatch('size')}
+                                onChecked={value => this.toggleMatch('size')}
                             />
                             <Checkbox
                                 label={'type ' + this.state.monster.category}
                                 checked={this.state.similarFilter.type}
-                                changeValue={value => this.toggleMatch('type')}
+                                onChecked={value => this.toggleMatch('type')}
                             />
                             <Checkbox
                                 label={this.state.monster.tag ? 'subtype ' + this.state.monster.tag : 'subtype'}
                                 checked={this.state.similarFilter.subtype}
                                 disabled={!this.state.monster.tag}
-                                changeValue={value => this.toggleMatch('subtype')}
+                                onChecked={value => this.toggleMatch('subtype')}
                             />
                             <Checkbox
                                 label={this.state.monster.alignment ? 'alignment ' + this.state.monster.alignment : 'alignment'}
                                 checked={this.state.similarFilter.alignment}
                                 disabled={!this.state.monster.alignment}
-                                changeValue={value => this.toggleMatch('alignment')}
+                                onChecked={value => this.toggleMatch('alignment')}
                             />
                             <Checkbox
                                 label={'challenge rating ' + Utils.challenge(this.state.monster.challenge)}
                                 checked={this.state.similarFilter.challenge}
-                                changeValue={value => this.toggleMatch('challenge')}
+                                onChecked={value => this.toggleMatch('challenge')}
                             />
                         </Expander>
                     );
@@ -614,7 +614,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                             <Tabs
                                 options={[{ id: 'scratch', text: 'scratchpad' }]}
                                 selectedID={'scratch'}
-                                select={() => null}
+                                onSelect={() => null}
                             />
                             <button
                                 className={this.state.scratchpadList.length < 2 ? 'disabled' : ''}
@@ -642,7 +642,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                             <Tabs
                                 options={sidebarOptions}
                                 selectedID={this.state.sidebar}
-                                select={optionID => this.setState({sidebar: optionID as 'similar' | 'all'})}
+                                onSelect={optionID => this.setState({sidebar: optionID as 'similar' | 'all'})}
                             />
                             {sidebarContent}
                             <div className='divider'/>
@@ -812,7 +812,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                             <Selector
                                 options={options}
                                 selectedID={this.state.helpSection}
-                                select={optionID => this.setHelpSection(optionID)}
+                                onSelect={optionID => this.setHelpSection(optionID)}
                             />
                             <div className='subheading'>values</div>
                         </div>
@@ -834,7 +834,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
                         <Tabs
                             options={pages}
                             selectedID={this.state.page}
-                            select={optionID => this.setPage(optionID as 'overview' | 'abilities' | 'cbt-stats' | 'actions')}
+                            onSelect={optionID => this.setPage(optionID as 'overview' | 'abilities' | 'cbt-stats' | 'actions')}
                         />
                         {content}
                         {help}
@@ -889,13 +889,13 @@ class OverviewTab extends React.Component<OverviewTabProps> {
                         <NumberSpin
                             source={this.props.monster}
                             name='size'
-                            nudgeValue={delta => this.props.nudgeValue('size', delta)}
+                            onNudgeValue={delta => this.props.nudgeValue('size', delta)}
                         />
                         <div className='subheading'>type</div>
                         <Dropdown
                             options={catOptions}
                             selectedID={this.props.monster.category}
-                            select={optionID => this.props.changeValue('category', optionID)}
+                            onSelect={optionID => this.props.changeValue('category', optionID)}
                         />
                         <div className='subheading'>subtype</div>
                         <Textbox
@@ -911,8 +911,8 @@ class OverviewTab extends React.Component<OverviewTabProps> {
                         <NumberSpin
                             source={this.props.monster}
                             name='challenge'
-                            display={value => Utils.challenge(value)}
-                            nudgeValue={delta => this.props.nudgeValue('challenge', delta)}
+                            onNudgeValue={delta => this.props.nudgeValue('challenge', delta)}
+                            onFormatValue={value => Utils.challenge(value)}
                         />
                     </Col>
                     <Col xs={24} sm={24} md={24} lg={12} xl={12}>
@@ -968,7 +968,7 @@ class AbilitiesTab extends React.Component<AbilitiesTabProps> {
                         <AbilityScorePanel
                             edit={true}
                             combatant={this.props.monster}
-                            nudgeValue={(source, type, delta) => this.props.nudgeValue(type, delta)}
+                            onNudgeValue={(source, type, delta) => this.props.nudgeValue(type, delta)}
                         />
                     </Col>
                     <Col xs={24} sm={24} md={24} lg={12} xl={12}>
@@ -1008,14 +1008,14 @@ class CombatTab extends React.Component<CombatTabProps> {
                         <NumberSpin
                             source={this.props.monster}
                             name='ac'
-                            nudgeValue={delta => this.props.nudgeValue('ac', delta)}
+                            onNudgeValue={delta => this.props.nudgeValue('ac', delta)}
                         />
                         <div className='subheading'>hit dice</div>
                         <NumberSpin
                             source={this.props.monster}
                             name='hitDice'
-                            display={value => value + 'd' + Utils.hitDieType(this.props.monster.size)}
-                            nudgeValue={delta => this.props.nudgeValue('hitDice', delta)}
+                            onNudgeValue={delta => this.props.nudgeValue('hitDice', delta)}
+                            onFormatValue={value => value + 'd' + Utils.hitDieType(this.props.monster.size)}
                         />
                         <div className='subheading'>hit points</div>
                         <div className='hp-value'>{Frankenstein.getTypicalHP(this.props.monster)} hp</div>
@@ -1023,7 +1023,7 @@ class CombatTab extends React.Component<CombatTabProps> {
                         <NumberSpin
                             source={this.props.monster}
                             name='legendaryActions'
-                            nudgeValue={delta => this.props.nudgeValue('legendaryActions', delta)}
+                            onNudgeValue={delta => this.props.nudgeValue('legendaryActions', delta)}
                         />
                     </Col>
                     <Col xs={24} sm={24} md={24} lg={12} xl={12}>

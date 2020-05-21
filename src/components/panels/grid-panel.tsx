@@ -1,5 +1,5 @@
 import { DownCircleOutlined, SettingOutlined } from '@ant-design/icons';
-import { Col, Row } from 'antd';
+import { Col, Popover, Row } from 'antd';
 import React from 'react';
 
 interface Props {
@@ -12,7 +12,6 @@ interface Props {
 
 interface State {
     showContent: boolean;
-    showControls: boolean;
 }
 
 export default class GridPanel extends React.Component<Props, State> {
@@ -27,20 +26,13 @@ export default class GridPanel extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            showContent: true,
-            showControls: false
+            showContent: true
         };
     }
 
     private toggleContentVisible() {
         this.setState({
             showContent: !this.state.showContent
-        });
-    }
-
-    private toggleControlsVisible() {
-        this.setState({
-            showControls: !this.state.showControls
         });
     }
 
@@ -56,11 +48,13 @@ export default class GridPanel extends React.Component<Props, State> {
                 let controlsIcon = null;
                 if (this.props.controls && this.state.showContent) {
                     controlsIcon = (
-                        <SettingOutlined
-                            className={this.state.showControls ? 'selected' : ''}
-                            title='controls'
-                            onClick={() => this.toggleControlsVisible()}
-                        />
+                        <Popover
+                            content={this.props.controls}
+                            trigger='click'
+                            placement='bottomRight'
+                        >
+                            <SettingOutlined />
+                        </Popover>
                     );
                 }
 
@@ -81,11 +75,6 @@ export default class GridPanel extends React.Component<Props, State> {
                         {toggleIcon}
                     </div>
                 );
-            }
-
-            let controls = null;
-            if (this.props.controls && this.state.showControls && this.state.showContent) {
-                controls = this.props.controls;
             }
 
             let content = null;
@@ -122,7 +111,6 @@ export default class GridPanel extends React.Component<Props, State> {
             return (
                 <div className='grid-panel'>
                     {heading}
-                    {controls}
                     {content}
                 </div>
             );

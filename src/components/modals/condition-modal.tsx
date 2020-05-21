@@ -110,7 +110,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                                 source={this.props.condition}
                                 name='level'
                                 label='exhaustion'
-                                nudgeValue={delta => this.nudgeValue(this.props.condition, 'level', delta)}
+                                onNudgeValue={delta => this.nudgeValue(this.props.condition, 'level', delta)}
                             />
                         );
                     }
@@ -156,13 +156,16 @@ export default class ConditionModal extends React.Component<Props, State> {
                     text: 'end of turn'
                 }
             ];
-            const combatantOptions = this.props.combat.combatants.map(combatant => {
-                const c = combatant as (Combatant & PC) | (Combatant & Monster);
-                return {
-                    id: c.id,
-                    text: (c.displayName || c.name || 'unnamed monster')
-                };
-            });
+            const combatantOptions = this.props.combat.combatants
+                .filter(combatant => combatant.type !== 'placeholder')
+                .map(combatant => {
+                    const c = combatant as (Combatant & PC) | (Combatant & Monster);
+                    return {
+                        id: c.id,
+                        text: (c.displayName || c.name || 'unnamed monster')
+                    };
+                });
+            Utils.sort(combatantOptions, [{ field: 'text', dir: 'asc' }]);
 
             const durations = [
                 {
@@ -184,7 +187,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                                 <NumberSpin
                                     source={this.props.condition.duration}
                                     name='count'
-                                    nudgeValue={delta => this.nudgeValue(this.props.condition.duration, 'count', delta)}
+                                    onNudgeValue={delta => this.nudgeValue(this.props.condition.duration, 'count', delta)}
                                 />
                             </div>
                             <div className='section'>
@@ -192,7 +195,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                                 <NumberSpin
                                     source={this.props.condition.duration}
                                     name='saveDC'
-                                    nudgeValue={delta => this.nudgeValue(this.props.condition.duration, 'saveDC', delta)}
+                                    onNudgeValue={delta => this.nudgeValue(this.props.condition.duration, 'saveDC', delta)}
                                 />
                             </div>
                             <div className='section'>
@@ -204,7 +207,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                                         ? (this.props.condition.duration as ConditionDurationSaves).saveType
                                         : null
                                     }
-                                    select={optionID => this.changeValue(this.props.condition.duration, 'saveType', optionID)}
+                                    onSelect={optionID => this.changeValue(this.props.condition.duration, 'saveType', optionID)}
                                 />
                             </div>
                             <div className='section'>
@@ -216,7 +219,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                                         ? (this.props.condition.duration as ConditionDurationSaves).point
                                         : null
                                     }
-                                    select={optionID => this.changeValue(this.props.condition.duration, 'point', optionID)}
+                                    onSelect={optionID => this.changeValue(this.props.condition.duration, 'point', optionID)}
                                 />
                             </div>
                         </div>
@@ -236,7 +239,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                                         ? (this.props.condition.duration as ConditionDurationCombatant).point
                                         : null
                                     }
-                                    select={optionID => this.changeValue(this.props.condition.duration, 'point', optionID)}
+                                    onSelect={optionID => this.changeValue(this.props.condition.duration, 'point', optionID)}
                                 />
                             </div>
                             <div className='section'>
@@ -248,7 +251,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                                         ? (this.props.condition.duration as ConditionDurationCombatant).combatantID || undefined
                                         : undefined
                                     }
-                                    select={optionID => this.changeValue(this.props.condition.duration, 'combatantID', optionID)}
+                                    onSelect={optionID => this.changeValue(this.props.condition.duration, 'combatantID', optionID)}
                                 />
                             </div>
                         </div>
@@ -264,7 +267,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                                 <NumberSpin
                                     source={this.props.condition.duration}
                                     name='count'
-                                    nudgeValue={delta => this.nudgeValue(this.props.condition.duration, 'count', delta)}
+                                    onNudgeValue={delta => this.nudgeValue(this.props.condition.duration, 'count', delta)}
                                 />
                             </div>
                         </div>
@@ -279,7 +282,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                         <RadioGroup
                             items={conditions}
                             selectedItemID={this.state.condition.name}
-                            select={itemID => this.setCondition(itemID)}
+                            onSelect={itemID => this.setCondition(itemID)}
                         />
                     </Col>
                     <Col span={12} className='scrollable'>
@@ -287,7 +290,7 @@ export default class ConditionModal extends React.Component<Props, State> {
                         <RadioGroup
                             items={durations}
                             selectedItemID={this.state.condition.duration ? this.state.condition.duration.type : 'none'}
-                            select={itemID => this.setDuration(itemID as 'saves' | 'combatant' | 'rounds')}
+                            onSelect={itemID => this.setDuration(itemID as 'saves' | 'combatant' | 'rounds')}
                         />
                     </Col>
                 </Row>

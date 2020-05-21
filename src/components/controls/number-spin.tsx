@@ -7,8 +7,8 @@ interface Props {
     label: string;
     disabled: boolean;
     factors: number[];
-    nudgeValue: (delta: number) => void;
-    display: ((value: number) => string) | null;
+    onNudgeValue: (delta: number) => void;
+    onFormatValue: (value: number) => string;
 }
 
 export default class NumberSpin extends React.Component<Props> {
@@ -16,18 +16,18 @@ export default class NumberSpin extends React.Component<Props> {
         label: null,
         disabled: false,
         factors: null,
-        display: null
+        onFormatValue: null
     };
 
     private click(e: React.MouseEvent, delta: number) {
         e.stopPropagation();
-        this.props.nudgeValue(delta);
+        this.props.onNudgeValue(delta);
     }
 
     private touchEnd(e: React.TouchEvent, delta: number) {
         e.preventDefault();
         e.stopPropagation();
-        this.props.nudgeValue(delta);
+        this.props.onNudgeValue(delta);
     }
 
     public render() {
@@ -38,8 +38,8 @@ export default class NumberSpin extends React.Component<Props> {
                 style += ' dimmed';
             }
 
-            if (this.props.display) {
-                value = this.props.display(value);
+            if (this.props.onFormatValue) {
+                value = this.props.onFormatValue(value);
             }
 
             const minusBtns: JSX.Element[] = [];

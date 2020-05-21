@@ -123,19 +123,25 @@ export default class MonsterCard extends React.Component<Props, State> {
 
     private getHP() {
         const combatant = this.props.monster as Monster & Combatant;
-        if (combatant.hpCurrent !== undefined) {
-            let current = (combatant.hpCurrent ?? 0).toString();
-
-            if ((combatant.hpTemp ?? 0) > 0) {
-                current += '+' + combatant.hpTemp;
-            }
-
-            return current;
+        if (combatant.hpCurrent === null) {
+            const hp = Frankenstein.getTypicalHP(this.props.monster);
+            const str = Frankenstein.getTypicalHPString(this.props.monster);
+            return hp + ' (' + str + ')';
         }
 
-        const hp = Frankenstein.getTypicalHP(this.props.monster);
-        const str = Frankenstein.getTypicalHPString(this.props.monster);
-        return hp + ' (' + str + ')';
+        const currentHP = combatant.hpCurrent ?? 0;
+        const maxHP = combatant.hpMax ?? 0;
+        const tempHP = combatant.hpTemp ?? 0;
+
+        let current = currentHP.toString();
+        if (tempHP > 0) {
+            current += '+' + tempHP;
+        }
+        if ((maxHP > 0) && (currentHP !== maxHP)) {
+            current += ' / ' + maxHP;
+        }
+
+        return current;
     }
 
     private statSection(text: string, value: string) {
@@ -214,11 +220,11 @@ export default class MonsterCard extends React.Component<Props, State> {
                     key='move'
                     options={groupOptions}
                     placeholder='move to group...'
-                    select={optionID => this.props.moveToGroup(this.props.monster, optionID)}
+                    onSelect={optionID => this.props.moveToGroup(this.props.monster, optionID)}
                 />
             );
 
-            options.push(<ConfirmButton key='remove' text='delete monster' callback={() => this.props.removeMonster(this.props.monster)} />);
+            options.push(<ConfirmButton key='remove' text='delete monster' onConfirm={() => this.props.removeMonster(this.props.monster)} />);
         }
 
         if (this.props.mode.indexOf('encounter') !== -1) {
@@ -241,7 +247,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                             key='replace'
                             placeholder='replace with...'
                             options={candidates}
-                            select={id => {
+                            onSelect={id => {
                                 const candidate = candidates.find(c => c.id === id);
                                 if (candidate) {
                                     this.props.swapEncounterSlot(this.props.slot, candidate.group, candidate.text);
@@ -268,7 +274,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                             key='move'
                             placeholder='move to...'
                             options={waves}
-                            select={id => this.props.moveToWave(this.props.slot, current, id)}
+                            onSelect={id => this.props.moveToWave(this.props.slot, current, id)}
                         />
                     );
                 }
@@ -312,7 +318,7 @@ export default class MonsterCard extends React.Component<Props, State> {
                             source={this.props.slot}
                             name='count'
                             label='count'
-                            nudgeValue={delta => this.props.nudgeValue(this.props.slot, 'count', delta)}
+                            onNudgeValue={delta => this.props.nudgeValue(this.props.slot, 'count', delta)}
                         />
                     </div>
                 );

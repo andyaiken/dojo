@@ -3,7 +3,7 @@ import React from 'react';
 
 interface Props {
     sidebar: string | null;
-    setSidebar: (type: string | null) => void;
+    onSelectSidebar: (type: string | null) => void;
 }
 
 export default class PageHeader extends React.Component<Props> {
@@ -15,27 +15,27 @@ export default class PageHeader extends React.Component<Props> {
                     <ToolOutlined
                         className={this.props.sidebar === 'tools' ? 'title-bar-icon selected' : 'title-bar-icon'}
                         title='tools'
-                        onClick={() => this.props.setSidebar(this.props.sidebar === 'tools' ? null : 'tools')}
+                        onClick={() => this.props.onSelectSidebar(this.props.sidebar === 'tools' ? null : 'tools')}
                     />
                     <BulbOutlined
                         className={this.props.sidebar === 'generators' ? 'title-bar-icon selected' : 'title-bar-icon'}
                         title='generators'
-                        onClick={() => this.props.setSidebar(this.props.sidebar === 'generators' ? null : 'generators')}
+                        onClick={() => this.props.onSelectSidebar(this.props.sidebar === 'generators' ? null : 'generators')}
                     />
                     <BookOutlined
                         className={this.props.sidebar === 'reference' ? 'title-bar-icon selected' : 'title-bar-icon'}
                         title='reference'
-                        onClick={() => this.props.setSidebar(this.props.sidebar === 'reference' ? null : 'reference')}
+                        onClick={() => this.props.onSelectSidebar(this.props.sidebar === 'reference' ? null : 'reference')}
                     />
                     <SearchOutlined
                         className={this.props.sidebar === 'search' ? 'title-bar-icon selected' : 'title-bar-icon'}
                         title='search'
-                        onClick={() => this.props.setSidebar(this.props.sidebar === 'search' ? null : 'search')}
+                        onClick={() => this.props.onSelectSidebar(this.props.sidebar === 'search' ? null : 'search')}
                     />
                     <InfoCircleOutlined
                         className={this.props.sidebar === 'about' ? 'title-bar-icon selected' : 'title-bar-icon'}
                         title='about'
-                        onClick={() => this.props.setSidebar(this.props.sidebar === 'about' ? null : 'about')}
+                        onClick={() => this.props.onSelectSidebar(this.props.sidebar === 'about' ? null : 'about')}
                     />
                 </div>
             );

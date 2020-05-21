@@ -226,7 +226,7 @@ export default class LeaderboardModal extends React.Component<Props> {
                 {data.length === 0 ? <div className='section'>no data to display</div> : null}
                 <ChartPanel
                     data={data}
-                    display={value => {
+                    onFormatValue={value => {
                         const d = new Date(value);
                         return d.getMinutes() + 'm ' + d.getSeconds() + 's';
                     }}

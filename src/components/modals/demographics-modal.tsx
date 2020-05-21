@@ -91,7 +91,7 @@ export default class DemographicsModal extends React.Component<Props, State> {
                     <Selector
                         options={chartOptions}
                         selectedID={this.state.chart}
-                        select={optionID => this.selectChart(optionID)}
+                        onSelect={optionID => this.selectChart(optionID)}
                     />
                     <ChartPanel data={data} />
                 </div>

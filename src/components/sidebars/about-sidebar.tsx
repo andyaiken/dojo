@@ -90,7 +90,7 @@ export default class AboutSidebar extends React.Component<Props, State> {
                         <div className='subheading'>options</div>
                         <div className='section'>this will reset the entire app and cannot be undone</div>
                         <div className='section'>use it at your own risk</div>
-                        <ConfirmButton text='clear all data' callback={() => this.props.resetAll()} />
+                        <ConfirmButton text='clear all data' onConfirm={() => this.props.resetAll()} />
                         <button onClick={() => this.toggleImages()}>show images</button>
                         <div className='divider'/>
                         <div className='subheading'>data</div>

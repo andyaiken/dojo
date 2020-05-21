@@ -167,6 +167,10 @@ button {
 ::-webkit-scrollbar-thumb {
     background-color: $control-border-05; 
     border-radius: 2px;
+
+    &:hover {
+        background-color: $control-border; 
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -179,9 +183,9 @@ button {
 .ant-drawer-body {
     padding: 0;
     font-size: 12px;
+    font-family: 'Open Sans', 'Segoe UI', sans-serif;
     height: 100%;
     user-select: none;
-    font-family: 'Open Sans', 'Segoe UI', sans-serif;
 }
 
 .ant-collapse {
@@ -341,8 +345,17 @@ button {
         }
     }
 
+    .slick-dots-bottom {
+        bottom: -10px;
+    }
+
     .slick-slide {
-        height: 300px;
+        height: 250px;
         overflow: hidden;
     }
+}
+
+.ant-popover {
+    font-size: 12px;
+    font-family: 'Open Sans', 'Segoe UI', sans-serif;
 }

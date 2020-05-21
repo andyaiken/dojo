@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 interface Props {
     title: string;
-    closeWindow: () => void;
+    onCloseWindow: () => void;
 }
 
 interface State {
@@ -49,7 +49,7 @@ export default class Popout extends React.Component<Props, State> {
 
             externalWindow.document.title = this.props.title;
             externalWindow.addEventListener('beforeunload', () => {
-                this.props.closeWindow();
+                this.props.onCloseWindow();
             });
         }
 

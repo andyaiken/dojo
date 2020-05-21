@@ -1,56 +1,41 @@
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Popover } from 'antd';
 import React from 'react';
 
 interface Props {
-    text: string;
-    callback: () => void;
+    text: string | JSX.Element | JSX.Element[];
+    prompt: string | JSX.Element | JSX.Element[];
+    info: string | JSX.Element | JSX.Element[] | null;
     disabled: boolean;
+    onConfirm: () => void;
 }
 
-interface State {
-    pressed: boolean;
-}
-
-export default class ConfirmButton extends React.Component<Props, State> {
+export default class ConfirmButton extends React.Component<Props> {
     public static defaultProps = {
+        prompt: 'are you sure you want to do this?',
+        info: null,
         disabled: false
     };
 
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            pressed: false
-        };
-    }
-
-    private toggle(e: React.MouseEvent) {
-        e.stopPropagation();
-        this.setState({
-            pressed: !this.state.pressed
-        });
-    }
-
-    private perform() {
-        this.setState({
-            pressed: false
-        }, () => {
-            this.props.callback();
-        });
-    }
-
     public render() {
         try {
-            let content = null;
-            if (this.state.pressed) {
-                content = (
-                    <div className='confirm' onClick={() => this.perform()}>confirm</div>
-                );
-            }
-
             return (
-                <button className={this.props.disabled ? 'danger disabled' : 'danger'} onClick={e => this.toggle(e)}>
-                    <div>{this.props.text}</div>
-                    {content}
-                </button>
+                <Popover
+                    content={(
+                        <div>
+                            <div className='section'>
+                                <QuestionCircleOutlined style={{ color: 'red' }} />
+                                <span style={{ marginLeft: '10px' }}>{this.props.prompt}</span>
+                            </div>
+                            {this.props.info}
+                            <div className='divider' />
+                            <button onClick={() => this.props.onConfirm()}>confirm</button>
+                        </div>
+                    )}
+                    trigger='click'
+                >
+                    <button className={this.props.disabled ? 'danger disabled' : 'danger'}>{this.props.text}</button>
+                </Popover>
             );
         } catch (ex) {
             console.error(ex);

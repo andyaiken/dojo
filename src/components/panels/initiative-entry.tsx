@@ -1,5 +1,5 @@
 import { EnvironmentOutlined } from '@ant-design/icons';
-import { Tag } from 'antd';
+import { Col, Row, Tag } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
 
@@ -56,7 +56,7 @@ export default class InitiativeEntry extends React.Component<Props> {
                         source={this.props.combatant}
                         name='initiative'
                         label='initiative'
-                        nudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
+                        onNudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
                     />
                     <button onClick={e => { e.stopPropagation(); this.props.makeActive(this.props.combatant); }}>add to encounter</button>
                 </div>
@@ -85,22 +85,87 @@ export default class InitiativeEntry extends React.Component<Props> {
 
             notes.push(
                 <div key='stats'>
-                    <div className='section key-stats'>
-                        <div className='key-stat'>
-                            <div className='stat-label'>ac</div>
-                            <div className='stat-value'>{monster.ac}</div>
-                        </div>
-                        <div className='key-stat'>
-                            <div className='stat-value'>{hp}</div>
-                            <div className='stat-label'>hp</div>
-                        </div>
-                    </div>
+                    <Row align='middle'>
+                        <Col span={12}>
+                            <div className='statistic'>
+                                <div className='statistic-label'>ac</div>
+                                <div className='statistic-value'>{monster.ac}</div>
+                            </div>
+                        </Col>
+                        <Col span={12}>
+                            <div className='statistic'>
+                                <div className='statistic-value'>{hp}</div>
+                                <div className='statistic-label'>hp</div>
+                            </div>
+                        </Col>
+                    </Row>
                     <HitPointGauge combatant={this.props.combatant} />
                 </div>
             );
         }
 
-        // Engaged tags
+        // Mounted on
+        if (!!this.props.combatant.mountID) {
+            const mount = this.props.combat.combatants.find(c => c.id === this.props.combatant.mountID);
+            if (mount) {
+                const btn = (
+                    <button
+                        className='link'
+                        onClick={e => {
+                            e.stopPropagation();
+                            this.props.select(mount, false);
+                        }}
+                    >
+                        {mount.displayName}
+                    </button>
+                );
+                let info = null;
+                if (this.props.combatant.mountType === 'controlled') {
+                    info = (
+                        <div className='note-details'>
+                            your mount moves as directed; it can only take dash, disengage, or dodge actions
+                        </div>
+                    );
+                }
+                /* tslint:disable:max-line-length */
+                notes.push(
+                    <Note key='mount'>
+                        <div> mounted on: {btn}</div>
+                        {info}
+                        <div className='note-details'>
+                            if you’re knocked prone, or an effect moves your mount against its will, you must succeed on a dex save (dc 10) or land prone in a space within 5 feet of your mount
+                        </div>
+                        <div className='note-details'>
+                            if your mount is knocked prone, you can use your reaction to land on your feet; otherwise, you fall prone in a space within 5 feet of your mount
+                        </div>
+                    </Note>
+                );
+                /* tslint:enable:max-line-length */
+            }
+        }
+
+        // Ridden by
+        const rider = this.props.combat.combatants.find(c => c.mountID === this.props.combatant.id);
+        if (rider) {
+            const btn = (
+                <button
+                    className='link'
+                    onClick={e => {
+                        e.stopPropagation();
+                        this.props.select(rider, false);
+                    }}
+                >
+                    {rider.displayName}
+                </button>
+            );
+            notes.push(
+                <Note key='rider'>
+                    <div>ridden by: {btn}</div>
+                </Note>
+            );
+        }
+
+        // Engaged with
         const engaged: string[] = [];
         this.props.combatant.tags.filter(tag => tag.startsWith('engaged')).forEach(tag => {
             engaged.push(Utils.getTagDescription(tag));
@@ -117,10 +182,8 @@ export default class InitiativeEntry extends React.Component<Props> {
         this.props.combatant.tags.filter(tag => !tag.startsWith('engaged')).forEach(tag => {
             notes.push(
                 <Note key={tag}>
-                    <div className='condition'>
-                        <div className='condition-name'>{Utils.getTagTitle(tag)}</div>
-                        {Utils.getTagDescription(tag)}
-                    </div>
+                    <div className='note-heading'>{Utils.getTagTitle(tag)}</div>
+                    <div className='note-details'>{Utils.getTagDescription(tag)}</div>
                 </Note>
             );
         });
@@ -155,14 +218,12 @@ export default class InitiativeEntry extends React.Component<Props> {
                 const description = [];
                 const text = Utils.conditionText(c);
                 for (let n = 0; n !== text.length; ++n) {
-                    description.push(<div key={n} className='condition-text'>{text[n]}</div>);
+                    description.push(<div key={n} className='note-details'>{text[n]}</div>);
                 }
                 notes.push(
                     <Note key={c.id}>
-                        <div className='condition'>
-                            <div className='condition-name'>{name}</div>
-                            {description}
-                        </div>
+                        <div className='note-heading'>{name}</div>
+                        {description}
                     </Note>
                 );
             });

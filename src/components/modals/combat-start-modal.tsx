@@ -322,8 +322,8 @@ class PartySection extends React.Component<PartySectionProps> {
                     options={partyOptions}
                     placeholder='select a party'
                     selectedID={this.props.combatSetup.party ? this.props.combatSetup.party.id : undefined}
-                    select={optionID => this.props.setPartyID(optionID)}
-                    clear={() => this.props.setPartyID(null)}
+                    onSelect={optionID => this.props.setPartyID(optionID)}
+                    onClear={() => this.props.setPartyID(null)}
                 />
             );
         }
@@ -392,7 +392,7 @@ class EncounterSection extends React.Component<EncounterSectionProps> {
                     <Dropdown
                         options={options}
                         placeholder='select an encounter'
-                        select={optionID => this.props.setEncounterID(optionID)}
+                        onSelect={optionID => this.props.setEncounterID(optionID)}
                     />
                 );
             }
@@ -508,7 +508,7 @@ class MapSection extends React.Component<MapSectionProps> {
                     <Dropdown
                         options={options}
                         placeholder='select a map'
-                        select={optionID => this.props.setMapID(optionID)}
+                        onSelect={optionID => this.props.setMapID(optionID)}
                     />
                 );
             }
@@ -605,8 +605,8 @@ class WaveSection extends React.Component<WaveSectionProps> {
                         options={waveOptions}
                         placeholder='select wave'
                         selectedID={this.props.combatSetup.waveID ? this.props.combatSetup.waveID : undefined}
-                        select={optionID => this.props.setWaveID(optionID)}
-                        clear={() => this.props.setWaveID(null)}
+                        onSelect={optionID => this.props.setWaveID(optionID)}
+                        onClear={() => this.props.setWaveID(null)}
                     />
                     {waveContent}
                 </div>
@@ -831,7 +831,7 @@ class MonsterSection extends React.Component<MonsterSectionProps, MonsterSection
             return (
                 <div>
                     <div className='heading'>monsters</div>
-                    <Selector options={options} selectedID={this.state.view} select={id => this.setView(id)} />
+                    <Selector options={options} selectedID={this.state.view} onSelect={id => this.setView(id)} />
                     <div className='divider' />
                     <div>{slots}</div>
                 </div>
@@ -893,7 +893,7 @@ class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
                 <Checkbox
                     label='roll initiative once for this group'
                     checked={this.props.slotInfo.useGroupInit}
-                    changeValue={value => this.props.changeValue(this.props.slotInfo, 'useGroupInit', value)}
+                    onChecked={value => this.props.changeValue(this.props.slotInfo, 'useGroupInit', value)}
                 />
             );
         }
@@ -935,7 +935,7 @@ class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
                 <Checkbox
                     label='roll hit points once for this group'
                     checked={this.props.slotInfo.useGroupHP}
-                    changeValue={value => this.props.changeValue(this.props.slotInfo, 'useGroupHP', value)}
+                    onChecked={value => this.props.changeValue(this.props.slotInfo, 'useGroupHP', value)}
                 />
             );
         }
@@ -1000,7 +1000,7 @@ class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
             <NumberSpin
                 source={this.props.encounterSlot}
                 name='count'
-                nudgeValue={delta => this.props.nudgeCount(this.props.encounterSlot.id, delta)}
+                onNudgeValue={delta => this.props.nudgeCount(this.props.encounterSlot.id, delta)}
             />
         );
     }

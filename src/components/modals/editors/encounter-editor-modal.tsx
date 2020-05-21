@@ -375,7 +375,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
                         placeholder='wave name'
                         onChange={value => this.changeValue(wave, 'name', value)}
                     />
-                    <ConfirmButton text='delete wave' callback={() => this.removeWave(wave)} />
+                    <ConfirmButton text='delete wave' onConfirm={() => this.removeWave(wave)} />
                 </div>
             ));
 
@@ -435,7 +435,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
                                 />
                                 <button onClick={() => this.buildEncounter()}>build encounter</button>
                             </Expander>
-                            <ConfirmButton text='clear encounter' callback={() => this.clearEncounter()} />
+                            <ConfirmButton text='clear encounter' onConfirm={() => this.clearEncounter()} />
                         </div>
                     </Col>
                     <Col span={18} className='scrollable'>

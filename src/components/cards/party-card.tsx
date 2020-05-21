@@ -52,7 +52,7 @@ export default class PartyCard extends React.Component<Props> {
                         </div>
                         <div className='divider'/>
                         <button onClick={() => this.props.open(this.props.party)}>open party</button>
-                        <ConfirmButton text='delete party' callback={() => this.props.delete(this.props.party)} />
+                        <ConfirmButton text='delete party' onConfirm={() => this.props.delete(this.props.party)} />
                     </div>
                 </div>
             );

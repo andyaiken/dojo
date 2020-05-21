@@ -1,5 +1,5 @@
-import { CloseCircleOutlined } from '@ant-design/icons';
-import { Col, Row } from 'antd';
+import { CloseCircleOutlined, MenuOutlined } from '@ant-design/icons';
+import { Col, Popover, Row } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
 
@@ -23,7 +23,6 @@ import ConfirmButton from '../controls/confirm-button';
 import Expander from '../controls/expander';
 import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
-import Selector from '../controls/selector';
 import CombatControlsPanel from '../panels/combat-controls-panel';
 import GridPanel from '../panels/grid-panel';
 import InitiativeEntry from '../panels/initiative-entry';
@@ -76,7 +75,6 @@ interface Props {
 }
 
 interface State {
-    rightPanel: string;
     showDefeatedCombatants: boolean;
     selectedItemIDs: string[];
     addingToMapID: string | null;
@@ -95,7 +93,6 @@ export default class CombatScreen extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            rightPanel: 'selection',
             showDefeatedCombatants: false,
             selectedItemIDs: [],            // The IDs of the combatants or map items that are selected
             addingToMapID: null,            // The ID of the combatant we're adding to the map
@@ -116,12 +113,6 @@ export default class CombatScreen extends React.Component<Props, State> {
         });
     }
 
-    private setRightPanel(panel: string) {
-        this.setState({
-            rightPanel: panel
-        });
-    }
-
     private toggleShowDefeatedCombatants() {
         this.setState({
             showDefeatedCombatants: !this.state.showDefeatedCombatants
@@ -129,11 +120,8 @@ export default class CombatScreen extends React.Component<Props, State> {
     }
 
     private setSelectedItemIDs(ids: string[]) {
-        // Switch to selection view if we're selecting an item
-        const rightPanel = ids.length > 0 ? 'selection' : this.state.rightPanel;
         this.setState({
-            selectedItemIDs: ids,
-            rightPanel: rightPanel
+            selectedItemIDs: ids
         });
     }
 
@@ -290,7 +278,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 
             this.props.addOverlay(overlay);
             this.setState({
-                rightPanel: 'selection',
                 addingOverlay: false,
                 addingToMapID: null,
                 selectedItemIDs: [overlay.id]
@@ -311,12 +298,16 @@ export default class CombatScreen extends React.Component<Props, State> {
 
     private orderCombatants(combatants: Combatant[]) {
         const current = combatants.find(c => c.current);
-        if (!current) {
-            return combatants;
+        if (current) {
+            const index = combatants.indexOf(current);
+            if (index !== 0) {
+                const all: (Combatant | string)[] = [...combatants];
+                const first = all.splice(index);
+                return first.concat(['top of the round']).concat(all);
+            }
         }
 
-        const index = combatants.indexOf(current);
-        return combatants.splice(index).concat(combatants);
+        return combatants;
     }
 
     //#region Rendering helper methods
@@ -326,9 +317,13 @@ export default class CombatScreen extends React.Component<Props, State> {
             return null;
         }
 
+        const controlledMounts = this.props.combat.combatants
+            .filter(c => !!c.mountID && (c.mountType === 'controlled'))
+            .map(c => c.mountID || '');
         const activeCombatants = this.props.combat.combatants
             .filter(c => (c.type === 'pc') || c.showOnMap)
             .filter(c => !c.pending && c.active && !c.defeated)
+            .filter(c => !controlledMounts.includes(c.id))
             .filter(c => {
                 if ((c.type === 'monster') && (!!this.props.combat.map)) {
                     // Only show this monster if it's on the map
@@ -342,17 +337,8 @@ export default class CombatScreen extends React.Component<Props, State> {
                 }
                 return true;
             });
-        const current = activeCombatants.some(c => c.current);
-        const initCount = activeCombatants.length;
-        const initList = this.orderCombatants(activeCombatants).map(c => this.createCombatantRow(c, true));
-        if (current) {
-            if (initCount > 1) {
-                initList.splice(1, 0, <div key='next1' className='section init-separator'>next up</div>);
-            }
-            if (initCount > 2) {
-                initList.splice(3, 0, <div key='next2' className='section init-separator'>then</div>);
-            }
-        }
+        const initList = this.orderCombatants(activeCombatants)
+            .map(c => this.createCombatantRow(c, true));
 
         if (this.props.combat.map) {
             let controls = null;
@@ -374,7 +360,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                         <div>
                             <div className='heading lowercase'>{token.displayName}</div>
                             <div className='section centered'>
-                                <Radial click={dir => this.props.mapMove([token.id], dir)} />
+                                <Radial onClick={dir => this.props.mapMove([token.id], dir)} />
                             </div>
                             <div className='divider' />
                             <NumberSpin
@@ -382,8 +368,8 @@ export default class CombatScreen extends React.Component<Props, State> {
                                 source={token}
                                 name='altitude'
                                 label='altitude'
-                                display={value => value + ' ft.'}
-                                nudgeValue={delta => this.props.nudgeValue(token, 'altitude', delta * 5)}
+                                onNudgeValue={delta => this.props.nudgeValue(token, 'altitude', delta * 5)}
+                                onFormatValue={value => value + ' ft.'}
                             />
                             <Row gutter={10}>
                                 <Col span={8}>
@@ -391,7 +377,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                                         label='conc.'
                                         display='button'
                                         checked={token.tags.includes('conc')}
-                                        changeValue={value => this.props.toggleTag([token], 'conc')}
+                                        onChecked={value => this.props.toggleTag([token], 'conc')}
                                     />
                                 </Col>
                                 <Col span={8}>
@@ -399,7 +385,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                                         label='bane'
                                         display='button'
                                         checked={token.tags.includes('bane')}
-                                        changeValue={value => this.props.toggleTag([token], 'bane')}
+                                        onChecked={value => this.props.toggleTag([token], 'bane')}
                                     />
                                 </Col>
                                 <Col span={8}>
@@ -407,7 +393,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                                         label='bless'
                                         display='button'
                                         checked={token.tags.includes('bless')}
-                                        changeValue={value => this.props.toggleTag([token], 'bless')}
+                                        onChecked={value => this.props.toggleTag([token], 'bless')}
                                     />
                                 </Col>
                             </Row>
@@ -417,7 +403,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                                         label='prone'
                                         display='button'
                                         checked={token.conditions.some(c => c.name === 'prone')}
-                                        changeValue={value => this.props.toggleCondition([token], 'prone')}
+                                        onChecked={value => this.props.toggleCondition([token], 'prone')}
                                     />
                                 </Col>
                                 <Col span={8}>
@@ -425,7 +411,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                                         label='uncon.'
                                         display='button'
                                         checked={token.conditions.some(c => c.name === 'unconscious')}
-                                        changeValue={value => this.props.toggleCondition([token], 'unconscious')}
+                                        onChecked={value => this.props.toggleCondition([token], 'unconscious')}
                                     />
                                 </Col>
                                 <Col span={8}>
@@ -433,7 +419,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                                         label='hidden'
                                         display='button'
                                         checked={!token.showOnMap}
-                                        changeValue={value => this.props.changeValue([token], 'showOnMap', !value)}
+                                        onChecked={value => this.props.changeValue([token], 'showOnMap', !value)}
                                     />
                                 </Col>
                             </Row>
@@ -477,7 +463,7 @@ export default class CombatScreen extends React.Component<Props, State> {
             }
 
             return (
-                <Popout title='Encounter' closeWindow={() => this.setPlayerViewOpen(false)}>
+                <Popout title='Encounter' onCloseWindow={() => this.setPlayerViewOpen(false)}>
                     <Row className='full-height'>
                         <Col xs={24} sm={24} md={12} lg={16} xl={18} className='scrollable both-ways'>
                             <MapPanel
@@ -502,7 +488,7 @@ export default class CombatScreen extends React.Component<Props, State> {
             );
         } else {
             return (
-                <Popout title='Encounter' closeWindow={() => this.setPlayerViewOpen(false)}>
+                <Popout title='Encounter' onCloseWindow={() => this.setPlayerViewOpen(false)}>
                     <div className='scrollable'>
                         <div className='heading'>initiative order</div>
                         {initList}
@@ -512,11 +498,11 @@ export default class CombatScreen extends React.Component<Props, State> {
         }
     }
 
-    private getTools() {
+    private getMenu() {
         let exitToMap = null;
         if (this.props.combat.map) {
             exitToMap = (
-                <ConfirmButton text='end combat and open map' callback={() => this.props.endCombat(true)} />
+                <ConfirmButton text='end combat and open map' onConfirm={() => this.props.endCombat(true)} />
             );
         }
 
@@ -560,13 +546,13 @@ export default class CombatScreen extends React.Component<Props, State> {
                     <Checkbox
                         label='show map controls'
                         checked={this.state.playerView.showControls}
-                        changeValue={value => this.setPlayerViewShowControls(value)}
+                        onChecked={value => this.setPlayerViewShowControls(value)}
                     />
                     <NumberSpin
                         source={this.state.playerView}
                         name={'mapSize'}
-                        display={() => 'zoom'}
-                        nudgeValue={delta => this.nudgePlayerViewMapSize(delta * 3)}
+                        onNudgeValue={delta => this.nudgePlayerViewMapSize(delta * 3)}
+                        onFormatValue={() => 'zoom'}
                     />
                 </div>
             );
@@ -576,8 +562,9 @@ export default class CombatScreen extends React.Component<Props, State> {
             <div>
                 <div className='subheading'>encounter</div>
                 <button onClick={() => this.props.pauseCombat()}>pause combat</button>
-                <ConfirmButton text='end combat' callback={() => this.props.endCombat(false)} />
+                <ConfirmButton text='end combat' onConfirm={() => this.props.endCombat(false)} />
                 {exitToMap}
+                <div className='subheading'>leaderboard</div>
                 <button onClick={() => this.props.showLeaderboard()}>show leaderboard</button>
                 <div className='subheading'>combatants</div>
                 <button onClick={() => this.props.addCombatants()}>add combatants</button>
@@ -588,7 +575,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                 <Checkbox
                     label='show player view'
                     checked={this.state.playerView.open}
-                    changeValue={value => this.setPlayerViewOpen(value)}
+                    onChecked={value => this.setPlayerViewOpen(value)}
                 />
                 {playerView}
             </div>
@@ -683,7 +670,13 @@ export default class CombatScreen extends React.Component<Props, State> {
         );
     }
 
-    private createCombatantRow(combatant: Combatant, playerView: boolean) {
+    private createCombatantRow(combatant: Combatant | string, playerView: boolean) {
+        if (typeof combatant === 'string') {
+            return (
+                <div key={combatant} className='section init-separator'>{combatant}</div>
+            );
+        }
+
         let selected = this.state.selectedItemIDs.includes(combatant.id);
         // If we're in player view, and there's no map, don't show selection
         if (playerView && !this.props.combat.map) {
@@ -802,39 +795,45 @@ export default class CombatScreen extends React.Component<Props, State> {
 
     public render() {
         try {
+            const controlledMounts = this.props.combat.combatants
+                .filter(c => !!c.mountID && (c.mountType === 'controlled'))
+                .map(c => c.mountID || '');
+
             let current: JSX.Element | null = null;
             const pending: JSX.Element[] = [];
             const active: Combatant[] = [];
 
-            this.props.combat.combatants.forEach(combatant => {
-                if (combatant.pending) {
-                    pending.push(
-                        <InitiativeEntry
-                            key={combatant.id}
-                            combatant={combatant}
-                            combat={this.props.combat}
-                            selected={this.state.selectedItemIDs.includes(combatant.id)}
-                            minimal={false}
-                            select={(c, ctrl) => this.toggleItemSelection(c.id, ctrl)}
-                            addToMap={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
-                            nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
-                            makeActive={c => this.props.makeActive([c])}
-                        />
-                    );
-                } else {
-                    if (combatant.current) {
-                        current = (
-                            <div>
-                                {this.createControls([combatant])}
-                                {this.createCard(combatant)}
-                            </div>
+            this.props.combat.combatants
+                .filter(combatant => !controlledMounts.includes(combatant.id))
+                .forEach(combatant => {
+                    if (combatant.pending) {
+                        pending.push(
+                            <InitiativeEntry
+                                key={combatant.id}
+                                combatant={combatant}
+                                combat={this.props.combat}
+                                selected={this.state.selectedItemIDs.includes(combatant.id)}
+                                minimal={false}
+                                select={(c, ctrl) => this.toggleItemSelection(c.id, ctrl)}
+                                addToMap={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
+                                nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
+                                makeActive={c => this.props.makeActive([c])}
+                            />
                         );
+                    } else {
+                        if (combatant.current) {
+                            current = (
+                                <div>
+                                    {this.createControls([combatant])}
+                                    {this.createCard(combatant)}
+                                </div>
+                            );
+                        }
+                        if (combatant.active || (combatant.defeated && this.state.showDefeatedCombatants)) {
+                            active.push(combatant);
+                        }
                     }
-                    if (combatant.active || (combatant.defeated && this.state.showDefeatedCombatants)) {
-                        active.push(combatant);
-                    }
-                }
-            });
+                });
 
             if (pending.length !== 0) {
                 pending.unshift(
@@ -853,17 +852,8 @@ export default class CombatScreen extends React.Component<Props, State> {
 
                     return true;
                 });
-            const initCount = activeCombatants.length;
             const initList = this.orderCombatants(activeCombatants)
                 .map(c => this.createCombatantRow(c, false));
-            if (current) {
-                if (initCount > 1) {
-                    initList.splice(1, 0, <div key='next1' className='section init-separator'>next up</div>);
-                }
-                if (initCount > 2) {
-                    initList.splice(3, 0, <div key='next2' className='section init-separator'>then</div>);
-                }
-            }
 
             if (!current) {
                 initList.unshift(
@@ -942,47 +932,38 @@ export default class CombatScreen extends React.Component<Props, State> {
                     }
                 });
 
-            const rightPanelOptions = ['selection', 'menu'].map(option => {
-                return { id: option, text: option };
-            });
-
-            let rightHeading = null;
-            let rightContent = null;
-            switch (this.state.rightPanel) {
-                case 'selection':
-                    rightHeading = 'selected combatant';
-                    rightContent = this.getSelectedCombatant();
-                    break;
-                case 'menu':
-                    rightHeading = 'menu';
-                    rightContent = this.getTools();
-                    break;
-            }
-
             return (
                 <div className='full-height'>
-                    <Row className='combat-top-row'>
-                        <Col span={8} style={{ padding: '0 10px' }}>
-                            <button onClick={() => this.nextTurn()}>
-                                {this.props.combat.combatants.find(c => c.current) ? 'next turn' : 'start combat'}
-                            </button>
-                        </Col>
-                        <Col span={4}>
-                            <div className='statistic'>
-                                round {this.props.combat.round}
+                    <Row align='middle' className='combat-top-row'>
+                        <Col span={8}>
+                            <div className='action'>
+                                <button onClick={() => this.nextTurn()}>
+                                    {this.props.combat.combatants.find(c => c.current) ? 'next turn' : 'start combat'}
+                                </button>
                             </div>
                         </Col>
                         <Col span={4}>
                             <div className='statistic'>
-                                {Napoleon.getCombatXP(this.props.combat)} xp
+                                <div className='statistic-label'>round</div>
+                                <div className='statistic-value'>{this.props.combat.round}</div>
                             </div>
                         </Col>
-                        <Col span={8} style={{ padding: '0 10px' }}>
-                            <Selector
-                                options={rightPanelOptions}
-                                selectedID={this.state.rightPanel}
-                                select={option => this.setRightPanel(option)}
-                            />
+                        <Col span={4}>
+                            <div className='statistic'>
+                                <div className='statistic-value'>{Napoleon.getCombatXP(this.props.combat)}</div>
+                                <div className='statistic-label'>xp</div>
+                            </div>
+                        </Col>
+                        <Col span={8}>
+                            <div className='menu'>
+                                <Popover
+                                    content={this.getMenu()}
+                                    trigger='click'
+                                    placement='bottomRight'
+                                >
+                                    <MenuOutlined />
+                                </Popover>
+                            </div>
                         </Col>
                     </Row>
                     <Row className='combat-main'>
@@ -1010,19 +991,19 @@ export default class CombatScreen extends React.Component<Props, State> {
                                 columns={1}
                                 showToggle={true}
                                 controls={(
-                                    <div className='group-panel'>
+                                    <div>
                                         <button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
                                         <button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
                                         <Checkbox
                                             label={this.state.addingOverlay ? 'click on the map to add the item, or click here to cancel' : 'add token / overlay'}
                                             display='button'
                                             checked={this.state.addingOverlay}
-                                            changeValue={() => this.toggleAddingOverlay()}
+                                            onChecked={() => this.toggleAddingOverlay()}
                                         />
                                         <Checkbox
                                             label='edit fog of war'
                                             checked={this.state.addingFog}
-                                            changeValue={() => this.toggleAddingFog()}
+                                            onChecked={() => this.toggleAddingFog()}
                                         />
                                         <div style={{ display: this.state.addingFog ? '' : 'none' }}>
                                             <button onClick={() => this.fillFog()}>
@@ -1035,8 +1016,8 @@ export default class CombatScreen extends React.Component<Props, State> {
                                         <NumberSpin
                                             source={this.state}
                                             name={'mapSize'}
-                                            display={() => 'zoom'}
-                                            nudgeValue={delta => this.nudgeMapSize(delta * 3)}
+                                            onNudgeValue={delta => this.nudgeMapSize(delta * 3)}
+                                            onFormatValue={() => 'zoom'}
                                         />
                                     </div>
                                 )}
@@ -1047,19 +1028,19 @@ export default class CombatScreen extends React.Component<Props, State> {
                                 columns={1}
                                 showToggle={true}
                                 controls={(
-                                    <div className='group-panel'>
+                                    <div>
                                         <Checkbox
                                             label='show defeated combatants'
                                             checked={this.state.showDefeatedCombatants}
-                                            changeValue={() => this.toggleShowDefeatedCombatants()}
+                                            onChecked={() => this.toggleShowDefeatedCombatants()}
                                         />
                                     </div>
                                 )}
                             />
                         </Col>
                         <Col span={8} className='scrollable'>
-                            <div className='heading fixed-top'>{rightHeading}</div>
-                            {rightContent}
+                            <div className='heading fixed-top'>selected combatant</div>
+                            {this.getSelectedCombatant()}
                         </Col>
                     </Row>
                     {this.getPlayerView()}

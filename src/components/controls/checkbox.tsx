@@ -4,8 +4,8 @@ interface Props {
     label: string;
     display: 'switch' | 'button';
     checked: boolean;
-    changeValue: (value: boolean) => void;
     disabled: boolean;
+    onChecked: (value: boolean) => void;
 }
 
 export default class Checkbox extends React.Component<Props> {
@@ -16,7 +16,7 @@ export default class Checkbox extends React.Component<Props> {
 
     private click(e: React.MouseEvent) {
         e.stopPropagation();
-        this.props.changeValue(!this.props.checked);
+        this.props.onChecked(!this.props.checked);
     }
 
     public render() {

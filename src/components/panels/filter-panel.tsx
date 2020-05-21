@@ -80,13 +80,13 @@ export default class FilterPanel extends React.Component<Props> {
                             options={sizeOptions}
                             placeholder='filter by size...'
                             selectedID={this.props.filter.size}
-                            select={optionID => this.props.changeValue('size', optionID)}
+                            onSelect={optionID => this.props.changeValue('size', optionID)}
                         />
                         <Selector
                             options={catOptions}
                             selectedID={this.props.filter.category}
                             itemsPerRow={3}
-                            select={optionID => this.props.changeValue('category', optionID)}
+                            onSelect={optionID => this.props.changeValue('category', optionID)}
                         />
                         <div className='divider' />
                         <div className='section'>

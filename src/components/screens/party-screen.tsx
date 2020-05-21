@@ -216,7 +216,7 @@ class PartyInfo extends React.Component<PartyInfoProps> {
                         <button onClick={() => this.props.addPC()}>add a new pc</button>
                         <button onClick={() => this.props.importPC()}>import a pc</button>
                         <button onClick={() => this.export()}>export party</button>
-                        <ConfirmButton text='delete party' callback={() => this.props.removeParty()} />
+                        <ConfirmButton text='delete party' onConfirm={() => this.props.removeParty()} />
                         <div className='divider' />
                         <button onClick={() => this.props.goBack()}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>
                     </div>

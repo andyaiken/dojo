@@ -59,7 +59,7 @@ export default class HandoutTool extends React.Component<Props, State> {
     private getPlayerView() {
         if (this.state.playerViewOpen) {
             return (
-                <Popout title='Handout' closeWindow={() => this.setPlayerViewOpen(false)}>
+                <Popout title='Handout' onCloseWindow={() => this.setPlayerViewOpen(false)}>
                     <img
                         className='nonselectable-image'
                         src={this.state.data || ''}
@@ -86,7 +86,7 @@ export default class HandoutTool extends React.Component<Props, State> {
                         <Checkbox
                             label='show player view'
                             checked={this.state.playerViewOpen}
-                            changeValue={value => this.setPlayerViewOpen(value)}
+                            onChecked={value => this.setPlayerViewOpen(value)}
                         />
                         <button onClick={() => this.clear()}>change handout</button>
                     </div>

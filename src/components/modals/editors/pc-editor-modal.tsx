@@ -109,8 +109,8 @@ export default class PCEditorModal extends React.Component<Props, State> {
                             options={monsterOptions}
                             placeholder='select a stat block'
                             selectedID={comp.monsterID || undefined}
-                            select={value => this.changeValue(comp, 'monsterID', value)}
-                            clear={() => this.changeValue(comp, 'monsterID', null)}
+                            onSelect={value => this.changeValue(comp, 'monsterID', value)}
+                            onClear={() => this.changeValue(comp, 'monsterID', null)}
                         />
                     </div>
                     <div className='companion-actions'>
@@ -144,7 +144,7 @@ export default class PCEditorModal extends React.Component<Props, State> {
                         <NumberSpin
                             source={this.state.pc}
                             name='size'
-                            nudgeValue={delta => this.nudgeValue(this.state.pc, 'size', delta)}
+                            onNudgeValue={delta => this.nudgeValue(this.state.pc, 'size', delta)}
                         />
                         <div className='subheading'>race:</div>
                         <Textbox
@@ -160,26 +160,26 @@ export default class PCEditorModal extends React.Component<Props, State> {
                         <NumberSpin
                             source={this.state.pc}
                             name='level'
-                            nudgeValue={delta => this.nudgeValue(this.state.pc, 'level', delta)}
+                            onNudgeValue={delta => this.nudgeValue(this.state.pc, 'level', delta)}
                         />
                         <div className='subheading'>passive skills</div>
                         <NumberSpin
                             source={this.state.pc}
                             name='passiveInsight'
                             label='insight'
-                            nudgeValue={delta => this.nudgeValue(this.state.pc, 'passiveInsight', delta)}
+                            onNudgeValue={delta => this.nudgeValue(this.state.pc, 'passiveInsight', delta)}
                         />
                         <NumberSpin
                             source={this.state.pc}
                             name='passiveInvestigation'
                             label='investigation'
-                            nudgeValue={delta => this.nudgeValue(this.state.pc, 'passiveInvestigation', delta)}
+                            onNudgeValue={delta => this.nudgeValue(this.state.pc, 'passiveInvestigation', delta)}
                         />
                         <NumberSpin
                             source={this.state.pc}
                             name='passivePerception'
                             label='perception'
-                            nudgeValue={delta => this.nudgeValue(this.state.pc, 'passivePerception', delta)}
+                            onNudgeValue={delta => this.nudgeValue(this.state.pc, 'passivePerception', delta)}
                         />
                     </Col>
                     <Col span={12} className='scrollable'>

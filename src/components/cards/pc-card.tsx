@@ -50,7 +50,7 @@ export default class PCCard extends React.Component<Props> {
                         </button>
                     );
                 }
-                options.push(<ConfirmButton key='remove' text='delete pc' callback={() => this.props.removePC(this.props.pc)} />);
+                options.push(<ConfirmButton key='remove' text='delete pc' onConfirm={() => this.props.removePC(this.props.pc)} />);
             }
 
             let companions = null;

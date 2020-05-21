@@ -43,7 +43,7 @@ export default class MonsterGroupCard extends React.Component<Props> {
                         </div>
                         <div className='divider'/>
                         <button onClick={() => this.props.open(this.props.group)}>open group</button>
-                        <ConfirmButton text='delete group' callback={() => this.props.delete(this.props.group)} />
+                        <ConfirmButton text='delete group' onConfirm={() => this.props.delete(this.props.group)} />
                     </div>
                 </div>
             );

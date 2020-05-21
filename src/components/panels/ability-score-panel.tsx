@@ -9,7 +9,7 @@ import NumberSpin from '../controls/number-spin';
 interface Props {
     combatant: Monster;
     edit: boolean;
-    nudgeValue: (combatant: Monster, field: string, delta: number) => void;
+    onNudgeValue: (combatant: Monster, field: string, delta: number) => void;
 }
 
 interface State {
@@ -19,7 +19,7 @@ interface State {
 export default class AbilityScorePanel extends React.Component<Props, State> {
     public static defaultProps = {
         edit: null,
-        nudgeValue: null
+        onNudgeValue: null
     };
 
     constructor(props: Props) {
@@ -46,37 +46,37 @@ export default class AbilityScorePanel extends React.Component<Props, State> {
                             source={this.props.combatant.abilityScores}
                             name='str'
                             label='strength'
-                            nudgeValue={(delta: number) => this.props.nudgeValue(this.props.combatant, 'abilityScores.str', delta)}
+                            onNudgeValue={(delta: number) => this.props.onNudgeValue(this.props.combatant, 'abilityScores.str', delta)}
                         />
                         <NumberSpin
                             source={this.props.combatant.abilityScores}
                             name='dex'
                             label='dexterity'
-                            nudgeValue={(delta: number) => this.props.nudgeValue(this.props.combatant, 'abilityScores.dex', delta)}
+                            onNudgeValue={(delta: number) => this.props.onNudgeValue(this.props.combatant, 'abilityScores.dex', delta)}
                         />
                         <NumberSpin
                             source={this.props.combatant.abilityScores}
                             name='con'
                             label='constitution'
-                            nudgeValue={(delta: number) => this.props.nudgeValue(this.props.combatant, 'abilityScores.con', delta)}
+                            onNudgeValue={(delta: number) => this.props.onNudgeValue(this.props.combatant, 'abilityScores.con', delta)}
                         />
                         <NumberSpin
                             source={this.props.combatant.abilityScores}
                             name='int'
                             label='intelligence'
-                            nudgeValue={(delta: number) => this.props.nudgeValue(this.props.combatant, 'abilityScores.int', delta)}
+                            onNudgeValue={(delta: number) => this.props.onNudgeValue(this.props.combatant, 'abilityScores.int', delta)}
                         />
                         <NumberSpin
                             source={this.props.combatant.abilityScores}
                             name='wis'
                             label='wisdom'
-                            nudgeValue={(delta: number) => this.props.nudgeValue(this.props.combatant, 'abilityScores.wis', delta)}
+                            onNudgeValue={(delta: number) => this.props.onNudgeValue(this.props.combatant, 'abilityScores.wis', delta)}
                         />
                         <NumberSpin
                             source={this.props.combatant.abilityScores}
                             name='cha'
                             label='charisma'
-                            nudgeValue={(delta: number) => this.props.nudgeValue(this.props.combatant, 'abilityScores.cha', delta)}
+                            onNudgeValue={(delta: number) => this.props.onNudgeValue(this.props.combatant, 'abilityScores.cha', delta)}
                         />
                     </div>
                 );

@@ -134,7 +134,7 @@ export default class PartyImportModal extends React.Component<Props, State> {
             return (
                 <Row className='full-height'>
                     <Col span={12} className='scrollable'>
-                        <Tabs options={options} selectedID={this.state.view} select={id => this.setView(id)} />
+                        <Tabs options={options} selectedID={this.state.view} onSelect={id => this.setView(id)} />
                         {content}
                     </Col>
                     <Col span={12} className='scrollable'>

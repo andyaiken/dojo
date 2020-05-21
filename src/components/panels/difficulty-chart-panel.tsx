@@ -222,8 +222,8 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
                         options={partyOptions}
                         placeholder='select party...'
                         selectedID={this.state.selectedPartyID ? this.state.selectedPartyID : undefined}
-                        select={optionID => this.selectParty(optionID)}
-                        clear={() => this.selectParty(null)}
+                        onSelect={optionID => this.selectParty(optionID)}
+                        onClear={() => this.selectParty(null)}
                     />
                 );
             }

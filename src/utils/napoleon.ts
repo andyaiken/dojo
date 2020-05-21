@@ -216,6 +216,8 @@ export default class Napoleon {
         combatant.note = '';
         combatant.altitude = 0;
         combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
+        combatant.mountID = null;
+        combatant.mountType = 'controlled';
 
         return combatant;
     }
@@ -242,6 +244,8 @@ export default class Napoleon {
         combatant.note = '';
         combatant.altitude = 0;
         combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
+        combatant.mountID = null;
+        combatant.mountType = 'controlled';
 
         return combatant;
     }
@@ -269,6 +273,8 @@ export default class Napoleon {
         combatant.note = '';
         combatant.altitude = 0;
         combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
+        combatant.mountID = null;
+        combatant.mountType = 'controlled';
 
         return combatant;
     }
@@ -294,7 +300,9 @@ export default class Napoleon {
             tags: [],
             note: '',
             altitude: 0,
-            aura: { radius: 0, style: 'rounded', color: '#005080' }
+            aura: { radius: 0, style: 'rounded', color: '#005080' },
+            mountID: null,
+            mountType: 'controlled'
         };
 
         return combatant;

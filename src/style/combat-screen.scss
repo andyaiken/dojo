@@ -1,13 +1,19 @@
 .combat-top-row {
     height: 50px;
-    padding: 4px 0;
     background-color: rgb(110, 110, 110);
 
+    .action {
+        padding: 0 10px;
+    }
+
     .statistic {
-        height: 42px;
-        line-height: 42px;
-        font-size: 15px;
-        text-align: center;
+        color: $header-foreground;
+    }
+
+    .menu {
+        padding: 0 10px;
+        text-align: right;
+        font-size: 20px;
         color: $header-foreground;
     }
 }
@@ -35,16 +41,6 @@
     &.highlight,
     &.current {
         border-color: $highlight;
-    }
-
-    &.current {
-        pointer-events: none;
-
-        .header {
-            .name {
-                font-size: 20px;
-            }
-        }
     }
 
     &.defeated {
@@ -76,42 +72,13 @@
     .content {
         padding-left: 5px;
 
-        .key-stats {
-    
-            .key-stat {
-                display: inline-block;
-                width: calc((100% - 1px) / 2);
-                text-align: center;
-    
-                .stat-value {
-                    display: inline-block;
-                    vertical-align: top;
-                    height: 30px;
-                    line-height: 30px;
-                    font-weight: 600;
-                    font-size: 25px;
-                }
-    
-                .stat-label {
-                    display: inline-block;
-                    vertical-align: top;
-                    height: 30px;
-                    line-height: 30px;
-                    font-weight: 600;
-                    padding: 0 5px;
-                }
-            }
+        .note-heading {
+            font-weight: 600;
         }
 
-        .condition {
-            .condition-name {
-                font-weight: 600;
-            }
-
-            .condition-text {
-                font-size: 11px;
-                margin: 2px 0;
-            }
+        .note-details {
+            font-size: 11px;
+            margin: 2px 0;
         }
 
         .icon-button {
@@ -149,4 +116,24 @@
     font-weight: 600;
     padding: 5px;
     margin: 20px 0 !important;
+}
+
+.combat-top-row .statistic,
+.initiative-list-item .statistic {
+    margin: 5px 0;
+    font-size: 15px;
+    text-align: center;
+    font-weight: 600;
+
+    .statistic-label,
+    .statistic-value {
+        display: inline-block;
+        vertical-align: top;
+        line-height: 30px;
+    }
+
+    .statistic-value {
+        font-size: 25px;
+        padding: 0 5px;
+    }
 }

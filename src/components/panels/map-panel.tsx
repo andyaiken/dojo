@@ -279,15 +279,24 @@ export default class MapPanel extends React.Component<Props> {
             // Draw the tokens
             let tokens: JSX.Element[] = [];
             if (this.props.mode !== 'edit') {
+                const mountIDs = this.props.combatants.map(c => c.mountID || '').filter(id => id !== '');
                 tokens = items
                     .filter(i => (i.type === 'monster') || (i.type === 'pc') || (i.type === 'companion') || (i.type === 'token'))
+                    .filter(i => !mountIDs.includes(i.id))
                     .map(i => {
                         let miniSize = Utils.miniSize(i.size);
                         let note = Mercator.getNote(this.props.map, i);
                         let isPC = false;
                         const combatant = this.props.combatants.find(c => c.id === i.id);
                         if (combatant) {
-                            miniSize = Utils.miniSize(combatant.displaySize);
+                            let s = combatant.displaySize;
+                            if (combatant.mountID) {
+                                const mount = this.props.combatants.find(m => m.id === combatant.mountID);
+                                if (mount) {
+                                    s = mount.displaySize;
+                                }
+                            }
+                            miniSize = Utils.miniSize(s);
                             if (!note && combatant.note) {
                                 note = Factory.createMapNote();
                                 note.targetID = combatant.id;
@@ -808,7 +817,7 @@ class MapToken extends React.Component<MapTokenProps> {
                     );
                 } else {
                     const inits = name.toUpperCase()
-                                    .replace(/[^A-Z ]/, '')
+                                    .replace(/[^A-Z0-9 ]/, '')
                                     .split(' ')
                                     .map(s => s[0])
                                     .join('');

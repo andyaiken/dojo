@@ -3,15 +3,15 @@ import React from 'react';
 interface Props {
     options: { id: string; text: string; disabled?: boolean }[];
     selectedID: string | null;
-    select: (optionID: string) => void;
-    disabled: boolean;
     itemsPerRow: number;
+    disabled: boolean;
+    onSelect: (optionID: string) => void;
 }
 
 export default class Selector extends React.Component<Props> {
     public static defaultProps = {
-        disabled: false,
-        itemsPerRow: null
+        itemsPerRow: null,
+        disabled: false
     };
 
     public render() {
@@ -33,7 +33,7 @@ export default class Selector extends React.Component<Props> {
                         option={option}
                         selected={option.id === this.props.selectedID}
                         count={itemsPerRow}
-                        select={(optionID: string) => this.props.select(optionID)}
+                        onSelect={(optionID: string) => this.props.onSelect(optionID)}
                     />
                 );
             });
@@ -59,14 +59,14 @@ interface SelectorOptionInterface {
     option: { id: string; text: string; disabled?: boolean };
     selected: boolean;
     count: number;
-    select: (optionID: string) => void;
+    onSelect: (optionID: string) => void;
 }
 
 class SelectorOption extends React.Component<SelectorOptionInterface> {
     private click(e: React.MouseEvent) {
         e.stopPropagation();
         if (!this.props.option.disabled) {
-            this.props.select(this.props.option.id);
+            this.props.onSelect(this.props.option.id);
         }
     }
 

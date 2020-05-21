@@ -477,12 +477,12 @@ export default class MapEditorModal extends React.Component<Props, State> {
                                 <NumberSpin
                                     source={this.state}
                                     name={'mapSize'}
-                                    display={() => 'zoom'}
-                                    nudgeValue={delta => this.nudgeMapSize(delta * 3)}
+                                    onNudgeValue={delta => this.nudgeMapSize(delta * 3)}
+                                    onFormatValue={() => 'zoom'}
                                 />
                                 <button onClick={() => this.generate('room')}>add a random room</button>
                                 <button onClick={() => this.rotateMap()}>rotate the map</button>
-                                <ConfirmButton text='clear all tiles' callback={() => this.clearMap()} />
+                                <ConfirmButton text='clear all tiles' onConfirm={() => this.clearMap()} />
                             </div>
                         }
                     </div>
@@ -566,7 +566,7 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
             <div>
                 <div className='subheading'>move</div>
                 <div className='section centered'>
-                    <Radial click={dir => this.props.move(this.props.tile, dir)} />
+                    <Radial onClick={dir => this.props.move(this.props.tile, dir)} />
                 </div>
                 <div className='subheading'>size</div>
                 <div className='section'>{this.props.tile.width * 5} ft x {this.props.tile.height * 5} ft</div>
@@ -575,15 +575,15 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
                         source={this.props.tile}
                         name='width'
                         label='width'
-                        display={value => value + ' sq'}
-                        nudgeValue={delta => this.props.nudgeValue(this.props.tile, 'width', delta)}
+                        onNudgeValue={delta => this.props.nudgeValue(this.props.tile, 'width', delta)}
+                        onFormatValue={value => value + ' sq'}
                     />
                     <NumberSpin
                         source={this.props.tile}
                         name='height'
                         label='height'
-                        display={value => value + ' sq'}
-                        nudgeValue={delta => this.props.nudgeValue(this.props.tile, 'height', delta)}
+                        onNudgeValue={delta => this.props.nudgeValue(this.props.tile, 'height', delta)}
+                        onFormatValue={value => value + ' sq'}
                     />
                 </div>
                 <div className='divider' />
@@ -626,14 +626,14 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
                     options={terrainOptions}
                     placeholder='select terrain'
                     selectedID={this.props.tile.terrain ? this.props.tile.terrain : undefined}
-                    select={optionID => this.props.changeValue(this.props.tile, 'terrain', optionID)}
+                    onSelect={optionID => this.props.changeValue(this.props.tile, 'terrain', optionID)}
                 />
                 {customSection}
                 <div className='subheading'>shape</div>
                 <Selector
                     options={styleOptions}
                     selectedID={this.props.tile.style}
-                    select={optionID => this.props.changeValue(this.props.tile, 'style', optionID)}
+                    onSelect={optionID => this.props.changeValue(this.props.tile, 'style', optionID)}
                 />
                 <div className='subheading'>content</div>
                 <RadioGroup
@@ -646,13 +646,13 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
                                     options={DOORWAY_TYPES.map(o => ({ id: o, text: o }))}
                                     itemsPerRow={2}
                                     selectedID={this.props.tile.content ? this.props.tile.content.style : null}
-                                    select={id => this.props.changeValue(this.props.tile.content, 'style', id)}
+                                    onSelect={id => this.props.changeValue(this.props.tile.content, 'style', id)}
                                 />
                                 <div><b>orientation</b></div>
                                 <Selector
                                     options={['horizontal', 'vertical'].map(o => ({ id: o, text: o }))}
                                     selectedID={this.props.tile.content ? this.props.tile.content.orientation : null}
-                                    select={id => this.props.changeValue(this.props.tile.content, 'orientation', id)}
+                                    onSelect={id => this.props.changeValue(this.props.tile.content, 'orientation', id)}
                                 />
                             </div>
                         ) },
@@ -662,19 +662,19 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
                                 <Selector
                                     options={STAIRWAY_TYPES.map(o => ({ id: o, text: o }))}
                                     selectedID={this.props.tile.content ? this.props.tile.content.style : null}
-                                    select={id => this.props.changeValue(this.props.tile.content, 'style', id)}
+                                    onSelect={id => this.props.changeValue(this.props.tile.content, 'style', id)}
                                 />
                                 <div><b>orientation</b></div>
                                 <Selector
                                     options={['horizontal', 'vertical'].map(o => ({ id: o, text: o }))}
                                     selectedID={this.props.tile.content ? this.props.tile.content.orientation : null}
-                                    select={id => this.props.changeValue(this.props.tile.content, 'orientation', id)}
+                                    onSelect={id => this.props.changeValue(this.props.tile.content, 'orientation', id)}
                                 />
                             </div>
                         ) }
                     ]}
                     selectedItemID={this.props.tile.content ? this.props.tile.content.type : 'none'}
-                    select={id => {
+                    onSelect={id => {
                         let value = null;
                         if (id !== 'none') {
                             let defaultStyle = '';
@@ -745,7 +745,7 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
                         <Selector
                             options={options}
                             selectedID={this.state.view}
-                            select={optionID => this.setView(optionID)}
+                            onSelect={optionID => this.setView(optionID)}
                         />
                         <div className='divider' />
                         {content}

@@ -163,7 +163,7 @@ class MonsterGroupInfo extends React.Component<MonsterGroupInfoProps> {
                         <button onClick={() => this.props.importMonster()}>import a monster</button>
                         <button onClick={() => this.props.openDemographics()}>show demographics</button>
                         <button onClick={() => this.export()}>export group</button>
-                        <ConfirmButton text='delete group' callback={() => this.props.removeMonsterGroup()} />
+                        <ConfirmButton text='delete group' onConfirm={() => this.props.removeMonsterGroup()} />
                         <div className='divider' />
                         <button onClick={() => this.props.goBack()}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>
                     </div>

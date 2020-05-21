@@ -2,9 +2,9 @@ import { ArrowDownOutlined, ArrowLeftOutlined, ArrowRightOutlined, ArrowUpOutlin
 import React from 'react';
 
 interface Props {
-    click: (dir: string) => void;
     mode: 'four' | 'eight';
     disabled: boolean;
+    onClick: (dir: string) => void;
 }
 
 export default class Radial extends React.Component<Props> {
@@ -15,7 +15,7 @@ export default class Radial extends React.Component<Props> {
 
     private click(e: React.MouseEvent, dir: string) {
         e.stopPropagation();
-        this.props.click(dir);
+        this.props.onClick(dir);
     }
 
     public render() {

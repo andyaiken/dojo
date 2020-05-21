@@ -1,3 +1,4 @@
+import { CaretLeftOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
@@ -11,6 +12,7 @@ import { Map } from '../../models/map';
 import { Party } from '../../models/party';
 
 import Checkbox from '../controls/checkbox';
+import ConfirmButton from '../controls/confirm-button';
 import Dropdown from '../controls/dropdown';
 import Expander from '../controls/expander';
 import NumberSpin from '../controls/number-spin';
@@ -273,7 +275,7 @@ export default class MapDisplayModal extends React.Component<Props, State> {
     private getPlayerView() {
         if (this.state.playerViewOpen) {
             return (
-                <Popout title='Map' closeWindow={() => this.setPlayerViewOpen(false)}>
+                <Popout title='Map' onCloseWindow={() => this.setPlayerViewOpen(false)}>
                     <div className='scrollable both-ways'>
                         {this.getMap(true)}
                     </div>
@@ -361,7 +363,7 @@ export default class MapDisplayModal extends React.Component<Props, State> {
                                 <Selector
                                     options={auraStyleOptions}
                                     selectedID={selection[0].aura.style}
-                                    select={optionID => this.changeValue(selection[0].aura, 'style', optionID)}
+                                    onSelect={optionID => this.changeValue(selection[0].aura, 'style', optionID)}
                                 />
                                 <input
                                     type='color'
@@ -379,16 +381,16 @@ export default class MapDisplayModal extends React.Component<Props, State> {
                                 source={selection[0]}
                                 name='altitude'
                                 label='altitude'
-                                display={value => value + ' ft.'}
-                                nudgeValue={delta => this.nudgeValue(selection[0], 'altitude', delta * 5)}
+                                onNudgeValue={delta => this.nudgeValue(selection[0], 'altitude', delta * 5)}
+                                onFormatValue={value => value + ' ft.'}
                             />
                             <Expander text='aura'>
                                 <NumberSpin
                                     source={selection[0].aura}
                                     name='radius'
                                     label='size'
-                                    display={value => value + ' ft.'}
-                                    nudgeValue={delta => this.nudgeValue(selection[0].aura, 'radius', delta * 5)}
+                                    onNudgeValue={delta => this.nudgeValue(selection[0].aura, 'radius', delta * 5)}
+                                    onFormatValue={value => value + ' ft.'}
                                 />
                                 {auraDetails}
                             </Expander>
@@ -400,11 +402,13 @@ export default class MapDisplayModal extends React.Component<Props, State> {
                     <div className='section'>
                         <div className='subheading'>{selection.length === 1 ? selection[0].displayName : 'multiple tokens'}</div>
                         <div className='section centered'>
-                            <Radial click={dir => this.mapMove(selection, dir)} />
+                            <Radial onClick={dir => this.mapMove(selection, dir)} />
                         </div>
                         {altitudeAndAura}
                         <div className='divider' />
                         <button onClick={() => this.mapRemove(selection)}>remove from map</button>
+                        <div className='divider' />
+                        <button onClick={() => this.setSelectedCombatantIDs([])}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back</button>
                     </div>
                 );
             } else {
@@ -431,7 +435,7 @@ export default class MapDisplayModal extends React.Component<Props, State> {
                     pcSection = (
                         <div>
                             {pcs}
-                            <button onClick={() => this.setParty(null)}>choose a different party</button>
+                            <ConfirmButton text='choose a different party' onConfirm={() => this.setParty(null)} />
                         </div>
                     );
                 } else {
@@ -439,7 +443,7 @@ export default class MapDisplayModal extends React.Component<Props, State> {
                         <Dropdown
                             options={this.props.parties.map(p => ({ id: p.id, text: p.name }))}
                             placeholder='select a party'
-                            select={id => this.setParty(this.props.parties.find(p => p.id === id) ?? null)}
+                            onSelect={id => this.setParty(this.props.parties.find(p => p.id === id) ?? null)}
                         />
                     );
                 }
@@ -465,8 +469,8 @@ export default class MapDisplayModal extends React.Component<Props, State> {
                         <NumberSpin
                             source={this.state}
                             name={'playerMapSize'}
-                            display={() => 'zoom'}
-                            nudgeValue={delta => this.nudgePlayerMapSize(delta * 3)}
+                            onNudgeValue={delta => this.nudgePlayerMapSize(delta * 3)}
+                            onFormatValue={() => 'zoom'}
                         />
                     );
                 }
@@ -478,8 +482,8 @@ export default class MapDisplayModal extends React.Component<Props, State> {
                             <NumberSpin
                                 source={this.state}
                                 name={'mapSize'}
-                                display={() => 'zoom'}
-                                nudgeValue={delta => this.nudgeMapSize(delta * 3)}
+                                onNudgeValue={delta => this.nudgeMapSize(delta * 3)}
+                                onFormatValue={() => 'zoom'}
                             />
                             <button onClick={() => this.rotateMap()}>rotate map</button>
                             <button onClick={() => this.props.startCombat(this.state.partyID, this.state.map, this.state.fog)}>start encounter</button>
@@ -487,7 +491,7 @@ export default class MapDisplayModal extends React.Component<Props, State> {
                         <div className='divider' />
                         <div className='section'>
                             <div className='subheading'>fog of war</div>
-                            <Checkbox label='edit fog of war' checked={this.state.editFog} changeValue={() => this.toggleEditFog()} />
+                            <Checkbox label='edit fog of war' checked={this.state.editFog} onChecked={() => this.toggleEditFog()} />
                             {fogSection}
                         </div>
                         <div className='divider' />
@@ -501,7 +505,7 @@ export default class MapDisplayModal extends React.Component<Props, State> {
                             <Checkbox
                                 label='show player view'
                                 checked={this.state.playerViewOpen}
-                                changeValue={value => this.setPlayerViewOpen(value)}
+                                onChecked={value => this.setPlayerViewOpen(value)}
                             />
                             {playerMapSection}
                         </div>

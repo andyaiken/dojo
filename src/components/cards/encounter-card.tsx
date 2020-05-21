@@ -77,7 +77,7 @@ export default class EncounterCard extends React.Component<Props> {
                     <Dropdown
                         options={options}
                         placeholder='run with...'
-                        select={partyID => this.props.run(this.props.encounter, partyID)}
+                        onSelect={partyID => this.props.run(this.props.encounter, partyID)}
                     />
                 );
             }
@@ -99,7 +99,7 @@ export default class EncounterCard extends React.Component<Props> {
                         <div className='divider'/>
                         {run}
                         <button onClick={() => this.props.edit(this.props.encounter)}>edit encounter</button>
-                        <ConfirmButton text='delete encounter' callback={() => this.props.delete(this.props.encounter)} />
+                        <ConfirmButton text='delete encounter' onConfirm={() => this.props.delete(this.props.encounter)} />
                     </div>
                 </div>
             );
