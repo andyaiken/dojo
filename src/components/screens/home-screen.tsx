@@ -62,9 +62,7 @@ export default class HomeScreen extends React.Component<Props> {
 
             return (
                 <Row align='middle' justify='center' className='scrollable'>
-                    <div className='group-panel'>
-                        {carousel}
-                    </div>
+                    {carousel}
                 </Row>
             );
         } catch (ex) {

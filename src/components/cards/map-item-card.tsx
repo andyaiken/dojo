@@ -41,9 +41,7 @@ export default class MapItemCard extends React.Component<Props, State> {
         return (
             <div>
                 <div className='subheading'>move</div>
-                <div className='section centered'>
-                    <Radial onClick={dir => this.props.move(this.props.item, dir)} />
-                </div>
+                <Radial onClick={dir => this.props.move(this.props.item, dir)} />
                 <div style={{ display: this.props.item.type === 'overlay' ? 'block' : 'none' }}>
                     <div className='subheading'>size</div>
                     <div className='section'>

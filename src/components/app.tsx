@@ -1487,7 +1487,8 @@ export default class App extends React.Component<Props, State> {
         });
 
         this.setState({
-            combats: this.state.combats
+            combats: this.state.combats,
+            drawer: this.state.drawer
         });
     }
 
@@ -1516,7 +1517,8 @@ export default class App extends React.Component<Props, State> {
             });
 
             this.setState({
-                combats: this.state.combats
+                combats: this.state.combats,
+                drawer: this.state.drawer
             });
         }
     }
@@ -1527,7 +1529,8 @@ export default class App extends React.Component<Props, State> {
         });
 
         this.setState({
-            combats: this.state.combats
+            combats: this.state.combats,
+            drawer: this.state.drawer
         });
     }
 
@@ -2313,6 +2316,12 @@ export default class App extends React.Component<Props, State> {
                             combatants={this.state.drawer.combatants}
                             parties={this.state.parties}
                             startCombat={(partyID, map, fog) => this.createCombat(null, partyID, map, fog)}
+                            toggleTag={(combatants, tag) => this.toggleTag(combatants, tag)}
+                            toggleCondition={(combatants, condition) => this.toggleCondition(combatants, condition)}
+                            toggleHidden={combatants => this.toggleHidden(combatants)}
+                            addCondition={combatants => this.addCondition(combatants)}
+                            editCondition={(combatant, condition) => this.editCondition(combatant, condition)}
+                            removeCondition={(combatant, condition) => this.removeCondition(combatant, condition)}
                         />
                     );
                     header = this.state.drawer.map.name;

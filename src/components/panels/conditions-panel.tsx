@@ -3,14 +3,14 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { Combat, Combatant } from '../../models/combat';
+import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 
 import NumberSpin from '../controls/number-spin';
 
 interface Props {
     combatants: Combatant[];
-    combat: Combat;
+    allCombatants: Combatant[];
     nudgeConditionValue: (condition: Condition, field: string, delta: number) => void;
     addCondition: () => void;
     editCondition: (combatant: Combatant, condition: Condition) => void;
@@ -28,7 +28,7 @@ export default class ConditionsPanel extends React.Component<Props> {
                             key={condition.id}
                             condition={condition}
                             combatant={combatant}
-                            combat={this.props.combat}
+                            combatants={this.props.allCombatants}
                             showCombatantName={this.props.combatants.length > 1}
                             nudgeConditionValue={(c, type, delta) => this.props.nudgeConditionValue(c, type, delta)}
                             editCondition={c => this.props.editCondition(combatant, c)}
@@ -54,7 +54,7 @@ export default class ConditionsPanel extends React.Component<Props> {
 interface ConditionPanelProps {
     condition: Condition;
     combatant: Combatant;
-    combat: Combat;
+    combatants: Combatant[];
     showCombatantName: boolean;
     nudgeConditionValue: (condition: Condition, field: string, delta: number) => void;
     editCondition: (condition: Condition) => void;
@@ -76,7 +76,7 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
             if (this.props.condition.duration !== null) {
                 duration = (
                     <div className='section'>
-                        <i>{Utils.conditionDurationText(this.props.condition, this.props.combat)}</i>
+                        <i>{Utils.conditionDurationText(this.props.condition, this.props.combatants)}</i>
                     </div>
                 );
             }

@@ -213,7 +213,7 @@ export default class InitiativeEntry extends React.Component<Props> {
                     name += ' (' + c.level + ')';
                 }
                 if (c.duration) {
-                    name += ' ' + Utils.conditionDurationText(c, this.props.combat);
+                    name += ' ' + Utils.conditionDurationText(c, this.props.combat.combatants);
                 }
                 const description = [];
                 const text = Utils.conditionText(c);

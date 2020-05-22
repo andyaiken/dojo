@@ -8,16 +8,15 @@ import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
+import { Condition } from '../../models/condition';
 import { Map } from '../../models/map';
-import { Party } from '../../models/party';
+import { Companion, Party } from '../../models/party';
 
 import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
 import Dropdown from '../controls/dropdown';
-import Expander from '../controls/expander';
 import NumberSpin from '../controls/number-spin';
-import Radial from '../controls/radial';
-import Selector from '../controls/selector';
+import CombatControlsPanel from '../panels/combat-controls-panel';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 import Popout from '../panels/popout';
@@ -29,6 +28,12 @@ interface Props {
     combatants: Combatant[];
     parties: Party[];
     startCombat: (partyID: string | null, map: Map, fog: { x: number, y: number }[]) => void;
+    toggleTag: (combatants: Combatant[], tag: string) => void;
+    toggleCondition: (combatants: Combatant[], condition: string) => void;
+    toggleHidden: (combatants: Combatant[]) => void;
+    addCondition: (combatants: Combatant[]) => void;
+    editCondition: (combatant: Combatant, condition: Condition) => void;
+    removeCondition: (combatant: Combatant, condition: Condition) => void;
 }
 
 interface State {
@@ -119,9 +124,6 @@ export default class MapDisplayModal extends React.Component<Props, State> {
         if (party) {
             party.pcs.forEach(pc => {
                 combatants.push(Napoleon.convertPCToCombatant(pc));
-                pc.companions.forEach(comp => {
-                    combatants.push(Napoleon.convertCompanionToCombatant(comp));
-                });
             });
         }
 
@@ -130,6 +132,19 @@ export default class MapDisplayModal extends React.Component<Props, State> {
         this.setState({
             map: this.state.map,
             partyID: party ? party.id : null,
+            combatants: combatants
+        });
+    }
+
+    private addCompanion(companion: Companion) {
+        const combatants = this.state.combatants;
+        combatants.push(Napoleon.convertCompanionToCombatant(companion));
+
+        Utils.sort(combatants, [{ field: 'displayName', dir: 'asc' }]);
+
+        this.setState({
+            map: this.state.map,
+            selectedCombatantIDs: [companion.id],
             combatants: combatants
         });
     }
@@ -340,73 +355,37 @@ export default class MapDisplayModal extends React.Component<Props, State> {
             const selection = this.state.combatants.filter(c => this.state.selectedCombatantIDs.includes(c.id));
             const items = this.state.map.items.filter(i => this.state.selectedCombatantIDs.includes(i.id));
             if ((selection.length > 0) && (items.length === selection.length)) {
-                let altitudeAndAura = null;
-                if (selection.length === 1) {
-                    let auraDetails = null;
-                    if (selection[0].aura.radius > 0) {
-                        const auraStyleOptions = [
-                            {
-                                id: 'square',
-                                text: 'square'
-                            },
-                            {
-                                id: 'rounded',
-                                text: 'rounded'
-                            },
-                            {
-                                id: 'circle',
-                                text: 'circle'
-                            }
-                        ];
-                        auraDetails = (
-                            <div>
-                                <Selector
-                                    options={auraStyleOptions}
-                                    selectedID={selection[0].aura.style}
-                                    onSelect={optionID => this.changeValue(selection[0].aura, 'style', optionID)}
-                                />
-                                <input
-                                    type='color'
-                                    value={selection[0].aura.color}
-                                    onChange={event => this.changeValue(selection[0].aura, 'color', event.target.value)}
-                                />
-                            </div>
-                        );
-                    }
-
-                    altitudeAndAura = (
-                        <div>
-                            <div className='divider' />
-                            <NumberSpin
-                                source={selection[0]}
-                                name='altitude'
-                                label='altitude'
-                                onNudgeValue={delta => this.nudgeValue(selection[0], 'altitude', delta * 5)}
-                                onFormatValue={value => value + ' ft.'}
-                            />
-                            <Expander text='aura'>
-                                <NumberSpin
-                                    source={selection[0].aura}
-                                    name='radius'
-                                    label='size'
-                                    onNudgeValue={delta => this.nudgeValue(selection[0].aura, 'radius', delta * 5)}
-                                    onFormatValue={value => value + ' ft.'}
-                                />
-                                {auraDetails}
-                            </Expander>
-                        </div>
-                    );
-                }
-
                 sidebar = (
                     <div className='section'>
-                        <div className='subheading'>{selection.length === 1 ? selection[0].displayName : 'multiple tokens'}</div>
-                        <div className='section centered'>
-                            <Radial onClick={dir => this.mapMove(selection, dir)} />
-                        </div>
-                        {altitudeAndAura}
-                        <div className='divider' />
-                        <button onClick={() => this.mapRemove(selection)}>remove from map</button>
+                        <CombatControlsPanel
+                            combatants={selection}
+                            allCombatants={this.state.combatants}
+                            map={this.state.map}
+                            defaultTab='map'
+                            // Main tab
+                            makeCurrent={combatant => null}
+                            makeActive={combatants => null}
+                            makeDefeated={combatants => null}
+                            toggleTag={(combatants, tag) => this.props.toggleTag(combatants, tag)}
+                            toggleCondition={(combatants, condition) => this.props.toggleCondition(combatants, condition)}
+                            toggleHidden={combatants => this.props.toggleHidden(combatants)}
+                            // HP tab
+                            changeHP={values => null}
+                            // Cond tab
+                            addCondition={combatants => this.props.addCondition(combatants)}
+                            editCondition={(combatant, condition) => this.props.editCondition(combatant, condition)}
+                            removeCondition={(combatant, condition) => this.props.removeCondition(combatant, condition)}
+                            // Map tab
+                            mapAdd={combatant => null}
+                            mapMove={(combatants, dir) => this.mapMove(combatants, dir)}
+                            mapRemove={combatants => this.mapRemove(combatants)}
+                            // Adv tab
+                            removeCombatants={null}
+                            addCompanion={companion => this.addCompanion(companion)}
+                            // General
+                            changeValue={(source, field, value) => this.changeValue(source, field, value)}
+                            nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
+                        />
                         <div className='divider' />
                         <button onClick={() => this.setSelectedCombatantIDs([])}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back</button>
                     </div>

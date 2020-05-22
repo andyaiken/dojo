@@ -359,9 +359,7 @@ export default class CombatScreen extends React.Component<Props, State> {
                     controls = (
                         <div>
                             <div className='heading lowercase'>{token.displayName}</div>
-                            <div className='section centered'>
-                                <Radial onClick={dir => this.props.mapMove([token.id], dir)} />
-                            </div>
+                            <Radial onClick={dir => this.props.mapMove([token.id], dir)} />
                             <div className='divider' />
                             <NumberSpin
                                 key='altitude'
@@ -706,23 +704,30 @@ export default class CombatScreen extends React.Component<Props, State> {
         return (
             <CombatControlsPanel
                 combatants={selectedCombatants}
-                combat={this.props.combat}
+                allCombatants={this.props.combat.combatants}
+                map={this.props.combat.map}
+                defaultTab='main'
+                // Main tab
                 makeCurrent={combatant => this.props.makeCurrent(combatant)}
                 makeActive={combatants => this.props.makeActive(combatants)}
                 makeDefeated={combatants => this.defeatCombatants(combatants)}
-                removeCombatants={combatants => this.removeCombatants(combatants)}
-                changeHP={values => this.props.changeHP(values)}
-                addCondition={combatants => this.props.addCondition(combatants)}
-                editCondition={(combatant, condition) => this.props.editCondition(combatant, condition)}
-                removeCondition={(combatant, condition) => this.props.removeCondition(combatant, condition)}
-                nudgeConditionValue={(combatant, type, delta) => this.props.nudgeValue(combatant, type, delta)}
-                mapAdd={combatant => this.setAddingToMapID(this.state.addingToMapID ? null : combatant.id)}
-                mapMove={(combatants, dir) => this.props.mapMove(combatants.map(c => c.id), dir)}
-                mapRemove={combatants => this.props.mapRemove(combatants.map(c => c.id))}
                 toggleTag={(combatants, tag) => this.props.toggleTag(combatants, tag)}
                 toggleCondition={(combatants, condition) => this.props.toggleCondition(combatants, condition)}
                 toggleHidden={combatants => this.props.toggleHidden(combatants)}
+                // HP tab
+                changeHP={values => this.props.changeHP(values)}
+                // Cond tab
+                addCondition={combatants => this.props.addCondition(combatants)}
+                editCondition={(combatant, condition) => this.props.editCondition(combatant, condition)}
+                removeCondition={(combatant, condition) => this.props.removeCondition(combatant, condition)}
+                // Map tab
+                mapAdd={combatant => this.setAddingToMapID(this.state.addingToMapID ? null : combatant.id)}
+                mapMove={(combatants, dir) => this.props.mapMove(combatants.map(c => c.id), dir)}
+                mapRemove={combatants => this.props.mapRemove(combatants.map(c => c.id))}
+                // Adv tab
+                removeCombatants={combatants => this.removeCombatants(combatants)}
                 addCompanion={companion => this.props.addCompanion(companion)}
+                // General
                 changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
                 nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
             />

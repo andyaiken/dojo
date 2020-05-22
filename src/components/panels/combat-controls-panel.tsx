@@ -3,8 +3,9 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { Combat, Combatant } from '../../models/combat';
+import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
+import { Map } from '../../models/map';
 import { Monster } from '../../models/monster-group';
 import { Companion, PC } from '../../models/party';
 
@@ -20,23 +21,30 @@ import Note from './note';
 
 interface Props {
     combatants: Combatant[];
-    combat: Combat;
+    allCombatants: Combatant[];
+    map: Map | null;
+    defaultTab: string;
+    // Main tab
     makeCurrent: (combatant: Combatant) => void;
     makeActive: (combatants: Combatant[]) => void;
     makeDefeated: (combatants: Combatant[]) => void;
-    mapAdd: (combatant: Combatant) => void;
-    mapMove: (combatants: Combatant[], dir: string) => void;
-    mapRemove: (combatants: Combatant[]) => void;
-    removeCombatants: (combatants: Combatant[]) => void;
-    changeHP: (values: {id: string, hp: number, temp: number, damage: number}[]) => void;
-    addCondition: (combatants: Combatant[]) => void;
-    editCondition: (combatant: Combatant, condition: Condition) => void;
-    removeCondition: (combatant: Combatant, condition: Condition) => void;
-    nudgeConditionValue: (condition: Condition, field: string, delta: number) => void;
     toggleTag: (combatants: Combatant[], tag: string) => void;
     toggleCondition: (combatants: Combatant[], condition: string) => void;
     toggleHidden: (combatants: Combatant[]) => void;
+    // HP tab
+    changeHP: (values: {id: string, hp: number, temp: number, damage: number}[]) => void;
+    // Cond tab
+    addCondition: (combatants: Combatant[]) => void;
+    editCondition: (combatant: Combatant, condition: Condition) => void;
+    removeCondition: (combatant: Combatant, condition: Condition) => void;
+    // Map tab
+    mapAdd: (combatant: Combatant) => void;
+    mapMove: (combatants: Combatant[], dir: string) => void;
+    mapRemove: (combatants: Combatant[]) => void;
+    // Adv tab
+    removeCombatants: ((combatants: Combatant[]) => void) | null;
     addCompanion: (companion: Companion) => void;
+    // General
     changeValue: (source: any, field: string, value: any) => void;
     nudgeValue: (source: any, field: string, delta: number) => void;
 }
@@ -52,7 +60,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            view: 'main',
+            view: props.defaultTab,
             damageOrHealing: 0,
             damageMultipliers: {}
         };
@@ -141,19 +149,15 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
     }
 
     private getMainSection() {
-        if (this.props.combatants.every(c => c.pending)) {
-            return (
-                <div className='section'>pending initiative entry</div>
-            );
-        }
+        const actions = [];
+        const engaged: JSX.Element[] = [];
 
         if (this.props.combatants.every(c => c.active)) {
-            const actions = [];
             if (this.props.combatants.every(c => c.current)) {
                 actions.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(this.props.combatants)}>mark as defeated and end turn</button>);
             } else {
                 if (this.props.combatants.length === 1) {
-                    const isMount = !!this.props.combat.combatants.find(c => c.mountID === this.props.combatants[0].id);
+                    const isMount = !!this.props.allCombatants.find(c => c.mountID === this.props.combatants[0].id);
                     if (!isMount) {
                         actions.push(<button key='makeCurrent' onClick={() => this.props.makeCurrent(this.props.combatants[0])}>start turn</button>);
                     }
@@ -161,9 +165,8 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                 actions.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(this.props.combatants)}>mark as defeated</button>);
             }
 
-            const engaged: JSX.Element[] = [];
             if (this.props.combatants.every(c => c.type !== 'pc')) {
-                const pcs = this.props.combat.combatants.filter(c => c.type === 'pc');
+                const pcs = this.props.allCombatants.filter(c => c.type === 'pc');
                 pcs.forEach(pc => {
                     const tag = 'engaged:' + pc.displayName;
                     engaged.push(
@@ -177,74 +180,76 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                     );
                 });
             }
-            let engagedSection = null;
-            if (engaged.length > 0) {
-                engagedSection = (
-                    <div className='section'>
-                        <b>engaged with: </b>
-                        {engaged}
-                    </div>
-                );
-            }
+        }
 
-            return (
+        if (this.props.combatants.every(c => c.defeated)) {
+            actions.push(<button key='makeActive' onClick={() => this.props.makeActive(this.props.combatants)}>mark as active</button>);
+        }
+
+        let actionSection = null;
+        if (actions.length > 0) {
+            actionSection = (
                 <div>
                     {actions}
                     <div className='divider' />
-                    <div className='section'>
-                        <b>quick tags: </b>
-                        <Tag.CheckableTag
-                            checked={this.props.combatants.every(c => c.tags.includes('conc'))}
-                            onChange={() => this.props.toggleTag(this.props.combatants, 'conc')}
-                        >
-                            concentrating
-                        </Tag.CheckableTag>
-                        <Tag.CheckableTag
-                            checked={this.props.combatants.every(c => c.tags.includes('bane'))}
-                            onChange={() => this.props.toggleTag(this.props.combatants, 'bane')}
-                        >
-                            bane
-                        </Tag.CheckableTag>
-                        <Tag.CheckableTag
-                            checked={this.props.combatants.every(c => c.tags.includes('bless'))}
-                            onChange={() => this.props.toggleTag(this.props.combatants, 'bless')}
-                        >
-                            bless
-                        </Tag.CheckableTag>
-                        <Tag.CheckableTag
-                            checked={this.props.combatants.every(c => c.conditions.some(condition => condition.name === 'prone'))}
-                            onChange={() => this.props.toggleCondition(this.props.combatants, 'prone')}
-                        >
-                            prone
-                        </Tag.CheckableTag>
-                        <Tag.CheckableTag
-                            checked={this.props.combatants.every(c => c.conditions.some(condition => condition.name === 'unconscious'))}
-                            onChange={() => this.props.toggleCondition(this.props.combatants, 'unconscious')}
-                        >
-                            unconscious
-                        </Tag.CheckableTag>
-                        <Tag.CheckableTag
-                            checked={!this.props.combatants.every(c => c.showOnMap)}
-                            onChange={() => this.props.toggleHidden(this.props.combatants)}
-                        >
-                            hidden
-                        </Tag.CheckableTag>
-                    </div>
-                    {engagedSection}
                 </div>
             );
         }
 
-        if (this.props.combatants.every(c => c.defeated)) {
-            return (
-                <button onClick={() => this.props.makeActive(this.props.combatants)}>mark as active</button>
+        let engagedSection = null;
+        if (engaged.length > 0) {
+            engagedSection = (
+                <div className='section'>
+                    <b>engaged with: </b>
+                    {engaged}
+                </div>
             );
         }
 
         return (
-            <Note>
-                <div className='section'>multiple combatants are selected</div>
-            </Note>
+            <div>
+                {actionSection}
+                <div className='section'>
+                    <b>quick tags: </b>
+                    <Tag.CheckableTag
+                        checked={this.props.combatants.every(c => c.tags.includes('conc'))}
+                        onChange={() => this.props.toggleTag(this.props.combatants, 'conc')}
+                    >
+                        concentrating
+                    </Tag.CheckableTag>
+                    <Tag.CheckableTag
+                        checked={this.props.combatants.every(c => c.tags.includes('bane'))}
+                        onChange={() => this.props.toggleTag(this.props.combatants, 'bane')}
+                    >
+                        bane
+                    </Tag.CheckableTag>
+                    <Tag.CheckableTag
+                        checked={this.props.combatants.every(c => c.tags.includes('bless'))}
+                        onChange={() => this.props.toggleTag(this.props.combatants, 'bless')}
+                    >
+                        bless
+                    </Tag.CheckableTag>
+                    <Tag.CheckableTag
+                        checked={this.props.combatants.every(c => c.conditions.some(condition => condition.name === 'prone'))}
+                        onChange={() => this.props.toggleCondition(this.props.combatants, 'prone')}
+                    >
+                        prone
+                    </Tag.CheckableTag>
+                    <Tag.CheckableTag
+                        checked={this.props.combatants.every(c => c.conditions.some(condition => condition.name === 'unconscious'))}
+                        onChange={() => this.props.toggleCondition(this.props.combatants, 'unconscious')}
+                    >
+                        unconscious
+                    </Tag.CheckableTag>
+                    <Tag.CheckableTag
+                        checked={!this.props.combatants.every(c => c.showOnMap)}
+                        onChange={() => this.props.toggleHidden(this.props.combatants)}
+                    >
+                        hidden
+                    </Tag.CheckableTag>
+                </div>
+                {engagedSection}
+            </div>
         );
     }
 
@@ -444,11 +449,11 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
         const conditions = (
             <ConditionsPanel
                 combatants={this.props.combatants}
-                combat={this.props.combat}
+                allCombatants={this.props.allCombatants}
                 addCondition={() => this.props.addCondition(this.props.combatants)}
                 editCondition={(combatant, condition) => this.props.editCondition(combatant, condition)}
                 removeCondition={(combatant, condition) => this.props.removeCondition(combatant, condition)}
-                nudgeConditionValue={(condition, type, delta) => this.props.nudgeConditionValue(condition, type, delta)}
+                nudgeConditionValue={(condition, type, delta) => this.props.nudgeValue(condition, type, delta)}
             />
         );
 
@@ -461,12 +466,12 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
     }
 
     private getMapSection() {
-        if (!this.props.combat.map) {
+        if (!this.props.map) {
             return null;
         }
 
         const allOnMap = this.props.combatants.every(c => {
-            return this.props.combat.map && this.props.combat.map.items.find(i => i.id === c.id);
+            return this.props.map && this.props.map.items.find(i => i.id === c.id);
         });
         if (allOnMap) {
             let altitude = null;
@@ -529,9 +534,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 
             return (
                 <div>
-                    <div className='section centered'>
-                        <Radial onClick={dir => this.props.mapMove(this.props.combatants, dir)} />
-                    </div>
+                    <Radial onClick={dir => this.props.mapMove(this.props.combatants, dir)} />
                     <div className='divider' />
                     {altitude}
                     {aura}
@@ -551,9 +554,16 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 
     private getAdvancedSection() {
         let remove = null;
-        if (this.props.combatants.every(c => !c.current)) {
+        if (this.props.removeCombatants && this.props.combatants.every(c => !c.current)) {
             remove = (
-                <ConfirmButton text='remove from encounter' onConfirm={() => this.props.removeCombatants(this.props.combatants)} />
+                <ConfirmButton
+                    text='remove from encounter'
+                    onConfirm={() => {
+                        if (this.props.removeCombatants) {
+                            this.props.removeCombatants(this.props.combatants);
+                        }
+                    }}
+                />
             );
         }
 
@@ -596,12 +606,12 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                 );
             }
 
-            const rider = this.props.combat.combatants.find(c => c.mountID === combatant.id);
+            const rider = this.props.allCombatants.find(c => c.mountID === combatant.id);
             if (!rider) {
-                const currentMountIDs = this.props.combat.combatants
+                const currentMountIDs = this.props.allCombatants
                     .filter(c => c.id !== combatant.id)
                     .filter(c => !!c.mountID).map(c => c.mountID);
-                const mountOptions = this.props.combat.combatants
+                const mountOptions = this.props.allCombatants
                     .filter(c => c.id !== combatant.id)             // Don't include me
                     .filter(c => c.type !== 'placeholder')          // Don't include placeholders
                     .filter(c => !c.mountID)                        // Don't include anyone that's mounted
@@ -656,7 +666,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
             .filter(c => c.type === 'pc')
             .forEach(pc => {
                 (pc as Combatant & PC).companions
-                    .filter(comp => !this.props.combat.combatants.find(c => c.id === comp.id))
+                    .filter(comp => !this.props.allCombatants.find(c => c.id === comp.id))
                     .forEach(comp => {
                         companions.push(
                             <button key={comp.id} onClick={() => this.props.addCompanion(comp)}>add {comp.name}</button>
@@ -698,13 +708,13 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
                     text: m
                 };
             });
-            const controlledMounts = this.props.combat.combatants
+            const controlledMounts = this.props.allCombatants
                 .filter(c => !!c.mountID && (c.mountType === 'controlled'))
                 .map(c => c.mountID || '');
-            if (!this.props.combat.map || this.props.combatants.some(c => controlledMounts.includes(c.id))) {
+            if (!this.props.map || this.props.combatants.some(c => controlledMounts.includes(c.id))) {
                 // Either:
-                // No combat map
-                // Some selected combatants are controlled mounts
+                // * No combat map
+                // * Some selected combatants are controlled mounts
                 // ... so remove the map option
                 views.splice(3, 1);
             }
@@ -715,7 +725,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 
             let currentView = this.state.view;
             if (!views.find(v => v.id === currentView)) {
-                currentView = 'main';
+                currentView = views[0].id;
             }
 
             let content = null;

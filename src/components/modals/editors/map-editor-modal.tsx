@@ -565,9 +565,7 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
         return (
             <div>
                 <div className='subheading'>move</div>
-                <div className='section centered'>
-                    <Radial onClick={dir => this.props.move(this.props.tile, dir)} />
-                </div>
+                <Radial onClick={dir => this.props.move(this.props.tile, dir)} />
                 <div className='subheading'>size</div>
                 <div className='section'>{this.props.tile.width * 5} ft x {this.props.tile.height * 5} ft</div>
                 <div className='section'>
