@@ -251,7 +251,7 @@ export default class Napoleon {
 	}
 
 	public static convertCompanionToCombatant(companion: Companion | null) {
-		const combatant = JSON.parse(JSON.stringify(companion)) as Combatant & Companion;
+		const combatant = (companion ? JSON.parse(JSON.stringify(companion)) : {}) as Combatant & Companion;
 		combatant.id = companion ? companion.id : Utils.guid();
 		combatant.type = 'companion';
 

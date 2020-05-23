@@ -973,8 +973,12 @@ export default class CombatScreen extends React.Component<Props, State> {
 					</Row>
 					<Row className='combat-main'>
 						<Col span={8} className='scrollable'>
-							<div className='heading fixed-top'>initiative holder</div>
-							{current}
+							<GridPanel
+								heading='initiative holder'
+								content={[current]}
+								columns={1}
+								showToggle={false}
+							/>
 						</Col>
 						<Col span={8} className='scrollable'>
 							{notificationSection}
@@ -1044,8 +1048,12 @@ export default class CombatScreen extends React.Component<Props, State> {
 							/>
 						</Col>
 						<Col span={8} className='scrollable'>
-							<div className='heading fixed-top'>selected combatant</div>
-							{this.getSelectedCombatant()}
+							<GridPanel
+								heading='selected combatant'
+								content={[this.getSelectedCombatant()]}
+								columns={1}
+								showToggle={false}
+							/>
 						</Col>
 					</Row>
 					{this.getPlayerView()}

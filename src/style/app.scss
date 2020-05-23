@@ -173,7 +173,6 @@ hr,
 			flex-basis: 28px;
 			font-size: 18px;
 			padding: 5px;
-			margin: 0 5px;
 
 			&.selected {
 				background-color: $highlight02;
@@ -220,7 +219,7 @@ p,
 }
 
 .note {
-	margin: 15px 0;
+	margin: 15px 10px;
 	padding: 5px 10px;
 	background-color: #FAF7EA;
 	border: 1px solid $control-border;

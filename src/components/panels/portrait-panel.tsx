@@ -1,10 +1,8 @@
-import { CloseCircleOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, UserOutlined } from '@ant-design/icons';
 import React from 'react';
 
 import { Monster } from '../../models/monster-group';
 import { PC } from '../../models/party';
-
-import noPortrait from '../../resources/images/no-portrait.png';
 
 interface Props {
 	source: PC | Monster;
@@ -24,21 +22,27 @@ export default class PortraitPanel extends React.Component<Props> {
 		let clearBtn = null;
 		if (this.props.source.portrait) {
 			clearBtn = (
-				<CloseCircleOutlined onClick={() => this.props.clear()} />
+				<CloseCircleOutlined className='clear' onClick={() => this.props.clear()} />
 			);
 		}
 
-		let src = noPortrait;
+		let img = null;
 		const data = localStorage.getItem('image-' + this.props.source.portrait);
 		if (data) {
 			const image = JSON.parse(data);
-			src = image.data;
+			img = (
+				<img className='circle' src={image.data} alt='portrait' onClick={() => this.props.edit()} />
+			);
+		} else {
+			img = (
+				<UserOutlined className='circle' onClick={() => this.props.edit()} />
+			);
 		}
 
 		return (
 			<div className='portrait editing'>
 				<div className='section centered'>
-					<img src={src} alt='portrait' onClick={() => this.props.edit()} />
+					{img}
 					{clearBtn}
 				</div>
 			</div>

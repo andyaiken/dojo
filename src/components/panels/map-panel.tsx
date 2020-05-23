@@ -14,8 +14,6 @@ import { PC } from '../../models/party';
 
 import HitPointGauge from './hit-point-gauge';
 
-import none from '../../resources/images/no-portrait.png';
-
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);
 
@@ -453,15 +451,13 @@ class MapTile extends React.Component<MapTileProps> {
 
 			let customImage = null;
 			if (this.props.tile.terrain === 'custom') {
-				let src = none;
 				const data = localStorage.getItem('image-' + this.props.tile.customBackground);
 				if (data) {
 					const image = JSON.parse(data);
-					src = image.data;
+					customImage = (
+						<img className='custom-image' alt='map tile' src={image.data} />
+					);
 				}
-				customImage = (
-					<img className='custom-image' alt='map tile' src={src} />
-				);
 			}
 
 			let content = null;

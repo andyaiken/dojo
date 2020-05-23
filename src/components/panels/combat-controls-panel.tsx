@@ -747,11 +747,8 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 					break;
 			}
 
-			const name = this.props.combatants.length === 1 ? this.props.combatants[0].displayName : 'multiple combatants';
-
 			return (
-				<div className='group-panel combat-controls'>
-					<div className='subheading'>{name}</div>
+				<div>
 					<Selector
 						options={views}
 						selectedID={currentView}
