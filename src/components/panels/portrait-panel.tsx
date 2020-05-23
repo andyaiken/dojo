@@ -73,7 +73,7 @@ export default class PortraitPanel extends React.Component<Props> {
 
 		return (
 			<div className={style}>
-				<img src={image.data} alt='portrait' />
+				<img className='circle' src={image.data} alt='portrait' />
 			</div>
 		);
 	}
