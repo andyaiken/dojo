@@ -1,139 +1,139 @@
 .combat-top-row {
-    height: 50px;
-    background-color: rgb(110, 110, 110);
+	height: 50px;
+	background-color: rgb(110, 110, 110);
 
-    .action {
-        padding: 0 10px;
-    }
+	.action {
+		padding: 0 10px;
+	}
 
-    .statistic {
-        color: $header-foreground;
-    }
+	.statistic {
+		color: $header-foreground;
+	}
 
-    .menu {
-        padding: 0 10px;
-        text-align: right;
-        font-size: 20px;
-        color: $header-foreground;
-    }
+	.menu {
+		padding: 0 10px;
+		text-align: right;
+		font-size: 20px;
+		color: $header-foreground;
+	}
 }
 
 .combat-main {
-    height: calc(100% - 50px);
+	height: calc(100% - 50px);
 }
 
 .multiple-combatant-row {
-    color: white;
-    background-color: #656565;
-    border-radius: 5px;
-    margin: 3px 0;
-    padding: 3px 5px;
-    position: relative;
+	color: white;
+	background-color: #656565;
+	border-radius: 5px;
+	margin: 3px 0;
+	padding: 3px 5px;
+	position: relative;
 }
 
 .initiative-list-item {
-    border: 0 solid $control-border;
-    border-left-width: 5px;
-    margin: 5px 0;
-    cursor: pointer;
+	border: 0 solid $control-border;
+	border-left-width: 5px;
+	margin: 5px 0;
+	cursor: pointer;
 
-    &:hover,
-    &.highlight,
-    &.current {
-        border-color: $highlight;
-    }
+	&:hover,
+	&.highlight,
+	&.current {
+		border-color: $highlight;
+	}
 
-    &.defeated {
-        opacity: 0.5;
-    }
+	&.defeated {
+		opacity: 0.5;
+	}
 
-    .header {
-        height: 35px;
-        padding: 5px 8px;
-        background-color: $highlight01;
-        display: flex;
-        align-items: center;
+	.header {
+		height: 35px;
+		padding: 5px 8px;
+		background-color: $highlight01;
+		display: flex;
+		align-items: center;
 
-        .name {
-            display: inline-block;
-            height: 22px;
-            line-height: 22px;
-            flex-grow: 1;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow-x: hidden;
-            overflow-y: hidden;
-        }
-    }
+		.name {
+			display: inline-block;
+			height: 22px;
+			line-height: 22px;
+			flex-grow: 1;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow-x: hidden;
+			overflow-y: hidden;
+		}
+	}
 
-    .content {
-        padding-left: 5px;
+	.content {
+		padding-left: 5px;
 
-        .note-heading {
-            font-weight: 600;
-        }
+		.note-heading {
+			font-weight: 600;
+		}
 
-        .note-details {
-            font-size: 11px;
-            margin: 2px 0;
-        }
+		.note-details {
+			font-size: 11px;
+			margin: 2px 0;
+		}
 
-        .icon-button {
-            float: right;
-            font-size: 14px;
-            padding: 2px;
-            pointer-events: all;
+		.icon-button {
+			float: right;
+			font-size: 14px;
+			padding: 2px;
+			pointer-events: all;
 
-            &:hover {
-                background-color: $highlight01;
-            }
-        }
-    }
+			&:hover {
+				background-color: $highlight01;
+			}
+		}
+	}
 }
 
 .next-up {
-    margin: 15px 0;
+	margin: 15px 0;
 }
 
 .notifications {
-    position: sticky;
-    z-index: 15;
-    top: 0;
-    background-color: transparent;
-    padding: 1px 5px 0 5px;
+	position: sticky;
+	z-index: 15;
+	top: 0;
+	background-color: transparent;
+	padding: 1px 5px 0 5px;
 }
 
 .legendary-usage .anticon {
-    font-size: 20px;
-    margin: 0 15px !important;
+	font-size: 20px;
+	margin: 0 15px !important;
 }
 
 .init-separator {
-    background-color: rgba(220, 220, 220, 0.5);
-    font-weight: 600;
-    padding: 5px;
-    margin: 20px 0 !important;
+	background-color: rgba(220, 220, 220, 0.5);
+	font-weight: 600;
+	padding: 5px;
+	margin: 20px 0 !important;
 }
 
 .combat-top-row .statistic,
 .initiative-list-item .statistic {
-    margin: 5px 0;
-    font-size: 15px;
-    text-align: center;
-    font-weight: 600;
+	margin: 5px 0;
+	font-size: 15px;
+	text-align: center;
+	font-weight: 600;
 
-    .statistic-label,
-    .statistic-value {
-        display: inline-block;
-        vertical-align: top;
-        line-height: 30px;
-    }
+	.statistic-label,
+	.statistic-value {
+		display: inline-block;
+		vertical-align: top;
+		line-height: 30px;
+	}
 
-    .statistic-value {
-        font-size: 25px;
-        padding: 0 5px;
-    }
+	.statistic-value {
+		font-size: 25px;
+		padding: 0 5px;
+	}
 }

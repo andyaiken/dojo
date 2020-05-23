@@ -9,106 +9,106 @@ interface Props {
 }
 
 interface State {
-    view: string;
+	view: string;
 }
 
 export default class GeneratorsSidebar extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
+	constructor(props: Props) {
+		super(props);
 
-        this.state = {
-            view: 'name'
-        };
-    }
+		this.state = {
+			view: 'name'
+		};
+	}
 
-    private setView(view: string) {
-        this.setState({
-            view: view
-        });
-    }
+	private setView(view: string) {
+		this.setState({
+			view: view
+		});
+	}
 
-    public render() {
-        try {
-            const options = [
-                {
-                    id: 'name',
-                    text: 'names'
-                },
-                {
-                    id: 'book',
-                    text: 'book titles'
-                },
-                {
-                    id: 'potion',
-                    text: 'potions'
-                },
-                {
-                    id: 'treasure',
-                    text: 'treasures'
-                },
-                {
-                    id: 'place',
-                    text: 'place names'
-                },
-                {
-                    id: 'npc',
-                    text: 'npc'
-                }
-            ];
+	public render() {
+		try {
+			const options = [
+				{
+					id: 'name',
+					text: 'names'
+				},
+				{
+					id: 'book',
+					text: 'book titles'
+				},
+				{
+					id: 'potion',
+					text: 'potions'
+				},
+				{
+					id: 'treasure',
+					text: 'treasures'
+				},
+				{
+					id: 'place',
+					text: 'place names'
+				},
+				{
+					id: 'npc',
+					text: 'npc'
+				}
+			];
 
-            let content = null;
-            switch (this.state.view) {
-                case 'name':
-                    content = (
-                        <SimpleGenerator key='name' type='name' />
-                    );
-                    break;
-                case 'book':
-                    content = (
-                        <SimpleGenerator key='book' type='book' />
-                    );
-                    break;
-                case 'potion':
-                    content = (
-                        <SimpleGenerator key='potion' type='potion' />
-                    );
-                    break;
-                case 'treasure':
-                    content = (
-                        <SimpleGenerator key='treasure' type='treasure' />
-                    );
-                    break;
-                case 'place':
-                    content = (
-                        <PlaceNameGenerator />
-                    );
-                    break;
-                case 'npc':
-                    content = (
-                        <NPCGenerator />
-                    );
-                    break;
-            }
+			let content = null;
+			switch (this.state.view) {
+				case 'name':
+					content = (
+						<SimpleGenerator key='name' type='name' />
+					);
+					break;
+				case 'book':
+					content = (
+						<SimpleGenerator key='book' type='book' />
+					);
+					break;
+				case 'potion':
+					content = (
+						<SimpleGenerator key='potion' type='potion' />
+					);
+					break;
+				case 'treasure':
+					content = (
+						<SimpleGenerator key='treasure' type='treasure' />
+					);
+					break;
+				case 'place':
+					content = (
+						<PlaceNameGenerator />
+					);
+					break;
+				case 'npc':
+					content = (
+						<NPCGenerator />
+					);
+					break;
+			}
 
-            return (
-                <div className='sidebar-container'>
-                    <div className='sidebar-header'>
-                        <div className='heading'>generators</div>
-                        <Selector
-                            options={options}
-                            selectedID={this.state.view}
-                            itemsPerRow={3}
-                            onSelect={optionID => this.setView(optionID)}
-                        />
-                    </div>
-                    <div className='sidebar-content'>
-                        {content}
-                    </div>
-                </div>
-            );
-        } catch (ex) {
-            console.error(ex);
-            return <div className='render-error'/>;
-        }
-    }
+			return (
+				<div className='sidebar-container'>
+					<div className='sidebar-header'>
+						<div className='heading'>generators</div>
+						<Selector
+							options={options}
+							selectedID={this.state.view}
+							itemsPerRow={3}
+							onSelect={optionID => this.setView(optionID)}
+						/>
+					</div>
+					<div className='sidebar-content'>
+						{content}
+					</div>
+				</div>
+			);
+		} catch (ex) {
+			console.error(ex);
+			return <div className='render-error'/>;
+		}
+	}
 }

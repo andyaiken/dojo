@@ -23,199 +23,199 @@
 @import './utility.scss';
 
 * {
-    transition:
-        color 0.2s ease-in-out,
-        background-color 0.2s ease-in-out,
-        border-color 0.2s ease-in-out;
+	transition:
+		color 0.2s ease-in-out,
+		background-color 0.2s ease-in-out,
+		border-color 0.2s ease-in-out;
 }
 
 html,
 body,
 #root,
 .dojo {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
-    position: fixed;
-    overflow-x: hidden;
-    overflow-y: hidden;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	width: 100%;
+	position: fixed;
+	overflow-x: hidden;
+	overflow-y: hidden;
 }
 
 .fixed-top {
-    position: sticky;
-    z-index: 5;
-    top: 0;
-    background-color: $background;
+	position: sticky;
+	z-index: 5;
+	top: 0;
+	background-color: $background;
 
-    &::after {
-        position: absolute;
-        top: 40px;
-        left: 1px;
-        right: 1px;
-        height: 5px;
-        background: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
-        content: "";
-        z-index: 10;
-    }
+	&::after {
+		position: absolute;
+		top: 40px;
+		left: 1px;
+		right: 1px;
+		height: 5px;
+		background: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+		content: "";
+		z-index: 10;
+	}
 }
 
 .app-title {
-    display: inline-block;
-    vertical-align: top;
-    padding: 5px 5px 5px 10px;
-    height: 30px;
-    line-height: 20px;
-    font-size: 20px;
-    font-weight: 600;
-    color: $header-foreground;
-    border-left: 5px solid $header-foreground;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+	display: inline-block;
+	vertical-align: top;
+	padding: 5px 5px 5px 10px;
+	height: 30px;
+	line-height: 20px;
+	font-size: 20px;
+	font-weight: 600;
+	color: $header-foreground;
+	border-left: 5px solid $header-foreground;
+	text-transform: uppercase;
+	letter-spacing: 2px;
 }
 
 .app-name {
-    text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 2px;
+	text-transform: uppercase;
+	font-weight: 600;
+	letter-spacing: 2px;
 }
 
 hr,
 .divider {
-    margin: 10px 20px;
-    height: 0;
-    border-top: 1px solid $control-border;
+	margin: 10px 20px;
+	height: 0;
+	border-top: 1px solid $control-border;
 }
 
 .vertical-divider {
-    height: 35px;
-    width: 3px;
-    margin: 0 10px;
-    background-color: $control-border;
+	height: 35px;
+	width: 3px;
+	margin: 0 10px;
+	background-color: $control-border;
 }
 
 .image,
 .anticon {
-    transition: transform 0.2s ease-in-out;
+	transition: transform 0.2s ease-in-out;
 
-    &.rotate {
-        transform: rotate(-180deg);
-    }
+	&.rotate {
+		transform: rotate(-180deg);
+	}
 }
 
 .table {
-    background-color: $background;
-    border: 1px solid $control-border;
-    margin: 8px 0;
-    padding: 3px 0;
+	background-color: $background;
+	border: 1px solid $control-border;
+	margin: 8px 0;
+	padding: 3px 0;
 
-    .cell {
-        display: inline-block;
-        padding: 2px 0;
-        text-align: center;
+	.cell {
+		display: inline-block;
+		padding: 2px 0;
+		text-align: center;
 
-        &.three {
-            width: calc((100% - 1px) / 3);
-        }
+		&.three {
+			width: calc((100% - 1px) / 3);
+		}
 
-        &.four {
-            width: calc((100% - 1px) / 4);
-        }
+		&.four {
+			width: calc((100% - 1px) / 4);
+		}
 
-        &.easy {
-            padding-bottom: 4px;
-            border-bottom: 3px solid green;
-        }
-    
-        &.medium {
-            padding-bottom: 4px;
-            border-bottom: 3px solid orange;
-        }
-    
-        &.hard {
-            padding-bottom: 4px;
-            border-bottom: 3px solid red;
-        }
-    
-        &.deadly {
-            padding-bottom: 4px;
-            border-bottom: 3px solid black;
-        }
-    }
+		&.easy {
+			padding-bottom: 4px;
+			border-bottom: 3px solid green;
+		}
+	
+		&.medium {
+			padding-bottom: 4px;
+			border-bottom: 3px solid orange;
+		}
+	
+		&.hard {
+			padding-bottom: 4px;
+			border-bottom: 3px solid red;
+		}
+	
+		&.deadly {
+			padding-bottom: 4px;
+			border-bottom: 3px solid black;
+		}
+	}
 }
 
 .dragged {
-    font-family: 'Open Sans', 'Segoe UI', sans-serif;
-    font-size: 12px;
-    background-color: $background;
-    box-sizing: border-box;
-    user-select: none;
-    transition-duration: 0s;
-    z-index: 2000;
+	font-family: 'Open Sans', 'Segoe UI', sans-serif;
+	font-size: 12px;
+	background-color: $background;
+	box-sizing: border-box;
+	user-select: none;
+	transition-duration: 0s;
+	z-index: 2000;
 
-    * {
-        transition-duration: 0s;
-    }
+	* {
+		transition-duration: 0s;
+	}
 }
 
 .grid-panel {
-    padding-bottom: 10px;
+	padding-bottom: 10px;
 
-    > .heading {
-        display: flex;
-        align-items: center;
+	> .heading {
+		display: flex;
+		align-items: center;
 
-        > .title {
-            flex-grow: 1;
-            flex-shrink: 1;
-        }
+		> .title {
+			flex-grow: 1;
+			flex-shrink: 1;
+		}
 
-        > .anticon {
-            flex-basis: 28px;
-            font-size: 18px;
-            padding: 5px;
-            margin: 0 5px;
+		> .anticon {
+			flex-basis: 28px;
+			font-size: 18px;
+			padding: 5px;
+			margin: 0 5px;
 
-            &.selected {
-                background-color: $highlight02;
-            }
-        }
-    }
+			&.selected {
+				background-color: $highlight02;
+			}
+		}
+	}
 }
 
 p,
 .section {
-    margin: 5px 0;
-    break-inside: avoid;
+	margin: 5px 0;
+	break-inside: avoid;
 
-    &.intro {
-        font-size: 16px;
-    }
+	&.intro {
+		font-size: 16px;
+	}
 
-    &.centered {
-        text-align: center;
-    }
+	&.centered {
+		text-align: center;
+	}
 
-    .statistic-value {
-        vertical-align: middle;
-        font-weight: 600;
-        text-align: right;
-    }
+	.statistic-value {
+		vertical-align: middle;
+		font-weight: 600;
+		text-align: right;
+	}
 }
 
 .selectable-image,
 .nonselectable-image {
-    border: 1px solid $control-border;
-    padding: 5px;
-    width: 100%;
-    object-fit: contain;
-    max-height: 100%;
+	border: 1px solid $control-border;
+	padding: 5px;
+	width: 100%;
+	object-fit: contain;
+	max-height: 100%;
 }
 
 .selectable-image {
-    cursor: pointer;
+	cursor: pointer;
 
-    &:hover {
-        border-color: $highlight;
-    }
+	&:hover {
+		border-color: $highlight;
+	}
 }

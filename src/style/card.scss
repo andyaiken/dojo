@@ -1,206 +1,206 @@
 .card {
-    background-color: #F5F5F5;
-    border: 1px solid #656565;
-    margin: 5px;
+	background-color: #F5F5F5;
+	border: 1px solid #656565;
+	margin: 5px;
 
-    .heading {
-        height: 35px;
-        font-size: 15px;
-        margin: 0;
-        padding: 5px 0 5px 8px;
-        border-bottom: none;
-        background-color: #656565;
-        color: $background;
+	.heading {
+		height: 35px;
+		font-size: 15px;
+		margin: 0;
+		padding: 5px 0 5px 8px;
+		border-bottom: none;
+		background-color: #656565;
+		color: $background;
 
-        .title {
-            width: calc(100% - 25px);
-            display: inline-block;
-            vertical-align: middle;
-            white-space: nowrap;
-            overflow-x: hidden;
-            overflow-y: hidden;
-            text-overflow: ellipsis;
-        }
+		.title {
+			width: calc(100% - 25px);
+			display: inline-block;
+			vertical-align: middle;
+			white-space: nowrap;
+			overflow-x: hidden;
+			overflow-y: hidden;
+			text-overflow: ellipsis;
+		}
 
-        .image {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            display: inline-block;
-            vertical-align: middle;
-        }
+		.image {
+			width: 20px;
+			height: 20px;
+			cursor: pointer;
+			display: inline-block;
+			vertical-align: middle;
+		}
 
-        .anticon {
-            font-size: 20px;
-            vertical-align: middle;
-            cursor: pointer;
-        }
-    }
+		.anticon {
+			font-size: 20px;
+			vertical-align: middle;
+			cursor: pointer;
+		}
+	}
 
-    .hp-gauge {
-        margin: 5px 0 10px 0;
-    }
+	.hp-gauge {
+		margin: 5px 0 10px 0;
+	}
 
-    .divider {
-        border-color: #656565;
-    }
+	.divider {
+		border-color: #656565;
+	}
 
-    &.pc {
-        border: 1px solid #006500;
-        background-color: beige;
+	&.pc {
+		border: 1px solid #006500;
+		background-color: beige;
 
-        .heading {
-            background-color: #006500;
-        }
+		.heading {
+			background-color: #006500;
+		}
 
-        .subheading {
-            color: #006500;
-        }
+		.subheading {
+			color: #006500;
+		}
 
-        .divider {
-            border-color: #006500;
-        }
+		.divider {
+			border-color: #006500;
+		}
 
-        .card-content {
-    
-            .stats {
-                column-count: 1;
-            }
-        }
-    }
+		.card-content {
+	
+			.stats {
+				column-count: 1;
+			}
+		}
+	}
 
-    &.monster {
-        border: 1px solid #650000;
-        background-color: beige;
+	&.monster {
+		border: 1px solid #650000;
+		background-color: beige;
 
-        .heading {
-            background-color: #650000;
-        }
+		.heading {
+			background-color: #650000;
+		}
 
-        .subheading {
-            color: #650000;
-        }
+		.subheading {
+			color: #650000;
+		}
 
-        .divider {
-            border-color: #650000;
-        }
-    }
+		.divider {
+			border-color: #650000;
+		}
+	}
 
-    &.encounter {
-        border: 1px solid #006565;
-        background-color: beige;
+	&.encounter {
+		border: 1px solid #006565;
+		background-color: beige;
 
-        .heading {
-            background-color: #006565;
-        }
+		.heading {
+			background-color: #006565;
+		}
 
-        .subheading {
-            color: #006565;
-        }
+		.subheading {
+			color: #006565;
+		}
 
-        .divider {
-            border-color: #006565;
-        }
-    }
+		.divider {
+			border-color: #006565;
+		}
+	}
 
-    &.map {
-        border: 1px solid #000065;
-        background-color: beige;
+	&.map {
+		border: 1px solid #000065;
+		background-color: beige;
 
-        .heading {
-            background-color: #000065;
-        }
+		.heading {
+			background-color: #000065;
+		}
 
-        .subheading {
-            color: #000065;
-        }
+		.subheading {
+			color: #000065;
+		}
 
-        .divider {
-            border-color: #000065;
-        }
-    }
+		.divider {
+			border-color: #000065;
+		}
+	}
 
-    &.combat {
-        border: 1px solid #650065;
-        background-color: beige;
+	&.combat {
+		border: 1px solid #650065;
+		background-color: beige;
 
-        .heading {
-            background-color: #650065;
-        }
+		.heading {
+			background-color: #650065;
+		}
 
-        .subheading {
-            color: #650065;
-        }
+		.subheading {
+			color: #650065;
+		}
 
-        .divider {
-            border-color: #650065;
-        }
-    }
+		.divider {
+			border-color: #650065;
+		}
+	}
 
-    &.error {
-        background-color: red;
-        color: $background;
+	&.error {
+		background-color: red;
+		color: $background;
 
-        .subheading, b, strong {
-            color: $background;
-        }
+		.subheading, b, strong {
+			color: $background;
+		}
 
-        .divider {
-            border-color: $background;
-        }
-    }
+		.divider {
+			border-color: $background;
+		}
+	}
 
-    .card-content {
-        padding: 5px 10px;
+	.card-content {
+		padding: 5px 10px;
 
-        .stats {
-            column-width: 220px;
-            column-count: 2;
-        }
+		.stats {
+			column-width: 220px;
+			column-count: 2;
+		}
 
-        .trait {
-            break-inside: avoid-column;
-    
-            &.trait-template {
-                cursor: pointer;
-    
-                &:hover {
-                    background-color: $highlight02;
-                }
-            }
-        }
+		.trait {
+			break-inside: avoid-column;
+	
+			&.trait-template {
+				cursor: pointer;
+	
+				&:hover {
+					background-color: $highlight02;
+				}
+			}
+		}
 
-        .fixed-height {
-            height: 194px;
-            overflow-y: auto;
+		.fixed-height {
+			height: 194px;
+			overflow-y: auto;
 
-            .combatant-row {
-                margin: 5px 0;
-                padding: 3px 5px;
-                position: relative;
-                border-left: 5px solid $control-border;
-                cursor: pointer;
+			.combatant-row {
+				margin: 5px 0;
+				padding: 3px 5px;
+				position: relative;
+				border-left: 5px solid $control-border;
+				cursor: pointer;
 
-                .name {
-                    display: inline-block;
-                    vertical-align: top;
-                    padding: 1px 0;
-                    min-height: 20px;
-                }
+				.name {
+					display: inline-block;
+					vertical-align: top;
+					padding: 1px 0;
+					min-height: 20px;
+				}
 
-                &.inactive {
-                    opacity: 0.5;
+				&.inactive {
+					opacity: 0.5;
 
-                    .name {
-                        text-decoration: line-through;
-                    }
-                }
+					.name {
+						text-decoration: line-through;
+					}
+				}
 
-                &:hover {
-                    border-color: $highlight;
-                    background-color: $highlight01;
-                }
-            }
-        }
-    }
+				&:hover {
+					border-color: $highlight;
+					background-color: $highlight01;
+				}
+			}
+		}
+	}
 }

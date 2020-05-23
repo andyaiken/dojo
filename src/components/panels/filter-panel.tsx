@@ -12,92 +12,92 @@ import Selector from '../controls/selector';
 import Textbox from '../controls/textbox';
 
 interface Props {
-    filter: MonsterFilter;
-    noTopMargin: boolean;
-    changeValue: (type: 'name' | 'challenge' | 'category' | 'size', value: any) => void;
-    resetFilter: () => void;
+	filter: MonsterFilter;
+	noTopMargin: boolean;
+	changeValue: (type: 'name' | 'challenge' | 'category' | 'size', value: any) => void;
+	resetFilter: () => void;
 }
 
 export default class FilterPanel extends React.Component<Props> {
-    public static defaultProps = {
-        noTopMargin: false
-    };
+	public static defaultProps = {
+		noTopMargin: false
+	};
 
-    public render() {
-        try {
-            const style: React.CSSProperties = {};
-            if (this.props.noTopMargin) {
-                style.marginTop = '-5px';
-            }
+	public render() {
+		try {
+			const style: React.CSSProperties = {};
+			if (this.props.noTopMargin) {
+				style.marginTop = '-5px';
+			}
 
-            const sizes = ['all sizes'].concat(SIZE_TYPES);
-            const sizeOptions = sizes.map(size => ({ id: size, text: size }));
+			const sizes = ['all sizes'].concat(SIZE_TYPES);
+			const sizeOptions = sizes.map(size => ({ id: size, text: size }));
 
-            const categories = ['all types'].concat(CATEGORY_TYPES);
-            const catOptions = categories.map(cat => ({ id: cat, text: cat }));
-            const aberr = catOptions.find(o => o.id === 'aberration');
-            if (aberr) {
-                aberr.text = 'aberr.';
-            }
-            const celest = catOptions.find(o => o.id === 'celestial');
-            if (celest) {
-                celest.text = 'celest.';
-            }
-            const constr = catOptions.find(o => o.id === 'construct');
-            if (constr) {
-                constr.text = 'const.';
-            }
-            const elem = catOptions.find(o => o.id === 'elemental');
-            if (elem) {
-                elem.text = 'elem.';
-            }
-            const human = catOptions.find(o => o.id === 'humanoid');
-            if (human) {
-                human.text = 'human.';
-            }
-            const monst = catOptions.find(o => o.id === 'monstrosity');
-            if (monst) {
-                monst.text = 'monst.';
-            }
+			const categories = ['all types'].concat(CATEGORY_TYPES);
+			const catOptions = categories.map(cat => ({ id: cat, text: cat }));
+			const aberr = catOptions.find(o => o.id === 'aberration');
+			if (aberr) {
+				aberr.text = 'aberr.';
+			}
+			const celest = catOptions.find(o => o.id === 'celestial');
+			if (celest) {
+				celest.text = 'celest.';
+			}
+			const constr = catOptions.find(o => o.id === 'construct');
+			if (constr) {
+				constr.text = 'const.';
+			}
+			const elem = catOptions.find(o => o.id === 'elemental');
+			if (elem) {
+				elem.text = 'elem.';
+			}
+			const human = catOptions.find(o => o.id === 'humanoid');
+			if (human) {
+				human.text = 'human.';
+			}
+			const monst = catOptions.find(o => o.id === 'monstrosity');
+			if (monst) {
+				monst.text = 'monst.';
+			}
 
-            return (
-                <div style={style}>
-                    <Textbox
-                        key='search'
-                        text={this.props.filter.name}
-                        placeholder='filter by name'
-                        onChange={value => this.props.changeValue('name', value)}
-                    />
-                    <Expander text={'showing ' + Napoleon.getFilterDescription(this.props.filter)}>
-                        <Slider
-                            range={true}
-                            min={0}
-                            max={35}
-                            value={[this.props.filter.challengeMin, this.props.filter.challengeMax]}
-                            onChange={value => this.props.changeValue('challenge', value)}
-                        />
-                        <Dropdown
-                            options={sizeOptions}
-                            placeholder='filter by size...'
-                            selectedID={this.props.filter.size}
-                            onSelect={optionID => this.props.changeValue('size', optionID)}
-                        />
-                        <Selector
-                            options={catOptions}
-                            selectedID={this.props.filter.category}
-                            itemsPerRow={3}
-                            onSelect={optionID => this.props.changeValue('category', optionID)}
-                        />
-                        <div className='divider' />
-                        <div className='section'>
-                            <button onClick={() => this.props.resetFilter()}>clear filter</button>
-                        </div>
-                    </Expander>
-                </div>
-            );
-        } catch (e) {
-            console.error(e);
-            return <div className='render-error'/>;
-        }
-    }
+			return (
+				<div style={style}>
+					<Textbox
+						key='search'
+						text={this.props.filter.name}
+						placeholder='filter by name'
+						onChange={value => this.props.changeValue('name', value)}
+					/>
+					<Expander text={'showing ' + Napoleon.getFilterDescription(this.props.filter)}>
+						<Slider
+							range={true}
+							min={0}
+							max={35}
+							value={[this.props.filter.challengeMin, this.props.filter.challengeMax]}
+							onChange={value => this.props.changeValue('challenge', value)}
+						/>
+						<Dropdown
+							options={sizeOptions}
+							placeholder='filter by size...'
+							selectedID={this.props.filter.size}
+							onSelect={optionID => this.props.changeValue('size', optionID)}
+						/>
+						<Selector
+							options={catOptions}
+							selectedID={this.props.filter.category}
+							itemsPerRow={3}
+							onSelect={optionID => this.props.changeValue('category', optionID)}
+						/>
+						<div className='divider' />
+						<div className='section'>
+							<button onClick={() => this.props.resetFilter()}>clear filter</button>
+						</div>
+					</Expander>
+				</div>
+			);
+		} catch (e) {
+			console.error(e);
+			return <div className='render-error'/>;
+		}
+	}
 }

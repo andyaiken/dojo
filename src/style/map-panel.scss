@@ -1,282 +1,282 @@
 .map-panel {
-    overflow-x: auto;
-    overflow-y: auto;
+	overflow-x: auto;
+	overflow-y: auto;
 
-    .grid {
-        position: relative;
-        margin: 0 auto;
-        overflow: hidden;
+	.grid {
+		position: relative;
+		margin: 0 auto;
+		overflow: hidden;
 
-        .grid-square {
-            position: absolute;
+		.grid-square {
+			position: absolute;
 
-            &.drag-overlay {
-                background-color: rgba(0, 60, 200, 0.1);
-                cursor: pointer;
+			&.drag-overlay {
+				background-color: rgba(0, 60, 200, 0.1);
+				cursor: pointer;
 
-                &:hover {
-                    background-color: rgba(0, 60, 200, 0.2);
-                }
-            }
+				&:hover {
+					background-color: rgba(0, 60, 200, 0.2);
+				}
+			}
 
-            &.fog-overlay {
-                cursor: pointer;
+			&.fog-overlay {
+				cursor: pointer;
 
-                &:hover {
-                    background-color: rgba(0, 60, 200, 0.2);
-                }
-            }
+				&:hover {
+					background-color: rgba(0, 60, 200, 0.2);
+				}
+			}
 
-            &.fog {
-                background-color: black;
-                box-shadow: 0 0 10px 2px black;
-                pointer-events: none;
-            }
-        }
-    }
+			&.fog {
+				background-color: black;
+				box-shadow: 0 0 10px 2px black;
+				pointer-events: none;
+			}
+		}
+	}
 
-    &.thumbnail {
-        pointer-events: none;
-        overflow-x: hidden;
-        overflow-y: hidden;
-    }
+	&.thumbnail {
+		pointer-events: none;
+		overflow-x: hidden;
+		overflow-y: hidden;
+	}
 
-    &.edit {
-        overflow-x: visible;
-        overflow-y: visible;
+	&.edit {
+		overflow-x: visible;
+		overflow-y: visible;
 
-        .grid {
-            border: 1px solid $control-border;
-            background-color: #B8C7F4;
-            margin: 15px auto;
-        }
+		.grid {
+			border: 1px solid $control-border;
+			background-color: #B8C7F4;
+			margin: 15px auto;
+		}
 
-        .tile:hover {
-            border-color: $highlight;
-        }
-    }
+		.tile:hover {
+			border-color: $highlight;
+		}
+	}
 
-    &.combat,
-    &.combat-player {
+	&.combat,
+	&.combat-player {
 
-        .overlay:hover,
-        .token:hover {
-            border-color: $highlight;
-        }
-    }
+		.overlay:hover,
+		.token:hover {
+			border-color: $highlight;
+		}
+	}
 
-    &.combat {
-        padding: 10px 0;
+	&.combat {
+		padding: 10px 0;
 
-        .fog {
-            opacity: 0.6;
-            box-shadow: none !important;
-        }
-    }
+		.fog {
+			opacity: 0.6;
+			box-shadow: none !important;
+		}
+	}
 
-    &.combat-player {
-        padding: 20px;
-    }
+	&.combat-player {
+		padding: 20px;
+	}
 }
 
 .tile {
-    position: absolute;
-    border: 1px solid darkgrey;
-    background-color: lightgrey;
-    /*
-    // This causes a compilation error when deploying, for some reason
-    transition:
-        left 0.2s ease-in-out,
-        top 0.2s ease-in-out,
-        width 0.2s ease-in-out,
-        height 0.2s ease-in-out;
-    */
+	position: absolute;
+	border: 1px solid darkgrey;
+	background-color: lightgrey;
+	/*
+	// This causes a compilation error when deploying, for some reason
+	transition:
+		left 0.2s ease-in-out,
+		top 0.2s ease-in-out,
+		width 0.2s ease-in-out,
+		height 0.2s ease-in-out;
+	*/
 
-    &.default {
-        background-image: url("../resources/images/map-tiles/default.jpg");
-    }
+	&.default {
+		background-image: url("../resources/images/map-tiles/default.jpg");
+	}
 
-    &.cavern {
-        background-image: url("../resources/images/map-tiles/cavern.jpg");
-    }
+	&.cavern {
+		background-image: url("../resources/images/map-tiles/cavern.jpg");
+	}
 
-    &.dirt {
-        background-image: url("../resources/images/map-tiles/dirt.jpg");
-    }
+	&.dirt {
+		background-image: url("../resources/images/map-tiles/dirt.jpg");
+	}
 
-    &.flagstone {
-        background-image: url("../resources/images/map-tiles/flagstone.jpg");
-    }
+	&.flagstone {
+		background-image: url("../resources/images/map-tiles/flagstone.jpg");
+	}
 
-    &.floorboard {
-        background-image: url("../resources/images/map-tiles/floorboard.jpg");
-    }
+	&.floorboard {
+		background-image: url("../resources/images/map-tiles/floorboard.jpg");
+	}
 
-    &.grassland {
-        background-image: url("../resources/images/map-tiles/grassland.jpg");
-    }
+	&.grassland {
+		background-image: url("../resources/images/map-tiles/grassland.jpg");
+	}
 
-    &.pit {
-        background-image: url("../resources/images/map-tiles/pit.jpg");
-    }
+	&.pit {
+		background-image: url("../resources/images/map-tiles/pit.jpg");
+	}
 
-    &.sand {
-        background-image: url("../resources/images/map-tiles/sand.jpg");
-    }
+	&.sand {
+		background-image: url("../resources/images/map-tiles/sand.jpg");
+	}
 
-    &.snow {
-        background-image: url("../resources/images/map-tiles/snow.jpg");
-    }
+	&.snow {
+		background-image: url("../resources/images/map-tiles/snow.jpg");
+	}
 
-    &.water {
-        background-image: url("../resources/images/map-tiles/water.jpg");
-    }
+	&.water {
+		background-image: url("../resources/images/map-tiles/water.jpg");
+	}
 
-    &.selected {
-        border-color: $highlight;
-    }
+	&.selected {
+		border-color: $highlight;
+	}
 
-    .custom-image {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-    }
+	.custom-image {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+	}
 
-    .tile-content {
-        position: absolute;
-        width: 100%;
-        height: 100%;
+	.tile-content {
+		position: absolute;
+		width: 100%;
+		height: 100%;
 
-        .thick {
-            stroke: rgb(100, 100, 100);
-            stroke-width: 20%;
-        }
+		.thick {
+			stroke: rgb(100, 100, 100);
+			stroke-width: 20%;
+		}
 
-        .medium {
-            stroke: rgb(100, 100, 100);
-            stroke-width: 10%;
-        }
+		.medium {
+			stroke: rgb(100, 100, 100);
+			stroke-width: 10%;
+		}
 
-        .thin {
-            stroke: rgb(100, 100, 100);
-            stroke-width: 5%;
-        }
+		.thin {
+			stroke: rgb(100, 100, 100);
+			stroke-width: 5%;
+		}
 
-        .outline {
-            fill: rgb(255, 255, 255);
-        }
+		.outline {
+			fill: rgb(255, 255, 255);
+		}
 
-        .filled {
-            fill: rgb(100, 100, 100);
-        }
-    }
+		.filled {
+			fill: rgb(100, 100, 100);
+		}
+	}
 }
 
 .overlay {
-    position: absolute;
-    border: 1px solid darkgrey;
-    background-color: lightgrey;
-    transition:
-        left 0.2s ease-in-out,
-        top 0.2s ease-in-out,
-        width 0.2s ease-in-out,
-        height 0.2s ease-in-out;
+	position: absolute;
+	border: 1px solid darkgrey;
+	background-color: lightgrey;
+	transition:
+		left 0.2s ease-in-out,
+		top 0.2s ease-in-out,
+		width 0.2s ease-in-out,
+		height 0.2s ease-in-out;
 
-    &.selected {
-        border-color: $highlight;
-    }
+	&.selected {
+		border-color: $highlight;
+	}
 }
 
 .aura {
-    position: absolute;
-    background-color: #005080;
-    opacity: 0.2;
-    pointer-events: none;
-    transition:
-        left 0.2s ease-in-out,
-        top 0.2s ease-in-out,
-        width 0.2s ease-in-out,
-        height 0.2s ease-in-out;
+	position: absolute;
+	background-color: #005080;
+	opacity: 0.2;
+	pointer-events: none;
+	transition:
+		left 0.2s ease-in-out,
+		top 0.2s ease-in-out,
+		width 0.2s ease-in-out,
+		height 0.2s ease-in-out;
 }
 
 .token {
-    position: absolute;
-    background-color: #000065;
-    border: 1px solid $control-border;
-    box-shadow: inset 0 0 6px 3px rgba(0, 0, 0, 0.1);
-    transition:
-        left 0.2s ease-in-out,
-        top 0.2s ease-in-out,
-        width 0.2s ease-in-out,
-        height 0.2s ease-in-out;
+	position: absolute;
+	background-color: #000065;
+	border: 1px solid $control-border;
+	box-shadow: inset 0 0 6px 3px rgba(0, 0, 0, 0.1);
+	transition:
+		left 0.2s ease-in-out,
+		top 0.2s ease-in-out,
+		width 0.2s ease-in-out,
+		height 0.2s ease-in-out;
 
-    &.monster {
-        background-color: #650000;
-    }
+	&.monster {
+		background-color: #650000;
+	}
 
-    &.pc {
-        background-color: #006500;
-    }
+	&.pc {
+		background-color: #006500;
+	}
 
-    &.current {
-        background-color: white;
-        box-shadow: 0 0 10px 3px black;
+	&.current {
+		background-color: white;
+		box-shadow: 0 0 10px 3px black;
 
-        & .initials {
-            color: black;
-            font-weight: 600;
-        }
-    }
+		& .initials {
+			color: black;
+			font-weight: 600;
+		}
+	}
 
-    &.selected {
-        border-color: $highlight;
-        box-shadow: 0 0 10px 3px black;
-    }
+	&.selected {
+		border-color: $highlight;
+		box-shadow: 0 0 10px 3px black;
+	}
 
-    &.hidden {
-        opacity: 0.3;
-    }
+	&.hidden {
+		opacity: 0.3;
+	}
 
-    .portrait {
-        display: block;
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        object-fit: cover;
-    }
+	.portrait {
+		display: block;
+		width: 100%;
+		height: 100%;
+		border-radius: 50%;
+		object-fit: cover;
+	}
 
-    .initials {
-        font-size: 8px;
-        text-transform: uppercase;
-        color: white;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
+	.initials {
+		font-size: 8px;
+		text-transform: uppercase;
+		color: white;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
 
-    .hp-gauge {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: -1px;
-    }
+	.hp-gauge {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -1px;
+	}
 
-    .badge {
-        position: absolute;
-        top: -4px;
-        left: -4px;
-        font-size: 15px;
-        z-index: 5;
-    }
+	.badge {
+		position: absolute;
+		top: -4px;
+		left: -4px;
+		font-size: 15px;
+		z-index: 5;
+	}
 
-    .conditions {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        animation: loadingCircle 10s infinite linear;
-        z-index: 5;
-    }
+	.conditions {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		animation: loadingCircle 10s infinite linear;
+		z-index: 5;
+	}
 }

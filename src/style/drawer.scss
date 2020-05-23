@@ -1,84 +1,84 @@
 .drawer-header {
-    height: 50px;
-    background-color: $header-background;
-    border-bottom: 1px solid $control-border;
-    padding: 10px;
+	height: 50px;
+	background-color: $header-background;
+	border-bottom: 1px solid $control-border;
+	padding: 10px;
 }
 
 .drawer-content {
-    height: calc(100% - 100px);
+	height: calc(100% - 100px);
 
-    .hp-value {
-        height: 32px;
-        margin: 5px 0;
-        padding: 5px 8px;
-        border: 1px solid $control-border;
-        font-size: 15px;
-        text-align: center;
-        font-weight: 600;
-    }
+	.hp-value {
+		height: 32px;
+		margin: 5px 0;
+		padding: 5px 8px;
+		border: 1px solid $control-border;
+		font-size: 15px;
+		text-align: center;
+		font-weight: 600;
+	}
 
-    .companion-list-item {
-        display: flex;
-        align-items: center;
+	.companion-list-item {
+		display: flex;
+		align-items: center;
 
-        .companion-fields {
-            flex-grow: 1;
-            flex-shrink: 1;
-        }
+		.companion-fields {
+			flex-grow: 1;
+			flex-shrink: 1;
+		}
 
-        .companion-actions {
-            flex-basis: auto;
-            margin-left: 10px;
+		.companion-actions {
+			flex-basis: auto;
+			margin-left: 10px;
 
-            .anticon {
-                padding: 5px;
-                font-size: 20px;
+			.anticon {
+				padding: 5px;
+				font-size: 20px;
 
-                &:hover {
-                    background-color: $highlight02;
-                }
-            }
-        }
-    }
+				&:hover {
+					background-color: $highlight02;
+				}
+			}
+		}
+	}
 
-    .monster-help {
-        margin-top: 20px;
+	.monster-help {
+		margin-top: 20px;
 
-        .value-list {
-            margin: 0 !important;
+		.value-list {
+			margin: 0 !important;
 
-            &:nth-child(odd) {
-                background-color: $highlight01;
-            }
+			&:nth-child(odd) {
+				background-color: $highlight01;
+			}
 
-            .text-container {
-                min-height: 42px;
-                padding: 12px 0;
+			.text-container {
+				min-height: 42px;
+				padding: 12px 0;
 
-                &.number {
-                    text-align: right;
-                }
-            }
+				&.number {
+					text-align: right;
+				}
+			}
 
-            .bar-container {
-                height: 22px;
-                margin: 10px 0;
-                padding: 0 !important;
-                border-bottom: 1px solid $highlight02;
+			.bar-container {
+				height: 22px;
+				margin: 10px 0;
+				padding: 0 !important;
+				border-bottom: 1px solid $highlight02;
 
-                .bar {
-                    height: 100%;
-                    background-color: $highlight;
-                }
-            }
-        }
-    }
+				.bar {
+					height: 100%;
+					background-color: $highlight;
+				}
+			}
+		}
+	}
 }
 
 .drawer-footer {
-    height: 50px;
-    background-color: $header-background;
-    border-top: 1px solid $control-border;
-    padding: 4px 20px;
+	height: 50px;
+	background-color: $header-background;
+	border-top: 1px solid $control-border;
+	padding: 4px 20px;
 }

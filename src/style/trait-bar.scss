@@ -1,34 +1,34 @@
 .trait-bar {
-    margin: 5px 0;
-    padding: 5px 0;
-    cursor: pointer;
-    z-index: 2000;
-    font-size: 14px;
-    font-weight: 600;
+	margin: 5px 0;
+	padding: 5px 0;
+	cursor: pointer;
+	z-index: 2000;
+	font-size: 14px;
+	font-weight: 600;
 
-    &:hover, &.selected {
-        background-color: $highlight01;
-        border-color: $highlight;
-    }
+	&:hover, &.selected {
+		background-color: $highlight01;
+		border-color: $highlight;
+	}
 
-    &.selected {
-        font-weight: 600;
-        cursor: default;
-    }
+	&.selected {
+		font-weight: 600;
+		cursor: default;
+	}
 
-    .name {
-        display: inline-block;
-        vertical-align: top;
-        height: 20px;
-        line-height: 20px;
-    }
+	.name {
+		display: inline-block;
+		vertical-align: top;
+		height: 20px;
+		line-height: 20px;
+	}
 }
 
 .grabber {
-    margin-right: 5px;
-    cursor: ns-resize;
-    display: inline-block;
-    vertical-align: top;
-    font-size: 15px;
-    padding: 3px 0;
+	margin-right: 5px;
+	cursor: ns-resize;
+	display: inline-block;
+	vertical-align: top;
+	font-size: 15px;
+	padding: 3px 0;
 }

@@ -1,13 +1,13 @@
 .render-error {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: orange;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: orange;
 
-    &:after {
-        color: white;
-        font-weight: 600;
-        content: 'error - please refresh';
-    }
+	&:after {
+		color: white;
+		font-weight: 600;
+		content: 'error - please refresh';
+	}
 }

@@ -1,192 +1,192 @@
 .dojo {
-    font-family: 'Open Sans', 'Segoe UI', sans-serif;
-    font-size: 12px;
-    background-color: $background;
-    box-sizing: border-box;
-    user-select: none;
+	font-family: 'Open Sans', 'Segoe UI', sans-serif;
+	font-size: 12px;
+	background-color: $background;
+	box-sizing: border-box;
+	user-select: none;
 
-    &.popout {
-        
-        .map-panel {
-            overflow-x: visible;
-            overflow-y: visible;
-        }
-    }
+	&.popout {
+		
+		.map-panel {
+			overflow-x: visible;
+			overflow-y: visible;
+		}
+	}
 }
 
 .page-header {
-    display: flex;
-    align-items: center;
-    height: 50px;
-    background-color: $header-background;
-    color: $header-foreground;
+	display: flex;
+	align-items: center;
+	height: 50px;
+	background-color: $header-background;
+	color: $header-foreground;
 
-    .app-title {
-        flex-grow: 1;
-        margin: 0 10px;
-    }
+	.app-title {
+		flex-grow: 1;
+		margin: 0 10px;
+	}
 
-    .title-bar-icon {
-        padding: 15px;
-        font-size: 20px;
+	.title-bar-icon {
+		padding: 15px;
+		font-size: 20px;
 
-        &:hover {
-            background-color: $highlight05;
-        }
+		&:hover {
+			background-color: $highlight05;
+		}
 
-        &.selected {
-            background-color: $highlight;
-        }
-    }
+		&.selected {
+			background-color: $highlight;
+		}
+	}
 }
 
 .page-content {
-    height: calc(100% - 100px);
-    display: flex;
-    flex-direction: row;
+	height: calc(100% - 100px);
+	display: flex;
+	flex-direction: row;
 
-    .content {
-        flex-grow: 1;
-        flex-shrink: 0;
-        flex-basis: 0;
-    }
+	.content {
+		flex-grow: 1;
+		flex-shrink: 0;
+		flex-basis: 0;
+	}
 
-    .sidebar {
-        flex-grow: 0;
-        flex-shrink: 0;
-        flex-basis: 400px;
-        padding: 10px;
+	.sidebar {
+		flex-grow: 0;
+		flex-shrink: 0;
+		flex-basis: 400px;
+		padding: 10px;
 
-        .sidebar-container {
-            display: flex;
-            flex-direction: column;
-            height: calc(100% + 20px);
-            margin: -10px;
+		.sidebar-container {
+			display: flex;
+			flex-direction: column;
+			height: calc(100% + 20px);
+			margin: -10px;
 
-            .sidebar-header {
-                flex-grow: 0;
-                flex-shrink: 0;
-                flex-basis: auto;
-                padding: 0 10px 10px 10px;
-            }
+			.sidebar-header {
+				flex-grow: 0;
+				flex-shrink: 0;
+				flex-basis: auto;
+				padding: 0 10px 10px 10px;
+			}
 
-            .sidebar-content {
-                flex-grow: 1;
-                flex-shrink: 0;
-                flex-basis: 0;
-                overflow-y: auto;
-                padding: 10px;
-                padding-top: 0;
-            }
-        }
+			.sidebar-content {
+				flex-grow: 1;
+				flex-shrink: 0;
+				flex-basis: 0;
+				overflow-y: auto;
+				padding: 10px;
+				padding-top: 0;
+			}
+		}
 
-        .language-options {
-            .checkbox {
-                margin: 2px;
-            }
-        }
-    
-        .generated-item {
-            display: flex;
-            align-items: center;
-            font-size: 18px;
-            padding: 5px 10px;
+		.language-options {
+			.checkbox {
+				margin: 2px;
+			}
+		}
+	
+		.generated-item {
+			display: flex;
+			align-items: center;
+			font-size: 18px;
+			padding: 5px 10px;
 
-            .text-section {
-                flex-grow: 1;
-                flex-shrink: 0;
-                flex-basis: 0;
+			.text-section {
+				flex-grow: 1;
+				flex-shrink: 0;
+				flex-basis: 0;
 
-                .smaller {
-                    font-size: 15px;
-                }
-            }
+				.smaller {
+					font-size: 15px;
+				}
+			}
 
-            .icon-section {
-                flex-grow: 0;
-                flex-shrink: 0;
-                flex-basis: auto;
-                opacity: 0;
+			.icon-section {
+				flex-grow: 0;
+				flex-shrink: 0;
+				flex-basis: auto;
+				opacity: 0;
 
-                .anticon {
-                    padding: 5px;
+				.anticon {
+					padding: 5px;
 
-                    &:hover {
-                        background-color: $highlight02;
-                    }
-                }
-            }
+					&:hover {
+						background-color: $highlight02;
+					}
+				}
+			}
 
-            &:hover .icon-section {
-                opacity: 1;
-            }
-        }
-        
-        .die-rolls {
-            text-align: center;
-            font-weight: 600;
-            padding-top: 20px;
-        }
-    
-        .die-result {
-            text-align: center;
-            font-size: 50px;
-            font-weight: 600;
-            padding-top: 20px;
-        }
-    }
+			&:hover .icon-section {
+				opacity: 1;
+			}
+		}
+		
+		.die-rolls {
+			text-align: center;
+			font-weight: 600;
+			padding-top: 20px;
+		}
+	
+		.die-result {
+			text-align: center;
+			font-size: 50px;
+			font-weight: 600;
+			padding-top: 20px;
+		}
+	}
 }
 
 .page-footer {
-    text-align: center;
-    background-color: $header-background;
-    color: $header-foreground;
-    display: flex;
-    align-items: center;
+	text-align: center;
+	background-color: $header-background;
+	color: $header-foreground;
+	display: flex;
+	align-items: center;
 
-    .navigator-item {
-        flex-grow: 1;
-        flex-shrink: 1;
-        flex-basis: 0;
-        cursor: pointer;
-        height: 50px;
-        line-height: 48px;
-        font-size: 16px;
-        color: $header-foreground;
+	.navigator-item {
+		flex-grow: 1;
+		flex-shrink: 1;
+		flex-basis: 0;
+		cursor: pointer;
+		height: 50px;
+		line-height: 48px;
+		font-size: 16px;
+		color: $header-foreground;
 
-        &:hover {
-            background-color: $highlight05;
-        }
+		&:hover {
+			background-color: $highlight05;
+		}
 
-        &.selected {
-            background-color: $highlight;
-            font-weight: 600;
-            pointer-events: none;
-        }
-    }
+		&.selected {
+			background-color: $highlight;
+			font-weight: 600;
+			pointer-events: none;
+		}
+	}
 
-    .anticon {
-        flex-grow: 0;
-        flex-shrink: 0;
-        flex-basis: auto;
-        margin: 5px;
-        padding: 5px;
-        font-size: 20px;
+	.anticon {
+		flex-grow: 0;
+		flex-shrink: 0;
+		flex-basis: auto;
+		margin: 5px;
+		padding: 5px;
+		font-size: 20px;
 
-        &:hover {
-            background-color: $highlight05;
-        }
-    }
+		&:hover {
+			background-color: $highlight05;
+		}
+	}
 }
 
 .sidebar {
-    background-color: rgb(240, 240, 240);
+	background-color: rgb(240, 240, 240);
 
-    &.sidebar-left {
-        border-right: 1px solid $control-border;
-    }
+	&.sidebar-left {
+		border-right: 1px solid $control-border;
+	}
 
-    &.sidebar-right {
-        border-left: 1px solid $control-border;
-    }
+	&.sidebar-right {
+		border-left: 1px solid $control-border;
+	}
 }

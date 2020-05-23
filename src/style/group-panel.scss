@@ -1,50 +1,50 @@
 .group-panel {
-    border-left: 5px solid #c3c3c3;
-    background-color: $background;
-    padding: 5px 10px;
-    margin: 5px 0;
-    break-inside: avoid-column;
+	border-left: 5px solid #c3c3c3;
+	background-color: $background;
+	padding: 5px 10px;
+	margin: 5px 0;
+	break-inside: avoid-column;
 
-    &.combat-controls {
-        margin: 10px 0;
-    }
+	&.combat-controls {
+		margin: 10px 0;
+	}
 
-    &.clickable {
-        cursor: pointer;
+	&.clickable {
+		cursor: pointer;
 
-        .group-panel {
-            background-color: transparent;
-        }
+		.group-panel {
+			background-color: transparent;
+		}
 
-        &:hover {
-            background-color: $highlight01;
-        }
-    }
+		&:hover {
+			background-color: $highlight01;
+		}
+	}
 
-    &.combatant-setup {
-        .combatant-name {
-            font-weight: 600;
-            padding-top: 10px;
-        }
-    
-        .combatant-value {
-            text-align: right;
-            font-size: 20px;
-            line-height: 32px;
-    
-            .anticon {
-                font-size: 14px;
-                vertical-align: unset;
-                padding: 5px;
-    
-                &:hover {
-                    background-color: $highlight01;
-                }
-            }
-        }
-    }
+	&.combatant-setup {
+		.combatant-name {
+			font-weight: 600;
+			padding-top: 10px;
+		}
+	
+		.combatant-value {
+			text-align: right;
+			font-size: 20px;
+			line-height: 32px;
+	
+			.anticon {
+				font-size: 14px;
+				vertical-align: unset;
+				padding: 5px;
+	
+				&:hover {
+					background-color: $highlight01;
+				}
+			}
+		}
+	}
 
-    &:hover {
-        border-color: $highlight;
-    }
+	&:hover {
+		border-color: $highlight;
+	}
 }

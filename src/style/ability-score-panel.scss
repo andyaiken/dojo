@@ -1,33 +1,33 @@
 .ability-scores {
-    margin: 10px 0;
-    background-color: $background;
-    border: 1px solid $control-border;
-    border-left-width: 5px;
-    text-align: center;
-    cursor: pointer;
+	margin: 10px 0;
+	background-color: $background;
+	border: 1px solid $control-border;
+	border-left-width: 5px;
+	text-align: center;
+	cursor: pointer;
 
-    &:hover {
-        border-color: $highlight;
-    }
+	&:hover {
+		border-color: $highlight;
+	}
 
-    .ability-score-group {
-        display: inline-block;
-        column-width: 120px;
+	.ability-score-group {
+		display: inline-block;
+		column-width: 120px;
 
-        .ability-score {
-            display: inline-block;
-            width: calc((100% - 1px) / 3);
-            padding: 5px;
+		.ability-score {
+			display: inline-block;
+			width: calc((100% - 1px) / 3);
+			padding: 5px;
 
-            .ability-heading {
-                text-align: center;
-                font-weight: 600;
-            }
+			.ability-heading {
+				text-align: center;
+				font-weight: 600;
+			}
 
-            .ability-value {
-                text-align: center;
-                padding-top: 5px;
-            }
-        }
-    }
+			.ability-value {
+				text-align: center;
+				padding-top: 5px;
+			}
+		}
+	}
 }
