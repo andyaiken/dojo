@@ -161,6 +161,7 @@ export default class PCEditorModal extends React.Component<Props, State> {
 						<NumberSpin
 							value={this.state.pc.level}
 							downEnabled={this.state.pc.level > 1}
+							upEnabled={this.state.pc.level < 20}
 							onNudgeValue={delta => this.nudgeValue(this.state.pc, 'level', delta)}
 						/>
 						<div className='subheading'>passive skills</div>

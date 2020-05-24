@@ -167,7 +167,6 @@ export default class MapImportModal extends React.Component<Props, State> {
 						<MapPanel
 							map={this.state.map}
 							mode='edit'
-							size={50}
 						/>
 					</Col>
 				</Row>

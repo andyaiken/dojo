@@ -1,4 +1,4 @@
-import { DownSquareTwoTone, StarTwoTone, UpSquareTwoTone } from '@ant-design/icons';
+import { DownSquareTwoTone, MenuOutlined, StarTwoTone, UpSquareTwoTone } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
@@ -12,6 +12,7 @@ import { Map, MapItem, MapNote } from '../../models/map';
 import { Monster } from '../../models/monster-group';
 import { PC } from '../../models/party';
 
+import NumberSpin from '../controls/number-spin';
 import HitPointGauge from './hit-point-gauge';
 
 const showdown = new Showdown.Converter();
@@ -20,7 +21,6 @@ showdown.setOption('tables', true);
 interface Props {
 	map: Map;
 	mode: 'edit' | 'thumbnail' | 'combat' | 'combat-player';
-	size: number;
 	viewport: MapDimensions | null;
 	paddingSquares: number;
 	floatingItem: MapItem | null;
@@ -32,6 +32,11 @@ interface Props {
 	itemSelected: (itemID: string | null, ctrl: boolean) => void;
 	gridSquareEntered: (x: number, y: number) => void;
 	gridSquareClicked: (x: number, y: number) => void;
+}
+
+interface State {
+	showControls: boolean;
+	size: number;
 }
 
 interface MapDimensions {
@@ -52,8 +57,9 @@ interface MapItemStyle {
 	opacity?: string;
 }
 
-export default class MapPanel extends React.Component<Props> {
+export default class MapPanel extends React.Component<Props, State> {
 	public static defaultProps = {
+		mode: 'thumbnail',
 		viewport: null,
 		paddingSquares: 0,
 		floatingItem: null,
@@ -66,6 +72,28 @@ export default class MapPanel extends React.Component<Props> {
 		gridSquareEntered: null,
 		gridSquareClicked: null
 	};
+
+	constructor(props: Props) {
+		super(props);
+
+		this.state = {
+			showControls: false,
+			size: (props.mode === 'thumbnail') ? 15 : 45
+		};
+	}
+
+	private toggleShowControls() {
+		this.setState({
+			showControls: !this.state.showControls
+		});
+	}
+
+	private nudgeSize(delta: number) {
+		const value = Math.max(this.state.size + delta, 3);
+		this.setState({
+			size: value
+		});
+	}
 
 	private getMapDimensions(): MapDimensions | null {
 		let dimensions: MapDimensions | null = this.props.viewport;
@@ -158,7 +186,7 @@ export default class MapPanel extends React.Component<Props> {
 		let radius = '0';
 		switch (style) {
 			case 'rounded':
-				radius = this.props.size + 'px';
+				radius = this.state.size + 'px';
 				break;
 			case 'circle':
 				radius = '50%';
@@ -166,13 +194,18 @@ export default class MapPanel extends React.Component<Props> {
 		}
 
 		return {
-			left: 'calc(' + this.props.size + 'px * ' + (x + offsetX - dim.minX) + ')',
-			top: 'calc(' + this.props.size + 'px * ' + (y + offsetY - dim.minY) + ')',
-			width: 'calc((' + this.props.size + 'px * ' + width + ') + 1px)',
-			height: 'calc((' + this.props.size + 'px * ' + height + ') + 1px)',
+			left: 'calc(' + this.state.size + 'px * ' + (x + offsetX - dim.minX) + ')',
+			top: 'calc(' + this.state.size + 'px * ' + (y + offsetY - dim.minY) + ')',
+			width: 'calc((' + this.state.size + 'px * ' + width + ') + 1px)',
+			height: 'calc((' + this.state.size + 'px * ' + height + ') + 1px)',
 			borderRadius: radius,
-			backgroundSize: this.props.size + 'px'
+			backgroundSize: this.state.size + 'px'
 		};
+	}
+
+	private menuClick(e: React.MouseEvent) {
+		e.stopPropagation();
+		this.toggleShowControls();
 	}
 
 	public render() {
@@ -343,12 +376,34 @@ export default class MapPanel extends React.Component<Props> {
 				}
 			}
 
+			let controls = null;
+			if (this.props.mode !== 'thumbnail') {
+				if (this.state.showControls) {
+					controls = (
+						<div className='map-menu'>
+							<MenuOutlined className='menu-icon' onClick={e => this.menuClick(e)} />
+							<NumberSpin
+								value='zoom'
+								downEnabled={this.state.size > 3}
+								onNudgeValue={delta => this.nudgeSize(delta * 3)}
+							/>
+						</div>
+					);
+				} else {
+					controls = (
+						<div className='map-menu'>
+							<MenuOutlined className='menu-icon' onClick={e => this.menuClick(e)} />
+						</div>
+					);
+				}
+			}
+
 			const style = 'map-panel ' + this.props.mode;
 			const mapWidth = 1 + mapDimensions.maxX - mapDimensions.minX;
 			const mapHeight = 1 + mapDimensions.maxY - mapDimensions.minY;
 			return (
 				<div className={style} onClick={() => this.props.itemSelected ? this.props.itemSelected(null, false) : null}>
-					<div className='grid' style={{ width: ((this.props.size * mapWidth) + 2) + 'px', height: ((this.props.size * mapHeight) + 2) + 'px' }}>
+					<div className='grid' style={{ width: ((this.state.size * mapWidth) + 2) + 'px', height: ((this.state.size * mapHeight) + 2) + 'px' }}>
 						{tiles}
 						{fog}
 						{overlays}
@@ -356,6 +411,7 @@ export default class MapPanel extends React.Component<Props> {
 						{tokens}
 						{dragOverlay}
 					</div>
+					{controls}
 				</div>
 			);
 		} catch (e) {

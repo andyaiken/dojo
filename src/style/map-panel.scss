@@ -2,6 +2,34 @@
 	overflow-x: auto;
 	overflow-y: auto;
 
+	.map-menu {
+		position: absolute;
+		top: 0;
+		right: 0;
+		min-width: 44px;
+		min-height: 44px;
+		background-color: white;
+		border: 1px solid $control-border;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		opacity: 0.7;
+
+		&:hover {
+			opacity: 1;
+		}
+
+		.menu-icon {
+			margin: 5px;
+			font-size: 20px;
+		}
+
+		.number-spin {
+			margin: 5px 10px;
+			min-width: 150px;
+		}
+	}
+
 	.grid {
 		position: relative;
 		margin: 0 auto;
@@ -58,6 +86,7 @@
 
 	&.combat,
 	&.combat-player {
+		padding: 10px 0;
 
 		.overlay:hover,
 		.token:hover {
@@ -66,16 +95,11 @@
 	}
 
 	&.combat {
-		padding: 10px 0;
 
 		.fog {
 			opacity: 0.6;
 			box-shadow: none !important;
 		}
-	}
-
-	&.combat-player {
-		padding: 20px;
 	}
 }
 

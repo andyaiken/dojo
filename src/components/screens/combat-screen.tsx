@@ -80,11 +80,9 @@ interface State {
 	addingToMapID: string | null;
 	addingOverlay: boolean;
 	addingFog: boolean;
-	mapSize: number;
 	playerView: {
 		open: boolean;
 		showControls: boolean;
-		mapSize: number;
 	};
 	middleColumnWidth: number;
 }
@@ -99,11 +97,9 @@ export default class CombatScreen extends React.Component<Props, State> {
 			addingToMapID: null,            // The ID of the combatant we're adding to the map
 			addingOverlay: false,           // True if we're adding a custom overlay to the map
 			addingFog: false,
-			mapSize: 30,
 			playerView: {
 				open: false,
-				showControls: false,
-				mapSize: 30
+				showControls: false
 			},
 			middleColumnWidth: 8
 		};
@@ -185,12 +181,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 		this.props.setFog([]);
 	}
 
-	private nudgeMapSize(value: number) {
-		this.setState({
-			mapSize: Math.max(this.state.mapSize + value, 3)
-		});
-	}
-
 	private setPlayerViewOpen(show: boolean) {
 		const pv = this.state.playerView;
 		pv.open = show;
@@ -202,14 +192,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 	private setPlayerViewShowControls(show: boolean) {
 		const pv = this.state.playerView;
 		pv.showControls = show;
-		this.setState({
-			playerView: pv
-		});
-	}
-
-	private nudgePlayerViewMapSize(value: number) {
-		const pv = this.state.playerView;
-		pv.mapSize = Math.max(pv.mapSize + value, 3);
 		this.setState({
 			playerView: pv
 		});
@@ -474,7 +456,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 								key='map'
 								map={this.props.combat.map}
 								mode='combat-player'
-								size={this.state.playerView.mapSize}
 								viewport={viewport}
 								combatants={this.props.combat.combatants}
 								selectedItemIDs={this.state.selectedItemIDs}
@@ -551,11 +532,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 						label='show map controls'
 						checked={this.state.playerView.showControls}
 						onChecked={value => this.setPlayerViewShowControls(value)}
-					/>
-					<NumberSpin
-						value='zoom'
-						downEnabled={this.state.playerView.mapSize > 3}
-						onNudgeValue={delta => this.nudgePlayerViewMapSize(delta * 3)}
 					/>
 				</div>
 			);
@@ -914,7 +890,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 						key='map'
 						map={this.props.combat.map}
 						mode='combat'
-						size={this.state.mapSize}
 						showOverlay={(this.state.addingToMapID !== null) || this.state.addingOverlay}
 						combatants={this.props.combat.combatants}
 						selectedItemIDs={this.state.selectedItemIDs}
@@ -1043,11 +1018,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 												clear fog of war
 											</button>
 										</div>
-										<NumberSpin
-											value='zoom'
-											downEnabled={this.state.mapSize > 3}
-											onNudgeValue={delta => this.nudgeMapSize(delta * 3)}
-										/>
 									</div>
 								)}
 							/>

@@ -172,6 +172,7 @@ button.danger {
 	border: 1px solid $control-border;
 	border-left-width: 5px;
 	background-color: $background;
+	display: flex;
 
 	&:hover {
 		border-color: $highlight;
@@ -179,12 +180,19 @@ button.danger {
 
 	.minus,
 	.plus,
-	.spin-button,
-	.info {
-		display: inline-block;
-		text-align: center;
-		vertical-align: middle;
+	.spin-button {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	
+		&.disabled {
+			opacity: 0.5;
+		}
+	}
 
+	.info {
+		text-align: center;
+			
 		&.disabled {
 			opacity: 0.5;
 		}
@@ -199,7 +207,6 @@ button.danger {
 		border: 1.5px solid rgba(0, 0, 0, 0.65);
 		border-radius: 50%;
 		font-weight: 600;
-		line-height: 17px;
 
 		&.multiple {
 			font-size: 8px;

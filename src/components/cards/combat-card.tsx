@@ -24,8 +24,6 @@ export default class CombatCard extends React.Component<Props> {
 					<div className='section'>
 						<MapPanel
 							map={this.props.combat.map}
-							mode='thumbnail'
-							size={12}
 							combatants={this.props.combat.combatants}
 						/>
 					</div>

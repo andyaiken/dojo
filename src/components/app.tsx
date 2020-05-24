@@ -274,6 +274,7 @@ export default class App extends React.Component<Props, State> {
 	}
 
 	private changeValue(combatant: any, type: string, value: any) {
+		/*
 		switch (type) {
 			case 'hpCurrent':
 				value = Math.min(value, combatant.hpMax);
@@ -299,6 +300,7 @@ export default class App extends React.Component<Props, State> {
 				// Do nothing
 				break;
 		}
+		*/
 
 		const tokens = type.split('.');
 		let obj = combatant;

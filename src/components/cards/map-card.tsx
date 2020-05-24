@@ -28,8 +28,6 @@ export default class MapCard extends React.Component<Props> {
 							<Col span={24}>
 								<MapPanel
 									map={this.props.map}
-									mode='thumbnail'
-									size={12}
 								/>
 							</Col>
 						</Row>

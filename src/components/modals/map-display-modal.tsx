@@ -15,7 +15,6 @@ import { Companion, Party } from '../../models/party';
 import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
 import Dropdown from '../controls/dropdown';
-import NumberSpin from '../controls/number-spin';
 import CombatControlsPanel from '../panels/combat-controls-panel';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
@@ -38,8 +37,6 @@ interface Props {
 
 interface State {
 	map: Map;
-	mapSize: number;
-	playerMapSize: number;
 	playerViewOpen: boolean;
 	editFog: boolean;
 	selectedCombatantIDs: string[];
@@ -53,8 +50,6 @@ export default class MapDisplayModal extends React.Component<Props, State> {
 		super(props);
 		this.state = {
 			map: props.map,
-			mapSize: 50,
-			playerMapSize: 50,
 			playerViewOpen: false,
 			editFog: false,
 			selectedCombatantIDs: [],
@@ -62,18 +57,6 @@ export default class MapDisplayModal extends React.Component<Props, State> {
 			partyID: props.partyID,
 			combatants: props.combatants
 		};
-	}
-
-	private nudgeMapSize(value: number) {
-		this.setState({
-			mapSize: Math.max(this.state.mapSize + value, 3)
-		});
-	}
-
-	private nudgePlayerMapSize(value: number) {
-		this.setState({
-			playerMapSize: Math.max(this.state.playerMapSize + value, 3)
-		});
 	}
 
 	private setPlayerViewOpen(open: boolean) {
@@ -253,10 +236,19 @@ export default class MapDisplayModal extends React.Component<Props, State> {
 	}
 
 	private nudgeValue(source: any, field: string, delta: number) {
-		let value = source[field] + delta;
-		if (field === 'radius') {
-			value = Math.max(value, 0);
+		let value = null;
+		switch (field) {
+			case 'challenge':
+				value = Utils.nudgeChallenge(source[field], delta);
+				break;
+			case 'size':
+			case 'displaySize':
+				value = Utils.nudgeSize(source[field], delta);
+				break;
+			default:
+				value = source[field] + delta;
 		}
+
 		this.changeValue(source, field, value);
 	}
 
@@ -334,7 +326,6 @@ export default class MapDisplayModal extends React.Component<Props, State> {
 			<MapPanel
 				map={this.state.map}
 				mode={playerView ? 'combat-player' : 'combat'}
-				size={playerView ? this.state.playerMapSize : this.state.mapSize}
 				viewport={viewport}
 				combatants={this.state.combatants}
 				showOverlay={adding}
@@ -442,26 +433,10 @@ export default class MapDisplayModal extends React.Component<Props, State> {
 					);
 				}
 
-				let playerMapSection = null;
-				if (this.state.playerViewOpen) {
-					playerMapSection = (
-						<NumberSpin
-							value='zoom'
-							downEnabled={this.state.playerMapSize > 3}
-							onNudgeValue={delta => this.nudgePlayerMapSize(delta * 3)}
-						/>
-					);
-				}
-
 				sidebar = (
 					<div>
 						<div className='section'>
 							<div className='subheading'>options</div>
-							<NumberSpin
-								value='zoom'
-								downEnabled={this.state.mapSize > 3}
-								onNudgeValue={delta => this.nudgeMapSize(delta * 3)}
-							/>
 							<button onClick={() => this.rotateMap()}>rotate map</button>
 							<button onClick={() => this.props.startCombat(this.state.partyID, this.state.map, this.state.fog)}>start encounter</button>
 						</div>
@@ -484,7 +459,6 @@ export default class MapDisplayModal extends React.Component<Props, State> {
 								checked={this.state.playerViewOpen}
 								onChecked={value => this.setPlayerViewOpen(value)}
 							/>
-							{playerMapSection}
 						</div>
 					</div>
 				);

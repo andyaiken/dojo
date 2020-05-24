@@ -31,7 +31,6 @@ interface State {
 	map: Map;
 	selectedTileID: string | null;
 	addingTile: MapItem | null;
-	mapSize: number;
 	showImageSelection: boolean;
 }
 
@@ -43,7 +42,6 @@ export default class MapEditorModal extends React.Component<Props, State> {
 			map: props.map,
 			selectedTileID: null,
 			addingTile: null,
-			mapSize: 30,
 			showImageSelection: false
 		};
 	}
@@ -123,12 +121,6 @@ export default class MapEditorModal extends React.Component<Props, State> {
 				addingTile: tile
 			});
 		}
-	}
-
-	private nudgeMapSize(value: number) {
-		this.setState({
-			mapSize: Math.max(this.state.mapSize + value, 3)
-		});
 	}
 
 	private toggleImageSelection() {
@@ -474,11 +466,6 @@ export default class MapEditorModal extends React.Component<Props, State> {
 									</Col>
 								</Row>
 								<hr/>
-								<NumberSpin
-									value='zoom'
-									downEnabled={this.state.mapSize > 3}
-									onNudgeValue={delta => this.nudgeMapSize(delta * 3)}
-								/>
 								<button onClick={() => this.generate('room')}>add a random room</button>
 								<button onClick={() => this.rotateMap()}>rotate the map</button>
 								<ConfirmButton text='clear all tiles' onConfirm={() => this.clearMap()} />
@@ -497,7 +484,6 @@ export default class MapEditorModal extends React.Component<Props, State> {
 						<MapPanel
 							map={this.state.map}
 							mode='edit'
-							size={this.state.mapSize}
 							paddingSquares={4}
 							selectedItemIDs={this.state.selectedTileID ? [this.state.selectedTileID] : []}
 							showOverlay={!!this.state.addingTile}
