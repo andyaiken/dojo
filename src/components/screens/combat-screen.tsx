@@ -86,6 +86,7 @@ interface State {
 		showControls: boolean;
 		mapSize: number;
 	};
+	middleColumnWidth: number;
 }
 
 export default class CombatScreen extends React.Component<Props, State> {
@@ -103,7 +104,8 @@ export default class CombatScreen extends React.Component<Props, State> {
 				open: false,
 				showControls: false,
 				mapSize: 30
-			}
+			},
+			middleColumnWidth: 8
 		};
 	}
 
@@ -210,6 +212,12 @@ export default class CombatScreen extends React.Component<Props, State> {
 		pv.mapSize = Math.max(pv.mapSize + value, 3);
 		this.setState({
 			playerView: pv
+		});
+	}
+
+	private nudgeMiddleColumnWidth(delta: number) {
+		this.setState({
+			middleColumnWidth: this.state.middleColumnWidth + delta
 		});
 	}
 
@@ -363,11 +371,9 @@ export default class CombatScreen extends React.Component<Props, State> {
 							<div className='divider' />
 							<NumberSpin
 								key='altitude'
-								source={token}
-								name='altitude'
+								value={token.altitude + ' ft.'}
 								label='altitude'
 								onNudgeValue={delta => this.props.nudgeValue(token, 'altitude', delta * 5)}
-								onFormatValue={value => value + ' ft.'}
 							/>
 							<Row gutter={10}>
 								<Col span={8}>
@@ -547,10 +553,9 @@ export default class CombatScreen extends React.Component<Props, State> {
 						onChecked={value => this.setPlayerViewShowControls(value)}
 					/>
 					<NumberSpin
-						source={this.state.playerView}
-						name={'mapSize'}
+						value='zoom'
+						downEnabled={this.state.playerView.mapSize > 3}
 						onNudgeValue={delta => this.nudgePlayerViewMapSize(delta * 3)}
-						onFormatValue={() => 'zoom'}
 					/>
 				</div>
 			);
@@ -576,6 +581,13 @@ export default class CombatScreen extends React.Component<Props, State> {
 					onChecked={value => this.setPlayerViewOpen(value)}
 				/>
 				{playerView}
+				<div className='subheading'>layout</div>
+				<NumberSpin
+					value='middle column size'
+					downEnabled={this.state.middleColumnWidth > 4}
+					upEnabled={this.state.middleColumnWidth < 14}
+					onNudgeValue={delta => this.nudgeMiddleColumnWidth(delta * 2)}
+				/>
 			</div>
 		);
 	}
@@ -614,6 +626,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 			return (
 				<div>
 					{this.createControls(combatants)}
+					<div className='divider space'/>
 					{this.createCard(combatants[0])}
 				</div>
 			);
@@ -623,11 +636,10 @@ export default class CombatScreen extends React.Component<Props, State> {
 		if (combatants.length > 1) {
 			return (
 				<div>
-					{this.createControls(combatants)}
 					<Note>
 						<div className='section'>multiple combatants are selected:</div>
 						{combatants.map(c => (
-							<div key={c.id} className='multiple-combatant-row'>
+							<div key={c.id} className='group-panel'>
 								{c.displayName}
 								<CloseCircleOutlined
 									style={{ float: 'right', padding: '2px 0', fontSize: '14px' }}
@@ -636,6 +648,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 							</div>
 						))}
 					</Note>
+					{this.createControls(combatants)}
 				</div>
 			);
 		}
@@ -830,6 +843,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 							current = (
 								<div>
 									{this.createControls([combatant])}
+									<div className='divider space'/>
 									{this.createCard(combatant)}
 								</div>
 							);
@@ -937,29 +951,36 @@ export default class CombatScreen extends React.Component<Props, State> {
 					}
 				});
 
+			const middleWidth = this.state.middleColumnWidth;
+			const sideWidth = (24 - middleWidth) / 2;
+
 			return (
 				<div className='full-height'>
 					<Row align='middle' className='combat-top-row'>
-						<Col span={8}>
+						<Col span={sideWidth}>
 							<div className='action'>
 								<button onClick={() => this.nextTurn()}>
 									{this.props.combat.combatants.find(c => c.current) ? 'next turn' : 'start combat'}
 								</button>
 							</div>
 						</Col>
-						<Col span={4}>
-							<div className='statistic'>
-								<div className='statistic-label'>round</div>
-								<div className='statistic-value'>{this.props.combat.round}</div>
-							</div>
+						<Col span={middleWidth}>
+							<Row>
+								<Col span={12}>
+									<div className='statistic'>
+										<div className='statistic-label'>round</div>
+										<div className='statistic-value'>{this.props.combat.round}</div>
+									</div>
+								</Col>
+								<Col span={12}>
+									<div className='statistic'>
+										<div className='statistic-value'>{Napoleon.getCombatXP(this.props.combat)}</div>
+										<div className='statistic-label'>xp</div>
+									</div>
+								</Col>
+							</Row>
 						</Col>
-						<Col span={4}>
-							<div className='statistic'>
-								<div className='statistic-value'>{Napoleon.getCombatXP(this.props.combat)}</div>
-								<div className='statistic-label'>xp</div>
-							</div>
-						</Col>
-						<Col span={8}>
+						<Col span={sideWidth}>
 							<div className='menu'>
 								<Popover
 									content={this.getMenu()}
@@ -972,7 +993,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 						</Col>
 					</Row>
 					<Row className='combat-main'>
-						<Col span={8} className='scrollable'>
+						<Col span={sideWidth} className='scrollable'>
 							<GridPanel
 								heading='initiative holder'
 								content={[current]}
@@ -980,7 +1001,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 								showToggle={false}
 							/>
 						</Col>
-						<Col span={8} className='scrollable'>
+						<Col span={middleWidth} className='scrollable'>
 							{notificationSection}
 							<GridPanel
 								heading='waiting for intiative'
@@ -1023,10 +1044,9 @@ export default class CombatScreen extends React.Component<Props, State> {
 											</button>
 										</div>
 										<NumberSpin
-											source={this.state}
-											name={'mapSize'}
+											value='zoom'
+											downEnabled={this.state.mapSize > 3}
 											onNudgeValue={delta => this.nudgeMapSize(delta * 3)}
-											onFormatValue={() => 'zoom'}
 										/>
 									</div>
 								)}
@@ -1047,7 +1067,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 								)}
 							/>
 						</Col>
-						<Col span={8} className='scrollable'>
+						<Col span={sideWidth} className='scrollable'>
 							<GridPanel
 								heading='selected combatant'
 								content={[this.getSelectedCombatant()]}

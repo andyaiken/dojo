@@ -184,6 +184,10 @@ button.danger {
 		display: inline-block;
 		text-align: center;
 		vertical-align: middle;
+
+		&.disabled {
+			opacity: 0.5;
+		}
 	}
 
 	.spin-button {
@@ -192,10 +196,10 @@ button.danger {
 		margin: 5px;
 		cursor: pointer;
 		background-color: transparent;
-		border: 2px solid $control-border;
+		border: 1.5px solid rgba(0, 0, 0, 0.65);
 		border-radius: 50%;
 		font-weight: 600;
-		line-height: 15px;
+		line-height: 17px;
 
 		&.multiple {
 			font-size: 8px;
@@ -218,10 +222,6 @@ button.danger {
 		.info-value {
 			font-weight: 600;
 			font-size: 15px;
-
-			&.dimmed {
-				opacity: 0.25;
-			}
 		}
 	}
 }
@@ -362,10 +362,10 @@ button.danger {
 		border-bottom: 2px solid $control-border;
 		margin: 1px;
 		padding: 3px;
-		font-size: 16px;
+		font-size: 13px;
 		font-weight: 600;
 		letter-spacing: 1px;
-		line-height: 24px;
+		line-height: 20px;
 		overflow-x: hidden;
 		overflow-y: hidden;
 		text-overflow: ellipsis;

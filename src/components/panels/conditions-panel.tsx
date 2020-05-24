@@ -86,9 +86,10 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
 				description.push(
 					<div key='level' className='section'>
 						<NumberSpin
-							source={this.props.condition}
-							name='level'
+							value={this.props.condition.level}
 							label='level'
+							downEnabled={this.props.condition.level > 1}
+							upEnabled={this.props.condition.level < 6}
 							onNudgeValue={delta => this.props.nudgeConditionValue(this.props.condition, 'level', delta)}
 						/>
 					</div>

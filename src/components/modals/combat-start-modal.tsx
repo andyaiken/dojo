@@ -998,8 +998,8 @@ class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
 	public getCountSection() {
 		return (
 			<NumberSpin
-				source={this.props.encounterSlot}
-				name='count'
+				value={this.props.encounterSlot.count}
+				downEnabled={this.props.encounterSlot.count > 1}
 				onNudgeValue={delta => this.props.nudgeCount(this.props.encounterSlot.id, delta)}
 			/>
 		);

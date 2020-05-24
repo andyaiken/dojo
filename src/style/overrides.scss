@@ -356,6 +356,14 @@ button {
 }
 
 .ant-popover {
+	user-select: none;
 	font-size: 12px;
 	font-family: 'Open Sans', 'Segoe UI', sans-serif;
+	
+	.ant-popover-inner {
+		border-radius: 0;
+		min-width: 260px;
+		border: 1px solid $control-border;
+		border-left-width: 5px;
+	}
 }

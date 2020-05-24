@@ -53,9 +53,7 @@ export default class InitiativeEntry extends React.Component<Props> {
 			return (
 				<div>
 					<NumberSpin
-						source={this.props.combatant}
-						name='initiative'
-						label='initiative'
+						value={this.props.combatant.initiative ?? 10}
 						onNudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
 					/>
 					<button onClick={e => { e.stopPropagation(); this.props.makeActive(this.props.combatant); }}>add to encounter</button>

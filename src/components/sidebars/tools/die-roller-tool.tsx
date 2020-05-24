@@ -195,10 +195,9 @@ export default class DieRollerTool extends React.Component<Props, State> {
 					/>
 					<div className='subheading'>number of dice to roll</div>
 					<NumberSpin
-						source={this.state}
-						name='count'
+						value={this.state.count + 'd' + this.state.dice}
+						downEnabled={this.state.count > 1}
 						onNudgeValue={delta => this.nudgeCount(delta)}
-						onFormatValue={count => count + 'd' + this.state.dice}
 					/>
 					{optionsSection ? <div className='subheading'>options</div> : null}
 					{optionsSection}

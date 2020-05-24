@@ -20,15 +20,10 @@
 
 .combat-main {
 	height: calc(100% - 50px);
-}
 
-.multiple-combatant-row {
-	color: white;
-	background-color: #656565;
-	border-radius: 5px;
-	margin: 3px 0;
-	padding: 3px 5px;
-	position: relative;
+	.card {
+		margin: 5px 0;
+	}
 }
 
 .initiative-list-item {

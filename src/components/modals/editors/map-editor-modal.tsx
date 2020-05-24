@@ -475,10 +475,9 @@ export default class MapEditorModal extends React.Component<Props, State> {
 								</Row>
 								<div className='divider' />
 								<NumberSpin
-									source={this.state}
-									name={'mapSize'}
+									value='zoom'
+									downEnabled={this.state.mapSize > 3}
 									onNudgeValue={delta => this.nudgeMapSize(delta * 3)}
-									onFormatValue={() => 'zoom'}
 								/>
 								<button onClick={() => this.generate('room')}>add a random room</button>
 								<button onClick={() => this.rotateMap()}>rotate the map</button>
@@ -570,18 +569,16 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
 				<div className='section'>{this.props.tile.width * 5} ft x {this.props.tile.height * 5} ft</div>
 				<div className='section'>
 					<NumberSpin
-						source={this.props.tile}
-						name='width'
+						value={this.props.tile.width + ' sq'}
 						label='width'
+						downEnabled={this.props.tile.width > 1}
 						onNudgeValue={delta => this.props.nudgeValue(this.props.tile, 'width', delta)}
-						onFormatValue={value => value + ' sq'}
 					/>
 					<NumberSpin
-						source={this.props.tile}
-						name='height'
+						value={this.props.tile.height + ' sq'}
 						label='height'
+						downEnabled={this.props.tile.height > 1}
 						onNudgeValue={delta => this.props.nudgeValue(this.props.tile, 'height', delta)}
-						onFormatValue={value => value + ' sq'}
 					/>
 				</div>
 				<div className='divider' />

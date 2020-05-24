@@ -125,18 +125,16 @@ export default class MapImportModal extends React.Component<Props, State> {
 						/>
 						<div className='subheading'>size</div>
 						<NumberSpin
-							source={this.state}
-							name='width'
+							value={this.state.width + ' sq'}
 							label='width'
+							downEnabled={this.state.width > 1}
 							onNudgeValue={delta => this.nudgeWidth(delta)}
-							onFormatValue={value => value + ' sq'}
 						/>
 						<NumberSpin
-							source={this.state}
-							name='height'
+							value={this.state.height + ' sq'}
 							label='height'
+							downEnabled={this.state.height > 1}
 							onNudgeValue={delta => this.nudgeHeight(delta)}
-							onFormatValue={value => value + ' sq'}
 						/>
 					</div>
 				);

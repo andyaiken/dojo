@@ -15,6 +15,7 @@ import Expander from '../controls/expander';
 import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
 import Selector from '../controls/selector';
+import Tabs from '../controls/tabs';
 import Textbox from '../controls/textbox';
 import ConditionsPanel from './conditions-panel';
 import Note from './note';
@@ -51,7 +52,8 @@ interface Props {
 
 interface State {
 	view: string;
-	damageOrHealing: number;
+	healingValue: number;
+	damageValue: number;
 	damageMultipliers: { [id: string]: number };
 }
 
@@ -61,14 +63,21 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 
 		this.state = {
 			view: props.defaultTab,
-			damageOrHealing: 0,
+			healingValue: 0,
+			damageValue: 0,
 			damageMultipliers: {}
 		};
 	}
 
+	private nudgeHealing(delta: number) {
+		this.setState({
+			healingValue: Math.max(this.state.healingValue + delta, 0)
+		});
+	}
+
 	private nudgeDamage(delta: number) {
 		this.setState({
-			damageOrHealing: Math.max(this.state.damageOrHealing + delta, 0)
+			damageValue: Math.max(this.state.damageValue + delta, 0)
 		});
 	}
 
@@ -87,10 +96,10 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 	}
 
 	private heal() {
-		const value = this.state.damageOrHealing;
+		const value = this.state.healingValue;
 
 		this.setState({
-			damageOrHealing: 0
+			healingValue: 0
 		}, () => {
 			const values: { id: string, hp: number, temp: number; damage: number }[] = [];
 			this.props.combatants.forEach(combatant => {
@@ -112,10 +121,10 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 	}
 
 	private damage() {
-		const value = this.state.damageOrHealing;
+		const value = this.state.damageValue;
 
 		this.setState({
-			damageOrHealing: 0
+			damageValue: 0
 		}, () => {
 			const values: { id: string, hp: number, temp: number; damage: number }[] = [];
 			this.props.combatants.forEach(combatant => {
@@ -262,23 +271,23 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 		if (this.props.combatants.length === 1) {
 			const monster = this.props.combatants[0] as Combatant & Monster;
 			current = (
-				<div>
+				<Expander text='current hit points'>
 					<NumberSpin
-						source={monster}
-						name='hpCurrent'
-						label='hit points'
+						value={monster.hpCurrent ?? 0}
+						label='hp'
 						factors={[1, 10]}
+						downEnabled={(monster.hpCurrent ?? 0) > 0}
+						upEnabled={(monster.hpCurrent ?? 0) < (monster.hpMax ?? 0)}
 						onNudgeValue={delta => this.props.nudgeValue(monster, 'hpCurrent', delta)}
 					/>
 					<NumberSpin
-						source={monster}
-						name='hpTemp'
+						value={monster.hpTemp ?? 0}
 						label='temp hp'
 						factors={[1, 10]}
+						downEnabled={(monster.hpTemp ?? 0) > 0}
 						onNudgeValue={delta => this.props.nudgeValue(monster, 'hpTemp', delta)}
 					/>
-					<div className='divider' />
-				</div>
+				</Expander>
 			);
 		}
 
@@ -291,21 +300,21 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 			if (monster.damage.resist) {
 				resist = (
 					<div className='section'>
-						<b>damage resistances</b> {monster.damage.resist} {this.props.combatants.length > 1 ? <i> - {c.displayName}</i> : null}
+						<b>resistances</b> {monster.damage.resist} {this.props.combatants.length > 1 ? <i> - {c.displayName}</i> : null}
 					</div>
 				);
 			}
 			if (monster.damage.vulnerable) {
 				vuln = (
 					<div className='section'>
-						<b>damage vulnerabilities</b> {monster.damage.vulnerable} {this.props.combatants.length > 1 ? <i> - {c.displayName}</i> : null}
+						<b>vulnerabilities</b> {monster.damage.vulnerable} {this.props.combatants.length > 1 ? <i> - {c.displayName}</i> : null}
 					</div>
 				);
 			}
 			if (monster.damage.immune) {
 				immune = (
 					<div className='section'>
-						<b>damage immunities</b> {monster.damage.immune} {this.props.combatants.length > 1 ? <i> - {c.displayName}</i> : null}
+						<b>immunities</b> {monster.damage.immune} {this.props.combatants.length > 1 ? <i> - {c.displayName}</i> : null}
 					</div>
 				);
 			}
@@ -320,12 +329,12 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 			}
 			if (resist || vuln || immune || conc) {
 				return (
-					<div key={c.id}>
+					<Note key={c.id}>
 						{resist}
 						{vuln}
 						{immune}
 						{conc}
-					</div>
+					</Note>
 				);
 			}
 			return null;
@@ -402,28 +411,29 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 
 		return (
 			<div>
-				{current}
 				{modifiers}
 				<NumberSpin
-					source={this.state}
-					name='damageOrHealing'
+					value={this.state.damageValue}
+					label='damage'
 					factors={[1, 10]}
+					downEnabled={this.state.damageValue > 0}
 					onNudgeValue={delta => this.nudgeDamage(delta)}
 				/>
-				<Row gutter={10}>
-					<Col xs={24} sm={24} md={12} lg={12} xl={12}>
-						<button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.heal()}>
-							heal
-						</button>
-					</Col>
-					<Col xs={24} sm={24} md={12} lg={12} xl={12}>
-						<button className={this.state.damageOrHealing === 0 ? 'disabled' : ''} onClick={() => this.damage()}>
-							damage
-						</button>
-					</Col>
-				</Row>
+				<button className={this.state.damageValue === 0 ? 'disabled' : ''} onClick={() => this.damage()}>apply damage</button>
 				{degrees}
 				{defeatedBtn}
+				<div className='divider'/>
+				<Expander text='healing'>
+					<NumberSpin
+						value={this.state.healingValue}
+						label='healing'
+						factors={[1, 10]}
+						downEnabled={this.state.healingValue > 0}
+						onNudgeValue={delta => this.nudgeHealing(delta)}
+					/>
+					<button className={this.state.healingValue === 0 ? 'disabled' : ''} onClick={() => this.heal()}>apply healing</button>
+				</Expander>
+				{current}
 			</div>
 		);
 	}
@@ -440,9 +450,9 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 			}
 
 			return (
-				<div key={c.id} className='section'>
-					<b>condition immunities</b> {monster.conditionImmunities} {this.props.combatants.length > 1 ? <i> - {c.displayName}</i> : null}
-				</div>
+				<Note key={c.id}>
+					<b>immunities</b> {monster.conditionImmunities} {this.props.combatants.length > 1 ? <i> - {c.displayName}</i> : null}
+				</Note>
 			);
 		});
 
@@ -480,11 +490,9 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 				const combatant = this.props.combatants[0];
 				altitude = (
 					<NumberSpin
-						source={combatant}
-						name='altitude'
+						value={combatant.altitude + ' ft.'}
 						label='altitude'
 						onNudgeValue={delta => this.props.nudgeValue(combatant, 'altitude', delta * 5)}
-						onFormatValue={value => value + ' ft.'}
 					/>
 				);
 				let auraDetails = null;
@@ -521,11 +529,10 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 				aura = (
 					<Expander text='aura'>
 						<NumberSpin
-							source={combatant.aura}
-							name='radius'
+							value={combatant.aura.radius + ' ft.'}
 							label='size'
+							downEnabled={combatant.aura.radius > 0}
 							onNudgeValue={delta => this.props.nudgeValue(combatant.aura, 'radius', delta * 5)}
-							onFormatValue={value => value + ' ft.'}
 						/>
 						{auraDetails}
 					</Expander>
@@ -585,9 +592,10 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 			changeSize = (
 				<Expander text='change size'>
 					<NumberSpin
-						source={combatant}
-						name='displaySize'
+						value={combatant.displaySize}
 						label='size'
+						downEnabled={combatant.displaySize !== 'tiny'}
+						upEnabled={combatant.displaySize !== 'gargantuan'}
 						onNudgeValue={delta => this.props.nudgeValue(combatant, 'displaySize', delta)}
 					/>
 				</Expander>
@@ -597,8 +605,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 				changeInit = (
 					<Expander text='change initiative score'>
 						<NumberSpin
-							source={combatant}
-							name='initiative'
+							value={combatant.initiative ?? 0}
 							label='initiative'
 							onNudgeValue={delta => this.props.nudgeValue(combatant, 'initiative', delta)}
 						/>
@@ -749,12 +756,11 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 
 			return (
 				<div>
-					<Selector
+					<Tabs
 						options={views}
 						selectedID={currentView}
 						onSelect={option => this.setView(option)}
 					/>
-					<div className='divider' />
 					{content}
 				</div>
 			);

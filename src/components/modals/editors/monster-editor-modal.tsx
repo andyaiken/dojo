@@ -887,8 +887,9 @@ class OverviewTab extends React.Component<OverviewTabProps> {
 						<button onClick={() => this.randomName()}>generate a random name</button>
 						<div className='subheading'>size</div>
 						<NumberSpin
-							source={this.props.monster}
-							name='size'
+							value={this.props.monster.size}
+							downEnabled={this.props.monster.size !== 'tiny'}
+							upEnabled={this.props.monster.size !== 'gargantuan'}
 							onNudgeValue={delta => this.props.nudgeValue('size', delta)}
 						/>
 						<div className='subheading'>type</div>
@@ -909,10 +910,9 @@ class OverviewTab extends React.Component<OverviewTabProps> {
 						/>
 						<div className='subheading'>challenge rating</div>
 						<NumberSpin
-							source={this.props.monster}
-							name='challenge'
+							value={Utils.challenge(this.props.monster.challenge)}
+							downEnabled={this.props.monster.challenge > 0}
 							onNudgeValue={delta => this.props.nudgeValue('challenge', delta)}
-							onFormatValue={value => Utils.challenge(value)}
 						/>
 					</Col>
 					<Col xs={24} sm={24} md={24} lg={12} xl={12}>
@@ -1006,23 +1006,22 @@ class CombatTab extends React.Component<CombatTabProps> {
 					<Col xs={24} sm={24} md={24} lg={12} xl={12}>
 						<div className='subheading'>armor class</div>
 						<NumberSpin
-							source={this.props.monster}
-							name='ac'
+							value={this.props.monster.ac}
+							downEnabled={this.props.monster.ac > 0}
 							onNudgeValue={delta => this.props.nudgeValue('ac', delta)}
 						/>
 						<div className='subheading'>hit dice</div>
 						<NumberSpin
-							source={this.props.monster}
-							name='hitDice'
+							value={this.props.monster.hitDice + 'd' + Utils.hitDieType(this.props.monster.size)}
+							downEnabled={this.props.monster.hitDice > 1}
 							onNudgeValue={delta => this.props.nudgeValue('hitDice', delta)}
-							onFormatValue={value => value + 'd' + Utils.hitDieType(this.props.monster.size)}
 						/>
 						<div className='subheading'>hit points</div>
 						<div className='hp-value'>{Frankenstein.getTypicalHP(this.props.monster)} hp</div>
 						<div className='subheading'>legendary actions</div>
 						<NumberSpin
-							source={this.props.monster}
-							name='legendaryActions'
+							value={this.props.monster.legendaryActions}
+							downEnabled={this.props.monster.legendaryActions > 0}
 							onNudgeValue={delta => this.props.nudgeValue('legendaryActions', delta)}
 						/>
 					</Col>

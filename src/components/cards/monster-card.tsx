@@ -315,9 +315,9 @@ export default class MonsterCard extends React.Component<Props, State> {
 					<div>
 						<div className='divider' />
 						<NumberSpin
-							source={this.props.slot}
-							name='count'
+							value={this.props.slot.count}
 							label='count'
+							downEnabled={this.props.slot.count > 1}
 							onNudgeValue={delta => this.props.nudgeValue(this.props.slot, 'count', delta)}
 						/>
 					</div>

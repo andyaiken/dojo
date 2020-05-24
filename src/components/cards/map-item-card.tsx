@@ -46,18 +46,16 @@ export default class MapItemCard extends React.Component<Props, State> {
 					<div className='subheading'>size</div>
 					<div className='section'>
 						<NumberSpin
-							source={this.props.item}
-							name='width'
+							value={this.props.item.width + ' sq'}
 							label='width'
+							downEnabled={this.props.item.width > 1}
 							onNudgeValue={delta => this.props.nudgeValue(this.props.item, 'width', delta)}
-							onFormatValue={value => value + ' sq'}
 						/>
 						<NumberSpin
-							source={this.props.item}
-							name='height'
+							value={this.props.item.height + ' sq'}
 							label='height'
+							downEnabled={this.props.item.height > 1}
 							onNudgeValue={delta => this.props.nudgeValue(this.props.item, 'height', delta)}
-							onFormatValue={value => value + ' sq'}
 						/>
 					</div>
 				</div>
@@ -107,8 +105,9 @@ export default class MapItemCard extends React.Component<Props, State> {
 				<div style={{ display: this.props.item.type === 'token' ? 'block' : 'none' }}>
 					<div className='subheading'>size</div>
 					<NumberSpin
-						source={this.props.item}
-						name='size'
+						value={this.props.item.size}
+						downEnabled={this.props.item.size !== 'tiny'}
+						upEnabled={this.props.item.size !== 'gargantuan'}
 						onNudgeValue={delta => this.props.nudgeValue(this.props.item, 'size', delta)}
 					/>
 				</div>

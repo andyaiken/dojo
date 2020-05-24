@@ -142,8 +142,9 @@ export default class PCEditorModal extends React.Component<Props, State> {
 						/>
 						<div className='subheading'>size</div>
 						<NumberSpin
-							source={this.state.pc}
-							name='size'
+							value={this.state.pc.size}
+							downEnabled={this.state.pc.size !== 'tiny'}
+							upEnabled={this.state.pc.size !== 'gargantuan'}
 							onNudgeValue={delta => this.nudgeValue(this.state.pc, 'size', delta)}
 						/>
 						<div className='subheading'>race:</div>
@@ -158,27 +159,27 @@ export default class PCEditorModal extends React.Component<Props, State> {
 						/>
 						<div className='subheading'>level:</div>
 						<NumberSpin
-							source={this.state.pc}
-							name='level'
+							value={this.state.pc.level}
+							downEnabled={this.state.pc.level > 1}
 							onNudgeValue={delta => this.nudgeValue(this.state.pc, 'level', delta)}
 						/>
 						<div className='subheading'>passive skills</div>
 						<NumberSpin
-							source={this.state.pc}
-							name='passiveInsight'
+							value={this.state.pc.passiveInsight}
 							label='insight'
+							downEnabled={this.state.pc.passiveInsight > 0}
 							onNudgeValue={delta => this.nudgeValue(this.state.pc, 'passiveInsight', delta)}
 						/>
 						<NumberSpin
-							source={this.state.pc}
-							name='passiveInvestigation'
+							value={this.state.pc.passiveInvestigation}
 							label='investigation'
+							downEnabled={this.state.pc.passiveInvestigation > 0}
 							onNudgeValue={delta => this.nudgeValue(this.state.pc, 'passiveInvestigation', delta)}
 						/>
 						<NumberSpin
-							source={this.state.pc}
-							name='passivePerception'
+							value={this.state.pc.passivePerception}
 							label='perception'
+							downEnabled={this.state.pc.passivePerception > 0}
 							onNudgeValue={delta => this.nudgeValue(this.state.pc, 'passivePerception', delta)}
 						/>
 					</Col>

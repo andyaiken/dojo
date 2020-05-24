@@ -5,7 +5,7 @@ import Factory from '../../utils/factory';
 import Utils from '../../utils/utils';
 
 import { Combat, Combatant } from '../../models/combat';
-import { Condition, CONDITION_TYPES, ConditionDurationCombatant, ConditionDurationSaves } from '../../models/condition';
+import { Condition, CONDITION_TYPES, ConditionDurationCombatant, ConditionDurationRounds, ConditionDurationSaves } from '../../models/condition';
 import { Monster } from '../../models/monster-group';
 import { PC } from '../../models/party';
 
@@ -107,9 +107,10 @@ export default class ConditionModal extends React.Component<Props, State> {
 						controls.push(
 							<NumberSpin
 								key='exhaustion-spin'
-								source={this.props.condition}
-								name='level'
+								value={this.props.condition.level}
 								label='exhaustion'
+								downEnabled={this.props.condition.level > 1}
+								upEnabled={this.props.condition.level < 6}
 								onNudgeValue={delta => this.nudgeValue(this.props.condition, 'level', delta)}
 							/>
 						);
@@ -185,16 +186,32 @@ export default class ConditionModal extends React.Component<Props, State> {
 							<div className='section'>
 								<div className='subheading'>number of saves required</div>
 								<NumberSpin
-									source={this.props.condition.duration}
-									name='count'
+									value={
+										(this.props.condition.duration as ConditionDurationSaves)
+										? (this.props.condition.duration as ConditionDurationSaves).count
+										: ''
+									}
+									downEnabled={
+										(this.props.condition.duration as ConditionDurationSaves)
+										? (this.props.condition.duration as ConditionDurationSaves).count > 1
+										: false
+									}
 									onNudgeValue={delta => this.nudgeValue(this.props.condition.duration, 'count', delta)}
 								/>
 							</div>
 							<div className='section'>
 								<div className='subheading'>save dc</div>
 								<NumberSpin
-									source={this.props.condition.duration}
-									name='saveDC'
+									value={
+										(this.props.condition.duration as ConditionDurationSaves)
+										? 'dc ' + (this.props.condition.duration as ConditionDurationSaves).saveDC
+										: ''
+									}
+									downEnabled={
+										(this.props.condition.duration as ConditionDurationSaves)
+										? (this.props.condition.duration as ConditionDurationSaves).saveDC > 0
+										: false
+									}
 									onNudgeValue={delta => this.nudgeValue(this.props.condition.duration, 'saveDC', delta)}
 								/>
 							</div>
@@ -265,8 +282,16 @@ export default class ConditionModal extends React.Component<Props, State> {
 							<div className='section'>
 								<div className='subheading'>number of rounds</div>
 								<NumberSpin
-									source={this.props.condition.duration}
-									name='count'
+									value={
+										(this.props.condition.duration as ConditionDurationRounds)
+										? (this.props.condition.duration as ConditionDurationRounds).count
+										: ''
+									}
+									downEnabled={
+										(this.props.condition.duration as ConditionDurationRounds)
+										? (this.props.condition.duration as ConditionDurationRounds).count > 1
+										: false
+									}
 									onNudgeValue={delta => this.nudgeValue(this.props.condition.duration, 'count', delta)}
 								/>
 							</div>

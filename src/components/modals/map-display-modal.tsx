@@ -446,10 +446,9 @@ export default class MapDisplayModal extends React.Component<Props, State> {
 				if (this.state.playerViewOpen) {
 					playerMapSection = (
 						<NumberSpin
-							source={this.state}
-							name={'playerMapSize'}
+							value='zoom'
+							downEnabled={this.state.playerMapSize > 3}
 							onNudgeValue={delta => this.nudgePlayerMapSize(delta * 3)}
-							onFormatValue={() => 'zoom'}
 						/>
 					);
 				}
@@ -459,10 +458,9 @@ export default class MapDisplayModal extends React.Component<Props, State> {
 						<div className='section'>
 							<div className='subheading'>options</div>
 							<NumberSpin
-								source={this.state}
-								name={'mapSize'}
+								value='zoom'
+								downEnabled={this.state.mapSize > 3}
 								onNudgeValue={delta => this.nudgeMapSize(delta * 3)}
-								onFormatValue={() => 'zoom'}
 							/>
 							<button onClick={() => this.rotateMap()}>rotate map</button>
 							<button onClick={() => this.props.startCombat(this.state.partyID, this.state.map, this.state.fog)}>start encounter</button>
