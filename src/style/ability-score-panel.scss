@@ -5,29 +5,27 @@
 	border-left-width: 5px;
 	text-align: center;
 	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
 	&:hover {
 		border-color: $highlight;
 	}
 
-	.ability-score-group {
-		display: inline-block;
-		column-width: 120px;
+	.ability-score {
+		flex-grow: 1;
+		flex-shrink: 1;
+		flex-basis: auto;
+		padding: 5px 0;
+		text-align: center;
 
-		.ability-score {
-			display: inline-block;
-			width: calc((100% - 1px) / 3);
-			padding: 5px;
+		.ability-heading {
+			font-weight: 600;
+		}
 
-			.ability-heading {
-				text-align: center;
-				font-weight: 600;
-			}
-
-			.ability-value {
-				text-align: center;
-				padding-top: 5px;
-			}
+		.ability-value {
+			padding-top: 5px;
 		}
 	}
 }

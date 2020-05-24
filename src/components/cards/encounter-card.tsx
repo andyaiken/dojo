@@ -22,11 +22,14 @@ interface Props {
 
 export default class EncounterCard extends React.Component<Props> {
 	private getText(slot: EncounterSlot) {
-		let text = slot.monsterName || 'unnamed monster';
+		return <div className='name'>{slot.monsterName || 'unnamed monster'}</div>;
+	}
+
+	private getValue(slot: EncounterSlot) {
 		if (slot.count > 1) {
-			text += ' (x' + slot.count + ')';
+			return <div className='value'>x{slot.count}</div>;
 		}
-		return <div className='name'>{text}</div>;
+		return null;
 	}
 
 	private getPortrait(slot: EncounterSlot) {
@@ -44,6 +47,7 @@ export default class EncounterCard extends React.Component<Props> {
 				<div key={slot.id} className='combatant-row' onClick={() => this.props.openStatBlock(slot)}>
 					{this.getPortrait(slot)}
 					{this.getText(slot)}
+					{this.getValue(slot)}
 				</div>
 			));
 			if (slots.length === 0) {
@@ -56,7 +60,7 @@ export default class EncounterCard extends React.Component<Props> {
 					slots.push(
 						<div key={slot.id} className='combatant-row' onClick={() => this.props.openStatBlock(slot)}>
 							{this.getPortrait(slot)}
-							{this.getText(slot)}
+							{this.getValue(slot)}
 						</div>
 					);
 				});

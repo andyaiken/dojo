@@ -16,6 +16,27 @@ interface Props {
 }
 
 export default class CombatCard extends React.Component<Props> {
+	private getValue(combatant: Combatant) {
+		switch (combatant.type) {
+			case 'pc':
+				return <div className='value'>pc</div>;
+			case 'monster':
+				const current = combatant.hpCurrent ?? 0;
+				const max = combatant.hpMax ?? 0;
+				const temp = combatant.hpTemp ?? 0;
+				let str = current.toString();
+				if (temp > 0) {
+					str += '+' + temp;
+				}
+				if (current < max) {
+					str += ' / ' + max;
+				}
+				return <div className='value'>{str} hp</div>;
+		}
+
+		return null;
+	}
+
 	public render() {
 		try {
 			let map = null;
@@ -37,6 +58,7 @@ export default class CombatCard extends React.Component<Props> {
 					<div key={c.id} className='combatant-row' onClick={() => this.props.openStatBlock(c)}>
 						<PortraitPanel source={c as (Combatant & PC) | (Combatant & Monster)} inline={true}/>
 						<div className='name'>{c.displayName}</div>
+						{this.getValue(c)}
 					</div>
 				));
 

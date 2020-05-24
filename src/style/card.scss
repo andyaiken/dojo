@@ -171,27 +171,32 @@
 		}
 
 		.fixed-height {
-			height: 194px;
+			height: 191px;
 			overflow-y: auto;
 
 			.combatant-row {
 				margin: 5px 0;
 				padding: 3px 5px;
-				position: relative;
+				min-height: 26px;
 				border-left: 5px solid $control-border;
 				cursor: pointer;
+				display: flex;
+				align-items: center;
 
 				.name {
-					display: inline-block;
-					vertical-align: top;
-					padding: 1px 0;
-					min-height: 20px;
+					flex-grow: 1;
+				}
+
+				.value {
+					flex-shrink: 0;
+					font-size: 10px;
 				}
 
 				&.inactive {
 					opacity: 0.5;
 
-					.name {
+					.name,
+					.value {
 						text-decoration: line-through;
 					}
 				}

@@ -32,6 +32,7 @@ export default class PartyCard extends React.Component<Props> {
 			<div key={pc.id} className={pc.active ? 'combatant-row' : 'combatant-row inactive'} onClick={() => this.props.openStatBlock(pc)}>
 				<PortraitPanel source={pc} inline={true}/>
 				<div className='name'>{this.getText(pc)}</div>
+				<div className='value'>lvl {pc.level}</div>
 			</div>
 		));
 	}
