@@ -832,7 +832,7 @@ class MonsterSection extends React.Component<MonsterSectionProps, MonsterSection
 				<div>
 					<div className='heading'>monsters</div>
 					<Selector options={options} selectedID={this.state.view} onSelect={id => this.setView(id)} />
-					<div className='divider' />
+					<hr/>
 					<div>{slots}</div>
 				</div>
 			);
@@ -1028,7 +1028,7 @@ class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
 		return (
 			<div className='group-panel combatant-setup'>
 				<div className='subheading'>{header}</div>
-				<div className='divider' />
+				<hr/>
 				{content}
 			</div>
 		);

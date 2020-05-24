@@ -226,7 +226,7 @@ export default class LanguageTool extends React.Component<Props, State> {
 			const output = [];
 			if (this.state.output.length > 0) {
 				output.push(
-					<div key='div' className='divider' />
+					<hr key='div' />
 				);
 			}
 			for (let n = 0; n !== this.state.output.length; ++n) {
@@ -248,7 +248,7 @@ export default class LanguageTool extends React.Component<Props, State> {
 						onSelect={optionID => this.usePreset(optionID)}
 					/>
 					{custom}
-					<div className='divider' />
+					<hr/>
 					<button className={allowGenerate ? '' : 'disabled'} onClick={() => this.generate()}>generate text</button>
 					{output}
 				</div>

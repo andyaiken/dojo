@@ -43,7 +43,7 @@ export default class TraitsPanel extends React.Component<Props> {
 						count = (
 							<div>
 								<div><b>{this.props.combatant.legendaryActions}</b> legendary actions per round</div>
-								<div className='divider' />
+								<hr/>
 							</div>
 						);
 						if (this.props.mode === 'legendary') {
@@ -74,7 +74,7 @@ export default class TraitsPanel extends React.Component<Props> {
 							}
 							usage = (
 								<div>
-									<div className='divider' />
+									<hr/>
 									<div className='section centered legendary-usage'>
 										{icons}
 									</div>

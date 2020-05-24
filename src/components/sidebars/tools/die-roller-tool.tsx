@@ -201,7 +201,7 @@ export default class DieRollerTool extends React.Component<Props, State> {
 					/>
 					{optionsSection ? <div className='subheading'>options</div> : null}
 					{optionsSection}
-					<div className='divider' />
+					<hr/>
 					<button onClick={() => this.roll()}>roll dice</button>
 					{rollsSection}
 					{resultSection}

@@ -33,7 +33,7 @@ export default class MonsterListScreen extends React.Component<Props> {
 								<div className='section'>
 									to kickstart your monster collection, let's import all the monsters from the <a href='http://dnd.wizards.com/articles/features/systems-reference-document-srd' target='_blank' rel='noopener noreferrer'>d&amp;d system reference document</a>
 								</div>
-								<div className='divider' />
+								<hr/>
 								<button onClick={() => this.props.addOpenGameContent()}>import monsters</button>
 							</Note>
 						</Col>
@@ -60,10 +60,10 @@ export default class MonsterListScreen extends React.Component<Props> {
 						<Note>
 							<div className='section'>you can maintain your menagerie of monsters here</div>
 							<div className='section'>you can then use these monsters to design combat encounters in the encounter builder</div>
-							<div className='divider'/>
+							<hr/>
 							<div className='section'>on the right you will see a list of monster groups</div>
 							<div className='section'>select a monster group from the list to see stat blocks for monsters in that group</div>
-							<div className='divider'/>
+							<hr/>
 							<div className='section'>to start adding monsters, press the <b>create a new monster group</b> button</div>
 						</Note>
 						<button onClick={() => this.props.addMonsterGroup()}>create a new monster group</button>

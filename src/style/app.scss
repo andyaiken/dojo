@@ -79,23 +79,11 @@ body,
 	letter-spacing: 2px;
 }
 
-hr,
-.divider {
+hr {
 	margin: 10px 20px;
 	height: 0;
+	border: none;
 	border-top: 1px solid $control-border;
-
-	&.space {
-		border: none;
-		height: 5px;
-	}
-}
-
-.vertical-divider {
-	height: 35px;
-	width: 3px;
-	margin: 0 10px;
-	background-color: $control-border;
 }
 
 .image,

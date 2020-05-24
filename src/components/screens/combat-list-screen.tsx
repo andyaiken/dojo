@@ -47,11 +47,11 @@ export default class CombatListScreen extends React.Component<Props> {
 										{this.props.hasMonsters ? <CheckCircleOutlined title='done' style={{ marginLeft: '5px' }}/> : null}
 									</li>
 								</ul>
-								<div className='divider'/>
+								<hr/>
 								<div className='section'>
 									you probably want to design your encounter in the <button className='link' onClick={() => this.props.setView('encounters')}>encounters screen</button>, but you don't have to (you can generate a random encounter here instead)
 								</div>
-								<div className='divider'/>
+								<hr/>
 								<div className='section'>
 									if you want to use a tactical map, you can either build one in the <button className='link' onClick={() => this.props.setView('maps')}>maps screen</button>, or you can generate a random one here
 								</div>
@@ -81,10 +81,10 @@ export default class CombatListScreen extends React.Component<Props> {
 							<div className='section'>
 								here you can run a combat encounter by specifying a party and an encounter, and optionally a tactical map
 							</div>
-							<div className='divider' />
+							<hr/>
 							<div className='section'>on the right you will see a list of combats that you have paused</div>
 							<div className='section'>you can resume a paused combat by selecting it</div>
-							<div className='divider' />
+							<hr/>
 							<div className='section'>to start a combat encounter, press the <b>start a new combat</b> button</div>
 						</Note>
 						<button onClick={() => this.props.createCombat()}>start a new combat</button>

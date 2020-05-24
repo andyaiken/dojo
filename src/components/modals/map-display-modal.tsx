@@ -386,7 +386,7 @@ export default class MapDisplayModal extends React.Component<Props, State> {
 							changeValue={(source, field, value) => this.changeValue(source, field, value)}
 							nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
 						/>
-						<div className='divider' />
+						<hr/>
 						<button onClick={() => this.setSelectedCombatantIDs([])}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back</button>
 					</div>
 				);
@@ -465,18 +465,18 @@ export default class MapDisplayModal extends React.Component<Props, State> {
 							<button onClick={() => this.rotateMap()}>rotate map</button>
 							<button onClick={() => this.props.startCombat(this.state.partyID, this.state.map, this.state.fog)}>start encounter</button>
 						</div>
-						<div className='divider' />
+						<hr/>
 						<div className='section'>
 							<div className='subheading'>fog of war</div>
 							<Checkbox label='edit fog of war' checked={this.state.editFog} onChecked={() => this.toggleEditFog()} />
 							{fogSection}
 						</div>
-						<div className='divider' />
+						<hr/>
 						<div className='section'>
 							<div className='subheading'>pcs</div>
 							{pcSection}
 						</div>
-						<div className='divider' />
+						<hr/>
 						<div className='section'>
 							<div className='subheading'>player view</div>
 							<Checkbox

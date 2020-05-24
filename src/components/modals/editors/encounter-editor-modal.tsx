@@ -272,11 +272,11 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 					<div className='card error'>
 						<div className='card-content'>
 							<div className='subheading'>unknown monster</div>
-							<div className='divider' />
+							<hr/>
 							<div className='section'>
 								could not find a monster called '<b>{slot.monsterName}</b>' in a group called '<b>{slot.monsterGroupName}'</b>
 							</div>
-							<div className='divider' />
+							<hr/>
 							<button onClick={() => this.removeEncounterSlot(slot, waveID)}>remove</button>
 						</div>
 					</div>
@@ -406,13 +406,13 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 							{waves}
 							<button onClick={() => this.addWave()}>add a new wave</button>
 						</div>
-						<div className='divider' />
+						<hr/>
 						<DifficultyChartPanel
 							encounter={this.props.encounter}
 							parties={this.props.parties}
 							getMonster={(monsterName, monsterGroupName) => this.props.getMonster(monsterName, monsterGroupName)}
 						/>
-						<div className='divider' />
+						<hr/>
 						<div className='section'>
 							<FilterPanel
 								filter={this.state.filter}
@@ -420,7 +420,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 								resetFilter={() => this.resetFilter()}
 							/>
 						</div>
-						<div className='divider' />
+						<hr/>
 						<div className='section'>
 							<Expander text='build a random encounter'>
 								<p>add random monsters to this encounter until its (effective) xp value is at least the following value</p>

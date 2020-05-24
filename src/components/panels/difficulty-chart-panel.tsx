@@ -47,7 +47,7 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
 
 			const basicData = (
 				<div>
-					<div className='divider' />
+					<hr/>
 					<div className='section'>
 						<Row>
 							<Col span={16}>xp for this encounter</Col>

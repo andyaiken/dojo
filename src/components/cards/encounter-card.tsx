@@ -96,7 +96,7 @@ export default class EncounterCard extends React.Component<Props> {
 							<div className='subheading'>xp</div>
 							{Napoleon.getEncounterXP(this.props.encounter, this.props.getMonster)}
 						</div>
-						<div className='divider'/>
+						<hr/>
 						{run}
 						<button onClick={() => this.props.edit(this.props.encounter)}>edit encounter</button>
 						<ConfirmButton text='delete encounter' onConfirm={() => this.props.delete(this.props.encounter)} />

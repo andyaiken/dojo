@@ -433,12 +433,12 @@ export default class MapEditorModal extends React.Component<Props, State> {
 							placeholder='map name'
 							onChange={value => this.changeValue(this.state.map, 'name', value)}
 						/>
-						<div className='divider' />
+						<hr/>
 						<Note>
 							<p>to add a new tile to the map, click on one of the buttons below</p>
 							<p>to edit an existing tile, click on it to select it</p>
 						</Note>
-						<div className='divider' />
+						<hr/>
 						{
 							this.state.addingTile
 							?
@@ -473,7 +473,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
 										</button>
 									</Col>
 								</Row>
-								<div className='divider' />
+								<hr/>
 								<NumberSpin
 									value='zoom'
 									downEnabled={this.state.mapSize > 3}
@@ -581,7 +581,7 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
 						onNudgeValue={delta => this.props.nudgeValue(this.props.tile, 'height', delta)}
 					/>
 				</div>
-				<div className='divider' />
+				<hr/>
 				<button onClick={() => this.props.sendToBack(this.props.tile)}>send to back</button>
 				<button onClick={() => this.props.bringToFront(this.props.tile)}>bring to front</button>
 			</div>
@@ -742,9 +742,9 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
 							selectedID={this.state.view}
 							onSelect={optionID => this.setView(optionID)}
 						/>
-						<div className='divider' />
+						<hr/>
 						{content}
-						<div className='divider' />
+						<hr/>
 						<div className='section'>
 							<button onClick={() => this.props.rotate(this.props.tile)}>rotate tile</button>
 							<button onClick={() => this.props.clone(this.props.tile)}>clone tile</button>

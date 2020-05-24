@@ -40,7 +40,7 @@ export default class NPCTool extends React.Component<Props, State> {
 					<div className='generated-item group-panel'>
 						<div className='text-section'>
 							<div><b>npc:</b> {this.state.description}</div>
-							<div className='divider' />
+							<hr/>
 							<div className='smaller'><b>physical:</b> {this.state.physical}</div>
 							<div className='smaller'><b>personality:</b> {this.state.mental}</div>
 							<div className='smaller'><b>speech:</b> {this.state.speech}</div>
@@ -52,7 +52,7 @@ export default class NPCTool extends React.Component<Props, State> {
 			return (
 				<div>
 					<button onClick={() => this.generate()}>generate</button>
-					{!!item ? <div className='divider' /> : null}
+					{!!item ? <hr/> : null}
 					{item}
 				</div>
 			);

@@ -28,7 +28,7 @@ export default class ConfirmButton extends React.Component<Props> {
 								<span style={{ marginLeft: '10px' }}>{this.props.prompt}</span>
 							</div>
 							{this.props.info}
-							<div className='divider' />
+							<hr/>
 							<button onClick={() => this.props.onConfirm()}>confirm</button>
 						</div>
 					)}

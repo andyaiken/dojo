@@ -200,7 +200,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 			actionSection = (
 				<div>
 					{actions}
-					<div className='divider' />
+					<hr/>
 				</div>
 			);
 		}
@@ -422,7 +422,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 				<button className={this.state.damageValue === 0 ? 'disabled' : ''} onClick={() => this.damage()}>apply damage</button>
 				{degrees}
 				{defeatedBtn}
-				<div className='divider'/>
+				<hr/>
 				<Expander text='healing'>
 					<NumberSpin
 						value={this.state.healingValue}
@@ -542,7 +542,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 			return (
 				<div>
 					<Radial onClick={dir => this.props.mapMove(this.props.combatants, dir)} />
-					<div className='divider' />
+					<hr/>
 					{altitude}
 					{aura}
 					<button onClick={() => this.props.mapRemove(this.props.combatants)}>remove from map</button>

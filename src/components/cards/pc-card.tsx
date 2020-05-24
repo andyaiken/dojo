@@ -82,7 +82,7 @@ export default class PCCard extends React.Component<Props> {
 							<div className='section centered' style={{ display: this.props.pc.url ? '' : 'none' }}>
 								<a href={this.props.pc.url} target='_blank' rel='noopener noreferrer'>d&amp;d beyond sheet</a>
 							</div>
-							<div className='divider' />
+							<hr/>
 							<div className='section subheading'>size</div>
 							<div className='section'>
 								{this.props.pc.size}
@@ -105,7 +105,7 @@ export default class PCCard extends React.Component<Props> {
 							</div>
 						</div>
 						<div style={{ display: options.length > 0 ? '' : 'none' }}>
-							<div className='divider' />
+							<hr/>
 							<div className='section'>
 								{options}
 							</div>

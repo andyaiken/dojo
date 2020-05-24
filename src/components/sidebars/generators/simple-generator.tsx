@@ -60,7 +60,7 @@ export default class SimpleGenerator extends React.Component<Props, State> {
 			return (
 				<div>
 					<button onClick={() => this.generate()}>generate</button>
-					{values.length > 0 ? <div className='divider' /> : null}
+					{values.length > 0 ? <hr/> : null}
 					{values}
 				</div>
 			);

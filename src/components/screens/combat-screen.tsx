@@ -368,7 +368,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 						<div>
 							<div className='heading lowercase'>{token.displayName}</div>
 							<Radial onClick={dir => this.props.mapMove([token.id], dir)} />
-							<div className='divider' />
+							<hr/>
 							<NumberSpin
 								key='altitude'
 								value={token.altitude + ' ft.'}
@@ -626,7 +626,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 			return (
 				<div>
 					{this.createControls(combatants)}
-					<div className='divider space'/>
+					<hr/>
 					{this.createCard(combatants[0])}
 				</div>
 			);
@@ -843,7 +843,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 							current = (
 								<div>
 									{this.createControls([combatant])}
-									<div className='divider space'/>
+									<hr/>
 									{this.createCard(combatant)}
 								</div>
 							);

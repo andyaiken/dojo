@@ -41,9 +41,9 @@ export default class MapListScreen extends React.Component<Props> {
 						<Note>
 							<div className='section'>on this page you can set up tactical maps</div>
 							<div className='section'>when you have created a map you can use it in the combat manager</div>
-							<div className='divider'/>
+							<hr/>
 							<div className='section'>on the right you will see a list of maps</div>
-							<div className='divider'/>
+							<hr/>
 							<div className='section'>to start a new map, press the <b>create a new map</b> button</div>
 						</Note>
 						<button onClick={() => this.props.addMap()}>create a new map</button>

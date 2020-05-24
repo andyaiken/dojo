@@ -209,15 +209,15 @@ class PartyInfo extends React.Component<PartyInfoProps> {
 							onChange={value => this.props.changeValue('name', value)}
 						/>
 					</div>
-					<div className='divider' />
+					<hr/>
 					{this.getSummary()}
-					<div className='divider' />
+					<hr/>
 					<div className='section'>
 						<button onClick={() => this.props.addPC()}>add a new pc</button>
 						<button onClick={() => this.props.importPC()}>import a pc</button>
 						<button onClick={() => this.export()}>export party</button>
 						<ConfirmButton text='delete party' onConfirm={() => this.props.removeParty()} />
-						<div className='divider' />
+						<hr/>
 						<button onClick={() => this.props.goBack()}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>
 					</div>
 				</div>

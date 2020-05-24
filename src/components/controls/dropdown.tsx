@@ -101,7 +101,7 @@ export default class Dropdown extends React.Component<Props, State> {
 
 				const items = this.props.options.map(o => {
 					if (o.text === null) {
-						return <div key={o.id} className='divider' />;
+						return <hr key={o.id} />;
 					} else {
 						const matches = Sherlock.match(this.state.filterText, o.text);
 						if (!matches) {

@@ -52,7 +52,7 @@ export default class PlaceNameTool extends React.Component<Props, State> {
 			return (
 				<div>
 					<button onClick={() => this.generate()}>generate</button>
-					{output.length > 0 ? <div className='divider' /> : null}
+					{output.length > 0 ? <hr/> : null}
 					{output}
 				</div>
 			);

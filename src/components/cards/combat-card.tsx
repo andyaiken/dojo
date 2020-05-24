@@ -56,7 +56,7 @@ export default class CombatCard extends React.Component<Props> {
 							<div className='subheading'>initiative order</div>
 							{list}
 						</div>
-						<div className='divider'/>
+						<hr/>
 						<button onClick={() => this.props.resume(this.props.combat)}>resume combat</button>
 						<ConfirmButton text='delete combat' onConfirm={() => this.props.delete(this.props.combat)} />
 					</div>

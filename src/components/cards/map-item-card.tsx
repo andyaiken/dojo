@@ -167,9 +167,9 @@ export default class MapItemCard extends React.Component<Props, State> {
 							selectedID={this.state.view}
 							onSelect={optionID => this.setView(optionID)}
 						/>
-						<div className='divider' />
+						<hr/>
 						{content}
-						<div className='divider' />
+						<hr/>
 						<div className='section'>
 							<button onClick={() => this.props.remove(this.props.item)}>remove from the map</button>
 						</div>

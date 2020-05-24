@@ -313,7 +313,7 @@ export default class MonsterCard extends React.Component<Props, State> {
 			if (this.props.slot) {
 				slotSection = (
 					<div>
-						<div className='divider' />
+						<hr/>
 						<NumberSpin
 							value={this.props.slot.count}
 							label='count'
@@ -328,7 +328,7 @@ export default class MonsterCard extends React.Component<Props, State> {
 			if ((this.props.mode.indexOf('full') !== -1) || (this.props.mode.indexOf('combat') !== -1)) {
 				statBlock = (
 					<div>
-						<div className='divider' />
+						<hr/>
 						<AbilityScorePanel combatant={this.props.monster} />
 						{this.statSection('ac', this.props.monster.ac.toString())}
 						{this.statSection('hp', this.getHP())}
@@ -342,7 +342,7 @@ export default class MonsterCard extends React.Component<Props, State> {
 						{this.statSection('condition immunities', this.props.monster.conditionImmunities)}
 						{this.statSection('languages', this.props.monster.languages)}
 						{this.statSection('equipment', this.props.monster.equipment)}
-						<div className='divider' />
+						<hr/>
 						<TraitsPanel
 							combatant={this.props.monster}
 							mode={this.props.mode.indexOf('combat') !== -1 ? 'combat' : 'view'}
@@ -371,7 +371,7 @@ export default class MonsterCard extends React.Component<Props, State> {
 						<div className='section centered'>
 							{this.getTags()}
 						</div>
-						<div className='divider' />
+						<hr/>
 						{this.statSection('speed', this.props.monster.speed)}
 						{this.statSection('senses', this.props.monster.senses)}
 						{this.statSection('languages', this.props.monster.languages)}
@@ -449,7 +449,7 @@ export default class MonsterCard extends React.Component<Props, State> {
 					<div className='card-content'>
 						{this.getStats()}
 						<div style={{ display: buttons.length > 0 ? '' : 'none' }}>
-							<div className='divider' />
+							<hr/>
 							<div className='section'>{buttons}</div>
 						</div>
 					</div>

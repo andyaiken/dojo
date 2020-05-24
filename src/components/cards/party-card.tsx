@@ -50,7 +50,7 @@ export default class PartyCard extends React.Component<Props> {
 						<div className='fixed-height'>
 							{this.getPCs()}
 						</div>
-						<div className='divider'/>
+						<hr/>
 						<button onClick={() => this.props.open(this.props.party)}>open party</button>
 						<ConfirmButton text='delete party' onConfirm={() => this.props.delete(this.props.party)} />
 					</div>

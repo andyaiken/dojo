@@ -41,7 +41,7 @@ export default class MonsterGroupCard extends React.Component<Props> {
 						<div className='fixed-height'>
 							{this.getMonsters()}
 						</div>
-						<div className='divider'/>
+						<hr/>
 						<button onClick={() => this.props.open(this.props.group)}>open group</button>
 						<ConfirmButton text='delete group' onConfirm={() => this.props.delete(this.props.group)} />
 					</div>

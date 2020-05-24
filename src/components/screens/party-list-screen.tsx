@@ -40,10 +40,10 @@ export default class PartyListScreen extends React.Component<Props> {
 							<div className='section'>this page is where you can tell dojo all about your pcs</div>
 							<div className='section'>you can add a party for each of your gaming groups</div>
 							<div className='section'>when you have set up a party and an encounter you can run the encounter in the combat manager</div>
-							<div className='divider'/>
+							<hr/>
 							<div className='section'>on the right you will see a list of parties that you have created</div>
 							<div className='section'>select a party from the list to see pc details</div>
-							<div className='divider'/>
+							<hr/>
 							<div className='section'>to start adding a party, press the <b>create a new party</b> button</div>
 						</Note>
 						<button onClick={() => this.props.addParty()}>create a new party</button>

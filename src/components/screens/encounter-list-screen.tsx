@@ -85,10 +85,10 @@ export default class EncounterListScreen extends React.Component<Props> {
 							<div className='section'>
 								when you have set up a party and an encounter you can then run the encounter in the combat manager
 							</div>
-							<div className='divider'/>
+							<hr/>
 							<div className='section'>on the right you will see a list of encounters that you have created</div>
 							<div className='section'>select an encounter from the list to add monsters to it</div>
-							<div className='divider'/>
+							<hr/>
 							<div className='section'>to start building an encounter, press the <b>create a new encounter</b> button</div>
 						</Note>
 						<button onClick={() => this.props.addEncounter()}>create a new encounter</button>

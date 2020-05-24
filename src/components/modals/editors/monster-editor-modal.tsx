@@ -634,7 +634,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 							>
 								clear scratchpad
 							</button>
-							<div className='divider'/>
+							<hr/>
 							{this.getMonsterCards(this.state.scratchpadList, true)}
 							{emptyScratchpadNote}
 						</Col>
@@ -645,7 +645,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 								onSelect={optionID => this.setState({sidebar: optionID as 'similar' | 'all'})}
 							/>
 							{sidebarContent}
-							<div className='divider'/>
+							<hr/>
 							{this.getMonsterCards(monsters, false)}
 							{emptyListNote}
 						</Col>
@@ -701,7 +701,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 			sidebar = (
 				<Col span={12} className='scrollable sidebar sidebar-right' style={{ padding: '5px' }}>
 					{stats}
-					{stats ? <div className='divider' /> : null}
+					{stats ? <hr/> : null}
 					<MonsterCard monster={this.state.monster} />
 				</Col>
 			);
@@ -1230,7 +1230,7 @@ class TraitEditorPanel extends React.Component<TraitEditorPanelProps> {
 						multiLine={true}
 						onChange={value => this.props.changeValue(this.props.trait, 'text', value)}
 					/>
-					<div className='divider' />
+					<hr/>
 					<button onClick={() => this.props.removeTrait(this.props.trait)}>remove this trait</button>
 				</div>
 			);
