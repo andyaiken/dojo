@@ -80,7 +80,7 @@ export default class EncounterCard extends React.Component<Props> {
 				run = (
 					<Dropdown
 						options={options}
-						placeholder='run with...'
+						placeholder='start encounter with...'
 						onSelect={partyID => this.props.run(this.props.encounter, partyID)}
 					/>
 				);

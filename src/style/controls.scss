@@ -147,7 +147,7 @@ button.danger {
 			margin: 5px;
 			padding-left: 5px;
 			border-left: 5px solid $control-border;
-			height: 25px;
+			min-height: 25px;
 			line-height: 25px;
 			white-space: nowrap;
 			overflow-x: hidden;

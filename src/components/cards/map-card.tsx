@@ -32,7 +32,7 @@ export default class MapCard extends React.Component<Props> {
 							</Col>
 						</Row>
 						<hr/>
-						<button onClick={() => this.props.viewMap(this.props.map)}>view map</button>
+						<button onClick={() => this.props.viewMap(this.props.map)}>open map</button>
 						<button onClick={() => this.props.editMap(this.props.map)}>edit map</button>
 						<ConfirmButton text='delete map' onConfirm={() => this.props.removeMap(this.props.map)} />
 					</div>

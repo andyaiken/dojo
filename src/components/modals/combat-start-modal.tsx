@@ -1,4 +1,4 @@
-import { RedoOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, RedoOutlined } from '@ant-design/icons';
 import { Col, Row, Slider } from 'antd';
 import React from 'react';
 
@@ -308,8 +308,8 @@ class PartySection extends React.Component<PartySectionProps> {
 			);
 		}
 
-		let dropdown = null;
-		if (!this.props.fixed) {
+		let tools = null;
+		if (!this.props.combatSetup.party) {
 			const partyOptions = this.props.parties.map(party => {
 				return {
 					id: party.id,
@@ -317,13 +317,11 @@ class PartySection extends React.Component<PartySectionProps> {
 				};
 			});
 
-			dropdown = (
+			tools = (
 				<Dropdown
 					options={partyOptions}
 					placeholder='select a party'
-					selectedID={this.props.combatSetup.party ? this.props.combatSetup.party.id : undefined}
 					onSelect={optionID => this.props.setPartyID(optionID)}
-					onClear={() => this.props.setPartyID(null)}
 				/>
 			);
 		}
@@ -344,16 +342,25 @@ class PartySection extends React.Component<PartySectionProps> {
 
 			partyContent = (
 				<div>
-					<div className='subheading'>pcs</div>
 					{pcSections}
 				</div>
 			);
 		}
 
+		let clear = null;
+		if (this.props.combatSetup.party && !this.props.fixed) {
+			clear = (
+				<CloseCircleOutlined onClick={() => this.props.setPartyID(null)} />
+			);
+		}
+
 		return (
 			<div>
-				<div className='heading'>party</div>
-				{dropdown}
+				<div className='heading'>
+					party
+					{clear}
+				</div>
+				{tools}
 				{partyContent}
 			</div>
 		);
@@ -371,15 +378,7 @@ interface EncounterSectionProps {
 class EncounterSection extends React.Component<EncounterSectionProps> {
 	public render() {
 		let tools = null;
-		if (this.props.combatSetup.encounter) {
-			if (!this.props.fixed) {
-				tools = (
-					<div>
-						<button onClick={() => this.props.setEncounterID(null)}>choose a different encounter</button>
-					</div>
-				);
-			}
-		} else {
+		if (!this.props.combatSetup.encounter) {
 			let selector = null;
 			if (this.props.encounters.length > 0) {
 				const options = this.props.encounters.map(encounter => {
@@ -459,16 +458,25 @@ class EncounterSection extends React.Component<EncounterSectionProps> {
 
 			encounterContent = (
 				<div>
-					<div className='subheading'>monsters</div>
 					{monsterSections}
 					{waves}
 				</div>
 			);
 		}
 
+		let clear = null;
+		if (this.props.combatSetup.encounter && !this.props.fixed) {
+			clear = (
+				<CloseCircleOutlined onClick={() => this.props.setEncounterID(null)} />
+			);
+		}
+
 		return (
 			<div>
-				<div className='heading'>encounter</div>
+				<div className='heading'>
+					encounter
+					{clear}
+				</div>
 				{tools}
 				{encounterContent}
 			</div>
@@ -487,21 +495,16 @@ interface MapSectionProps {
 class MapSection extends React.Component<MapSectionProps> {
 	public render() {
 		let tools = null;
-		if (this.props.combatSetup.map) {
-			if (!this.props.fixed) {
-				tools = (
-					<div>
-						<button onClick={() => this.props.setMapID(null)}>choose a different map</button>
-					</div>
-				);
-			}
-		} else {
+		if (!this.props.combatSetup.map) {
 			let selector = null;
 			if (this.props.maps.length > 0) {
 				const options = this.props.maps.map(map => {
 					return {
 						id: map.id,
-						text: map.name || 'unnamed map'
+						text: map.name || 'unnamed map',
+						display: (
+							<MapPanel map={map} />
+						)
 					};
 				});
 				selector = (
@@ -515,6 +518,7 @@ class MapSection extends React.Component<MapSectionProps> {
 
 			tools = (
 				<div>
+					<Note>this is optional - you don't have to use a map to run an encounter</Note>
 					{selector}
 					<button onClick={() => this.props.generateMap('delve')}>generate a random delve</button>
 				</div>
@@ -530,9 +534,19 @@ class MapSection extends React.Component<MapSectionProps> {
 			);
 		}
 
+		let clear = null;
+		if (this.props.combatSetup.map && !this.props.fixed) {
+			clear = (
+				<CloseCircleOutlined onClick={() => this.props.setMapID(null)} />
+			);
+		}
+
 		return (
 			<div>
-				<div className='heading'>map</div>
+				<div className='heading'>
+					map
+					{clear}
+				</div>
 				{tools}
 				{mapContent}
 			</div>
@@ -589,7 +603,6 @@ class WaveSection extends React.Component<WaveSectionProps> {
 
 					waveContent = (
 						<div>
-							<div className='subheading'>monsters</div>
 							{monsterSections}
 						</div>
 					);

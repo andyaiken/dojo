@@ -6,7 +6,7 @@ import Sherlock from '../../utils/sherlock';
 import Textbox from './textbox';
 
 interface Props {
-	options: { id: string; text: string; disabled?: boolean }[];
+	options: { id: string; text: string; disabled?: boolean, display?: JSX.Element }[];
 	selectedID: string | null;
 	placeholder: string;
 	disabled: boolean;
@@ -70,7 +70,7 @@ export default class Dropdown extends React.Component<Props, State> {
 			let style = this.props.disabled ? 'dropdown disabled' : 'dropdown';
 			const content = [];
 
-			let option: { id: string; text: string; disabled?: boolean } | undefined;
+			let option: { id: string; text: string; disabled?: boolean, display?: JSX.Element } | undefined;
 			if (this.props.selectedID) {
 				option = this.props.options.find(o => o.id === this.props.selectedID);
 			}
@@ -78,6 +78,7 @@ export default class Dropdown extends React.Component<Props, State> {
 			const canClear = option && this.props.onClear;
 			content.push(
 				<div key='selection' className='dropdown-top' title={option ? option.text : this.props.placeholder}>
+					{option ? option.display : null}
 					<div className='item-text'>{option ? option.text : this.props.placeholder}</div>
 					{canClear ? <CloseCircleOutlined onClick={e => this.clear(e)} /> : <EllipsisOutlined />}
 				</div>
@@ -140,7 +141,7 @@ export default class Dropdown extends React.Component<Props, State> {
 }
 
 interface DropdownOptionProps {
-	option: { id: string; text: string; disabled?: boolean };
+	option: { id: string; text: string; disabled?: boolean, display?: JSX.Element };
 	selected: boolean;
 	select: (optionID: string) => void;
 }
@@ -164,7 +165,8 @@ class DropdownOption extends React.Component<DropdownOptionProps> {
 			}
 
 			return (
-				<div className={style} title={this.props.option.text} onClick={e => this.click(e)}>
+				<div className={style} onClick={e => this.click(e)}>
+					{this.props.option.display}
 					{this.props.option.text}
 				</div>
 			);

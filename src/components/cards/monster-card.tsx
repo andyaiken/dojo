@@ -184,7 +184,7 @@ export default class MonsterCard extends React.Component<Props, State> {
 
 		if (this.props.mode.indexOf('editable') !== -1) {
 			options.push(
-				<button key='view' onClick={() => this.props.viewMonster(this.props.monster)}>view monster</button>
+				<button key='view' onClick={() => this.props.viewMonster(this.props.monster)}>open monster</button>
 			);
 
 			options.push(
@@ -229,7 +229,7 @@ export default class MonsterCard extends React.Component<Props, State> {
 
 		if (this.props.mode.indexOf('encounter') !== -1) {
 			options.push(
-				<button key='view' onClick={() => this.props.viewMonster(this.props.monster)}>view monster</button>
+				<button key='view' onClick={() => this.props.viewMonster(this.props.monster)}>open monster</button>
 			);
 			if (this.props.slot) {
 				// This card is in an encounter (or a wave)
