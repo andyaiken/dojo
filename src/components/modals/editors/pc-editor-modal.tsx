@@ -5,9 +5,8 @@ import React from 'react';
 import Factory from '../../../utils/factory';
 import Utils from '../../../utils/utils';
 
-import { Map } from '../../../models/map';
 import { MonsterGroup } from '../../../models/monster-group';
-import { Party, PC } from '../../../models/party';
+import { PC } from '../../../models/party';
 
 import Dropdown from '../../controls/dropdown';
 import NumberSpin from '../../controls/number-spin';
@@ -17,9 +16,7 @@ import ImageSelectionModal from '../image-selection-modal';
 
 interface Props {
 	pc: PC;
-	parties: Party[];
 	library: MonsterGroup[];
-	maps: Map[];
 }
 
 interface State {
@@ -208,9 +205,6 @@ export default class PCEditorModal extends React.Component<Props, State> {
 					</Col>
 					<Drawer visible={this.state.showImageSelection} closable={false} onClose={() => this.toggleImageSelection()}>
 						<ImageSelectionModal
-							parties={this.props.parties}
-							library={this.props.library}
-							maps={this.props.maps}
 							select={id => this.changeValue(this.state.pc, 'portrait', id)}
 							cancel={() => this.toggleImageSelection()}
 						/>

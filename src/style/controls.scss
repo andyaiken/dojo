@@ -130,6 +130,7 @@ button.danger {
 	.dropdown-options {
 		background-color: $background;
 		border: 1px solid $control-border;
+		border-top: none;
 		max-height: 155px;
 		overflow-y: auto;
 		box-shadow: 0 3px 5px 0 rgba(220, 220, 220, 0.5);
@@ -137,6 +138,9 @@ button.danger {
 
 		.dropdown-filter {
 			margin: 0 5px;
+			position: sticky;
+			top: 0;
+			background-color: $background;
 		}
 
 		.dropdown-option {

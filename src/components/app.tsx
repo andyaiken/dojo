@@ -2126,6 +2126,7 @@ export default class App extends React.Component<Props, State> {
 						parties={this.state.parties}
 						library={this.state.library}
 						maps={this.state.maps}
+						combats={this.state.combats}
 						resetAll={() => this.resetAll()}
 					/>
 				);
@@ -2175,9 +2176,7 @@ export default class App extends React.Component<Props, State> {
 					content = (
 						<PCEditorModal
 							pc={this.state.drawer.pc}
-							parties={this.state.parties}
 							library={this.state.library}
-							maps={this.state.maps}
 						/>
 					);
 					header = 'pc editor';
@@ -2238,9 +2237,7 @@ export default class App extends React.Component<Props, State> {
 					content = (
 						<MonsterEditorModal
 							monster={this.state.drawer.monster}
-							parties={this.state.parties}
 							library={this.state.library}
-							maps={this.state.maps}
 							showSidebar={this.state.drawer.showSidebar}
 						/>
 					);
@@ -2334,9 +2331,6 @@ export default class App extends React.Component<Props, State> {
 					content = (
 						<MapEditorModal
 							map={this.state.drawer.map}
-							parties={this.state.parties}
-							library={this.state.library}
-							maps={this.state.maps}
 						/>
 					);
 					header = 'map editor';

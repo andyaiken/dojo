@@ -3,6 +3,7 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
+import { Combat } from '../../models/combat';
 import { Map } from '../../models/map';
 import { MonsterGroup } from '../../models/monster-group';
 import { Party } from '../../models/party';
@@ -16,6 +17,7 @@ interface Props {
 	parties: Party[];
 	library: MonsterGroup[];
 	maps: Map[];
+	combats: Combat[];
 	resetAll: () => void;
 }
 
@@ -114,6 +116,7 @@ export default class AboutSidebar extends React.Component<Props, State> {
 							parties={this.props.parties}
 							library={this.props.library}
 							maps={this.props.maps}
+							combats={this.props.combats}
 							select={() => null}
 							cancel={() => this.toggleImages()}
 						/>

@@ -5,6 +5,7 @@ import React from 'react';
 import Sherlock from '../../utils/sherlock';
 import Utils from '../../utils/utils';
 
+import { Combat } from '../../models/combat';
 import { Map } from '../../models/map';
 import { MonsterGroup } from '../../models/monster-group';
 import { Party } from '../../models/party';
@@ -16,6 +17,7 @@ interface Props {
 	parties: Party[];
 	library: MonsterGroup[];
 	maps: Map[];
+	combats: Combat[];
 	select: (id: string) => void;
 	cancel: () => void;
 }
@@ -32,6 +34,13 @@ interface SavedImage {
 }
 
 export default class ImageSelectionModal extends React.Component<Props, State> {
+	public static defaultProps = {
+		parties: [],
+		library: [],
+		maps: [],
+		combats: []
+	};
+
 	constructor(props: Props) {
 		super(props);
 
@@ -103,29 +112,40 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
 			const images = this.state.images
 				.filter(img => Sherlock.match(this.state.filter, img.name))
 				.map(img => {
-					// Work out if the image is used in a PC, a monster, or a map tile
-					let used = false;
-					this.props.parties.forEach(party => {
-						if (party.pcs.find(pc => pc.portrait === img.id)) {
-							used = true;
-						}
-					});
-					this.props.library.forEach(group => {
-						if (group.monsters.find(monster => monster.portrait === img.id)) {
-							used = true;
-						}
-					});
-					this.props.maps.forEach(map => {
-						if (map.items.find(mi => mi.customBackground === img.id)) {
-							used = true;
-						}
-					});
-
 					let deleteBtn = null;
-					if (!used) {
-						deleteBtn = (
-							<button onClick={() => this.delete(img.id)}>delete this image</button>
-						);
+					const data = this.props.parties.length + this.props.library.length + this.props.maps.length + this.props.combats.length;
+					if (data > 0) {
+						// Work out if the image is used in a PC, a monster, or a map tile
+						let used = false;
+						this.props.parties.forEach(party => {
+							if (party.pcs.find(pc => pc.portrait === img.id)) {
+								used = true;
+							}
+						});
+						this.props.library.forEach(group => {
+							if (group.monsters.find(monster => monster.portrait === img.id)) {
+								used = true;
+							}
+						});
+						this.props.maps.forEach(map => {
+							if (map.items.find(mi => mi.customBackground === img.id)) {
+								used = true;
+							}
+						});
+						this.props.combats.forEach(combat => {
+							if (combat.map && combat.map.items.find(mi => mi.customBackground === img.id)) {
+								used = true;
+							}
+						});
+
+						if (!used) {
+							deleteBtn = (
+								<div>
+									<Note>not used ({Utils.toData(img.data.length)})</Note>
+									<button onClick={() => this.delete(img.id)}>delete this image</button>
+								</div>
+							);
+						}
 					}
 
 					return (
