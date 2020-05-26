@@ -32,7 +32,6 @@ export default class Selector extends React.Component<Props> {
 						key={option.id}
 						option={option}
 						selected={option.id === this.props.selectedID}
-						count={itemsPerRow}
 						onSelect={(optionID: string) => this.props.onSelect(optionID)}
 					/>
 				);
@@ -55,14 +54,13 @@ export default class Selector extends React.Component<Props> {
 	}
 }
 
-interface SelectorOptionInterface {
+interface SelectorOptionProps {
 	option: { id: string; text: string; disabled?: boolean };
 	selected: boolean;
-	count: number;
 	onSelect: (optionID: string) => void;
 }
 
-class SelectorOption extends React.Component<SelectorOptionInterface> {
+class SelectorOption extends React.Component<SelectorOptionProps> {
 	private click(e: React.MouseEvent) {
 		e.stopPropagation();
 		if (!this.props.option.disabled) {
@@ -72,8 +70,6 @@ class SelectorOption extends React.Component<SelectorOptionInterface> {
 
 	public render() {
 		try {
-			const width = 'calc(((100% - 1px) / ' + this.props.count + ') - 2px )';
-
 			let style = 'option';
 			if (this.props.selected) {
 				style += ' selected';
@@ -83,7 +79,7 @@ class SelectorOption extends React.Component<SelectorOptionInterface> {
 			}
 
 			return (
-				<div key={this.props.option.id} className={style} style={{ width: width }} title={this.props.option.text} onClick={e => this.click(e)}>
+				<div key={this.props.option.id} className={style} title={this.props.option.text} onClick={e => this.click(e)}>
 					{this.props.option.text}
 				</div>
 			);

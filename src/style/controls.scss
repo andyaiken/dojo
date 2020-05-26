@@ -332,25 +332,31 @@ button.danger {
 	background-color: $background;
 	border: 1px solid $control-border;
 
-	.option {
-		display: inline-block;
-		vertical-align: middle;
-		text-align: center;
-		margin: 1px;
-		padding: 3px;
-		overflow-x: hidden;
-		overflow-y: hidden;
-		text-overflow: ellipsis;
-		cursor: pointer;
+	.selector-row {
+		display: flex;
+		align-items: center;
 
-		&:hover {
-			background-color: $highlight01;
-		}
+		.option {
+			flex-basis: 0;
+			flex-grow: 1;
+			flex-shrink: 1;
+			text-align: center;
+			margin: 1px;
+			padding: 3px;
+			overflow-x: hidden;
+			overflow-y: hidden;
+			text-overflow: ellipsis;
+			cursor: pointer;
 
-		&.selected {
-			cursor: default;
-			background-color: $highlight02;
-			font-weight: 600;
+			&:hover {
+				background-color: $highlight01;
+			}
+
+			&.selected {
+				cursor: default;
+				background-color: $highlight02;
+				font-weight: 600;
+			}
 		}
 	}
 
@@ -365,10 +371,12 @@ button.danger {
 .tabs {
 	margin: 10px 0;
 	background-color: transparent;
+	display: flex;
 
 	.tab {
-		display: inline-block;
-		vertical-align: middle;
+		flex-basis: 0;
+		flex-grow: 1;
+		flex-shrink: 1;
 		text-align: center;
 		border-bottom: 2px solid $control-border;
 		margin: 1px;

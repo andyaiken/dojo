@@ -30,8 +30,7 @@ interface Props {
 	toggleTag: (combatants: Combatant[], tag: string) => void;
 	toggleCondition: (combatants: Combatant[], condition: string) => void;
 	toggleHidden: (combatants: Combatant[]) => void;
-	addCondition: (combatants: Combatant[]) => void;
-	editCondition: (combatant: Combatant, condition: Condition) => void;
+	quickAddCondition: (combatants: Combatant[], condition: Condition) => void;
 	removeCondition: (combatant: Combatant, condition: Condition) => void;
 }
 
@@ -45,7 +44,7 @@ interface State {
 	combatants: Combatant[];
 }
 
-export default class MapDisplayModal extends React.Component<Props, State> {
+export default class MapModal extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {
@@ -353,6 +352,7 @@ export default class MapDisplayModal extends React.Component<Props, State> {
 							allCombatants={this.state.combatants}
 							map={this.state.map}
 							defaultTab='map'
+							inline={true}
 							// Main tab
 							makeCurrent={combatant => null}
 							makeActive={combatants => null}
@@ -363,8 +363,9 @@ export default class MapDisplayModal extends React.Component<Props, State> {
 							// HP tab
 							changeHP={values => null}
 							// Cond tab
-							addCondition={combatants => this.props.addCondition(combatants)}
-							editCondition={(combatant, condition) => this.props.editCondition(combatant, condition)}
+							addCondition={combatants => null}
+							quickAddCondition={(combatants, condition) => this.props.quickAddCondition(combatants, condition)}
+							editCondition={(combatant, condition) => null}
 							removeCondition={(combatant, condition) => this.props.removeCondition(combatant, condition)}
 							// Map tab
 							mapAdd={combatant => null}
@@ -466,10 +467,10 @@ export default class MapDisplayModal extends React.Component<Props, State> {
 
 			return (
 				<Row className='full-height'>
-					<Col span={6} className='scrollable sidebar sidebar-left'>
+					<Col span={8} className='scrollable sidebar sidebar-left'>
 						{sidebar}
 					</Col>
-					<Col span={18} className='scrollable both-ways'>
+					<Col span={16} className='scrollable both-ways'>
 						{this.getMap(false)}
 					</Col>
 					{this.getPlayerView()}

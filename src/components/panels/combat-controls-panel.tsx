@@ -25,6 +25,7 @@ interface Props {
 	allCombatants: Combatant[];
 	map: Map | null;
 	defaultTab: string;
+	inline: boolean;
 	// Main tab
 	makeCurrent: (combatant: Combatant) => void;
 	makeActive: (combatants: Combatant[]) => void;
@@ -36,6 +37,7 @@ interface Props {
 	changeHP: (values: {id: string, hp: number, temp: number, damage: number}[]) => void;
 	// Cond tab
 	addCondition: (combatants: Combatant[]) => void;
+	quickAddCondition: (combatants: Combatant[], condition: Condition) => void;
 	editCondition: (combatant: Combatant, condition: Condition) => void;
 	removeCondition: (combatant: Combatant, condition: Condition) => void;
 	// Map tab
@@ -460,7 +462,9 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 			<ConditionsPanel
 				combatants={this.props.combatants}
 				allCombatants={this.props.allCombatants}
+				inline={this.props.inline}
 				addCondition={() => this.props.addCondition(this.props.combatants)}
+				quickAddCondition={(combatants, condition) => this.props.quickAddCondition(combatants, condition)}
 				editCondition={(combatant, condition) => this.props.editCondition(combatant, condition)}
 				removeCondition={(combatant, condition) => this.props.removeCondition(combatant, condition)}
 				nudgeConditionValue={(condition, type, delta) => this.props.nudgeValue(condition, type, delta)}
@@ -726,7 +730,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 				views.splice(3, 1);
 			}
 			if (!this.props.combatants.every(c => c.type === 'monster')) {
-				// Not everything is a monster, so can't change hit points
+				// Not everything is a monster, so don't show the HP tab
 				views.splice(1, 1);
 			}
 

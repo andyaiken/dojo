@@ -88,7 +88,7 @@ export default class Dropdown extends React.Component<Props, State> {
 				style += ' open';
 
 				let filter = null;
-				if (this.props.options.length > 20) {
+				if (this.props.options.length > 10) {
 					filter = (
 						<div className='dropdown-filter' onClick={e => e.stopPropagation()}>
 							<Textbox

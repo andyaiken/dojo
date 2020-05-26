@@ -28,7 +28,7 @@ import MonsterImportModal from './modals/import/monster-import-modal';
 import PartyImportModal from './modals/import/party-import-modal';
 import PCImportModal from './modals/import/pc-import-modal';
 import LeaderboardModal from './modals/leaderboard-modal';
-import MapDisplayModal from './modals/map-display-modal';
+import MapModal from './modals/map-modal';
 import StatBlockModal from './modals/stat-block-modal';
 import PageFooter from './panels/page-footer';
 import PageHeader from './panels/page-header';
@@ -1495,19 +1495,19 @@ export default class App extends React.Component<Props, State> {
 	}
 
 	private toggleCondition(combatants: Combatant[], condition: string) {
-		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-		if (combat) {
-			combatants.forEach(c => {
-				const existing = c.conditions.find(cond => cond.name === condition);
-				if (existing) {
-					this.removeCondition(c, existing);
-				} else {
-					const cnd = Factory.createCondition();
-					cnd.name = condition;
-					c.conditions.push(cnd);
+		combatants.forEach(c => {
+			const existing = c.conditions.find(cond => cond.name === condition);
+			if (existing) {
+				this.removeCondition(c, existing);
+			} else {
+				const cnd = Factory.createCondition();
+				cnd.name = condition;
+				c.conditions.push(cnd);
 
-					c.conditions = Utils.sort(c.conditions, [{ field: 'name', dir: 'asc' }]);
+				c.conditions = Utils.sort(c.conditions, [{ field: 'name', dir: 'asc' }]);
 
+				const combat = this.state.combats.find(cbt => cbt.id === this.state.selectedCombatID);
+				if (combat) {
 					const current = combat.combatants.find(combatant => combatant.current);
 					if (current && (current.type === 'pc')) {
 						const entry = Factory.createCombatReportEntry();
@@ -1516,13 +1516,13 @@ export default class App extends React.Component<Props, State> {
 						combat.report.push(entry);
 					}
 				}
-			});
+			}
+		});
 
-			this.setState({
-				combats: this.state.combats,
-				drawer: this.state.drawer
-			});
-		}
+		this.setState({
+			combats: this.state.combats,
+			drawer: this.state.drawer
+		});
 	}
 
 	private toggleHidden(combatants: Combatant[]) {
@@ -1761,7 +1761,7 @@ export default class App extends React.Component<Props, State> {
 					type: 'condition-add',
 					condition: condition,
 					combatants: combatants,
-					combat: combat
+					allCombatants: combat.combatants
 				}
 			});
 		}
@@ -1792,6 +1792,20 @@ export default class App extends React.Component<Props, State> {
 		}
 	}
 
+	private quickAddCondition(combatants: Combatant[], condition: Condition) {
+		combatants.forEach(c => {
+			if (!c.conditions.some(cond => cond.name === condition.name)) {
+				const copy = JSON.parse(JSON.stringify(condition));
+				c.conditions.push(copy);
+			}
+		});
+
+		this.setState({
+			combats: this.state.combats,
+			drawer: this.state.drawer
+		});
+	}
+
 	private editCondition(combatant: Combatant, condition: Condition) {
 		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
 		if (combat) {
@@ -1800,7 +1814,7 @@ export default class App extends React.Component<Props, State> {
 					type: 'condition-edit',
 					condition: condition,
 					combatants: [combatant],
-					combat: combat
+					allCombatants: combat.combatants
 				}
 			});
 		}
@@ -1823,11 +1837,11 @@ export default class App extends React.Component<Props, State> {
 	}
 
 	private removeCondition(combatant: Combatant, condition: Condition) {
+		const index = combatant.conditions.indexOf(condition);
+		combatant.conditions.splice(index, 1);
+
 		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
 		if (combat) {
-			const index = combatant.conditions.indexOf(condition);
-			combatant.conditions.splice(index, 1);
-
 			const current = combat.combatants.find(c => c.current);
 			if (current && (current.type === 'pc')) {
 				const entry = Factory.createCombatReportEntry();
@@ -1835,11 +1849,12 @@ export default class App extends React.Component<Props, State> {
 				entry.combatantID = current.id;
 				combat.report.push(entry);
 			}
-
-			this.setState({
-				combats: this.state.combats
-			});
 		}
+
+		this.setState({
+			combats: this.state.combats,
+			drawer: this.state.drawer
+		});
 	}
 
 	/// Miscellaneous methods
@@ -2308,7 +2323,7 @@ export default class App extends React.Component<Props, State> {
 					break;
 				case 'map-view':
 					content = (
-						<MapDisplayModal
+						<MapModal
 							map={this.state.drawer.map}
 							fog={this.state.drawer.fog}
 							partyID={this.state.drawer.partyID}
@@ -2318,8 +2333,7 @@ export default class App extends React.Component<Props, State> {
 							toggleTag={(combatants, tag) => this.toggleTag(combatants, tag)}
 							toggleCondition={(combatants, condition) => this.toggleCondition(combatants, condition)}
 							toggleHidden={combatants => this.toggleHidden(combatants)}
-							addCondition={combatants => this.addCondition(combatants)}
-							editCondition={(combatant, condition) => this.editCondition(combatant, condition)}
+							quickAddCondition={(combatants, condition) => this.quickAddCondition(combatants, condition)}
 							removeCondition={(combatant, condition) => this.removeCondition(combatant, condition)}
 						/>
 					);
@@ -2436,7 +2450,7 @@ export default class App extends React.Component<Props, State> {
 						<ConditionModal
 							condition={this.state.drawer.condition}
 							combatants={this.state.drawer.combatants}
-							combat={this.state.drawer.combat}
+							allCombatants={this.state.drawer.allCombatants}
 						/>
 					);
 					header = 'add a condition';
@@ -2451,7 +2465,7 @@ export default class App extends React.Component<Props, State> {
 						<ConditionModal
 							condition={this.state.drawer.condition}
 							combatants={this.state.drawer.combatants}
-							combat={this.state.drawer.combat}
+							allCombatants={this.state.drawer.allCombatants}
 						/>
 					);
 					header = 'edit condition';

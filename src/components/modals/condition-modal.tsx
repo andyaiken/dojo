@@ -4,7 +4,7 @@ import React from 'react';
 import Factory from '../../utils/factory';
 import Utils from '../../utils/utils';
 
-import { Combat, Combatant } from '../../models/combat';
+import { Combatant } from '../../models/combat';
 import { Condition, CONDITION_TYPES, ConditionDurationCombatant, ConditionDurationRounds, ConditionDurationSaves } from '../../models/condition';
 import { Monster } from '../../models/monster-group';
 import { PC } from '../../models/party';
@@ -17,7 +17,7 @@ import Selector from '../controls/selector';
 interface Props {
 	condition: Condition;
 	combatants: Combatant[];
-	combat: Combat;
+	allCombatants: Combatant[];
 }
 
 interface State {
@@ -157,7 +157,7 @@ export default class ConditionModal extends React.Component<Props, State> {
 					text: 'end of turn'
 				}
 			];
-			const combatantOptions = this.props.combat.combatants
+			const combatantOptions = this.props.allCombatants
 				.filter(combatant => combatant.type !== 'placeholder')
 				.map(combatant => {
 					const c = combatant as (Combatant & PC) | (Combatant & Monster);

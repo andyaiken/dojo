@@ -1,18 +1,22 @@
 import { CloseOutlined, EditOutlined } from '@ant-design/icons';
 import React from 'react';
 
+import Factory from '../../utils/factory';
 import Utils from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
-import { Condition } from '../../models/condition';
+import { Condition, CONDITION_TYPES } from '../../models/condition';
 
+import Dropdown from '../controls/dropdown';
 import NumberSpin from '../controls/number-spin';
 
 interface Props {
 	combatants: Combatant[];
 	allCombatants: Combatant[];
+	inline: boolean;
 	nudgeConditionValue: (condition: Condition, field: string, delta: number) => void;
 	addCondition: () => void;
+	quickAddCondition: (combatants: Combatant[], condition: Condition) => void;
 	editCondition: (combatant: Combatant, condition: Condition) => void;
 	removeCondition: (combatant: Combatant, condition: Condition) => void;
 }
@@ -30,6 +34,7 @@ export default class ConditionsPanel extends React.Component<Props> {
 							combatant={combatant}
 							combatants={this.props.allCombatants}
 							showCombatantName={this.props.combatants.length > 1}
+							inline={this.props.inline}
 							nudgeConditionValue={(c, type, delta) => this.props.nudgeConditionValue(c, type, delta)}
 							editCondition={c => this.props.editCondition(combatant, c)}
 							removeCondition={c => this.props.removeCondition(combatant, c)}
@@ -38,10 +43,30 @@ export default class ConditionsPanel extends React.Component<Props> {
 				});
 			});
 
+			let add = null;
+			if (this.props.inline) {
+				const options = CONDITION_TYPES.map(c => ({ id: c, text: c }));
+				add = (
+					<Dropdown
+						options={options}
+						placeholder='add a condition...'
+						onSelect={id => {
+							const condition = Factory.createCondition();
+							condition.name = id;
+							this.props.quickAddCondition(this.props.combatants, condition);
+						}}
+					/>
+				);
+			} else {
+				add = (
+					<button onClick={() => this.props.addCondition()}>add a condition</button>
+				);
+			}
+
 			return (
 				<div className='section'>
 					{conditions}
-					<button onClick={() => this.props.addCondition()}>add a condition</button>
+					{add}
 				</div>
 			);
 		} catch (e) {
@@ -56,6 +81,7 @@ interface ConditionPanelProps {
 	combatant: Combatant;
 	combatants: Combatant[];
 	showCombatantName: boolean;
+	inline: boolean;
 	nudgeConditionValue: (condition: Condition, field: string, delta: number) => void;
 	editCondition: (condition: Condition) => void;
 	removeCondition: (condition: Condition) => void;
@@ -71,6 +97,17 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
 			if (this.props.showCombatantName) {
 				name = this.props.combatant.displayName + ': ' + name;
 			}
+
+			let edit = null;
+			if (!this.props.inline) {
+				edit = (
+					<EditOutlined title='edit' onClick={() => this.props.editCondition(this.props.condition)} />
+				);
+			}
+
+			const remove = (
+				<CloseOutlined title='remove' onClick={() => this.props.removeCondition(this.props.condition)} />
+			);
 
 			let duration = null;
 			if (this.props.condition.duration !== null) {
@@ -102,10 +139,12 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
 
 			return (
 				<div className='group-panel condition-panel'>
-					<div className='condition-name'>{name}</div>
-					<div className='condition-buttons'>
-						<EditOutlined title='edit' onClick={() => this.props.editCondition(this.props.condition)} />
-						<CloseOutlined title='remove' onClick={() => this.props.removeCondition(this.props.condition)} />
+					<div className='condition-heading'>
+						<div className='condition-name'>{name}</div>
+						<div className='condition-buttons'>
+							{edit}
+							{remove}
+						</div>
 					</div>
 					{duration}
 					{description}

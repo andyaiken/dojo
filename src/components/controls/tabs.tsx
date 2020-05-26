@@ -20,7 +20,6 @@ export default class Tabs extends React.Component<Props> {
 						key={option.id}
 						option={option}
 						selected={option.id === this.props.selectedID}
-						count={this.props.options.length}
 						onSelect={(optionID: string) => this.props.onSelect(optionID)}
 					/>
 				);
@@ -41,7 +40,6 @@ export default class Tabs extends React.Component<Props> {
 interface TabProps {
 	option: { id: string; text: string; disabled?: boolean };
 	selected: boolean;
-	count: number;
 	onSelect: (optionID: string) => void;
 }
 
@@ -55,8 +53,6 @@ class Tab extends React.Component<TabProps> {
 
 	public render() {
 		try {
-			const width = 'calc(((100% - 1px) / ' + this.props.count + ') - 2px )';
-
 			let style = 'tab';
 			if (this.props.selected) {
 				style += ' selected';
@@ -66,7 +62,7 @@ class Tab extends React.Component<TabProps> {
 			}
 
 			return (
-				<div key={this.props.option.id} className={style} style={{ width: width }} title={this.props.option.text} onClick={e => this.click(e)}>
+				<div key={this.props.option.id} className={style} title={this.props.option.text} onClick={e => this.click(e)}>
 					{this.props.option.text}
 				</div>
 			);

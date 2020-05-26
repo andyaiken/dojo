@@ -696,6 +696,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 				allCombatants={this.props.combat.combatants}
 				map={this.props.combat.map}
 				defaultTab='main'
+				inline={false}
 				// Main tab
 				makeCurrent={combatant => this.props.makeCurrent(combatant)}
 				makeActive={combatants => this.props.makeActive(combatants)}
@@ -707,6 +708,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 				changeHP={values => this.props.changeHP(values)}
 				// Cond tab
 				addCondition={combatants => this.props.addCondition(combatants)}
+				quickAddCondition={(combatants, condition) => null}
 				editCondition={(combatant, condition) => this.props.editCondition(combatant, condition)}
 				removeCondition={(combatant, condition) => this.props.removeCondition(combatant, condition)}
 				// Map tab
