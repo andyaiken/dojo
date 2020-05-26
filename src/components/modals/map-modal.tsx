@@ -26,7 +26,7 @@ interface Props {
 	partyID: string | null;
 	combatants: Combatant[];
 	parties: Party[];
-	startCombat: (partyID: string | null, map: Map, fog: { x: number, y: number }[]) => void;
+	startCombat: (partyID: string | null, map: Map, fog: { x: number, y: number }[], combatants: Combatant[]) => void;
 	toggleTag: (combatants: Combatant[], tag: string) => void;
 	toggleCondition: (combatants: Combatant[], condition: string) => void;
 	toggleHidden: (combatants: Combatant[]) => void;
@@ -439,7 +439,7 @@ export default class MapModal extends React.Component<Props, State> {
 						<div className='section'>
 							<div className='subheading'>options</div>
 							<button onClick={() => this.rotateMap()}>rotate map</button>
-							<button onClick={() => this.props.startCombat(this.state.partyID, this.state.map, this.state.fog)}>start encounter</button>
+							<button onClick={() => this.props.startCombat(this.state.partyID, this.state.map, this.state.fog, this.state.combatants)}>start encounter</button>
 						</div>
 						<hr/>
 						<div className='section'>

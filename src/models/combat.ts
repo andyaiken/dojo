@@ -10,6 +10,7 @@ export interface CombatSetup {
 	waveID: string | null;
 	map: Map | null;
 	fog: { x: number, y: number }[];
+	combatants: Combatant[];
 	slotInfo: CombatSlotInfo[];
 }
 

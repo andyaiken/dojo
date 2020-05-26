@@ -835,7 +835,8 @@ export default class App extends React.Component<Props, State> {
 		encounter: Encounter | null = null,
 		partyID: string | null = null,
 		map: Map | null = null,
-		fog: { x: number, y: number }[] = []
+		fog: { x: number, y: number }[] = [],
+		combatants: Combatant[] = []
 		) {
 		let party = this.state.parties.length === 1 ? this.state.parties[0] : null;
 		if (partyID) {
@@ -859,6 +860,7 @@ export default class App extends React.Component<Props, State> {
 			setup.map = map;
 		}
 		setup.fog = fog;
+		setup.combatants = combatants;
 
 		this.setState({
 			drawer: {
@@ -882,9 +884,16 @@ export default class App extends React.Component<Props, State> {
 			entry.type = 'combat-start';
 			combat.report.push(entry);
 
+			// Add any pre-existing combatants
+			combatSetup.combatants.forEach(c => {
+				combat.combatants.push(c);
+			});
+
 			// Add a copy of each PC to the encounter
 			combatSetup.party.pcs.filter(pc => pc.active).forEach(pc => {
-				combat.combatants.push(Napoleon.convertPCToCombatant(pc));
+				if (!combat.combatants.find(c => c.id === pc.id)) {
+					combat.combatants.push(Napoleon.convertPCToCombatant(pc));
+				}
 			});
 
 			combat.encounter.slots.forEach(slot => {
@@ -2329,7 +2338,7 @@ export default class App extends React.Component<Props, State> {
 							partyID={this.state.drawer.partyID}
 							combatants={this.state.drawer.combatants}
 							parties={this.state.parties}
-							startCombat={(partyID, map, fog) => this.createCombat(null, partyID, map, fog)}
+							startCombat={(partyID, map, fog, combatants) => this.createCombat(null, partyID, map, fog, combatants)}
 							toggleTag={(combatants, tag) => this.toggleTag(combatants, tag)}
 							toggleCondition={(combatants, condition) => this.toggleCondition(combatants, condition)}
 							toggleHidden={combatants => this.toggleHidden(combatants)}

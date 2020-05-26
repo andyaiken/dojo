@@ -530,6 +530,7 @@ class MapSection extends React.Component<MapSectionProps> {
 			mapContent = (
 				<MapPanel
 					map={this.props.combatSetup.map}
+					combatants={this.props.combatSetup.combatants}
 				/>
 			);
 		}

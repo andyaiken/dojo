@@ -181,6 +181,7 @@ export default class Factory {
 			waveID: null,
 			map: null,
 			fog: [],
+			combatants: [],
 			slotInfo: []
 		};
 	}
