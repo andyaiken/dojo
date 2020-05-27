@@ -367,3 +367,16 @@ button {
 		border-left-width: 5px;
 	}
 }
+
+.ant-message {
+	.anticon {
+		display: none;
+	}
+
+	.message-details {
+		.result {
+			font-weight: 600;
+			font-size: 20px;
+		}
+	}
+}

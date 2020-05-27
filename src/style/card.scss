@@ -161,6 +161,15 @@
 		.trait {
 			break-inside: avoid-column;
 	
+			.trait-buttons {
+				padding-left: 10px;
+
+				.link {
+					margin: 0 5px;
+					padding: 0 5px;
+				}
+			}
+		
 			&.trait-template {
 				cursor: pointer;
 	

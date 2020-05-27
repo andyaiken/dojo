@@ -290,8 +290,7 @@ button.danger {
 	.radio-item {
 		margin: 5px 0;
 		background-color: $background;
-		border: 1px solid $control-border;
-		border-left-width: 5px;
+		border-left: 1px solid $control-border;
 		cursor: pointer;
 
 		&:hover {

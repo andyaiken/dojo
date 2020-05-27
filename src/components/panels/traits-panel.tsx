@@ -1,4 +1,5 @@
 import { CrownFilled, CrownOutlined } from '@ant-design/icons';
+import { message } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
 
@@ -241,19 +242,86 @@ class TraitPanel extends React.Component<TraitPanelProps> {
 				case 'legendary':
 				case 'lair':
 					let style = '';
-					let usage = null;
+					const buttons = [];
 					if (maxUses > 0) {
 						if (this.props.trait.uses >= maxUses) {
 							style = 'strikethrough';
-							usage = <button onClick={() => this.props.rechargeTrait(this.props.trait)}>recharge</button>;
+							buttons.push(
+								<button key='use' className='link' onClick={() => this.props.rechargeTrait(this.props.trait)}>recharge</button>
+							);
 						} else {
-							usage = <button onClick={() => this.props.useTrait(this.props.trait)}>use</button>;
+							buttons.push(
+								<button key='use' className='link' onClick={() => this.props.useTrait(this.props.trait)}>use</button>
+							);
 						}
+					}
+					Array.from(this.props.trait.text.matchAll(/([+-])\s*(\d+)\s*to hit/g))
+						.forEach(exp => {
+							const expression = exp[0];
+							let bonus = parseInt(exp[2], 10);
+							if (exp[1] === '-') {
+								bonus *= -1;
+							}
+							buttons.push(
+								<button
+									key={expression}
+									className='link'
+									onClick={() => {
+										const result = Utils.dieRoll() + bonus;
+										message.info(
+											<div className='message-details'>
+												<div>rolling {expression}</div>
+												<div className='result'>{result}</div>
+											</div>
+										);
+									}}
+								>
+									{expression}
+								</button>
+							);
+						});
+					Array.from(this.props.trait.text.matchAll(/(\d*)[dD](\d+)\s*(([+-])\s*(\d*))?/g))
+						.forEach(exp => {
+							const expression = exp[0];
+							const count = parseInt(exp[1], 10) ?? 1;
+							const sides = parseInt(exp[2], 10);
+							let bonus = 0;
+							if (exp[3] && exp[4] && exp[5]) {
+								bonus = parseInt(exp[5], 10);
+								if (exp[4] === '-') {
+									bonus *= -1;
+								}
+							}
+							buttons.push(
+								<button
+									key={expression}
+									className='link'
+									onClick={() => {
+										const result = Utils.dieRoll(sides, count) + bonus;
+										message.info(
+											<div className='message-details'>
+												<div>rolling {expression}</div>
+												<div className='result'>{result}</div>
+											</div>
+										);
+									}}
+								>
+									{expression}
+								</button>
+							);
+						});
+					let buttonSection = null;
+					if (buttons.length > 0) {
+						buttonSection = (
+							<div className='trait-buttons'>
+								{buttons}
+							</div>
+						);
 					}
 					return (
 						<div key={this.props.trait.id} className='section trait'>
 							<div className={style} dangerouslySetInnerHTML={{ __html: showdown.makeHtml(markdown) }} />
-							{usage}
+							{buttonSection}
 						</div>
 					);
 			}
