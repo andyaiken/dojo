@@ -18,10 +18,10 @@ export default class Frankenstein {
 
 		let conModStr = '';
 		if (conMod > 0) {
-			conModStr = ' +' + conMod;
+			conModStr = ' + ' + conMod;
 		}
 		if (conMod < 0) {
-			conModStr = ' ' + conMod;
+			conModStr = ' - ' + Math.abs(conMod);
 		}
 
 		return monster.hitDice + 'd' + die + conModStr;

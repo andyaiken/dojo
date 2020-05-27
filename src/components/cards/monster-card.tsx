@@ -123,7 +123,7 @@ export default class MonsterCard extends React.Component<Props, State> {
 
 	private getHP() {
 		const combatant = this.props.monster as Monster & Combatant;
-		if (combatant.hpCurrent === null) {
+		if ((combatant.hpCurrent === null) || (combatant.hpCurrent === undefined)) {
 			const hp = Frankenstein.getTypicalHP(this.props.monster);
 			const str = Frankenstein.getTypicalHPString(this.props.monster);
 			return hp + ' (' + str + ')';
