@@ -16,7 +16,7 @@ interface State {
 	count: number;
 	options: string[];
 	rolls: number[] | null;
-	result: number | null;
+	results: number[];
 }
 
 export default class DieRollerTool extends React.Component<Props, State> {
@@ -28,7 +28,7 @@ export default class DieRollerTool extends React.Component<Props, State> {
 			count: 1,
 			options: [],
 			rolls: null,
-			result: null
+			results: []
 		};
 	}
 
@@ -91,9 +91,11 @@ export default class DieRollerTool extends React.Component<Props, State> {
 			}
 		}
 
+		this.state.results.unshift(result);
+
 		this.setState({
 			rolls: rolls,
-			result: result
+			results: this.state.results
 		});
 	}
 
@@ -178,10 +180,16 @@ export default class DieRollerTool extends React.Component<Props, State> {
 				);
 			}
 
-			let resultSection = null;
-			if (this.state.result !== null) {
-				resultSection = (
-					<div className='section die-result'>{this.state.result}</div>
+			const resultsSection = [];
+			for (let index = 0; index !== this.state.results.length; ++index) {
+				let style = 'section die-result';
+				if (index === 0) {
+					style += ' first';
+				}
+				resultsSection.push(
+					<div key={index} className={style}>
+						{this.state.results[index]}
+					</div>
 				);
 			}
 
@@ -204,7 +212,7 @@ export default class DieRollerTool extends React.Component<Props, State> {
 					<hr/>
 					<button onClick={() => this.roll()}>roll dice</button>
 					{rollsSection}
-					{resultSection}
+					{resultsSection}
 				</div>
 			);
 		} catch (ex) {

@@ -162,7 +162,8 @@
 			break-inside: avoid-column;
 	
 			.trait-buttons {
-				padding-left: 10px;
+				margin-left: 10px;
+				border-left: 5px solid $control-border;
 
 				.link {
 					margin: 0 5px;
