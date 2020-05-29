@@ -157,6 +157,16 @@
 		.stats {
 			column-width: 220px;
 			column-count: 2;
+
+			.roll-buttons {
+				margin-left: 10px;
+				border-left: 5px solid $control-border;
+
+				.link {
+					margin: 5px;
+					padding: 0 5px;
+				}
+			}
 		}
 
 		.trait {
@@ -167,7 +177,7 @@
 				border-left: 5px solid $control-border;
 
 				.link {
-					margin: 0 5px;
+					margin: 5px;
 					padding: 0 5px;
 				}
 			}

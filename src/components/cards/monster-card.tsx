@@ -1,5 +1,5 @@
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import { Tag } from 'antd';
+import { message, Tag } from 'antd';
 import React from 'react';
 
 import Frankenstein from '../../utils/frankenstein';
@@ -144,14 +144,53 @@ export default class MonsterCard extends React.Component<Props, State> {
 		return current;
 	}
 
-	private statSection(text: string, value: string) {
+	private statSection(text: string, value: string, showButtons: boolean = false) {
 		if (!value) {
 			return null;
 		}
 
+		let showText = true;
+		let buttonSection = null;
+		if (showButtons && (this.props.mode.indexOf('combat') !== -1)) {
+			let remainingText = value;
+			const buttons: JSX.Element[] = [];
+			Array.from(value.matchAll(/([^,;:/]*)\s+([+-]?)\s*(\d+)/g))
+				.forEach(exp => {
+					const expression = exp[0];
+					const sign = exp[2] || '+';
+					const bonus = parseInt(exp[3], 10) * (sign === '+' ? 1 : -1);
+					buttons.push(
+						<button
+							key={expression}
+							className='link'
+							onClick={() => {
+								const result = Utils.dieRoll() + bonus;
+								message.info(
+									<div className='message-details'>
+										<div>rolling {expression}</div>
+										<div className='result'>{result}</div>
+									</div>,
+									10
+								);
+							}}
+						>
+							{expression}
+						</button>
+					);
+					remainingText = remainingText.replace(expression, '');
+				});
+			showText = !!remainingText.match(/[a-zA-Z]/);
+			buttonSection = (
+				<div className='roll-buttons'>
+					{buttons}
+				</div>
+			);
+		}
+
 		return (
 			<div className='section'>
-				<b>{text}</b> {value}
+				<b>{text}</b> {showText ? value : null}
+				{buttonSection}
 			</div>
 		);
 	}
@@ -332,8 +371,8 @@ export default class MonsterCard extends React.Component<Props, State> {
 						<AbilityScorePanel combatant={this.props.monster} />
 						{this.statSection('ac', this.props.monster.ac.toString())}
 						{this.statSection('hp', this.getHP())}
-						{this.statSection('saving throws', this.props.monster.savingThrows)}
-						{this.statSection('skills', this.props.monster.skills)}
+						{this.statSection('saving throws', this.props.monster.savingThrows, true)}
+						{this.statSection('skills', this.props.monster.skills, true)}
 						{this.statSection('speed', this.props.monster.speed)}
 						{this.statSection('senses', this.props.monster.senses)}
 						{this.statSection('damage resistances', this.props.monster.damage.resist)}

@@ -560,7 +560,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 				<div className='subheading'>layout</div>
 				<NumberSpin
 					value='middle column size'
-					downEnabled={this.state.middleColumnWidth > 4}
+					downEnabled={this.state.middleColumnWidth > 6}
 					upEnabled={this.state.middleColumnWidth < 14}
 					onNudgeValue={delta => this.nudgeMiddleColumnWidth(delta * 2)}
 				/>

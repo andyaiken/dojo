@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import React from 'react';
 
 import Utils from '../../utils/utils';
@@ -33,6 +34,47 @@ export default class AbilityScorePanel extends React.Component<Props, State> {
 		this.setState({
 			showAbilityScores: !this.state.showAbilityScores
 		});
+	}
+
+	private roll(e: React.MouseEvent, ability: 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha') {
+		e.stopPropagation();
+
+		const score = this.props.combatant.abilityScores[ability];
+		const result = Utils.modifierValue(score) + Utils.dieRoll();
+
+		message.info(
+			<div className='message-details'>
+				<div>rolling {ability}</div>
+				<div className='result'>{result}</div>
+			</div>,
+			10
+		);
+	}
+
+	private getAbilityScore(ability: 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha') {
+		const score = this.props.combatant.abilityScores[ability];
+
+		let value = null;
+		if (this.state.showAbilityScores) {
+			value = (
+				<div>{score}</div>
+			);
+		} else {
+			value = (
+				<div>
+					<button className='link' onClick={e => this.roll(e, ability)}>
+						{Utils.modifier(score)}
+					</button>
+				</div>
+			);
+		}
+
+		return (
+			<div className='ability-score'>
+				<div className='ability-heading'>{ability}</div>
+				<div className='ability-value'>{value}</div>
+			</div>
+		);
 	}
 
 	public render() {
@@ -83,66 +125,12 @@ export default class AbilityScorePanel extends React.Component<Props, State> {
 			} else {
 				result = (
 					<div className='ability-scores' onClick={() => this.toggleAbilityScores()}>
-						<div className='ability-score'>
-							<div className='ability-heading'>str</div>
-							<div className='ability-value'>
-								{
-									this.state.showAbilityScores
-									? this.props.combatant.abilityScores.str
-									: Utils.modifier(this.props.combatant.abilityScores.str)
-								}
-							</div>
-						</div>
-						<div className='ability-score'>
-							<div className='ability-heading'>dex</div>
-							<div className='ability-value'>
-								{
-									this.state.showAbilityScores
-									? this.props.combatant.abilityScores.dex
-									: Utils.modifier(this.props.combatant.abilityScores.dex)
-								}
-							</div>
-						</div>
-						<div className='ability-score'>
-							<div className='ability-heading'>con</div>
-							<div className='ability-value'>
-								{
-									this.state.showAbilityScores
-									? this.props.combatant.abilityScores.con
-									: Utils.modifier(this.props.combatant.abilityScores.con)
-								}
-							</div>
-						</div>
-						<div className='ability-score'>
-							<div className='ability-heading'>int</div>
-							<div className='ability-value'>
-								{
-									this.state.showAbilityScores
-									? this.props.combatant.abilityScores.int
-									: Utils.modifier(this.props.combatant.abilityScores.int)
-								}
-							</div>
-						</div>
-						<div className='ability-score'>
-							<div className='ability-heading'>wis</div>
-							<div className='ability-value'>
-								{
-									this.state.showAbilityScores
-									? this.props.combatant.abilityScores.wis
-									: Utils.modifier(this.props.combatant.abilityScores.wis)
-								}
-							</div>
-						</div>
-						<div className='ability-score'>
-							<div className='ability-heading'>cha</div>
-							<div className='ability-value'>
-								{
-									this.state.showAbilityScores
-									? this.props.combatant.abilityScores.cha
-									: Utils.modifier(this.props.combatant.abilityScores.cha)
-								}
-							</div>
-						</div>
+						{this.getAbilityScore('str')}
+						{this.getAbilityScore('dex')}
+						{this.getAbilityScore('con')}
+						{this.getAbilityScore('int')}
+						{this.getAbilityScore('wis')}
+						{this.getAbilityScore('cha')}
 					</div>
 				);
 			}
