@@ -17,15 +17,21 @@
 
 		&:hover {
 			opacity: 1;
+			border-color: $highlight;
 		}
 
 		.menu-icon {
 			margin: 5px;
+			padding: 5px;
 			font-size: 20px;
+
+			&:hover {
+				background-color: $highlight02;
+			}
 		}
 
 		.number-spin {
-			margin: 5px 10px;
+			margin: 5px;
 			min-width: 150px;
 		}
 	}

@@ -122,20 +122,63 @@
 			}
 		}
 		
-		.die-rolls {
-			text-align: center;
-			font-weight: 600;
-			padding-top: 20px;
-		}
-	
-		.die-result {
-			text-align: center;
-			font-weight: 600;
-			margin-top: 10px 0;
+		.die-types {
+			display: flex;
 
-			&.first {
-				font-size: 50px;
-				margin: 20px 0;
+			.die-type {
+				flex: 1 1 0;
+				text-align: center;
+				border: 1px solid $control-border;
+				background-color: $background;
+				margin: 0 3px;
+				padding: 5px 0;
+				cursor: pointer;
+
+				&:hover {
+					border-color: $highlight;
+				}
+
+				.die-type-value {
+					padding-top: 5px;
+					font-size: 20px;
+					font-weight: 600;
+				}
+
+				&.none .die-type-value {
+					opacity: 0.5;
+				}
+			}
+		}
+
+		.die-roll {
+			display: flex;
+			align-items: center;
+
+			.rolls {
+				flex: 1 1 0;
+				flex-wrap: wrap;
+				display: flex;
+				align-items: center;
+
+				.roll-icon {
+					font-size: 16px;
+					padding-left: 5px;
+
+					&.advantage {
+						color: green;
+					}
+
+					&.disadvantage {
+						color: red;
+					}
+				}
+			}
+
+			.sum {
+				flex: 0 0 70px;
+				text-align: right;
+				font-size: 25px;
+				font-weight: 600;
 			}
 		}
 	}

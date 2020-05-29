@@ -272,7 +272,8 @@ class TraitPanel extends React.Component<TraitPanelProps> {
 											<div className='message-details'>
 												<div>rolling {expression}</div>
 												<div className='result'>{result}</div>
-											</div>
+											</div>,
+											10
 										);
 									}}
 								>
@@ -302,7 +303,8 @@ class TraitPanel extends React.Component<TraitPanelProps> {
 											<div className='message-details'>
 												<div>rolling {expression}</div>
 												<div className='result'>{result}</div>
-											</div>
+											</div>,
+											10
 										);
 									}}
 								>

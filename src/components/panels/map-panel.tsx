@@ -1,4 +1,4 @@
-import { DownSquareTwoTone, MenuOutlined, StarTwoTone, UpSquareTwoTone } from '@ant-design/icons';
+import { DownSquareTwoTone, LeftCircleOutlined, StarTwoTone, UpSquareTwoTone } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
@@ -381,7 +381,7 @@ export default class MapPanel extends React.Component<Props, State> {
 				if (this.state.showControls) {
 					controls = (
 						<div className='map-menu'>
-							<MenuOutlined className='menu-icon' onClick={e => this.menuClick(e)} />
+							<LeftCircleOutlined className='menu-icon rotate' onClick={e => this.menuClick(e)} />
 							<NumberSpin
 								value='zoom'
 								downEnabled={this.state.size > 3}
@@ -392,7 +392,7 @@ export default class MapPanel extends React.Component<Props, State> {
 				} else {
 					controls = (
 						<div className='map-menu'>
-							<MenuOutlined className='menu-icon' onClick={e => this.menuClick(e)} />
+							<LeftCircleOutlined className='menu-icon' onClick={e => this.menuClick(e)} />
 						</div>
 					);
 				}
