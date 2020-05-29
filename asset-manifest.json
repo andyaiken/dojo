@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/dojo/static/css/main.d0d120a0.chunk.css",
-    "main.js": "/dojo/static/js/main.e52ea756.chunk.js",
+    "main.css": "/dojo/static/css/main.4610904f.chunk.css",
+    "main.js": "/dojo/static/js/main.bc44e66e.chunk.js",
     "runtime-main.js": "/dojo/static/js/runtime-main.62197196.js",
     "static/css/2.a522ac48.chunk.css": "/dojo/static/css/2.a522ac48.chunk.css",
-    "static/js/2.5baa9c58.chunk.js": "/dojo/static/js/2.5baa9c58.chunk.js",
+    "static/js/2.9b36f567.chunk.js": "/dojo/static/js/2.9b36f567.chunk.js",
     "index.html": "/dojo/index.html",
-    "precache-manifest.c7b6544f223e216431d9bb0df859e05d.js": "/dojo/precache-manifest.c7b6544f223e216431d9bb0df859e05d.js",
+    "precache-manifest.5a03008993d710ad53514f18b55bfbee.js": "/dojo/precache-manifest.5a03008993d710ad53514f18b55bfbee.js",
     "service-worker.js": "/dojo/service-worker.js",
-    "static/js/2.5baa9c58.chunk.js.LICENSE.txt": "/dojo/static/js/2.5baa9c58.chunk.js.LICENSE.txt"
+    "static/js/2.9b36f567.chunk.js.LICENSE.txt": "/dojo/static/js/2.9b36f567.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.62197196.js",
     "static/css/2.a522ac48.chunk.css",
-    "static/js/2.5baa9c58.chunk.js",
-    "static/css/main.d0d120a0.chunk.css",
-    "static/js/main.e52ea756.chunk.js"
+    "static/js/2.9b36f567.chunk.js",
+    "static/css/main.4610904f.chunk.css",
+    "static/js/main.bc44e66e.chunk.js"
   ]
 }
