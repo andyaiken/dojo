@@ -9,6 +9,7 @@ export interface Monster {
 	type: string;
 	name: string;
 	size: string;
+	role: string;
 	category: string;
 	tag: string;
 	alignment: string;
@@ -73,6 +74,16 @@ export const CATEGORY_TYPES = [
 	'ooze',
 	'plant',
 	'undead'
+];
+
+export const ROLE_TYPES = [
+	'artillery',
+	'boss',
+	'controller',
+	'elite',
+	'lurker',
+	'skirmisher',
+	'tank'
 ];
 
 export const TRAIT_TYPES = [

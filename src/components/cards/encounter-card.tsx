@@ -13,6 +13,7 @@ import PortraitPanel from '../panels/portrait-panel';
 interface Props {
 	encounter: Encounter;
 	parties: Party[];
+	view: (encounter: Encounter) => void;
 	edit: (encounter: Encounter) => void;
 	delete: (encounter: Encounter) => void;
 	run: (encounter: Encounter, partyID: string) => void;
@@ -101,6 +102,7 @@ export default class EncounterCard extends React.Component<Props> {
 							{Napoleon.getEncounterXP(this.props.encounter, this.props.getMonster)}
 						</div>
 						<hr/>
+						<button onClick={() => this.props.view(this.props.encounter)}>open encounter</button>
 						{run}
 						<button onClick={() => this.props.edit(this.props.encounter)}>edit encounter</button>
 						<ConfirmButton text='delete encounter' onConfirm={() => this.props.delete(this.props.encounter)} />

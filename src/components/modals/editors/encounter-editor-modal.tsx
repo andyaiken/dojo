@@ -11,6 +11,7 @@ import { Party } from '../../../models/party';
 import MonsterCard from '../../cards/monster-card';
 import ConfirmButton from '../../controls/confirm-button';
 import Expander from '../../controls/expander';
+import Selector from '../../controls/selector';
 import Textbox from '../../controls/textbox';
 import DifficultyChartPanel from '../../panels/difficulty-chart-panel';
 import FilterPanel from '../../panels/filter-panel';
@@ -27,6 +28,7 @@ interface Props {
 
 interface State {
 	encounter: Encounter;
+	view: string;
 	filter: MonsterFilter;
 	selectedMonster: Monster | null;
 	randomEncounterXP: number;
@@ -42,12 +44,19 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 
 		this.state = {
 			encounter: props.encounter,
+			view: 'monsters',
 			filter: Factory.createMonsterFilter(),
 			selectedMonster: null,
 			randomEncounterXP: 1000
 		};
 
 		this.libraryMonsters = null;
+	}
+
+	private setView(view: string) {
+		this.setState({
+			view: view
+		});
 	}
 
 	private setSelectedMonster(monster: Monster | null) {
@@ -225,7 +234,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 		this.changeValue(source, field, value);
 	}
 
-	private changeFilterValue(type: 'name' | 'challenge' | 'category' | 'size', value: any) {
+	private changeFilterValue(type: 'name' | 'challenge' | 'category' | 'size' | 'role', value: any) {
 		const filter = this.state.filter as any;
 		if (type === 'challenge') {
 			filter.challengeMin = value[0];
@@ -368,27 +377,103 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 
 	public render() {
 		try {
-			const waves = this.props.encounter.waves.map(wave => (
-				<div key={wave.id} className='group-panel'>
-					<Textbox
-						text={wave.name}
-						placeholder='wave name'
-						onChange={value => this.changeValue(wave, 'name', value)}
-					/>
-					<ConfirmButton text='delete wave' onConfirm={() => this.removeWave(wave)} />
-				</div>
-			));
-
-			const waveSlots = this.props.encounter.waves.map(w => {
-				return (
-					<GridPanel
-						key={w.id}
-						heading={w.name || 'unnamed wave'}
-						content={this.getMonsterCards(w.slots, w.id)}
-						columns={3}
-					/>
-				);
-			});
+			let sidebar = null;
+			let content = null;
+			switch (this.state.view) {
+				case 'monsters':
+					const waves = this.props.encounter.waves.map(wave => (
+						<div key={wave.id} className='group-panel'>
+							<Textbox
+								text={wave.name}
+								placeholder='wave name'
+								onChange={value => this.changeValue(wave, 'name', value)}
+							/>
+							<ConfirmButton text='delete wave' onConfirm={() => this.removeWave(wave)} />
+						</div>
+					));
+					const waveSlots = this.props.encounter.waves.map(w => {
+						return (
+							<GridPanel
+								key={w.id}
+								heading={w.name || 'unnamed wave'}
+								content={this.getMonsterCards(w.slots, w.id)}
+								columns={3}
+							/>
+						);
+					});
+					sidebar = (
+						<div>
+							<div className='section'>
+								<div className='subheading'>waves</div>
+								{waves}
+								<button onClick={() => this.addWave()}>add a new wave</button>
+							</div>
+							<hr/>
+							<DifficultyChartPanel
+								encounter={this.props.encounter}
+								parties={this.props.parties}
+								getMonster={(monsterName, monsterGroupName) => this.props.getMonster(monsterName, monsterGroupName)}
+							/>
+							<hr/>
+							<div className='section'>
+								<FilterPanel
+									filter={this.state.filter}
+									changeValue={(type, value) => this.changeFilterValue(type, value)}
+									resetFilter={() => this.resetFilter()}
+								/>
+							</div>
+							<hr/>
+							<div className='section'>
+								<Expander text='build a random encounter'>
+									<p>add random monsters to this encounter until its (effective) xp value is at least the following value</p>
+									<InputNumber
+										value={this.state.randomEncounterXP}
+										min={0}
+										step={1000}
+										onChange={value => {
+											const val = parseInt((value ?? 0).toString(), 10);
+											this.setRandomEncounterXP(val);
+										}}
+									/>
+									<button onClick={() => this.buildEncounter()}>build encounter</button>
+								</Expander>
+								<ConfirmButton text='clear encounter' onConfirm={() => this.clearEncounter()} />
+							</div>
+						</div>
+					);
+					content = (
+						<div>
+							<GridPanel
+								columns={3}
+								content={this.getMonsterCards(this.props.encounter.slots, null)}
+								heading='encounter'
+							/>
+							{waveSlots}
+							{this.getLibrarySection()}
+						</div>
+					);
+					break;
+				case 'notes':
+					sidebar = null;
+					content = (
+						<div>
+							<GridPanel
+								columns={1}
+								content={[
+									<Textbox
+										key='notes'
+										text={this.props.encounter.notes}
+										placeholder='notes'
+										multiLine={true}
+										onChange={text => this.changeValue(this.props.encounter, 'notes', text)}
+									/>
+								]}
+								heading='notes'
+							/>
+						</div>
+					);
+					break;
+			}
 
 			return (
 				<Row className='full-height'>
@@ -400,52 +485,16 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 								placeholder='encounter name'
 								onChange={value => this.changeValue(this.props.encounter, 'name', value)}
 							/>
-						</div>
-						<div className='section'>
-							<div className='subheading'>waves</div>
-							{waves}
-							<button onClick={() => this.addWave()}>add a new wave</button>
-						</div>
-						<hr/>
-						<DifficultyChartPanel
-							encounter={this.props.encounter}
-							parties={this.props.parties}
-							getMonster={(monsterName, monsterGroupName) => this.props.getMonster(monsterName, monsterGroupName)}
-						/>
-						<hr/>
-						<div className='section'>
-							<FilterPanel
-								filter={this.state.filter}
-								changeValue={(type, value) => this.changeFilterValue(type, value)}
-								resetFilter={() => this.resetFilter()}
+							<Selector
+								options={['monsters', 'notes'].map(o => ({ id: o, text: o }))}
+								selectedID={this.state.view}
+								onSelect={view => this.setView(view)}
 							/>
-						</div>
-						<hr/>
-						<div className='section'>
-							<Expander text='build a random encounter'>
-								<p>add random monsters to this encounter until its (effective) xp value is at least the following value</p>
-								<InputNumber
-									value={this.state.randomEncounterXP}
-									min={0}
-									step={1000}
-									onChange={value => {
-										const val = parseInt((value ?? 0).toString(), 10);
-										this.setRandomEncounterXP(val);
-									}}
-								/>
-								<button onClick={() => this.buildEncounter()}>build encounter</button>
-							</Expander>
-							<ConfirmButton text='clear encounter' onConfirm={() => this.clearEncounter()} />
+							{sidebar}
 						</div>
 					</Col>
 					<Col span={18} className='scrollable'>
-						<GridPanel
-							columns={3}
-							content={this.getMonsterCards(this.props.encounter.slots, null)}
-							heading='encounter'
-						/>
-						{waveSlots}
-						{this.getLibrarySection()}
+						{content}
 					</Col>
 					<Drawer visible={!!this.state.selectedMonster} width='50%' closable={false} onClose={() => this.setSelectedMonster(null)}>
 						<StatBlockModal source={this.state.selectedMonster} />

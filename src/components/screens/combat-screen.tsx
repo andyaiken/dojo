@@ -1,5 +1,5 @@
 import { CloseCircleOutlined, MenuOutlined } from '@ant-design/icons';
-import { Col, Popover, Row } from 'antd';
+import { Col, message, Popover, Row } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
 
@@ -72,10 +72,12 @@ interface Props {
 	setFog: (fog: { x: number, y: number }[]) => void;
 	addOverlay: (overlay: MapItem) => void;
 	showLeaderboard: () => void;
+	onRollDice: (count: number, sides: number, constant: number) => void;
 }
 
 interface State {
 	showDefeatedCombatants: boolean;
+	showRollButtons: boolean;
 	selectedItemIDs: string[];
 	addingToMapID: string | null;
 	addingOverlay: boolean;
@@ -93,6 +95,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 
 		this.state = {
 			showDefeatedCombatants: false,
+			showRollButtons: false,
 			selectedItemIDs: [],            // The IDs of the combatants or map items that are selected
 			addingToMapID: null,            // The ID of the combatant we're adding to the map
 			addingOverlay: false,           // True if we're adding a custom overlay to the map
@@ -114,6 +117,12 @@ export default class CombatScreen extends React.Component<Props, State> {
 	private toggleShowDefeatedCombatants() {
 		this.setState({
 			showDefeatedCombatants: !this.state.showDefeatedCombatants
+		});
+	}
+
+	private toggleShowRollButtons() {
+		this.setState({
+			showRollButtons: !this.state.showRollButtons
 		});
 	}
 
@@ -484,6 +493,23 @@ export default class CombatScreen extends React.Component<Props, State> {
 	}
 
 	private getMenu() {
+		let notes = null;
+		if (this.props.combat.encounter.notes) {
+			notes = (
+				<button
+					onClick={() => {
+						message.info(
+							<div className='message-details'>
+								<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.combat.encounter.notes) }} />
+							</div>,
+							10
+						);
+					}}
+				>
+					encounter notes
+				</button>
+			);
+		}
 		let exitToMap = null;
 		if (this.props.combat.map) {
 			exitToMap = (
@@ -540,6 +566,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 		return (
 			<div>
 				<div className='subheading'>encounter</div>
+				{notes}
 				<button onClick={() => this.props.pauseCombat()}>pause combat</button>
 				<ConfirmButton text='end combat' onConfirm={() => this.props.endCombat(false)} />
 				{exitToMap}
@@ -558,6 +585,11 @@ export default class CombatScreen extends React.Component<Props, State> {
 				/>
 				{playerView}
 				<div className='subheading'>layout</div>
+				<Checkbox
+					label='show monster die rolls'
+					checked={this.state.showRollButtons}
+					onChecked={() => this.toggleShowRollButtons()}
+				/>
 				<NumberSpin
 					value='middle column size'
 					downEnabled={this.state.middleColumnWidth > 6}
@@ -741,8 +773,10 @@ export default class CombatScreen extends React.Component<Props, State> {
 					<MonsterCard
 						monster={combatant as Combatant & Monster}
 						mode={'combat'}
+						showRollButtons={this.state.showRollButtons}
 						useTrait={trait => this.props.useTrait(combatant as Combatant & Monster, trait)}
 						rechargeTrait={trait => this.props.rechargeTrait(combatant as Combatant & Monster, trait)}
+						onRollDice={(count, sides, constant) => this.props.onRollDice(count, sides, constant)}
 					/>
 				);
 			case 'companion':
@@ -753,7 +787,11 @@ export default class CombatScreen extends React.Component<Props, State> {
 						const monster = group.monsters.find(m => m.id === comp.monsterID);
 						if (monster) {
 							card = (
-								<MonsterCard monster={monster} />
+								<MonsterCard
+									monster={monster}
+									showRollButtons={this.state.showRollButtons}
+									onRollDice={(count, sides, constant) => this.props.onRollDice(count, sides, constant)}
+								/>
 							);
 						}
 					});

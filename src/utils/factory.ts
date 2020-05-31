@@ -60,6 +60,7 @@ export default class Factory {
 			type: 'monster',
 			name: '',
 			size: 'medium',
+			role: '',
 			category: 'humanoid',
 			tag: '',
 			alignment: '',
@@ -108,7 +109,8 @@ export default class Factory {
 			id: Utils.guid(),
 			name: '',
 			slots: [],
-			waves: []
+			waves: [],
+			notes: ''
 		};
 	}
 
@@ -135,7 +137,8 @@ export default class Factory {
 			challengeMin: 0,
 			challengeMax: 5,
 			category: 'all types',
-			size: 'all sizes'
+			size: 'all sizes',
+			role: 'all roles'
 		};
 	}
 

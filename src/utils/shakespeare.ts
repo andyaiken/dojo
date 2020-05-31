@@ -189,7 +189,7 @@ export default class Shakespeare {
 		return items.join(', ');
 	}
 
-	public static generateName() {
+	public static generateName(capitalise: boolean) {
 		const startHuman1 = 'As Has Khe Zash Gl Ig Iv Kos Miv Pav Ser Dar Even Gor Rand Sto Tam Barer Keth Mum';
 		const startHuman2 = 'Mar Burg Al Hel Wrayt S Eag Eath Joan Answ L Ot Ced At Tal Ham Jasm Mail Yash Row';
 		const startDwarf = 'Adr Alber Ba Bar Gar Kildr Kath Dies Eld Gurd Har Morg Or Rur Mar Vis Jen Torg Tak Thor End Ris Em Gunn';
@@ -225,12 +225,21 @@ export default class Shakespeare {
 
 		let separator = '';
 		if (Utils.dieRoll(10) === 1) {
-			const separators = ['-', '\''];
+			const separators = ['-', '\'', ' '];
 			const sepIndex = Math.floor(Math.random() * separators.length);
 			separator = separators[sepIndex];
 		}
 
-		return starts[startIndex] + separator + ends[endIndex];
+		let name = starts[startIndex] + separator + ends[endIndex];
+		if (capitalise) {
+			name = name.split(' ').map(token => {
+				const first = token[0].toUpperCase();
+				const rest = token.length > 1 ? token.substring(1) : '';
+				return first + rest;
+			}).join(' ');
+		}
+
+		return name;
 	}
 
 	public static generatePotion() {

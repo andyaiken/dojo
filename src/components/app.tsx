@@ -22,6 +22,7 @@ import EncounterEditorModal from './modals/editors/encounter-editor-modal';
 import MapEditorModal from './modals/editors/map-editor-modal';
 import MonsterEditorModal from './modals/editors/monster-editor-modal';
 import PCEditorModal from './modals/editors/pc-editor-modal';
+import EncounterModal from './modals/encounter-modal';
 import MapImportModal from './modals/import/map-import-modal';
 import MonsterGroupImportModal from './modals/import/monster-group-import-modal';
 import MonsterImportModal from './modals/import/monster-import-modal';
@@ -37,8 +38,8 @@ import CombatScreen from './screens/combat-screen';
 import EncounterListScreen from './screens/encounter-list-screen';
 import HomeScreen from './screens/home-screen';
 import MapListScreen from './screens/map-list-screen';
+import MonsterGroupListScreen from './screens/monster-group-list-screen';
 import MonsterGroupScreen from './screens/monster-group-screen';
-import MonsterListScreen from './screens/monster-list-screen';
 import PartyListScreen from './screens/party-list-screen';
 import PartyScreen from './screens/party-screen';
 import AboutSidebar from './sidebars/about-sidebar';
@@ -53,7 +54,7 @@ interface Props {
 interface State {
 	view: string;
 	drawer: any;
-	sidebar: string | null;
+	sidebar: any;
 
 	parties: Party[];
 	library: MonsterGroup[];
@@ -95,6 +96,7 @@ export default class App extends React.Component<Props, State> {
 							const value = m.traits.some(t => t.type === 'legendary') ? 3 : 0;
 							m.legendaryActions = value;
 						}
+						m.role = Frankenstein.getRole(m);
 					});
 				});
 			}
@@ -194,12 +196,6 @@ export default class App extends React.Component<Props, State> {
 		});
 	}
 
-	private setSidebar(view: string | null) {
-		this.setState({
-			sidebar: view
-		});
-	}
-
 	private closeDrawer() {
 		this.setState({
 			drawer: null
@@ -245,6 +241,21 @@ export default class App extends React.Component<Props, State> {
 		this.save();
 		this.setState({
 			view: 'maps'
+		});
+	}
+
+	private setDice(count: number, sides: number, constant: number) {
+		const dice: { [sides: number]: number } = {};
+		[4, 6, 8, 10, 12, 20, 100].forEach(n => dice[n] = 0);
+		dice[sides] = count;
+
+		this.setState({
+			sidebar: {
+				type: 'tools',
+				subtype: 'die',
+				dice: dice,
+				constant: constant
+			}
 		});
 	}
 
@@ -590,12 +601,37 @@ export default class App extends React.Component<Props, State> {
 		}
 	}
 
-	private editMonster(monster: Monster | null) {
-		if (!monster) {
+	private addMonster(monster: Monster | null) {
+		if (monster) {
+			const group = this.state.library.find(g => g.id === this.state.selectedMonsterGroupID);
+			if (group) {
+				group.monsters.push(monster);
+				Utils.sort(group.monsters);
+
+				this.setState({
+					library: this.state.library,
+					drawer: {
+						type: 'stat-block',
+						source: monster
+					}
+				});
+			}
+		} else {
 			monster = Factory.createMonster();
 			monster.name = 'new monster';
-		}
 
+			const copy = JSON.parse(JSON.stringify(monster));
+			this.setState({
+				drawer: {
+					type: 'monster',
+					monster: copy,
+					showSidebar: false
+				}
+			});
+		}
+	}
+
+	private editMonster(monster: Monster) {
 		const copy = JSON.parse(JSON.stringify(monster));
 		this.setState({
 			drawer: {
@@ -699,6 +735,16 @@ export default class App extends React.Component<Props, State> {
 
 	//#region Encounter screen
 
+	private viewEncounter(encounter: Encounter) {
+		const copy = JSON.parse(JSON.stringify(encounter));
+		this.setState({
+			drawer: {
+				type: 'encounter-view',
+				encounter: copy
+			}
+		});
+	}
+
 	private editEncounter(encounter: Encounter | null) {
 		if (!encounter) {
 			encounter = Factory.createEncounter();
@@ -708,7 +754,7 @@ export default class App extends React.Component<Props, State> {
 		const copy = JSON.parse(JSON.stringify(encounter));
 		this.setState({
 			drawer: {
-				type: 'encounter',
+				type: 'encounter-edit',
 				encounter: copy
 			}
 		});
@@ -1993,7 +2039,7 @@ export default class App extends React.Component<Props, State> {
 							goBack={() => this.selectMonsterGroup(null)}
 							removeMonsterGroup={() => this.removeCurrentMonsterGroup()}
 							openDemographics={group => this.openDemographics(group)}
-							addMonster={() => this.editMonster(null)}
+							addMonster={monster => this.addMonster(monster)}
 							importMonster={() => this.importMonster()}
 							removeMonster={monster => this.removeMonster(monster)}
 							changeValue={(monster, type, value) => this.changeValue(monster, type, value)}
@@ -2006,7 +2052,7 @@ export default class App extends React.Component<Props, State> {
 					);
 				} else {
 					return (
-						<MonsterListScreen
+						<MonsterGroupListScreen
 							library={this.state.library}
 							hasMonsters={hasMonsters}
 							addMonsterGroup={() => this.addMonsterGroup()}
@@ -2026,6 +2072,7 @@ export default class App extends React.Component<Props, State> {
 						parties={this.state.parties}
 						hasMonsters={hasMonsters}
 						addEncounter={() => this.editEncounter(null)}
+						viewEncounter={encounter => this.viewEncounter(encounter)}
 						editEncounter={encounter => this.editEncounter(encounter)}
 						deleteEncounter={encounter => this.removeEncounter(encounter)}
 						runEncounter={(encounter, partyID) => this.createCombat(encounter, partyID)}
@@ -2087,6 +2134,21 @@ export default class App extends React.Component<Props, State> {
 							setFog={fog => this.setFog(fog)}
 							addOverlay={overlay => this.addMapItem(overlay)}
 							showLeaderboard={() => this.showLeaderboard()}
+							onRollDice={(count, sides, constant) => {
+								// TODO: Open die roller with this info
+								this.setDice(count, sides, constant);
+								/*
+								const sign = (constant >= 0) ? '+' : '-';
+								const result = Utils.dieRoll(count, sides) + constant;
+								message.info(
+									<div className='message-details'>
+										<div>rolling {count}d{sides} {sign} {Math.abs(constant)}</div>
+										<div className='result'>{result}</div>
+									</div>,
+									10
+								);
+								*/
+							}}
 						/>
 					);
 				} else {
@@ -2114,20 +2176,71 @@ export default class App extends React.Component<Props, State> {
 		}
 
 		let content = null;
-		switch (this.state.sidebar) {
+		switch (this.state.sidebar.type) {
 			case 'tools':
 				content = (
-					<ToolsSidebar />
+					<ToolsSidebar
+						view={this.state.sidebar.subtype}
+						setView={view => {
+							const sidebar = this.state.sidebar;
+							sidebar.subtype = view;
+							this.setState({
+								sidebar: sidebar
+							});
+						}}
+						dice={this.state.sidebar.dice}
+						constant={this.state.sidebar.constant}
+						setDie={(sides, count) => {
+							const sidebar = this.state.sidebar;
+							sidebar.dice[sides] = count;
+							this.setState({
+								sidebar: sidebar
+							});
+						}}
+						setConstant={value => {
+							const sidebar = this.state.sidebar;
+							sidebar.constant = value;
+							this.setState({
+								sidebar: sidebar
+							});
+						}}
+						resetDice={() => {
+							const sidebar = this.state.sidebar;
+							[4, 6, 8, 10, 12, 20, 100].forEach(n => sidebar.dice[n] = 0);
+							sidebar.constant = 0;
+							this.setState({
+								sidebar: sidebar
+							});
+						}}
+					/>
 				);
 				break;
 			case 'generators':
 				content = (
-					<GeneratorsSidebar />
+					<GeneratorsSidebar
+						view={this.state.sidebar.subtype}
+						setView={view => {
+							const sidebar = this.state.sidebar;
+							sidebar.subtype = view;
+							this.setState({
+								sidebar: sidebar
+							});
+						}}
+					/>
 				);
 				break;
 			case 'reference':
 				content = (
-					<ReferenceSidebar />
+					<ReferenceSidebar
+						view={this.state.sidebar.subtype}
+						setView={view => {
+							const sidebar = this.state.sidebar;
+							sidebar.subtype = view;
+							this.setState({
+								sidebar: sidebar
+							});
+						}}
+					/>
 				);
 				break;
 			case 'search':
@@ -2308,7 +2421,17 @@ export default class App extends React.Component<Props, State> {
 					header = 'demographics';
 					closable = true;
 					break;
-				case 'encounter':
+				case 'encounter-view':
+					content = (
+						<EncounterModal
+							encounter={this.state.drawer.encounter}
+							getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
+						/>
+					);
+					header = this.state.drawer.encounter.name;
+					closable = true;
+					break;
+				case 'encounter-edit':
 					content = (
 						<EncounterEditorModal
 							encounter={this.state.drawer.encounter}
@@ -2520,8 +2643,51 @@ export default class App extends React.Component<Props, State> {
 				<div className='dojo'>
 					<ErrorBoundary>
 						<PageHeader
-							sidebar={this.state.sidebar}
-							onSelectSidebar={type => this.setSidebar(type)}
+							sidebar={this.state.sidebar ? this.state.sidebar.type : null}
+							onSelectSidebar={type => {
+								if (type) {
+									switch (type) {
+										case 'tools':
+											const dice: { [sides: number]: number } = {};
+											[4, 6, 8, 10, 12, 20, 100].forEach(n => dice[n] = 0);
+											this.setState({
+												sidebar: {
+													type: 'tools',
+													subtype: 'die',
+													dice: dice,
+													constant: 0
+												}
+											});
+											break;
+										case 'generators':
+											this.setState({
+												sidebar: {
+													type: 'generators',
+													subtype: 'name'
+												}
+											});
+											break;
+										case 'reference':
+											this.setState({
+												sidebar: {
+													type: 'reference',
+													subtype: 'skills'
+												}
+											});
+											break;
+										default:
+											this.setState({
+												sidebar: {
+													type: type
+												}
+											});
+									}
+								} else {
+									this.setState({
+										sidebar: null
+									});
+								}
+							}}
 						/>
 					</ErrorBoundary>
 					<div className='page-content'>

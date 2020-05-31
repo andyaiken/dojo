@@ -3,6 +3,7 @@
 import Factory from './factory';
 import Utils from './utils';
 
+import { CONDITION_TYPES } from '../models/condition';
 import { Monster, Trait, TRAIT_TYPES } from '../models/monster-group';
 
 export default class Frankenstein {
@@ -72,6 +73,7 @@ export default class Frankenstein {
 	public static clear(monster: Monster) {
 		monster.name = '';
 		monster.size = 'medium';
+		monster.role = '';
 		monster.category = 'beast';
 		monster.tag = '';
 		monster.alignment = '';
@@ -96,6 +98,7 @@ export default class Frankenstein {
 		monster.traits = [];
 		monster.conditionImmunities = '';
 		monster.portrait = '';
+		monster.legendaryActions = 0;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,6 +110,7 @@ export default class Frankenstein {
 			type: 'monster',
 			name: name || (monster.name + ' copy'),
 			size: monster.size,
+			role: monster.role,
 			category: monster.category,
 			tag: monster.tag,
 			alignment: monster.alignment,
@@ -144,7 +148,7 @@ export default class Frankenstein {
 			}),
 			conditionImmunities: monster.conditionImmunities,
 			portrait: monster.portrait,
-			legendaryActions: 0
+			legendaryActions: monster.legendaryActions
 		};
 	}
 
@@ -154,6 +158,7 @@ export default class Frankenstein {
 		monster.type = 'monster';
 		monster.name = data.name;
 		monster.size = data.size.toLowerCase();
+		monster.role = '';
 		monster.category = data.type;
 		monster.tag = data.subtype;
 		monster.alignment = data.alignment;
@@ -177,6 +182,8 @@ export default class Frankenstein {
 		monster.damage.vulnerable = data.damage_vulnerabilities;
 		monster.damage.immune = data.damage_immunities;
 		monster.conditionImmunities = data.condition_immunities;
+
+		monster.legendaryActions = 0;
 
 		const saves = [
 			{
@@ -316,6 +323,12 @@ export default class Frankenstein {
 				monster.traits.push(trait);
 			});
 		}
+
+		if (monster.traits.some(t => t.type === 'legendary')) {
+			monster.legendaryActions = 3;
+		}
+
+		monster.role = this.getRole(monster);
 
 		return monster;
 	}
@@ -510,6 +523,12 @@ export default class Frankenstein {
 		} catch (ex) {
 			console.error(ex);
 		}
+
+		if (monster.traits.some(t => t.type === 'legendary')) {
+			monster.legendaryActions = 3;
+		}
+
+		monster.role = this.getRole(monster);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -622,6 +641,12 @@ export default class Frankenstein {
 				distinct.splice(index, 1);
 			}
 		});
+
+		if (target.traits.some(t => t.type === 'legendary')) {
+			target.legendaryActions = 3;
+		}
+
+		target.role = this.getRole(target);
 	}
 
 	public static setRandomValue(target: Monster, field: string, monsters: Monster[]) {
@@ -655,5 +680,121 @@ export default class Frankenstein {
 		const trait = traits[index];
 
 		this.copyTrait(target, trait);
+	}
+
+	public static getToHitExpressions(trait: Trait) {
+		const matches = Array.from(trait.text.matchAll(/([+-])\s*(\d+)\s*to hit/g));
+		return matches.map(exp => {
+			const expression = exp[0];
+			let bonus = parseInt(exp[2], 10);
+			if (exp[1] === '-') {
+				bonus *= -1;
+			}
+			return {
+				expression: expression,
+				bonus: bonus
+			};
+		});
+	}
+
+	public static getDiceExpressions(trait: Trait) {
+		const matches = Array.from(trait.text.matchAll(/(\d*)[dD](\d+)\s*(([+-])\s*(\d*))?/g));
+		return matches.map(exp => {
+			const expression = exp[0];
+			const count = parseInt(exp[1], 10) ?? 1;
+			const sides = parseInt(exp[2], 10);
+			let bonus = 0;
+			if (exp[3] && exp[4] && exp[5]) {
+				bonus = parseInt(exp[5], 10);
+				if (exp[4] === '-') {
+					bonus *= -1;
+				}
+			}
+			return {
+				expression: expression,
+				count: count,
+				sides: sides,
+				bonus: bonus
+			};
+		});
+	}
+
+	public static getSaveExpressions(trait: Trait) {
+		const matches = Array.from(trait.text.matchAll(/(dc|DC)\s*(\d+)/g));
+		return matches.map(exp => {
+			const expression = exp[0];
+			const dc = parseInt(exp[2], 10);
+			return {
+				expression: expression,
+				dc: dc
+			};
+		});
+	}
+
+	public static getRole(monster: Monster) {
+		// If it has legendary actions, it's a boss
+		if (monster.legendaryActions > 0) {
+			return 'boss';
+		}
+
+		// If it can teleport, it's a skirmisher
+		if (monster.traits.some(t => t.text.toLowerCase().includes('teleport'))) {
+			return 'skirmisher';
+		}
+
+		// If it's got Deception or Stealth skills, it's a lurker
+		const skills = monster.skills.toLowerCase();
+		if (skills.includes('deception') || skills.includes('stealth')) {
+			return 'lurker';
+		}
+
+		// If it can be described as 'indistinguishable', it's a lurker
+		if (monster.traits.some(t => t.text.toLowerCase().includes('indistinguishable'))) {
+			return 'lurker';
+		}
+
+		const expected = Utils.challengeDetails().find(details => details.cr === monster.challenge);
+		if (expected) {
+			// If it has high hp, it's a tank
+			const typicalHP = Frankenstein.getTypicalHP(monster);
+			if (typicalHP > expected.hpMax) {
+				return 'tank';
+			}
+
+			// If it has strong ranged attacks, it's an artillery
+			// If it has strong melee attacks, it's an elite
+			const strongTraits = monster.traits.filter(trait => {
+				const toHits = this.getToHitExpressions(trait);
+				const damages = this.getDiceExpressions(trait).map(exp => (exp.count * (exp.sides + 1) / 2) + exp.bonus);
+				const saves = this.getSaveExpressions(trait);
+				return toHits.some(toHit => toHit.bonus > expected.attack)
+					|| damages.some(dmg => dmg > expected.dmgMax)
+					|| saves.some(save => save.dc > expected.save);
+			});
+			if (strongTraits.length > 0) {
+				const rangedAttacks = strongTraits.filter(trait => {
+					const text = trait.text.toLowerCase();
+					return text.includes('ranged') && text.includes('attack');
+				}).length;
+				const meleeAttacks = strongTraits.length - rangedAttacks;
+				return (rangedAttacks >= meleeAttacks) ? 'artillery' : 'elite';
+			}
+		}
+
+		// If it can impose at least two different conditions, it's a controller
+		// Note that this only looks for the appearance of conditions in the text
+		let count = 0;
+		CONDITION_TYPES.forEach(condition => {
+			const includes = monster.traits.some(t => t.text.toLowerCase().includes(condition.toLowerCase()));
+			if (includes) {
+				count += 1;
+			}
+		});
+		if (count >= 2) {
+			return 'controller';
+		}
+
+		// Otherwise, it's probably a skirmisher
+		return 'skirmisher';
 	}
 }

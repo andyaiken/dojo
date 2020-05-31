@@ -1,35 +1,19 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import React from 'react';
+import Showdown from 'showdown';
 
 import Selector from '../controls/selector';
 
-import Showdown from 'showdown';
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);
 
 interface Props {
-}
-
-interface State {
 	view: string;
+	setView: (view: string) => void;
 }
 
-export default class ReferenceSidebar extends React.Component<Props, State> {
-	constructor(props: Props) {
-		super(props);
-
-		this.state = {
-			view: 'skills'
-		};
-	}
-
-	private setView(view: string) {
-		this.setState({
-			view: view
-		});
-	}
-
+export default class ReferenceSidebar extends React.Component<Props> {
 	public render() {
 		try {
 			const options = [
@@ -48,7 +32,7 @@ export default class ReferenceSidebar extends React.Component<Props, State> {
 			];
 
 			let content = null;
-			switch (this.state.view) {
+			switch (this.props.view) {
 				case 'skills':
 					content = (
 						<ReferenceContentPanel key='skills' filename='/dojo/data/skills.md' />
@@ -72,9 +56,9 @@ export default class ReferenceSidebar extends React.Component<Props, State> {
 						<div className='heading'>reference</div>
 						<Selector
 							options={options}
-							selectedID={this.state.view}
+							selectedID={this.props.view}
 							itemsPerRow={3}
-							onSelect={optionID => this.setView(optionID)}
+							onSelect={optionID => this.props.setView(optionID)}
 						/>
 					</div>
 					<div className='sidebar-content'>

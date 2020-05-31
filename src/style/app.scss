@@ -234,3 +234,26 @@ p,
 		padding: 8px 0;
 	}
 }
+
+.control-with-icons {
+	position: relative;
+
+	.anticon {
+		position: absolute;
+		right: 0;
+		top: 5px;
+		opacity: 0.2;
+		font-size: 16px;
+		padding: 8px;
+
+		&:hover {
+			background-color: $highlight01;
+		}
+	}
+
+	&:hover {
+		.anticon {
+			opacity: 1;
+		}
+	}
+}

@@ -21,6 +21,10 @@ input[type=color] {
 	&:focus {
 		border-color: $highlight;
 	}
+
+	&.no-margins {
+		margin: 0;
+	}
 }
 
 input[type=color] {
@@ -374,7 +378,10 @@ button {
 	}
 
 	.message-details {
+		text-align: left;
+
 		.result {
+			text-align: center;
 			font-weight: 600;
 			font-size: 20px;
 		}

@@ -21,7 +21,7 @@ interface Props {
 	openDemographics: (group: MonsterGroup | null) => void;
 }
 
-export default class MonsterListScreen extends React.Component<Props> {
+export default class MonsterGroupListScreen extends React.Component<Props> {
 	public render() {
 		try {
 			if (!this.props.hasMonsters) {

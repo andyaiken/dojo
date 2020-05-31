@@ -13,14 +13,19 @@ interface Roll {
 
 interface RollResult {
 	rolls: Roll[];
+	constant: number;
 	option: string;
 }
 
 interface Props {
+	dice: { [sides: number]: number };
+	constant: number;
+	setDie: (sides: number, count: number) => void;
+	setConstant: (value: number) => void;
+	resetDice: () => void;
 }
 
 interface State {
-	dice: { [sides: number]: number };
 	option: string;
 	results: RollResult[];
 }
@@ -29,17 +34,7 @@ export default class DieRollerTool extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 
-		const dice: { [sides: number]: number } = {};
-		dice[4] = 0;
-		dice[6] = 0;
-		dice[8] = 0;
-		dice[10] = 0;
-		dice[12] = 0;
-		dice[20] = 0;
-		dice[100] = 0;
-
 		this.state = {
-			dice: dice,
 			option: 'normal',
 			results: []
 		};
@@ -48,10 +43,11 @@ export default class DieRollerTool extends React.Component<Props, State> {
 	private rollDice() {
 		const result: RollResult = {
 			rolls: [],
+			constant: this.props.constant,
 			option: this.state.option
 		};
 		[4, 6, 8, 10, 12, 20, 100].forEach(sides => {
-			const count = this.state.dice[sides];
+			const count = this.props.dice[sides];
 			for (let n = 0; n !== count; ++n) {
 				let value = Utils.dieRoll(sides);
 				switch (result.option) {
@@ -70,51 +66,33 @@ export default class DieRollerTool extends React.Component<Props, State> {
 		});
 		this.state.results.unshift(result);
 
-		const dice: { [sides: number]: number } = {};
-		dice[4] = 0;
-		dice[6] = 0;
-		dice[8] = 0;
-		dice[10] = 0;
-		dice[12] = 0;
-		dice[20] = 0;
-		dice[100] = 0;
-
 		this.setState({
-			dice: dice,
-			option: 'normal',
 			results: this.state.results
 		});
 	}
 
 	private reset() {
-		const dice: { [sides: number]: number } = {};
-		dice[4] = 0;
-		dice[6] = 0;
-		dice[8] = 0;
-		dice[10] = 0;
-		dice[12] = 0;
-		dice[20] = 0;
-		dice[100] = 0;
-
 		this.setState({
-			dice: dice,
 			option: 'normal'
+		}, () => {
+			this.props.resetDice();
 		});
 	}
 
 	private dieTypeClicked(e: React.MouseEvent, sides: number, up: boolean) {
 		e.preventDefault();
 
-		const dice = this.state.dice;
-		dice[sides] = Math.max(dice[sides] + (up ? 1 : -1), 0);
-
-		this.setState({
-			dice: dice
-		});
+		if (sides === 0) {
+			const value = this.props.constant + (up ? 1 : -1);
+			this.props.setConstant(value);
+		} else {
+			const value = Math.max(this.props.dice[sides] + (up ? 1 : -1), 0);
+			this.props.setDie(sides, value);
+		}
 	}
 
 	private getDieTypeBox(sides: number) {
-		const count = this.state.dice[sides];
+		const count = this.props.dice[sides];
 		return (
 			<div
 				className={count > 0 ? 'die-type' : 'die-type none'}
@@ -127,17 +105,49 @@ export default class DieRollerTool extends React.Component<Props, State> {
 		);
 	}
 
+	private getConstantBox() {
+		const count = this.props.constant;
+		return (
+			<div
+				className={count > 0 ? 'die-type' : 'die-type none'}
+				onClick={e => this.dieTypeClicked(e, 0, true && !e.ctrlKey)}
+				onContextMenu={e => this.dieTypeClicked(e, 0, false)}
+			>
+				<div className='die-type-name'>+/-</div>
+				<div className='die-type-value'>{count}</div>
+			</div>
+		);
+	}
+
 	private renderRoll(result: RollResult, resultIndex: number) {
 		const rolls: JSX.Element[] = [];
 		let sum = 0;
 		result.rolls.forEach((roll, rollIndex) => {
+			let style = '';
+			if (roll.sides === 20) {
+				if (roll.value === 1) {
+					style = 'nat1';
+				}
+				if (roll.value === 20) {
+					style = 'nat20';
+				}
+			}
 			rolls.push(
-				<Tag key={'d' + roll.sides + '.' + rollIndex}>
+				<Tag key={'d' + roll.sides + '.' + rollIndex} className={style}>
 					d{roll.sides}: <b>{roll.value}</b>
 				</Tag>
 			);
 			sum += roll.value;
 		});
+		if (result.constant !== 0) {
+			const sign = (result.constant > 0) ? '+' : '-';
+			rolls.push(
+				<Tag key='constant'>
+					{sign} <b>{Math.abs(result.constant)}</b>
+				</Tag>
+			);
+			sum += result.constant;
+		}
 
 		const icon = (result.option === 'normal') ? null : <ExclamationCircleOutlined className={'roll-icon ' + result.option} title={result.option} />;
 
@@ -158,13 +168,13 @@ export default class DieRollerTool extends React.Component<Props, State> {
 		try {
 			const results = this.state.results.map((result, resultIndex) => this.renderRoll(result, resultIndex));
 
-			const total = this.state.dice[4]
-				+ this.state.dice[6]
-				+ this.state.dice[8]
-				+ this.state.dice[10]
-				+ this.state.dice[12]
-				+ this.state.dice[20]
-				+ this.state.dice[100];
+			const total = this.props.dice[4]
+				+ this.props.dice[6]
+				+ this.props.dice[8]
+				+ this.props.dice[10]
+				+ this.props.dice[12]
+				+ this.props.dice[20]
+				+ this.props.dice[100];
 
 			return (
 				<div>
@@ -176,12 +186,13 @@ export default class DieRollerTool extends React.Component<Props, State> {
 						{this.getDieTypeBox(12)}
 						{this.getDieTypeBox(20)}
 						{this.getDieTypeBox(100)}
+						{this.getConstantBox()}
 					</div>
 					<hr/>
 					<Selector
 						options={['normal', 'advantage', 'disadvantage'].map(o => ({ id: o, text: o }))}
 						selectedID={this.state.option}
-						disabled={(total !== 1) || (this.state.dice[20] !== 1)}
+						disabled={(total !== 1) || (this.props.dice[20] !== 1)}
 						onSelect={id => this.setState({ option: id })}
 					/>
 					<Row gutter={10}>

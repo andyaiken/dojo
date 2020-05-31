@@ -1,4 +1,3 @@
-import { message } from 'antd';
 import React from 'react';
 
 import Utils from '../../utils/utils';
@@ -10,7 +9,9 @@ import NumberSpin from '../controls/number-spin';
 interface Props {
 	combatant: Monster;
 	edit: boolean;
+	showRollButtons: boolean;
 	onNudgeValue: (combatant: Monster, field: string, delta: number) => void;
+	onRollDice: (count: number, sides: number, constant: number) => void;
 }
 
 interface State {
@@ -19,8 +20,10 @@ interface State {
 
 export default class AbilityScorePanel extends React.Component<Props, State> {
 	public static defaultProps = {
-		edit: null,
-		onNudgeValue: null
+		edit: false,
+		showRollButtons: false,
+		onNudgeValue: null,
+		onRollDice: null
 	};
 
 	constructor(props: Props) {
@@ -40,41 +43,38 @@ export default class AbilityScorePanel extends React.Component<Props, State> {
 		e.stopPropagation();
 
 		const score = this.props.combatant.abilityScores[ability];
-		const result = Utils.modifierValue(score) + Utils.dieRoll();
-
-		message.info(
-			<div className='message-details'>
-				<div>rolling {ability}</div>
-				<div className='result'>{result}</div>
-			</div>,
-			10
-		);
+		const mod = Utils.modifierValue(score);
+		this.props.onRollDice(1, 20, mod);
 	}
 
 	private getAbilityScore(ability: 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha') {
 		const score = this.props.combatant.abilityScores[ability];
+		const mod = Utils.modifier(score);
 
-		let value = null;
-		if (this.state.showAbilityScores) {
-			value = (
-				<div>{score}</div>
+		const content = (
+			<div>
+				<div className='ability-heading'>
+					{ability}
+				</div>
+				<div className='ability-value'>
+					<div>{this.state.showAbilityScores ? score : mod}</div>
+				</div>
+			</div>
+		);
+
+		if (this.props.showRollButtons) {
+			return (
+				<div className='ability-score link' onClick={e => this.roll(e, ability)}>
+					{content}
+				</div>
 			);
 		} else {
-			value = (
-				<div>
-					<button className='link' onClick={e => this.roll(e, ability)}>
-						{Utils.modifier(score)}
-					</button>
+			return (
+				<div className='ability-score'>
+					{content}
 				</div>
 			);
 		}
-
-		return (
-			<div className='ability-score'>
-				<div className='ability-heading'>{ability}</div>
-				<div className='ability-value'>{value}</div>
-			</div>
-		);
 	}
 
 	public render() {

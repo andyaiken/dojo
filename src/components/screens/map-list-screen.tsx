@@ -48,7 +48,7 @@ export default class MapListScreen extends React.Component<Props> {
 						</Note>
 						<button onClick={() => this.props.addMap()}>create a new map</button>
 						<button onClick={() => this.props.importMap()}>import a map image</button>
-						<Expander text='map generator'>
+						<Expander text='create a random map'>
 							<button onClick={() => this.props.generateMap('dungeon')}>create a new dungeon map</button>
 							<button onClick={() => this.props.generateMap('delve')}>create a new delve map</button>
 						</Expander>

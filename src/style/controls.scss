@@ -177,6 +177,7 @@ button.danger {
 	border-left-width: 5px;
 	background-color: $background;
 	display: flex;
+	align-items: center;
 
 	&:hover {
 		border-color: $highlight;

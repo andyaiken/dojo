@@ -17,6 +17,7 @@ interface Props {
 	parties: Party[];
 	hasMonsters: boolean;
 	addEncounter: () => void;
+	viewEncounter: (encounter: Encounter) => void;
 	editEncounter: (encounter: Encounter) => void;
 	deleteEncounter: (encounter: Encounter) => void;
 	runEncounter: (encounter: Encounter, partyID: string) => void;
@@ -66,6 +67,7 @@ export default class EncounterListScreen extends React.Component<Props> {
 					key={e.id}
 					encounter={e}
 					parties={this.props.parties}
+					view={encounter => this.props.viewEncounter(encounter)}
 					edit={encounter => this.props.editEncounter(encounter)}
 					delete={encounter => this.props.deleteEncounter(encounter)}
 					run={(encounter, partyID) => this.props.runEncounter(encounter, partyID)}

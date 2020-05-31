@@ -7,27 +7,17 @@ import LanguageTool from './tools/language-tool';
 import OracleTool from './tools/oracle-tool';
 
 interface Props {
-}
-
-interface State {
 	view: string;
+	setView: (view: string) => void;
+	// Dice
+	dice: { [sides: number]: number };
+	constant: number;
+	setDie: (sides: number, count: number) => void;
+	setConstant: (value: number) => void;
+	resetDice: () => void;
 }
 
-export default class ToolsSidebar extends React.Component<Props, State> {
-	constructor(props: Props) {
-		super(props);
-
-		this.state = {
-			view: 'die'
-		};
-	}
-
-	private setView(view: string) {
-		this.setState({
-			view: view
-		});
-	}
-
+export default class ToolsSidebar extends React.Component<Props> {
 	public render() {
 		try {
 			const options = [
@@ -50,10 +40,16 @@ export default class ToolsSidebar extends React.Component<Props, State> {
 			];
 
 			let content = null;
-			switch (this.state.view) {
+			switch (this.props.view) {
 				case 'die':
 					content = (
-						<DieRollerTool />
+						<DieRollerTool
+							dice={this.props.dice}
+							constant={this.props.constant}
+							setDie={(sides, count) => this.props.setDie(sides, count)}
+							setConstant={value => this.props.setConstant(value)}
+							resetDice={() => this.props.resetDice()}
+						/>
 					);
 					break;
 				case 'handout':
@@ -79,9 +75,9 @@ export default class ToolsSidebar extends React.Component<Props, State> {
 						<div className='heading'>tools</div>
 						<Selector
 							options={options}
-							selectedID={this.state.view}
+							selectedID={this.props.view}
 							itemsPerRow={4}
-							onSelect={optionID => this.setView(optionID)}
+							onSelect={optionID => this.props.setView(optionID)}
 						/>
 					</div>
 					<div className='sidebar-content'>

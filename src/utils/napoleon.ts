@@ -87,6 +87,9 @@ export default class Napoleon {
 		if (filter.category !== 'all types') {
 			summary += summary ? ' ' + filter.category : filter.category;
 		}
+		if (filter.role !== 'all roles') {
+			summary += summary ? ' ' + filter.role : filter.role;
+		}
 		const min = Utils.challenge(filter.challengeMin);
 		const max = Utils.challenge(filter.challengeMax);
 		const cr =  (filter.challengeMin === filter.challengeMax) ? min : min + ' to ' + max;
@@ -162,6 +165,12 @@ export default class Napoleon {
 
 		if (filter.size !== 'all sizes') {
 			if (monster.size !== filter.size) {
+				return false;
+			}
+		}
+
+		if (filter.role !== 'all roles') {
+			if (monster.role !== filter.role) {
 				return false;
 			}
 		}

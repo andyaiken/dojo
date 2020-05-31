@@ -10,12 +10,41 @@ interface Props {
 	onConfirm: () => void;
 }
 
-export default class ConfirmButton extends React.Component<Props> {
+interface State {
+	visible: boolean;
+}
+
+export default class ConfirmButton extends React.Component<Props, State> {
 	public static defaultProps = {
 		prompt: 'are you sure you want to do this?',
 		info: null,
 		disabled: false
 	};
+
+	constructor(props: Props) {
+		super(props);
+
+		this.state = {
+			visible: false
+		};
+	}
+
+	private onClick(e: React.MouseEvent) {
+		e.stopPropagation();
+		this.setState({
+			visible: true
+		});
+	}
+
+	private onClose(e: React.MouseEvent, confirm: boolean) {
+		e.stopPropagation();
+		if (confirm) {
+			this.props.onConfirm();
+		}
+		this.setState({
+			visible: false
+		});
+	}
 
 	public render() {
 		try {
@@ -29,12 +58,16 @@ export default class ConfirmButton extends React.Component<Props> {
 							</div>
 							{this.props.info}
 							<hr/>
-							<button onClick={() => this.props.onConfirm()}>confirm</button>
+							<button onClick={e => this.onClose(e, true)}>confirm</button>
+							<button onClick={e => this.onClose(e, false)}>cancel</button>
 						</div>
 					)}
 					trigger='click'
+					visible={this.state.visible}
 				>
-					<button className={this.props.disabled ? 'danger disabled' : 'danger'}>{this.props.text}</button>
+					<button className={this.props.disabled ? 'danger disabled' : 'danger'} onClick={e => this.onClick(e)}>
+						{this.props.text}
+					</button>
 				</Popover>
 			);
 		} catch (ex) {

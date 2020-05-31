@@ -3,6 +3,7 @@ export interface Encounter {
 	name: string;
 	slots: EncounterSlot[];
 	waves: EncounterWave[];
+	notes: string;
 }
 
 export interface EncounterSlot {
@@ -24,4 +25,5 @@ export interface MonsterFilter {
 	challengeMax: number;
 	category: string;
 	size: string;
+	role: string;
 }

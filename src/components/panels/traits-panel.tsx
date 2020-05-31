@@ -1,8 +1,8 @@
 import { CrownFilled, CrownOutlined } from '@ant-design/icons';
-import { message } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
 
+import Frankenstein from '../../utils/frankenstein';
 import Utils from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
@@ -11,21 +11,26 @@ import { Monster, Trait, TRAIT_TYPES } from '../../models/monster-group';
 import Note from '../panels/note';
 
 const showdown = new Showdown.Converter();
+showdown.setOption('tables', true);
 
 interface Props {
 	combatant: Monster | (Combatant & Monster);
 	mode: 'view' | 'template' | 'combat' | 'legendary' | 'lair';
+	showRollButtons: boolean;
 	copyTrait: (trait: Trait) => void;
 	useTrait: (trait: Trait) => void;
 	rechargeTrait: (trait: Trait) => void;
+	onRollDice: (count: number, sides: number, constant: number) => void;
 }
 
 export default class TraitsPanel extends React.Component<Props> {
 	public static defaultProps = {
 		mode: 'view',
+		showRollButtons: false,
 		copyTrait: null,
 		useTrait: null,
-		rechargeTrait: null
+		rechargeTrait: null,
+		onRollDice: null
 	};
 
 	private createSection(traitsByType: { [id: string]: JSX.Element[] }, type: string) {
@@ -129,9 +134,11 @@ export default class TraitsPanel extends React.Component<Props> {
 						key={trait.id}
 						trait={trait}
 						mode={this.props.mode}
+						showRollButtons={this.props.showRollButtons}
 						copyTrait={action => this.props.copyTrait(action)}
 						useTrait={action => this.props.useTrait(action)}
 						rechargeTrait={action => this.props.rechargeTrait(action)}
+						onRollDice={(count, sides, constant) => this.props.onRollDice(count, sides, constant)}
 					/>
 				));
 			});
@@ -189,9 +196,11 @@ export default class TraitsPanel extends React.Component<Props> {
 interface TraitPanelProps {
 	trait: Trait;
 	mode: 'view' | 'template' | 'combat' | 'legendary' | 'lair';
+	showRollButtons: boolean;
 	copyTrait: (trait: Trait) => void;
 	useTrait: (trait: Trait) => void;
 	rechargeTrait: (trait: Trait) => void;
+	onRollDice: (count: number, sides: number, constant: number) => void;
 }
 
 class TraitPanel extends React.Component<TraitPanelProps> {
@@ -255,63 +264,32 @@ class TraitPanel extends React.Component<TraitPanelProps> {
 							);
 						}
 					}
-					Array.from(this.props.trait.text.matchAll(/([+-])\s*(\d+)\s*to hit/g))
-						.forEach(exp => {
-							const expression = exp[0];
-							let bonus = parseInt(exp[2], 10);
-							if (exp[1] === '-') {
-								bonus *= -1;
-							}
-							buttons.push(
-								<button
-									key={expression}
-									className='link'
-									onClick={() => {
-										const result = Utils.dieRoll() + bonus;
-										message.info(
-											<div className='message-details'>
-												<div>rolling {expression}</div>
-												<div className='result'>{result}</div>
-											</div>,
-											10
-										);
-									}}
-								>
-									{expression}
-								</button>
-							);
-						});
-					Array.from(this.props.trait.text.matchAll(/(\d*)[dD](\d+)\s*(([+-])\s*(\d*))?/g))
-						.forEach(exp => {
-							const expression = exp[0];
-							const count = parseInt(exp[1], 10) ?? 1;
-							const sides = parseInt(exp[2], 10);
-							let bonus = 0;
-							if (exp[3] && exp[4] && exp[5]) {
-								bonus = parseInt(exp[5], 10);
-								if (exp[4] === '-') {
-									bonus *= -1;
-								}
-							}
-							buttons.push(
-								<button
-									key={expression}
-									className='link'
-									onClick={() => {
-										const result = Utils.dieRoll(sides, count) + bonus;
-										message.info(
-											<div className='message-details'>
-												<div>rolling {expression}</div>
-												<div className='result'>{result}</div>
-											</div>,
-											10
-										);
-									}}
-								>
-									{expression}
-								</button>
-							);
-						});
+					if (this.props.showRollButtons) {
+						Frankenstein.getToHitExpressions(this.props.trait)
+							.forEach(exp => {
+								buttons.push(
+									<button
+										key={exp.expression}
+										className='link'
+										onClick={() => this.props.onRollDice(1, 20, exp.bonus)}
+									>
+										{exp.expression}
+									</button>
+								);
+							});
+						Frankenstein.getDiceExpressions(this.props.trait)
+							.forEach(exp => {
+								buttons.push(
+									<button
+										key={exp.expression}
+										className='link'
+										onClick={() => this.props.onRollDice(exp.count, exp.sides, exp.bonus)}
+									>
+										{exp.expression}
+									</button>
+								);
+							});
+					}
 					let buttonSection = null;
 					if (buttons.length > 0) {
 						buttonSection = (

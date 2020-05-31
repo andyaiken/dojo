@@ -645,7 +645,7 @@ class MonsterSelectionSection extends React.Component<MonsterSelectionSectionPro
 		};
 	}
 
-	private changeFilterValue(type: 'name' | 'challenge' | 'category' | 'size', value: any) {
+	private changeFilterValue(type: 'name' | 'challenge' | 'category' | 'size' | 'role', value: any) {
 		const filter = this.state.filter as any;
 		if (type === 'challenge') {
 			filter.challengeMin = value[0];

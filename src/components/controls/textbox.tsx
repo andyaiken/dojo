@@ -7,6 +7,7 @@ interface Props {
 	multiLine: boolean;
 	minLength: number;
 	disabled: boolean;
+	noMargins: boolean;
 	onChange: (value: string) => void;
 }
 
@@ -15,7 +16,8 @@ export default class Textbox extends React.Component<Props> {
 		placeholder: '',
 		multiLine: false,
 		minLength: 0,
-		disabled: false
+		disabled: false,
+		noMargins: false
 	};
 
 	public render() {
@@ -23,6 +25,9 @@ export default class Textbox extends React.Component<Props> {
 			let style = '';
 			if (this.props.disabled) {
 				style = 'disabled';
+			}
+			if (this.props.noMargins) {
+				style += ' no-margins';
 			}
 
 			if (this.props.multiLine) {

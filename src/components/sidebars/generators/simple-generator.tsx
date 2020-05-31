@@ -28,7 +28,7 @@ export default class SimpleGenerator extends React.Component<Props, State> {
 					v = Shakespeare.generateBookTitle();
 					break;
 				case 'name':
-					v = Shakespeare.generateName();
+					v = Shakespeare.generateName(false);
 					break;
 				case 'potion':
 					v = Shakespeare.generatePotion();

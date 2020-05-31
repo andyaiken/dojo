@@ -1,5 +1,5 @@
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import { message, Tag } from 'antd';
+import { Tag } from 'antd';
 import React from 'react';
 
 import Frankenstein from '../../utils/frankenstein';
@@ -21,6 +21,7 @@ import TraitsPanel from '../panels/traits-panel';
 interface Props {
 	monster: Monster | (Monster & Combatant);
 	mode: string;
+	showRollButtons: boolean;
 	library: MonsterGroup[];
 	nudgeValue: (source: any, field: string, delta: number) => void;
 	// Library
@@ -43,6 +44,7 @@ interface Props {
 	// Combat
 	useTrait: (trait: Trait) => void;
 	rechargeTrait: (trait: Trait) => void;
+	onRollDice: (count: number, sides: number, constant: number) => void;
 }
 
 interface State {
@@ -52,6 +54,7 @@ interface State {
 export default class MonsterCard extends React.Component<Props, State> {
 	public static defaultProps = {
 		mode: 'full',
+		showRollButtons: false,
 		library: null,
 		nudgeValue: null,
 		viewMonster: null,
@@ -86,7 +89,8 @@ export default class MonsterCard extends React.Component<Props, State> {
 		toggleTag: null,
 		toggleCondition: null,
 		useTrait: null,
-		rechargeTrait: null
+		rechargeTrait: null,
+		onRollDice: null
 	};
 
 	constructor(props: Props) {
@@ -163,16 +167,7 @@ export default class MonsterCard extends React.Component<Props, State> {
 						<button
 							key={expression}
 							className='link'
-							onClick={() => {
-								const result = Utils.dieRoll() + bonus;
-								message.info(
-									<div className='message-details'>
-										<div>rolling {expression}</div>
-										<div className='result'>{result}</div>
-									</div>,
-									10
-								);
-							}}
+							onClick={() => this.props.onRollDice(1, 20, bonus)}
 						>
 							{expression}
 						</button>
@@ -368,11 +363,17 @@ export default class MonsterCard extends React.Component<Props, State> {
 				statBlock = (
 					<div>
 						<hr/>
-						<AbilityScorePanel combatant={this.props.monster} />
+						<div className='section'>
+							<AbilityScorePanel
+								combatant={this.props.monster}
+								showRollButtons={this.props.showRollButtons}
+								onRollDice={(count, sides, constant) => this.props.onRollDice(count, sides, constant)}
+							/>
+						</div>
 						{this.statSection('ac', this.props.monster.ac.toString())}
 						{this.statSection('hp', this.getHP())}
-						{this.statSection('saving throws', this.props.monster.savingThrows, true)}
-						{this.statSection('skills', this.props.monster.skills, true)}
+						{this.statSection('saving throws', this.props.monster.savingThrows, this.props.showRollButtons)}
+						{this.statSection('skills', this.props.monster.skills, this.props.showRollButtons)}
 						{this.statSection('speed', this.props.monster.speed)}
 						{this.statSection('senses', this.props.monster.senses)}
 						{this.statSection('damage resistances', this.props.monster.damage.resist)}
@@ -385,8 +386,10 @@ export default class MonsterCard extends React.Component<Props, State> {
 						<TraitsPanel
 							combatant={this.props.monster}
 							mode={this.props.mode.indexOf('combat') !== -1 ? 'combat' : 'view'}
+							showRollButtons={this.props.showRollButtons}
 							useTrait={trait => this.props.useTrait(trait)}
 							rechargeTrait={trait => this.props.rechargeTrait(trait)}
+							onRollDice={(count, sides, constant) => this.props.onRollDice(count, sides, constant)}
 						/>
 					</div>
 				);
@@ -421,7 +424,9 @@ export default class MonsterCard extends React.Component<Props, State> {
 			if (this.props.mode.indexOf('abilities') !== -1) {
 				stats = (
 					<div className='stats'>
-						<AbilityScorePanel combatant={this.props.monster} />
+						<div className='section'>
+							<AbilityScorePanel combatant={this.props.monster} />
+						</div>
 						{this.statSection('saving throws', this.props.monster.savingThrows)}
 						{this.statSection('skills', this.props.monster.skills)}
 					</div>

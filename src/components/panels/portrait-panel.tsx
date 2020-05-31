@@ -35,7 +35,7 @@ export default class PortraitPanel extends React.Component<Props> {
 			);
 		} else {
 			img = (
-				<UserOutlined className='circle' onClick={() => this.props.edit()} />
+				<UserOutlined className='circle' style={{ opacity: 0.5 }} onClick={() => this.props.edit()} />
 			);
 		}
 

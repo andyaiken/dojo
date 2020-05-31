@@ -4,7 +4,7 @@ import React from 'react';
 import Napoleon from '../../utils/napoleon';
 
 import { MonsterFilter } from '../../models/encounter';
-import { CATEGORY_TYPES, SIZE_TYPES } from '../../models/monster-group';
+import { CATEGORY_TYPES, ROLE_TYPES, SIZE_TYPES } from '../../models/monster-group';
 
 import Dropdown from '../controls/dropdown';
 import Expander from '../controls/expander';
@@ -13,23 +13,13 @@ import Textbox from '../controls/textbox';
 
 interface Props {
 	filter: MonsterFilter;
-	noTopMargin: boolean;
-	changeValue: (type: 'name' | 'challenge' | 'category' | 'size', value: any) => void;
+	changeValue: (type: 'name' | 'challenge' | 'category' | 'size' | 'role', value: any) => void;
 	resetFilter: () => void;
 }
 
 export default class FilterPanel extends React.Component<Props> {
-	public static defaultProps = {
-		noTopMargin: false
-	};
-
 	public render() {
 		try {
-			const style: React.CSSProperties = {};
-			if (this.props.noTopMargin) {
-				style.marginTop = '-5px';
-			}
-
 			const sizes = ['all sizes'].concat(SIZE_TYPES);
 			const sizeOptions = sizes.map(size => ({ id: size, text: size }));
 
@@ -60,12 +50,16 @@ export default class FilterPanel extends React.Component<Props> {
 				monst.text = 'monst.';
 			}
 
+			const roles = ['all roles'].concat(ROLE_TYPES);
+			const roleOptions = roles.map(role => ({ id: role, text: role }));
+
 			return (
-				<div style={style}>
+				<div>
 					<Textbox
 						key='search'
 						text={this.props.filter.name}
 						placeholder='filter by name'
+						noMargins={true}
 						onChange={value => this.props.changeValue('name', value)}
 					/>
 					<Expander text={'showing ' + Napoleon.getFilterDescription(this.props.filter)}>
@@ -76,17 +70,23 @@ export default class FilterPanel extends React.Component<Props> {
 							value={[this.props.filter.challengeMin, this.props.filter.challengeMax]}
 							onChange={value => this.props.changeValue('challenge', value)}
 						/>
+						<Selector
+							options={catOptions}
+							selectedID={this.props.filter.category}
+							itemsPerRow={3}
+							onSelect={optionID => this.props.changeValue('category', optionID)}
+						/>
 						<Dropdown
 							options={sizeOptions}
 							placeholder='filter by size...'
 							selectedID={this.props.filter.size}
 							onSelect={optionID => this.props.changeValue('size', optionID)}
 						/>
-						<Selector
-							options={catOptions}
-							selectedID={this.props.filter.category}
-							itemsPerRow={3}
-							onSelect={optionID => this.props.changeValue('category', optionID)}
+						<Dropdown
+							options={roleOptions}
+							placeholder='filter by role...'
+							selectedID={this.props.filter.role}
+							onSelect={optionID => this.props.changeValue('role', optionID)}
 						/>
 						<hr/>
 						<div className='section'>

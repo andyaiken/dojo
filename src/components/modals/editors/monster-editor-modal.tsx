@@ -1,4 +1,4 @@
-import { MenuOutlined } from '@ant-design/icons';
+import { MenuOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Col, Drawer, Row } from 'antd';
 import React from 'react';
 import { List } from 'react-movable';
@@ -42,6 +42,7 @@ interface State {
 		size: boolean,
 		type: boolean,
 		subtype: boolean,
+		role: boolean,
 		alignment: boolean,
 		challenge: boolean
 	};
@@ -63,6 +64,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 				size: true,
 				type: true,
 				subtype: false,
+				role: false,
 				alignment: false,
 				challenge: true
 			},
@@ -86,7 +88,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 		});
 	}
 
-	private toggleMatch(type: 'size' | 'type' | 'subtype' | 'alignment' | 'challenge') {
+	private toggleMatch(type: 'size' | 'type' | 'subtype' | 'role' | 'alignment' | 'challenge') {
 		const filter = this.state.similarFilter;
 		filter[type] = !filter[type];
 		this.setState({
@@ -172,6 +174,10 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 					match = false;
 				}
 
+				if (this.state.similarFilter.role && (this.state.monster.role !== monster.role)) {
+					match = false;
+				}
+
 				if (this.state.similarFilter.alignment && (this.state.monster.alignment !== monster.alignment)) {
 					match = false;
 				}
@@ -189,8 +195,14 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 		return monsters;
 	}
 
+	private recalculateRole() {
+		const monster = this.state.monster;
+		monster.role = Frankenstein.getRole(monster);
+	}
+
 	private setRandomValue(field: string, monsters: Monster[]) {
 		Frankenstein.setRandomValue(this.state.monster, field, monsters);
+		this.recalculateRole();
 		this.setState({
 			monster: this.state.monster
 		});
@@ -198,6 +210,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
 	private spliceMonsters(monsters: Monster[]) {
 		Frankenstein.spliceMonsters(this.state.monster, monsters);
+		this.recalculateRole();
 		this.setState({
 			monster: this.state.monster
 		});
@@ -205,6 +218,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
 	private addTrait(type: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'lair') {
 		Frankenstein.addTrait(this.state.monster, type);
+		this.recalculateRole();
 		this.setState({
 			monster: this.state.monster
 		});
@@ -212,6 +226,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
 	private addRandomTrait(type: string, monsters: Monster[]) {
 		Frankenstein.addRandomTrait(this.state.monster, type, monsters);
+		this.recalculateRole();
 		this.setState({
 			monster: this.state.monster
 		});
@@ -221,6 +236,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 		const oldIndex = this.state.monster.traits.indexOf(trait);
 		const newIndex = this.state.monster.traits.indexOf(moveBefore);
 		Frankenstein.moveTrait(this.state.monster, oldIndex, newIndex);
+		this.recalculateRole();
 		this.setState({
 			monster: this.state.monster
 		});
@@ -228,6 +244,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
 	private removeTrait(trait: Trait) {
 		Frankenstein.removeTrait(this.state.monster, trait);
+		this.recalculateRole();
 		this.setState({
 			monster: this.state.monster
 		});
@@ -235,6 +252,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
 	private copyTrait(trait: Trait) {
 		Frankenstein.copyTrait(this.state.monster, trait);
+		this.recalculateRole();
 		this.setState({
 			monster: this.state.monster
 		});
@@ -242,6 +260,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
 	private changeTrait(trait: Trait, field: string, value: any) {
 		(trait as any)[field] = value;
+		this.recalculateRole();
 		this.setState({
 			monster: this.state.monster
 		});
@@ -249,6 +268,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
 	private nudgeValue(field: string, delta: number) {
 		Frankenstein.nudgeValue(this.state.monster, field, delta);
+		this.recalculateRole();
 		this.setState({
 			monster: this.state.monster
 		});
@@ -256,13 +276,14 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
 	private changeValue(field: string, value: any) {
 		Frankenstein.changeValue(this.state.monster, field, value);
+		this.recalculateRole();
 		this.setState({
 			monster: this.state.monster,
 			showImageSelection: false
 		});
 	}
 
-	private changeFilterValue(type: 'name' | 'challenge' | 'category' | 'size', value: any) {
+	private changeFilterValue(type: 'name' | 'challenge' | 'category' | 'size' | 'role', value: any) {
 		const filter = this.state.scratchpadFilter as any;
 		if (type === 'challenge') {
 			filter.challengeMin = value[0];
@@ -536,6 +557,12 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 								onChecked={value => this.toggleMatch('subtype')}
 							/>
 							<Checkbox
+								label={this.state.monster.role ? 'role ' + this.state.monster.role : 'role'}
+								checked={this.state.similarFilter.role}
+								disabled={!this.state.monster.role}
+								onChecked={value => this.toggleMatch('role')}
+							/>
+							<Checkbox
 								label={this.state.monster.alignment ? 'alignment ' + this.state.monster.alignment : 'alignment'}
 								checked={this.state.similarFilter.alignment}
 								disabled={!this.state.monster.alignment}
@@ -553,7 +580,6 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 					sidebarContent = (
 						<FilterPanel
 							filter={this.state.scratchpadFilter}
-							noTopMargin={true}
 							changeValue={(type, value) => this.changeFilterValue(type, value)}
 							resetFilter={() => this.resetFilter()}
 						/>
@@ -619,12 +645,6 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 								generate hybrid monster
 							</button>
 							<button
-								className={monsters.length === 0 ? 'disabled' : ''}
-								onClick={() => this.addAllToScratchpad(monsters)}
-							>
-								add all from right
-							</button>
-							<button
 								className={this.state.scratchpadList.length === 0 ? 'disabled' : ''}
 								onClick={() => this.clearScratchpad()}
 							>
@@ -641,6 +661,12 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 								onSelect={optionID => this.setState({sidebar: optionID as 'similar' | 'all'})}
 							/>
 							{sidebarContent}
+							<button
+								className={monsters.length === 0 ? 'disabled' : ''}
+								onClick={() => this.addAllToScratchpad(monsters)}
+							>
+								add all to scratchpad
+							</button>
 							<hr/>
 							{this.getMonsterCards(monsters, false)}
 							{emptyListNote}
@@ -803,15 +829,11 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 						};
 					});
 					selector = (
-						<div>
-							<div className='subheading'>fields</div>
-							<Selector
-								options={options}
-								selectedID={this.state.helpSection}
-								onSelect={optionID => this.setHelpSection(optionID)}
-							/>
-							<div className='subheading'>values</div>
-						</div>
+						<Selector
+							options={options}
+							selectedID={this.state.helpSection}
+							onSelect={optionID => this.setHelpSection(optionID)}
+						/>
 					);
 				}
 
@@ -860,7 +882,7 @@ interface OverviewTabProps {
 
 class OverviewTab extends React.Component<OverviewTabProps> {
 	private randomName() {
-		let name = Shakespeare.generateName();
+		let name = Shakespeare.generateName(true);
 		name = name[0].toUpperCase() + name.substr(1);
 		this.props.changeValue('name', name);
 	}
@@ -871,20 +893,17 @@ class OverviewTab extends React.Component<OverviewTabProps> {
 
 			return (
 				<Row gutter={10} key='overview'>
-					<Col xs={24} sm={24} md={24} lg={12} xl={12}>
+					<Col span={24}>
 						<div className='subheading'>name</div>
-						<Textbox
-							text={this.props.monster.name}
-							onChange={value => this.props.changeValue('name', value)}
-						/>
-						<button onClick={() => this.randomName()}>generate a random name</button>
-						<div className='subheading'>size</div>
-						<NumberSpin
-							value={this.props.monster.size}
-							downEnabled={this.props.monster.size !== 'tiny'}
-							upEnabled={this.props.monster.size !== 'gargantuan'}
-							onNudgeValue={delta => this.props.nudgeValue('size', delta)}
-						/>
+						<div className='control-with-icons'>
+							<Textbox
+								text={this.props.monster.name}
+								onChange={value => this.props.changeValue('name', value)}
+							/>
+							<ReloadOutlined onClick={() => this.randomName()} title='generate a random name' />
+						</div>
+					</Col>
+					<Col xs={24} sm={24} md={24} lg={12} xl={12}>
 						<div className='subheading'>type</div>
 						<Dropdown
 							options={catOptions}
@@ -894,6 +913,7 @@ class OverviewTab extends React.Component<OverviewTabProps> {
 						<div className='subheading'>subtype</div>
 						<Textbox
 							text={this.props.monster.tag}
+							placeholder='none'
 							onChange={value => this.props.changeValue('tag', value)}
 						/>
 						<div className='subheading'>alignment</div>
@@ -906,6 +926,13 @@ class OverviewTab extends React.Component<OverviewTabProps> {
 							value={Utils.challenge(this.props.monster.challenge)}
 							downEnabled={this.props.monster.challenge > 0}
 							onNudgeValue={delta => this.props.nudgeValue('challenge', delta)}
+						/>
+						<div className='subheading'>size</div>
+						<NumberSpin
+							value={this.props.monster.size}
+							downEnabled={this.props.monster.size !== 'tiny'}
+							upEnabled={this.props.monster.size !== 'gargantuan'}
+							onNudgeValue={delta => this.props.nudgeValue('size', delta)}
 						/>
 					</Col>
 					<Col xs={24} sm={24} md={24} lg={12} xl={12}>

@@ -160,6 +160,14 @@
 				display: flex;
 				align-items: center;
 
+				.nat1 {
+					background-color: rgba(255, 0, 0, 0.1);
+				}
+
+				.nat20 {
+					background-color: rgba(0, 255, 0, 0.1);
+				}
+
 				.roll-icon {
 					font-size: 16px;
 					padding-left: 5px;
