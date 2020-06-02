@@ -25,7 +25,7 @@ interface Props {
 	paddingSquares: number;
 	floatingItem: MapItem | null;
 	combatants: Combatant[];
-	showOverlay: boolean;
+	showGrid: boolean;
 	selectedItemIDs: string[];
 	fog: { x: number, y: number }[];
 	editFog: boolean;
@@ -64,7 +64,7 @@ export default class MapPanel extends React.Component<Props, State> {
 		paddingSquares: 0,
 		floatingItem: null,
 		combatants: [],
-		showOverlay: false,
+		showGrid: false,
 		selectedItemIDs: [],
 		fog: [],
 		editFog: false,
@@ -355,19 +355,19 @@ export default class MapPanel extends React.Component<Props, State> {
 					.filter(mt => mt !== null) as JSX.Element[];
 			}
 
-			// Draw the drag overlay
+			// Draw the grid
 			const dragOverlay = [];
-			if (this.props.showOverlay || this.props.editFog) {
-				for (let yOver = mapDimensions.minY; yOver !== mapDimensions.maxY + 1; ++yOver) {
-					for (let xOver = mapDimensions.minX; xOver !== mapDimensions.maxX + 1; ++xOver) {
-						const overlayStyle = this.getStyle(xOver, yOver, 1, 1, 'square', mapDimensions);
+			if (this.props.showGrid || this.props.editFog) {
+				for (let yGrid = mapDimensions.minY; yGrid !== mapDimensions.maxY + 1; ++yGrid) {
+					for (let xGrid = mapDimensions.minX; xGrid !== mapDimensions.maxX + 1; ++xGrid) {
+						const overlayStyle = this.getStyle(xGrid, yGrid, 1, 1, 'square', mapDimensions);
 						dragOverlay.push(
 							<GridSquare
-								key={xOver + ',' + yOver}
-								x={xOver}
-								y={yOver}
+								key={xGrid + ',' + yGrid}
+								x={xGrid}
+								y={yGrid}
 								style={overlayStyle}
-								mode={this.props.editFog ? 'fog-overlay' : 'drag-overlay'}
+								mode={'cell'}
 								onMouseEnter={(posX, posY) => this.props.gridSquareEntered(posX, posY)}
 								onClick={(posX, posY) => this.props.gridSquareClicked(posX, posY)}
 							/>
@@ -425,7 +425,7 @@ interface GridSquareProps {
 	x: number;
 	y: number;
 	style: MapItemStyle;
-	mode: 'drag-overlay' | 'fog-overlay' | 'fog';
+	mode: 'cell' | 'fog';
 	onMouseEnter: (x: number, y: number) => void;
 	onClick: (x: number, y: number) => void;
 	onDoubleClick: (x: number, y: number) => void;

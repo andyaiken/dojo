@@ -1,12 +1,12 @@
 {
 	"name": "dojo",
-	"version": "8.16.1",
+	"version": "8.16.2",
 	"license": "MIT",
 	"repository": "https://github.com/andyaiken/dojo.git",
 	"homepage": "https://andyaiken.github.io/dojo/",
 	"dependencies": {
 		"@ant-design/icons": "^4.2.1",
-		"antd": "^4.3.0",
+		"antd": "^4.3.1",
 		"react": "^16.13.1",
 		"react-debounce-input": "^3.2.2",
 		"react-dom": "^16.13.1",

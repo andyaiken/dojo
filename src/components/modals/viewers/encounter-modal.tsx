@@ -1,11 +1,11 @@
 import React from 'react';
 import Showdown from 'showdown';
 
-import { Encounter, EncounterSlot } from '../../models/encounter';
-import { Monster } from '../../models/monster-group';
+import { Encounter, EncounterSlot } from '../../../models/encounter';
+import { Monster } from '../../../models/monster-group';
 
-import MonsterCard from '../cards/monster-card';
-import Expander from '../controls/expander';
+import MonsterCard from '../../cards/monster-card';
+import Expander from '../../controls/expander';
 
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);

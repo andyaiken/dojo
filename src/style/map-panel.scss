@@ -44,20 +44,12 @@
 		.grid-square {
 			position: absolute;
 
-			&.drag-overlay {
-				background-color: rgba(0, 60, 200, 0.1);
+			&.cell {
+				border: 1px solid $control-border-05;
 				cursor: pointer;
 
 				&:hover {
-					background-color: rgba(0, 60, 200, 0.2);
-				}
-			}
-
-			&.fog-overlay {
-				cursor: pointer;
-
-				&:hover {
-					background-color: rgba(0, 60, 200, 0.2);
+					background-color: rgba(0, 0, 200, 0.2);
 				}
 			}
 

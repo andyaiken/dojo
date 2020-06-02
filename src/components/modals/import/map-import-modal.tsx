@@ -1,5 +1,5 @@
 import { FileOutlined } from '@ant-design/icons';
-import { Col, Row, Upload } from 'antd';
+import { Col, notification, Row, Upload } from 'antd';
 import React from 'react';
 
 import Factory from '../../../utils/factory';
@@ -19,8 +19,15 @@ interface Props {
 interface State {
 	map: Map;
 	imageID: string | null;
-	width: number;
-	height: number;
+	square: number;
+	imageDimensions: {
+		width: number,
+		height: number;
+	};
+	mapDimensions: {
+		width: number,
+		height: number;
+	};
 }
 
 export default class MapImportModal extends React.Component<Props, State> {
@@ -30,8 +37,15 @@ export default class MapImportModal extends React.Component<Props, State> {
 		this.state = {
 			map: props.map,
 			imageID: null,
-			width: 4,
-			height: 4
+			square: 0,
+			imageDimensions: {
+				width: 0,
+				height: 0
+			},
+			mapDimensions: {
+				width: 0,
+				height: 0
+			}
 		};
 	}
 
@@ -46,38 +60,81 @@ export default class MapImportModal extends React.Component<Props, State> {
 					localStorage.removeItem('image-' + this.state.imageID);
 				}
 
-				const image = {
-					id: Utils.guid(),
-					name:  file.name,
-					data: content
-				};
-				const json = JSON.stringify(image);
-				localStorage.setItem('image-' + image.id, json);
+				try {
+					const image = {
+						id: Utils.guid(),
+						name:  file.name,
+						data: content
+					};
+					const json = JSON.stringify(image);
+					localStorage.setItem('image-' + image.id, json);
 
-				this.setState({
-					imageID: image.id
-				}, () => {
-					this.updateMap(image.name);
-				});
+					const img = new Image();
+					img.onload = () => {
+						// Assume a map will be 10 squares on its smallest side
+						const square = Math.round(Math.min(img.width, img.height) / 10);
+						this.setState({
+							imageID: image.id,
+							square: square,
+							imageDimensions: {
+								width: img.width,
+								height: img.height
+							},
+							mapDimensions: {
+								width: Math.round(img.width / square),
+								height: Math.round(img.height / square)
+							}
+						}, () => {
+							this.updateMap(image.name);
+						});
+					};
+					img.src = content;
+				} catch {
+					// ERROR: Quota exceeded (probably)
+					notification.open({
+						message: 'can\'t upload this image',
+						description: 'not enough storage space; try reducing the resolution or removing unused images'
+					});
+				}
 			}
 		};
 		reader.readAsDataURL(file);
 		return false;
 	}
 
-	private nudgeWidth(delta: number) {
-		const val = Math.max(0, this.state.width + delta);
+	private nudgeSquare(delta: number) {
+		const square = Math.max(0, this.state.square + delta);
+
 		this.setState({
-			width: val
+			square: square,
+			mapDimensions: {
+				width: Math.round(this.state.imageDimensions.width / square),
+				height: Math.round(this.state.imageDimensions.height / square)
+			}
+		}, () => {
+			this.updateMap(null);
+		});
+	}
+
+	private nudgeWidth(delta: number) {
+		const width = Math.max(0, this.state.mapDimensions.width + delta);
+		this.setState({
+			mapDimensions: {
+				width: width,
+				height: this.state.mapDimensions.height
+			}
 		}, () => {
 			this.updateMap(null);
 		});
 	}
 
 	private nudgeHeight(delta: number) {
-		const val = Math.max(0, this.state.height + delta);
+		const height = Math.max(0, this.state.mapDimensions.height + delta);
 		this.setState({
-			height: val
+			mapDimensions: {
+				width: this.state.mapDimensions.width,
+				height: height
+			}
 		}, () => {
 			this.updateMap(null);
 		});
@@ -93,8 +150,8 @@ export default class MapImportModal extends React.Component<Props, State> {
 			tile.type = 'tile';
 			tile.terrain = 'custom';
 			tile.customBackground = this.state.imageID;
-			tile.width = this.state.width;
-			tile.height = this.state.height;
+			tile.width = this.state.mapDimensions.width;
+			tile.height = this.state.mapDimensions.height;
 
 			map.items = [tile];
 		} else {
@@ -109,12 +166,18 @@ export default class MapImportModal extends React.Component<Props, State> {
 	public render() {
 		try {
 			let content = null;
-			if (this.state.imageID) {
+			if (this.state.imageID && this.state.imageDimensions) {
 				content = (
 					<div>
 						<Note>
-							<div className='section'>
+						<div className='section'>
 								set the name and dimensions of this map image
+							</div>
+							<div className='section'>
+								changing the size of a map square, in pixels, will change the map's dimensions
+							</div>
+							<div className='section'>
+								you can then fine-tune the exact width and height of the map
 							</div>
 						</Note>
 						<div className='subheading'>map name</div>
@@ -123,17 +186,25 @@ export default class MapImportModal extends React.Component<Props, State> {
 							placeholder='map name'
 							onChange={value => this.updateMap(value)}
 						/>
-						<div className='subheading'>size</div>
+						<div className='subheading'>map square size</div>
 						<NumberSpin
-							value={this.state.width + ' sq'}
+							value={this.state.square + ' px'}
+							label='square size'
+							factors={[1, 10]}
+							downEnabled={this.state.square > 1}
+							onNudgeValue={delta => this.nudgeSquare(delta)}
+						/>
+						<div className='subheading'>map dimensions</div>
+						<NumberSpin
+							value={this.state.mapDimensions.width + ' sq'}
 							label='width'
-							downEnabled={this.state.width > 1}
+							downEnabled={this.state.mapDimensions.width > 1}
 							onNudgeValue={delta => this.nudgeWidth(delta)}
 						/>
 						<NumberSpin
-							value={this.state.height + ' sq'}
+							value={this.state.mapDimensions.height + ' sq'}
 							label='height'
-							downEnabled={this.state.height > 1}
+							downEnabled={this.state.mapDimensions.height > 1}
 							onNudgeValue={delta => this.nudgeHeight(delta)}
 						/>
 					</div>
@@ -167,6 +238,9 @@ export default class MapImportModal extends React.Component<Props, State> {
 						<MapPanel
 							map={this.state.map}
 							mode='edit'
+							showGrid={true}
+							gridSquareEntered={() => null}
+							gridSquareClicked={(x, y) => null}
 						/>
 					</Col>
 				</Row>

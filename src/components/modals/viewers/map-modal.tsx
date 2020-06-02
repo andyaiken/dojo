@@ -2,23 +2,23 @@ import { CaretLeftOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import Factory from '../../utils/factory';
-import Mercator from '../../utils/mercator';
-import Napoleon from '../../utils/napoleon';
-import Utils from '../../utils/utils';
+import Factory from '../../../utils/factory';
+import Mercator from '../../../utils/mercator';
+import Napoleon from '../../../utils/napoleon';
+import Utils from '../../../utils/utils';
 
-import { Combatant } from '../../models/combat';
-import { Condition } from '../../models/condition';
-import { Map } from '../../models/map';
-import { Companion, Party } from '../../models/party';
+import { Combatant } from '../../../models/combat';
+import { Condition } from '../../../models/condition';
+import { Map } from '../../../models/map';
+import { Companion, Party } from '../../../models/party';
 
-import Checkbox from '../controls/checkbox';
-import ConfirmButton from '../controls/confirm-button';
-import Dropdown from '../controls/dropdown';
-import CombatControlsPanel from '../panels/combat-controls-panel';
-import MapPanel from '../panels/map-panel';
-import Note from '../panels/note';
-import Popout from '../panels/popout';
+import Checkbox from '../../controls/checkbox';
+import ConfirmButton from '../../controls/confirm-button';
+import Dropdown from '../../controls/dropdown';
+import CombatControlsPanel from '../../panels/combat-controls-panel';
+import MapPanel from '../../panels/map-panel';
+import Note from '../../panels/note';
+import Popout from '../../panels/popout';
 
 interface Props {
 	map: Map;
@@ -327,7 +327,7 @@ export default class MapModal extends React.Component<Props, State> {
 				mode={playerView ? 'combat-player' : 'combat'}
 				viewport={viewport}
 				combatants={this.state.combatants}
-				showOverlay={adding}
+				showGrid={adding}
 				selectedItemIDs={this.state.selectedCombatantIDs}
 				fog={this.state.fog}
 				editFog={this.state.editFog && !playerView}

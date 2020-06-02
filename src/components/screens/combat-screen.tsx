@@ -930,7 +930,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 						key='map'
 						map={this.props.combat.map}
 						mode='combat'
-						showOverlay={(this.state.addingToMapID !== null) || this.state.addingOverlay}
+						showGrid={(this.state.addingToMapID !== null) || this.state.addingOverlay}
 						combatants={this.props.combat.combatants}
 						selectedItemIDs={this.state.selectedItemIDs}
 						editFog={this.state.addingFog}

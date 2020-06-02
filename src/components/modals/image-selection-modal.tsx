@@ -1,5 +1,5 @@
 import { FileOutlined } from '@ant-design/icons';
-import { Upload } from 'antd';
+import { notification, Upload } from 'antd';
 import React from 'react';
 
 import Sherlock from '../../utils/sherlock';
@@ -87,12 +87,20 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
 					data: content
 				};
 
-				const json = JSON.stringify(image);
-				localStorage.setItem('image-' + image.id, json);
+				try {
+					const json = JSON.stringify(image);
+					localStorage.setItem('image-' + image.id, json);
 
-				this.setState({
-					images: this.listImages()
-				});
+					this.setState({
+						images: this.listImages()
+					});
+				} catch {
+					// ERROR: Quota exceeded (probably)
+					notification.open({
+						message: 'can\'t upload this image',
+						description: 'not enough storage space; try reducing the resolution or removing unused images'
+					});
+				}
 			}
 		};
 		reader.readAsDataURL(file);
