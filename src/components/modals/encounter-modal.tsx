@@ -43,7 +43,7 @@ export default class EncounterModal extends React.Component<Props> {
 			const waves = this.props.encounter.waves.map(wave => this.getSlots(wave.id, wave.name, wave.slots));
 
 			return (
-				<div className='scrollable padded'>
+				<div className='scrollable'>
 					<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.encounter.notes) }} />
 					{enc}
 					{waves}

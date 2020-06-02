@@ -50,10 +50,9 @@ export default class Frankenstein {
 				break;
 			default:
 				newValue = (value ? value : 0) + delta;
+				newValue = Math.max(newValue, 0);
 				break;
 		}
-
-		newValue = Math.max(newValue, 0);
 
 		Frankenstein.changeValue(target, field, newValue);
 	}
