@@ -176,6 +176,26 @@ export default class DieRollerTool extends React.Component<Props, State> {
 				+ this.props.dice[20]
 				+ this.props.dice[100];
 
+			let expression = '';
+			[100, 20, 12, 10, 8, 6, 4].forEach(sides => {
+				if (this.props.dice[sides] !== 0) {
+					if (expression) {
+						expression += ' + ';
+					}
+					expression += this.props.dice[sides] + 'd' + sides;
+				}
+			});
+			if (this.props.constant !== 0) {
+				if (expression) {
+					if (this.props.constant > 0) {
+						expression += ' + ';
+					} else {
+						expression += ' - ';
+					}
+				}
+				expression += Math.abs(this.props.constant);
+			}
+
 			return (
 				<div>
 					<div className='die-types'>
@@ -197,7 +217,7 @@ export default class DieRollerTool extends React.Component<Props, State> {
 					/>
 					<Row gutter={10}>
 						<Col span={12}>
-							<button className={total > 0 ? '' : 'disabled'} onClick={() => this.rollDice()}>roll dice</button>
+							<button className={total > 0 ? '' : 'disabled'} onClick={() => this.rollDice()}>roll {expression}</button>
 						</Col>
 						<Col span={12}>
 							<button className={total > 0 ? '' : 'disabled'} onClick={() => this.reset()}>reset</button>
