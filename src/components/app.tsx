@@ -93,7 +93,7 @@ export default class App extends React.Component<Props, State> {
 				library.forEach(group => {
 					group.monsters.forEach(m => {
 						if (m.legendaryActions === undefined) {
-							const value = m.traits.some(t => t.type === 'legendary') ? 3 : 0;
+							const value = m.traits.some(t => (t.type === 'legendary') || (t.type === 'mythic')) ? 3 : 0;
 							m.legendaryActions = value;
 						}
 						m.role = Frankenstein.getRole(m);
@@ -1275,7 +1275,7 @@ export default class App extends React.Component<Props, State> {
 						});
 					});
 				(combatant as Combatant & Monster).traits
-					.filter(t => t.type === 'legendary')
+					.filter(t => (t.type === 'legendary') || (t.type === 'mythic'))
 					.forEach(t => {
 						t.uses = 0;
 					});
@@ -2470,7 +2470,7 @@ export default class App extends React.Component<Props, State> {
 						/>
 					);
 					header = this.state.drawer.map.name;
-					width = '70%';
+					width = '75%';
 					closable = true;
 					break;
 				case 'map-edit':
@@ -2504,7 +2504,7 @@ export default class App extends React.Component<Props, State> {
 							accept map
 						</button>
 					);
-					width = '70%';
+					width = '75%';
 					closable = true;
 					break;
 				case 'combat-start':

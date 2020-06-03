@@ -216,7 +216,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 		});
 	}
 
-	private addTrait(type: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'lair') {
+	private addTrait(type: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair') {
 		Frankenstein.addTrait(this.state.monster, type);
 		this.recalculateRole();
 		this.setState({
@@ -682,10 +682,11 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 					<Expander text='suggested stats'>
 						<div className='section'>
 							<Row>
-								<Col span={16}>challenge</Col>
+								<Col span={16}>challenge rating</Col>
 								<Col span={8} className='statistic-value'>{details.cr}</Col>
 							</Row>
 						</div>
+						<div className='subheading'>defensive</div>
 						<div className='section'>
 							<Row>
 								<Col span={16}>armor class</Col>
@@ -698,6 +699,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 								<Col span={8} className='statistic-value'>{details.hpMin} - {details.hpMax}</Col>
 							</Row>
 						</div>
+						<div className='subheading'>offensive</div>
 						<div className='section'>
 							<Row>
 								<Col span={16}>attack bonus</Col>
@@ -1078,7 +1080,7 @@ class CombatTab extends React.Component<CombatTabProps> {
 
 interface TraitsTabProps {
 	monster: Monster;
-	addTrait: (traitType: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'lair') => void;
+	addTrait: (traitType: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair') => void;
 	copyTrait: (trait: Trait) => void;
 	moveTrait: (trait: Trait, moveBefore: Trait) => void;
 	removeTrait: (trait: Trait) => void;
@@ -1143,8 +1145,8 @@ class TraitsTab extends React.Component<TraitsTabProps, TraitsTabState> {
 						</div>
 					)}
 				/>
-				<button onClick={() => this.props.addTrait(type as 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'lair')}>
-					add a new {type}
+				<button onClick={() => this.props.addTrait(type as 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair')}>
+					add a new {Utils.traitType(type, false)}
 				</button>
 			</div>
 		);
@@ -1184,6 +1186,7 @@ class TraitsTab extends React.Component<TraitsTabProps, TraitsTabState> {
 						{this.createSection(traitsByType, 'bonus')}
 						{this.createSection(traitsByType, 'reaction')}
 						{this.createSection(traitsByType, 'legendary')}
+						{this.createSection(traitsByType, 'mythic')}
 						{this.createSection(traitsByType, 'lair')}
 					</Col>
 					<Col span={14}>

@@ -186,40 +186,40 @@ export default class Utils {
 
 	public static challengeDetails() {
 		return [
-			{ cr: 0,        ac: 13,       hpMin: 1, hpMax: 6,       attack: 3,  dmgMin: 0,   dmgMax: 1,   save: 13 },
-			{ cr: 0.125,    ac: 13,       hpMin: 7, hpMax: 35,      attack: 3,  dmgMin: 2,   dmgMax: 3,   save: 13 },
-			{ cr: 0.25,     ac: 13,       hpMin: 36, hpMax: 49,     attack: 3,  dmgMin: 4,   dmgMax: 5,   save: 13 },
-			{ cr: 0.5,      ac: 13,       hpMin: 50, hpMax: 70,     attack: 3,  dmgMin: 6,   dmgMax: 8,   save: 13 },
-			{ cr: 1,        ac: 13,       hpMin: 71, hpMax: 85,     attack: 3,  dmgMin: 9,   dmgMax: 14,  save: 13 },
-			{ cr: 2,        ac: 13,       hpMin: 86, hpMax: 100,    attack: 3,  dmgMin: 15,  dmgMax: 20,  save: 13 },
-			{ cr: 3,        ac: 13,       hpMin: 101, hpMax: 115,   attack: 4,  dmgMin: 21,  dmgMax: 26,  save: 13 },
-			{ cr: 4,        ac: 14,       hpMin: 116, hpMax: 130,   attack: 5,  dmgMin: 27,  dmgMax: 32,  save: 14 },
-			{ cr: 5,        ac: 15,       hpMin: 131, hpMax: 145,   attack: 6,  dmgMin: 33,  dmgMax: 38,  save: 15 },
-			{ cr: 6,        ac: 15,       hpMin: 146, hpMax: 160,   attack: 6,  dmgMin: 39,  dmgMax: 44,  save: 15 },
-			{ cr: 7,        ac: 15,       hpMin: 161, hpMax: 175,   attack: 6,  dmgMin: 45,  dmgMax: 50,  save: 15 },
-			{ cr: 8,        ac: 16,       hpMin: 176, hpMax: 190,   attack: 7,  dmgMin: 51,  dmgMax: 56,  save: 16 },
-			{ cr: 9,        ac: 16,       hpMin: 191, hpMax: 205,   attack: 7,  dmgMin: 57,  dmgMax: 62,  save: 16 },
-			{ cr: 10,       ac: 17,       hpMin: 206, hpMax: 220,   attack: 7,  dmgMin: 63,  dmgMax: 68,  save: 16 },
-			{ cr: 11,       ac: 17,       hpMin: 221, hpMax: 235,   attack: 8,  dmgMin: 69,  dmgMax: 74,  save: 17 },
-			{ cr: 12,       ac: 17,       hpMin: 236, hpMax: 250,   attack: 8,  dmgMin: 75,  dmgMax: 80,  save: 17 },
-			{ cr: 13,       ac: 18,       hpMin: 251, hpMax: 265,   attack: 8,  dmgMin: 81,  dmgMax: 86,  save: 18 },
-			{ cr: 14,       ac: 18,       hpMin: 266, hpMax: 280,   attack: 8,  dmgMin: 87,  dmgMax: 92,  save: 18 },
-			{ cr: 15,       ac: 18,       hpMin: 281, hpMax: 295,   attack: 8,  dmgMin: 93,  dmgMax: 98,  save: 18 },
-			{ cr: 16,       ac: 18,       hpMin: 296, hpMax: 310,   attack: 9,  dmgMin: 99,  dmgMax: 104, save: 18 },
-			{ cr: 17,       ac: 19,       hpMin: 311, hpMax: 325,   attack: 10, dmgMin: 105, dmgMax: 110, save: 19 },
-			{ cr: 18,       ac: 19,       hpMin: 326, hpMax: 340,   attack: 10, dmgMin: 111, dmgMax: 116, save: 19 },
-			{ cr: 19,       ac: 19,       hpMin: 341, hpMax: 355,   attack: 10, dmgMin: 117, dmgMax: 122, save: 19 },
-			{ cr: 20,       ac: 19,       hpMin: 356, hpMax: 400,   attack: 10, dmgMin: 123, dmgMax: 140, save: 19 },
-			{ cr: 21,       ac: 19,       hpMin: 401, hpMax: 445,   attack: 11, dmgMin: 141, dmgMax: 158, save: 20 },
-			{ cr: 22,       ac: 19,       hpMin: 446, hpMax: 490,   attack: 11, dmgMin: 159, dmgMax: 176, save: 20 },
-			{ cr: 23,       ac: 19,       hpMin: 491, hpMax: 535,   attack: 11, dmgMin: 177, dmgMax: 194, save: 20 },
-			{ cr: 24,       ac: 19,       hpMin: 536, hpMax: 580,   attack: 12, dmgMin: 195, dmgMax: 212, save: 21 },
-			{ cr: 25,       ac: 19,       hpMin: 581, hpMax: 625,   attack: 12, dmgMin: 213, dmgMax: 230, save: 21 },
-			{ cr: 26,       ac: 19,       hpMin: 626, hpMax: 670,   attack: 12, dmgMin: 231, dmgMax: 248, save: 21 },
-			{ cr: 27,       ac: 19,       hpMin: 671, hpMax: 715,   attack: 13, dmgMin: 249, dmgMax: 266, save: 22 },
-			{ cr: 28,       ac: 19,       hpMin: 716, hpMax: 760,   attack: 13, dmgMin: 267, dmgMax: 284, save: 22 },
-			{ cr: 29,       ac: 19,       hpMin: 761, hpMax: 805,   attack: 13, dmgMin: 285, dmgMax: 302, save: 22 },
-			{ cr: 30,       ac: 19,       hpMin: 806, hpMax: 850,   attack: 14, dmgMin: 303, dmgMax: 320, save: 23 }
+			{ cr: 0,		ac: 13,		hpMin: 1,		hpMax: 6,		attack: 3,		dmgMin: 0,		dmgMax: 1,		save: 13 },
+			{ cr: 0.125,	ac: 13,		hpMin: 7,		hpMax: 35,		attack: 3,		dmgMin: 2,		dmgMax: 3,		save: 13 },
+			{ cr: 0.25,		ac: 13,		hpMin: 36,		hpMax: 49,		attack: 3,		dmgMin: 4,		dmgMax: 5,		save: 13 },
+			{ cr: 0.5,		ac: 13,		hpMin: 50,		hpMax: 70,		attack: 3,		dmgMin: 6,		dmgMax: 8,		save: 13 },
+			{ cr: 1,		ac: 13,		hpMin: 71,		hpMax: 85,		attack: 3,		dmgMin: 9,		dmgMax: 14,		save: 13 },
+			{ cr: 2,		ac: 13,		hpMin: 86,		hpMax: 100,		attack: 3,		dmgMin: 15,		dmgMax: 20,		save: 13 },
+			{ cr: 3,		ac: 13,		hpMin: 101,		hpMax: 115,		attack: 4,		dmgMin: 21,		dmgMax: 26,		save: 13 },
+			{ cr: 4,		ac: 14,		hpMin: 116,		hpMax: 130,		attack: 5,		dmgMin: 27,		dmgMax: 32,		save: 14 },
+			{ cr: 5,		ac: 15,		hpMin: 131,		hpMax: 145,		attack: 6,		dmgMin: 33,		dmgMax: 38,		save: 15 },
+			{ cr: 6,		ac: 15,		hpMin: 146,		hpMax: 160,		attack: 6,		dmgMin: 39,		dmgMax: 44,		save: 15 },
+			{ cr: 7,		ac: 15,		hpMin: 161,		hpMax: 175,		attack: 6,		dmgMin: 45,		dmgMax: 50,		save: 15 },
+			{ cr: 8,		ac: 16,		hpMin: 176,		hpMax: 190,		attack: 7,		dmgMin: 51,		dmgMax: 56,		save: 16 },
+			{ cr: 9,		ac: 16,		hpMin: 191,		hpMax: 205,		attack: 7,		dmgMin: 57,		dmgMax: 62,		save: 16 },
+			{ cr: 10,		ac: 17,		hpMin: 206,		hpMax: 220,		attack: 7,		dmgMin: 63,		dmgMax: 68,		save: 16 },
+			{ cr: 11,		ac: 17,		hpMin: 221,		hpMax: 235,		attack: 8,		dmgMin: 69,		dmgMax: 74,		save: 17 },
+			{ cr: 12,		ac: 17,		hpMin: 236,		hpMax: 250,		attack: 8,		dmgMin: 75,		dmgMax: 80,		save: 17 },
+			{ cr: 13,		ac: 18,		hpMin: 251,		hpMax: 265,		attack: 8,		dmgMin: 81,		dmgMax: 86,		save: 18 },
+			{ cr: 14,		ac: 18,		hpMin: 266,		hpMax: 280,		attack: 8,		dmgMin: 87,		dmgMax: 92,		save: 18 },
+			{ cr: 15,		ac: 18,		hpMin: 281,		hpMax: 295,		attack: 8,		dmgMin: 93,		dmgMax: 98,		save: 18 },
+			{ cr: 16,		ac: 18,		hpMin: 296,		hpMax: 310,		attack: 9,		dmgMin: 99,		dmgMax: 104,	save: 18 },
+			{ cr: 17,		ac: 19,		hpMin: 311,		hpMax: 325,		attack: 10,		dmgMin: 105,	dmgMax: 110,	save: 19 },
+			{ cr: 18,		ac: 19,		hpMin: 326,		hpMax: 340,		attack: 10,		dmgMin: 111,	dmgMax: 116,	save: 19 },
+			{ cr: 19,		ac: 19,		hpMin: 341,		hpMax: 355,		attack: 10,		dmgMin: 117,	dmgMax: 122,	save: 19 },
+			{ cr: 20,		ac: 19,		hpMin: 356,		hpMax: 400,		attack: 10,		dmgMin: 123,	dmgMax: 140,	save: 19 },
+			{ cr: 21,		ac: 19,		hpMin: 401,		hpMax: 445,		attack: 11,		dmgMin: 141,	dmgMax: 158,	save: 20 },
+			{ cr: 22,		ac: 19,		hpMin: 446,		hpMax: 490,		attack: 11,		dmgMin: 159,	dmgMax: 176,	save: 20 },
+			{ cr: 23,		ac: 19,		hpMin: 491,		hpMax: 535,		attack: 11,		dmgMin: 177,	dmgMax: 194,	save: 20 },
+			{ cr: 24,		ac: 19,		hpMin: 536,		hpMax: 580,		attack: 12,		dmgMin: 195,	dmgMax: 212,	save: 21 },
+			{ cr: 25,		ac: 19,		hpMin: 581,		hpMax: 625,		attack: 12,		dmgMin: 213,	dmgMax: 230,	save: 21 },
+			{ cr: 26,		ac: 19,		hpMin: 626,		hpMax: 670,		attack: 12,		dmgMin: 231,	dmgMax: 248,	save: 21 },
+			{ cr: 27,		ac: 19,		hpMin: 671,		hpMax: 715,		attack: 13,		dmgMin: 249,	dmgMax: 266,	save: 22 },
+			{ cr: 28,		ac: 19,		hpMin: 716,		hpMax: 760,		attack: 13,		dmgMin: 267,	dmgMax: 284,	save: 22 },
+			{ cr: 29,		ac: 19,		hpMin: 761,		hpMax: 805,		attack: 13,		dmgMin: 285,	dmgMax: 302,	save: 22 },
+			{ cr: 30,		ac: 19,		hpMin: 806,		hpMax: 850,		attack: 14,		dmgMin: 303,	dmgMax: 320,	save: 23 }
 		];
 	}
 
@@ -398,17 +398,11 @@ export default class Utils {
 			case 'action':
 				str = 'action';
 				break;
-			case 'bonus':
-				str = 'bonus action';
-				break;
 			case 'reaction':
 				str = 'reaction';
 				break;
-			case 'legendary':
-				str = 'legendary action';
-				break;
-			case 'lair':
-				str = 'lair action';
+			default:
+				str = type + ' action';
 				break;
 		}
 

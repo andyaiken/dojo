@@ -13,7 +13,7 @@
 	.menu {
 		padding: 0 10px;
 		text-align: right;
-		font-size: 20px;
+		font-size: 26px;
 		color: $header-foreground;
 	}
 }
@@ -115,20 +115,13 @@
 
 .combat-top-row .statistic,
 .initiative-list-item .statistic {
-	margin: 5px 0;
-	font-size: 15px;
-	text-align: center;
 	font-weight: 600;
-
-	.statistic-label,
-	.statistic-value {
-		display: inline-block;
-		vertical-align: top;
-		line-height: 30px;
-	}
+	display: flex;
+	justify-content: center;
+	align-items: center;
 
 	.statistic-value {
-		font-size: 25px;
+		font-size: 26px;
 		padding: 0 5px;
 	}
 }

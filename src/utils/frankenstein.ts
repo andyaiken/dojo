@@ -323,7 +323,7 @@ export default class Frankenstein {
 			});
 		}
 
-		if (monster.traits.some(t => t.type === 'legendary')) {
+		if (monster.traits.some(t => (t.type === 'legendary') || (t.type === 'mythic'))) {
 			monster.legendaryActions = 3;
 		}
 
@@ -332,7 +332,7 @@ export default class Frankenstein {
 		return monster;
 	}
 
-	private static buildTrait(rawTrait: any, type: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'lair'): Trait {
+	private static buildTrait(rawTrait: any, type: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair'): Trait {
 		let name = '';
 		let usage = '';
 
@@ -472,7 +472,7 @@ export default class Frankenstein {
 			const blocks = doc.getElementsByClassName('mon-stat-block__description-block');
 			for (let blockIndex = 0; blockIndex !== blocks.length; ++blockIndex) {
 				const block = blocks[blockIndex];
-				let traitType: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'lair' = 'trait';
+				let traitType: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair' = 'trait';
 				const headingElements = block.getElementsByClassName('mon-stat-block__description-block-heading');
 				if (headingElements.length > 0) {
 					const heading = (headingElements[0] as HTMLElement).innerText.toLowerCase().trim();
@@ -488,6 +488,9 @@ export default class Frankenstein {
 							break;
 						case 'legendary actions':
 							traitType = 'legendary';
+							break;
+						case 'mythic actions':
+							traitType = 'mythic';
 							break;
 						case 'lair actions':
 							traitType = 'lair';
@@ -523,7 +526,7 @@ export default class Frankenstein {
 			console.error(ex);
 		}
 
-		if (monster.traits.some(t => t.type === 'legendary')) {
+		if (monster.traits.some(t => (t.type === 'legendary') || (t.type === 'mythic'))) {
 			monster.legendaryActions = 3;
 		}
 
@@ -539,7 +542,7 @@ export default class Frankenstein {
 		target.traits.push(copy);
 	}
 
-	public static addTrait(target: Monster, type: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'lair') {
+	public static addTrait(target: Monster, type: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair') {
 		const trait = Factory.createTrait();
 		trait.type = type;
 		trait.name = 'New ' + Utils.traitType(type, false).toLowerCase();
@@ -641,7 +644,7 @@ export default class Frankenstein {
 			}
 		});
 
-		if (target.traits.some(t => t.type === 'legendary')) {
+		if (target.traits.some(t => (t.type === 'legendary') || (t.type === 'mythic'))) {
 			target.legendaryActions = 3;
 		}
 
@@ -741,15 +744,15 @@ export default class Frankenstein {
 			return 'skirmisher';
 		}
 
-		// If it's got Deception or Stealth skills, it's a lurker
+		// If it's got Deception or Stealth skills, it's a sneak
 		const skills = monster.skills.toLowerCase();
 		if (skills.includes('deception') || skills.includes('stealth')) {
-			return 'lurker';
+			return 'sneak';
 		}
 
-		// If it can be described as 'indistinguishable', it's a lurker
+		// If it can be described as 'indistinguishable', it's a sneak
 		if (monster.traits.some(t => t.text.toLowerCase().includes('indistinguishable'))) {
-			return 'lurker';
+			return 'sneak';
 		}
 
 		const expected = Utils.challengeDetails().find(details => details.cr === monster.challenge);
@@ -761,7 +764,7 @@ export default class Frankenstein {
 			}
 
 			// If it has strong ranged attacks, it's an artillery
-			// If it has strong melee attacks, it's an elite
+			// If it has strong melee attacks, it's a soldier
 			const strongTraits = monster.traits.filter(trait => {
 				const toHits = this.getToHitExpressions(trait);
 				const damages = this.getDiceExpressions(trait).map(exp => (exp.count * (exp.sides + 1) / 2) + exp.bonus);
@@ -776,7 +779,7 @@ export default class Frankenstein {
 					return text.includes('ranged') && text.includes('attack');
 				}).length;
 				const meleeAttacks = strongTraits.length - rangedAttacks;
-				return (rangedAttacks >= meleeAttacks) ? 'artillery' : 'elite';
+				return (rangedAttacks >= meleeAttacks) ? 'artillery' : 'soldier';
 			}
 		}
 

@@ -43,6 +43,7 @@ export default class TraitsPanel extends React.Component<Props> {
 		if ((this.props.mode === 'legendary') || (this.props.mode === 'lair')) {
 			switch (type) {
 				case 'legendary':
+				case 'mythic':
 					let count = null;
 					let usage = null;
 					if (this.props.combatant.legendaryActions > 0) {
@@ -54,7 +55,7 @@ export default class TraitsPanel extends React.Component<Props> {
 						);
 						if (this.props.mode === 'legendary') {
 							let used = 0;
-							this.props.combatant.traits.filter(t => (t.type === 'legendary') && (t.uses > 0)).forEach(t => {
+							this.props.combatant.traits.filter(t => ((t.type === 'legendary') || (t.type === 'mythic')) && (t.uses > 0)).forEach(t => {
 								let value = 1;
 								if (t.usage) {
 									// Action usage might be: '[costs|counts as] N [legendary actions|actions]'
@@ -88,15 +89,28 @@ export default class TraitsPanel extends React.Component<Props> {
 							);
 						}
 					}
-					/* tslint:disable:max-line-length */
-					info = (
-						<Note white={true}>
-							{count}
-							one legendary action can be used at the end of each other combatant's turn; spent actions are refreshed at the start of the monster's turn
-							{usage}
-						</Note>
-					);
-					/* tslint:enable:max-line-length */
+					if (type === 'legendary') {
+						/* tslint:disable:max-line-length */
+						info = (
+							<Note white={true}>
+								{count}
+								<div>
+									one legendary action can be used at the end of each other combatant's turn; spent actions are refreshed at the start of the monster's turn
+								</div>
+								{usage}
+							</Note>
+						);
+						/* tslint:enable:max-line-length */
+					}
+					if (type === 'mythic') {
+						/* tslint:disable:max-line-length */
+						info = (
+							<Note white={true}>
+								while the monster's mythic trait is active, the following can be used as legendary actions
+							</Note>
+						);
+						/* tslint:enable:max-line-length */
+					}
 					break;
 				case 'lair':
 					info = (
@@ -111,6 +125,13 @@ export default class TraitsPanel extends React.Component<Props> {
 				info = (
 					<Note white={true}>
 						<b>{this.props.combatant.legendaryActions}</b> legendary actions per round
+					</Note>
+				);
+			}
+			if (type === 'mythic') {
+				info = (
+					<Note white={true}>
+						while the monster's mythic trait is active, the following can be used as legendary actions
 					</Note>
 				);
 			}
@@ -164,6 +185,7 @@ export default class TraitsPanel extends React.Component<Props> {
 				return (
 					<div>
 						{this.createSection(traitsByType, 'legendary')}
+						{this.createSection(traitsByType, 'mythic')}
 					</div>
 				);
 			}
@@ -183,6 +205,7 @@ export default class TraitsPanel extends React.Component<Props> {
 					{this.createSection(traitsByType, 'bonus')}
 					{this.createSection(traitsByType, 'reaction')}
 					{this.createSection(traitsByType, 'legendary')}
+					{this.createSection(traitsByType, 'mythic')}
 					{this.createSection(traitsByType, 'lair')}
 				</div>
 			);
@@ -226,7 +249,7 @@ class TraitPanel extends React.Component<TraitPanelProps> {
 				}
 				heading += ' *(' + this.props.trait.usage + used + ')*';
 			}
-			if (this.props.trait.type === 'legendary') {
+			if ((this.props.trait.type === 'legendary') || (this.props.trait.type === 'mythic')) {
 				maxUses = 1;
 				if (this.props.trait.uses > 0) {
 					heading += ' *(used)*';

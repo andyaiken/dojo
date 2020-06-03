@@ -45,7 +45,7 @@ export interface Trait {
 	id: string;
 	name: string;
 	usage: string;
-	type: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'lair';
+	type: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair';
 	text: string;
 	uses: number;
 }
@@ -80,9 +80,9 @@ export const ROLE_TYPES = [
 	'artillery',
 	'boss',
 	'controller',
-	'elite',
-	'lurker',
 	'skirmisher',
+	'sneak',
+	'soldier',
 	'tank'
 ];
 
@@ -92,5 +92,6 @@ export const TRAIT_TYPES = [
 	'bonus',
 	'reaction',
 	'legendary',
+	'mythic',
 	'lair'
 ];

@@ -1,5 +1,5 @@
 import { CloseCircleOutlined, MenuOutlined } from '@ant-design/icons';
-import { Col, message, Popover, Row } from 'antd';
+import { Col, Popover, Row } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
 
@@ -496,18 +496,9 @@ export default class CombatScreen extends React.Component<Props, State> {
 		let notes = null;
 		if (this.props.combat.encounter.notes) {
 			notes = (
-				<button
-					onClick={() => {
-						message.info(
-							<div className='message-details'>
-								<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.combat.encounter.notes) }} />
-							</div>,
-							10
-						);
-					}}
-				>
-					encounter notes
-				</button>
+				<Expander text='encounter notes'>
+					<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.combat.encounter.notes) }} />
+				</Expander>
 			);
 		}
 		let exitToMap = null;
@@ -586,13 +577,18 @@ export default class CombatScreen extends React.Component<Props, State> {
 				{playerView}
 				<div className='subheading'>layout</div>
 				<Checkbox
+					label='show defeated combatants'
+					checked={this.state.showDefeatedCombatants}
+					onChecked={() => this.toggleShowDefeatedCombatants()}
+				/>
+				<Checkbox
 					label='show monster die rolls'
 					checked={this.state.showRollButtons}
 					onChecked={() => this.toggleShowRollButtons()}
 				/>
 				<NumberSpin
 					value='middle column size'
-					downEnabled={this.state.middleColumnWidth > 6}
+					downEnabled={this.state.middleColumnWidth > 4}
 					upEnabled={this.state.middleColumnWidth < 14}
 					onNudgeValue={delta => this.nudgeMiddleColumnWidth(delta * 2)}
 				/>
@@ -947,7 +943,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 				.filter(c => !c.pending && c.active && !c.defeated)
 				.forEach(c => {
 					const monster = c as (Combatant & Monster);
-					if (monster && monster.traits && monster.traits.some(t => t.type === 'legendary') && !monster.current) {
+					if (monster && monster.traits && monster.traits.some(t => (t.type === 'legendary') || (t.type === 'mythic')) && !monster.current) {
 						legendary.push(
 							<div className='card monster' key={'leg ' + monster.id}>
 								<div className='heading'>
@@ -1002,7 +998,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 									trigger='click'
 									placement='bottomRight'
 								>
-									<MenuOutlined />
+									<MenuOutlined title='menu' />
 								</Popover>
 							</div>
 						</Col>
@@ -1066,15 +1062,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 								content={initList}
 								columns={1}
 								showToggle={true}
-								controls={(
-									<div>
-										<Checkbox
-											label='show defeated combatants'
-											checked={this.state.showDefeatedCombatants}
-											onChecked={() => this.toggleShowDefeatedCombatants()}
-										/>
-									</div>
-								)}
 							/>
 						</Col>
 						<Col span={sideWidth} className='scrollable'>

@@ -66,7 +66,7 @@ export default class FilterPanel extends React.Component<Props> {
 						<Slider
 							range={true}
 							min={0}
-							max={35}
+							max={30}
 							value={[this.props.filter.challengeMin, this.props.filter.challengeMax]}
 							onChange={value => this.props.changeValue('challenge', value)}
 						/>
