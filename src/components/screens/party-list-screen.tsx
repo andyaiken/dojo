@@ -3,6 +3,7 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
+import { Encounter } from '../../models/encounter';
 import { Party, PC } from '../../models/party';
 
 import PartyCard from '../cards/party-card';
@@ -11,10 +12,12 @@ import Note from '../panels/note';
 
 interface Props {
 	parties: Party[];
+	encounters: Encounter[];
 	addParty: () => void;
 	importParty: () => void;
 	selectParty: (party: Party) => void;
 	deleteParty: (party: Party) => void;
+	runEncounter: (party: Party, encounterID: string) => void;
 	openStatBlock: (pc: PC) => void;
 }
 
@@ -27,8 +30,10 @@ export default class PartyListScreen extends React.Component<Props> {
 				<PartyCard
 					key={p.id}
 					party={p}
+					encounters={this.props.encounters}
 					open={party => this.props.selectParty(party)}
 					delete={party => this.props.deleteParty(party)}
+					runEncounter={(party, encounterID) => this.props.runEncounter(party, encounterID)}
 					openStatBlock={pc => this.props.openStatBlock(pc)}
 				/>
 			));

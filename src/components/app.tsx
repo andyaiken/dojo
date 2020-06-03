@@ -2079,10 +2079,17 @@ export default class App extends React.Component<Props, State> {
 					return (
 						<PartyListScreen
 							parties={this.state.parties}
+							encounters={this.state.encounters}
 							addParty={() => this.addParty()}
 							importParty={() => this.importParty()}
 							selectParty={party => this.selectParty(party)}
 							deleteParty={party => this.removeParty(party)}
+							runEncounter={(party, encounterID) => {
+								const encounter = this.state.encounters.find(enc => enc.id === encounterID);
+								if (encounter) {
+									this.createCombat(encounter, party.id);
+								}
+							}}
 							openStatBlock={pc => this.setState({drawer: { type: 'stat-block', source: pc }})}
 						/>
 					);
