@@ -1,4 +1,5 @@
 import { Col, Drawer, Row } from 'antd';
+import Mousetrap from 'mousetrap';
 import React, { ErrorInfo } from 'react';
 
 import Factory from '../utils/factory';
@@ -181,6 +182,17 @@ export default class App extends React.Component<Props, State> {
 
 	//#region Lifecycle
 
+	public componentDidMount() {
+		Mousetrap.bind('ctrl+f', e => {
+			e.preventDefault();
+			this.setSidebar('search');
+		});
+	}
+
+	public componentWillUnmount() {
+		Mousetrap.unbind('ctrl+f');
+	}
+
 	public componentDidUpdate() {
 		this.saveAfterDelay();
 	}
@@ -194,6 +206,51 @@ export default class App extends React.Component<Props, State> {
 		this.setState({
 			view: view
 		});
+	}
+
+	private setSidebar(type: string | null) {
+		if (type) {
+			switch (type) {
+				case 'tools':
+					const dice: { [sides: number]: number } = {};
+					[4, 6, 8, 10, 12, 20, 100].forEach(n => dice[n] = 0);
+					this.setState({
+						sidebar: {
+							type: 'tools',
+							subtype: 'die',
+							dice: dice,
+							constant: 0
+						}
+					});
+					break;
+				case 'generators':
+					this.setState({
+						sidebar: {
+							type: 'generators',
+							subtype: 'name'
+						}
+					});
+					break;
+				case 'reference':
+					this.setState({
+						sidebar: {
+							type: 'reference',
+							subtype: 'skills'
+						}
+					});
+					break;
+				default:
+					this.setState({
+						sidebar: {
+							type: type
+						}
+					});
+			}
+		} else {
+			this.setState({
+				sidebar: null
+			});
+		}
 	}
 
 	private closeDrawer() {
@@ -2644,50 +2701,7 @@ export default class App extends React.Component<Props, State> {
 					<ErrorBoundary>
 						<PageHeader
 							sidebar={this.state.sidebar ? this.state.sidebar.type : null}
-							onSelectSidebar={type => {
-								if (type) {
-									switch (type) {
-										case 'tools':
-											const dice: { [sides: number]: number } = {};
-											[4, 6, 8, 10, 12, 20, 100].forEach(n => dice[n] = 0);
-											this.setState({
-												sidebar: {
-													type: 'tools',
-													subtype: 'die',
-													dice: dice,
-													constant: 0
-												}
-											});
-											break;
-										case 'generators':
-											this.setState({
-												sidebar: {
-													type: 'generators',
-													subtype: 'name'
-												}
-											});
-											break;
-										case 'reference':
-											this.setState({
-												sidebar: {
-													type: 'reference',
-													subtype: 'skills'
-												}
-											});
-											break;
-										default:
-											this.setState({
-												sidebar: {
-													type: type
-												}
-											});
-									}
-								} else {
-									this.setState({
-										sidebar: null
-									});
-								}
-							}}
+							onSelectSidebar={type => this.setSidebar(type)}
 						/>
 					</ErrorBoundary>
 					<div className='page-content'>
