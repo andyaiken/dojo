@@ -6,7 +6,7 @@ import Frankenstein from '../../utils/frankenstein';
 import Utils from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
-import { Monster, Trait, TRAIT_TYPES } from '../../models/monster-group';
+import { Monster, Trait, TRAIT_TYPES } from '../../models/monster';
 
 import Note from '../panels/note';
 

@@ -7,7 +7,7 @@ import Frankenstein from '../../utils/frankenstein';
 import Shakespeare from '../../utils/shakespeare';
 import Utils from '../../utils/utils';
 
-import { CATEGORY_TYPES, Monster, MonsterGroup, ROLE_TYPES, SIZE_TYPES } from '../../models/monster-group';
+import { CATEGORY_TYPES, Monster, MonsterGroup, ROLE_TYPES, SIZE_TYPES } from '../../models/monster';
 
 import MonsterCard from '../cards/monster-card';
 import ConfirmButton from '../controls/confirm-button';

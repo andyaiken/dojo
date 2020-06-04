@@ -5,7 +5,7 @@ import React from 'react';
 import Factory from '../../../utils/factory';
 import Utils from '../../../utils/utils';
 
-import { MonsterGroup } from '../../../models/monster-group';
+import { MonsterGroup } from '../../../models/monster';
 import { PC } from '../../../models/party';
 
 import Dropdown from '../../controls/dropdown';

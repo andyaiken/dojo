@@ -2,7 +2,7 @@
 
 import { Encounter, EncounterSlot, EncounterWave } from '../models/encounter';
 import { Map, MapNote } from '../models/map';
-import { Monster, MonsterGroup, Trait } from '../models/monster-group';
+import { Monster, MonsterGroup, Trait } from '../models/monster';
 import { Companion, Party, PC } from '../models/party';
 
 export default class Sherlock {

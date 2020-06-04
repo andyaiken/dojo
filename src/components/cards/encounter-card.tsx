@@ -3,7 +3,7 @@ import React from 'react';
 import Napoleon from '../../utils/napoleon';
 
 import { Encounter, EncounterSlot } from '../../models/encounter';
-import { Monster } from '../../models/monster-group';
+import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
 import ConfirmButton from '../controls/confirm-button';
@@ -23,7 +23,7 @@ interface Props {
 
 export default class EncounterCard extends React.Component<Props> {
 	private getText(slot: EncounterSlot) {
-		return <div className='name'>{slot.monsterName || 'unnamed monster'}</div>;
+		return <div className='name'>{slot.monsterName || slot.roles.join(', ') || 'unnamed monster'}</div>;
 	}
 
 	private getValue(slot: EncounterSlot) {
@@ -103,8 +103,8 @@ export default class EncounterCard extends React.Component<Props> {
 						</div>
 						<hr/>
 						<button onClick={() => this.props.view(this.props.encounter)}>open encounter</button>
-						{run}
 						<button onClick={() => this.props.edit(this.props.encounter)}>edit encounter</button>
+						{run}
 						<ConfirmButton text='delete encounter' onConfirm={() => this.props.delete(this.props.encounter)} />
 					</div>
 				</div>

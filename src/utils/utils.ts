@@ -4,7 +4,7 @@ import Frankenstein from './frankenstein';
 import { Combatant, CombatSlotInfo } from '../models/combat';
 import { Condition, ConditionDurationCombatant, ConditionDurationRounds, ConditionDurationSaves } from '../models/condition';
 import { Encounter, EncounterWave } from '../models/encounter';
-import { Monster, MonsterGroup } from '../models/monster-group';
+import { Monster, MonsterGroup } from '../models/monster';
 import { PC } from '../models/party';
 
 export default class Utils {

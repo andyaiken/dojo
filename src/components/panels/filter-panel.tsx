@@ -4,7 +4,7 @@ import React from 'react';
 import Napoleon from '../../utils/napoleon';
 
 import { MonsterFilter } from '../../models/encounter';
-import { CATEGORY_TYPES, ROLE_TYPES, SIZE_TYPES } from '../../models/monster-group';
+import { CATEGORY_TYPES, ROLE_TYPES, SIZE_TYPES } from '../../models/monster';
 
 import Dropdown from '../controls/dropdown';
 import Expander from '../controls/expander';
@@ -70,22 +70,22 @@ export default class FilterPanel extends React.Component<Props> {
 							value={[this.props.filter.challengeMin, this.props.filter.challengeMax]}
 							onChange={value => this.props.changeValue('challenge', value)}
 						/>
-						<Selector
-							options={catOptions}
-							selectedID={this.props.filter.category}
-							itemsPerRow={3}
-							onSelect={optionID => this.props.changeValue('category', optionID)}
-						/>
 						<Dropdown
 							options={sizeOptions}
 							placeholder='filter by size...'
 							selectedID={this.props.filter.size}
 							onSelect={optionID => this.props.changeValue('size', optionID)}
 						/>
-						<Dropdown
+						<Selector
+							options={catOptions}
+							selectedID={this.props.filter.category}
+							itemsPerRow={3}
+							onSelect={optionID => this.props.changeValue('category', optionID)}
+						/>
+						<Selector
 							options={roleOptions}
-							placeholder='filter by role...'
 							selectedID={this.props.filter.role}
+							itemsPerRow={2}
 							onSelect={optionID => this.props.changeValue('role', optionID)}
 						/>
 						<hr/>

@@ -11,7 +11,7 @@ import Utils from '../../utils/utils';
 import { CombatSetup, CombatSlotInfo, CombatSlotMember } from '../../models/combat';
 import { Encounter, EncounterSlot, MonsterFilter } from '../../models/encounter';
 import { Map } from '../../models/map';
-import { Monster, MonsterGroup } from '../../models/monster-group';
+import { Monster, MonsterGroup } from '../../models/monster';
 import { Party } from '../../models/party';
 
 import MonsterCard from '../cards/monster-card';

@@ -9,7 +9,7 @@ import Utils from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
 import { Map, MapItem, MapNote } from '../../models/map';
-import { Monster } from '../../models/monster-group';
+import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
 import NumberSpin from '../controls/number-spin';

@@ -2,13 +2,16 @@ import { CheckCircleOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
+import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
 import { Encounter, EncounterSlot } from '../../models/encounter';
-import { Monster } from '../../models/monster-group';
+import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
 import EncounterCard from '../cards/encounter-card';
+import Expander from '../controls/expander';
+import RadioGroup from '../controls/radio-group';
 import GridPanel from '../panels/grid-panel';
 import Note from '../panels/note';
 
@@ -16,7 +19,7 @@ interface Props {
 	encounters: Encounter[];
 	parties: Party[];
 	hasMonsters: boolean;
-	addEncounter: () => void;
+	addEncounter: (templateID: string | null) => void;
 	viewEncounter: (encounter: Encounter) => void;
 	editEncounter: (encounter: Encounter) => void;
 	deleteEncounter: (encounter: Encounter) => void;
@@ -93,7 +96,14 @@ export default class EncounterListScreen extends React.Component<Props> {
 							<hr/>
 							<div className='section'>to start building an encounter, press the <b>create a new encounter</b> button</div>
 						</Note>
-						<button onClick={() => this.props.addEncounter()}>create a new encounter</button>
+						<button onClick={() => this.props.addEncounter(null)}>create a new encounter</button>
+						<Expander text='use an encounter template'>
+							<RadioGroup
+								items={Napoleon.encounterTemplates().map(t => ({ id: t.name, text: t.name }))}
+								selectedItemID={null}
+								onSelect={id => this.props.addEncounter(id)}
+							/>
+						</Expander>
 					</Col>
 					<Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
 						<GridPanel heading='encounters' content={listItems} />

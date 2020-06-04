@@ -4,7 +4,7 @@ import React from 'react';
 import Showdown from 'showdown';
 
 import { Combat, Combatant } from '../../models/combat';
-import { Monster } from '../../models/monster-group';
+import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
 import Utils from '../../utils/utils';

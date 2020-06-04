@@ -7,7 +7,7 @@ import Utils from '../../utils/utils';
 
 import { Combat } from '../../models/combat';
 import { Map } from '../../models/map';
-import { MonsterGroup } from '../../models/monster-group';
+import { MonsterGroup } from '../../models/monster';
 import { Party } from '../../models/party';
 
 import Textbox from '../controls/textbox';

@@ -3,7 +3,7 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { Monster, MonsterGroup } from '../../models/monster-group';
+import { Monster, MonsterGroup } from '../../models/monster';
 
 import MonsterGroupCard from '../cards/monster-group-card';
 import GridPanel from '../panels/grid-panel';

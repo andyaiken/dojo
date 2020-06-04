@@ -4,7 +4,7 @@ import Factory from './factory';
 import Utils from './utils';
 
 import { CONDITION_TYPES } from '../models/condition';
-import { Monster, Trait, TRAIT_TYPES } from '../models/monster-group';
+import { Monster, Trait, TRAIT_TYPES } from '../models/monster';
 
 export default class Frankenstein {
 	public static getTypicalHP(monster: Monster) {

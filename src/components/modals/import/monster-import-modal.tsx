@@ -4,7 +4,7 @@ import React from 'react';
 
 import Frankenstein from '../../../utils/frankenstein';
 
-import { Monster } from '../../../models/monster-group';
+import { Monster } from '../../../models/monster';
 
 import MonsterCard from '../../cards/monster-card';
 import Tabs from '../../controls/tabs';

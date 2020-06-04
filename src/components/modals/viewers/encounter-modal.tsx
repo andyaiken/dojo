@@ -2,7 +2,7 @@ import React from 'react';
 import Showdown from 'showdown';
 
 import { Encounter, EncounterSlot } from '../../../models/encounter';
-import { Monster } from '../../../models/monster-group';
+import { Monster } from '../../../models/monster';
 
 import MonsterCard from '../../cards/monster-card';
 import Expander from '../../controls/expander';

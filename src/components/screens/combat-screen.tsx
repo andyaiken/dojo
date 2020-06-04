@@ -12,7 +12,7 @@ import { Combat, Combatant, Notification } from '../../models/combat';
 import { Condition, ConditionDurationSaves } from '../../models/condition';
 import { Encounter } from '../../models/encounter';
 import { MapItem } from '../../models/map';
-import { Monster, MonsterGroup, Trait } from '../../models/monster-group';
+import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, Party, PC } from '../../models/party';
 
 import MapItemCard from '../cards/map-item-card';

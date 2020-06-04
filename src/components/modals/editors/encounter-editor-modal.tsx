@@ -3,14 +3,17 @@ import React from 'react';
 
 import Factory from '../../../utils/factory';
 import Napoleon from '../../../utils/napoleon';
+import Utils from '../../../utils/utils';
 
 import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../../../models/encounter';
-import { Monster, MonsterGroup } from '../../../models/monster-group';
+import { Monster, MonsterGroup } from '../../../models/monster';
 import { Party } from '../../../models/party';
 
-import MonsterCard from '../../cards/monster-card';
+import EncounterCandidateCard from '../../cards/encounter-candidate-card';
+import EncounterSlotCard from '../../cards/encounter-slot-card';
 import ConfirmButton from '../../controls/confirm-button';
 import Expander from '../../controls/expander';
+import RadioGroup from '../../controls/radio-group';
 import Selector from '../../controls/selector';
 import Textbox from '../../controls/textbox';
 import DifficultyChartPanel from '../../panels/difficulty-chart-panel';
@@ -30,15 +33,14 @@ interface State {
 	encounter: Encounter;
 	view: string;
 	filter: MonsterFilter;
+	selectedWaveID: string | null;
+	selectedSlotID: string | null;
+	showLibrary: boolean;
 	selectedMonster: Monster | null;
 	randomEncounterXP: number;
 }
 
 export default class EncounterEditorModal extends React.Component<Props, State> {
-
-	// We store this so we don't have to recalculate the list on every render
-	private libraryMonsters: Monster[] | null;
-
 	constructor(props: Props) {
 		super(props);
 
@@ -46,16 +48,32 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 			encounter: props.encounter,
 			view: 'monsters',
 			filter: Factory.createMonsterFilter(),
+			selectedWaveID: null,
+			selectedSlotID: null,
+			showLibrary: false,
 			selectedMonster: null,
 			randomEncounterXP: 1000
 		};
-
-		this.libraryMonsters = null;
 	}
 
 	private setView(view: string) {
 		this.setState({
 			view: view
+		});
+	}
+
+	private openSlot(waveID: string | null, slotID: string | null) {
+		this.setState({
+			filter: Factory.createMonsterFilter(),
+			selectedWaveID: waveID,
+			selectedSlotID: slotID,
+			showLibrary: true
+		});
+	}
+
+	private setShowLibrary(show: boolean) {
+		this.setState({
+			showLibrary: show
 		});
 	}
 
@@ -114,26 +132,39 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 		});
 	}
 
-	private addEncounterSlot(monster: Monster, waveID: string | null) {
+	private addToEncounterSlot(monster: Monster) {
+		let list = this.state.encounter.slots;
+		if (this.state.selectedWaveID) {
+			const wave = this.state.encounter.waves.find(w => w.id === this.state.selectedWaveID);
+			if (wave) {
+				list = wave.slots;
+			}
+		}
+
+		let slot = null;
+		if (this.state.selectedSlotID) {
+			slot = list.find(s => s.id === this.state.selectedSlotID) ?? null;
+		}
+
+		if (!slot) {
+			slot = Factory.createEncounterSlot();
+			list.push(slot);
+		}
+
 		const group = this.props.library.find(g => g.monsters.includes(monster));
 		if (group) {
-			const slot = Factory.createEncounterSlot();
 			slot.monsterGroupName = group.name;
 			slot.monsterName = monster.name;
 
-			if (waveID !== null) {
-				const wave = this.state.encounter.waves.find(w => w.id === waveID);
-				if (wave) {
-					wave.slots.push(slot);
-					this.sortEncounterSlots(wave);
-				}
-			} else {
-				this.state.encounter.slots.push(slot);
-				this.sortEncounterSlots(this.state.encounter);
-			}
+			this.sortEncounterSlots(this.state.encounter);
+			this.state.encounter.waves.forEach(wave => this.sortEncounterSlots(wave));
 
 			this.setState({
-				encounter: this.state.encounter
+				encounter: this.state.encounter,
+				selectedWaveID: null,
+				selectedSlotID: null,
+				showLibrary: false,
+				selectedMonster: null
 			});
 		}
 	}
@@ -141,7 +172,10 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 	private sortEncounterSlots(slotContainer: { slots: EncounterSlot[] }) {
 		const uniqueSlots: EncounterSlot[] = [];
 		slotContainer.slots.forEach(slot => {
-			let current = uniqueSlots.find(s => (s.monsterGroupName === slot.monsterGroupName) && (s.monsterName === slot.monsterName));
+			let current = uniqueSlots.find(s =>
+				(s.monsterGroupName === slot.monsterGroupName)
+				&& (s.monsterName === slot.monsterName)
+				&& (s.roles.join(',') === slot.roles.join(',')));
 			if (!current) {
 				current = slot;
 				uniqueSlots.push(slot);
@@ -177,24 +211,6 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 		});
 	}
 
-	private swapEncounterSlot(slot: EncounterSlot, waveID: string | null, groupName: string, monsterName: string) {
-		slot.monsterGroupName = groupName;
-		slot.monsterName = monsterName;
-
-		if (waveID) {
-			const wave = this.state.encounter.waves.find(w => w.id === waveID);
-			if (wave) {
-				this.sortEncounterSlots(wave);
-			}
-		} else {
-			this.sortEncounterSlots(this.state.encounter);
-		}
-
-		this.setState({
-			encounter: this.state.encounter
-		});
-	}
-
 	private moveToWave(slot: EncounterSlot, current: EncounterSlot[], waveID: string) {
 		const index = current.indexOf(slot);
 		current.splice(index, 1);
@@ -209,6 +225,55 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 			this.state.encounter.slots.push(slot);
 			this.sortEncounterSlots(this.state.encounter);
 		}
+
+		this.setState({
+			encounter: this.state.encounter
+		});
+	}
+
+	private useTemplate(templateID: string) {
+		const template = Napoleon.encounterTemplates().find(t => t.name === templateID);
+		if (template) {
+			const encounter = this.state.encounter;
+			encounter.slots = template.slots.map(s => {
+				const slot = Factory.createEncounterSlot();
+				slot.roles = s.roles;
+				slot.count = s.count;
+				return slot;
+			});
+			encounter.waves = [];
+
+			this.setState({
+				encounter: encounter
+			});
+		}
+	}
+
+	private fillTemplate() {
+		const monsters: Monster[] = [];
+		this.props.library.forEach(group => {
+			group.monsters.forEach(monster => {
+				const inList = this.state.encounter.slots.some(s => (s.monsterName === monster.name) && (s.monsterGroupName === group.name));
+				if (!inList) {
+					monsters.push(monster);
+				}
+			});
+		});
+
+		this.state.encounter.slots
+			.filter(slot => slot.roles.length > 0)
+			.forEach(slot => {
+				const candidates = monsters.filter(m => slot.roles.includes(m.role));
+				if (candidates.length > 0) {
+					const index = Utils.randomNumber(candidates.length);
+					const monster = candidates[index];
+					const group = this.props.library.find(g => g.monsters.includes(monster));
+					if (group) {
+						slot.monsterName = monster.name;
+						slot.monsterGroupName = group.name;
+					}
+				}
+			});
 
 		this.setState({
 			encounter: this.state.encounter
@@ -243,14 +308,12 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 			filter[type] = value;
 		}
 
-		this.libraryMonsters = null;
 		this.setState({
 			filter: filter
 		});
 	}
 
 	private resetFilter() {
-		this.libraryMonsters = null;
 		this.setState({
 			filter: Factory.createMonsterFilter()
 		});
@@ -260,37 +323,19 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 		const cards = [];
 
 		slots.forEach(slot => {
-			const monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
-			if (monster) {
-				cards.push(
-					<MonsterCard
-						monster={monster}
-						slot={slot}
-						encounter={this.props.encounter}
-						mode={'encounter'}
-						library={this.props.library}
-						nudgeValue={(source, type, delta) => this.nudgeValue(source, type, delta)}
-						viewMonster={m => this.setSelectedMonster(m)}
-						removeEncounterSlot={s => this.removeEncounterSlot(s, waveID)}
-						swapEncounterSlot={(s, groupName, monsterName) => this.swapEncounterSlot(s, waveID, groupName, monsterName)}
-						moveToWave={(s, current, id) => this.moveToWave(s, current, id)}
-					/>
-				);
-			} else {
-				cards.push(
-					<div className='card error'>
-						<div className='card-content'>
-							<div className='subheading'>unknown monster</div>
-							<hr/>
-							<div className='section'>
-								could not find a monster called '<b>{slot.monsterName}</b>' in a group called '<b>{slot.monsterGroupName}'</b>
-							</div>
-							<hr/>
-							<button onClick={() => this.removeEncounterSlot(slot, waveID)}>remove</button>
-						</div>
-					</div>
-				);
-			}
+			cards.push(
+				<EncounterSlotCard
+					slot={slot}
+					monster={this.props.getMonster(slot.monsterName, slot.monsterGroupName)}
+					encounter={this.props.encounter}
+					library={this.props.library}
+					nudgeValue={(source, type, delta) => this.nudgeValue(source, type, delta)}
+					select={s => this.openSlot(waveID, s.id)}
+					remove={s => this.removeEncounterSlot(s, waveID)}
+					moveToWave={(s, current, id) => this.moveToWave(s, current, id)}
+					viewMonster={m => this.setSelectedMonster(m)}
+				/>
+			);
 		});
 
 		if (slots.length === 0) {
@@ -302,7 +347,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 				cards.push(
 					<Note>
 						<p>there are no monsters in this encounter</p>
-						<p>you can add monsters from the list below, or try 'build a random encounter'</p>
+						<p>you can add monsters, or try <b>build a random encounter</b> or <b>use an encounter template</b></p>
 					</Note>
 				);
 			}
@@ -311,21 +356,35 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 		return cards;
 	}
 
-	private getLibraryMonsters() {
-		const containers: { slots: EncounterSlot[] }[] = [ this.state.encounter ];
-		this.state.encounter.waves.forEach(wave => containers.push(wave));
+	private getCandidateSection() {
+		let list = this.state.encounter.slots;
+		if (this.state.selectedWaveID) {
+			const wave = this.state.encounter.waves.find(w => w.id === this.state.selectedWaveID);
+			if (wave) {
+				list = wave.slots;
+			}
+		}
+
+		let slot: EncounterSlot | null = null;
+		if (this.state.selectedSlotID) {
+			slot = list.find(s => s.id === this.state.selectedSlotID) ?? null;
+		}
 
 		const monsters: Monster[] = [];
+
 		this.props.library.forEach(group => {
 			group.monsters.forEach(monster => {
-				if (Napoleon.matchMonster(monster, this.state.filter)) {
-					const inAll = containers
-						.every(container => !!container.slots
-							.find(slot => (slot.monsterGroupName === group.name) && (slot.monsterName === monster.name))
-						);
-					if (!inAll) {
-						monsters.push(monster);
-					}
+				// Ignore monsters that don't match the filter
+				const matchFilter = Napoleon.matchMonster(monster, this.state.filter);
+
+				// Ignore monsters that don't match the slot's role
+				const matchRole = slot ? slot.roles.includes(monster.role) : true;
+
+				// Ignore monsters that are already in the list
+				const inList = list.some(s => (s.monsterName === monster.name) && (s.monsterGroupName === group.name));
+
+				if (matchFilter && matchRole && !inList) {
+					monsters.push(monster);
 				}
 			});
 		});
@@ -336,24 +395,15 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 			return 0;
 		});
 
-		return monsters;
-	}
-
-	private getLibrarySection() {
-		if (this.libraryMonsters === null) {
-			this.libraryMonsters = this.getLibraryMonsters();
-		}
-
-		const cards = this.libraryMonsters.map(monster => {
+		const cards = monsters.map(monster => {
 			return (
-				<MonsterCard
+				<EncounterCandidateCard
 					key={monster.id}
 					monster={monster}
 					encounter={this.props.encounter}
 					library={this.props.library}
-					mode={'encounter'}
 					viewMonster={m => this.setSelectedMonster(m)}
-					addEncounterSlot={(combatant, waveID) => this.addEncounterSlot(combatant, waveID)}
+					select={m => this.addToEncounterSlot(m)}
 				/>
 			);
 		});
@@ -361,17 +411,53 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 		if (cards.length === 0) {
 			const desc = Napoleon.getFilterDescription(this.state.filter);
 			cards.push(
-				<Note key='empty'><p>there are no monsters that meet the criteria <i>{desc}</i></p></Note>
+				<Note key='empty'>
+					there are no monsters that meet the criteria <i>{desc}</i> (or they are all already part of the encounter)
+				</Note>
 			);
 		}
 
 		return (
-			<GridPanel
-				heading='monster library'
-				content={cards}
-				columns={3}
-				showToggle={true}
-			/>
+			<div className='full-height'>
+				<div className='drawer-header'>
+					<div className='app-title'>choose a monster</div>
+				</div>
+				<div className='drawer-content'>
+					<Row className='full-height'>
+						<Col span={12} className='scrollable'>
+							<div className='section'>
+								<FilterPanel
+									filter={this.state.filter}
+									changeValue={(type, value) => this.changeFilterValue(type, value)}
+									resetFilter={() => this.resetFilter()}
+								/>
+							</div>
+							<hr/>
+							{cards}
+						</Col>
+						<Col span={12} className='scrollable'>
+							{this.state.selectedMonster ? <StatBlockModal source={this.state.selectedMonster} /> : null}
+						</Col>
+					</Row>
+				</div>
+				<div className='drawer-footer'/>
+			</div>
+		);
+	}
+
+	private getStatblockSection() {
+		return (
+			<div className='full-height'>
+				<div className='drawer-header'>
+					<div className='app-title'>statblock</div>
+				</div>
+				<div className='drawer-content'>
+					<div className='scrollable'>
+						<StatBlockModal source={this.state.selectedMonster} />
+					</div>
+				</div>
+				<div className='drawer-footer'/>
+			</div>
 		);
 	}
 
@@ -391,16 +477,12 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 							<ConfirmButton text='delete wave' onConfirm={() => this.removeWave(wave)} />
 						</div>
 					));
-					const waveSlots = this.props.encounter.waves.map(w => {
-						return (
-							<GridPanel
-								key={w.id}
-								heading={w.name || 'unnamed wave'}
-								content={this.getMonsterCards(w.slots, w.id)}
-								columns={3}
-							/>
+					let templateOptions = null;
+					if (this.state.encounter.slots.some(s => s.roles.length > 0)) {
+						templateOptions = (
+							<button onClick={() => this.fillTemplate()}>choose monsters</button>
 						);
-					});
+					}
 					sidebar = (
 						<div>
 							<div className='section'>
@@ -415,41 +497,57 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 								getMonster={(monsterName, monsterGroupName) => this.props.getMonster(monsterName, monsterGroupName)}
 							/>
 							<hr/>
-							<div className='section'>
-								<FilterPanel
-									filter={this.state.filter}
-									changeValue={(type, value) => this.changeFilterValue(type, value)}
-									resetFilter={() => this.resetFilter()}
+							<Expander text='build a random encounter'>
+								<p>
+									add random monsters to this encounter until its (effective) xp value is at least the following value
+								</p>
+								<InputNumber
+									value={this.state.randomEncounterXP}
+									min={0}
+									step={1000}
+									onChange={value => {
+										const val = parseInt((value ?? 0).toString(), 10);
+										this.setRandomEncounterXP(val);
+									}}
 								/>
-							</div>
+								<button onClick={() => this.buildEncounter()}>build encounter</button>
+							</Expander>
+							<Expander text='use an encounter template'>
+								<p>
+									select one of these options to create an encounter based on a predefined template
+								</p>
+								<RadioGroup
+									items={Napoleon.encounterTemplates().map(t => ({ id: t.name, text: t.name }))}
+									selectedItemID={null}
+									onSelect={id => this.useTemplate(id)}
+								/>
+							</Expander>
+							{templateOptions}
 							<hr/>
-							<div className='section'>
-								<Expander text='build a random encounter'>
-									<p>add random monsters to this encounter until its (effective) xp value is at least the following value</p>
-									<InputNumber
-										value={this.state.randomEncounterXP}
-										min={0}
-										step={1000}
-										onChange={value => {
-											const val = parseInt((value ?? 0).toString(), 10);
-											this.setRandomEncounterXP(val);
-										}}
-									/>
-									<button onClick={() => this.buildEncounter()}>build encounter</button>
-								</Expander>
-								<ConfirmButton text='clear encounter' onConfirm={() => this.clearEncounter()} />
-							</div>
+							<ConfirmButton text='clear encounter' onConfirm={() => this.clearEncounter()} />
 						</div>
 					);
+					const waveSections = this.props.encounter.waves.map(w => {
+						return (
+							<div key={w.id}>
+								<GridPanel
+									heading={w.name || 'unnamed wave'}
+									content={this.getMonsterCards(w.slots, w.id)}
+									columns={3}
+								/>
+								<button onClick={() => this.openSlot(w.id, null)}>add a monster to this wave</button>
+							</div>
+						);
+					});
 					content = (
 						<div>
 							<GridPanel
-								columns={3}
-								content={this.getMonsterCards(this.props.encounter.slots, null)}
 								heading='encounter'
+								content={this.getMonsterCards(this.props.encounter.slots, null)}
+								columns={3}
 							/>
-							{waveSlots}
-							{this.getLibrarySection()}
+							<button onClick={() => this.openSlot(null, null)}>add a monster to the encounter</button>
+							{waveSections}
 						</div>
 					);
 					break;
@@ -478,26 +576,27 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 			return (
 				<Row className='full-height'>
 					<Col span={6} className='scrollable sidebar sidebar-left'>
-						<div className='section'>
-							<div className='subheading'>encounter name</div>
-							<Textbox
-								text={this.props.encounter.name}
-								placeholder='encounter name'
-								onChange={value => this.changeValue(this.props.encounter, 'name', value)}
-							/>
-							<Selector
-								options={['monsters', 'notes'].map(o => ({ id: o, text: o }))}
-								selectedID={this.state.view}
-								onSelect={view => this.setView(view)}
-							/>
-							{sidebar}
-						</div>
+						<div className='section subheading'>encounter name</div>
+						<Textbox
+							text={this.props.encounter.name}
+							placeholder='encounter name'
+							onChange={value => this.changeValue(this.props.encounter, 'name', value)}
+						/>
+						<Selector
+							options={['monsters', 'notes'].map(o => ({ id: o, text: o }))}
+							selectedID={this.state.view}
+							onSelect={view => this.setView(view)}
+						/>
+						{sidebar}
 					</Col>
 					<Col span={18} className='scrollable'>
 						{content}
 					</Col>
-					<Drawer visible={!!this.state.selectedMonster} width='50%' closable={false} onClose={() => this.setSelectedMonster(null)}>
-						<StatBlockModal source={this.state.selectedMonster} />
+					<Drawer visible={this.state.showLibrary} width='50%' closable={false} onClose={() => this.setShowLibrary(false)}>
+						{this.getCandidateSection()}
+					</Drawer>
+					<Drawer visible={!this.state.showLibrary && !!this.state.selectedMonster} width='50%' closable={false} onClose={() => this.setSelectedMonster(null)}>
+						{this.getStatblockSection()}
 					</Drawer>
 				</Row>
 			);

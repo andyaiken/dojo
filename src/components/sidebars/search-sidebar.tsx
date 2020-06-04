@@ -4,7 +4,7 @@ import Sherlock from '../../utils/sherlock';
 
 import { Encounter } from '../../models/encounter';
 import { Map } from '../../models/map';
-import { MonsterGroup } from '../../models/monster-group';
+import { MonsterGroup } from '../../models/monster';
 import { Party } from '../../models/party';
 
 import Textbox from '../controls/textbox';

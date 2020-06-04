@@ -6,7 +6,7 @@ import Utils from '../../utils/utils';
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { Map } from '../../models/map';
-import { Monster } from '../../models/monster-group';
+import { Monster } from '../../models/monster';
 import { Companion, PC } from '../../models/party';
 
 import ConfirmButton from '../controls/confirm-button';

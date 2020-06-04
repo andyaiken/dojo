@@ -12,7 +12,7 @@ import { Combat, Combatant, CombatSetup, Notification } from '../models/combat';
 import { Condition } from '../models/condition';
 import { Encounter } from '../models/encounter';
 import { Map, MapItem } from '../models/map';
-import { Monster, MonsterGroup, Trait } from '../models/monster-group';
+import { Monster, MonsterGroup, Trait } from '../models/monster';
 import { Companion, Party, PC } from '../models/party';
 
 import Checkbox from './controls/checkbox';
@@ -110,6 +110,22 @@ export default class App extends React.Component<Props, State> {
 			const str = window.localStorage.getItem('data-encounters');
 			if (str) {
 				encounters = JSON.parse(str);
+
+				encounters.forEach(encounter => {
+					encounter.slots.forEach(slot => {
+						if (slot.roles === undefined) {
+							slot.roles = [];
+						}
+					});
+
+					encounter.waves.forEach(wave => {
+						wave.slots.forEach(slot => {
+							if (slot.roles === undefined) {
+								slot.roles = [];
+							}
+						});
+					});
+				});
 			}
 		} catch (ex) {
 			console.error('Could not parse JSON: ', ex);
@@ -802,12 +818,33 @@ export default class App extends React.Component<Props, State> {
 		});
 	}
 
-	private editEncounter(encounter: Encounter | null) {
-		if (!encounter) {
-			encounter = Factory.createEncounter();
-			encounter.name = 'new encounter';
+	private addEncounter(templateName: string | null) {
+		const encounter = Factory.createEncounter();
+		encounter.name = 'new encounter';
+		if (templateName) {
+			const template = Napoleon.encounterTemplates().find(t => t.name === templateName);
+			if (template) {
+				encounter.name = 'new ' + templateName + ' encounter';
+				encounter.slots = template.slots.map(s => {
+					const slot = Factory.createEncounterSlot();
+					slot.roles = s.roles;
+					slot.count = s.count;
+					return slot;
+				});
+				encounter.waves = [];
+			}
 		}
 
+		const copy = JSON.parse(JSON.stringify(encounter));
+		this.setState({
+			drawer: {
+				type: 'encounter-edit',
+				encounter: copy
+			}
+		});
+	}
+
+	private editEncounter(encounter: Encounter) {
 		const copy = JSON.parse(JSON.stringify(encounter));
 		this.setState({
 			drawer: {
@@ -2135,7 +2172,7 @@ export default class App extends React.Component<Props, State> {
 						encounters={this.state.encounters}
 						parties={this.state.parties}
 						hasMonsters={hasMonsters}
-						addEncounter={() => this.editEncounter(null)}
+						addEncounter={templateID => this.addEncounter(templateID)}
 						viewEncounter={encounter => this.viewEncounter(encounter)}
 						editEncounter={encounter => this.editEncounter(encounter)}
 						deleteEncounter={encounter => this.removeEncounter(encounter)}

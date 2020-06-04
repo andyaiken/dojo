@@ -1,7 +1,7 @@
 import { Condition } from './condition';
 import { Encounter } from './encounter';
 import { Map } from './map';
-import { Trait } from './monster-group';
+import { Trait } from './monster';
 import { Party } from './party';
 
 export interface CombatSetup {

@@ -131,7 +131,7 @@ button.danger {
 		background-color: $background;
 		border: 1px solid $control-border;
 		border-top: none;
-		max-height: 155px;
+		max-height: 156px;
 		overflow-y: auto;
 		box-shadow: 0 3px 5px 0 rgba(220, 220, 220, 0.5);
 		z-index: 20;
@@ -296,6 +296,7 @@ button.danger {
 
 		&:hover {
 			border-color: $highlight;
+			background-color: $highlight01;
 		}
 
 		&.selected {

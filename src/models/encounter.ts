@@ -10,6 +10,7 @@ export interface EncounterSlot {
 	id: string;
 	monsterGroupName: string;
 	monsterName: string;
+	roles: string[];
 	count: number;
 }
 

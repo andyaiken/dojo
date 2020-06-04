@@ -6,7 +6,7 @@ import Utils from './utils';
 
 import { Combat, Combatant } from '../models/combat';
 import { Encounter, EncounterSlot, MonsterFilter } from '../models/encounter';
-import { Monster, MonsterGroup } from '../models/monster-group';
+import { Monster, MonsterGroup } from '../models/monster';
 import { Companion, PC } from '../models/party';
 
 export default class Napoleon {
@@ -315,5 +315,67 @@ export default class Napoleon {
 		};
 
 		return combatant;
+	}
+
+	public static encounterTemplates() {
+		return [
+			{
+				name: 'battlefield control',
+				slots: [
+					{
+						roles: ['controller'],
+						count: 1
+					},
+					{
+						roles: ['skirmisher', 'sneak'],
+						count: 5
+					}
+				]
+			},
+			{
+				name: 'commander and troops',
+				slots: [
+					{
+						roles: ['controller', 'soldier'],
+						count: 1
+					},
+					{
+						roles: ['soldier', 'tank'],
+						count: 5
+					}
+				]
+			},
+			{
+				name: 'dragon\'s den',
+				slots: [
+					{
+						roles: ['boss'],
+						count: 1
+					}
+				]
+			},
+			{
+				name: 'double line',
+				slots: [
+					{
+						roles: ['soldier', 'tank'],
+						count: 3
+					},
+					{
+						roles: ['artillery', 'controller'],
+						count: 2
+					}
+				]
+			},
+			{
+				name: 'wolf pack',
+				slots: [
+					{
+						roles: ['skirmisher'],
+						count: 6
+					}
+				]
+			}
+		];
 	}
 }

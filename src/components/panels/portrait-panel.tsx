@@ -1,7 +1,7 @@
 import { CloseCircleOutlined, UserOutlined } from '@ant-design/icons';
 import React from 'react';
 
-import { Monster } from '../../models/monster-group';
+import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
 interface Props {

@@ -5,7 +5,7 @@ import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
 import { Encounter } from '../../models/encounter';
-import { Monster } from '../../models/monster-group';
+import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
 import Dropdown from '../controls/dropdown';

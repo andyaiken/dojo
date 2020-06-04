@@ -71,6 +71,7 @@ body,
 	border-left: 5px solid $header-foreground;
 	text-transform: uppercase;
 	letter-spacing: 2px;
+	white-space: nowrap;
 }
 
 .app-name {

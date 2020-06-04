@@ -4,7 +4,7 @@ import { Combat, CombatReportEntry, CombatSetup, CombatSlotInfo, CombatSlotMembe
 import { Condition, ConditionDurationCombatant, ConditionDurationRounds, ConditionDurationSaves } from '../models/condition';
 import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../models/encounter';
 import { Map, MapItem, MapNote } from '../models/map';
-import { Monster, MonsterGroup, Trait } from '../models/monster-group';
+import { Monster, MonsterGroup, Trait } from '../models/monster';
 import { Companion, Party, PC } from '../models/party';
 
 export default class Factory {
@@ -119,6 +119,7 @@ export default class Factory {
 			id: Utils.guid(),
 			monsterGroupName: '',
 			monsterName: '',
+			roles: [],
 			count: 1
 		};
 	}

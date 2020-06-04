@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Combatant } from '../../../models/combat';
-import { Monster } from '../../../models/monster-group';
+import { Monster } from '../../../models/monster';
 import { PC } from '../../../models/party';
 
 import MonsterCard from '../../cards/monster-card';

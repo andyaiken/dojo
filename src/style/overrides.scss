@@ -100,6 +100,7 @@ button {
 	font-size: 12px;
 	font-weight: 600;
 	background-color: $background;
+	color: rgba(0, 0, 0, 0.65);
 	border: 1px solid $control-border;
 	border-left-width: 5px;
 	margin: 5px 0;
@@ -178,10 +179,6 @@ button {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Ant Overrides
-
-.ant-drawer.ant-drawer-open .ant-drawer-mask {
-	backdrop-filter: blur(2px);
-}
 
 .ant-drawer-wrapper-body {
 	height: 100%;

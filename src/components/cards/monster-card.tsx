@@ -6,13 +6,12 @@ import Frankenstein from '../../utils/frankenstein';
 import Utils from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
-import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
-import { Monster, MonsterGroup, Trait } from '../../models/monster-group';
+import { EncounterWave } from '../../models/encounter';
+import { Monster, MonsterGroup, Trait } from '../../models/monster';
 
 import ConfirmButton from '../controls/confirm-button';
 import Dropdown from '../controls/dropdown';
 import Expander from '../controls/expander';
-import NumberSpin from '../controls/number-spin';
 import Textbox from '../controls/textbox';
 import AbilityScorePanel from '../panels/ability-score-panel';
 import PortraitPanel from '../panels/portrait-panel';
@@ -34,13 +33,6 @@ interface Props {
 	copyTrait: (trait: Trait) => void;
 	selectMonster: (monster: Monster) => void;
 	deselectMonster: (monster: Monster) => void;
-	// Encounter builder
-	encounter: Encounter;
-	slot: EncounterSlot;
-	addEncounterSlot: (monster: Monster, waveID: string | null) => void;
-	removeEncounterSlot: (slot: EncounterSlot) => void;
-	swapEncounterSlot: (slot: EncounterSlot, groupName: string, monsterName: string) => void;
-	moveToWave: (slot: EncounterSlot, current: EncounterSlot[], waveID: string) => void;
 	// Combat
 	useTrait: (trait: Trait) => void;
 	rechargeTrait: (trait: Trait) => void;
@@ -66,12 +58,6 @@ export default class MonsterCard extends React.Component<Props, State> {
 		copyTrait: null,
 		selectMonster: null,
 		deselectMonster: null,
-		encounter: null,
-		slot: null,
-		addEncounterSlot: null,
-		removeEncounterSlot: null,
-		swapEncounterSlot: null,
-		moveToWave: null,
 		combat: null,
 		makeCurrent: null,
 		makeActive: null,
@@ -218,7 +204,7 @@ export default class MonsterCard extends React.Component<Props, State> {
 
 		if (this.props.mode.indexOf('editable') !== -1) {
 			options.push(
-				<button key='view' onClick={() => this.props.viewMonster(this.props.monster)}>open monster</button>
+				<button key='view' onClick={() => this.props.viewMonster(this.props.monster)}>statblock</button>
 			);
 
 			options.push(
@@ -261,81 +247,6 @@ export default class MonsterCard extends React.Component<Props, State> {
 			options.push(<ConfirmButton key='remove' text='delete monster' onConfirm={() => this.props.removeMonster(this.props.monster)} />);
 		}
 
-		if (this.props.mode.indexOf('encounter') !== -1) {
-			options.push(
-				<button key='view' onClick={() => this.props.viewMonster(this.props.monster)}>open monster</button>
-			);
-			if (this.props.slot) {
-				// This card is in an encounter (or a wave)
-				const candidates: {id: string, text: string, group: string}[] = [];
-				this.props.library.forEach(group => {
-					group.monsters
-						.filter(m => m.challenge === this.props.monster.challenge)
-						.filter(m => m.id !== this.props.monster.id)
-						.forEach(m => candidates.push({ id: m.id, text: m.name, group: group.name }));
-				});
-				Utils.sort(candidates, [{ field: 'text', dir: 'asc' }]);
-				if (candidates.length > 0) {
-					options.push(
-						<Dropdown
-							key='replace'
-							placeholder='replace with...'
-							options={candidates}
-							onSelect={id => {
-								const candidate = candidates.find(c => c.id === id);
-								if (candidate) {
-									this.props.swapEncounterSlot(this.props.slot, candidate.group, candidate.text);
-								}
-							}}
-						/>
-					);
-				}
-				if (this.props.encounter.waves.length > 0) {
-					let current = this.props.encounter.slots;
-					const waves = [];
-					if (!this.props.encounter.slots.includes(this.props.slot)) {
-						waves.push({ id: '', text: 'main encounter' });
-					}
-					this.props.encounter.waves.forEach(wave => {
-						if (wave.slots.includes(this.props.slot)) {
-							current = wave.slots;
-						} else {
-							waves.push({ id: wave.id, text: wave.name });
-						}
-					});
-					options.push(
-						<Dropdown
-							key='move'
-							placeholder='move to...'
-							options={waves}
-							onSelect={id => this.props.moveToWave(this.props.slot, current, id)}
-						/>
-					);
-				}
-				options.push(
-					<button key='remove' onClick={() => this.props.removeEncounterSlot(this.props.slot)}>remove</button>
-				);
-			} else {
-				// This card is in the library list
-				if (!this.monsterIsInWave(this.props.encounter)) {
-					options.push(
-						<button key='add encounter' onClick={() => this.props.addEncounterSlot(this.props.monster, null)}>
-							add to encounter
-						</button>
-					);
-				}
-				this.props.encounter.waves.forEach(wave => {
-					if (!this.monsterIsInWave(wave)) {
-						options.push(
-							<button key={'add ' + wave.id} onClick={() => this.props.addEncounterSlot(this.props.monster, wave.id)}>
-								add to {wave.name}
-							</button>
-						);
-					}
-				});
-			}
-		}
-
 		return options;
 	}
 
@@ -343,21 +254,6 @@ export default class MonsterCard extends React.Component<Props, State> {
 		let stats = null;
 
 		if (this.props.mode.indexOf('template') === -1) {
-			let slotSection = null;
-			if (this.props.slot) {
-				slotSection = (
-					<div>
-						<hr/>
-						<NumberSpin
-							value={this.props.slot.count}
-							label='count'
-							downEnabled={this.props.slot.count > 1}
-							onNudgeValue={delta => this.props.nudgeValue(this.props.slot, 'count', delta)}
-						/>
-					</div>
-				);
-			}
-
 			let statBlock = null;
 			if ((this.props.mode.indexOf('full') !== -1) || (this.props.mode.indexOf('combat') !== -1)) {
 				statBlock = (
@@ -401,7 +297,6 @@ export default class MonsterCard extends React.Component<Props, State> {
 					<div className='section centered'>
 						{this.getTags()}
 					</div>
-					{slotSection}
 					{statBlock}
 				</div>
 			);

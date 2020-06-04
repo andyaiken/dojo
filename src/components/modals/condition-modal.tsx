@@ -6,7 +6,7 @@ import Utils from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
 import { Condition, CONDITION_TYPES, ConditionDurationCombatant, ConditionDurationRounds, ConditionDurationSaves } from '../../models/condition';
-import { Monster } from '../../models/monster-group';
+import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
 import Dropdown from '../controls/dropdown';

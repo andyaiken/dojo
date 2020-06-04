@@ -2,7 +2,7 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { Monster, MonsterGroup } from '../../models/monster-group';
+import { Monster, MonsterGroup } from '../../models/monster';
 
 import ConfirmButton from '../controls/confirm-button';
 import PortraitPanel from '../panels/portrait-panel';

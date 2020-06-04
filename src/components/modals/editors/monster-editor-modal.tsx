@@ -10,7 +10,7 @@ import Shakespeare from '../../../utils/shakespeare';
 import Utils from '../../../utils/utils';
 
 import { MonsterFilter } from '../../../models/encounter';
-import { CATEGORY_TYPES, Monster, MonsterGroup, Trait, TRAIT_TYPES } from '../../../models/monster-group';
+import { CATEGORY_TYPES, Monster, MonsterGroup, Trait, TRAIT_TYPES } from '../../../models/monster';
 
 import MonsterCard from '../../cards/monster-card';
 import Checkbox from '../../controls/checkbox';

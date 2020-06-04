@@ -122,12 +122,9 @@ class PartyInfo extends React.Component<PartyInfoProps> {
 			);
 		}
 
-		let languages = '';
-		let insightSummary = '-';
-		let investigationSummary = '-';
-		let perceptionSummary = '-';
+		const level = Math.round(activePCs.reduce((sum, current) => sum + current.level, 0) / activePCs.length);
 
-		languages = activePCs
+		const languages = activePCs
 			.map(pc => pc.languages)
 			.join(', ')
 			.split(/[ ,;]+/)
@@ -161,20 +158,26 @@ class PartyInfo extends React.Component<PartyInfoProps> {
 			percep.max = percep.max === null ? pc.passivePerception : Math.max(percep.max, pc.passivePerception);
 		});
 
-		insightSummary = insight.min === insight.max ? (insight.min as number).toString() : insight.min + ' - ' + insight.max;
-		investigationSummary = invest.min === invest.max ? (invest.min as number).toString() : invest.min + ' - ' + invest.max;
-		perceptionSummary = percep.min === percep.max ? (percep.min as number).toString() : percep.min + ' - ' + percep.max;
+		const insightSummary = insight.min === insight.max ? (insight.min as number).toString() : insight.min + ' - ' + insight.max;
+		const investigationSummary = invest.min === invest.max ? (invest.min as number).toString() : invest.min + ' - ' + invest.max;
+		const perceptionSummary = percep.min === percep.max ? (percep.min as number).toString() : percep.min + ' - ' + percep.max;
 
 		return (
 			<div className='group-panel'>
-				<div className='section' style={{ display: languages !== '' ? 'block' : 'none' }}>
-					<div className='subheading'>party languages</div>
+				<div className='section subheading'>
+					average party level
+				</div>
+				<div className='section'>
+					{level}
+				</div>
+				<div className='section subheading' style={{ display: languages !== '' ? 'block' : 'none' }}>
+					party languages
 				</div>
 				<div className='section'>
 					{languages}
 				</div>
-				<div className='section'>
-					<div className='subheading'>party passive skills</div>
+				<div className='section subheading'>
+					party passive skills
 				</div>
 				<div className='table'>
 					<div>
