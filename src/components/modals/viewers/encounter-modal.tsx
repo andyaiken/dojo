@@ -6,6 +6,7 @@ import { Monster } from '../../../models/monster';
 
 import MonsterCard from '../../cards/monster-card';
 import Expander from '../../controls/expander';
+import Note from '../../panels/note';
 
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);
@@ -17,10 +18,15 @@ interface Props {
 
 export default class EncounterModal extends React.Component<Props> {
 	private getSlots(id: string, name: string, slots: EncounterSlot[]) {
+		const filledSlots = slots.filter(s => s.monsterName !== '');
+		if (filledSlots.length === 0) {
+			return <Note>no monsters</Note>;
+		}
+
 		return (
 			<div key={id}>
 				<div className='heading'>{name}</div>
-				{slots.map(s => {
+				{filledSlots.map(s => {
 					const monsterName = s.monsterName + ((s.count > 1) ? (' (x' + s.count + ')') : '');
 					const monster = this.props.getMonster(s.monsterName, s.monsterGroupName);
 					if (monster) {

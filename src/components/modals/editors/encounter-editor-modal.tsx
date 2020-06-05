@@ -9,7 +9,6 @@ import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../../..
 import { Monster, MonsterGroup } from '../../../models/monster';
 import { Party } from '../../../models/party';
 
-import EncounterCandidateCard from '../../cards/encounter-candidate-card';
 import EncounterSlotCard from '../../cards/encounter-slot-card';
 import ConfirmButton from '../../controls/confirm-button';
 import Expander from '../../controls/expander';
@@ -73,7 +72,8 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 
 	private setShowLibrary(show: boolean) {
 		this.setState({
-			showLibrary: show
+			showLibrary: show,
+			selectedMonster: null
 		});
 	}
 
@@ -347,7 +347,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 				cards.push(
 					<Note>
 						<p>there are no monsters in this encounter</p>
-						<p>you can add monsters, or try <b>build a random encounter</b> or <b>use an encounter template</b></p>
+						<p>you can click the button below to add a monster, or try <b>build a random encounter</b> or <b>use an encounter template</b></p>
 					</Note>
 				);
 			}
@@ -395,25 +395,32 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 			return 0;
 		});
 
-		const cards = monsters.map(monster => {
-			return (
-				<EncounterCandidateCard
-					key={monster.id}
-					monster={monster}
-					encounter={this.props.encounter}
-					library={this.props.library}
-					viewMonster={m => this.setSelectedMonster(m)}
-					select={m => this.addToEncounterSlot(m)}
-				/>
-			);
-		});
+		const hasRoles = !!slot && (slot.roles.length > 0);
 
-		if (cards.length === 0) {
+		let left = (
+			<RadioGroup
+				items={monsters.map(m => ({ id: m.id, text: m.name }))}
+				selectedItemID={this.state.selectedMonster ? this.state.selectedMonster.id : null}
+				onSelect={id => this.setSelectedMonster(monsters.find(m => m.id === id) ?? null)}
+			/>
+		);
+		if (monsters.length === 0) {
 			const desc = Napoleon.getFilterDescription(this.state.filter);
-			cards.push(
+			left = (
 				<Note key='empty'>
 					there are no monsters that meet the criteria <i>{desc}</i> (or they are all already part of the encounter)
 				</Note>
+			);
+		}
+
+		let right = (
+			<Note>
+				select a monster from the list at the left to see its statblock here
+			</Note>
+		);
+		if (this.state.selectedMonster) {
+			right = (
+				<StatBlockModal source={this.state.selectedMonster} />
 			);
 		}
 
@@ -424,23 +431,31 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 				</div>
 				<div className='drawer-content'>
 					<Row className='full-height'>
-						<Col span={12} className='scrollable'>
+						<Col span={10} className='scrollable'>
 							<div className='section'>
 								<FilterPanel
 									filter={this.state.filter}
+									showRoles={!hasRoles}
 									changeValue={(type, value) => this.changeFilterValue(type, value)}
 									resetFilter={() => this.resetFilter()}
 								/>
 							</div>
 							<hr/>
-							{cards}
+							{left}
 						</Col>
-						<Col span={12} className='scrollable'>
-							{this.state.selectedMonster ? <StatBlockModal source={this.state.selectedMonster} /> : null}
+						<Col span={14} className='scrollable'>
+							{right}
 						</Col>
 					</Row>
 				</div>
-				<div className='drawer-footer'/>
+				<div className='drawer-footer'>
+					<button
+						className={!!this.state.selectedMonster ? '' : 'disabled'}
+						onClick={() => this.addToEncounterSlot(this.state.selectedMonster as Monster)}
+					>
+						add this monster to the encounter
+					</button>
+				</div>
 			</div>
 		);
 	}
@@ -535,7 +550,11 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 									content={this.getMonsterCards(w.slots, w.id)}
 									columns={3}
 								/>
-								<button onClick={() => this.openSlot(w.id, null)}>add a monster to this wave</button>
+								<Row>
+									<Col xs={24} sm={24} md={8} lg={8} xl={8}>
+										<button onClick={() => this.openSlot(w.id, null)}>add a monster to this wave</button>
+									</Col>
+								</Row>
 							</div>
 						);
 					});
@@ -546,7 +565,11 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 								content={this.getMonsterCards(this.props.encounter.slots, null)}
 								columns={3}
 							/>
-							<button onClick={() => this.openSlot(null, null)}>add a monster to the encounter</button>
+							<Row>
+								<Col xs={24} sm={24} md={8} lg={8} xl={8}>
+									<button onClick={() => this.openSlot(null, null)}>add a monster to the encounter</button>
+								</Col>
+							</Row>
 							{waveSections}
 						</div>
 					);

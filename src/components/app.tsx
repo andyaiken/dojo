@@ -2393,7 +2393,7 @@ export default class App extends React.Component<Props, State> {
 							source={this.state.drawer.source}
 						/>
 					);
-					header = this.state.drawer.source.name;
+					header = 'statblock';
 					closable = true;
 					break;
 				case 'import-party':
