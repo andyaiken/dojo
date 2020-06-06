@@ -303,7 +303,7 @@ export default class ConditionModal extends React.Component<Props, State> {
 			return (
 				<Row className='full-height'>
 					<Col span={12} className='scrollable'>
-						<div className='subheading'>condition</div>
+						<div className='heading'>condition</div>
 						<RadioGroup
 							items={conditions}
 							selectedItemID={this.state.condition.name}
@@ -311,7 +311,7 @@ export default class ConditionModal extends React.Component<Props, State> {
 						/>
 					</Col>
 					<Col span={12} className='scrollable'>
-						<div className='subheading'>duration</div>
+						<div className='heading'>duration</div>
 						<RadioGroup
 							items={durations}
 							selectedItemID={this.state.condition.duration ? this.state.condition.duration.type : 'none'}

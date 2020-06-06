@@ -28,15 +28,23 @@ interface Props {
 	showGrid: boolean;
 	selectedItemIDs: string[];
 	fog: { x: number, y: number }[];
-	editFog: boolean;
 	itemSelected: (itemID: string | null, ctrl: boolean) => void;
 	gridSquareEntered: (x: number, y: number) => void;
 	gridSquareClicked: (x: number, y: number) => void;
+	gridRectangleSelected: (x1: number, y1: number, x2: number, y2: number) => void;
 }
 
 interface State {
 	showControls: boolean;
 	size: number;
+	selectionStartSquare: {
+		x: number,
+		y: number
+	} | null;
+	selectionEndSquare: {
+		x: number,
+		y: number
+	} | null;
 }
 
 interface MapDimensions {
@@ -67,10 +75,11 @@ export default class MapPanel extends React.Component<Props, State> {
 		showGrid: false,
 		selectedItemIDs: [],
 		fog: [],
-		editFog: false,
 		itemSelected: null,
 		gridSquareEntered: null,
-		gridSquareClicked: null
+		gridSquareClicked: null,
+		gridRectangleUpdated: null,
+		gridRectangleSelected: null
 	};
 
 	constructor(props: Props) {
@@ -78,8 +87,72 @@ export default class MapPanel extends React.Component<Props, State> {
 
 		this.state = {
 			showControls: false,
-			size: (props.mode === 'thumbnail') ? 15 : 45
+			size: (props.mode === 'thumbnail') ? 15 : 45,
+			selectionStartSquare: null,
+			selectionEndSquare: null
 		};
+	}
+
+	private gridSquareMouseDown(x: number, y: number) {
+		this.setState({
+			selectionStartSquare: {
+				x: x,
+				y: y
+			},
+			selectionEndSquare: null
+		});
+	}
+
+	private gridSquareEntered(x: number, y: number) {
+		if (this.state.selectionStartSquare) {
+			this.setState({
+				selectionEndSquare: {
+					x: x,
+					y: y
+				}
+			});
+		} else {
+			if (!!this.props.gridSquareEntered) {
+				this.props.gridSquareEntered(x, y);
+			}
+		}
+	}
+
+	private gridSquareMouseUp(x: number, y: number) {
+		if (this.state.selectionStartSquare) {
+			const x1 = this.state.selectionStartSquare.x;
+			const y1 = this.state.selectionStartSquare.y;
+			this.setState({
+				selectionStartSquare: null,
+				selectionEndSquare: null
+			}, () => {
+				if ((x1 === x) && (y1 === y)) {
+					if (!!this.props.gridSquareClicked) {
+						this.props.gridSquareClicked(x, y);
+					}
+				} else {
+					if (this.props.gridRectangleSelected) {
+						const minX = Math.min(x1, x);
+						const minY = Math.min(y1, y);
+						const maxX = Math.max(x1, x);
+						const maxY = Math.max(y1, y);
+						this.props.gridRectangleSelected(minX, minY, maxX, maxY);
+					}
+				}
+			});
+		}
+	}
+
+	private isSelected(x: number, y: number) {
+		if (this.state.selectionStartSquare && this.state.selectionEndSquare) {
+			const minX = Math.min(this.state.selectionStartSquare.x, this.state.selectionEndSquare.x);
+			const minY = Math.min(this.state.selectionStartSquare.y, this.state.selectionEndSquare.y);
+			const maxX = Math.max(this.state.selectionStartSquare.x, this.state.selectionEndSquare.x);
+			const maxY = Math.max(this.state.selectionStartSquare.y, this.state.selectionEndSquare.y);
+			return ((x >= minX) && (x <= maxX) && (y >= minY) && (y <= maxY));
+		}
+
+		return false;
 	}
 
 	private toggleShowControls() {
@@ -356,20 +429,22 @@ export default class MapPanel extends React.Component<Props, State> {
 			}
 
 			// Draw the grid
-			const dragOverlay = [];
-			if (this.props.showGrid || this.props.editFog) {
+			const grid = [];
+			if (this.props.showGrid) {
 				for (let yGrid = mapDimensions.minY; yGrid !== mapDimensions.maxY + 1; ++yGrid) {
 					for (let xGrid = mapDimensions.minX; xGrid !== mapDimensions.maxX + 1; ++xGrid) {
 						const overlayStyle = this.getStyle(xGrid, yGrid, 1, 1, 'square', mapDimensions);
-						dragOverlay.push(
+						grid.push(
 							<GridSquare
 								key={xGrid + ',' + yGrid}
 								x={xGrid}
 								y={yGrid}
 								style={overlayStyle}
 								mode={'cell'}
-								onMouseEnter={(posX, posY) => this.props.gridSquareEntered(posX, posY)}
-								onClick={(posX, posY) => this.props.gridSquareClicked(posX, posY)}
+								selected={this.isSelected(xGrid, yGrid)}
+								onMouseDown={(posX, posY) => this.gridSquareMouseDown(posX, posY)}
+								onMouseUp={(posX, posY) => this.gridSquareMouseUp(posX, posY)}
+								onMouseEnter={(posX, posY) => this.gridSquareEntered(posX, posY)}
 							/>
 						);
 					}
@@ -409,7 +484,7 @@ export default class MapPanel extends React.Component<Props, State> {
 						{overlays}
 						{auras}
 						{tokens}
-						{dragOverlay}
+						{grid}
 					</div>
 					{controls}
 				</div>
@@ -426,17 +501,35 @@ interface GridSquareProps {
 	y: number;
 	style: MapItemStyle;
 	mode: 'cell' | 'fog';
+	selected: boolean;
+	onMouseDown: (x: number, y: number) => void;
+	onMouseUp: (x: number, y: number) => void;
 	onMouseEnter: (x: number, y: number) => void;
-	onClick: (x: number, y: number) => void;
 	onDoubleClick: (x: number, y: number) => void;
 }
 
 class GridSquare extends React.Component<GridSquareProps> {
 	public static defaultProps = {
+		selected: false,
+		onMouseDown: null,
+		onMouseUp: null,
 		onMouseEnter: null,
-		onClick: null,
 		onDoubleClick: null
 	};
+
+	private mouseDown(e: React.MouseEvent) {
+		e.stopPropagation();
+		if (this.props.onMouseDown) {
+			this.props.onMouseDown(this.props.x, this.props.y);
+		}
+	}
+
+	private mouseUp(e: React.MouseEvent) {
+		e.stopPropagation();
+		if (this.props.onMouseUp) {
+			this.props.onMouseUp(this.props.x, this.props.y);
+		}
+	}
 
 	private mouseEnter(e: React.MouseEvent) {
 		e.stopPropagation();
@@ -445,12 +538,9 @@ class GridSquare extends React.Component<GridSquareProps> {
 		}
 	}
 
-	private click(e: React.MouseEvent, type: 'single' | 'double') {
+	private doubleClick(e: React.MouseEvent) {
 		e.stopPropagation();
-		if ((type === 'single') && this.props.onClick) {
-			this.props.onClick(this.props.x, this.props.y);
-		}
-		if ((type === 'double') && this.props.onDoubleClick) {
+		if (this.props.onDoubleClick) {
 			this.props.onDoubleClick(this.props.x, this.props.y);
 		}
 	}
@@ -459,11 +549,12 @@ class GridSquare extends React.Component<GridSquareProps> {
 		try {
 			return (
 				<div
-					className={'grid-square ' + this.props.mode}
+					className={'grid-square ' + this.props.mode + (this.props.selected ? ' selected' : '')}
 					style={this.props.style}
+					onMouseDown={e => this.mouseDown(e)}
+					onMouseUp={e => this.mouseUp(e)}
 					onMouseEnter={e => this.mouseEnter(e)}
-					onClick={e => this.click(e, 'single')}
-					onDoubleClick={e => this.click(e, 'double')}
+					onDoubleClick={e => this.doubleClick(e)}
 				/>
 			);
 		} catch (ex) {

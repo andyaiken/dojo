@@ -48,7 +48,8 @@
 				border: 1px solid $control-border-05;
 				cursor: pointer;
 
-				&:hover {
+				&:hover,
+				&.selected {
 					background-color: rgba(0, 0, 200, 0.2);
 				}
 			}

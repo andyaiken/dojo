@@ -54,7 +54,7 @@ export default class PartyCard extends React.Component<Props> {
 				run = (
 					<Dropdown
 						options={options}
-						placeholder='start encounter...'
+						placeholder='start combat...'
 						onSelect={encounterID => this.props.runEncounter(this.props.party, encounterID)}
 					/>
 				);

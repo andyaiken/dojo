@@ -2627,7 +2627,7 @@ export default class App extends React.Component<Props, State> {
 							className={this.state.drawer.combatSetup.party && this.state.drawer.combatSetup.encounter ? '' : 'disabled'}
 							onClick={() => this.startCombat()}
 						>
-							start encounter
+							start combat
 						</button>
 					);
 					width = '75%';

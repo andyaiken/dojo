@@ -284,15 +284,25 @@ export default class CombatScreen extends React.Component<Props, State> {
 		}
 
 		if (this.state.addingFog) {
-			const fog = this.props.combat.fog;
-			const index = fog.findIndex(i => (i.x === x) && (i.y === y));
-			if (index === -1) {
-				fog.push({ x: x, y: y });
-			} else {
-				fog.splice(index, 1);
-			}
-			this.props.setFog(fog);
+			this.toggleFog(x, y, x, y);
 		}
+	}
+
+	private toggleFog(x1: number, y1: number, x2: number, y2: number) {
+		const fog = this.props.combat.fog;
+
+		for (let x = x1; x <= x2; ++x) {
+			for (let y = y1; y <= y2; ++y) {
+				const index = fog.findIndex(i => (i.x === x) && (i.y === y));
+				if (index === -1) {
+					fog.push({ x: x, y: y });
+				} else {
+					fog.splice(index, 1);
+				}
+			}
+		}
+
+		this.props.setFog(fog);
 	}
 
 	private orderCombatants(combatants: Combatant[]) {
@@ -926,14 +936,13 @@ export default class CombatScreen extends React.Component<Props, State> {
 						key='map'
 						map={this.props.combat.map}
 						mode='combat'
-						showGrid={(this.state.addingToMapID !== null) || this.state.addingOverlay}
+						showGrid={(this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.addingFog}
 						combatants={this.props.combat.combatants}
 						selectedItemIDs={this.state.selectedItemIDs}
-						editFog={this.state.addingFog}
 						fog={this.props.combat.fog}
 						itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
-						gridSquareEntered={(x, y) => null}
 						gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
+						gridRectangleSelected={(x1, y1, x2, y2) => this.toggleFog(x1, y1, x2, y2)}
 					/>
 				);
 			}

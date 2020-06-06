@@ -73,17 +73,21 @@ export default class MapModal extends React.Component<Props, State> {
 
 	private setSelectedCombatantIDs(ids: string[]) {
 		this.setState({
-			editFog: false,
+			editFog: (ids.length > 0) ? false : this.state.editFog,
 			selectedCombatantIDs: ids
 		});
 	}
 
-	private toggleFog(x: number, y: number) {
-		const index = this.state.fog.findIndex(i => (i.x === x) && (i.y === y));
-		if (index === -1) {
-			this.state.fog.push({ x: x, y: y });
-		} else {
-			this.state.fog.splice(index, 1);
+	private toggleFog(x1: number, y1: number, x2: number, y2: number) {
+		for (let x = x1; x <= x2; ++x) {
+			for (let y = y1; y <= y2; ++y) {
+				const index = this.state.fog.findIndex(i => (i.x === x) && (i.y === y));
+				if (index === -1) {
+					this.state.fog.push({ x: x, y: y });
+				} else {
+					this.state.fog.splice(index, 1);
+				}
+			}
 		}
 		this.setState({
 			fog: this.state.fog
@@ -274,7 +278,7 @@ export default class MapModal extends React.Component<Props, State> {
 		}
 
 		if (this.state.editFog && !playerView) {
-			this.toggleFog(x, y);
+			this.toggleFog(x, y, x, y);
 		}
 	}
 
@@ -327,12 +331,11 @@ export default class MapModal extends React.Component<Props, State> {
 				mode={playerView ? 'combat-player' : 'combat'}
 				viewport={viewport}
 				combatants={this.state.combatants}
-				showGrid={adding}
+				showGrid={(adding || this.state.editFog) && !playerView}
 				selectedItemIDs={this.state.selectedCombatantIDs}
 				fog={this.state.fog}
-				editFog={this.state.editFog && !playerView}
-				gridSquareEntered={() => null}
 				gridSquareClicked={(x, y) => this.gridSquareClicked(x, y, playerView)}
+				gridRectangleSelected={(x1, y1, x2, y2) => this.toggleFog(x1, y1, x2, y2)}
 				itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
 			/>
 		);
@@ -423,7 +426,7 @@ export default class MapModal extends React.Component<Props, State> {
 				if (this.state.editFog) {
 					fogSection = (
 						<div>
-							<Note>you can now click on map squares to turn fog of war on and off</Note>
+							<Note>click on map squares to turn fog of war on and off</Note>
 							<button onClick={() => this.fillFog()}>
 								fill fog of war
 							</button>
@@ -439,7 +442,7 @@ export default class MapModal extends React.Component<Props, State> {
 						<div className='section'>
 							<div className='subheading'>options</div>
 							<button onClick={() => this.rotateMap()}>rotate map</button>
-							<button onClick={() => this.props.startCombat(this.state.partyID, this.state.map, this.state.fog, this.state.combatants)}>start encounter</button>
+							<button onClick={() => this.props.startCombat(this.state.partyID, this.state.map, this.state.fog, this.state.combatants)}>start combat</button>
 						</div>
 						<hr/>
 						<div className='section'>
