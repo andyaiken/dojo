@@ -684,7 +684,7 @@ export default class App extends React.Component<Props, State> {
 				this.setState({
 					library: this.state.library,
 					drawer: {
-						type: 'stat-block',
+						type: 'statblock',
 						source: monster
 					}
 				});
@@ -2127,7 +2127,7 @@ export default class App extends React.Component<Props, State> {
 									this.createCombat(encounter, party.id);
 								}
 							}}
-							openStatBlock={pc => this.setState({drawer: { type: 'stat-block', source: pc }})}
+							openStatBlock={pc => this.setState({drawer: { type: 'statblock', source: pc }})}
 						/>
 					);
 				}
@@ -2145,7 +2145,7 @@ export default class App extends React.Component<Props, State> {
 							removeMonster={monster => this.removeMonster(monster)}
 							changeValue={(monster, type, value) => this.changeValue(monster, type, value)}
 							nudgeValue={(monster, type, delta) => this.nudgeValue(monster, type, delta)}
-							viewMonster={monster => this.setState({drawer: { type: 'stat-block', source: monster }})}
+							viewMonster={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
 							editMonster={monster => this.editMonster(monster)}
 							cloneMonster={(monster, name) => this.cloneMonster(monster, name)}
 							moveToGroup={(monster, groupID) => this.moveToGroup(monster, groupID)}
@@ -2161,7 +2161,7 @@ export default class App extends React.Component<Props, State> {
 							selectMonsterGroup={group => this.selectMonsterGroup(group)}
 							deleteMonsterGroup={group => this.removeMonsterGroup(group)}
 							addOpenGameContent={() => this.addOpenGameContent()}
-							openStatBlock={monster => this.setState({drawer: { type: 'stat-block', source: monster }})}
+							openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
 							openDemographics={group => this.openDemographics(group)}
 						/>
 					);
@@ -2179,7 +2179,7 @@ export default class App extends React.Component<Props, State> {
 						runEncounter={(encounter, partyID) => this.createCombat(encounter, partyID)}
 						getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
 						setView={view => this.setView(view)}
-						openStatBlock={monster => this.setState({drawer: { type: 'stat-block', source: monster }})}
+						openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
 					/>
 				);
 			case 'maps':
@@ -2235,21 +2235,7 @@ export default class App extends React.Component<Props, State> {
 							setFog={fog => this.setFog(fog)}
 							addOverlay={overlay => this.addMapItem(overlay)}
 							showLeaderboard={() => this.showLeaderboard()}
-							onRollDice={(count, sides, constant) => {
-								// TODO: Open die roller with this info
-								this.setDice(count, sides, constant);
-								/*
-								const sign = (constant >= 0) ? '+' : '-';
-								const result = Utils.dieRoll(count, sides) + constant;
-								message.info(
-									<div className='message-details'>
-										<div>rolling {count}d{sides} {sign} {Math.abs(constant)}</div>
-										<div className='result'>{result}</div>
-									</div>,
-									10
-								);
-								*/
-							}}
+							onRollDice={(count, sides, constant) => this.setDice(count, sides, constant)}
 						/>
 					);
 				} else {
@@ -2261,7 +2247,7 @@ export default class App extends React.Component<Props, State> {
 							createCombat={() => this.createCombat()}
 							resumeCombat={combat => this.resumeCombat(combat)}
 							deleteCombat={combat => this.endCombat(combat)}
-							openStatBlock={combatant => this.setState({drawer: { type: 'stat-block', source: combatant }})}
+							openStatBlock={combatant => this.setState({drawer: { type: 'statblock', source: combatant }})}
 							setView={view => this.setView(view)}
 						/>
 					);
@@ -2387,7 +2373,7 @@ export default class App extends React.Component<Props, State> {
 
 		if (this.state.drawer) {
 			switch (this.state.drawer.type) {
-				case 'stat-block':
+				case 'statblock':
 					content = (
 						<StatBlockModal
 							source={this.state.drawer.source}

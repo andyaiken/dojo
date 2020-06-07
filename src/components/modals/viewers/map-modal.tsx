@@ -470,10 +470,10 @@ export default class MapModal extends React.Component<Props, State> {
 
 			return (
 				<Row className='full-height'>
-					<Col span={8} className='scrollable sidebar sidebar-left'>
+					<Col span={6} className='scrollable sidebar sidebar-left'>
 						{sidebar}
 					</Col>
-					<Col span={16} className='scrollable both-ways'>
+					<Col span={18} className='scrollable both-ways'>
 						{this.getMap(false)}
 					</Col>
 					{this.getPlayerView()}
