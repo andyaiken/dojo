@@ -2736,7 +2736,7 @@ export default class App extends React.Component<Props, State> {
 					</ErrorBoundary>
 					<div className='page-content'>
 						<ErrorBoundary>
-							<div className='content'>{this.getContent()}</div>
+							<div className={this.state.sidebar ? 'content with-sidebar' : 'content'}>{this.getContent()}</div>
 						</ErrorBoundary>
 						<ErrorBoundary>
 							{sidebar}
