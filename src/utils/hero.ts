@@ -144,7 +144,7 @@ export default class Hero {
 				pc.companions.push(companion);
 			});
 
-			// TODO: Portrait
+			// TODO: Import portrait
 		} catch (e) {
 			console.error(e);
 		}

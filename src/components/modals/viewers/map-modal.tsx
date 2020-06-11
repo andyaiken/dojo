@@ -426,7 +426,10 @@ export default class MapModal extends React.Component<Props, State> {
 				if (this.state.editFog) {
 					fogSection = (
 						<div>
-							<Note>click on map squares to turn fog of war on and off</Note>
+							<Note>
+								<p>click on map squares to turn fog of war on and off</p>
+								<p>you can also click and drag to select an area</p>
+							</Note>
 							<button onClick={() => this.fillFog()}>
 								fill fog of war
 							</button>

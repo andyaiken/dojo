@@ -587,10 +587,10 @@ class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
 		});
 
 		// TODO: More content options
-		// Doorway: secret door / concealed door
-		// Stairs: slope
-		// Obstacle: pit / column
-		// Furniture: table / chair / bed / brazier / chest / fireplace
+		//   Doorway: secret door / concealed door
+		//   Stairs: slope
+		//   Obstacle: pit / column
+		//   Furniture: table / chair / bed / brazier / chest / fireplace
 
 		return (
 			<div>

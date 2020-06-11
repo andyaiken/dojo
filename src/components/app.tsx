@@ -1248,6 +1248,12 @@ export default class App extends React.Component<Props, State> {
 			}, () => {
 				if (combat && combat.map && goToMap) {
 					const combatants = combat.combatants.filter(c => (c.type === 'pc') || (c.type === 'companion'));
+					combatants.forEach(c => {
+						c.pending = false;
+						c.active = true;
+						c.defeated = false;
+						c.current = false;
+					});
 
 					// See if we can work out the party ID from the combatants
 					let partyID = null;

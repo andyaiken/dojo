@@ -70,11 +70,11 @@ export default class EncounterSlotCard extends React.Component<Props> {
 						</div>
 					</Note>
 				);
-			}
 
-			options.push(
-				<button key='select' onClick={() => this.props.select(this.props.slot)}>choose a monster</button>
-			);
+				options.push(
+					<button key='select' onClick={() => this.props.select(this.props.slot)}>choose a monster</button>
+				);
+			}
 
 			if (this.props.encounter.waves.length > 0) {
 				let current = this.props.encounter.slots;
