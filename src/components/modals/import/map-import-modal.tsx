@@ -19,6 +19,7 @@ interface Props {
 interface State {
 	map: Map;
 	imageID: string | null;
+	size: number;
 	square: number;
 	imageDimensions: {
 		width: number,
@@ -37,6 +38,7 @@ export default class MapImportModal extends React.Component<Props, State> {
 		this.state = {
 			map: props.map,
 			imageID: null,
+			size: 0,
 			square: 0,
 			imageDimensions: {
 				width: 0,
@@ -75,6 +77,7 @@ export default class MapImportModal extends React.Component<Props, State> {
 						const square = Math.round(Math.min(img.width, img.height) / 10);
 						this.setState({
 							imageID: image.id,
+							size: content.length,
 							square: square,
 							imageDimensions: {
 								width: img.width,
@@ -93,7 +96,9 @@ export default class MapImportModal extends React.Component<Props, State> {
 					// ERROR: Quota exceeded (probably)
 					notification.open({
 						message: 'can\'t upload this image',
-						description: 'not enough storage space; try reducing the resolution or removing unused images'
+						description: 'not enough storage space for this image ('
+							+ Utils.toData(content.length)
+							+ '); try reducing the resolution or removing unused images'
 					});
 				}
 			}
@@ -170,7 +175,10 @@ export default class MapImportModal extends React.Component<Props, State> {
 				content = (
 					<div>
 						<Note>
-						<div className='section'>
+							<div className='section'>
+								this image is {Utils.toData(this.state.size)}
+							</div>
+							<div className='section'>
 								set the name and dimensions of this map image
 							</div>
 							<div className='section'>
