@@ -957,6 +957,15 @@ export default class App extends React.Component<Props, State> {
 		});
 	}
 
+	private declineImportedMap() {
+		if (this.state.drawer.map.items.length > 0) {
+			const tile: MapItem = this.state.drawer.map.items[0];
+			const id = tile.customBackground;
+			localStorage.removeItem('image-' + id);
+		}
+		this.closeDrawer();
+	}
+
 	private removeMap(map: Map) {
 		const index = this.state.maps.indexOf(map);
 		this.state.maps.splice(index, 1);
@@ -2593,12 +2602,17 @@ export default class App extends React.Component<Props, State> {
 					);
 					header = 'import map';
 					footer = (
-						<button onClick={() => this.acceptImportedMap()}>
-							accept map
-						</button>
+						<Row gutter={10}>
+							<Col span={12}>
+								<button onClick={() => this.acceptImportedMap()}>save changes</button>
+							</Col>
+							<Col span={12}>
+								<button onClick={() => this.declineImportedMap()}>discard changes</button>
+							</Col>
+						</Row>
 					);
 					width = '75%';
-					closable = true;
+					closable = false;
 					break;
 				case 'combat-start':
 					content = (
