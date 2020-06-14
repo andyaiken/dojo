@@ -59,7 +59,7 @@ export default class MapImportModal extends React.Component<Props, State> {
 
 				if (this.state.imageID) {
 					// Remove previous image from localStorage
-					localStorage.removeItem('image-' + this.state.imageID);
+					window.localStorage.removeItem('image-' + this.state.imageID);
 				}
 
 				try {
@@ -69,7 +69,7 @@ export default class MapImportModal extends React.Component<Props, State> {
 						data: content
 					};
 					const json = JSON.stringify(image);
-					localStorage.setItem('image-' + image.id, json);
+					window.localStorage.setItem('image-' + image.id, json);
 
 					const img = new Image();
 					img.onload = () => {

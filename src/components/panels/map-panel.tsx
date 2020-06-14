@@ -598,7 +598,7 @@ class MapTile extends React.Component<MapTileProps> {
 
 			let customImage = null;
 			if (this.props.tile.terrain === 'custom') {
-				const data = localStorage.getItem('image-' + this.props.tile.customBackground);
+				const data = window.localStorage.getItem('image-' + this.props.tile.customBackground);
 				if (data) {
 					const image = JSON.parse(data);
 					customImage = (
@@ -947,7 +947,7 @@ class MapToken extends React.Component<MapTokenProps> {
 				let src = '';
 				const c = this.props.combatant as (Combatant & PC) | (Combatant & Monster);
 				if (c && c.portrait) {
-					const data = localStorage.getItem('image-' + c.portrait);
+					const data = window.localStorage.getItem('image-' + c.portrait);
 					if (data) {
 						const image = JSON.parse(data);
 						src = image.data;

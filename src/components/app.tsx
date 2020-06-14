@@ -342,7 +342,16 @@ export default class App extends React.Component<Props, State> {
 			selectedPartyID: null,
 			selectedMonsterGroupID: null,
 			selectedCombatID: null
-		}, () => this.saveAll());
+		}, () => {
+			this.saveAll();
+
+			for (let n = 0; n !== window.localStorage.length; ++n) {
+				const key = window.localStorage.key(n);
+				if (key) {
+					window.localStorage.removeItem(key);
+				}
+			}
+		});
 	}
 
 	private getMonster(monsterName: string, groupName: string) {
@@ -961,7 +970,7 @@ export default class App extends React.Component<Props, State> {
 		if (this.state.drawer.map.items.length > 0) {
 			const tile: MapItem = this.state.drawer.map.items[0];
 			const id = tile.customBackground;
-			localStorage.removeItem('image-' + id);
+			window.localStorage.removeItem('image-' + id);
 		}
 		this.closeDrawer();
 	}

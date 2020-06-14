@@ -52,10 +52,10 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
 
 	private listImages() {
 		const images: SavedImage[] = [];
-		for (let n = 0; n !== localStorage.length; ++n) {
-			const key = localStorage.key(n);
+		for (let n = 0; n !== window.localStorage.length; ++n) {
+			const key = window.localStorage.key(n);
 			if (key && key.startsWith('image-')) {
-				const data = localStorage.getItem(key);
+				const data = window.localStorage.getItem(key);
 				if (data) {
 					const img = JSON.parse(data);
 					images.push({
@@ -89,7 +89,7 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
 
 				try {
 					const json = JSON.stringify(image);
-					localStorage.setItem('image-' + image.id, json);
+					window.localStorage.setItem('image-' + image.id, json);
 
 					this.setState({
 						images: this.listImages()
@@ -108,7 +108,7 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
 	}
 
 	private delete(id: string) {
-		localStorage.removeItem('image-' + id);
+		window.localStorage.removeItem('image-' + id);
 
 		this.setState({
 			images: this.listImages()

@@ -27,7 +27,7 @@ export default class PortraitPanel extends React.Component<Props> {
 		}
 
 		let img = null;
-		const data = localStorage.getItem('image-' + this.props.source.portrait);
+		const data = window.localStorage.getItem('image-' + this.props.source.portrait);
 		if (data) {
 			const image = JSON.parse(data);
 			img = (
@@ -54,7 +54,7 @@ export default class PortraitPanel extends React.Component<Props> {
 			return null;
 		}
 
-		const data = localStorage.getItem('image-' + this.props.source.portrait);
+		const data = window.localStorage.getItem('image-' + this.props.source.portrait);
 		if (!data) {
 			return null;
 		}

@@ -1,7 +1,8 @@
 .card {
-	background-color: #F5F5F5;
+	background-color: $card-background;
+	background-image: radial-gradient($card-background, $card-background-outer);
 	border: 1px solid #656565;
-	margin: 5px;
+	margin: 5px 0;
 
 	.heading {
 		height: 35px;
@@ -48,7 +49,6 @@
 
 	&.pc {
 		border: 1px solid #006500;
-		background-color: beige;
 
 		.heading {
 			background-color: #006500;
@@ -72,7 +72,6 @@
 
 	&.monster {
 		border: 1px solid #650000;
-		background-color: beige;
 
 		.heading {
 			background-color: #650000;
@@ -89,7 +88,6 @@
 
 	&.encounter {
 		border: 1px solid #006565;
-		background-color: beige;
 
 		.heading {
 			background-color: #006565;
@@ -106,7 +104,6 @@
 
 	&.map {
 		border: 1px solid #000065;
-		background-color: beige;
 
 		.heading {
 			background-color: #000065;
@@ -123,7 +120,6 @@
 
 	&.combat {
 		border: 1px solid #650065;
-		background-color: beige;
 
 		.heading {
 			background-color: #650065;
@@ -155,7 +151,7 @@
 		padding: 5px 10px;
 
 		.stats {
-			column-width: 220px;
+			column-width: 218px;
 			column-count: 2;
 
 			.roll-buttons {

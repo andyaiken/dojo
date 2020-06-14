@@ -267,7 +267,7 @@ export default class InitiativeEntry extends React.Component<Props> {
 						</div>
 						{this.getInformationTag()}
 					</div>
-					<div className='content'>
+					<div className='init-entry-content'>
 						{this.getContent()}
 					</div>
 				</div>

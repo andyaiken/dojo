@@ -71,10 +71,10 @@
 	&.edit {
 		overflow-x: visible;
 		overflow-y: visible;
+		background-color: #B8C7F4;
+		background-image: radial-gradient(cornflowerblue, royalblue);
 
 		.grid {
-			border: 1px solid $control-border;
-			background-color: #B8C7F4;
 			margin: 15px auto;
 		}
 

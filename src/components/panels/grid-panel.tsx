@@ -98,7 +98,7 @@ export default class GridPanel extends React.Component<Props, State> {
 				}
 
 				content = (
-					<Row align='top'>
+					<Row align='top' gutter={10}>
 						{items.map(item => (
 							<Col key={items.indexOf(item)} xs={span.xs} sm={span.sm} md={span.md} lg={span.lg} xl={span.xl}>
 								{item}
