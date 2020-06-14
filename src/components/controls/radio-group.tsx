@@ -1,7 +1,13 @@
 import React from 'react';
 
 interface Props {
-	items: { id: string; text: string; details?: JSX.Element | string; disabled?: boolean }[];
+	items: {
+		id: string;
+		text: string;
+		info?: string;
+		details?: JSX.Element | string;
+		disabled?: boolean
+	}[];
 	selectedItemID: string | null;
 	onSelect: (itemID: string) => void;
 }
@@ -33,7 +39,13 @@ export default class RadioGroup extends React.Component<Props> {
 }
 
 interface RadioGroupItemProps {
-	item: { id: string; text: string; details?: JSX.Element | string; disabled?: boolean };
+	item: {
+		id: string;
+		text: string;
+		info?: string;
+		details?: JSX.Element | string;
+		disabled?: boolean
+	};
 	selected: boolean;
 	onSelect: (itemID: string) => void;
 }
@@ -66,7 +78,10 @@ class RadioGroupItem extends React.Component<RadioGroupItemProps> {
 
 			return (
 				<div className={style} onClick={e => this.click(e)}>
-					<div className='radio-item-text'>{this.props.item.text}</div>
+					<div className='radio-item-top'>
+						<div className='radio-item-text'>{this.props.item.text}</div>
+						<div className='radio-item-info'>{this.props.item.info}</div>
+					</div>
 					{details}
 				</div>
 			);

@@ -132,7 +132,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 		});
 	}
 
-	private addToEncounterSlot(monster: Monster) {
+	private addToEncounterSlot(monster: Monster, closeLibrary: boolean = true) {
 		let list = this.state.encounter.slots;
 		if (this.state.selectedWaveID) {
 			const wave = this.state.encounter.waves.find(w => w.id === this.state.selectedWaveID);
@@ -163,7 +163,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 				encounter: this.state.encounter,
 				selectedWaveID: null,
 				selectedSlotID: null,
-				showLibrary: false,
+				showLibrary: !closeLibrary,
 				selectedMonster: null
 			});
 		}
@@ -399,7 +399,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 
 		let left = (
 			<RadioGroup
-				items={monsters.map(m => ({ id: m.id, text: m.name }))}
+				items={monsters.map(m => ({ id: m.id, text: m.name, info: 'cr ' + Utils.challenge(m.challenge) }))}
 				selectedItemID={this.state.selectedMonster ? this.state.selectedMonster.id : null}
 				onSelect={id => this.setSelectedMonster(monsters.find(m => m.id === id) ?? null)}
 			/>
@@ -421,6 +421,34 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 		if (this.state.selectedMonster) {
 			right = (
 				<StatBlockModal source={this.state.selectedMonster} />
+			);
+		}
+
+		let actions = null;
+		if (hasRoles) {
+			actions = (
+				<button
+					className={!!this.state.selectedMonster ? '' : 'disabled'}
+					onClick={() => this.addToEncounterSlot(this.state.selectedMonster as Monster)}
+				>
+					add this monster to the encounter
+				</button>
+			);
+		} else {
+			actions = (
+				<Row gutter={10}>
+					<Col span={12}>
+						<button
+							className={!!this.state.selectedMonster ? '' : 'disabled'}
+							onClick={() => this.addToEncounterSlot(this.state.selectedMonster as Monster, false)}
+						>
+							add this monster to the encounter
+						</button>
+					</Col>
+					<Col span={12}>
+						<button onClick={() => this.setShowLibrary(false)}>close</button>
+					</Col>
+				</Row>
 			);
 		}
 
@@ -449,12 +477,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 					</Row>
 				</div>
 				<div className='drawer-footer'>
-					<button
-						className={!!this.state.selectedMonster ? '' : 'disabled'}
-						onClick={() => this.addToEncounterSlot(this.state.selectedMonster as Monster)}
-					>
-						add this monster to the encounter
-					</button>
+					{actions}
 				</div>
 			</div>
 		);
@@ -615,10 +638,21 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 					<Col span={18} className='scrollable'>
 						{content}
 					</Col>
-					<Drawer visible={this.state.showLibrary} width='50%' closable={false} onClose={() => this.setShowLibrary(false)}>
+					<Drawer
+						visible={this.state.showLibrary}
+						width='50%'
+						closable={false}
+						maskClosable={false}
+						onClose={() => this.setShowLibrary(false)}
+					>
 						{this.getCandidateSection()}
 					</Drawer>
-					<Drawer visible={!this.state.showLibrary && !!this.state.selectedMonster} width='50%' closable={false} onClose={() => this.setSelectedMonster(null)}>
+					<Drawer
+						visible={!this.state.showLibrary && !!this.state.selectedMonster}
+						width='50%'
+						closable={false}
+						onClose={() => this.setSelectedMonster(null)}
+					>
 						{this.getStatblockSection()}
 					</Drawer>
 				</Row>
