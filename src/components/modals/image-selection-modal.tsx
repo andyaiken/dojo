@@ -38,7 +38,9 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
 		parties: [],
 		library: [],
 		maps: [],
-		combats: []
+		combats: [],
+		select: null,
+		cancel: null
 	};
 
 	constructor(props: Props) {
@@ -156,10 +158,24 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
 						}
 					}
 
+					let imgSection = (
+						<img className='section nonselectable-image' src={img.data} alt={img.name} />
+					);
+					if (!!this.props.select) {
+						imgSection = (
+							<img
+								className='section selectable-image'
+								src={img.data}
+								alt={img.name}
+								onClick={() => this.props.select ? this.props.select(img.id) : null}
+							/>
+						);
+					}
+
 					return (
 						<div key={img.id} className='group-panel'>
 							<div className='subheading'>{img.name}</div>
-							<img className='section selectable-image' src={img.data} alt={img.name} onClick={() => this.props.select(img.id)} />
+							{imgSection}
 							{deleteBtn}
 						</div>
 					);
@@ -182,6 +198,13 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
 				);
 			}
 
+			let footer = null;
+			if (!!this.props.cancel) {
+				footer = (
+					<button onClick={() => this.props.cancel ? this.props.cancel() : null}>cancel</button>
+				);
+			}
+
 			return (
 				<div className='full-height'>
 					<div className='drawer-header'><div className='app-title'>select image</div></div>
@@ -201,7 +224,7 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
 						</div>
 					</div>
 					<div className='drawer-footer'>
-						<button onClick={() => this.props.cancel()}>cancel</button>
+						{footer}
 					</div>
 				</div>
 			);

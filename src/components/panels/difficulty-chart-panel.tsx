@@ -139,17 +139,17 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
 
 				xpThresholds = (
 					<div className='table'>
-						<div>
-							<div className='cell four easy'><b>easy</b></div>
-							<div className='cell four medium'><b>medium</b></div>
-							<div className='cell four hard'><b>hard</b></div>
-							<div className='cell four deadly'><b>deadly</b></div>
+						<div className='table-row'>
+							<div className='table-cell easy'><b>easy</b></div>
+							<div className='table-cell medium'><b>medium</b></div>
+							<div className='table-cell hard'><b>hard</b></div>
+							<div className='table-cell deadly'><b>deadly</b></div>
 						</div>
-						<div>
-							<div className='cell four'>{xpEasy} xp</div>
-							<div className='cell four'>{xpMedium} xp</div>
-							<div className='cell four'>{xpHard} xp</div>
-							<div className='cell four'>{xpDeadly} xp</div>
+						<div className='table-row'>
+							<div className='table-cell'>{xpEasy} xp</div>
+							<div className='table-cell'>{xpMedium} xp</div>
+							<div className='table-cell'>{xpHard} xp</div>
+							<div className='table-cell'>{xpDeadly} xp</div>
 						</div>
 					</div>
 				);

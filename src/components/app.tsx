@@ -251,7 +251,9 @@ export default class App extends React.Component<Props, State> {
 					this.setState({
 						sidebar: {
 							type: 'reference',
-							subtype: 'skills'
+							subtype: 'skills',
+							selectedPartyID: null,
+							selectedMonsterID: null
 						}
 					});
 					break;
@@ -2341,12 +2343,35 @@ export default class App extends React.Component<Props, State> {
 				);
 				break;
 			case 'reference':
+				const monsters: Monster[] = [];
+				this.state.library.forEach(g => {
+					g.monsters.forEach(m => monsters.push(m));
+				});
+				Utils.sort(monsters);
 				content = (
 					<ReferenceSidebar
 						view={this.state.sidebar.subtype}
 						setView={view => {
 							const sidebar = this.state.sidebar;
 							sidebar.subtype = view;
+							this.setState({
+								sidebar: sidebar
+							});
+						}}
+						selectedPartyID={this.state.sidebar.selectedPartyID}
+						parties={this.state.parties}
+						selectPartyID={id => {
+							const sidebar = this.state.sidebar;
+							sidebar.selectedPartyID = id;
+							this.setState({
+								sidebar: sidebar
+							});
+						}}
+						selectedMonsterID={this.state.sidebar.selectedMonsterID}
+						monsters={monsters}
+						selectMonsterID={id => {
+							const sidebar = this.state.sidebar;
+							sidebar.selectedMonsterID = id;
 							this.setState({
 								sidebar: sidebar
 							});

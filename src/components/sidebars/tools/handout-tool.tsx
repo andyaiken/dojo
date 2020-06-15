@@ -109,7 +109,6 @@ export default class HandoutTool extends React.Component<Props, State> {
 
 			return (
 				<div>
-					<div className='subheading'>handout</div>
 					{image}
 					{this.getPlayerView()}
 				</div>

@@ -76,7 +76,6 @@ export default class ToolsSidebar extends React.Component<Props> {
 						<Selector
 							options={options}
 							selectedID={this.props.view}
-							itemsPerRow={4}
 							onSelect={optionID => this.props.setView(optionID)}
 						/>
 					</div>

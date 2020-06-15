@@ -12,6 +12,7 @@
 			background-color: transparent;
 		}
 
+		&.selected,
 		&:hover {
 			background-color: $highlight01;
 		}

@@ -100,40 +100,56 @@ hr {
 	background-color: $background;
 	border: 1px solid $control-border;
 	margin: 8px 0;
-	padding: 3px 0;
 
-	.cell {
-		display: inline-block;
-		padding: 2px 0;
-		text-align: center;
+	.table-row {
+		display: flex;
+		align-items: center;
+		padding: 5px;
 
-		&.three {
-			width: calc((100% - 1px) / 3);
-		}
+		.table-cell {
+			flex-grow: 1;
+			flex-shrink: 1;
+			flex-basis: 0;
+			text-align: center;
 
-		&.four {
-			width: calc((100% - 1px) / 4);
-		}
+			&.small {
+				flex-grow: 0;
+				flex-shrink: 0;
+				flex-basis: 20px;
+			}
 
-		&.easy {
-			padding-bottom: 4px;
-			border-bottom: 3px solid green;
+			&.l {
+				text-align: left;
+			}
+
+			&.r {
+				text-align: right;
+			}
+
+			&.easy {
+				padding-bottom: 4px;
+				border-bottom: 3px solid green;
+			}
+		
+			&.medium {
+				padding-bottom: 4px;
+				border-bottom: 3px solid orange;
+			}
+		
+			&.hard {
+				padding-bottom: 4px;
+				border-bottom: 3px solid red;
+			}
+		
+			&.deadly {
+				padding-bottom: 4px;
+				border-bottom: 3px solid black;
+			}
 		}
-	
-		&.medium {
-			padding-bottom: 4px;
-			border-bottom: 3px solid orange;
-		}
-	
-		&.hard {
-			padding-bottom: 4px;
-			border-bottom: 3px solid red;
-		}
-	
-		&.deadly {
-			padding-bottom: 4px;
-			border-bottom: 3px solid black;
-		}
+	}
+
+	&.alternating .table-row:nth-child(even) {
+		background-color: $highlight01;
 	}
 }
 

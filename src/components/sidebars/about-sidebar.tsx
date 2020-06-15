@@ -173,8 +173,6 @@ export default class AboutSidebar extends React.Component<Props, State> {
 							library={this.props.library}
 							maps={this.props.maps}
 							combats={this.props.combats}
-							select={() => null}
-							cancel={() => this.toggleImages()}
 						/>
 					</Drawer>
 				</div>

@@ -1,16 +1,24 @@
-import { LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
 import React from 'react';
-import Showdown from 'showdown';
+
+import { Monster } from '../../models/monster';
+import { Party } from '../../models/party';
 
 import Selector from '../controls/selector';
-
-const showdown = new Showdown.Converter();
-showdown.setOption('tables', true);
+import MarkdownReference from './reference/markdown-reference';
+import MonsterReference from './reference/monster-reference';
+import PartyReference from './reference/party-reference';
 
 interface Props {
 	view: string;
 	setView: (view: string) => void;
+	// Party
+	selectedPartyID: string | null;
+	parties: Party[];
+	selectPartyID: (id: string) => void;
+	// Monster
+	selectedMonsterID: string | null;
+	monsters: Monster[];
+	selectMonsterID: (id: string) => void;
 }
 
 export default class ReferenceSidebar extends React.Component<Props> {
@@ -28,6 +36,14 @@ export default class ReferenceSidebar extends React.Component<Props> {
 				{
 					id: 'actions',
 					text: 'actions'
+				},
+				{
+					id: 'party',
+					text: 'party'
+				},
+				{
+					id: 'monster',
+					text: 'monster'
 				}
 			];
 
@@ -35,17 +51,35 @@ export default class ReferenceSidebar extends React.Component<Props> {
 			switch (this.props.view) {
 				case 'skills':
 					content = (
-						<ReferenceContentPanel key='skills' filename='/dojo/data/skills.md' />
+						<MarkdownReference key='skills' filename='/dojo/data/skills.md' />
 					);
 					break;
 				case 'conditions':
 					content = (
-						<ReferenceContentPanel key='conditions' filename='/dojo/data/conditions.md' />
+						<MarkdownReference key='conditions' filename='/dojo/data/conditions.md' />
 					);
 					break;
 				case 'actions':
 					content = (
-						<ReferenceContentPanel key='actions' filename='/dojo/data/actions.md' />
+						<MarkdownReference key='actions' filename='/dojo/data/actions.md' />
+					);
+					break;
+				case 'party':
+					content = (
+						<PartyReference
+							selectedPartyID={this.props.selectedPartyID}
+							parties={this.props.parties}
+							selectPartyID={id => this.props.selectPartyID(id)}
+						/>
+					);
+					break;
+				case 'monster':
+					content = (
+						<MonsterReference
+							selectedMonsterID={this.props.selectedMonsterID}
+							monsters={this.props.monsters}
+							selectMonsterID={id => this.props.selectMonsterID(id)}
+						/>
 					);
 					break;
 			}
@@ -57,7 +91,6 @@ export default class ReferenceSidebar extends React.Component<Props> {
 						<Selector
 							options={options}
 							selectedID={this.props.view}
-							itemsPerRow={3}
 							onSelect={optionID => this.props.setView(optionID)}
 						/>
 					</div>
@@ -65,49 +98,6 @@ export default class ReferenceSidebar extends React.Component<Props> {
 						{content}
 					</div>
 				</div>
-			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
-		}
-	}
-}
-
-interface ReferenceContentPanelProps {
-	filename: string;
-}
-
-interface ReferenceContentPanelState {
-	source: string | null;
-}
-
-class ReferenceContentPanel extends React.Component<ReferenceContentPanelProps, ReferenceContentPanelState> {
-	constructor(props: ReferenceContentPanelProps) {
-		super(props);
-
-		this.state = {
-			source: null
-		};
-	}
-
-	private async fetchData() {
-		const response = await fetch(this.props.filename);
-		const text = await response.text();
-		this.setState({
-			source: text
-		});
-	}
-
-	public render() {
-		try {
-			if (!this.state.source) {
-				this.fetchData();
-			}
-
-			return (
-				<Spin spinning={this.state.source === null} indicator={<LoadingOutlined style={{ fontSize: 20, marginTop: 100 }} />}>
-					<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.state.source || '') }} />
-				</Spin>
 			);
 		} catch (ex) {
 			console.error(ex);

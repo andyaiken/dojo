@@ -351,12 +351,14 @@ button.danger {
 	.selector-row {
 		display: flex;
 		align-items: center;
+		height: 24px;
 
 		.option {
 			flex-basis: 0;
 			flex-grow: 1;
 			flex-shrink: 1;
 			text-align: center;
+			height: 24px;
 			margin: 1px;
 			padding: 3px;
 			overflow-x: hidden;

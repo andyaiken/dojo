@@ -689,7 +689,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 		return (
 			<Note>
 				<div className='section'>
-					select a pc or monster from the <b>initiative order</b> list to see its details here
+					select a pc or monster from the <b>initiative order</b> list (in the middle column) to see its details here
 				</div>
 			</Note>
 		);
@@ -896,19 +896,44 @@ export default class CombatScreen extends React.Component<Props, State> {
 			const initList = this.orderCombatants(activeCombatants)
 				.map(c => this.createCombatantRow(c, false));
 
+			let notOnMap = null;
+			if (!current && this.props.combat.map) {
+				const missing = activeCombatants
+					.filter(c => this.props.combat.map && !this.props.combat.map.items.find(i => i.id === c.id))
+					.map(c => {
+						const style = this.state.addingToMapID === c.id ? 'group-panel clickable selected' : 'group-panel clickable';
+						return (
+							<div key={c.id} className={style} onClick={() => this.setAddingToMapID(c.id)}>
+								{c.displayName}
+							</div>
+						);
+					});
+				if (missing.length > 0) {
+					notOnMap = (
+						<div>
+							<Note>
+								<div className='section'>these combatants have not yet been placed on the map (which you'll find in the middle column)</div>
+								<div className='section'>to place one on the map, select it and then click on a map square</div>
+							</Note>
+							{missing}
+						</div>
+					);
+				}
+			}
+
 			if (!current) {
 				initList.unshift(
 					/* tslint:disable:max-line-length */
 					<Note key='init-help'>
 						<div className='section'>these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right)</div>
 						<div className='section'>they are listed in initiative order (with the highest initiative score at the top of the list, and the lowest at the bottom)</div>
-						<div className='section'>when you're ready to begin the encounter, press the <b>start combat</b> button at the top left</div>
 					</Note>
 					/* tslint:enable:max-line-length */
 				);
 
 				current = (
 					<Note>
+						<div className='section'>when you're ready to begin the encounter, press the <b>start combat</b> button (above)</div>
 						<div className='section'>the current initiative holder will be displayed here</div>
 					</Note>
 				);
@@ -1075,10 +1100,15 @@ export default class CombatScreen extends React.Component<Props, State> {
 						</Col>
 						<Col span={sideWidth} className='scrollable'>
 							<GridPanel
+								heading='not on the map'
+								content={[notOnMap]}
+								columns={1}
+								showToggle={true}
+							/>
+							<GridPanel
 								heading='selected combatant'
 								content={[this.getSelectedCombatant()]}
 								columns={1}
-								showToggle={false}
 							/>
 						</Col>
 					</Row>
