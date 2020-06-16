@@ -49,28 +49,7 @@ export default class InitiativeEntry extends React.Component<Props> {
 	}
 
 	private getContent() {
-		if (this.props.combatant.pending) {
-			return (
-				<div>
-					<NumberSpin
-						value={this.props.combatant.initiative ?? 10}
-						onNudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
-					/>
-					<button onClick={e => { e.stopPropagation(); this.props.makeActive(this.props.combatant); }}>add to encounter</button>
-				</div>
-			);
-		}
-
 		const notes = [];
-
-		if (this.props.combatant.type === 'pc') {
-			const pc = this.props.combatant as (Combatant & PC);
-			if (pc.player) {
-				notes.push(
-					<div key='player' className='section'>{pc.player}</div>
-				);
-			}
-		}
 
 		// HP, AC stats
 		if ((this.props.combatant.type === 'monster') && !this.props.minimal) {
@@ -241,7 +220,7 @@ export default class InitiativeEntry extends React.Component<Props> {
 
 	public render() {
 		try {
-			let style = 'initiative-list-item ' + this.props.combatant.type;
+			let style = 'initiative-list-item clickable ' + this.props.combatant.type;
 			if (this.props.combatant.current) {
 				style += ' current';
 			}
@@ -269,6 +248,84 @@ export default class InitiativeEntry extends React.Component<Props> {
 					</div>
 					<div className='init-entry-content'>
 						{this.getContent()}
+					</div>
+				</div>
+			);
+		} catch (ex) {
+			console.error(ex);
+			return <div className='render-error'/>;
+		}
+	}
+}
+
+interface PendingProps {
+	combatant: Combatant;
+	nudgeValue: (combatant: Combatant, field: string, delta: number) => void;
+	makeActive: (combatant: Combatant) => void;
+}
+
+export class PendingInitiativeEntry extends React.Component<PendingProps> {
+	private makeActive(e: React.MouseEvent) {
+		e.stopPropagation();
+		this.props.makeActive(this.props.combatant);
+	}
+
+	public render() {
+		try {
+			let portrait = null;
+			const pcOrMonster = this.props.combatant as (Combatant & Monster) | (Combatant & PC);
+			if (pcOrMonster.portrait) {
+				portrait = <PortraitPanel source={pcOrMonster} inline={true} />;
+			}
+
+			return (
+				<div className={'initiative-list-item ' + this.props.combatant.type}>
+					<div className='header'>
+						{portrait}
+						<div className='name'>
+							{this.props.combatant.displayName || 'combatant'}
+						</div>
+					</div>
+					<div className='init-entry-content'>
+						<NumberSpin
+							value={this.props.combatant.initiative ?? 10}
+							onNudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
+						/>
+						<button onClick={e => this.makeActive(e)}>add to encounter</button>
+					</div>
+				</div>
+			);
+		} catch (ex) {
+			console.error(ex);
+			return <div className='render-error'/>;
+		}
+	}
+}
+
+interface NotOnMapProps {
+	combatant: Combatant;
+	addToMap: () => void;
+}
+
+export class NotOnMapInitiativeEntry extends React.Component<NotOnMapProps> {
+	public render() {
+		try {
+			let portrait = null;
+			const pcOrMonster = this.props.combatant as (Combatant & Monster) | (Combatant & PC);
+			if (pcOrMonster.portrait) {
+				portrait = <PortraitPanel source={pcOrMonster} inline={true} />;
+			}
+
+			return (
+				<div className={'initiative-list-item ' + this.props.combatant.type}>
+					<div className='header'>
+						{portrait}
+						<div className='name'>
+							{this.props.combatant.displayName || 'combatant'}
+						</div>
+					</div>
+					<div className='init-entry-content'>
+						<button onClick={() => this.props.addToMap()}>place on map</button>
 					</div>
 				</div>
 			);

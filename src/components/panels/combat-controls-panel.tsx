@@ -342,6 +342,17 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 			return null;
 		});
 
+		let apply = 'apply damage';
+		if (this.props.combatants.length === 1) {
+			const degree = this.state.damageMultipliers[this.props.combatants[0].id];
+			if (degree === 0.5) {
+				apply = 'apply half damage';
+			}
+			if (degree === 2) {
+				apply = 'apply double damage';
+			}
+		}
+
 		const degreeOptions = [
 			{ id: 'half', text: 'half' },
 			{ id: 'normal', text: 'normal' },
@@ -421,7 +432,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 					downEnabled={this.state.damageValue > 0}
 					onNudgeValue={delta => this.nudgeDamage(delta)}
 				/>
-				<button className={this.state.damageValue === 0 ? 'disabled' : ''} onClick={() => this.damage()}>apply damage</button>
+				<button className={this.state.damageValue === 0 ? 'disabled' : ''} onClick={() => this.damage()}>{apply}</button>
 				{degrees}
 				{defeatedBtn}
 				<hr/>

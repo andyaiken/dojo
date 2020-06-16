@@ -25,7 +25,7 @@ import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
 import CombatControlsPanel from '../panels/combat-controls-panel';
 import GridPanel from '../panels/grid-panel';
-import InitiativeEntry from '../panels/initiative-entry';
+import InitiativeEntry, { NotOnMapInitiativeEntry, PendingInitiativeEntry } from '../panels/initiative-entry';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 import Popout from '../panels/popout';
@@ -848,14 +848,9 @@ export default class CombatScreen extends React.Component<Props, State> {
 				.forEach(combatant => {
 					if (combatant.pending) {
 						pending.push(
-							<InitiativeEntry
+							<PendingInitiativeEntry
 								key={combatant.id}
 								combatant={combatant}
-								combat={this.props.combat}
-								selected={this.state.selectedItemIDs.includes(combatant.id)}
-								minimal={false}
-								select={(c, ctrl) => this.toggleItemSelection(c.id, ctrl)}
-								addToMap={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
 								nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
 								makeActive={c => this.props.makeActive([c])}
 							/>
@@ -901,11 +896,12 @@ export default class CombatScreen extends React.Component<Props, State> {
 				const missing = activeCombatants
 					.filter(c => this.props.combat.map && !this.props.combat.map.items.find(i => i.id === c.id))
 					.map(c => {
-						const style = this.state.addingToMapID === c.id ? 'group-panel clickable selected' : 'group-panel clickable';
 						return (
-							<div key={c.id} className={style} onClick={() => this.setAddingToMapID(c.id)}>
-								{c.displayName}
-							</div>
+							<NotOnMapInitiativeEntry
+								key={c.id}
+								combatant={c}
+								addToMap={() => this.setAddingToMapID(c.id)}
+							/>
 						);
 					});
 				if (missing.length > 0) {
@@ -913,7 +909,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 						<div>
 							<Note>
 								<div className='section'>these combatants have not yet been placed on the map (which you'll find in the middle column)</div>
-								<div className='section'>to place one on the map, select it and then click on a map square</div>
+								<div className='section'>to place one on the map, click the <b>place on map</b> button and then click on a map square</div>
 							</Note>
 							{missing}
 						</div>
