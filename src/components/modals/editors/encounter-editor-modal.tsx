@@ -19,7 +19,7 @@ import DifficultyChartPanel from '../../panels/difficulty-chart-panel';
 import FilterPanel from '../../panels/filter-panel';
 import GridPanel from '../../panels/grid-panel';
 import Note from '../../panels/note';
-import StatBlockModal from '../viewers/stat-block-modal';
+import StatBlockModal from '../stat-block-modal';
 
 interface Props {
 	encounter: Encounter;

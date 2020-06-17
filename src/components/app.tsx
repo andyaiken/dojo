@@ -29,14 +29,14 @@ import MonsterImportModal from './modals/import/monster-import-modal';
 import PartyImportModal from './modals/import/party-import-modal';
 import PCImportModal from './modals/import/pc-import-modal';
 import LeaderboardModal from './modals/leaderboard-modal';
-import EncounterModal from './modals/viewers/encounter-modal';
+import StatBlockModal from './modals/stat-block-modal';
 import MapModal from './modals/viewers/map-modal';
-import StatBlockModal from './modals/viewers/stat-block-modal';
 import PageFooter from './panels/page-footer';
 import PageHeader from './panels/page-header';
 import CombatListScreen from './screens/combat-list-screen';
 import CombatScreen from './screens/combat-screen';
 import EncounterListScreen from './screens/encounter-list-screen';
+import EncounterScreen from './screens/encounter-screen';
 import HomeScreen from './screens/home-screen';
 import MapListScreen from './screens/map-list-screen';
 import MonsterGroupListScreen from './screens/monster-group-list-screen';
@@ -65,6 +65,7 @@ interface State {
 
 	selectedPartyID: string | null;
 	selectedMonsterGroupID: string | null;
+	selectedEncounterID: string | null;
 	selectedCombatID: string | null;
 }
 
@@ -190,6 +191,7 @@ export default class App extends React.Component<Props, State> {
 			combats: combats,
 			selectedPartyID: null,
 			selectedMonsterGroupID: null,
+			selectedEncounterID: null,
 			selectedCombatID: null
 		};
 	}
@@ -286,6 +288,12 @@ export default class App extends React.Component<Props, State> {
 	private selectMonsterGroup(group: MonsterGroup | null) {
 		this.setState({
 			selectedMonsterGroupID: group ? group.id : null
+		});
+	}
+
+	private selectEncounter(encounter: Encounter | null) {
+		this.setState({
+			selectedEncounterID: encounter ? encounter.id : null
 		});
 	}
 
@@ -819,16 +827,6 @@ export default class App extends React.Component<Props, State> {
 
 	//#region Encounter screen
 
-	private viewEncounter(encounter: Encounter) {
-		const copy = JSON.parse(JSON.stringify(encounter));
-		this.setState({
-			drawer: {
-				type: 'encounter-view',
-				encounter: copy
-			}
-		});
-	}
-
 	private addEncounter(templateName: string | null) {
 		const encounter = Factory.createEncounter();
 		encounter.name = 'new encounter';
@@ -887,7 +885,8 @@ export default class App extends React.Component<Props, State> {
 		this.state.encounters.splice(index, 1);
 
 		this.setState({
-			encounters: this.state.encounters
+			encounters: this.state.encounters,
+			selectedEncounterID: null
 		});
 	}
 
@@ -2138,25 +2137,24 @@ export default class App extends React.Component<Props, State> {
 							nudgeValue={(pc, type, delta) => this.nudgeValue(pc, type, delta)}
 						/>
 					);
-				} else {
-					return (
-						<PartyListScreen
-							parties={this.state.parties}
-							encounters={this.state.encounters}
-							addParty={() => this.addParty()}
-							importParty={() => this.importParty()}
-							selectParty={party => this.selectParty(party)}
-							deleteParty={party => this.removeParty(party)}
-							runEncounter={(party, encounterID) => {
-								const encounter = this.state.encounters.find(enc => enc.id === encounterID);
-								if (encounter) {
-									this.createCombat(encounter, party.id);
-								}
-							}}
-							openStatBlock={pc => this.setState({drawer: { type: 'statblock', source: pc }})}
-						/>
-					);
 				}
+				return (
+					<PartyListScreen
+						parties={this.state.parties}
+						encounters={this.state.encounters}
+						addParty={() => this.addParty()}
+						importParty={() => this.importParty()}
+						selectParty={party => this.selectParty(party)}
+						deleteParty={party => this.removeParty(party)}
+						runEncounter={(party, encounterID) => {
+							const encounter = this.state.encounters.find(enc => enc.id === encounterID);
+							if (encounter) {
+								this.createCombat(encounter, party.id);
+							}
+						}}
+						openStatBlock={pc => this.setState({drawer: { type: 'statblock', source: pc }})}
+					/>
+				);
 			case 'library':
 				if (this.state.selectedMonsterGroupID) {
 					return (
@@ -2177,29 +2175,42 @@ export default class App extends React.Component<Props, State> {
 							moveToGroup={(monster, groupID) => this.moveToGroup(monster, groupID)}
 						/>
 					);
-				} else {
+				}
+				return (
+					<MonsterGroupListScreen
+						library={this.state.library}
+						hasMonsters={hasMonsters}
+						addMonsterGroup={() => this.addMonsterGroup()}
+						importMonsterGroup={() => this.importMonsterGroup()}
+						selectMonsterGroup={group => this.selectMonsterGroup(group)}
+						deleteMonsterGroup={group => this.removeMonsterGroup(group)}
+						addOpenGameContent={() => this.addOpenGameContent()}
+						openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
+						openDemographics={group => this.openDemographics(group)}
+					/>
+				);
+			case 'encounters':
+				if (this.state.selectedEncounterID) {
 					return (
-						<MonsterGroupListScreen
-							library={this.state.library}
-							hasMonsters={hasMonsters}
-							addMonsterGroup={() => this.addMonsterGroup()}
-							importMonsterGroup={() => this.importMonsterGroup()}
-							selectMonsterGroup={group => this.selectMonsterGroup(group)}
-							deleteMonsterGroup={group => this.removeMonsterGroup(group)}
-							addOpenGameContent={() => this.addOpenGameContent()}
-							openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
-							openDemographics={group => this.openDemographics(group)}
+						<EncounterScreen
+							encounter={this.state.encounters.find(e => e.id === this.state.selectedEncounterID) as Encounter}
+							parties={this.state.parties}
+							edit={encounter => this.editEncounter(encounter)}
+							delete={encounter => this.removeEncounter(encounter)}
+							run={(encounter, partyID) => this.createCombat(encounter, partyID)}
+							getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
+							changeValue={(source, field, value) => this.changeValue(source, field, value)}
+							goBack={() => this.selectEncounter(null)}
 						/>
 					);
 				}
-			case 'encounters':
 				return (
 					<EncounterListScreen
 						encounters={this.state.encounters}
 						parties={this.state.parties}
 						hasMonsters={hasMonsters}
 						addEncounter={templateID => this.addEncounter(templateID)}
-						viewEncounter={encounter => this.viewEncounter(encounter)}
+						viewEncounter={encounter => this.selectEncounter(encounter)}
 						editEncounter={encounter => this.editEncounter(encounter)}
 						deleteEncounter={encounter => this.removeEncounter(encounter)}
 						runEncounter={(encounter, partyID) => this.createCombat(encounter, partyID)}
@@ -2264,20 +2275,19 @@ export default class App extends React.Component<Props, State> {
 							onRollDice={(count, sides, constant) => this.setDice(count, sides, constant)}
 						/>
 					);
-				} else {
-					return (
-						<CombatListScreen
-							combats={this.state.combats}
-							hasPCs={hasPCs}
-							hasMonsters={hasMonsters}
-							createCombat={() => this.createCombat()}
-							resumeCombat={combat => this.resumeCombat(combat)}
-							deleteCombat={combat => this.endCombat(combat)}
-							openStatBlock={combatant => this.setState({drawer: { type: 'statblock', source: combatant }})}
-							setView={view => this.setView(view)}
-						/>
-					);
 				}
+				return (
+					<CombatListScreen
+						combats={this.state.combats}
+						hasPCs={hasPCs}
+						hasMonsters={hasMonsters}
+						createCombat={() => this.createCombat()}
+						resumeCombat={combat => this.resumeCombat(combat)}
+						deleteCombat={combat => this.endCombat(combat)}
+						openStatBlock={combatant => this.setState({drawer: { type: 'statblock', source: combatant }})}
+						setView={view => this.setView(view)}
+					/>
+				);
 		}
 
 		return null;
@@ -2557,16 +2567,6 @@ export default class App extends React.Component<Props, State> {
 					header = 'demographics';
 					closable = true;
 					break;
-				case 'encounter-view':
-					content = (
-						<EncounterModal
-							encounter={this.state.drawer.encounter}
-							getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
-						/>
-					);
-					header = this.state.drawer.encounter.name;
-					closable = true;
-					break;
 				case 'encounter-edit':
 					content = (
 						<EncounterEditorModal
@@ -2590,26 +2590,26 @@ export default class App extends React.Component<Props, State> {
 					width = '75%';
 					break;
 				case 'map-view':
-					content = (
-						<MapModal
-							map={this.state.drawer.map}
-							fog={this.state.drawer.fog}
-							partyID={this.state.drawer.partyID}
-							combatants={this.state.drawer.combatants}
-							parties={this.state.parties}
-							startCombat={(partyID, map, fog, combatants) => this.createCombat(null, partyID, map, fog, combatants)}
-							toggleTag={(combatants, tag) => this.toggleTag(combatants, tag)}
-							toggleCondition={(combatants, condition) => this.toggleCondition(combatants, condition)}
-							toggleHidden={combatants => this.toggleHidden(combatants)}
-							quickAddCondition={(combatants, condition) => this.quickAddCondition(combatants, condition)}
-							removeCondition={(combatant, condition) => this.removeCondition(combatant, condition)}
-						/>
-					);
-					header = this.state.drawer.map.name;
-					width = '75%';
-					closable = true;
-					break;
-				case 'map-edit':
+						content = (
+							<MapModal
+								map={this.state.drawer.map}
+								fog={this.state.drawer.fog}
+								partyID={this.state.drawer.partyID}
+								combatants={this.state.drawer.combatants}
+								parties={this.state.parties}
+								startCombat={(partyID, map, fog, combatants) => this.createCombat(null, partyID, map, fog, combatants)}
+								toggleTag={(combatants, tag) => this.toggleTag(combatants, tag)}
+								toggleCondition={(combatants, condition) => this.toggleCondition(combatants, condition)}
+								toggleHidden={combatants => this.toggleHidden(combatants)}
+								quickAddCondition={(combatants, condition) => this.quickAddCondition(combatants, condition)}
+								removeCondition={(combatant, condition) => this.removeCondition(combatant, condition)}
+							/>
+						);
+						header = this.state.drawer.map.name;
+						width = '75%';
+						closable = true;
+						break;
+					case 'map-edit':
 					content = (
 						<MapEditorModal
 							map={this.state.drawer.map}

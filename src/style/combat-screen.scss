@@ -27,7 +27,7 @@
 }
 
 .initiative-list-item {
-	border: 1px solid $control-border;
+	border: 0px solid $control-border;
 	border-left-width: 5px;
 	margin: 5px 0;
 
@@ -35,14 +35,10 @@
 		cursor: pointer;
 	}
 
-	&:hover,
+	&:hover ,
 	&.highlight,
 	&.current {
 		border-color: $highlight;
-
-		.header {
-			background-color: $highlight01;
-		}
 	}
 
 	&.defeated {
@@ -52,6 +48,7 @@
 	.header {
 		height: 35px;
 		padding: 5px 8px;
+		background-color: $highlight01;
 		display: flex;
 		align-items: center;
 

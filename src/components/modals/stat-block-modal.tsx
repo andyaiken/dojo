@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { Combatant } from '../../../models/combat';
-import { Monster } from '../../../models/monster';
-import { PC } from '../../../models/party';
+import { Combatant } from '../../models/combat';
+import { Monster } from '../../models/monster';
+import { PC } from '../../models/party';
 
-import MonsterCard from '../../cards/monster-card';
-import PCCard from '../../cards/pc-card';
+import MonsterCard from '../cards/monster-card';
+import PCCard from '../cards/pc-card';
 
 interface Props {
 	source: PC | Monster | (Combatant & PC) | (Combatant & Monster) | null;

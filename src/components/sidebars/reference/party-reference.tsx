@@ -82,10 +82,10 @@ export default class PartyReference extends React.Component<Props> {
 			const per = activePCs.filter(pc => pc.passivePerception === n).map(pc => pc.name).join(', ');
 			rows.push(
 				<div key={n} className='table-row'>
-					<div className='table-cell small l'>{n}</div>
-					<div className='table-cell'>{ins}</div>
-					<div className='table-cell'>{inv}</div>
-					<div className='table-cell'>{per}</div>
+					<div className='table-cell l small'>{n}</div>
+					<div className='table-cell l'>{ins}</div>
+					<div className='table-cell l'>{inv}</div>
+					<div className='table-cell l'>{per}</div>
 				</div>
 			);
 		}
@@ -94,15 +94,13 @@ export default class PartyReference extends React.Component<Props> {
 			<div>
 				<hr/>
 				<div className='section subheading'>
-					average level
-				</div>
-				<div className='section'>
-					{level}
-				</div>
-				<div className='section subheading'>
 					languages
 				</div>
 				<div className='table alternating'>
+					<div className='table-row'>
+						<div className='table-cell l'><b>language</b></div>
+						<div className='table-cell l'><b>spoken by</b></div>
+					</div>
 					{languages}
 				</div>
 				<div className='section subheading'>
@@ -110,12 +108,18 @@ export default class PartyReference extends React.Component<Props> {
 				</div>
 				<div className='table alternating'>
 					<div className='table-row'>
-						<div className='table-cell small l' />
-						<div className='table-cell'><b>insight</b></div>
-						<div className='table-cell'><b>invest.</b></div>
-						<div className='table-cell'><b>percep.</b></div>
+						<div className='table-cell l small' />
+						<div className='table-cell l'><b>insight</b></div>
+						<div className='table-cell l'><b>investigation</b></div>
+						<div className='table-cell l'><b>perception</b></div>
 					</div>
 					{rows}
+				</div>
+				<div className='section subheading'>
+					average level
+				</div>
+				<div className='section'>
+					{level}
 				</div>
 			</div>
 		);
