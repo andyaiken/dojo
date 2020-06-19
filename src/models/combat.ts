@@ -46,6 +46,7 @@ export interface Combat {
 export interface Combatant {
 	id: string;
 	type: string;
+	faction: 'foe' | 'neutral' | 'ally';
 	displayName: string;
 	displaySize: string;
 	showOnMap: boolean;     // Whether or not the combatant is hidden

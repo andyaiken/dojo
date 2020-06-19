@@ -763,7 +763,7 @@ class MonsterSection extends React.Component<MonsterSectionProps, MonsterSection
 	constructor(props: MonsterSectionProps) {
 		super(props);
 		this.state = {
-			view: 'init'
+			view: 'initiative'
 		};
 	}
 
@@ -814,7 +814,7 @@ class MonsterSection extends React.Component<MonsterSectionProps, MonsterSection
 				return null;
 			}
 
-			const options = ['init', 'hit points', 'names', 'count'].map(s => {
+			const options = ['initiative', 'hit points', 'names', 'advanced'].map(s => {
 				return { id: s, text: s };
 			});
 
@@ -1009,11 +1009,18 @@ class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
 
 	public getCountSection() {
 		return (
-			<NumberSpin
-				value={this.props.encounterSlot.count}
-				downEnabled={this.props.encounterSlot.count > 1}
-				onNudgeValue={delta => this.props.nudgeCount(this.props.encounterSlot.id, delta)}
-			/>
+			<div>
+				<NumberSpin
+					value={'count: ' + this.props.encounterSlot.count}
+					downEnabled={this.props.encounterSlot.count > 1}
+					onNudgeValue={delta => this.props.nudgeCount(this.props.encounterSlot.id, delta)}
+				/>
+				<Dropdown
+					options={['foe', 'neutral', 'ally'].map(o => ({ id: o, text: 'faction: ' + o }))}
+					selectedID={this.props.encounterSlot.faction}
+					onSelect={id => this.props.changeValue(this.props.encounterSlot, 'faction', id)}
+				/>
+			</div>
 		);
 	}
 
@@ -1021,7 +1028,7 @@ class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
 		let header = this.props.encounterSlot.monsterName;
 		let content = null;
 		switch (this.props.view) {
-			case 'init':
+			case 'initiative':
 				header += ' (1d20 ' + Utils.modifier(this.props.monster.abilityScores.dex) + ')';
 				content = this.getInitSection();
 				break;
@@ -1032,7 +1039,7 @@ class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
 			case 'names':
 				content = this.getNameSection();
 				break;
-			case 'count':
+			case 'advanced':
 				content = this.getCountSection();
 				break;
 		}

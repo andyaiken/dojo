@@ -925,7 +925,7 @@ class MapToken extends React.Component<MapTokenProps> {
 
 			if (this.props.combatant) {
 				name = this.props.combatant.displayName || 'combatant';
-				style += ' ' + this.props.combatant.type;
+				style += ' ' + this.props.combatant.faction;
 
 				if (this.props.combatant.current) {
 					style += ' current';

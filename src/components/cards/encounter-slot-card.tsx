@@ -16,6 +16,7 @@ interface Props {
 	monster: Monster | null;
 	encounter: Encounter;
 	library: MonsterGroup[];
+	changeValue: (source: any, field: string, value: any) => void;
 	nudgeValue: (source: any, field: string, delta: number) => void;
 	select: (slot: EncounterSlot) => void;
 	remove: (slot: EncounterSlot) => void;
@@ -100,11 +101,20 @@ export default class EncounterSlotCard extends React.Component<Props> {
 			}
 
 			options.push(
+				<Dropdown
+					key='faction'
+					options={['foe', 'neutral', 'ally'].map(o => ({ id: o, text: o }))}
+					selectedID={this.props.slot.faction}
+					onSelect={id => this.props.changeValue(this.props.slot, 'faction', id)}
+				/>
+			);
+
+			options.push(
 				<button key='remove' onClick={() => this.props.remove(this.props.slot)}>remove</button>
 			);
 
 			return (
-				<div className='card monster'>
+				<div className={'card ' + this.props.slot.faction}>
 					<div className='heading'>
 						<div className='title'>
 							{name}

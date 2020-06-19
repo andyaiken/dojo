@@ -592,6 +592,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 		let changeName = null;
 		let changeSize = null;
 		let changeInit = null;
+		let changeFaction = null;
 		let mountedCombat = null;
 		if (this.props.combatants.length === 1) {
 			const combatant = this.props.combatants[0];
@@ -627,6 +628,16 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 					</Expander>
 				);
 			}
+
+			changeFaction = (
+				<Expander text='change faction'>
+					<Dropdown
+						options={['foe', 'neutral', 'ally'].map(o => ({ id: o, text: o }))}
+						selectedID={combatant.faction}
+						onSelect={id => this.props.changeValue(combatant, 'faction', id)}
+					/>
+				</Expander>
+			);
 
 			const rider = this.props.allCombatants.find(c => c.mountID === combatant.id);
 			if (!rider) {
@@ -715,6 +726,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 				{changeName}
 				{changeSize}
 				{changeInit}
+				{changeFaction}
 				{mountedCombat}
 				{companions}
 				{notes}

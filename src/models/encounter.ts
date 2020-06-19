@@ -12,6 +12,7 @@ export interface EncounterSlot {
 	monsterName: string;
 	roles: string[];
 	count: number;
+	faction: 'foe' | 'neutral' | 'ally';
 }
 
 export interface EncounterWave {

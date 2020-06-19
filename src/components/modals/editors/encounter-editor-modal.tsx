@@ -329,6 +329,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 					monster={this.props.getMonster(slot.monsterName, slot.monsterGroupName)}
 					encounter={this.props.encounter}
 					library={this.props.library}
+					changeValue={(source, type, value) => this.changeValue(source, type, value)}
 					nudgeValue={(source, type, delta) => this.nudgeValue(source, type, delta)}
 					select={s => this.openSlot(waveID, s.id)}
 					remove={s => this.removeEncounterSlot(s, waveID)}

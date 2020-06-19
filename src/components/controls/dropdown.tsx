@@ -24,7 +24,8 @@ export default class Dropdown extends React.Component<Props, State> {
 		selectedID: null,
 		placeholder: 'select...',
 		disabled: false,
-		onClear: null
+		onClear: null,
+		onDisplay: null
 	};
 
 	constructor(props: Props) {

@@ -43,7 +43,8 @@
 		border-color: #656565;
 	}
 
-	&.pc {
+	&.pc,
+	&.ally {
 		border: 1px solid #006500;
 
 		.heading {
@@ -66,7 +67,8 @@
 		}
 	}
 
-	&.monster {
+	&.monster,
+	&.foe {
 		border: 1px solid #650000;
 
 		.heading {
@@ -98,7 +100,8 @@
 		}
 	}
 
-	&.map {
+	&.map,
+	&.neutral {
 		border: 1px solid #000065;
 
 		.heading {

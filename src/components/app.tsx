@@ -117,12 +117,18 @@ export default class App extends React.Component<Props, State> {
 						if (slot.roles === undefined) {
 							slot.roles = [];
 						}
+						if (slot.faction === undefined) {
+							slot.faction = 'foe';
+						}
 					});
 
 					encounter.waves.forEach(wave => {
 						wave.slots.forEach(slot => {
 							if (slot.roles === undefined) {
 								slot.roles = [];
+							}
+							if (slot.faction === undefined) {
+								slot.faction = 'foe';
 							}
 						});
 					});
@@ -150,6 +156,20 @@ export default class App extends React.Component<Props, State> {
 
 				combats.forEach(combat => {
 					combat.combatants.forEach(c => {
+						if (c.faction === undefined) {
+							switch (c.type) {
+								case 'pc':
+								case 'companion':
+									c.faction = 'ally';
+									break;
+								case 'monster':
+									c.faction = 'foe';
+									break;
+								default:
+									c.faction = 'neutral';
+									break;
+							}
+						}
 						if (c.note === undefined) {
 							c.note = '';
 						}
@@ -160,6 +180,28 @@ export default class App extends React.Component<Props, State> {
 							c.mountType = 'controlled';
 						}
 					});
+
+					if (combat.encounter) {
+						combat.encounter.slots.forEach(slot => {
+							if (slot.roles === undefined) {
+								slot.roles = [];
+							}
+							if (slot.faction === undefined) {
+								slot.faction = 'foe';
+							}
+						});
+
+						combat.encounter.waves.forEach(wave => {
+							wave.slots.forEach(slot => {
+								if (slot.roles === undefined) {
+									slot.roles = [];
+								}
+								if (slot.faction === undefined) {
+									slot.faction = 'foe';
+								}
+							});
+						});
+					}
 
 					if (combat.map) {
 						if (combat.map.notes === undefined) {
@@ -1060,7 +1102,7 @@ export default class App extends React.Component<Props, State> {
 				const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
 				if (monster && slotInfo) {
 					slotInfo.members.forEach(m => {
-						combat.combatants.push(Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name));
+						combat.combatants.push(Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, slot.faction));
 					});
 				} else {
 					combat.issues.push('unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName);
@@ -1115,7 +1157,7 @@ export default class App extends React.Component<Props, State> {
 					const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
 					if (monster && slotInfo) {
 						slotInfo.members.forEach(m => {
-							combat.combatants.push(Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name));
+							combat.combatants.push(Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, slot.faction));
 						});
 					} else {
 						combat.issues.push('unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName);
@@ -1177,7 +1219,7 @@ export default class App extends React.Component<Props, State> {
 				const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
 				if (monster && slotInfo) {
 					slotInfo.members.forEach(m => {
-						combat.combatants.push(Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name));
+						combat.combatants.push(Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, slot.faction));
 					});
 				} else {
 					combat.issues.push('unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName);

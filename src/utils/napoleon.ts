@@ -19,7 +19,7 @@ export default class Napoleon {
 			slots = slots.concat(wave.slots);
 		});
 
-		slots.forEach(slot => {
+		slots.filter(slot => slot.faction === 'foe').forEach(slot => {
 			count += slot.count;
 		});
 
@@ -35,7 +35,7 @@ export default class Napoleon {
 			slots = slots.concat(wave.slots);
 		});
 
-		slots.forEach(slot => {
+		slots.filter(slot => slot.faction === 'foe').forEach(slot => {
 			const monster = getMonster(slot.monsterName, slot.monsterGroupName);
 			if (monster) {
 				xp += Utils.experience(monster.challenge) * slot.count;
@@ -46,23 +46,8 @@ export default class Napoleon {
 	}
 
 	public static getAdjustedEncounterXP(encounter: Encounter, getMonster: (monsterName: string, groupName: string) => Monster | null) {
-		let count = 0;
-		let xp = 0;
-
-		let slots: EncounterSlot[] = [];
-		slots = slots.concat(encounter.slots);
-		encounter.waves.forEach(wave => {
-			slots = slots.concat(wave.slots);
-		});
-
-		slots.forEach(slot => {
-			count += slot.count;
-			const monster = getMonster(slot.monsterName, slot.monsterGroupName);
-			if (monster) {
-				xp += Utils.experience(monster.challenge) * slot.count;
-			}
-		});
-
+		const count = this.getMonsterCount(encounter);
+		const xp = this.getEncounterXP(encounter, getMonster);
 		return xp * Utils.experienceFactor(count);
 	}
 
@@ -71,6 +56,7 @@ export default class Napoleon {
 
 		combat.combatants
 			.filter(combatant => combatant.type === 'monster')
+			.filter(combatant => combatant.faction === 'foe')
 			.forEach(combatant => {
 				const monster = combatant as (Combatant & Monster);
 				xp += Utils.experience(monster.challenge);
@@ -213,6 +199,7 @@ export default class Napoleon {
 		combatant.active = false;
 		combatant.defeated = false;
 
+		combatant.faction = 'ally';
 		combatant.displayName = pc.name;
 		combatant.displaySize = pc.size;
 		combatant.showOnMap = true;
@@ -231,7 +218,7 @@ export default class Napoleon {
 		return combatant;
 	}
 
-	public static convertMonsterToCombatant(monster: Monster, init: number, hp: number, name: string) {
+	public static convertMonsterToCombatant(monster: Monster, init: number, hp: number, name: string, faction: 'foe' | 'neutral' | 'ally') {
 		const combatant = JSON.parse(JSON.stringify(monster)) as Combatant & Monster;
 		combatant.id = Utils.guid();
 
@@ -240,6 +227,7 @@ export default class Napoleon {
 		combatant.active = true;
 		combatant.defeated = false;
 
+		combatant.faction = faction;
 		combatant.displayName = name;
 		combatant.displaySize = monster.size;
 		combatant.showOnMap = true;
@@ -269,6 +257,7 @@ export default class Napoleon {
 		combatant.active = false;
 		combatant.defeated = false;
 
+		combatant.faction = 'ally';
 		combatant.displayName = companion ? companion.name : 'companion';
 		combatant.displaySize = 'medium';
 		combatant.showOnMap = true;
@@ -298,6 +287,7 @@ export default class Napoleon {
 			active: true,
 			defeated: false,
 
+			faction: 'neutral',
 			displayName: 'lair actions',
 			displaySize: 'medium',
 			showOnMap: true,

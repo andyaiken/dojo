@@ -120,7 +120,8 @@ export default class Factory {
 			monsterGroupName: '',
 			monsterName: '',
 			roles: [],
-			count: 1
+			count: 1,
+			faction: 'foe'
 		};
 	}
 
