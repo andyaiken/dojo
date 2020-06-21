@@ -63,7 +63,7 @@ export default class CombatCard extends React.Component<Props> {
 				));
 
 			return (
-				<div className='card combat'>
+				<div className='card encounter'>
 					<div className='heading'>
 						<div className='title'>
 							{this.props.combat.name || 'unnamed combat'}

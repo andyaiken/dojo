@@ -25,7 +25,6 @@ interface Props {
 	allCombatants: Combatant[];
 	map: Map | null;
 	defaultTab: string;
-	inline: boolean;
 	// Main tab
 	makeCurrent: (combatant: Combatant) => void;
 	makeActive: (combatants: Combatant[]) => void;
@@ -37,7 +36,6 @@ interface Props {
 	changeHP: (values: {id: string, hp: number, temp: number, damage: number}[]) => void;
 	// Cond tab
 	addCondition: (combatants: Combatant[]) => void;
-	quickAddCondition: (combatants: Combatant[], condition: Condition) => void;
 	editCondition: (combatant: Combatant, condition: Condition) => void;
 	removeCondition: (combatant: Combatant, condition: Condition) => void;
 	// Map tab
@@ -473,9 +471,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 			<ConditionsPanel
 				combatants={this.props.combatants}
 				allCombatants={this.props.allCombatants}
-				inline={this.props.inline}
 				addCondition={() => this.props.addCondition(this.props.combatants)}
-				quickAddCondition={(combatants, condition) => this.props.quickAddCondition(combatants, condition)}
 				editCondition={(combatant, condition) => this.props.editCondition(combatant, condition)}
 				removeCondition={(combatant, condition) => this.props.removeCondition(combatant, condition)}
 				nudgeConditionValue={(condition, type, delta) => this.props.nudgeValue(condition, type, delta)}
@@ -631,7 +627,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 
 			changeFaction = (
 				<Expander text='change faction'>
-					<Dropdown
+					<Selector
 						options={['foe', 'neutral', 'ally'].map(o => ({ id: o, text: o }))}
 						selectedID={combatant.faction}
 						onSelect={id => this.props.changeValue(combatant, 'faction', id)}

@@ -11,7 +11,7 @@ import Utils from '../utils/utils';
 import { Combat, Combatant, CombatSetup, Notification } from '../models/combat';
 import { Condition } from '../models/condition';
 import { Encounter } from '../models/encounter';
-import { Map, MapItem } from '../models/map';
+import { Exploration, Map, MapItem } from '../models/map';
 import { Monster, MonsterGroup, Trait } from '../models/monster';
 import { Companion, Party, PC } from '../models/party';
 
@@ -30,15 +30,15 @@ import PartyImportModal from './modals/import/party-import-modal';
 import PCImportModal from './modals/import/pc-import-modal';
 import LeaderboardModal from './modals/leaderboard-modal';
 import StatBlockModal from './modals/stat-block-modal';
-import MapModal from './modals/viewers/map-modal';
 import PageFooter from './panels/page-footer';
 import PageHeader from './panels/page-header';
-import CombatListScreen from './screens/combat-list-screen';
 import CombatScreen from './screens/combat-screen';
 import EncounterListScreen from './screens/encounter-list-screen';
 import EncounterScreen from './screens/encounter-screen';
+import ExplorationScreen from './screens/exploration-screen';
 import HomeScreen from './screens/home-screen';
 import MapListScreen from './screens/map-list-screen';
+import MapScreen from './screens/map-screen';
 import MonsterGroupListScreen from './screens/monster-group-list-screen';
 import MonsterGroupScreen from './screens/monster-group-screen';
 import PartyListScreen from './screens/party-list-screen';
@@ -62,11 +62,14 @@ interface State {
 	encounters: Encounter[];
 	maps: Map[];
 	combats: Combat[];
+	explorations: Exploration[];
 
 	selectedPartyID: string | null;
 	selectedMonsterGroupID: string | null;
 	selectedEncounterID: string | null;
+	selectedMapID: string | null;
 	selectedCombatID: string | null;
+	selectedExplorationID: string | null;
 }
 
 export default class App extends React.Component<Props, State> {
@@ -222,6 +225,16 @@ export default class App extends React.Component<Props, State> {
 			console.error('Could not parse JSON: ', ex);
 		}
 
+		let explorations: Exploration[] = [];
+		try {
+			const str = window.localStorage.getItem('data-explorations');
+			if (str) {
+				explorations = JSON.parse(str);
+			}
+		} catch (ex) {
+			console.error('Could not parse JSON: ', ex);
+		}
+
 		this.state = {
 			view: 'home',
 			drawer: null,
@@ -231,10 +244,13 @@ export default class App extends React.Component<Props, State> {
 			encounters: encounters,
 			maps: maps,
 			combats: combats,
+			explorations: explorations,
 			selectedPartyID: null,
 			selectedMonsterGroupID: null,
 			selectedEncounterID: null,
-			selectedCombatID: null
+			selectedMapID: null,
+			selectedCombatID: null,
+			selectedExplorationID: null
 		};
 	}
 
@@ -339,6 +355,12 @@ export default class App extends React.Component<Props, State> {
 		});
 	}
 
+	private selectMap(map: Map | null) {
+		this.setState({
+			selectedMapID: map ? map.id : null
+		});
+	}
+
 	private selectPartyByID(id: string | null) {
 		this.save();
 		this.setState({
@@ -358,14 +380,16 @@ export default class App extends React.Component<Props, State> {
 	private selectEncounterByID(id: string | null) {
 		this.save();
 		this.setState({
-			view: 'encounters'
+			view: 'encounters',
+			selectedEncounterID: id
 		});
 	}
 
 	private selectMapByID(id: string | null) {
 		this.save();
 		this.setState({
-			view: 'maps'
+			view: 'maps',
+			selectedMapID: id
 		});
 	}
 
@@ -461,6 +485,9 @@ export default class App extends React.Component<Props, State> {
 		Utils.sort(this.state.parties);
 		Utils.sort(this.state.library);
 		Utils.sort(this.state.encounters);
+		Utils.sort(this.state.maps);
+		Utils.sort(this.state.combats);
+		Utils.sort(this.state.explorations);
 
 		if (type === 'initiative') {
 			if (!(combatant as Combatant).pending) {
@@ -471,8 +498,8 @@ export default class App extends React.Component<Props, State> {
 
 		if (type === 'mountID') {
 			const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-			if (combat) {
-				this.setMountPositions(combat);
+			if (combat && combat.map) {
+				this.setMountPositions(combat.combatants, combat.map);
 			}
 		}
 
@@ -480,11 +507,17 @@ export default class App extends React.Component<Props, State> {
 			parties: this.state.parties,
 			library: this.state.library,
 			encounters: this.state.encounters,
+			maps: this.state.maps,
 			combats: this.state.combats,
+			explorations: this.state.explorations,
 			selectedPartyID: this.state.selectedPartyID,
 			selectedMonsterGroupID: this.state.selectedMonsterGroupID,
+			selectedEncounterID: this.state.selectedEncounterID,
+			selectedMapID: this.state.selectedMapID,
 			selectedCombatID: this.state.selectedCombatID,
-			drawer: this.state.drawer
+			selectedExplorationID: this.state.selectedExplorationID,
+			drawer: this.state.drawer,
+			sidebar: this.state.sidebar
 		});
 	}
 
@@ -947,19 +980,6 @@ export default class App extends React.Component<Props, State> {
 		});
 	}
 
-	private viewMap(map: Map) {
-		const copy = JSON.parse(JSON.stringify(map));
-		this.setState({
-			drawer: {
-				type: 'map-view',
-				map: copy,
-				fog: [],
-				partyID: null,
-				combatants: []
-			}
-		});
-	}
-
 	private editMap(map: Map | null) {
 		if (!map) {
 			map = Factory.createMap();
@@ -1022,8 +1042,118 @@ export default class App extends React.Component<Props, State> {
 		const index = this.state.maps.indexOf(map);
 		this.state.maps.splice(index, 1);
 		this.setState({
-			maps: this.state.maps
+			maps: this.state.maps,
+			selectedMapID: null
 		});
+	}
+
+	//#endregion
+
+	//#region Exploration screen
+
+	private startExploration(map: Map, partyID: string) {
+		const party = this.state.parties.find(p => p.id === partyID);
+		if (party) {
+			const mapCopy = JSON.parse(JSON.stringify(map));
+			const ex = Factory.createExploration();
+			ex.name = party.name + ' in ' + map.name;
+			ex.map = mapCopy;
+			ex.partyID = partyID;
+			party.pcs.forEach(pc => {
+				const combatant = Napoleon.convertPCToCombatant(pc);
+				ex.combatants.push(combatant);
+			});
+			this.state.explorations.push(ex);
+
+			this.setState({
+				view: 'maps',
+				explorations: this.state.explorations,
+				selectedExplorationID: ex.id
+			});
+		}
+	}
+
+	private pauseExploration() {
+		this.setState({
+			selectedExplorationID: null
+		});
+	}
+
+	private resumeExploration(exploration: Exploration) {
+		this.setState({
+			view: 'maps',
+			selectedExplorationID: exploration.id
+		});
+	}
+
+	private endExploration(exploration: Exploration) {
+		const index = this.state.explorations.indexOf(exploration);
+		this.state.explorations.splice(index, 1);
+		this.setState({
+			explorations: this.state.explorations,
+			selectedExplorationID: null
+		});
+	}
+
+	private fillFog() {
+		const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID);
+		if (ex) {
+			const fog: { x: number, y: number }[] = [];
+			const dims = Mercator.mapDimensions(ex.map);
+			if (dims) {
+				for (let x = dims.minX; x <= dims.maxX; ++x) {
+					for (let y = dims.minY; y <= dims.maxY; ++y) {
+						fog.push({ x: x, y: y });
+					}
+				}
+				ex.fog = fog;
+				this.setState({
+					explorations: this.state.explorations
+				});
+			}
+		}
+	}
+
+	private clearFog() {
+		const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID);
+		if (ex) {
+			ex.fog = [];
+			this.setState({
+				explorations: this.state.explorations
+			});
+		}
+	}
+
+	private toggleFog(x1: number, y1: number, x2: number, y2: number) {
+		const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID);
+		if (ex) {
+			for (let x = x1; x <= x2; ++x) {
+				for (let y = y1; y <= y2; ++y) {
+					const index = ex.fog.findIndex(i => (i.x === x) && (i.y === y));
+					if (index === -1) {
+						ex.fog.push({ x: x, y: y });
+					} else {
+						ex.fog.splice(index, 1);
+					}
+				}
+			}
+			this.setState({
+				explorations: this.state.explorations
+			});
+		}
+	}
+
+	private addCompanionToExploration(companion: Companion) {
+		const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID);
+		if (ex) {
+			ex.combatants.push(Napoleon.convertCompanionToCombatant(companion));
+
+			Utils.sort(ex.combatants, [{ field: 'displayName', dir: 'asc' }]);
+
+			this.setState({
+				explorations: this.state.explorations
+			});
+		}
 	}
 
 	//#endregion
@@ -1123,7 +1253,7 @@ export default class App extends React.Component<Props, State> {
 				combats: ([] as Combat[]).concat(this.state.combats, [combat]),
 				selectedCombatID: combat.id,
 				drawer: null,
-				view: 'combat'
+				view: 'encounters'
 			});
 		}
 	}
@@ -1284,79 +1414,78 @@ export default class App extends React.Component<Props, State> {
 		combat.report.push(entry);
 
 		this.setState({
+			view: 'encounters',
 			selectedCombatID: combat.id
 		});
 	}
 
-	private endCombat(combat: Combat | null = null, goToMap: boolean = false) {
-		if (!combat) {
-			const cbt = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-			if (cbt) {
-				combat = cbt;
-			}
-		}
+	private endCombat(combat: Combat, goToMap: boolean = false) {
+		const entry = Factory.createCombatReportEntry();
+		entry.type = 'combat-end';
+		combat.report.push(entry);
 
-		if (combat) {
-			const entry = Factory.createCombatReportEntry();
-			entry.type = 'combat-end';
-			combat.report.push(entry);
+		const index = this.state.combats.indexOf(combat);
+		this.state.combats.splice(index, 1);
+		this.setState({
+			combats: this.state.combats,
+			selectedCombatID: null
+		}, () => {
+			if (combat && combat.map && goToMap) {
+				const combatants = combat.combatants.filter(c => (c.type === 'pc') || (c.type === 'companion'));
+				combatants.forEach(c => {
+					c.current = false;
+					c.pending = true;
+					c.active = false;
+					c.defeated = false;
+					c.initiative = 10;
+				});
 
-			const index = this.state.combats.indexOf(combat);
-			this.state.combats.splice(index, 1);
-			this.setState({
-				combats: this.state.combats,
-				selectedCombatID: null
-			}, () => {
-				if (combat && combat.map && goToMap) {
-					const combatants = combat.combatants.filter(c => (c.type === 'pc') || (c.type === 'companion'));
-					combatants.forEach(c => {
-						c.pending = false;
-						c.active = true;
-						c.defeated = false;
-						c.current = false;
-					});
+				// See if we can work out the party ID from the combatants
+				let partyID: string | null = null;
+				const pcs = combatants.filter(c => c.type === 'pc');
+				if (pcs.length > 0) {
+					const party = this.state.parties.find(p => p.pcs.find(pc1 => pc1.id === pcs[0].id));
+					if (party) {
+						partyID = party.id;
 
-					// See if we can work out the party ID from the combatants
-					let partyID = null;
-					const pcs = combat.combatants.filter(c => c.type === 'pc');
-					if (pcs.length > 0) {
-						const party = this.state.parties.find(p => p.pcs.find(pc1 => pc1.id === pcs[0].id));
-						if (party) {
-							partyID = party.id;
-
-							// Make sure there's no-one missing
-							party.pcs.forEach(pc => {
-								if (!combatants.find(c => c.id === pc.id)) {
-									// Add this PC
-									combatants.push(Napoleon.convertPCToCombatant(pc));
-								}
-
-								pc.companions.forEach(comp => {
-									if (!combatants.find(c => c.id === comp.id)) {
-										// Add this companion
-										combatants.push(Napoleon.convertCompanionToCombatant(comp));
-									}
-								});
-							});
-						}
+						// Make sure there's no-one missing
+						party.pcs.forEach(pc => {
+							if (!combatants.find(c => c.id === pc.id)) {
+								// Add this PC
+								combatants.push(Napoleon.convertPCToCombatant(pc));
+							}
+						});
 					}
+				}
 
-					Utils.sort(combatants, [{ field: 'displayName', dir: 'asc' }]);
+				Utils.sort(combatants, [{ field: 'displayName', dir: 'asc' }]);
+
+				if (partyID) {
+					// If there's already an exploration with this map and party, update it, otherwise, create it
+					const mapID = combat.map.id;
+					let exploration = this.state.explorations.find(e => (e.map.id === mapID) && (e.partyID === partyID));
+					if (!exploration) {
+						exploration = Factory.createExploration();
+						exploration.name = combat.name + 'in ' + combat.map.name;
+						exploration.partyID = partyID;
+						this.state.explorations.push(exploration);
+					}
+					exploration.map = combat.map;
+					exploration.fog = combat.fog;
+					exploration.combatants = combatants;
+
+					// Clear the map of any monsters
+					exploration.map.items = exploration.map.items.filter(i => (i.type === 'tile') || (i.type === 'pc') || (i.type === 'companion'));
 
 					// Go to map view
 					this.setState({
 						view: 'maps',
-						drawer: {
-							type: 'map-view',
-							map: combat.map,
-							fog: combat.fog,
-							partyID: partyID,
-							combatants: combatants
-						}
+						explorations: this.state.explorations,
+						selectedExplorationID: exploration.id
 					});
 				}
-			});
-		}
+			}
+		});
 	}
 
 	// Combatant management
@@ -1695,188 +1824,7 @@ export default class App extends React.Component<Props, State> {
 		}
 	}
 
-	private toggleTag(combatants: Combatant[], tag: string) {
-		combatants.forEach(c => {
-			if (c.tags.includes(tag)) {
-				c.tags = c.tags.filter(t => t !== tag);
-			} else {
-				c.tags.push(tag);
-			}
-		});
-
-		this.setState({
-			combats: this.state.combats,
-			drawer: this.state.drawer
-		});
-	}
-
-	private toggleCondition(combatants: Combatant[], condition: string) {
-		combatants.forEach(c => {
-			const existing = c.conditions.find(cond => cond.name === condition);
-			if (existing) {
-				this.removeCondition(c, existing);
-			} else {
-				const cnd = Factory.createCondition();
-				cnd.name = condition;
-				c.conditions.push(cnd);
-
-				c.conditions = Utils.sort(c.conditions, [{ field: 'name', dir: 'asc' }]);
-
-				const combat = this.state.combats.find(cbt => cbt.id === this.state.selectedCombatID);
-				if (combat) {
-					const current = combat.combatants.find(combatant => combatant.current);
-					if (current && (current.type === 'pc')) {
-						const entry = Factory.createCombatReportEntry();
-						entry.type = 'condition-add';
-						entry.combatantID = current.id;
-						combat.report.push(entry);
-					}
-				}
-			}
-		});
-
-		this.setState({
-			combats: this.state.combats,
-			drawer: this.state.drawer
-		});
-	}
-
-	private toggleHidden(combatants: Combatant[]) {
-		combatants.forEach(c => {
-			c.showOnMap = !c.showOnMap;
-		});
-
-		this.setState({
-			combats: this.state.combats,
-			drawer: this.state.drawer
-		});
-	}
-
 	// Map methods
-
-	private mapAdd(combatant: Combatant, x: number, y: number) {
-		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-		if (combat) {
-			const combatants = [combatant];
-			if (!!combatant.mountID) {
-				const mount = combat.combatants.find(cmb => cmb.id === combatant.mountID);
-				if (mount) {
-					combatants.push(mount);
-				}
-			}
-			combatants.forEach(c => {
-				if (combat.map) {
-					// Make sure no-one is already on the map
-					const ids = combatants.map(cbt => cbt.id);
-					combat.map.items = combat.map.items.filter(i => !ids.includes(i.id));
-				}
-
-				const item = Factory.createMapItem();
-				item.id = c.id;
-				item.type = c.type as 'pc' | 'monster' | 'companion';
-				item.x = x;
-				item.y = y;
-
-				const size = Utils.miniSize(c.displaySize);
-				item.height = size;
-				item.width = size;
-
-				if (combat.map) {
-					combat.map.items.push(item);
-				}
-			});
-
-			this.setState({
-				combats: this.state.combats
-			});
-		}
-	}
-
-	private mapMove(ids: string[], dir: string) {
-		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-		if (combat) {
-			ids.forEach(id => {
-				if (combat.map) {
-					const item = combat.map.items.find(i => i.id === id);
-					if (item) {
-						switch (dir) {
-							case 'N':
-								item.y -= 1;
-								break;
-							case 'NE':
-								item.x += 1;
-								item.y -= 1;
-								break;
-							case 'E':
-								item.x += 1;
-								break;
-							case 'SE':
-								item.x += 1;
-								item.y += 1;
-								break;
-							case 'S':
-								item.y += 1;
-								break;
-							case 'SW':
-								item.x -= 1;
-								item.y += 1;
-								break;
-							case 'W':
-								item.x -= 1;
-								break;
-							case 'NW':
-								item.x -= 1;
-								item.y -= 1;
-								break;
-							default:
-								// Do nothing
-								break;
-						}
-
-						if (item.type === 'pc') {
-							const entry = Factory.createCombatReportEntry();
-							entry.type = 'movement';
-							entry.combatantID = item.id;
-							combat.report.push(entry);
-						}
-					}
-				}
-			});
-
-			this.setMountPositions(combat);
-
-			this.setState({
-				combats: this.state.combats
-			});
-		}
-	}
-
-	private mapRemove(ids: string[]) {
-		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-		if (combat) {
-			const allIDs = [...ids];
-			ids.forEach(id => {
-				const combatant = combat.combatants.find(cbt => cbt.id === id);
-				if (combatant && combatant.mountID) {
-					allIDs.push(combatant.mountID);
-				}
-			});
-
-			allIDs.forEach(id => {
-				if (combat.map) {
-					const item = combat.map.items.find(i => i.id === id);
-					if (item) {
-						const index = combat.map.items.indexOf(item);
-						combat.map.items.splice(index, 1);
-					}
-				}
-			});
-
-			this.setState({
-				combats: this.state.combats
-			});
-		}
-	}
 
 	private mapAddNote(tileID: string) {
 		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
@@ -1907,18 +1855,7 @@ export default class App extends React.Component<Props, State> {
 		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
 		if (combat && combat.map) {
 			Mercator.scatterCombatants(combat, type);
-			this.setMountPositions(combat);
-
-			this.setState({
-				combats: this.state.combats
-			});
-		}
-	}
-
-	private rotateMap() {
-		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-		if (combat && combat.map) {
-			Mercator.rotateMap(combat.map);
+			this.setMountPositions(combat.combatants, combat.map);
 
 			this.setState({
 				combats: this.state.combats
@@ -1946,131 +1883,6 @@ export default class App extends React.Component<Props, State> {
 				combats: this.state.combats
 			});
 		}
-	}
-
-	private setMountPositions(combat: Combat) {
-		combat.combatants.forEach(c => {
-			if (c.mountID) {
-				if (combat.map) {
-					// Set mount location to equal rider location
-					const riderItem = combat.map.items.find(i => i.id === c.id);
-					const mountItem = combat.map.items.find(i => i.id === c.mountID);
-					if (riderItem && mountItem) {
-						mountItem.x = riderItem.x;
-						mountItem.y = riderItem.y;
-					}
-				}
-			}
-		});
-	}
-
-	// Conditions
-
-	private addCondition(combatants: Combatant[]) {
-		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-		if (combat) {
-			const condition = Factory.createCondition();
-			condition.name = 'blinded';
-
-			this.setState({
-				drawer: {
-					type: 'condition-add',
-					condition: condition,
-					combatants: combatants,
-					allCombatants: combat.combatants
-				}
-			});
-		}
-	}
-
-	private addConditionFromModal() {
-		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-		if (combat) {
-			this.state.drawer.combatants.forEach((combatant: Combatant) => {
-				const condition: Condition = JSON.parse(JSON.stringify(this.state.drawer.condition));
-				condition.id = Utils.guid();
-				combatant.conditions.push(condition);
-				Utils.sort(combatant.conditions, [{ field: 'name', dir: 'asc' }]);
-
-				const current = combat.combatants.find(c => c.current);
-				if (current && (current.type === 'pc')) {
-					const entry = Factory.createCombatReportEntry();
-					entry.type = 'condition-add';
-					entry.combatantID = current.id;
-					combat.report.push(entry);
-				}
-			});
-
-			this.setState({
-				combats: this.state.combats,
-				drawer: null
-			});
-		}
-	}
-
-	private quickAddCondition(combatants: Combatant[], condition: Condition) {
-		combatants.forEach(c => {
-			if (!c.conditions.some(cond => cond.name === condition.name)) {
-				const copy = JSON.parse(JSON.stringify(condition));
-				c.conditions.push(copy);
-			}
-		});
-
-		this.setState({
-			combats: this.state.combats,
-			drawer: this.state.drawer
-		});
-	}
-
-	private editCondition(combatant: Combatant, condition: Condition) {
-		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-		if (combat) {
-			this.setState({
-				drawer: {
-					type: 'condition-edit',
-					condition: condition,
-					combatants: [combatant],
-					allCombatants: combat.combatants
-				}
-			});
-		}
-	}
-
-	private editConditionFromModal() {
-		this.state.drawer.combatants.forEach((combatant: Combatant) => {
-			const original = combatant.conditions.find(c => c.id === this.state.drawer.condition.id);
-			if (original) {
-				const index = combatant.conditions.indexOf(original);
-				combatant.conditions[index] = this.state.drawer.condition;
-				Utils.sort(combatant.conditions, [{ field: 'name', dir: 'asc' }]);
-			}
-		});
-
-		this.setState({
-			combats: this.state.combats,
-			drawer: null
-		});
-	}
-
-	private removeCondition(combatant: Combatant, condition: Condition) {
-		const index = combatant.conditions.indexOf(condition);
-		combatant.conditions.splice(index, 1);
-
-		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-		if (combat) {
-			const current = combat.combatants.find(c => c.current);
-			if (current && (current.type === 'pc')) {
-				const entry = Factory.createCombatReportEntry();
-				entry.type = 'condition-remove';
-				entry.combatantID = current.id;
-				combat.report.push(entry);
-			}
-		}
-
-		this.setState({
-			combats: this.state.combats,
-			drawer: this.state.drawer
-		});
 	}
 
 	/// Miscellaneous methods
@@ -2106,6 +1918,306 @@ export default class App extends React.Component<Props, State> {
 
 	//#endregion
 
+	//#region Combat and exploration
+
+	private toggleTag(combatants: Combatant[], tag: string) {
+		combatants.forEach(c => {
+			if (c.tags.includes(tag)) {
+				c.tags = c.tags.filter(t => t !== tag);
+			} else {
+				c.tags.push(tag);
+			}
+		});
+
+		this.setState({
+			combats: this.state.combats,
+			explorations: this.state.explorations
+		});
+	}
+
+	private toggleCondition(combatants: Combatant[], condition: string) {
+		combatants.forEach(c => {
+			const existing = c.conditions.find(cond => cond.name === condition);
+			if (existing) {
+				this.removeCondition(c, existing);
+			} else {
+				const cnd = Factory.createCondition();
+				cnd.name = condition;
+				c.conditions.push(cnd);
+
+				c.conditions = Utils.sort(c.conditions, [{ field: 'name', dir: 'asc' }]);
+
+				if (this.state.view === 'encounters') {
+					const combat = this.state.combats.find(cbt => cbt.id === this.state.selectedCombatID);
+					if (combat) {
+						const current = combat.combatants.find(combatant => combatant.current);
+						if (current && (current.type === 'pc')) {
+							const entry = Factory.createCombatReportEntry();
+							entry.type = 'condition-add';
+							entry.combatantID = current.id;
+							combat.report.push(entry);
+						}
+					}
+				}
+			}
+		});
+
+		this.setState({
+			combats: this.state.combats,
+			explorations: this.state.explorations
+		});
+	}
+
+	private toggleHidden(combatants: Combatant[]) {
+		combatants.forEach(c => {
+			c.showOnMap = !c.showOnMap;
+		});
+
+		this.setState({
+			combats: this.state.combats,
+			explorations: this.state.explorations
+		});
+	}
+
+	private addCondition(combatants: Combatant[], allCombatants: Combatant[]) {
+		const condition = Factory.createCondition();
+		condition.name = 'blinded';
+
+		this.setState({
+			drawer: {
+				type: 'condition-add',
+				condition: condition,
+				combatants: combatants,
+				allCombatants: allCombatants
+			}
+		});
+	}
+
+	private addConditionFromModal() {
+		this.state.drawer.combatants.forEach((combatant: Combatant) => {
+			const condition: Condition = JSON.parse(JSON.stringify(this.state.drawer.condition));
+			condition.id = Utils.guid();
+			combatant.conditions.push(condition);
+			Utils.sort(combatant.conditions, [{ field: 'name', dir: 'asc' }]);
+
+			if (this.state.view === 'encounters') {
+				const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+				if (combat) {
+					const current = combat.combatants.find(c => c.current);
+					if (current && (current.type === 'pc')) {
+						const entry = Factory.createCombatReportEntry();
+						entry.type = 'condition-add';
+						entry.combatantID = current.id;
+						combat.report.push(entry);
+					}
+				}
+			}
+		});
+
+		this.setState({
+			combats: this.state.combats,
+			explorations: this.state.explorations,
+			drawer: null
+		});
+	}
+
+	private editCondition(combatant: Combatant, condition: Condition, allCombatants: Combatant[]) {
+		this.setState({
+			drawer: {
+				type: 'condition-edit',
+				condition: condition,
+				combatants: [combatant],
+				allCombatants: allCombatants
+			}
+		});
+	}
+
+	private editConditionFromModal() {
+		this.state.drawer.combatants.forEach((combatant: Combatant) => {
+			const original = combatant.conditions.find(c => c.id === this.state.drawer.condition.id);
+			if (original) {
+				const index = combatant.conditions.indexOf(original);
+				combatant.conditions[index] = this.state.drawer.condition;
+				Utils.sort(combatant.conditions, [{ field: 'name', dir: 'asc' }]);
+			}
+		});
+
+		this.setState({
+			combats: this.state.combats,
+			explorations: this.state.explorations,
+			drawer: null
+		});
+	}
+
+	private removeCondition(combatant: Combatant, condition: Condition) {
+		const index = combatant.conditions.indexOf(condition);
+		combatant.conditions.splice(index, 1);
+
+		if (this.state.view === 'encounters') {
+			const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+			if (combat) {
+				const current = combat.combatants.find(c => c.current);
+				if (current && (current.type === 'pc')) {
+					const entry = Factory.createCombatReportEntry();
+					entry.type = 'condition-remove';
+					entry.combatantID = current.id;
+					combat.report.push(entry);
+				}
+			}
+		}
+
+		this.setState({
+			combats: this.state.combats,
+			explorations: this.state.explorations
+		});
+	}
+
+	private rotateMap(map: Map) {
+		Mercator.rotateMap(map);
+
+		this.setState({
+			combats: this.state.combats,
+			explorations: this.state.explorations
+		});
+	}
+
+	private mapAdd(combatant: Combatant, x: number, y: number, currentCombatants: Combatant[], map: Map) {
+		const combatants = [combatant];
+		if (!!combatant.mountID) {
+			const mount = currentCombatants.find(cmb => cmb.id === combatant.mountID);
+			if (mount) {
+				combatants.push(mount);
+			}
+		}
+		combatants.forEach(c => {
+			if (map) {
+				// Make sure no-one is already on the map
+				const ids = combatants.map(cbt => cbt.id);
+				map.items = map.items.filter(i => !ids.includes(i.id));
+			}
+
+			const item = Factory.createMapItem();
+			item.id = c.id;
+			item.type = c.type as 'pc' | 'monster' | 'companion';
+			item.x = x;
+			item.y = y;
+
+			const size = Utils.miniSize(c.displaySize);
+			item.height = size;
+			item.width = size;
+
+			if (map) {
+				map.items.push(item);
+			}
+		});
+
+		this.setState({
+			combats: this.state.combats,
+			explorations: this.state.explorations
+		});
+	}
+
+	private mapMove(ids: string[], dir: string, combatants: Combatant[], map: Map) {
+		ids.forEach(id => {
+			if (map) {
+				const item = map.items.find(i => i.id === id);
+				if (item) {
+					switch (dir) {
+						case 'N':
+							item.y -= 1;
+							break;
+						case 'NE':
+							item.x += 1;
+							item.y -= 1;
+							break;
+						case 'E':
+							item.x += 1;
+							break;
+						case 'SE':
+							item.x += 1;
+							item.y += 1;
+							break;
+						case 'S':
+							item.y += 1;
+							break;
+						case 'SW':
+							item.x -= 1;
+							item.y += 1;
+							break;
+						case 'W':
+							item.x -= 1;
+							break;
+						case 'NW':
+							item.x -= 1;
+							item.y -= 1;
+							break;
+						default:
+							// Do nothing
+							break;
+					}
+
+					if (this.state.view === 'encounters') {
+						const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+						if (combat) {
+							if (item.type === 'pc') {
+								const entry = Factory.createCombatReportEntry();
+								entry.type = 'movement';
+								entry.combatantID = item.id;
+								combat.report.push(entry);
+							}
+						}
+					}
+				}
+			}
+		});
+
+		this.setMountPositions(combatants, map);
+
+		this.setState({
+			combats: this.state.combats,
+			explorations: this.state.explorations
+		});
+	}
+
+	private mapRemove(ids: string[], combatants: Combatant[], map: Map) {
+		const allIDs = [...ids];
+		ids.forEach(id => {
+			const combatant = combatants.find(cbt => cbt.id === id);
+			if (combatant && combatant.mountID) {
+				allIDs.push(combatant.mountID);
+			}
+		});
+
+		allIDs.forEach(id => {
+			const item = map.items.find(i => i.id === id);
+			if (item) {
+				const index = map.items.indexOf(item);
+				map.items.splice(index, 1);
+			}
+		});
+
+		this.setState({
+			combats: this.state.combats,
+			explorations: this.state.explorations
+		});
+	}
+
+	private setMountPositions(combatants: Combatant[], map: Map) {
+		combatants.forEach(c => {
+			if (c.mountID) {
+				// Set mount location to equal rider location
+				const riderItem = map.items.find(i => i.id === c.id);
+				const mountItem = map.items.find(i => i.id === c.mountID);
+				if (riderItem && mountItem) {
+					mountItem.x = riderItem.x;
+					mountItem.y = riderItem.y;
+				}
+			}
+		});
+	}
+
+	//#endregion
+
 	//#region Saving
 
 	private saveAfterDelay = Utils.debounce(() => this.saveAll(), 5 * 1000);
@@ -2120,12 +2232,11 @@ export default class App extends React.Component<Props, State> {
 				break;
 			case 'encounters':
 				this.saveKey(this.state.encounters, 'data-encounters');
+				this.saveKey(this.state.combats, 'data-combats');
 				break;
 			case 'maps':
 				this.saveKey(this.state.maps, 'data-maps');
-				break;
-			case 'combat':
-				this.saveKey(this.state.combats, 'data-combats');
+				this.saveKey(this.state.explorations, 'data-explorations');
 				break;
 		}
 	}
@@ -2136,6 +2247,7 @@ export default class App extends React.Component<Props, State> {
 		this.saveKey(this.state.encounters, 'data-encounters');
 		this.saveKey(this.state.maps, 'data-maps');
 		this.saveKey(this.state.combats, 'data-combats');
+		this.saveKey(this.state.explorations, 'data-explorations');
 	}
 
 	private saveKey(obj: any, key: string) {
@@ -2232,48 +2344,6 @@ export default class App extends React.Component<Props, State> {
 					/>
 				);
 			case 'encounters':
-				if (this.state.selectedEncounterID) {
-					return (
-						<EncounterScreen
-							encounter={this.state.encounters.find(e => e.id === this.state.selectedEncounterID) as Encounter}
-							parties={this.state.parties}
-							edit={encounter => this.editEncounter(encounter)}
-							delete={encounter => this.removeEncounter(encounter)}
-							run={(encounter, partyID) => this.createCombat(encounter, partyID)}
-							getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
-							changeValue={(source, field, value) => this.changeValue(source, field, value)}
-							goBack={() => this.selectEncounter(null)}
-						/>
-					);
-				}
-				return (
-					<EncounterListScreen
-						encounters={this.state.encounters}
-						parties={this.state.parties}
-						hasMonsters={hasMonsters}
-						addEncounter={templateID => this.addEncounter(templateID)}
-						viewEncounter={encounter => this.selectEncounter(encounter)}
-						editEncounter={encounter => this.editEncounter(encounter)}
-						deleteEncounter={encounter => this.removeEncounter(encounter)}
-						runEncounter={(encounter, partyID) => this.createCombat(encounter, partyID)}
-						getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
-						setView={view => this.setView(view)}
-						openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
-					/>
-				);
-			case 'maps':
-				return (
-					<MapListScreen
-						maps={this.state.maps}
-						addMap={() => this.editMap(null)}
-						importMap={() => this.importMap()}
-						generateMap={(type) => this.generateMap(type)}
-						viewMap={map => this.viewMap(map)}
-						editMap={map => this.editMap(map)}
-						deleteMap={map => this.removeMap(map)}
-					/>
-				);
-			case 'combat':
 				if (this.state.selectedCombatID) {
 					return (
 						<CombatScreen
@@ -2282,7 +2352,7 @@ export default class App extends React.Component<Props, State> {
 							library={this.state.library}
 							encounters={this.state.encounters}
 							pauseCombat={() => this.pauseCombat()}
-							endCombat={goToMap => this.endCombat(null, goToMap)}
+							endCombat={(combat, goToMap) => this.endCombat(combat, goToMap)}
 							nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
 							changeValue={(combatant, type, value) => this.changeValue(combatant, type, value)}
 							makeCurrent={combatant => this.makeCurrent(combatant, false)}
@@ -2295,12 +2365,27 @@ export default class App extends React.Component<Props, State> {
 							addCompanion={companion => this.addCompanionToEncounter(companion)}
 							addPC={(partyID, pcID) => this.addPCToEncounter(partyID, pcID)}
 							addWave={() => this.openAddWaveModal()}
-							addCondition={combatants => this.addCondition(combatants)}
-							editCondition={(combatant, condition) => this.editCondition(combatant, condition)}
+							addCondition={combatants => {
+								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
+								this.addCondition(combatants, combat.combatants);
+							}}
+							editCondition={(combatant, condition) => {
+								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
+								this.editCondition(combatant, condition, combat.combatants);
+							}}
 							removeCondition={(combatant, condition) => this.removeCondition(combatant, condition)}
-							mapAdd={(combatant, x, y) => this.mapAdd(combatant, x, y)}
-							mapMove={(ids, dir) => this.mapMove(ids, dir)}
-							mapRemove={ids => this.mapRemove(ids)}
+							mapAdd={(combatant, x, y) => {
+								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
+								this.mapAdd(combatant, x, y, combat.combatants, combat.map as Map);
+							}}
+							mapMove={(ids, dir) => {
+								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
+								this.mapMove(ids, dir, combat.combatants, combat.map as Map);
+							}}
+							mapRemove={ids => {
+								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
+								this.mapRemove(ids, combat.combatants, combat.map as Map);
+							}}
 							mapAddNote={itemID => this.mapAddNote(itemID)}
 							mapRemoveNote={itemID => this.mapRemoveNote(itemID)}
 							endTurn={combatant => this.endTurn(combatant)}
@@ -2310,7 +2395,10 @@ export default class App extends React.Component<Props, State> {
 							toggleCondition={(combatants, condition) => this.toggleCondition(combatants, condition)}
 							toggleHidden={combatants => this.toggleHidden(combatants)}
 							scatterCombatants={type => this.scatterCombatants(type)}
-							rotateMap={() => this.rotateMap()}
+							rotateMap={() => {
+								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
+								this.rotateMap(combat.map as Map);
+							}}
 							setFog={fog => this.setFog(fog)}
 							addOverlay={overlay => this.addMapItem(overlay)}
 							showLeaderboard={() => this.showLeaderboard()}
@@ -2318,16 +2406,109 @@ export default class App extends React.Component<Props, State> {
 						/>
 					);
 				}
+				if (this.state.selectedEncounterID) {
+					return (
+						<EncounterScreen
+							encounter={this.state.encounters.find(e => e.id === this.state.selectedEncounterID) as Encounter}
+							parties={this.state.parties}
+							edit={encounter => this.editEncounter(encounter)}
+							delete={encounter => this.removeEncounter(encounter)}
+							run={(encounter, partyID) => this.createCombat(encounter, partyID)}
+							getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
+							changeValue={(encounter, type, value) => this.changeValue(encounter, type, value)}
+							goBack={() => this.selectEncounter(null)}
+						/>
+					);
+				}
 				return (
-					<CombatListScreen
+					<EncounterListScreen
+						encounters={this.state.encounters}
 						combats={this.state.combats}
-						hasPCs={hasPCs}
+						parties={this.state.parties}
 						hasMonsters={hasMonsters}
-						createCombat={() => this.createCombat()}
+						addEncounter={templateID => this.addEncounter(templateID)}
+						viewEncounter={encounter => this.selectEncounter(encounter)}
+						editEncounter={encounter => this.editEncounter(encounter)}
+						deleteEncounter={encounter => this.removeEncounter(encounter)}
+						runEncounter={(encounter, partyID) => this.createCombat(encounter, partyID)}
+						getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
+						setView={view => this.setView(view)}
+						openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
 						resumeCombat={combat => this.resumeCombat(combat)}
 						deleteCombat={combat => this.endCombat(combat)}
-						openStatBlock={combatant => this.setState({drawer: { type: 'statblock', source: combatant }})}
-						setView={view => this.setView(view)}
+					/>
+				);
+			case 'maps':
+				if (this.state.selectedExplorationID) {
+					return (
+						<ExplorationScreen
+							exploration={this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration}
+							startCombat={ex => this.createCombat(null, ex.partyID, ex.map, ex.fog, ex.combatants)}
+							toggleTag={(combatants, tag) => this.toggleTag(combatants, tag)}
+							toggleCondition={(combatants, condition) => this.toggleCondition(combatants, condition)}
+							toggleHidden={combatants => this.toggleHidden(combatants)}
+							addCondition={combatants => {
+								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
+								this.addCondition(combatants, ex.combatants);
+							}}
+							editCondition={(combatant, condition) => {
+								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
+								this.editCondition(combatant, condition, ex.combatants);
+							}}
+							removeCondition={(combatant, condition) => this.removeCondition(combatant, condition)}
+							changeValue={(source, field, value) => this.changeValue(source, field, value)}
+							fillFog={() => this.fillFog()}
+							clearFog={() => this.clearFog()}
+							toggleFog={(x1, y1, x2, y2) => this.toggleFog(x1, y1, x2, y2)}
+							addCompanion={companion => this.addCompanionToExploration(companion)}
+							mapAdd={(combatant, x, y) => {
+								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
+								this.mapAdd(combatant, x, y, ex.combatants, ex.map);
+							}}
+							mapMove={(ids, dir) => {
+								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
+								this.mapMove(ids, dir, ex.combatants, ex.map);
+							}}
+							mapRemove={ids => {
+								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
+								this.mapRemove(ids, ex.combatants, ex.map);
+							}}
+							rotateMap={() => {
+								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
+								this.rotateMap(ex.map);
+							}}
+							pauseExploration={() => this.pauseExploration()}
+							endExploration={exploration => this.endExploration(exploration)}
+						/>
+					);
+				}
+				if (this.state.selectedMapID) {
+					return (
+						<MapScreen
+							map={this.state.maps.find(m => m.id === this.state.selectedMapID) as Map}
+							parties={this.state.parties}
+							edit={map => this.editMap(map)}
+							delete={map => this.removeMap(map)}
+							startExploration={(map, partyID) => this.startExploration(map, partyID)}
+							changeValue={(map, type, value) => this.changeValue(map, type, value)}
+							goBack={() => this.selectMap(null)}
+						/>
+					);
+				}
+				return (
+					<MapListScreen
+						maps={this.state.maps}
+						parties={this.state.parties}
+						explorations={this.state.explorations}
+						addMap={() => this.editMap(null)}
+						importMap={() => this.importMap()}
+						generateMap={(type) => this.generateMap(type)}
+						viewMap={map => this.selectMap(map)}
+						editMap={map => this.editMap(map)}
+						deleteMap={map => this.removeMap(map)}
+						explore={(map, partyID) => this.startExploration(map, partyID)}
+						resumeExploration={ex => this.resumeExploration(ex)}
+						deleteExploration={ex => this.endExploration(ex)}
 					/>
 				);
 		}
@@ -2631,27 +2812,7 @@ export default class App extends React.Component<Props, State> {
 					);
 					width = '75%';
 					break;
-				case 'map-view':
-						content = (
-							<MapModal
-								map={this.state.drawer.map}
-								fog={this.state.drawer.fog}
-								partyID={this.state.drawer.partyID}
-								combatants={this.state.drawer.combatants}
-								parties={this.state.parties}
-								startCombat={(partyID, map, fog, combatants) => this.createCombat(null, partyID, map, fog, combatants)}
-								toggleTag={(combatants, tag) => this.toggleTag(combatants, tag)}
-								toggleCondition={(combatants, condition) => this.toggleCondition(combatants, condition)}
-								toggleHidden={combatants => this.toggleHidden(combatants)}
-								quickAddCondition={(combatants, condition) => this.quickAddCondition(combatants, condition)}
-								removeCondition={(combatant, condition) => this.removeCondition(combatant, condition)}
-							/>
-						);
-						header = this.state.drawer.map.name;
-						width = '75%';
-						closable = true;
-						break;
-					case 'map-edit':
+				case 'map-edit':
 					content = (
 						<MapEditorModal
 							map={this.state.drawer.map}

@@ -143,8 +143,6 @@ export default class Hero {
 				companion.name = creature.name;
 				pc.companions.push(companion);
 			});
-
-			// TODO: Import portrait
 		} catch (e) {
 			console.error(e);
 		}

@@ -40,7 +40,7 @@ interface Props {
 	library: MonsterGroup[];
 	encounters: Encounter[];
 	pauseCombat: () => void;
-	endCombat: (goToMap: boolean) => void;
+	endCombat: (combat: Combat, goToMap: boolean) => void;
 	closeNotification: (notification: Notification, removeCondition: boolean) => void;
 	mapAdd: (combatant: Combatant, x: number, y: number) => void;
 	makeCurrent: (combatant: Combatant) => void;
@@ -514,7 +514,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 		let exitToMap = null;
 		if (this.props.combat.map) {
 			exitToMap = (
-				<ConfirmButton text='end combat and open map' onConfirm={() => this.props.endCombat(true)} />
+				<ConfirmButton text='end combat and continue exploration' onConfirm={() => this.props.endCombat(this.props.combat, true)} />
 			);
 		}
 
@@ -569,7 +569,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 				<div className='subheading'>encounter</div>
 				{notes}
 				<button onClick={() => this.props.pauseCombat()}>pause combat</button>
-				<ConfirmButton text='end combat' onConfirm={() => this.props.endCombat(false)} />
+				<ConfirmButton text='end combat' onConfirm={() => this.props.endCombat(this.props.combat, false)} />
 				{exitToMap}
 				<div className='subheading'>leaderboard</div>
 				<button onClick={() => this.props.showLeaderboard()}>show leaderboard</button>
@@ -734,7 +734,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 				allCombatants={this.props.combat.combatants}
 				map={this.props.combat.map}
 				defaultTab='main'
-				inline={false}
 				// Main tab
 				makeCurrent={combatant => this.props.makeCurrent(combatant)}
 				makeActive={combatants => this.props.makeActive(combatants)}
@@ -746,7 +745,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 				changeHP={values => this.props.changeHP(values)}
 				// Cond tab
 				addCondition={combatants => this.props.addCondition(combatants)}
-				quickAddCondition={(combatants, condition) => null}
 				editCondition={(combatant, condition) => this.props.editCondition(combatant, condition)}
 				removeCondition={(combatant, condition) => this.props.removeCondition(combatant, condition)}
 				// Map tab

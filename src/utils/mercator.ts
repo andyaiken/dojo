@@ -364,8 +364,6 @@ export default class Mercator {
 			map.items.push(room);
 		}
 
-		// TODO: Maybe add a second or third adjacent tile
-
 		return true;
 	}
 

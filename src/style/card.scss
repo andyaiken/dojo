@@ -85,18 +85,18 @@
 	}
 
 	&.encounter {
-		border: 1px solid #006565;
+		border: 1px solid #650065;
 
 		.heading {
-			background-color: #006565;
+			background-color: #650065;
 		}
 
 		.subheading {
-			color: #006565;
+			color: #650065;
 		}
 
 		hr {
-			border-color: #006565;
+			border-color: #650065;
 		}
 	}
 
@@ -114,22 +114,6 @@
 
 		hr {
 			border-color: #000065;
-		}
-	}
-
-	&.combat {
-		border: 1px solid #650065;
-
-		.heading {
-			background-color: #650065;
-		}
-
-		.subheading {
-			color: #650065;
-		}
-
-		hr {
-			border-color: #650065;
 		}
 	}
 

@@ -1,3 +1,5 @@
+import { Combatant } from './combat';
+
 export interface Map {
 	id: string;
 	name: string;
@@ -25,6 +27,15 @@ export interface MapNote {
 	id: string;
 	targetID: string;
 	text: string;
+}
+
+export interface Exploration {
+	id: string;
+	name: string;
+	map: Map;
+	partyID: string;
+	fog: { x: number, y: number }[];
+	combatants: Combatant[];
 }
 
 export const TERRAIN_TYPES = [

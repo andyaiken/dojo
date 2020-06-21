@@ -24,7 +24,7 @@ interface Props {
 	delete: (encounter: Encounter) => void;
 	run: (encounter: Encounter, partyID: string) => void;
 	getMonster: (monsterName: string, groupName: string) => Monster | null;
-	changeValue: (source: any, field: string, value: any) => void;
+	changeValue: (encounter: Encounter, field: string, value: string) => void;
 	goBack: () => void;
 }
 
@@ -47,6 +47,9 @@ export default class EncounterScreen extends React.Component<Props> {
 							const copy: Monster = JSON.parse(JSON.stringify(monster));
 							if (s.count > 1) {
 								copy.name += ' x' + s.count;
+							}
+							if (s.faction !== 'foe') {
+								copy.name += ' (' + s.faction + ')';
 							}
 							return (
 								<MonsterCard key={s.id} monster={copy}/>
@@ -71,7 +74,7 @@ export default class EncounterScreen extends React.Component<Props> {
 							edit={enc => this.props.edit(enc)}
 							delete={enc => this.props.delete(enc)}
 							run={(enc, partyID) => this.props.run(enc, partyID)}
-							changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
+							changeValue={(encounter, field, value) => this.props.changeValue(encounter, field, value)}
 							goBack={() => this.props.goBack()}
 						/>
 					</Col>
@@ -95,8 +98,8 @@ interface EncounterInfoProps {
 	edit: (encounter: Encounter) => void;
 	delete: (encounter: Encounter) => void;
 	run: (encounter: Encounter, partyID: string) => void;
+	changeValue: (encounter: Encounter, field: string, value: string) => void;
 	goBack: () => void;
-	changeValue: (source: any, field: string, value: any) => void;
 }
 
 class EncounterInfo extends React.Component<EncounterInfoProps> {

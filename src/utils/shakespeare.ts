@@ -286,8 +286,6 @@ export default class Shakespeare {
 				break;
 		}
 
-		// TODO: Advanced: layered / varigated / alternating colours
-
 		return str;
 	}
 
@@ -669,8 +667,6 @@ export default class Shakespeare {
 				const medium = media[Utils.randomNumber(media.length)];
 
 				result = artAdjective + ' ' + artwork + ' on ' + medium;
-
-				// TODO: Subject
 				break;
 			case 11:
 				// Musical instrument
@@ -889,9 +885,6 @@ export default class Shakespeare {
 				'clear',
 				'transparent'
 			]);
-
-			// TODO: Two colours
-			// TODO: Marbled (two colours)
 		}
 
 		const index = Utils.randomNumber(values.length);

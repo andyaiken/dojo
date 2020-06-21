@@ -1,12 +1,12 @@
 {
 	"name": "dojo",
-	"version": "8.17.0",
+	"version": "9.0.0",
 	"license": "MIT",
 	"repository": "https://github.com/andyaiken/dojo.git",
 	"homepage": "https://andyaiken.github.io/dojo/",
 	"dependencies": {
 		"@ant-design/icons": "^4.2.1",
-		"antd": "^4.3.4",
+		"antd": "^4.3.5",
 		"mousetrap": "^1.6.5",
 		"react": "^16.13.1",
 		"react-debounce-input": "^3.2.2",
@@ -27,7 +27,7 @@
 		"typescript": "^3.9.5"
 	},
 	"scripts": {
-		"update": "npm update && npm update --save-dev",
+		"update": "npm update && npm update --save-dev && npm audit fix",
 		"start": "react-scripts start --display-error-details",
 		"lint": "tslint --config tslint.json --format verbose 'src/**/*.{ts,tsx}'",
 		"predeploy": "react-scripts build",

@@ -3,8 +3,10 @@ import React from 'react';
 
 import Utils from '../../utils/utils';
 
-import { Map } from '../../models/map';
+import { Exploration, Map } from '../../models/map';
+import { Party } from '../../models/party';
 
+import ExplorationCard from '../cards/exploration-card';
 import MapCard from '../cards/map-card';
 import Expander from '../controls/expander';
 import GridPanel from '../panels/grid-panel';
@@ -12,26 +14,44 @@ import Note from '../panels/note';
 
 interface Props {
 	maps: Map[];
+	parties: Party[];
+	explorations: Exploration[];
 	addMap: () => void;
 	importMap: () => void;
 	generateMap: (type: string) => void;
 	viewMap: (map: Map) => void;
 	editMap: (map: Map) => void;
 	deleteMap: (map: Map) => void;
+	explore: (map: Map, partyID: string) => void;
+	resumeExploration: (exploration: Exploration) => void;
+	deleteExploration: (exploration: Exploration) => void;
 }
 
 export default class MapListScreen extends React.Component<Props> {
 	public render() {
 		try {
+			const explorations = this.props.explorations;
+			Utils.sort(explorations);
+			const explorationItems = explorations.map(exploration => (
+				<ExplorationCard
+					key={exploration.id}
+					exploration={exploration}
+					resume={ex => this.props.resumeExploration(ex)}
+					delete={ex => this.props.deleteExploration(ex)}
+				/>
+			));
+
 			const maps = this.props.maps;
 			Utils.sort(maps);
-			const listItems = maps.map(map => (
+			const mapItems = maps.map(map => (
 				<MapCard
 					key={map.id}
 					map={map}
+					parties={this.props.parties}
 					viewMap={m => this.props.viewMap(m)}
 					editMap={m => this.props.editMap(m)}
 					removeMap={m => this.props.deleteMap(m)}
+					explore={(m, partyID) => this.props.explore(m, partyID)}
 				/>
 			));
 
@@ -54,7 +74,8 @@ export default class MapListScreen extends React.Component<Props> {
 						</Expander>
 					</Col>
 					<Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
-						<GridPanel heading='maps' content={listItems} />
+						<GridPanel heading='in progress' content={explorationItems} />
+						<GridPanel heading='maps' content={mapItems} />
 					</Col>
 				</Row>
 			);

@@ -5,10 +5,12 @@ import React from 'react';
 import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
+import { Combat, Combatant } from '../../models/combat';
 import { Encounter, EncounterSlot } from '../../models/encounter';
 import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
+import CombatCard from '../cards/combat-card';
 import EncounterCard from '../cards/encounter-card';
 import Expander from '../controls/expander';
 import RadioGroup from '../controls/radio-group';
@@ -17,6 +19,7 @@ import Note from '../panels/note';
 
 interface Props {
 	encounters: Encounter[];
+	combats: Combat[];
 	parties: Party[];
 	hasMonsters: boolean;
 	addEncounter: (templateID: string | null) => void;
@@ -26,7 +29,9 @@ interface Props {
 	runEncounter: (encounter: Encounter, partyID: string) => void;
 	getMonster: (monsterName: string, groupName: string) => Monster | null;
 	setView: (view: string) => void;
-	openStatBlock: (monster: Monster) => void;
+	openStatBlock: (monster: Monster | Combatant) => void;
+	resumeCombat: (combat: Combat) => void;
+	deleteCombat: (combat: Combat) => void;
 }
 
 export default class EncounterListScreen extends React.Component<Props> {
@@ -63,9 +68,21 @@ export default class EncounterListScreen extends React.Component<Props> {
 				/* tslint:enable:max-line-length */
 			}
 
+			const combats = this.props.combats;
+			Utils.sort(combats);
+			const combatItems = combats.map(c => (
+				<CombatCard
+					key={c.id}
+					combat={c}
+					resume={combat => this.props.resumeCombat(combat)}
+					delete={combat => this.props.deleteCombat(combat)}
+					openStatBlock={combatant => this.props.openStatBlock(combatant)}
+				/>
+			));
+
 			const encounters = this.props.encounters;
 			Utils.sort(encounters);
-			const listItems = encounters.map(e => (
+			const encounterItems = encounters.map(e => (
 				<EncounterCard
 					key={e.id}
 					encounter={e}
@@ -88,7 +105,7 @@ export default class EncounterListScreen extends React.Component<Props> {
 								when you have created an encounter you can add monsters to it, then gauge its difficulty for a party of pcs
 							</div>
 							<div className='section'>
-								when you have set up a party and an encounter you can then run the encounter in the combat manager
+								when you have set up a party and an encounter you can then run the encounter
 							</div>
 							<hr/>
 							<div className='section'>on the right you will see a list of encounters that you have created</div>
@@ -106,7 +123,8 @@ export default class EncounterListScreen extends React.Component<Props> {
 						</Expander>
 					</Col>
 					<Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
-						<GridPanel heading='encounters' content={listItems} />
+						<GridPanel heading='in progress' content={combatItems} />
+						<GridPanel heading='encounters' content={encounterItems} />
 					</Col>
 				</Row>
 			);
