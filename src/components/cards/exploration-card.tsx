@@ -26,6 +26,7 @@ export default class ExplorationCard extends React.Component<Props> {
 							<div className='section'>
 								<MapPanel
 									map={this.props.exploration.map}
+									fog={this.props.exploration.fog}
 									combatants={this.props.exploration.combatants}
 								/>
 							</div>

@@ -1,20 +1,16 @@
 import { Slider } from 'antd';
 import React from 'react';
 
-import { MapItem, MapNote } from '../../models/map';
+import { MapItem } from '../../models/map';
 
 import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
 import Selector from '../controls/selector';
-import Textbox from '../controls/textbox';
 
 interface Props {
 	item: MapItem;
-	note: MapNote | null;
 	move: (item: MapItem, dir: string) => void;
 	remove: (item: MapItem) => void;
-	addNote: (itemID: string) => void;
-	removeNote: (itemID: string) => void;
 	changeValue: (source: any, field: string, value: any) => void;
 	nudgeValue: (source: any, field: string, delta: number) => void;
 }
@@ -115,31 +111,9 @@ export default class MapItemCard extends React.Component<Props, State> {
 		);
 	}
 
-	private getNotesSection() {
-		if (this.props.note) {
-			return (
-				<div>
-					<Textbox
-						text={this.props.note.text}
-						placeholder='details'
-						multiLine={true}
-						onChange={value => this.props.changeValue(this.props.note, 'text', value)}
-					/>
-					<button onClick={() => this.props.removeNote(this.props.item.id)}>remove note</button>
-				</div>
-			);
-		} else {
-			return (
-				<div>
-					<button onClick={() => this.props.addNote(this.props.item.id)}>add a note</button>
-				</div>
-			);
-		}
-	}
-
 	public render() {
 		try {
-			const options = ['position', 'style', 'notes'].map(option => {
+			const options = ['position', 'style'].map(option => {
 				return { id: option, text: option };
 			});
 
@@ -150,9 +124,6 @@ export default class MapItemCard extends React.Component<Props, State> {
 					break;
 				case 'style':
 					content = this.getStyleSection();
-					break;
-				case 'notes':
-					content = this.getNotesSection();
 					break;
 			}
 

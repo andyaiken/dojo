@@ -1,7 +1,6 @@
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import Mercator from '../../utils/mercator';
 import Utils from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
@@ -44,6 +43,7 @@ interface State {
 	playerViewOpen: boolean;
 	editFog: boolean;
 	selectedCombatantIDs: string[];
+	selectedAreaID: string | null;
 }
 
 export default class ExplorationScreen extends React.Component<Props, State> {
@@ -52,7 +52,8 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 		this.state = {
 			playerViewOpen: false,
 			editFog: false,
-			selectedCombatantIDs: []
+			selectedCombatantIDs: [],
+			selectedAreaID: null
 		};
 	}
 
@@ -73,6 +74,12 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 		this.setState({
 			editFog: (ids.length > 0) ? false : this.state.editFog,
 			selectedCombatantIDs: ids
+		});
+	}
+
+	private setSelectedAreaID(id: string | null) {
+		this.setState({
+			selectedAreaID: id
 		});
 	}
 
@@ -150,28 +157,15 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 		const adding = (this.state.selectedCombatantIDs.length === 1) && !this.props.exploration.map.items.find(i => i.id === this.state.selectedCombatantIDs[0]);
 
 		let viewport = null;
-		if (playerView && (this.props.exploration.fog.length > 0)) {
-			const dims = Mercator.mapDimensions(this.props.exploration.map);
-			if (dims) {
-				// Invert the fog
-				const visible: { x: number, y: number }[] = [];
-				for (let x = dims.minX; x <= dims.maxX; ++x) {
-					for (let y = dims.minY; y <= dims.maxY; ++y) {
-						if (!this.props.exploration.fog.find(f => (f.x === x) && (f.y === y))) {
-							visible.push({ x: x, y: y });
-						}
-					}
-				}
-				if (visible.length > 0) {
-					const xs = visible.map(f => f.x);
-					const ys = visible.map(f => f.y);
-					viewport = {
-						minX: Math.min(...xs),
-						maxX: Math.max(...xs),
-						minY: Math.min(...ys),
-						maxY: Math.max(...ys)
-					};
-				}
+		if (this.state.selectedAreaID) {
+			const area = this.props.exploration.map.areas.find(a => a.id === this.state.selectedAreaID);
+			if (area) {
+				viewport = {
+					minX: area.x,
+					minY: area.y,
+					maxX: area.x + area.width - 1,
+					maxY: area.y + area.height - 1
+				};
 			}
 		}
 
@@ -187,6 +181,7 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 				gridSquareClicked={(x, y) => this.gridSquareClicked(x, y, playerView)}
 				gridRectangleSelected={(x1, y1, x2, y2) => this.props.toggleFog(x1, y1, x2, y2)}
 				itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
+				areaSelected={id => this.setSelectedAreaID(id)}
 			/>
 		);
 	}

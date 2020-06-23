@@ -58,8 +58,6 @@ interface Props {
 	removeCondition: (combatant: Combatant, condition: Condition) => void;
 	mapMove: (ids: string[], dir: string) => void;
 	mapRemove: (ids: string[]) => void;
-	mapAddNote: (id: string) => void;
-	mapRemoveNote: (id: string) => void;
 	endTurn: (combatant: Combatant) => void;
 	changeHP: (values: {id: string, hp: number, temp: number, damage: number}[]) => void;
 	changeValue: (source: {}, type: string, value: any) => void;
@@ -79,6 +77,7 @@ interface State {
 	showDefeatedCombatants: boolean;
 	showRollButtons: boolean;
 	selectedItemIDs: string[];
+	selectedAreaID: string | null;
 	addingToMapID: string | null;
 	addingOverlay: boolean;
 	addingFog: boolean;
@@ -97,6 +96,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 			showDefeatedCombatants: false,
 			showRollButtons: false,
 			selectedItemIDs: [],            // The IDs of the combatants or map items that are selected
+			selectedAreaID: null,			// The ID of the selected map area
 			addingToMapID: null,            // The ID of the combatant we're adding to the map
 			addingOverlay: false,           // True if we're adding a custom overlay to the map
 			addingFog: false,
@@ -145,6 +145,12 @@ export default class CombatScreen extends React.Component<Props, State> {
 		} else {
 			this.setSelectedItemIDs(id ? [id] : []);
 		}
+	}
+
+	private setSelectedAreaID(id: string | null) {
+		this.setState({
+			selectedAreaID: id
+		});
 	}
 
 	private setAddingToMapID(id: string | null) {
@@ -319,6 +325,22 @@ export default class CombatScreen extends React.Component<Props, State> {
 		return combatants;
 	}
 
+	private getMapViewport() {
+		if (this.props.combat.map && this.state.selectedAreaID) {
+			const area = this.props.combat.map.areas.find(a => a.id === this.state.selectedAreaID);
+			if (area) {
+				return {
+					minX: area.x,
+					minY: area.y,
+					maxX: area.x + area.width - 1,
+					maxY: area.y + area.height - 1
+				};
+			}
+		}
+
+		return null;
+	}
+
 	//#region Rendering helper methods
 
 	private getPlayerView() {
@@ -441,32 +463,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 				}
 			}
 
-			let viewport = null;
-			if (this.props.combat.fog.length > 0) {
-				const dims = Mercator.mapDimensions(this.props.combat.map);
-				if (dims) {
-					// Invert the fog
-					const visible: { x: number, y: number }[] = [];
-					for (let x = dims.minX; x <= dims.maxX; ++x) {
-						for (let y = dims.minY; y <= dims.maxY; ++y) {
-							if (!this.props.combat.fog.find(f => (f.x === x) && (f.y === y))) {
-								visible.push({ x: x, y: y });
-							}
-						}
-					}
-					if (visible.length > 0) {
-						const xs = visible.map(f => f.x);
-						const ys = visible.map(f => f.y);
-						viewport = {
-							minX: Math.min(...xs),
-							maxX: Math.max(...xs),
-							minY: Math.min(...ys),
-							maxY: Math.max(...ys)
-						};
-					}
-				}
-			}
-
 			return (
 				<Popout title='Encounter' onCloseWindow={() => this.setPlayerViewOpen(false)}>
 					<Row className='full-height'>
@@ -475,7 +471,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 								key='map'
 								map={this.props.combat.map}
 								mode='combat-player'
-								viewport={viewport}
+								viewport={this.getMapViewport()}
 								combatants={this.props.combat.combatants}
 								selectedItemIDs={this.state.selectedItemIDs}
 								fog={this.props.combat.fog}
@@ -674,11 +670,8 @@ export default class CombatScreen extends React.Component<Props, State> {
 				return (
 					<MapItemCard
 						item={mapItem}
-						note={Mercator.getNote(this.props.combat.map, mapItem)}
 						move={(item, dir) => this.props.mapMove([item.id], dir)}
 						remove={item => this.props.mapRemove([item.id])}
-						addNote={itemID => this.props.mapAddNote(itemID)}
-						removeNote={itemID => this.props.mapRemoveNote(itemID)}
 						changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
 						nudgeValue={(source, field, delta) => this.props.nudgeValue(source, field, delta)}
 					/>
@@ -955,11 +948,13 @@ export default class CombatScreen extends React.Component<Props, State> {
 						key='map'
 						map={this.props.combat.map}
 						mode='combat'
+						viewport={this.getMapViewport()}
 						showGrid={(this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.addingFog}
 						combatants={this.props.combat.combatants}
 						selectedItemIDs={this.state.selectedItemIDs}
 						fog={this.props.combat.fog}
 						itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
+						areaSelected={id => this.setSelectedAreaID(id)}
 						gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
 						gridRectangleSelected={(x1, y1, x2, y2) => this.toggleFog(x1, y1, x2, y2)}
 					/>

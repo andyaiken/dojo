@@ -4,7 +4,7 @@ export interface Map {
 	id: string;
 	name: string;
 	items: MapItem[];
-	notes: MapNote[];
+	areas: MapArea[];
 }
 
 export interface MapItem {
@@ -23,10 +23,14 @@ export interface MapItem {
 	style: 'square' | 'rounded' | 'circle' | null;                          // Used by tiles and overlays
 }
 
-export interface MapNote {
+export interface MapArea {
 	id: string;
-	targetID: string;
+	name: string;
 	text: string;
+	x: number;
+	y: number;
+	width: number;
+	height: number;
 }
 
 export interface Exploration {

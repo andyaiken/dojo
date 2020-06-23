@@ -11,8 +11,7 @@
 		background-color: white;
 		border: 1px solid $control-border;
 		display: flex;
-		align-items: center;
-		justify-content: center;
+		align-items: flex-start;
 		opacity: 0.5;
 
 		&:hover {
@@ -30,9 +29,11 @@
 			}
 		}
 
-		.number-spin {
+		.number-spin,
+		.dropdown,
+		button {
 			margin: 5px;
-			min-width: 150px;
+			width: 200px;
 		}
 	}
 
@@ -96,8 +97,17 @@
 	&.combat {
 
 		.fog {
-			opacity: 0.6;
+			opacity: 0.5;
 			box-shadow: none !important;
+		}
+	}
+
+	.map-area {
+		position: absolute;
+
+		&.selected {
+			border: 1px solid black;
+			box-shadow: 0 0 20px 0px black;
 		}
 	}
 }
@@ -157,6 +167,7 @@
 
 	&.selected {
 		border-color: $highlight;
+		box-shadow: 0 0 10px 3px black;
 	}
 
 	.custom-image {

@@ -3,15 +3,14 @@ import { Tooltip } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
 
-import Factory from '../../utils/factory';
-import Mercator from '../../utils/mercator';
 import Utils from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
-import { Map, MapItem, MapNote } from '../../models/map';
+import { Map, MapItem } from '../../models/map';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
+import Dropdown from '../controls/dropdown';
 import NumberSpin from '../controls/number-spin';
 import HitPointGauge from './hit-point-gauge';
 
@@ -23,12 +22,12 @@ interface Props {
 	mode: 'edit' | 'thumbnail' | 'combat' | 'combat-player';
 	viewport: MapDimensions | null;
 	paddingSquares: number;
-	floatingItem: MapItem | null;
 	combatants: Combatant[];
 	showGrid: boolean;
 	selectedItemIDs: string[];
 	fog: { x: number, y: number }[];
 	itemSelected: (itemID: string | null, ctrl: boolean) => void;
+	areaSelected: (areaID: string | null) => void;
 	gridSquareEntered: (x: number, y: number) => void;
 	gridSquareClicked: (x: number, y: number) => void;
 	gridRectangleSelected: (x1: number, y1: number, x2: number, y2: number) => void;
@@ -70,12 +69,12 @@ export default class MapPanel extends React.Component<Props, State> {
 		mode: 'thumbnail',
 		viewport: null,
 		paddingSquares: 0,
-		floatingItem: null,
 		combatants: [],
 		showGrid: false,
 		selectedItemIDs: [],
 		fog: [],
 		itemSelected: null,
+		areaSelected: null,
 		gridSquareEntered: null,
 		gridSquareClicked: null,
 		gridRectangleUpdated: null,
@@ -196,9 +195,16 @@ export default class MapPanel extends React.Component<Props, State> {
 					dimensions.maxY = Math.max(dimensions.maxY, i.y + i.height - 1);
 				}
 			});
-		}
 
-		if (this.props.combatants) {
+			this.props.map.areas.forEach(a => {
+				if (dimensions) {
+					dimensions.minX = Math.min(dimensions.minX, a.x);
+					dimensions.maxX = Math.max(dimensions.maxX, a.x + a.width - 1);
+					dimensions.minY = Math.min(dimensions.minY, a.y);
+					dimensions.maxY = Math.max(dimensions.maxY, a.y + a.height - 1);
+				}
+			});
+
 			this.props.combatants.filter(c => c.aura.radius > 0).forEach(c => {
 				const mi = this.props.map.items.find(i => i.id === c.id);
 				if (mi) {
@@ -235,6 +241,28 @@ export default class MapPanel extends React.Component<Props, State> {
 				minY: 0,
 				maxY: 0
 			};
+		}
+
+		if ((this.props.mode === 'thumbnail') || (this.props.mode === 'combat-player')) {
+			// Invert the fog
+			const visible: { x: number, y: number }[] = [];
+			for (let x = dimensions.minX; x <= dimensions.maxX; ++x) {
+				for (let y = dimensions.minY; y <= dimensions.maxY; ++y) {
+					if (!this.props.fog.find(f => (f.x === x) && (f.y === y))) {
+						visible.push({ x: x, y: y });
+					}
+				}
+			}
+			if (visible.length > 0) {
+				const xs = visible.map(f => f.x);
+				const ys = visible.map(f => f.y);
+				dimensions = {
+					minX: Math.min(...xs),
+					maxX: Math.max(...xs),
+					minY: Math.min(...ys),
+					maxY: Math.max(...ys)
+				};
+			}
 		}
 
 		// Apply the border
@@ -290,14 +318,24 @@ export default class MapPanel extends React.Component<Props, State> {
 				);
 			}
 
-			let items: MapItem[] = [];
-			items = items.concat(this.props.map.items);
-			if (this.props.floatingItem) {
-				items.push(this.props.floatingItem);
+			// Draw the map areas
+			let areas: JSX.Element[] = [];
+			if ((this.props.mode === 'edit') || (this.props.mode === 'combat')) {
+				areas = this.props.map.areas
+					.map(a => {
+						const areaStyle = this.getStyle(a.x, a.y, a.width, a.height, 'square', mapDimensions);
+						return (
+							<Area
+								key={a.id}
+								style={areaStyle}
+								selected={this.props.selectedItemIDs.includes(a.id)}
+							/>
+						);
+					});
 			}
 
 			// Draw the map tiles
-			const tiles = items
+			const tiles = this.props.map.items
 				.filter(i => i.type === 'tile')
 				.map(i => {
 					const tileStyle = this.getStyle(i.x, i.y, i.width, i.height, i.style, mapDimensions);
@@ -305,7 +343,6 @@ export default class MapPanel extends React.Component<Props, State> {
 						<MapTile
 							key={i.id}
 							tile={i}
-							note={this.props.mode !== 'combat-player' ? Mercator.getNote(this.props.map, i) : null}
 							style={tileStyle}
 							selectable={this.props.mode === 'edit'}
 							selected={this.props.selectedItemIDs.includes(i.id)}
@@ -335,7 +372,7 @@ export default class MapPanel extends React.Component<Props, State> {
 			// Draw overlays
 			let overlays: JSX.Element[] = [];
 			if ((this.props.mode !== 'edit') && (this.props.mode !== 'thumbnail')) {
-				overlays = items
+				overlays = this.props.map.items
 					.filter(i => i.type === 'overlay')
 					.map(i => {
 						const overlayStyle = this.getStyle(i.x, i.y, i.width, i.height, i.style, mapDimensions);
@@ -344,7 +381,6 @@ export default class MapPanel extends React.Component<Props, State> {
 							<MapOverlay
 								key={i.id}
 								overlay={i}
-								note={this.props.mode !== 'combat-player' ? Mercator.getNote(this.props.map, i) : null}
 								style={overlayStyle}
 								selected={this.props.selectedItemIDs.includes(i.id)}
 								select={(id, ctrl) => this.props.itemSelected(id, ctrl)}
@@ -360,7 +396,7 @@ export default class MapPanel extends React.Component<Props, State> {
 					.filter(c => c.aura.radius > 0)
 					.filter(c => c.showOnMap || (this.props.mode !== 'combat-player'))
 					.map(c => {
-						const mi = items.find(i => i.id === c.id);
+						const mi = this.props.map.items.find(i => i.id === c.id);
 						if (mi) {
 							const sizeInSquares = c.aura.radius / 5;
 							const miniSize = Math.max(Utils.miniSize(c.displaySize), 1);
@@ -384,12 +420,11 @@ export default class MapPanel extends React.Component<Props, State> {
 			let tokens: JSX.Element[] = [];
 			if (this.props.mode !== 'edit') {
 				const mountIDs = this.props.combatants.map(c => c.mountID || '').filter(id => id !== '');
-				tokens = items
+				tokens = this.props.map.items
 					.filter(i => (i.type === 'monster') || (i.type === 'pc') || (i.type === 'companion') || (i.type === 'token'))
 					.filter(i => !mountIDs.includes(i.id))
 					.map(i => {
 						let miniSize = Utils.miniSize(i.size);
-						let note = Mercator.getNote(this.props.map, i);
 						let isPC = false;
 						const combatant = this.props.combatants.find(c => c.id === i.id);
 						if (combatant) {
@@ -401,11 +436,6 @@ export default class MapPanel extends React.Component<Props, State> {
 								}
 							}
 							miniSize = Utils.miniSize(s);
-							if (!note && combatant.note) {
-								note = Factory.createMapNote();
-								note.targetID = combatant.id;
-								note.text = combatant.note;
-							}
 							isPC = (combatant.type === 'pc');
 						}
 						const tokenStyle = this.getStyle(i.x, i.y, miniSize, miniSize, 'circle', mapDimensions);
@@ -413,7 +443,6 @@ export default class MapPanel extends React.Component<Props, State> {
 							<MapToken
 								key={i.id}
 								token={i}
-								note={this.props.mode !== 'combat-player' ? note : null}
 								combatant={combatant || null}
 								style={tokenStyle}
 								simple={this.props.mode === 'thumbnail'}
@@ -453,24 +482,48 @@ export default class MapPanel extends React.Component<Props, State> {
 
 			let controls = null;
 			if (this.props.mode !== 'thumbnail') {
+				let ctrls = null;
 				if (this.state.showControls) {
-					controls = (
-						<div className='map-menu'>
-							<LeftCircleOutlined className='menu-icon rotate' onClick={e => this.menuClick(e)} />
+					let areaControl = null;
+					if (this.props.mode === 'combat') {
+						if (this.props.viewport) {
+							areaControl = (
+								<button
+									onClick={e => {
+										e.stopPropagation();
+										this.props.areaSelected(null);
+									}}
+								>
+									show full map
+								</button>
+							);
+						} else {
+							areaControl = (
+								<Dropdown
+									placeholder={'show map area...'}
+									options={this.props.map.areas.map(a => ({ id: a.id, text: a.name }))}
+									onSelect={id => this.props.areaSelected(id)}
+								/>
+							);
+						}
+					}
+					ctrls = (
+						<div>
 							<NumberSpin
 								value='zoom'
 								downEnabled={this.state.size > 3}
 								onNudgeValue={delta => this.nudgeSize(delta * 3)}
 							/>
-						</div>
-					);
-				} else {
-					controls = (
-						<div className='map-menu'>
-							<LeftCircleOutlined className='menu-icon' onClick={e => this.menuClick(e)} />
+							{areaControl}
 						</div>
 					);
 				}
+				controls = (
+					<div className='map-menu'>
+						<LeftCircleOutlined className={this.state.showControls ? 'menu-icon rotate' : 'menu-icon'} onClick={e => this.menuClick(e)} />
+						{ctrls}
+					</div>
+				);
 			}
 
 			const style = 'map-panel ' + this.props.mode;
@@ -479,6 +532,7 @@ export default class MapPanel extends React.Component<Props, State> {
 			return (
 				<div className={style} onClick={() => this.props.itemSelected ? this.props.itemSelected(null, false) : null}>
 					<div className='grid' style={{ width: ((this.state.size * mapWidth) + 2) + 'px', height: ((this.state.size * mapHeight) + 2) + 'px' }}>
+						{areas}
 						{tiles}
 						{fog}
 						{overlays}
@@ -491,6 +545,31 @@ export default class MapPanel extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
+			return <div className='render-error'/>;
+		}
+	}
+}
+
+interface AreaProps {
+	style: MapItemStyle;
+	selected: boolean;
+}
+
+class Area extends React.Component<AreaProps> {
+	public render() {
+		try {
+			let style = 'map-area';
+			if (this.props.selected) {
+				style += ' selected';
+			}
+			return (
+				<div
+					className={style}
+					style={this.props.style}
+				/>
+			);
+		} catch (ex) {
+			console.error(ex);
 			return <div className='render-error'/>;
 		}
 	}
@@ -566,7 +645,6 @@ class GridSquare extends React.Component<GridSquareProps> {
 
 interface MapTileProps {
 	tile: MapItem;
-	note: MapNote | null;
 	style: MapItemStyle;
 	selectable: boolean;
 	selected: boolean;
@@ -579,14 +657,6 @@ class MapTile extends React.Component<MapTileProps> {
 			e.stopPropagation();
 			this.props.select(this.props.tile.id, e.ctrlKey);
 		}
-	}
-
-	private getNoteText() {
-		if (this.props.note) {
-			return this.props.note.text.trim();
-		}
-
-		return '';
 	}
 
 	public render() {
@@ -777,7 +847,7 @@ class MapTile extends React.Component<MapTileProps> {
 				}
 			}
 
-			const tile = (
+			return (
 				<div
 					className={style}
 					style={this.props.style}
@@ -787,17 +857,6 @@ class MapTile extends React.Component<MapTileProps> {
 					{content}
 				</div>
 			);
-
-			const noteText = this.getNoteText();
-			if (noteText) {
-				return (
-					<Tooltip placement='bottom' title={<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(noteText) }} />}>
-						{tile}
-					</Tooltip>
-				);
-			} else {
-				return tile;
-			}
 		} catch (ex) {
 			console.error(ex);
 			return <div className='render-error'/>;
@@ -807,7 +866,6 @@ class MapTile extends React.Component<MapTileProps> {
 
 interface MapOverlayProps {
 	overlay: MapItem;
-	note: MapNote | null;
 	style: MapItemStyle;
 	selected: boolean;
 	select: (tileID: string, ctrl: boolean) => void;
@@ -819,14 +877,6 @@ class MapOverlay extends React.Component<MapOverlayProps> {
 		this.props.select(this.props.overlay.id, e.ctrlKey);
 	}
 
-	private getNoteText() {
-		if (this.props.note) {
-			return this.props.note.text.trim();
-		}
-
-		return '';
-	}
-
 	public render() {
 		try {
 			let style = 'overlay';
@@ -834,24 +884,13 @@ class MapOverlay extends React.Component<MapOverlayProps> {
 				style += ' selected';
 			}
 
-			const overlay = (
+			return (
 				<div
 					className={style}
 					style={this.props.style}
 					onClick={e => this.select(e)}
 				/>
 			);
-
-			const noteText = this.getNoteText();
-			if (noteText) {
-				return (
-					<Tooltip placement='bottom' title={<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(noteText) }} />}>
-						{overlay}
-					</Tooltip>
-				);
-			} else {
-				return overlay;
-			}
 		} catch (ex) {
 			console.error(ex);
 			return <div className='render-error'/>;
@@ -861,7 +900,6 @@ class MapOverlay extends React.Component<MapOverlayProps> {
 
 interface MapTokenProps {
 	token: MapItem;
-	note: MapNote | null;
 	combatant: Combatant | null;
 	style: MapItemStyle;
 	simple: boolean;
@@ -904,11 +942,6 @@ class MapToken extends React.Component<MapTokenProps> {
 					noteText += '* ' + txt;
 				});
 			});
-		}
-
-		if (this.props.note && this.props.note.text) {
-			noteText += '\n\n';
-			noteText += this.props.note.text;
 		}
 
 		return noteText.trim();

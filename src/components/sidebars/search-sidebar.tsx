@@ -132,18 +132,18 @@ export default class SearchSidebar extends React.Component<Props, State> {
 				});
 
 				this.props.maps.filter(map => Sherlock.matchMap(this.state.text, map)).forEach(map => {
-					const notes: JSX.Element[] = [];
-					map.notes.filter(note => Sherlock.matchMapNote(this.state.text, note)).forEach(note => {
-						notes.push(
-							<div key={note.id} className='group-panel'>
-								<div className='section'>map note</div>
+					const areas: JSX.Element[] = [];
+					map.areas.filter(area => Sherlock.matchMapArea(this.state.text, area)).forEach(area => {
+						areas.push(
+							<div key={area.id} className='group-panel'>
+								<div className='section'>map area</div>
 							</div>
 						);
 					});
 					results.push(
 						<div key={map.id} className='group-panel clickable' onClick={() => this.props.openMap(map.id)}>
 							<div className='section'>{map.name}</div>
-							{notes}
+							{areas}
 						</div>
 					);
 				});

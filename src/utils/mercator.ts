@@ -142,6 +142,18 @@ export default class Mercator {
 				item.content.orientation = item.content.orientation === 'horizontal' ? 'vertical' : 'horizontal';
 			}
 		});
+
+		map.areas.forEach(area => {
+			const newX = (area.y + area.height - 1) * -1;
+			const newY = area.x;
+			const newWidth = area.height;
+			const newHeight = area.width;
+
+			area.x = newX;
+			area.y = newY;
+			area.width = newWidth;
+			area.height = newHeight;
+		});
 	}
 
 	public static mapSize(map: Map) {
@@ -156,10 +168,6 @@ export default class Mercator {
 		}
 
 		return 0;
-	}
-
-	public static getNote(map: Map, item: MapItem) {
-		return map.notes.find(n => n.targetID === item.id) || null;
 	}
 
 	public static generate(type: string, map: Map) {

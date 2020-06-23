@@ -146,6 +146,12 @@ export default class App extends React.Component<Props, State> {
 			const str = window.localStorage.getItem('data-maps');
 			if (str) {
 				maps = JSON.parse(str);
+
+				maps.forEach(m => {
+					if (m.areas === undefined) {
+						m.areas = [];
+					}
+				});
 			}
 		} catch (ex) {
 			console.error('Could not parse JSON: ', ex);
@@ -207,8 +213,8 @@ export default class App extends React.Component<Props, State> {
 					}
 
 					if (combat.map) {
-						if (combat.map.notes === undefined) {
-							combat.map.notes = [];
+						if (combat.map.areas === undefined) {
+							combat.map.areas = [];
 						}
 					}
 
@@ -230,6 +236,12 @@ export default class App extends React.Component<Props, State> {
 			const str = window.localStorage.getItem('data-explorations');
 			if (str) {
 				explorations = JSON.parse(str);
+
+				explorations.forEach(ex => {
+					if (ex.map.areas === undefined) {
+						ex.map.areas = [];
+					}
+				});
 			}
 		} catch (ex) {
 			console.error('Could not parse JSON: ', ex);
@@ -1826,31 +1838,6 @@ export default class App extends React.Component<Props, State> {
 
 	// Map methods
 
-	private mapAddNote(tileID: string) {
-		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-		if (combat && combat.map) {
-			const note = Factory.createMapNote();
-			note.targetID = tileID;
-			combat.map.notes.push(note);
-
-			this.setState({
-				combats: this.state.combats
-			});
-		}
-	}
-
-	private mapRemoveNote(tileID: string) {
-		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-		if (combat && combat.map) {
-			const index = combat.map.notes.findIndex(n => n.targetID === tileID);
-			combat.map.notes.splice(index, 1);
-
-			this.setState({
-				combats: this.state.combats
-			});
-		}
-	}
-
 	private scatterCombatants(type: 'pc' | 'monster') {
 		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
 		if (combat && combat.map) {
@@ -2386,8 +2373,6 @@ export default class App extends React.Component<Props, State> {
 								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
 								this.mapRemove(ids, combat.combatants, combat.map as Map);
 							}}
-							mapAddNote={itemID => this.mapAddNote(itemID)}
-							mapRemoveNote={itemID => this.mapRemoveNote(itemID)}
 							endTurn={combatant => this.endTurn(combatant)}
 							changeHP={values => this.changeHP(values)}
 							closeNotification={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
@@ -3030,7 +3015,6 @@ export default class App extends React.Component<Props, State> {
 }
 
 interface ErrorBoundaryProps {
-	//
 }
 
 interface ErrorBoundaryState {

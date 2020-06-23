@@ -1,3 +1,4 @@
+import { CaretLeftOutlined } from '@ant-design/icons';
 import { Col, Drawer, Row } from 'antd';
 import React from 'react';
 
@@ -5,14 +6,11 @@ import Factory from '../../../utils/factory';
 import Mercator from '../../../utils/mercator';
 import Utils from '../../../utils/utils';
 
-import { DOORWAY_TYPES, Map, MapItem, MapNote, STAIRWAY_TYPES, TERRAIN_TYPES } from '../../../models/map';
+import { Map, MapArea, MapItem } from '../../../models/map';
 
+import MapAreaCard from '../../cards/map-area-card';
+import MapTileCard from '../../cards/map-tile-card';
 import ConfirmButton from '../../controls/confirm-button';
-import Dropdown from '../../controls/dropdown';
-import NumberSpin from '../../controls/number-spin';
-import Radial from '../../controls/radial';
-import RadioGroup from '../../controls/radio-group';
-import Selector from '../../controls/selector';
 import Textbox from '../../controls/textbox';
 import MapPanel from '../../panels/map-panel';
 import Note from '../../panels/note';
@@ -25,7 +23,9 @@ interface Props {
 interface State {
 	map: Map;
 	selectedTileID: string | null;
-	addingTile: MapItem | null;
+	selectedAreaID: string | null;
+	addingTile: boolean;
+	addingArea: boolean;
 	showImageSelection: boolean;
 }
 
@@ -36,7 +36,9 @@ export default class MapEditorModal extends React.Component<Props, State> {
 		this.state = {
 			map: props.map,
 			selectedTileID: null,
-			addingTile: null,
+			selectedAreaID: null,
+			addingTile: false,
+			addingArea: false,
 			showImageSelection: false
 		};
 	}
@@ -47,75 +49,24 @@ export default class MapEditorModal extends React.Component<Props, State> {
 		});
 	}
 
-	private setAddingTile(type: string | null) {
-		let tile = null;
-		switch (type) {
-			case 'room':
-				tile = Factory.createMapItem();
-				tile.terrain = 'default';
-				tile.width = 6;
-				tile.height = 6;
-				tile.style = 'square';
-				break;
-			case 'corridor':
-				tile = Factory.createMapItem();
-				tile.terrain = 'default';
-				tile.width = 6;
-				tile.height = 2;
-				tile.style = 'square';
-				break;
-			case 'door':
-				tile = Factory.createMapItem();
-				tile.terrain = 'default';
-				tile.width = 2;
-				tile.height = 1;
-				tile.style = 'square';
-				tile.content = {
-					type: 'doorway',
-					style: 'single',
-					orientation: 'horizontal'
-				};
-				break;
-			case 'stairs':
-				tile = Factory.createMapItem();
-				tile.terrain = 'default';
-				tile.width = 4;
-				tile.height = 2;
-				tile.style = 'square';
-				tile.content = {
-					type: 'stairway',
-					style: 'stairs',
-					orientation: 'vertical'
-				};
-				break;
-		}
-
-		if (tile && (this.state.map.items.length === 0)) {
-			// Just add the tile
-			tile.x = 0;
-			tile.y = 0;
-			this.state.map.items.push(tile);
-
-			this.setState({
-				map: this.state.map,
-				selectedTileID: tile.id
-			});
-		} else {
-			this.setState({
-				addingTile: tile
-			});
-		}
+	private setSelectedAreaID(id: string | null) {
+		this.setState({
+			selectedAreaID: id
+		});
 	}
 
-	private moveAddedTile(x: number, y: number) {
-		const tile = this.state.addingTile;
-		if (tile) {
-			tile.x = x;
-			tile.y = y;
-			this.setState({
-				addingTile: tile
-			});
-		}
+	private toggleAddingTile() {
+		this.setState({
+			addingTile: !this.state.addingTile,
+			addingArea: false
+		});
+	}
+
+	private toggleAddingArea() {
+		this.setState({
+			addingTile: false,
+			addingArea: !this.state.addingArea
+		});
 	}
 
 	private toggleImageSelection() {
@@ -124,23 +75,46 @@ export default class MapEditorModal extends React.Component<Props, State> {
 		});
 	}
 
-	private addMapTile(x: number, y: number) {
+	private rectangleSelected(x1: number, y1: number, x2: number, y2: number) {
 		if (this.state.addingTile) {
-			const tile = this.state.addingTile;
-
-			tile.x = x;
-			tile.y = y;
+			const tile = Factory.createMapItem();
+			tile.x = x1;
+			tile.y = y1;
+			tile.width = x2 - x1 + 1;
+			tile.height = y2 - y1 + 1;
+			tile.terrain = 'default';
 			this.state.map.items.push(tile);
 
 			this.setState({
 				map: this.state.map,
 				selectedTileID: tile.id,
-				addingTile: null
+				selectedAreaID: null,
+				addingTile: false,
+				addingArea: false
+			});
+		}
+
+		if (this.state.addingArea) {
+			const area = Factory.createMapArea();
+			area.name = 'new area';
+			area.x = x1;
+			area.y = y1;
+			area.width = x2 - x1 + 1;
+			area.height = y2 - y1 + 1;
+			this.state.map.areas.push(area);
+			Utils.sort(this.state.map.areas);
+
+			this.setState({
+				map: this.state.map,
+				selectedTileID: null,
+				selectedAreaID: area.id,
+				addingTile: false,
+				addingArea: false
 			});
 		}
 	}
 
-	private moveMapItem(item: MapItem, dir: string) {
+	private moveMapItem(item: MapItem | MapArea, dir: string) {
 		switch (dir) {
 			case 'N':
 				item.y -= 1;
@@ -169,66 +143,6 @@ export default class MapEditorModal extends React.Component<Props, State> {
 			case 'NW':
 				item.x -= 1;
 				item.y -= 1;
-				break;
-			default:
-				// Do nothing
-				break;
-		}
-
-		this.setState({
-			map: this.state.map
-		});
-	}
-
-	private bigMapItem(item: MapItem, dir: string) {
-		switch (dir) {
-			case 'N':
-				item.y -= 1;
-				item.height += 1;
-				break;
-			case 'E':
-				item.width += 1;
-				break;
-			case 'S':
-				item.height += 1;
-				break;
-			case 'W':
-				item.x -= 1;
-				item.width += 1;
-				break;
-			default:
-				// Do nothing
-				break;
-		}
-
-		this.setState({
-			map: this.state.map
-		});
-	}
-
-	private smallMapItem(item: MapItem, dir: string) {
-		switch (dir) {
-			case 'N':
-				if (item.height > 1) {
-					item.y += 1;
-					item.height -= 1;
-				}
-				break;
-			case 'E':
-				if (item.width > 1) {
-					item.width -= 1;
-				}
-				break;
-			case 'S':
-				if (item.height > 1) {
-					item.height -= 1;
-				}
-				break;
-			case 'W':
-				if (item.width > 1) {
-					item.x += 1;
-					item.width -= 1;
-				}
 				break;
 			default:
 				// Do nothing
@@ -292,18 +206,6 @@ export default class MapEditorModal extends React.Component<Props, State> {
 		});
 	}
 
-	private pickUpMapItem(item: MapItem) {
-		const map = this.state.map;
-		const index = map.items.indexOf(item);
-		map.items.splice(index, 1);
-
-		this.setState({
-			map: map,
-			selectedTileID: null,
-			addingTile: item
-		});
-	}
-
 	private removeMapItem(item: MapItem) {
 		const index = this.state.map.items.indexOf(item);
 		this.state.map.items.splice(index, 1);
@@ -311,6 +213,16 @@ export default class MapEditorModal extends React.Component<Props, State> {
 		this.setState({
 			map: this.state.map,
 			selectedTileID: null
+		});
+	}
+
+	private removeMapArea(area: MapArea) {
+		const index = this.state.map.areas.indexOf(area);
+		this.state.map.areas.splice(index, 1);
+
+		this.setState({
+			map: this.state.map,
+			selectedAreaID: null
 		});
 	}
 
@@ -325,43 +237,38 @@ export default class MapEditorModal extends React.Component<Props, State> {
 		Mercator.rotateMap(this.state.map);
 
 		this.setState({
-			map: this.state.map
+			map: this.state.map,
+			addingTile: false
 		});
 	}
 
-	private clearMap() {
+	private clearMapTiles() {
 		const map = this.state.map;
 		map.items = [];
 
 		this.setState({
 			map: map,
-			selectedTileID: null
+			selectedTileID: null,
+			addingTile: false
+		});
+	}
+
+	private clearMapAreas() {
+		const map = this.state.map;
+		map.areas = [];
+
+		this.setState({
+			map: map,
+			selectedAreaID: null,
+			addingArea: false
 		});
 	}
 
 	private generate(type: string) {
 		Mercator.generate(type, this.state.map);
 		this.setState({
-			map: this.state.map
-		});
-	}
-
-	private addNote(tileID: string) {
-		const note = Factory.createMapNote();
-		note.targetID = tileID;
-		this.state.map.notes.push(note);
-
-		this.setState({
-			map: this.state.map
-		});
-	}
-
-	private removeNote(tileID: string) {
-		const index = this.state.map.notes.findIndex(n => n.targetID === tileID);
-		this.state.map.notes.splice(index, 1);
-
-		this.setState({
-			map: this.state.map
+			map: this.state.map,
+			addingTile: false
 		});
 	}
 
@@ -387,32 +294,91 @@ export default class MapEditorModal extends React.Component<Props, State> {
 
 	public render() {
 		try {
-			let tools = null;
+			let sidebar = null;
 			if (this.state.selectedTileID) {
 				const item = this.state.map.items.find(i => i.id === this.state.selectedTileID);
 				if (item) {
-					const note = Mercator.getNote(this.state.map, item);
-					tools = (
-						<MapTileCard
-							tile={item}
-							note={note}
-							toggleImageSelection={() => this.toggleImageSelection()}
-							changeValue={(source, field, value) => this.changeValue(source, field, value)}
-							nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
-							move={(tile, dir) => this.moveMapItem(tile, dir)}
-							clone={tile => this.cloneMapItem(tile)}
-							pickUp={tile => this.pickUpMapItem(tile)}
-							remove={tile => this.removeMapItem(tile)}
-							rotate={tile => this.rotateMapItem(tile)}
-							sendToBack={tile => this.sendToBack(tile)}
-							bringToFront={tile => this.bringToFront(tile)}
-							addNote={tileID => this.addNote(tileID)}
-							removeNote={tileID => this.removeNote(tileID)}
-						/>
+					sidebar = (
+						<div>
+							<MapTileCard
+								tile={item}
+								toggleImageSelection={() => this.toggleImageSelection()}
+								changeValue={(source, field, value) => this.changeValue(source, field, value)}
+								nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
+								move={(tile, dir) => this.moveMapItem(tile, dir)}
+								clone={tile => this.cloneMapItem(tile)}
+								remove={tile => this.removeMapItem(tile)}
+								rotate={tile => this.rotateMapItem(tile)}
+								sendToBack={tile => this.sendToBack(tile)}
+								bringToFront={tile => this.bringToFront(tile)}
+							/>
+							<hr/>
+							<button onClick={() => this.setSelectedTileID(null)}>
+								<CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the editor
+							</button>
+						</div>
 					);
 				}
-			} else {
-				tools = (
+			}
+
+			if (this.state.selectedAreaID) {
+				const area = this.state.map.areas.find(a => a.id === this.state.selectedAreaID);
+				if (area) {
+					sidebar = (
+						<div>
+							<MapAreaCard
+								area={area}
+								changeValue={(source, field, value) => this.changeValue(source, field, value)}
+								nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
+								move={(a, dir) => this.moveMapItem(a, dir)}
+								remove={a => this.removeMapArea(a)}
+							/>
+							<hr/>
+							<button onClick={() => this.setSelectedAreaID(null)}>
+								<CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the editor
+							</button>
+						</div>
+					);
+				}
+			}
+
+			if (!sidebar) {
+				let actions = null;
+				if (this.state.addingTile) {
+					actions = (
+						<button onClick={() => this.toggleAddingTile()}>
+							click and drag on the map to create a tile, or click here to cancel
+						</button>
+					);
+				} else if (this.state.addingArea) {
+					actions = (
+						<button onClick={() => this.toggleAddingArea()}>
+							click and drag on the map to create a map area, or click here to cancel
+						</button>
+					);
+				} else {
+					const areas = this.state.map.areas.map(a => (
+						<div key={a.id} className='group-panel clickable' onClick={() => this.setSelectedAreaID(a.id)}>
+							{a.name}
+						</div>
+					));
+					actions = (
+						<div>
+							<button onClick={() => this.toggleAddingTile()}>add a map tile</button>
+							<hr/>
+							<button onClick={() => this.generate('room')}>add a random room</button>
+							<button onClick={() => this.rotateMap()}>rotate the map</button>
+							<ConfirmButton text='clear all tiles' onConfirm={() => this.clearMapTiles()} />
+							<hr/>
+							<div className='section subheading'>areas</div>
+							{areas}
+							<button onClick={() => this.toggleAddingArea()}>add a map area</button>
+							<ConfirmButton text='clear all areas' onConfirm={() => this.clearMapAreas()} />
+						</div>
+					);
+				}
+
+				sidebar = (
 					<div>
 						<div className='subheading'>map name</div>
 						<Textbox
@@ -422,70 +388,41 @@ export default class MapEditorModal extends React.Component<Props, State> {
 						/>
 						<hr/>
 						<Note>
-							<p>to add a new tile to the map, click on one of the buttons below</p>
+							<p>to add a new tile to the map, click on <b>add a map tile</b> below</p>
 							<p>to edit an existing tile, click on it to select it</p>
 						</Note>
 						<hr/>
-						{
-							this.state.addingTile
-							?
-							<div>
-								<button onClick={() => this.setAddingTile(null)}>
-									click somewhere on the map to lock the tile in place, or click here to remove it from the map
-								</button>
-								<button onClick={() => this.rotateMapItem(this.state.addingTile as MapItem)}>rotate tile</button>
-							</div>
-							:
-							<div>
-								<div className='section subheading'>add a... </div>
-								<Row gutter={10}>
-									<Col xs={24} sm={24} md={24} lg={12} xl={12}>
-										<button onClick={() => this.setAddingTile('room')}>
-											room tile
-										</button>
-									</Col>
-									<Col xs={24} sm={24} md={24} lg={12} xl={12}>
-										<button onClick={() => this.setAddingTile('corridor')}>
-											corridor tile
-										</button>
-									</Col>
-									<Col xs={24} sm={24} md={24} lg={12} xl={12}>
-										<button onClick={() => this.setAddingTile('door')}>
-											door tile
-										</button>
-									</Col>
-									<Col xs={24} sm={24} md={24} lg={12} xl={12}>
-										<button onClick={() => this.setAddingTile('stairs')}>
-											stairs tile
-										</button>
-									</Col>
-								</Row>
-								<hr/>
-								<button onClick={() => this.generate('room')}>add a random room</button>
-								<button onClick={() => this.rotateMap()}>rotate the map</button>
-								<ConfirmButton text='clear all tiles' onConfirm={() => this.clearMap()} />
-							</div>
-						}
+						{actions}
 					</div>
 				);
+			}
+
+			const selectedIDs = [];
+			if (this.state.selectedTileID) {
+				selectedIDs.push(this.state.selectedTileID);
+			}
+			if (this.state.selectedAreaID) {
+				selectedIDs.push(this.state.selectedAreaID);
 			}
 
 			return (
 				<Row className='full-height'>
 					<Col span={6} className='scrollable sidebar sidebar-left'>
-						{tools}
+						{sidebar}
 					</Col>
 					<Col span={18} className='scrollable both-ways'>
 						<MapPanel
 							map={this.state.map}
 							mode='edit'
-							paddingSquares={4}
-							selectedItemIDs={this.state.selectedTileID ? [this.state.selectedTileID] : []}
-							showGrid={!!this.state.addingTile}
-							floatingItem={this.state.addingTile}
-							itemSelected={(id, ctrl) => this.setSelectedTileID(id)}
-							gridSquareEntered={(x, y) => this.moveAddedTile(x, y)}
-							gridSquareClicked={(x, y) => this.addMapTile(x, y)}
+							paddingSquares={5}
+							selectedItemIDs={selectedIDs}
+							showGrid={this.state.addingTile || this.state.addingArea}
+							itemSelected={(id, ctrl) => {
+								this.setSelectedTileID(id);
+								this.setSelectedAreaID(null);
+							}}
+							areaSelected={id => this.setSelectedAreaID(id)}
+							gridRectangleSelected={(x1, y1, x2, y2) => this.rectangleSelected(x1, y1, x2, y2)}
 						/>
 					</Col>
 					<Drawer visible={this.state.showImageSelection} closable={false} onClose={() => this.toggleImageSelection()}>
@@ -495,236 +432,6 @@ export default class MapEditorModal extends React.Component<Props, State> {
 						/>
 					</Drawer>
 				</Row>
-			);
-		} catch (e) {
-			console.error(e);
-			return <div className='render-error'/>;
-		}
-	}
-}
-
-interface MapTileCardProps {
-	tile: MapItem;
-	note: MapNote | null;
-	toggleImageSelection: () => void;
-	changeValue: (source: any, field: string, value: any) => void;
-	nudgeValue: (source: any, field: string, delta: number) => void;
-	move: (tile: MapItem, dir: string) => void;
-	clone: (tile: MapItem) => void;
-	pickUp: (tile: MapItem) => void;
-	remove: (tile: MapItem) => void;
-	rotate: (tile: MapItem) => void;
-	sendToBack: (tile: MapItem) => void;
-	bringToFront: (tile: MapItem) => void;
-	addNote: (tileID: string) => void;
-	removeNote: (tileID: string) => void;
-}
-
-interface MapTileCardState {
-	view: string;
-}
-
-class MapTileCard extends React.Component<MapTileCardProps, MapTileCardState> {
-	constructor(props: MapTileCardProps) {
-		super(props);
-		this.state = {
-			view: 'position'
-		};
-	}
-
-	private setView(view: string) {
-		this.setState({
-			view: view
-		});
-	}
-
-	private getPositionSection() {
-		return (
-			<div>
-				<div className='subheading'>move</div>
-				<Radial onClick={dir => this.props.move(this.props.tile, dir)} />
-				<div className='subheading'>size</div>
-				<div className='section'>{this.props.tile.width * 5} ft x {this.props.tile.height * 5} ft</div>
-				<div className='section'>
-					<NumberSpin
-						value={this.props.tile.width + ' sq'}
-						label='width'
-						downEnabled={this.props.tile.width > 1}
-						onNudgeValue={delta => this.props.nudgeValue(this.props.tile, 'width', delta)}
-					/>
-					<NumberSpin
-						value={this.props.tile.height + ' sq'}
-						label='height'
-						downEnabled={this.props.tile.height > 1}
-						onNudgeValue={delta => this.props.nudgeValue(this.props.tile, 'height', delta)}
-					/>
-				</div>
-				<hr/>
-				<button onClick={() => this.props.sendToBack(this.props.tile)}>send to back</button>
-				<button onClick={() => this.props.bringToFront(this.props.tile)}>bring to front</button>
-			</div>
-		);
-	}
-
-	private getStyleSection() {
-		const terrainOptions = TERRAIN_TYPES.map(t => {
-			return { id: t, text: t };
-		});
-
-		let customSection = null;
-		if (this.props.tile.terrain === 'custom') {
-			customSection = (
-				<div>
-					<div className='subheading'>custom image</div>
-					<button onClick={() => this.props.toggleImageSelection()}>select image</button>
-					<button onClick={() => this.props.changeValue(this.props.tile, 'customBackground', '')}>clear image</button>
-				</div>
-			);
-		}
-
-		const styleOptions = ['square', 'rounded', 'circle'].map(t => {
-			return { id: t, text: t };
-		});
-
-		return (
-			<div>
-				<div className='subheading'>terrain</div>
-				<Dropdown
-					options={terrainOptions}
-					placeholder='select terrain'
-					selectedID={this.props.tile.terrain ? this.props.tile.terrain : undefined}
-					onSelect={optionID => this.props.changeValue(this.props.tile, 'terrain', optionID)}
-				/>
-				{customSection}
-				<div className='subheading'>shape</div>
-				<Selector
-					options={styleOptions}
-					selectedID={this.props.tile.style}
-					onSelect={optionID => this.props.changeValue(this.props.tile, 'style', optionID)}
-				/>
-				<div className='subheading'>content</div>
-				<RadioGroup
-					items={[
-						{ id: 'none', text: 'none' },
-						{ id: 'doorway', text: 'doorway', details: (
-							<div>
-								<div><b>style</b></div>
-								<Selector
-									options={DOORWAY_TYPES.map(o => ({ id: o, text: o }))}
-									itemsPerRow={2}
-									selectedID={this.props.tile.content ? this.props.tile.content.style : null}
-									onSelect={id => this.props.changeValue(this.props.tile.content, 'style', id)}
-								/>
-								<div><b>orientation</b></div>
-								<Selector
-									options={['horizontal', 'vertical'].map(o => ({ id: o, text: o }))}
-									selectedID={this.props.tile.content ? this.props.tile.content.orientation : null}
-									onSelect={id => this.props.changeValue(this.props.tile.content, 'orientation', id)}
-								/>
-							</div>
-						) },
-						{ id: 'stairway', text: 'stairway', details: (
-							<div>
-								<div><b>style</b></div>
-								<Selector
-									options={STAIRWAY_TYPES.map(o => ({ id: o, text: o }))}
-									selectedID={this.props.tile.content ? this.props.tile.content.style : null}
-									onSelect={id => this.props.changeValue(this.props.tile.content, 'style', id)}
-								/>
-								<div><b>orientation</b></div>
-								<Selector
-									options={['horizontal', 'vertical'].map(o => ({ id: o, text: o }))}
-									selectedID={this.props.tile.content ? this.props.tile.content.orientation : null}
-									onSelect={id => this.props.changeValue(this.props.tile.content, 'orientation', id)}
-								/>
-							</div>
-						) }
-					]}
-					selectedItemID={this.props.tile.content ? this.props.tile.content.type : 'none'}
-					onSelect={id => {
-						let value = null;
-						if (id !== 'none') {
-							let defaultStyle = '';
-							switch (id) {
-								case 'doorway':
-									defaultStyle = DOORWAY_TYPES[0];
-									break;
-								case 'stairway':
-									defaultStyle = STAIRWAY_TYPES[0];
-									break;
-							}
-							value = { type: id, orientation: 'horizontal', style: defaultStyle };
-						}
-						this.props.changeValue(this.props.tile, 'content', value);
-					}}
-				/>
-			</div>
-		);
-	}
-
-	private getNotesSection() {
-		if (this.props.note) {
-			return (
-				<div>
-					<Textbox
-						text={this.props.note.text}
-						placeholder='details'
-						multiLine={true}
-						onChange={value => this.props.changeValue(this.props.note, 'text', value)}
-					/>
-					<button onClick={() => this.props.removeNote(this.props.tile.id)}>remove note from this tile</button>
-				</div>
-			);
-		} else {
-			return (
-				<div>
-					<button onClick={() => this.props.addNote(this.props.tile.id)}>add a note to this tile</button>
-				</div>
-			);
-		}
-	}
-
-	public render() {
-		try {
-			const options = ['position', 'style', 'notes'].map(option => {
-				return { id: option, text: option };
-			});
-
-			let content = null;
-			switch (this.state.view) {
-				case 'position':
-					content = this.getPositionSection();
-					break;
-				case 'style':
-					content = this.getStyleSection();
-					break;
-				case 'notes':
-					content = this.getNotesSection();
-					break;
-			}
-
-			return (
-				<div className='card map'>
-					<div className='heading'>
-						<div className='title'>map tile</div>
-					</div>
-					<div className='card-content'>
-						<Selector
-							options={options}
-							selectedID={this.state.view}
-							onSelect={optionID => this.setView(optionID)}
-						/>
-						<hr/>
-						{content}
-						<hr/>
-						<div className='section'>
-							<button onClick={() => this.props.rotate(this.props.tile)}>rotate tile</button>
-							<button onClick={() => this.props.clone(this.props.tile)}>clone tile</button>
-							<button onClick={() => this.props.pickUp(this.props.tile)}>pick up tile</button>
-							<button onClick={() => this.props.remove(this.props.tile)}>remove tile</button>
-						</div>
-					</div>
-				</div>
 			);
 		} catch (e) {
 			console.error(e);

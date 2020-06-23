@@ -45,6 +45,7 @@ export default class CombatCard extends React.Component<Props> {
 					<div className='section'>
 						<MapPanel
 							map={this.props.combat.map}
+							fog={this.props.combat.fog}
 							combatants={this.props.combat.combatants}
 						/>
 					</div>

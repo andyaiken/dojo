@@ -60,11 +60,11 @@ export default class MapListScreen extends React.Component<Props> {
 					<Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar sidebar-left'>
 						<Note>
 							<div className='section'>on this page you can set up tactical maps</div>
-							<div className='section'>when you have created a map you can use it in the combat manager</div>
+							<div className='section'>when you have created a map you can explore it with a party of pcs, or use it in the combat manager</div>
 							<hr/>
 							<div className='section'>on the right you will see a list of maps</div>
 							<hr/>
-							<div className='section'>to start a new map, press the <b>create a new map</b> button</div>
+							<div className='section'>to design a new map, press the <b>create a new map</b> button</div>
 						</Note>
 						<button onClick={() => this.props.addMap()}>create a new map</button>
 						<button onClick={() => this.props.importMap()}>import a map image</button>
