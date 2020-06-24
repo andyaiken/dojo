@@ -5,6 +5,7 @@ import Utils from './utils';
 
 import { Combat, Combatant } from '../models/combat';
 import { DOORWAY_TYPES, Map, MapItem } from '../models/map';
+import Shakespeare from './shakespeare';
 
 export default class Mercator {
 	public static scatterCombatants(combat: Combat, type: 'pc' | 'monster') {
@@ -363,7 +364,6 @@ export default class Mercator {
 				}
 
 				map.items.push(corridor.tile);
-
 				map.items.push(room);
 			} else {
 				return false;
@@ -371,6 +371,14 @@ export default class Mercator {
 		} else {
 			map.items.push(room);
 		}
+
+		const area = Factory.createMapArea();
+		area.name = Shakespeare.capitalise(Shakespeare.generateRoomName());
+		area.x = room.x - 1;
+		area.y = room.y - 1;
+		area.width = room.width + 2;
+		area.height = room.height + 2;
+		map.areas.push(area);
 
 		return true;
 	}

@@ -25,6 +25,7 @@ interface Props {
 	addEncounter: (templateID: string | null) => void;
 	viewEncounter: (encounter: Encounter) => void;
 	editEncounter: (encounter: Encounter) => void;
+	cloneEncounter: (encounter: Encounter, name: string) => void;
 	deleteEncounter: (encounter: Encounter) => void;
 	runEncounter: (encounter: Encounter, partyID: string) => void;
 	getMonster: (monsterName: string, groupName: string) => Monster | null;
@@ -90,6 +91,7 @@ export default class EncounterListScreen extends React.Component<Props> {
 					view={encounter => this.props.viewEncounter(encounter)}
 					edit={encounter => this.props.editEncounter(encounter)}
 					delete={encounter => this.props.deleteEncounter(encounter)}
+					clone={(encounter, name) => this.props.cloneEncounter(encounter, name)}
 					run={(encounter, partyID) => this.props.runEncounter(encounter, partyID)}
 					openStatBlock={slot => this.openStatBlock(slot)}
 					getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}

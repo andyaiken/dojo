@@ -21,6 +21,7 @@ interface Props {
 	generateMap: (type: string) => void;
 	viewMap: (map: Map) => void;
 	editMap: (map: Map) => void;
+	cloneMap: (map: Map, name: string) => void;
 	deleteMap: (map: Map) => void;
 	explore: (map: Map, partyID: string) => void;
 	resumeExploration: (exploration: Exploration) => void;
@@ -50,6 +51,7 @@ export default class MapListScreen extends React.Component<Props> {
 					parties={this.props.parties}
 					viewMap={m => this.props.viewMap(m)}
 					editMap={m => this.props.editMap(m)}
+					cloneMap={(m, name) => this.props.cloneMap(m, name)}
 					removeMap={m => this.props.deleteMap(m)}
 					explore={(m, partyID) => this.props.explore(m, partyID)}
 				/>

@@ -850,7 +850,11 @@ export default class App extends React.Component<Props, State> {
 	private cloneMonster(monster: Monster, name: string) {
 		const group = this.state.library.find(g => g.monsters.includes(monster));
 		if (group) {
-			const clone = Frankenstein.clone(monster, name);
+			const clone: Monster = JSON.parse(JSON.stringify(monster));
+			monster.id = Utils.guid();
+			monster.traits.forEach(t => t.id = Utils.guid());
+			monster.name = name;
+
 			group.monsters.push(clone);
 			Utils.sort(group.monsters);
 
@@ -950,6 +954,24 @@ export default class App extends React.Component<Props, State> {
 		});
 	}
 
+	private cloneEncounter(encounter: Encounter, name: string) {
+		const clone: Encounter = JSON.parse(JSON.stringify(encounter));
+		clone.id = Utils.guid();
+		clone.slots.forEach(s => s.id = Utils.guid());
+		clone.waves.forEach(w => {
+			w.id = Utils.guid();
+			w.slots.forEach(s => s.id = Utils.guid());
+		});
+		clone.name = name;
+
+		this.state.encounters.push(clone);
+		Utils.sort(this.state.encounters);
+
+		this.setState({
+			encounters: this.state.encounters
+		});
+	}
+
 	private saveEncounter() {
 		const encounters = this.state.encounters;
 		const original = this.state.encounters.find(e => e.id === this.state.drawer.encounter.id);
@@ -1004,6 +1026,21 @@ export default class App extends React.Component<Props, State> {
 				type: 'map-edit',
 				map: copy
 			}
+		});
+	}
+
+	private cloneMap(map: Map, name: string) {
+		const clone: Map = JSON.parse(JSON.stringify(map));
+		clone.id = Utils.guid();
+		clone.items.forEach(i => i.id = Utils.guid());
+		clone.areas.forEach(a => a.id = Utils.guid());
+		clone.name = name;
+
+		this.state.maps.push(clone);
+		Utils.sort(this.state.maps);
+
+		this.setState({
+			maps: this.state.maps
 		});
 	}
 
@@ -2414,6 +2451,7 @@ export default class App extends React.Component<Props, State> {
 						addEncounter={templateID => this.addEncounter(templateID)}
 						viewEncounter={encounter => this.selectEncounter(encounter)}
 						editEncounter={encounter => this.editEncounter(encounter)}
+						cloneEncounter={(encounter, name) => this.cloneEncounter(encounter, name)}
 						deleteEncounter={encounter => this.removeEncounter(encounter)}
 						runEncounter={(encounter, partyID) => this.createCombat(encounter, partyID)}
 						getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
@@ -2490,6 +2528,7 @@ export default class App extends React.Component<Props, State> {
 						generateMap={(type) => this.generateMap(type)}
 						viewMap={map => this.selectMap(map)}
 						editMap={map => this.editMap(map)}
+						cloneMap={(map, name) => this.cloneMap(map, name)}
 						deleteMap={map => this.removeMap(map)}
 						explore={(map, partyID) => this.startExploration(map, partyID)}
 						resumeExploration={ex => this.resumeExploration(ex)}

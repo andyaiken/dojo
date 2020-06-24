@@ -884,8 +884,7 @@ interface OverviewTabProps {
 
 class OverviewTab extends React.Component<OverviewTabProps> {
 	private randomName() {
-		let name = Shakespeare.generateName(true);
-		name = name[0].toUpperCase() + name.substr(1);
+		const name = Shakespeare.capitalise(Shakespeare.generateName());
 		this.props.changeValue('name', name);
 	}
 

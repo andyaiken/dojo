@@ -249,7 +249,7 @@ class MonsterGroupInfo extends React.Component<MonsterGroupInfoProps, MonsterGro
 					className={monsters.length > 2 ? '' : 'disabled'}
 					onClick={() => {
 						const m = Factory.createMonster();
-						m.name = Shakespeare.generateName(true);
+						m.name = Shakespeare.capitalise(Shakespeare.generateName());
 						Frankenstein.spliceMonsters(m, monsters);
 						this.props.addMonster(m);
 					}}

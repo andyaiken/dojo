@@ -6,6 +6,8 @@ import { Party } from '../../models/party';
 
 import ConfirmButton from '../controls/confirm-button';
 import Dropdown from '../controls/dropdown';
+import Expander from '../controls/expander';
+import Textbox from '../controls/textbox';
 import MapPanel from '../panels/map-panel';
 
 interface Props {
@@ -13,11 +15,29 @@ interface Props {
 	parties: Party[];
 	viewMap: (map: Map) => void;
 	editMap: (map: Map) => void;
+	cloneMap: (map: Map, name: string) => void;
 	removeMap: (map: Map) => void;
 	explore: (map: Map, partyID: string) => void;
 }
 
-export default class MapCard extends React.Component<Props> {
+interface State {
+	cloneName: string;
+}
+
+export default class MapCard extends React.Component<Props, State> {
+	constructor(props: Props) {
+		super(props);
+		this.state = {
+			cloneName: props.map.name + ' copy'
+		};
+	}
+
+	private setCloneName(cloneName: string) {
+		this.setState({
+			cloneName: cloneName
+		});
+	}
+
 	public render() {
 		try {
 			let explore = null;
@@ -55,6 +75,14 @@ export default class MapCard extends React.Component<Props> {
 						<hr/>
 						<button onClick={() => this.props.viewMap(this.props.map)}>open map</button>
 						<button onClick={() => this.props.editMap(this.props.map)}>edit map</button>
+						<Expander text='copy map'>
+							<Textbox
+								text={this.state.cloneName}
+								placeholder='map name'
+								onChange={value => this.setCloneName(value)}
+							/>
+							<button onClick={() => this.props.cloneMap(this.props.map, this.state.cloneName)}>create copy</button>
+						</Expander>
 						{explore}
 						<ConfirmButton text='delete map' onConfirm={() => this.props.removeMap(this.props.map)} />
 					</div>

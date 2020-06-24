@@ -8,6 +8,8 @@ import { Party } from '../../models/party';
 
 import ConfirmButton from '../controls/confirm-button';
 import Dropdown from '../controls/dropdown';
+import Expander from '../controls/expander';
+import Textbox from '../controls/textbox';
 import PortraitPanel from '../panels/portrait-panel';
 
 interface Props {
@@ -16,12 +18,30 @@ interface Props {
 	view: (encounter: Encounter) => void;
 	edit: (encounter: Encounter) => void;
 	delete: (encounter: Encounter) => void;
+	clone: (encounter: Encounter, name: string) => void;
 	run: (encounter: Encounter, partyID: string) => void;
 	openStatBlock: (slot: EncounterSlot) => void;
 	getMonster: (monsterName: string, groupName: string) => Monster | null;
 }
 
-export default class EncounterCard extends React.Component<Props> {
+interface State {
+	cloneName: string;
+}
+
+export default class EncounterCard extends React.Component<Props, State> {
+	constructor(props: Props) {
+		super(props);
+		this.state = {
+			cloneName: props.encounter.name + ' copy'
+		};
+	}
+
+	private setCloneName(cloneName: string) {
+		this.setState({
+			cloneName: cloneName
+		});
+	}
+
 	private getText(slot: EncounterSlot) {
 		return <div className='name'>{slot.monsterName || slot.roles.join(', ') || 'unnamed monster'}</div>;
 	}
@@ -104,6 +124,14 @@ export default class EncounterCard extends React.Component<Props> {
 						<hr/>
 						<button onClick={() => this.props.view(this.props.encounter)}>open encounter</button>
 						<button onClick={() => this.props.edit(this.props.encounter)}>edit encounter</button>
+						<Expander text='copy encounter'>
+							<Textbox
+								text={this.state.cloneName}
+								placeholder='encounter name'
+								onChange={value => this.setCloneName(value)}
+							/>
+							<button onClick={() => this.props.clone(this.props.encounter, this.state.cloneName)}>create copy</button>
+						</Expander>
 						{run}
 						<ConfirmButton text='delete encounter' onConfirm={() => this.props.delete(this.props.encounter)} />
 					</div>

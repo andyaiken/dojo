@@ -275,6 +275,8 @@ export default class MapEditorModal extends React.Component<Props, State> {
 	private changeValue(source: any, field: string, value: any) {
 		source[field] = value;
 
+		Utils.sort(this.state.map.areas);
+
 		this.setState({
 			map: this.state.map,
 			showImageSelection: false

@@ -1,6 +1,10 @@
+import { ReloadOutlined } from '@ant-design/icons';
 import React from 'react';
 
+import Shakespeare from '../../utils/shakespeare';
+
 import { MapArea } from '../../models/map';
+
 import NumberSpin from '../controls/number-spin';
 import Radial from '../controls/radial';
 import Textbox from '../controls/textbox';
@@ -14,6 +18,11 @@ interface Props {
 }
 
 export default class MapAreaCard extends React.Component<Props> {
+	private randomName() {
+		const name = Shakespeare.capitalise(Shakespeare.generateRoomName());
+		this.props.changeValue(this.props.area, 'name', name);
+	}
+
 	public render() {
 		try {
 			return (
@@ -23,11 +32,13 @@ export default class MapAreaCard extends React.Component<Props> {
 					</div>
 					<div className='card-content'>
 						<div className='section subheading'>area name</div>
-						<Textbox
-							text={this.props.area.name}
-							placeholder='area name'
-							onChange={value => this.props.changeValue(this.props.area, 'name', value)}
-						/>
+						<div className='control-with-icons'>
+							<Textbox
+								text={this.props.area.name}
+								onChange={value => this.props.changeValue(this.props.area, 'name', value)}
+							/>
+							<ReloadOutlined onClick={() => this.randomName()} title='generate a random name' />
+						</div>
 						<div className='section subheading'>notes</div>
 						<Textbox
 							text={this.props.area.text}

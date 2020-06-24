@@ -103,54 +103,6 @@ export default class Frankenstein {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Monster creation
 
-	public static clone(monster: Monster, name: string): Monster {
-		return {
-			id: Utils.guid(),
-			type: 'monster',
-			name: name || (monster.name + ' copy'),
-			size: monster.size,
-			role: monster.role,
-			category: monster.category,
-			tag: monster.tag,
-			alignment: monster.alignment,
-			challenge: monster.challenge,
-			abilityScores: {
-				str: monster.abilityScores.str,
-				dex: monster.abilityScores.dex,
-				con: monster.abilityScores.con,
-				int: monster.abilityScores.int,
-				wis: monster.abilityScores.wis,
-				cha: monster.abilityScores.cha
-			},
-			ac: monster.ac,
-			hitDice: monster.hitDice,
-			damage: {
-				resist: monster.damage.resist,
-				vulnerable: monster.damage.vulnerable,
-				immune: monster.damage.immune
-			},
-			savingThrows: monster.savingThrows,
-			speed: monster.speed,
-			skills: monster.skills,
-			senses: monster.senses,
-			languages: monster.languages,
-			equipment: monster.equipment,
-			traits: monster.traits.map(trait => {
-				return {
-					id: Utils.guid(),
-					name: trait.name,
-					usage: trait.usage,
-					type: trait.type,
-					text: trait.text,
-					uses: 0
-				};
-			}),
-			conditionImmunities: monster.conditionImmunities,
-			portrait: monster.portrait,
-			legendaryActions: monster.legendaryActions
-		};
-	}
-
 	public static createFromJSON(data: any): Monster {
 		const monster = Factory.createMonster();
 

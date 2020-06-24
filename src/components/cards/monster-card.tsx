@@ -216,7 +216,7 @@ export default class MonsterCard extends React.Component<Props, State> {
 			);
 
 			options.push(
-				<Expander key='clone' text='clone monster'>
+				<Expander key='clone' text='copy monster'>
 					<Textbox
 						text={this.state.cloneName}
 						placeholder='monster name'
