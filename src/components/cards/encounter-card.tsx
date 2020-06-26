@@ -21,7 +21,7 @@ interface Props {
 	clone: (encounter: Encounter, name: string) => void;
 	run: (encounter: Encounter, partyID: string) => void;
 	openStatBlock: (slot: EncounterSlot) => void;
-	getMonster: (monsterName: string, groupName: string) => Monster | null;
+	getMonster: (id: string) => Monster | null;
 }
 
 interface State {
@@ -47,14 +47,27 @@ export default class EncounterCard extends React.Component<Props, State> {
 	}
 
 	private getValue(slot: EncounterSlot) {
+		let str = '';
 		if (slot.count > 1) {
-			return <div className='value'>x{slot.count}</div>;
+			if (str) {
+				str += ' ';
+			}
+			str += 'x' + slot.count;
+		}
+		if (slot.faction !== 'foe') {
+			if (str) {
+				str += ' ';
+			}
+			str += '(' + slot.faction + ')';
+		}
+		if (str) {
+			return <div className='value'>{str}</div>;
 		}
 		return null;
 	}
 
 	private getPortrait(slot: EncounterSlot) {
-		const monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
+		const monster = this.props.getMonster(slot.monsterID);
 		if (monster && monster.portrait) {
 			return <PortraitPanel source={monster} inline={true} />;
 		}

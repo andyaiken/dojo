@@ -3,6 +3,7 @@ import { Col, Drawer, Row } from 'antd';
 import React from 'react';
 
 import Factory from '../../../utils/factory';
+import Gygax from '../../../utils/gygax';
 import Utils from '../../../utils/utils';
 
 import { MonsterGroup } from '../../../models/monster';
@@ -72,7 +73,7 @@ export default class PCEditorModal extends React.Component<Props, State> {
 		let newValue;
 		switch (field) {
 			case 'size':
-				newValue = Utils.nudgeSize(value, delta);
+				newValue = Gygax.nudgeSize(value, delta);
 				break;
 			default:
 				newValue = (value ? value : 0) + delta;

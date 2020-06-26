@@ -4,6 +4,7 @@ import React from 'react';
 
 import Factory from '../../utils/factory';
 import Frankenstein from '../../utils/frankenstein';
+import Gygax from '../../utils/gygax';
 import Shakespeare from '../../utils/shakespeare';
 import Utils from '../../utils/utils';
 
@@ -142,8 +143,8 @@ class MonsterGroupInfo extends React.Component<MonsterGroupInfoProps, MonsterGro
 		});
 
 		const challengeSummary = challenge.min === challenge.max
-			? Utils.challenge(challenge.min as number)
-			: Utils.challenge(challenge.min) + ' - ' + Utils.challenge(challenge.max);
+			? Gygax.challenge(challenge.min as number)
+			: Gygax.challenge(challenge.min) + ' - ' + Gygax.challenge(challenge.max);
 
 		return (
 			<div className='group-panel'>
@@ -199,9 +200,9 @@ class MonsterGroupInfo extends React.Component<MonsterGroupInfoProps, MonsterGro
 			<Expander text='create a random monster'>
 				<NumberSpin
 					label='cr'
-					value={Utils.challenge(this.state.cr)}
+					value={Gygax.challenge(this.state.cr)}
 					onNudgeValue={delta => this.setState({
-						cr: Utils.nudgeChallenge(this.state.cr, delta)
+						cr: Gygax.nudgeChallenge(this.state.cr, delta)
 					})}
 				/>
 				<Dropdown

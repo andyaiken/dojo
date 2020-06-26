@@ -7,7 +7,7 @@ import { Combat, Combatant } from '../../models/combat';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
-import Utils from '../../utils/utils';
+import Gygax from '../../utils/gygax';
 
 import NumberSpin from '../controls/number-spin';
 import HitPointGauge from './hit-point-gauge';
@@ -145,7 +145,7 @@ export default class InitiativeEntry extends React.Component<Props> {
 		// Engaged with
 		const engaged: string[] = [];
 		this.props.combatant.tags.filter(tag => tag.startsWith('engaged')).forEach(tag => {
-			engaged.push(Utils.getTagDescription(tag));
+			engaged.push(Gygax.getTagDescription(tag));
 		});
 		if (engaged.length > 0) {
 			notes.push(
@@ -159,8 +159,8 @@ export default class InitiativeEntry extends React.Component<Props> {
 		this.props.combatant.tags.filter(tag => !tag.startsWith('engaged')).forEach(tag => {
 			notes.push(
 				<Note key={tag}>
-					<div className='note-heading'>{Utils.getTagTitle(tag)}</div>
-					<div className='note-details'>{Utils.getTagDescription(tag)}</div>
+					<div className='note-heading'>{Gygax.getTagTitle(tag)}</div>
+					<div className='note-details'>{Gygax.getTagDescription(tag)}</div>
 				</Note>
 			);
 		});
@@ -190,10 +190,10 @@ export default class InitiativeEntry extends React.Component<Props> {
 					name += ' (' + c.level + ')';
 				}
 				if (c.duration) {
-					name += ' ' + Utils.conditionDurationText(c, this.props.combat.combatants);
+					name += ' ' + Gygax.conditionDurationText(c, this.props.combat.combatants);
 				}
 				const description = [];
-				const text = Utils.conditionText(c);
+				const text = Gygax.conditionText(c);
 				for (let n = 0; n !== text.length; ++n) {
 					description.push(<div key={n} className='note-details'>{text[n]}</div>);
 				}

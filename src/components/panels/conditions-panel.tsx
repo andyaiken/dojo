@@ -1,7 +1,7 @@
 import { CloseOutlined, EditOutlined } from '@ant-design/icons';
 import React from 'react';
 
-import Utils from '../../utils/utils';
+import Gygax from '../../utils/gygax';
 
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
@@ -76,7 +76,7 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
 			if (this.props.condition.duration !== null) {
 				duration = (
 					<div className='section'>
-						<i>{Utils.conditionDurationText(this.props.condition, this.props.combatants)}</i>
+						<i>{Gygax.conditionDurationText(this.props.condition, this.props.combatants)}</i>
 					</div>
 				);
 			}
@@ -95,7 +95,7 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
 					</div>
 				);
 			}
-			const text = Utils.conditionText(this.props.condition);
+			const text = Gygax.conditionText(this.props.condition);
 			for (let n = 0; n !== text.length; ++n) {
 				description.push(<div key={n} className='section'>{text[n]}</div>);
 			}

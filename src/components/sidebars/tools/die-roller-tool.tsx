@@ -2,7 +2,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Col, Row, Tag } from 'antd';
 import React from 'react';
 
-import Utils from '../../../utils/utils';
+import Gygax from '../../../utils/gygax';
 
 import Selector from '../../controls/selector';
 
@@ -49,13 +49,13 @@ export default class DieRollerTool extends React.Component<Props, State> {
 		[4, 6, 8, 10, 12, 20, 100].forEach(sides => {
 			const count = this.props.dice[sides];
 			for (let n = 0; n !== count; ++n) {
-				let value = Utils.dieRoll(sides);
+				let value = Gygax.dieRoll(sides);
 				switch (result.option) {
 					case 'advantage':
-						value = Math.max(value, Utils.dieRoll(sides));
+						value = Math.max(value, Gygax.dieRoll(sides));
 						break;
 					case 'disadvantage':
-						value = Math.min(value, Utils.dieRoll(sides));
+						value = Math.min(value, Gygax.dieRoll(sides));
 						break;
 				}
 				result.rolls.push({

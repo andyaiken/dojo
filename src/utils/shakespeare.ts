@@ -1,5 +1,6 @@
 // This utility file deals with text
 
+import Gygax from './gygax';
 import Utils from './utils';
 
 interface ModelLine {
@@ -103,7 +104,7 @@ export default class Shakespeare {
 					line = line.substr(2);
 					return line;
 				} else {
-					if (Utils.dieRoll() === 1) {
+					if (Gygax.dieRoll() === 1) {
 						const groups = ['bdg', 'ptk', 'sz', 'aeiouy', 'lr', 'ckq', 'vf'];
 						groups.forEach(g => {
 							if (g.includes(char)) {
@@ -235,7 +236,7 @@ export default class Shakespeare {
 		const endIndex = Math.floor(Math.random() * ends.length);
 
 		let separator = '';
-		if (Utils.dieRoll(10) === 1) {
+		if (Gygax.dieRoll(10) === 1) {
 			const separators = ['-', '\'', ' '];
 			const sepIndex = Math.floor(Math.random() * separators.length);
 			separator = separators[sepIndex];

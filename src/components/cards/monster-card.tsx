@@ -3,7 +3,7 @@ import { Tag } from 'antd';
 import React from 'react';
 
 import Frankenstein from '../../utils/frankenstein';
-import Utils from '../../utils/utils';
+import Gygax from '../../utils/gygax';
 
 import { Combatant } from '../../models/combat';
 import { EncounterWave } from '../../models/encounter';
@@ -194,7 +194,7 @@ export default class MonsterCard extends React.Component<Props, State> {
 			tags.push(<Tag key='tag-align'>{this.props.monster.alignment.toLowerCase()}</Tag>);
 		}
 
-		tags.push(<Tag key='tag-cr'>cr {Utils.challenge(this.props.monster.challenge)}</Tag>);
+		tags.push(<Tag key='tag-cr'>cr {Gygax.challenge(this.props.monster.challenge)}</Tag>);
 
 		return tags;
 	}

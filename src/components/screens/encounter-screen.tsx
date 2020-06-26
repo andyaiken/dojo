@@ -23,7 +23,7 @@ interface Props {
 	edit: (encounter: Encounter) => void;
 	delete: (encounter: Encounter) => void;
 	run: (encounter: Encounter, partyID: string) => void;
-	getMonster: (monsterName: string, groupName: string) => Monster | null;
+	getMonster: (id: string) => Monster | null;
 	changeValue: (encounter: Encounter, field: string, value: string) => void;
 	goBack: () => void;
 }
@@ -42,7 +42,7 @@ export default class EncounterScreen extends React.Component<Props> {
 				columns={2}
 				content={
 					filledSlots.map(s => {
-						const monster = this.props.getMonster(s.monsterName, s.monsterGroupName);
+						const monster = this.props.getMonster(s.monsterID);
 						if (monster) {
 							const copy: Monster = JSON.parse(JSON.stringify(monster));
 							if (s.count > 1) {

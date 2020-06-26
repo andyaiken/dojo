@@ -1,7 +1,7 @@
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import Utils from '../../utils/utils';
+import Gygax from '../../utils/gygax';
 
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
@@ -114,11 +114,11 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 		let value = null;
 		switch (field) {
 			case 'challenge':
-				value = Utils.nudgeChallenge(source[field], delta);
+				value = Gygax.nudgeChallenge(source[field], delta);
 				break;
 			case 'size':
 			case 'displaySize':
-				value = Utils.nudgeSize(source[field], delta);
+				value = Gygax.nudgeSize(source[field], delta);
 				break;
 			default:
 				value = source[field] + delta;

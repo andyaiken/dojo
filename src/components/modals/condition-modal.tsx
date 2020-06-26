@@ -2,6 +2,7 @@ import { Col, Row } from 'antd';
 import React from 'react';
 
 import Factory from '../../utils/factory';
+import Gygax from '../../utils/gygax';
 import Utils from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
@@ -115,7 +116,7 @@ export default class ConditionModal extends React.Component<Props, State> {
 							/>
 						);
 					}
-					const text = Utils.conditionText(this.state.condition);
+					const text = Gygax.conditionText(this.state.condition);
 					for (let n = 0; n !== text.length; ++n) {
 						description.push(<li key={n} className='section'>{text[n]}</li>);
 					}

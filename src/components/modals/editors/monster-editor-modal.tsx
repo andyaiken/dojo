@@ -5,6 +5,7 @@ import { List } from 'react-movable';
 
 import Factory from '../../../utils/factory';
 import Frankenstein from '../../../utils/frankenstein';
+import Gygax from '../../../utils/gygax';
 import Napoleon from '../../../utils/napoleon';
 import Shakespeare from '../../../utils/shakespeare';
 import Utils from '../../../utils/utils';
@@ -489,7 +490,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 			rows.push(
 				<Row gutter={10} className='value-list' key={type}>
 					<Col span={8} className={count === 0 ? 'text-container disabled' : 'text-container'}>
-						{Utils.traitType(type, true)}
+						{Gygax.traitType(type, true)}
 					</Col>
 					<Col span={4} className={count === 0 ? 'text-container number disabled' : 'text-container number'}>
 						{avg}
@@ -569,7 +570,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 								onChecked={value => this.toggleMatch('alignment')}
 							/>
 							<Checkbox
-								label={'challenge rating ' + Utils.challenge(this.state.monster.challenge)}
+								label={'challenge rating ' + Gygax.challenge(this.state.monster.challenge)}
 								checked={this.state.similarFilter.challenge}
 								onChecked={value => this.toggleMatch('challenge')}
 							/>
@@ -676,7 +677,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 			);
 		} else {
 			let stats = null;
-			const details = Utils.challengeDetails().find(x => x.cr === this.state.monster.challenge);
+			const details = Gygax.challengeDetails().find(x => x.cr === this.state.monster.challenge);
 			if (details) {
 				stats = (
 					<Expander text='suggested stats'>
@@ -924,7 +925,7 @@ class OverviewTab extends React.Component<OverviewTabProps> {
 						/>
 						<div className='subheading'>challenge rating</div>
 						<NumberSpin
-							value={Utils.challenge(this.props.monster.challenge)}
+							value={Gygax.challenge(this.props.monster.challenge)}
 							downEnabled={this.props.monster.challenge > 0}
 							onNudgeValue={delta => this.props.nudgeValue('challenge', delta)}
 						/>
@@ -1033,7 +1034,7 @@ class CombatTab extends React.Component<CombatTabProps> {
 						/>
 						<div className='subheading'>hit dice</div>
 						<NumberSpin
-							value={this.props.monster.hitDice + 'd' + Utils.hitDieType(this.props.monster.size)}
+							value={this.props.monster.hitDice + 'd' + Gygax.hitDieType(this.props.monster.size)}
 							downEnabled={this.props.monster.hitDice > 1}
 							onNudgeValue={delta => this.props.nudgeValue('hitDice', delta)}
 						/>
@@ -1132,7 +1133,7 @@ class TraitsTab extends React.Component<TraitsTabProps, TraitsTabState> {
 
 		return (
 			<div>
-				<div className='section subheading'>{Utils.traitType(type, true)}</div>
+				<div className='section subheading'>{Gygax.traitType(type, true)}</div>
 				<List
 					values={traits}
 					lockVertically={true}
@@ -1145,7 +1146,7 @@ class TraitsTab extends React.Component<TraitsTabProps, TraitsTabState> {
 					)}
 				/>
 				<button onClick={() => this.props.addTrait(type as 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair')}>
-					add a new {Utils.traitType(type, false)}
+					add a new {Gygax.traitType(type, false)}
 				</button>
 			</div>
 		);
@@ -1157,7 +1158,7 @@ class TraitsTab extends React.Component<TraitsTabProps, TraitsTabState> {
 			const traitsByType: { [id: string]: Trait[] } = {};
 
 			TRAIT_TYPES.forEach(type => {
-				options.push({ id: type, text: Utils.traitType(type, false) });
+				options.push({ id: type, text: Gygax.traitType(type, false) });
 				traitsByType[type] = this.props.monster.traits.filter(t => t.type === type);
 			});
 
@@ -1213,7 +1214,7 @@ class TraitBarPanel extends React.Component<TraitBarProps> {
 				<div className={this.props.isSelected ? 'trait-bar selected' : 'trait-bar'} onClick={() => this.props.select(this.props.trait.id)}>
 					<MenuOutlined className='grabber' data-movable-handle={true} />
 					<div className='name'>
-						{this.props.trait.name || 'unnamed ' + Utils.traitType(this.props.trait.type, false)}
+						{this.props.trait.name || 'unnamed ' + Gygax.traitType(this.props.trait.type, false)}
 					</div>
 				</div>
 			);

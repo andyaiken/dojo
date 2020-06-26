@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Utils from '../../utils/utils';
+import Gygax from '../../utils/gygax';
 
 import { CATEGORY_TYPES, Monster, MonsterGroup, SIZE_TYPES } from '../../models/monster';
 
@@ -45,7 +45,7 @@ export default class DemographicsModal extends React.Component<Props, State> {
 					];
 					data = crs.map(cr => {
 						return {
-							text: 'cr ' + Utils.challenge(cr),
+							text: 'cr ' + Gygax.challenge(cr),
 							value: allMonsters.filter(monster => monster.challenge === cr).length
 						};
 					});

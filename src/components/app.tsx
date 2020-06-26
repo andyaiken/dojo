@@ -4,6 +4,7 @@ import React, { ErrorInfo } from 'react';
 
 import Factory from '../utils/factory';
 import Frankenstein from '../utils/frankenstein';
+import Gygax from '../utils/gygax';
 import Mercator from '../utils/mercator';
 import Napoleon from '../utils/napoleon';
 import Utils from '../utils/utils';
@@ -117,6 +118,15 @@ export default class App extends React.Component<Props, State> {
 
 				encounters.forEach(encounter => {
 					encounter.slots.forEach(slot => {
+						if (slot.monsterID === undefined) {
+							const group = library.find(g => g.name === slot.monsterGroupName);
+							if (group) {
+								const monster = group.monsters.find(m => m.name === slot.monsterName);
+								if (monster) {
+									slot.monsterID = monster.id;
+								}
+							}
+						}
 						if (slot.roles === undefined) {
 							slot.roles = [];
 						}
@@ -127,6 +137,15 @@ export default class App extends React.Component<Props, State> {
 
 					encounter.waves.forEach(wave => {
 						wave.slots.forEach(slot => {
+							if (slot.monsterID === undefined) {
+								const group = library.find(g => g.name === slot.monsterGroupName);
+								if (group) {
+									const monster = group.monsters.find(m => m.name === slot.monsterName);
+									if (monster) {
+										slot.monsterID = monster.id;
+									}
+								}
+							}
 							if (slot.roles === undefined) {
 								slot.roles = [];
 							}
@@ -192,6 +211,15 @@ export default class App extends React.Component<Props, State> {
 
 					if (combat.encounter) {
 						combat.encounter.slots.forEach(slot => {
+							if (slot.monsterID === undefined) {
+								const group = library.find(g => g.name === slot.monsterGroupName);
+								if (group) {
+									const monster = group.monsters.find(m => m.name === slot.monsterName);
+									if (monster) {
+										slot.monsterID = monster.id;
+									}
+								}
+							}
 							if (slot.roles === undefined) {
 								slot.roles = [];
 							}
@@ -202,6 +230,15 @@ export default class App extends React.Component<Props, State> {
 
 						combat.encounter.waves.forEach(wave => {
 							wave.slots.forEach(slot => {
+								if (slot.monsterID === undefined) {
+									const group = library.find(g => g.name === slot.monsterGroupName);
+									if (group) {
+										const monster = group.monsters.find(m => m.name === slot.monsterName);
+										if (monster) {
+											slot.monsterID = monster.id;
+										}
+									}
+								}
 								if (slot.roles === undefined) {
 									slot.roles = [];
 								}
@@ -442,47 +479,22 @@ export default class App extends React.Component<Props, State> {
 		});
 	}
 
-	private getMonster(monsterName: string, groupName: string) {
-		const group = this.state.library.find(p => p.name === groupName);
-		if (group) {
-			const monster = group.monsters.find(m => m.name === monsterName);
+	// This is an internal dictionary to speed up monster lookup
+	private monsterIdToGroup: { [id: string]: Monster } = {};
+
+	private getMonster(id: string) {
+		let monster: Monster | null = this.monsterIdToGroup[id];
+		if (!monster) {
+			const monsters = this.state.library.reduce((prev, current) => prev.concat(current.monsters), [] as Monster[]);
+			monster = monsters.find(m => m.id === id) || null;
 			if (monster) {
-				return monster;
+				this.monsterIdToGroup[id] = monster;
 			}
 		}
-
-		return null;
+		return monster;
 	}
 
 	private changeValue(combatant: any, type: string, value: any) {
-		/*
-		switch (type) {
-			case 'hpCurrent':
-				value = Math.min(value, combatant.hpMax);
-				value = Math.max(value, 0);
-				break;
-			case 'hpTemp':
-				value = Math.max(value, 0);
-				break;
-			case 'level':
-				value = Math.max(value, 1);
-				value = (combatant.player !== undefined) ? Math.min(value, 20) : Math.min(value, 6);
-				break;
-			case 'count':
-				value = Math.max(value, 1);
-				break;
-			case 'hitDice':
-				value = Math.max(value, 1);
-				break;
-			case 'radius':
-				value = Math.max(value, 0);
-				break;
-			default:
-				// Do nothing
-				break;
-		}
-		*/
-
 		const tokens = type.split('.');
 		let obj = combatant;
 		for (let n = 0; n !== tokens.length; ++n) {
@@ -542,11 +554,11 @@ export default class App extends React.Component<Props, State> {
 				let value = null;
 				switch (token) {
 					case 'challenge':
-						value = Utils.nudgeChallenge(obj[token], delta);
+						value = Gygax.nudgeChallenge(obj[token], delta);
 						break;
 					case 'size':
 					case 'displaySize':
-						value = Utils.nudgeSize(obj[token], delta);
+						value = Gygax.nudgeSize(obj[token], delta);
 						break;
 					default:
 						value = obj[token] + delta;
@@ -1234,7 +1246,7 @@ export default class App extends React.Component<Props, State> {
 		setup.party = JSON.parse(JSON.stringify(party));
 		setup.encounter = JSON.parse(JSON.stringify(encounter));
 		if (enc) {
-			setup.slotInfo = Utils.getCombatSlotData(enc, this.state.library);
+			setup.slotInfo = Gygax.getCombatSlotData(enc, this.state.library);
 		}
 		if (map) {
 			setup.map = map;
@@ -1277,7 +1289,7 @@ export default class App extends React.Component<Props, State> {
 			});
 
 			combat.encounter.slots.forEach(slot => {
-				const monster = this.getMonster(slot.monsterName, slot.monsterGroupName);
+				const monster = this.getMonster(slot.monsterID);
 				const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
 				if (monster && slotInfo) {
 					slotInfo.members.forEach(m => {
@@ -1314,7 +1326,7 @@ export default class App extends React.Component<Props, State> {
 		if (combat) {
 			const setup = Factory.createCombatSetup();
 			setup.encounter = combat.encounter;
-			setup.slotInfo = Utils.getCombatSlotData(combat.encounter, this.state.library);
+			setup.slotInfo = Gygax.getCombatSlotData(combat.encounter, this.state.library);
 
 			this.setState({
 				drawer: {
@@ -1332,7 +1344,7 @@ export default class App extends React.Component<Props, State> {
 			const wave = combatSetup.encounter.waves.find(w => w.id === combatSetup.waveID);
 			if (wave) {
 				wave.slots.forEach(slot => {
-					const monster = this.getMonster(slot.monsterName, slot.monsterGroupName);
+					const monster = this.getMonster(slot.monsterID);
 					const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
 					if (monster && slotInfo) {
 						slotInfo.members.forEach(m => {
@@ -1360,7 +1372,7 @@ export default class App extends React.Component<Props, State> {
 		if (combat) {
 			const setup = Factory.createCombatSetup();
 			setup.encounter = Factory.createEncounter();
-			setup.slotInfo = Utils.getCombatSlotData(setup.encounter, this.state.library);
+			setup.slotInfo = Gygax.getCombatSlotData(setup.encounter, this.state.library);
 
 			this.setState({
 				drawer: {
@@ -1374,18 +1386,20 @@ export default class App extends React.Component<Props, State> {
 	private addMonsterToAddCombatantsModal(monster: Monster) {
 		const combatSetup = this.state.drawer.combatSetup;
 		if (combatSetup && combatSetup.encounter) {
-			const group = Utils.getMonsterGroup(monster, this.state.library);
-			const slot = Factory.createEncounterSlot();
-			slot.id = monster.id;
-			slot.monsterName = monster.name;
-			slot.monsterGroupName = group.name;
-			combatSetup.encounter.slots.push(slot);
+			const group = this.state.library.find(g => g.monsters.find(m => m.id === monster.id));
+			if (group) {
+				const slot = Factory.createEncounterSlot();
+				slot.id = monster.id;
+				slot.monsterName = monster.name;
+				slot.monsterGroupName = group.name;
+				combatSetup.encounter.slots.push(slot);
 
-			combatSetup.slotInfo = Utils.getCombatSlotData(combatSetup.encounter, this.state.library);
+				combatSetup.slotInfo = Gygax.getCombatSlotData(combatSetup.encounter, this.state.library);
 
-			this.setState({
-				drawer: this.state.drawer
-			});
+				this.setState({
+					drawer: this.state.drawer
+				});
+			}
 		}
 	}
 
@@ -1394,7 +1408,7 @@ export default class App extends React.Component<Props, State> {
 		const combatSetup: CombatSetup = this.state.drawer.combatSetup;
 		if (combat && combatSetup && combatSetup.encounter) {
 			combatSetup.encounter.slots.forEach(slot => {
-				const monster = this.getMonster(slot.monsterName, slot.monsterGroupName);
+				const monster = this.getMonster(slot.monsterID);
 				const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
 				if (monster && slotInfo) {
 					slotInfo.members.forEach(m => {
@@ -2126,7 +2140,7 @@ export default class App extends React.Component<Props, State> {
 			item.x = x;
 			item.y = y;
 
-			const size = Utils.miniSize(c.displaySize);
+			const size = Gygax.miniSize(c.displaySize);
 			item.height = size;
 			item.width = size;
 
@@ -2436,7 +2450,7 @@ export default class App extends React.Component<Props, State> {
 							edit={encounter => this.editEncounter(encounter)}
 							delete={encounter => this.removeEncounter(encounter)}
 							run={(encounter, partyID) => this.createCombat(encounter, partyID)}
-							getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
+							getMonster={id => this.getMonster(id)}
 							changeValue={(encounter, type, value) => this.changeValue(encounter, type, value)}
 							goBack={() => this.selectEncounter(null)}
 						/>
@@ -2454,7 +2468,7 @@ export default class App extends React.Component<Props, State> {
 						cloneEncounter={(encounter, name) => this.cloneEncounter(encounter, name)}
 						deleteEncounter={encounter => this.removeEncounter(encounter)}
 						runEncounter={(encounter, partyID) => this.createCombat(encounter, partyID)}
-						getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
+						getMonster={id => this.getMonster(id)}
 						setView={view => this.setView(view)}
 						openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
 						resumeCombat={combat => this.resumeCombat(combat)}
@@ -2820,7 +2834,7 @@ export default class App extends React.Component<Props, State> {
 							encounter={this.state.drawer.encounter}
 							parties={this.state.parties}
 							library={this.state.library}
-							getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
+							getMonster={id => this.getMonster(id)}
 						/>
 					);
 					header = 'encounter editor';
@@ -2884,7 +2898,7 @@ export default class App extends React.Component<Props, State> {
 							library={this.state.library}
 							encounters={this.state.encounters}
 							maps={this.state.maps}
-							getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
+							getMonster={id => this.getMonster(id)}
 							notify={() => this.setState({drawer: this.state.drawer})}
 						/>
 					);
@@ -2906,7 +2920,7 @@ export default class App extends React.Component<Props, State> {
 							type='add-wave'
 							combatSetup={this.state.drawer.combatSetup}
 							library={this.state.library}
-							getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
+							getMonster={id => this.getMonster(id)}
 							notify={() => this.setState({drawer: this.state.drawer})}
 						/>
 					);
@@ -2928,7 +2942,7 @@ export default class App extends React.Component<Props, State> {
 							type='add-combatants'
 							combatSetup={this.state.drawer.combatSetup}
 							library={this.state.library}
-							getMonster={(monsterName, groupName) => this.getMonster(monsterName, groupName)}
+							getMonster={id => this.getMonster(id)}
 							addMonster={monster => this.addMonsterToAddCombatantsModal(monster)}
 							notify={() => this.setState({drawer: this.state.drawer})}
 						/>

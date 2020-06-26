@@ -3,7 +3,7 @@ import React from 'react';
 import Showdown from 'showdown';
 
 import Frankenstein from '../../utils/frankenstein';
-import Utils from '../../utils/utils';
+import Gygax from '../../utils/gygax';
 
 import { Combatant } from '../../models/combat';
 import { Monster, Trait, TRAIT_TYPES } from '../../models/monster';
@@ -139,7 +139,7 @@ export default class TraitsPanel extends React.Component<Props> {
 
 		return (
 			<div>
-				<div className='section subheading'>{Utils.traitType(type, true)}</div>
+				<div className='section subheading'>{Gygax.traitType(type, true)}</div>
 				{info}
 				{traits}
 			</div>
@@ -230,7 +230,7 @@ class TraitPanel extends React.Component<TraitPanelProps> {
 	public render() {
 		try {
 			let maxUses = 0;
-			let heading = this.props.trait.name || 'unnamed ' + Utils.traitType(this.props.trait.type, false);
+			let heading = this.props.trait.name || 'unnamed ' + Gygax.traitType(this.props.trait.type, false);
 
 			if (this.props.trait.usage) {
 				let used = '';

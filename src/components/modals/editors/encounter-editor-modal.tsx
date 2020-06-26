@@ -2,6 +2,7 @@ import { Col, Drawer, InputNumber, Row } from 'antd';
 import React from 'react';
 
 import Factory from '../../../utils/factory';
+import Gygax from '../../../utils/gygax';
 import Napoleon from '../../../utils/napoleon';
 import Utils from '../../../utils/utils';
 
@@ -25,7 +26,7 @@ interface Props {
 	encounter: Encounter;
 	parties: Party[];
 	library: MonsterGroup[];
-	getMonster: (monsterName: string, groupName: string) => Monster | null;
+	getMonster: (id: string) => Monster | null;
 }
 
 interface State {
@@ -326,7 +327,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 			cards.push(
 				<EncounterSlotCard
 					slot={slot}
-					monster={this.props.getMonster(slot.monsterName, slot.monsterGroupName)}
+					monster={this.props.getMonster(slot.monsterID)}
 					encounter={this.props.encounter}
 					library={this.props.library}
 					changeValue={(source, type, value) => this.changeValue(source, type, value)}
@@ -400,7 +401,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 
 		let left = (
 			<RadioGroup
-				items={monsters.map(m => ({ id: m.id, text: m.name, info: 'cr ' + Utils.challenge(m.challenge) }))}
+				items={monsters.map(m => ({ id: m.id, text: m.name, info: 'cr ' + Gygax.challenge(m.challenge) }))}
 				selectedItemID={this.state.selectedMonster ? this.state.selectedMonster.id : null}
 				onSelect={id => this.setSelectedMonster(monsters.find(m => m.id === id) ?? null)}
 			/>
@@ -533,7 +534,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 							<DifficultyChartPanel
 								encounter={this.props.encounter}
 								parties={this.props.parties}
-								getMonster={(monsterName, monsterGroupName) => this.props.getMonster(monsterName, monsterGroupName)}
+								getMonster={id => this.props.getMonster(id)}
 							/>
 							<hr/>
 							<Expander text='build a random encounter'>

@@ -117,6 +117,7 @@ export default class Factory {
 	public static createEncounterSlot(): EncounterSlot {
 		return {
 			id: Utils.guid(),
+			monsterID: '',
 			monsterGroupName: '',
 			monsterName: '',
 			roles: [],

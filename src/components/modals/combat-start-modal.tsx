@@ -4,9 +4,9 @@ import React from 'react';
 
 import Factory from '../../utils/factory';
 import Frankenstein from '../../utils/frankenstein';
+import Gygax from '../../utils/gygax';
 import Mercator from '../../utils/mercator';
 import Napoleon from '../../utils/napoleon';
-import Utils from '../../utils/utils';
 
 import { CombatSetup, CombatSlotInfo, CombatSlotMember } from '../../models/combat';
 import { Encounter, EncounterSlot, MonsterFilter } from '../../models/encounter';
@@ -32,7 +32,7 @@ interface Props {
 	library: MonsterGroup[];
 	encounters: Encounter[];
 	maps: Map[];
-	getMonster: (monsterName: string, groupName: string) => Monster | null;
+	getMonster: (id: string) => Monster | null;
 	addMonster: (monster: Monster) => void;
 	notify: () => void;
 }
@@ -76,7 +76,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
 		const setup = this.state.combatSetup;
 		const encounter = this.props.encounters.find(e => e.id === encounterID);
 		setup.encounter = encounter ? JSON.parse(JSON.stringify(encounter)) : null;
-		setup.slotInfo = Utils.getCombatSlotData(setup.encounter, this.props.library);
+		setup.slotInfo = Gygax.getCombatSlotData(setup.encounter, this.props.library);
 		this.setState({
 			combatSetup: setup
 		}, () => this.props.notify());
@@ -97,7 +97,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
 		if (setup.encounter) {
 			const wave = setup.encounter.waves.find(w => w.id === waveID);
 			if (wave) {
-				setup.slotInfo = Utils.getCombatSlotData(wave, this.props.library);
+				setup.slotInfo = Gygax.getCombatSlotData(wave, this.props.library);
 			}
 		}
 		this.setState({
@@ -116,7 +116,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
 		if (this.state.combatSetup.party) {
 			const pcs = this.state.combatSetup.party.pcs.filter(pc => pc.active);
 			pcs.forEach(pc => {
-				xp += Utils.pcExperience(pc.level, diff);
+				xp += Gygax.pcExperience(pc.level, diff);
 				sumLevel += pc.level;
 			});
 
@@ -127,7 +127,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
 		Napoleon.buildEncounter(encounter, xp, filter, this.props.library, this.props.getMonster);
 		const setup = this.state.combatSetup;
 		setup.encounter = encounter;
-		setup.slotInfo = Utils.getCombatSlotData(encounter, this.props.library);
+		setup.slotInfo = Gygax.getCombatSlotData(encounter, this.props.library);
 		this.setState({
 			combatSetup: setup
 		}, () => this.props.notify());
@@ -171,7 +171,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
 				// Change number
 				slot.count = Math.max(0, slot.count + delta);
 				// Reset names
-				setup.slotInfo = Utils.getCombatSlotData(setup.encounter, this.props.library);
+				setup.slotInfo = Gygax.getCombatSlotData(setup.encounter, this.props.library);
 				this.setState({
 					combatSetup: setup
 				});
@@ -216,13 +216,13 @@ export default class CombatStartModal extends React.Component<Props, State> {
 								combatSetup={this.state.combatSetup}
 								parties={this.props.parties}
 								encounters={this.props.encounters}
-								getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
+								getMonster={id => this.props.getMonster(id)}
 							/>
 							<MonsterSection
 								type={this.props.type}
 								combatSetup={this.state.combatSetup}
 								parties={this.props.parties}
-								getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
+								getMonster={id => this.props.getMonster(id)}
 								changeValue={(source, field, value) => this.changeValue(source, field, value)}
 								nudgeCount={(slotID, delta) => this.nudgeCount(slotID, delta)}
 							/>
@@ -244,7 +244,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
 								type={this.props.type}
 								combatSetup={this.state.combatSetup}
 								parties={this.props.parties}
-								getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
+								getMonster={id => this.props.getMonster(id)}
 								changeValue={(source, field, value) => this.changeValue(source, field, value)}
 								nudgeCount={(slotID, delta) => this.nudgeCount(slotID, delta)}
 							/>
@@ -267,7 +267,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
 								type={this.props.type}
 								combatSetup={this.state.combatSetup}
 								parties={this.props.parties}
-								getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
+								getMonster={id => this.props.getMonster(id)}
 								changeValue={(source, field, value) => this.changeValue(source, field, value)}
 								nudgeCount={(slotID, delta) => this.nudgeCount(slotID, delta)}
 							/>
@@ -718,7 +718,7 @@ interface DifficultySectionProps {
 	combatSetup: CombatSetup;
 	parties: Party[];
 	encounters: Encounter[];
-	getMonster: (monsterName: string, groupName: string) => Monster | null;
+	getMonster: (id: string) => Monster | null;
 }
 
 class DifficultySection extends React.Component<DifficultySectionProps> {
@@ -731,7 +731,7 @@ class DifficultySection extends React.Component<DifficultySectionProps> {
 						parties={this.props.parties}
 						party={this.props.combatSetup.party}
 						encounter={this.props.combatSetup.encounter}
-						getMonster={(monsterName, monsterGroupName) => this.props.getMonster(monsterName, monsterGroupName)}
+						getMonster={id => this.props.getMonster(id)}
 					/>
 				</div>
 			);
@@ -750,7 +750,7 @@ interface MonsterSectionProps {
 	type: 'start' | 'add-wave' | 'add-combatants';
 	combatSetup: CombatSetup;
 	parties: Party[];
-	getMonster: (monsterName: string, groupName: string) => Monster | null;
+	getMonster: (id: string) => Monster | null;
 	changeValue: (source: any, field: string, value: any) => void;
 	nudgeCount: (slotID: string, delta: number) => void;
 }
@@ -823,7 +823,7 @@ class MonsterSection extends React.Component<MonsterSectionProps, MonsterSection
 				if (!encounterSlot) {
 					return null;
 				}
-				const monster = this.props.getMonster(encounterSlot.monsterName, encounterSlot.monsterGroupName);
+				const monster = this.props.getMonster(encounterSlot.monsterID);
 				if (!monster) {
 					return null;
 				}
@@ -865,15 +865,15 @@ interface MonsterSlotSectionProps {
 
 class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
 	private rollInit(data: CombatSlotMember | null) {
-		const roll = Utils.dieRoll();
-		const bonus = Utils.modifierValue(this.props.monster.abilityScores.dex);
+		const roll = Gygax.dieRoll();
+		const bonus = Gygax.modifierValue(this.props.monster.abilityScores.dex);
 		this.props.changeValue(data ?? this.props.slotInfo, 'init', roll + bonus);
 	}
 
 	private rollHP(data: CombatSlotMember | null) {
-		const dieType = Utils.hitDieType(this.props.monster.size);
-		const roll = Utils.dieRoll(dieType, this.props.monster.hitDice);
-		const bonus = Utils.modifierValue(this.props.monster.abilityScores.con) * this.props.monster.hitDice;
+		const dieType = Gygax.hitDieType(this.props.monster.size);
+		const roll = Gygax.dieRoll(dieType, this.props.monster.hitDice);
+		const bonus = Gygax.modifierValue(this.props.monster.abilityScores.con) * this.props.monster.hitDice;
 		this.props.changeValue(data ?? this.props.slotInfo, 'hp', roll + bonus);
 	}
 
@@ -910,7 +910,7 @@ class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
 			);
 		}
 
-		const bonus = Utils.modifierValue(this.props.monster.abilityScores.dex);
+		const bonus = Gygax.modifierValue(this.props.monster.abilityScores.dex);
 		const min = 1 + bonus;
 		const max = 20 + bonus;
 
@@ -953,9 +953,9 @@ class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
 		}
 
 		const typical = Frankenstein.getTypicalHP(this.props.monster);
-		const bonus = Utils.modifierValue(this.props.monster.abilityScores.con) * this.props.monster.hitDice;
+		const bonus = Gygax.modifierValue(this.props.monster.abilityScores.con) * this.props.monster.hitDice;
 		const min = this.props.monster.hitDice + bonus;
-		const max = (this.props.monster.hitDice * Utils.hitDieType(this.props.monster.size)) + bonus;
+		const max = (this.props.monster.hitDice * Gygax.hitDieType(this.props.monster.size)) + bonus;
 
 		const sections = [];
 		if (this.props.slotInfo.useGroupHP) {
@@ -1029,7 +1029,7 @@ class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
 		let content = null;
 		switch (this.props.view) {
 			case 'initiative':
-				header += ' (1d20 ' + Utils.modifier(this.props.monster.abilityScores.dex) + ')';
+				header += ' (1d20 ' + Gygax.modifier(this.props.monster.abilityScores.dex) + ')';
 				content = this.getInitSection();
 				break;
 			case 'hit points':

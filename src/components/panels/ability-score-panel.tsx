@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Utils from '../../utils/utils';
+import Gygax from '../../utils/gygax';
 
 import { Monster } from '../../models/monster';
 
@@ -43,13 +43,13 @@ export default class AbilityScorePanel extends React.Component<Props, State> {
 		e.stopPropagation();
 
 		const score = this.props.combatant.abilityScores[ability];
-		const mod = Utils.modifierValue(score);
+		const mod = Gygax.modifierValue(score);
 		this.props.onRollDice(1, 20, mod);
 	}
 
 	private getAbilityScore(ability: 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha') {
 		const score = this.props.combatant.abilityScores[ability];
-		const mod = Utils.modifier(score);
+		const mod = Gygax.modifier(score);
 
 		const content = (
 			<div>

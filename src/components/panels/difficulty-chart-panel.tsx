@@ -1,8 +1,8 @@
 import { Col, Row } from 'antd';
 import React from 'react';
 
+import Gygax from '../../utils/gygax';
 import Napoleon from '../../utils/napoleon';
-import Utils from '../../utils/utils';
 
 import { Encounter } from '../../models/encounter';
 import { Monster } from '../../models/monster';
@@ -14,7 +14,7 @@ interface Props {
 	encounter: Encounter;
 	parties: Party[];
 	party: Party | null;
-	getMonster: (monsterName: string, groupName: string) => Monster | null;
+	getMonster: (id: string) => Monster | null;
 }
 
 interface State {
@@ -74,10 +74,10 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
 
 				const pcs = party.pcs.filter(pc => pc.active);
 				pcs.forEach(pc => {
-					xpEasy += Utils.pcExperience(pc.level, 'easy');
-					xpMedium += Utils.pcExperience(pc.level, 'medium');
-					xpHard += Utils.pcExperience(pc.level, 'hard');
-					xpDeadly += Utils.pcExperience(pc.level, 'deadly');
+					xpEasy += Gygax.pcExperience(pc.level, 'easy');
+					xpMedium += Gygax.pcExperience(pc.level, 'medium');
+					xpHard += Gygax.pcExperience(pc.level, 'hard');
+					xpDeadly += Gygax.pcExperience(pc.level, 'deadly');
 				});
 
 				let difficulty = 'trivial';

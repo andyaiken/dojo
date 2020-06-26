@@ -1,6 +1,7 @@
 // This utility file deals with encounters and combat
 
 import Factory from './factory';
+import Gygax from './gygax';
 import Sherlock from './sherlock';
 import Utils from './utils';
 
@@ -26,7 +27,7 @@ export default class Napoleon {
 		return count;
 	}
 
-	public static getEncounterXP(encounter: Encounter, getMonster: (monsterName: string, groupName: string) => Monster | null) {
+	public static getEncounterXP(encounter: Encounter, getMonster: (id: string) => Monster | null) {
 		let xp = 0;
 
 		let slots: EncounterSlot[] = [];
@@ -36,19 +37,19 @@ export default class Napoleon {
 		});
 
 		slots.filter(slot => slot.faction === 'foe').forEach(slot => {
-			const monster = getMonster(slot.monsterName, slot.monsterGroupName);
+			const monster = getMonster(slot.monsterID);
 			if (monster) {
-				xp += Utils.experience(monster.challenge) * slot.count;
+				xp += Gygax.experience(monster.challenge) * slot.count;
 			}
 		});
 
 		return xp;
 	}
 
-	public static getAdjustedEncounterXP(encounter: Encounter, getMonster: (monsterName: string, groupName: string) => Monster | null) {
+	public static getAdjustedEncounterXP(encounter: Encounter, getMonster: (id: string) => Monster | null) {
 		const count = this.getMonsterCount(encounter);
 		const xp = this.getEncounterXP(encounter, getMonster);
-		return xp * Utils.experienceFactor(count);
+		return xp * Gygax.experienceFactor(count);
 	}
 
 	public static getCombatXP(combat: Combat) {
@@ -59,7 +60,7 @@ export default class Napoleon {
 			.filter(combatant => combatant.faction === 'foe')
 			.forEach(combatant => {
 				const monster = combatant as (Combatant & Monster);
-				xp += Utils.experience(monster.challenge);
+				xp += Gygax.experience(monster.challenge);
 			});
 
 		return xp;
@@ -76,8 +77,8 @@ export default class Napoleon {
 		if (filter.role !== 'all roles') {
 			summary += summary ? ' ' + filter.role : filter.role;
 		}
-		const min = Utils.challenge(filter.challengeMin);
-		const max = Utils.challenge(filter.challengeMax);
+		const min = Gygax.challenge(filter.challengeMin);
+		const max = Gygax.challenge(filter.challengeMax);
 		const cr =  (filter.challengeMin === filter.challengeMax) ? min : min + ' to ' + max;
 		summary += ' monsters of cr ' + cr;
 		return summary;
@@ -85,10 +86,10 @@ export default class Napoleon {
 
 	public static buildEncounter(
 		encounter: Encounter, xp: number, filter: MonsterFilter, groups: MonsterGroup[],
-		getMonster: (monsterName: string, groupName: string) => Monster | null) {
+		getMonster: (id: string) => Monster | null) {
 
-		while (Napoleon.getAdjustedEncounterXP(encounter, (monsterName, groupName) => getMonster(monsterName, groupName)) <= xp) {
-			if ((encounter.slots.length > 0) && (Utils.dieRoll(3) > 1)) {
+		while (Napoleon.getAdjustedEncounterXP(encounter, id => getMonster(id)) <= xp) {
+			if ((encounter.slots.length > 0) && (Gygax.dieRoll(3) > 1)) {
 				// Increment a slot
 				const index = Math.floor(Math.random() * encounter.slots.length);
 				const slot = encounter.slots[index];
@@ -117,7 +118,7 @@ export default class Napoleon {
 		}
 
 		// Split into waves
-		while ((encounter.slots.length > 1) && (Utils.dieRoll(10) === 10)) {
+		while ((encounter.slots.length > 1) && (Gygax.dieRoll(10) === 10)) {
 			const index = Math.floor(Math.random() * encounter.slots.length);
 			const slot = encounter.slots[index];
 			encounter.slots = encounter.slots.filter(s => s.id !== slot.id);

@@ -1,9 +1,9 @@
 // This utility file deals with parties and pcs
 
 import Factory from './factory';
+import Gygax from './gygax';
 
 import { Party, PC } from '../models/party';
-import Utils from './utils';
 
 export default class Hero {
 	public static importParty(source: string, party: Party): void {
@@ -98,7 +98,7 @@ export default class Hero {
 			const languages = modifiers.filter(mod => mod.type === 'language').map(mod => mod.friendlySubtypeName);
 			pc.languages = languages.join(', ');
 
-			const prof = Utils.proficiency(level);
+			const prof = Gygax.proficiency(level);
 
 			let int = json.character.stats[3].value;
 			let wis = json.character.stats[4].value;
@@ -133,9 +133,9 @@ export default class Hero {
 				profPerc = 0.5;
 			}
 
-			pc.passiveInsight = 10 + Utils.modifierValue(wis) + Math.floor(prof * profIns);
-			pc.passiveInvestigation = 10 + Utils.modifierValue(int) + Math.floor(prof * profInv);
-			pc.passivePerception = 10 + Utils.modifierValue(wis) + Math.floor(prof * profPerc);
+			pc.passiveInsight = 10 + Gygax.modifierValue(wis) + Math.floor(prof * profIns);
+			pc.passiveInvestigation = 10 + Gygax.modifierValue(int) + Math.floor(prof * profInv);
+			pc.passivePerception = 10 + Gygax.modifierValue(wis) + Math.floor(prof * profPerc);
 
 			pc.companions = [];
 			json.character.creatures.forEach((creature: any) => {

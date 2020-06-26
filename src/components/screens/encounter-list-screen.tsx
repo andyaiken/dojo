@@ -28,7 +28,7 @@ interface Props {
 	cloneEncounter: (encounter: Encounter, name: string) => void;
 	deleteEncounter: (encounter: Encounter) => void;
 	runEncounter: (encounter: Encounter, partyID: string) => void;
-	getMonster: (monsterName: string, groupName: string) => Monster | null;
+	getMonster: (id: string) => Monster | null;
 	setView: (view: string) => void;
 	openStatBlock: (monster: Monster | Combatant) => void;
 	resumeCombat: (combat: Combat) => void;
@@ -37,7 +37,7 @@ interface Props {
 
 export default class EncounterListScreen extends React.Component<Props> {
 	private openStatBlock(slot: EncounterSlot) {
-		const monster = this.props.getMonster(slot.monsterName, slot.monsterGroupName);
+		const monster = this.props.getMonster(slot.monsterID);
 		if (monster) {
 			this.props.openStatBlock(monster);
 		}
@@ -94,7 +94,7 @@ export default class EncounterListScreen extends React.Component<Props> {
 					clone={(encounter, name) => this.props.cloneEncounter(encounter, name)}
 					run={(encounter, partyID) => this.props.runEncounter(encounter, partyID)}
 					openStatBlock={slot => this.openStatBlock(slot)}
-					getMonster={(monsterName, groupName) => this.props.getMonster(monsterName, groupName)}
+					getMonster={id => this.props.getMonster(id)}
 				/>
 			));
 

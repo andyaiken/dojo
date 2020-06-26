@@ -3,7 +3,7 @@ import { Tooltip } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
 
-import Utils from '../../utils/utils';
+import Gygax from '../../utils/gygax';
 
 import { Combatant } from '../../models/combat';
 import { Map, MapItem } from '../../models/map';
@@ -212,7 +212,7 @@ export default class MapPanel extends React.Component<Props, State> {
 					let miniSize = 1;
 					const m = c as Combatant & Monster;
 					if (m) {
-						miniSize = Math.max(Utils.miniSize(m.size), 1);
+						miniSize = Math.max(Gygax.miniSize(m.size), 1);
 					}
 					const minX = mi.x - sizeInSquares;
 					const maxX = mi.x + (miniSize - 1) + sizeInSquares;
@@ -399,7 +399,7 @@ export default class MapPanel extends React.Component<Props, State> {
 						const mi = this.props.map.items.find(i => i.id === c.id);
 						if (mi) {
 							const sizeInSquares = c.aura.radius / 5;
-							const miniSize = Math.max(Utils.miniSize(c.displaySize), 1);
+							const miniSize = Math.max(Gygax.miniSize(c.displaySize), 1);
 							const dim = (sizeInSquares * 2) + miniSize;
 							const auraStyle = this.getStyle(mi.x - sizeInSquares, mi.y - sizeInSquares, dim, dim, c.aura.style, mapDimensions);
 							auraStyle.backgroundColor = c.aura.color;
@@ -424,7 +424,7 @@ export default class MapPanel extends React.Component<Props, State> {
 					.filter(i => (i.type === 'monster') || (i.type === 'pc') || (i.type === 'companion') || (i.type === 'token'))
 					.filter(i => !mountIDs.includes(i.id))
 					.map(i => {
-						let miniSize = Utils.miniSize(i.size);
+						let miniSize = Gygax.miniSize(i.size);
 						let isPC = false;
 						const combatant = this.props.combatants.find(c => c.id === i.id);
 						if (combatant) {
@@ -435,7 +435,7 @@ export default class MapPanel extends React.Component<Props, State> {
 									s = mount.displaySize;
 								}
 							}
-							miniSize = Utils.miniSize(s);
+							miniSize = Gygax.miniSize(s);
 							isPC = (combatant.type === 'pc');
 						}
 						const tokenStyle = this.getStyle(i.x, i.y, miniSize, miniSize, 'circle', mapDimensions);
@@ -929,15 +929,15 @@ class MapToken extends React.Component<MapTokenProps> {
 
 			this.props.combatant.tags.forEach(tag => {
 				noteText += '\n\n';
-				noteText += '**' + Utils.getTagTitle(tag) + '**';
+				noteText += '**' + Gygax.getTagTitle(tag) + '**';
 				noteText += '\n\n';
-				noteText += '* ' + Utils.getTagDescription(tag);
+				noteText += '* ' + Gygax.getTagDescription(tag);
 			});
 
 			this.props.combatant.conditions.forEach(condition => {
 				noteText += '\n\n';
 				noteText += '**' + condition.name + '**';
-				Utils.conditionText(condition).forEach(txt => {
+				Gygax.conditionText(condition).forEach(txt => {
 					noteText += '\n\n';
 					noteText += '* ' + txt;
 				});

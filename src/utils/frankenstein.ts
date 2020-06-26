@@ -1,6 +1,7 @@
 // This utility file deals with monster groups and monsters
 
 import Factory from './factory';
+import Gygax from './gygax';
 import Utils from './utils';
 
 import { CONDITION_TYPES } from '../models/condition';
@@ -8,14 +9,14 @@ import { Monster, Trait, TRAIT_TYPES } from '../models/monster';
 
 export default class Frankenstein {
 	public static getTypicalHP(monster: Monster) {
-		const sides = Utils.hitDieType(monster.size);
-		const hpPerDie = ((sides + 1) / 2) + Utils.modifierValue(monster.abilityScores.con);
+		const sides = Gygax.hitDieType(monster.size);
+		const hpPerDie = ((sides + 1) / 2) + Gygax.modifierValue(monster.abilityScores.con);
 		return Math.floor(monster.hitDice * hpPerDie);
 	}
 
 	public static getTypicalHPString(monster: Monster) {
-		const die = Utils.hitDieType(monster.size);
-		const conMod = Utils.modifierValue(monster.abilityScores.con) * monster.hitDice;
+		const die = Gygax.hitDieType(monster.size);
+		const conMod = Gygax.modifierValue(monster.abilityScores.con) * monster.hitDice;
 
 		let conModStr = '';
 		if (conMod > 0) {
@@ -43,10 +44,10 @@ export default class Frankenstein {
 		let newValue;
 		switch (field) {
 			case 'challenge':
-				newValue = Utils.nudgeChallenge(value, delta);
+				newValue = Gygax.nudgeChallenge(value, delta);
 				break;
 			case 'size':
-				newValue = Utils.nudgeSize(value, delta);
+				newValue = Gygax.nudgeSize(value, delta);
 				break;
 			default:
 				newValue = (value ? value : 0) + delta;
@@ -113,7 +114,7 @@ export default class Frankenstein {
 		monster.category = data.type;
 		monster.tag = data.subtype;
 		monster.alignment = data.alignment;
-		monster.challenge = Utils.parseChallenge(data.challenge_rating);
+		monster.challenge = Gygax.parseChallenge(data.challenge_rating);
 		monster.ac = data.armor_class;
 		monster.speed = data.speed;
 		monster.senses = data.senses;
@@ -497,7 +498,7 @@ export default class Frankenstein {
 	public static addTrait(target: Monster, type: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair') {
 		const trait = Factory.createTrait();
 		trait.type = type;
-		trait.name = 'New ' + Utils.traitType(type, false).toLowerCase();
+		trait.name = 'New ' + Gygax.traitType(type, false).toLowerCase();
 		target.traits.push(trait);
 	}
 
@@ -707,7 +708,7 @@ export default class Frankenstein {
 			return 'sneak';
 		}
 
-		const expected = Utils.challengeDetails().find(details => details.cr === monster.challenge);
+		const expected = Gygax.challengeDetails().find(details => details.cr === monster.challenge);
 		if (expected) {
 			// If it has high hp, it's a tank
 			const typicalHP = Frankenstein.getTypicalHP(monster);

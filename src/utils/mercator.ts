@@ -1,11 +1,11 @@
 // This utility file deals with maps
 
 import Factory from './factory';
-import Utils from './utils';
+import Gygax from './gygax';
+import Shakespeare from './shakespeare';
 
 import { Combat, Combatant } from '../models/combat';
 import { DOORWAY_TYPES, Map, MapItem } from '../models/map';
-import Shakespeare from './shakespeare';
 
 export default class Mercator {
 	public static scatterCombatants(combat: Combat, type: 'pc' | 'monster') {
@@ -39,7 +39,7 @@ export default class Mercator {
 					if ((candidateSquares.length > 0) && combat.map) {
 						const index = Math.floor(Math.random() * candidateSquares.length);
 						const square = candidateSquares[index];
-						const size = Utils.miniSize(combatant.displaySize);
+						const size = Gygax.miniSize(combatant.displaySize);
 
 						const item = Factory.createMapItem();
 						item.id = combatant.id;
@@ -102,7 +102,7 @@ export default class Mercator {
 	public static canAddMonsterHere(map: Map, combatant: Combatant, x: number, y: number) {
 		const coveredSquares: boolean[] = [];
 
-		const size = Utils.miniSize(combatant.displaySize);
+		const size = Gygax.miniSize(combatant.displaySize);
 		const right = x + Math.max(1, size) - 1;
 		const bottom = y + Math.max(1, size) - 1;
 		for (let x1 = x; x1 <= right; ++x1) {
@@ -203,8 +203,8 @@ export default class Mercator {
 		room.type = 'tile';
 		room.terrain = 'default';
 		room.style = 'square';
-		room.width = Utils.dieRoll(4, 2) + 2;
-		room.height = Utils.dieRoll(4, 2) + 2;
+		room.width = Gygax.dieRoll(6, 3) + 3;
+		room.height = Gygax.dieRoll(6, 3) + 3;
 
 		const dimensions = Mercator.mapDimensions(map);
 		if (dimensions) {
@@ -285,7 +285,7 @@ export default class Mercator {
 				const corridor = corridors[index];
 
 				if ((!corridor.horizontal && (corridor.tile.height === 1)) || (corridor.horizontal && (corridor.tile.width === 1))) {
-					if (Utils.dieRoll(2) === 2) {
+					if (Gygax.dieRoll(2) === 2) {
 						corridor.tile.content = {
 							type: 'doorway',
 							style: Mercator.getRandomDoorwayStyle(),
@@ -294,7 +294,7 @@ export default class Mercator {
 					}
 				} else {
 					if ((!corridor.horizontal && (corridor.tile.height >= 4)) || (corridor.horizontal && (corridor.tile.width >= 4))) {
-						if (Utils.dieRoll(2) === 2) {
+						if (Gygax.dieRoll(2) === 2) {
 							const door = Factory.createMapItem();
 							door.type = 'tile';
 							door.terrain = 'default';
@@ -323,7 +323,7 @@ export default class Mercator {
 							}
 							map.items.push(door);
 						}
-						if (Utils.dieRoll(2) === 2) {
+						if (Gygax.dieRoll(2) === 2) {
 							const door = Factory.createMapItem();
 							door.type = 'tile';
 							door.terrain = 'default';
@@ -353,7 +353,7 @@ export default class Mercator {
 					}
 
 					if ((!corridor.horizontal && (corridor.tile.height <= 4)) || (corridor.horizontal && (corridor.tile.width <= 4))) {
-						if (Utils.dieRoll(3) === 3) {
+						if (Gygax.dieRoll(3) === 3) {
 							corridor.tile.content = {
 								type: 'stairway',
 								style: 'stairs',

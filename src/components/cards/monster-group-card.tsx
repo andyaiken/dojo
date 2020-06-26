@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Utils from '../../utils/utils';
+import Gygax from '../../utils/gygax';
 
 import { Monster, MonsterGroup } from '../../models/monster';
 
@@ -26,7 +26,7 @@ export default class MonsterGroupCard extends React.Component<Props> {
 			<div key={m.id} className='combatant-row' onClick={() => this.props.openStatBlock(m)}>
 				<PortraitPanel source={m} inline={true}/>
 				<div className='name'>{m.name || 'unnamed monster'}</div>
-				<div className='value'>cr {Utils.challenge(m.challenge)}</div>
+				<div className='value'>cr {Gygax.challenge(m.challenge)}</div>
 			</div>
 		));
 	}
