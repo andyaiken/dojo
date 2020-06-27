@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "e0176d0f7633765c1479a12f01d6a9cf",
+    "revision": "d48d843435987df5bb5f81957183d7d0",
     "url": "/dojo/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/dojo/static/css/2.13bd1b63.chunk.css"
   },
   {
-    "revision": "cf5a1a7b1a7dcb8a770d",
+    "revision": "75a4411c8d080975e0a3",
     "url": "/dojo/static/css/main.e6ffc99b.chunk.css"
   },
   {
@@ -20,8 +20,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/dojo/static/js/2.5eef0b16.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "cf5a1a7b1a7dcb8a770d",
-    "url": "/dojo/static/js/main.748f64e8.chunk.js"
+    "revision": "75a4411c8d080975e0a3",
+    "url": "/dojo/static/js/main.373d06dc.chunk.js"
   },
   {
     "revision": "9067d809298f108010aa",
