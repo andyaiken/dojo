@@ -106,8 +106,9 @@ export default class Napoleon {
 				if (candidates.length > 0) {
 					const index = Math.floor(Math.random() * candidates.length);
 					const slot = Factory.createEncounterSlot();
-					slot.monsterGroupName = candidates[index].groupName;
+					slot.monsterID = candidates.[0].id;
 					slot.monsterName = candidates[index].monsterName;
+					slot.monsterGroupName = candidates[index].groupName;
 					encounter.slots.push(slot);
 				} else {
 					if (encounter.slots.length === 0) {

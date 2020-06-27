@@ -154,8 +154,9 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 
 		const group = this.props.library.find(g => g.monsters.includes(monster));
 		if (group) {
-			slot.monsterGroupName = group.name;
+			slot.monsterID = monster.id;
 			slot.monsterName = monster.name;
+			slot.monsterGroupName = group.name;
 
 			this.sortEncounterSlots(this.state.encounter);
 			this.state.encounter.waves.forEach(wave => this.sortEncounterSlots(wave));

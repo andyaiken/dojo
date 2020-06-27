@@ -1389,7 +1389,6 @@ export default class App extends React.Component<Props, State> {
 			const group = this.state.library.find(g => g.monsters.find(m => m.id === monster.id));
 			if (group) {
 				const slot = Factory.createEncounterSlot();
-				slot.id = monster.id;
 				slot.monsterID = monster.id;
 				slot.monsterName = monster.name;
 				slot.monsterGroupName = group.name;
