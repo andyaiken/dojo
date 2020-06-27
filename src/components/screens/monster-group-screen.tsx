@@ -8,6 +8,7 @@ import Gygax from '../../utils/gygax';
 import Shakespeare from '../../utils/shakespeare';
 import Utils from '../../utils/utils';
 
+import { Encounter } from '../../models/encounter';
 import { CATEGORY_TYPES, Monster, MonsterGroup, ROLE_TYPES, SIZE_TYPES } from '../../models/monster';
 
 import MonsterCard from '../cards/monster-card';
@@ -22,6 +23,7 @@ import Note from '../panels/note';
 interface Props {
 	monsterGroup: MonsterGroup;
 	library: MonsterGroup[];
+	encounters: Encounter[];
 	goBack: () => void;
 	removeMonsterGroup: () => void;
 	openDemographics: (group: MonsterGroup) => void;
@@ -53,6 +55,7 @@ export default class MonsterGroupScreen extends React.Component<Props> {
 							monster={m}
 							mode={'editable'}
 							library={this.props.library}
+							encounters={this.props.encounters}
 							moveToGroup={(monster, groupID) => this.props.moveToGroup(monster, groupID)}
 							removeMonster={monster => this.props.removeMonster(monster)}
 							viewMonster={monster => this.props.viewMonster(monster)}

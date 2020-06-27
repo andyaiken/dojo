@@ -192,6 +192,14 @@ export default class Napoleon {
 		return hasLair;
 	}
 
+	public static encounterHasMonster(encounter: Encounter, monsterID: string) {
+		let ids = encounter.slots.map(s => s.monsterID);
+		encounter.waves.forEach(w => {
+			ids = ids.concat(w.slots.map(s => s.monsterID));
+		});
+		return !!ids.find(id => id === monsterID);
+	}
+
 	public static convertPCToCombatant(pc: PC) {
 		const combatant = JSON.parse(JSON.stringify(pc)) as Combatant & PC;
 

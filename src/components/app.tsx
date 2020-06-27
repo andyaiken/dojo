@@ -2353,6 +2353,7 @@ export default class App extends React.Component<Props, State> {
 						<MonsterGroupScreen
 							monsterGroup={this.state.library.find(g => g.id === this.state.selectedMonsterGroupID) as MonsterGroup}
 							library={this.state.library}
+							encounters={this.state.encounters}
 							goBack={() => this.selectMonsterGroup(null)}
 							removeMonsterGroup={() => this.removeCurrentMonsterGroup()}
 							openDemographics={group => this.openDemographics(group)}

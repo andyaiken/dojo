@@ -74,7 +74,7 @@ export default class MonsterGroupImportModal extends React.Component<Props, Stat
 						<GridPanel
 							heading={this.props.group.name}
 							columns={1}
-							content={this.props.group.monsters.map(monster => <MonsterCard key={monster.id} monster={monster} mode='view' />)}
+							content={this.props.group.monsters.map(monster => <MonsterCard key={monster.id} monster={monster} />)}
 						/>
 					</Col>
 				</Row>

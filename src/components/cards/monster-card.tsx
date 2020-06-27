@@ -6,7 +6,7 @@ import Frankenstein from '../../utils/frankenstein';
 import Gygax from '../../utils/gygax';
 
 import { Combatant } from '../../models/combat';
-import { EncounterWave } from '../../models/encounter';
+import { Encounter } from '../../models/encounter';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
 
 import ConfirmButton from '../controls/confirm-button';
@@ -16,12 +16,14 @@ import Textbox from '../controls/textbox';
 import AbilityScorePanel from '../panels/ability-score-panel';
 import PortraitPanel from '../panels/portrait-panel';
 import TraitsPanel from '../panels/traits-panel';
+import Napoleon from '../../utils/napoleon';
 
 interface Props {
 	monster: Monster | (Monster & Combatant);
 	mode: string;
 	showRollButtons: boolean;
 	library: MonsterGroup[];
+	encounters: Encounter[];
 	nudgeValue: (source: any, field: string, delta: number) => void;
 	// Library
 	viewMonster: (monster: Monster) => void;
@@ -48,6 +50,7 @@ export default class MonsterCard extends React.Component<Props, State> {
 		mode: 'full',
 		showRollButtons: false,
 		library: null,
+		encounters: null,
 		nudgeValue: null,
 		viewMonster: null,
 		editMonster: null,
@@ -102,13 +105,6 @@ export default class MonsterCard extends React.Component<Props, State> {
 		}
 
 		return false;
-	}
-
-	private monsterIsInWave(wave: EncounterWave) {
-		return wave.slots.some(s => {
-			const group = this.props.library.find(g => g.monsters.includes(this.props.monster));
-			return !!group && (s.monsterGroupName === group.name) && (s.monsterName === this.props.monster.name);
-		});
 	}
 
 	private getHP() {
@@ -244,7 +240,10 @@ export default class MonsterCard extends React.Component<Props, State> {
 				/>
 			);
 
-			options.push(<ConfirmButton key='remove' text='delete monster' onConfirm={() => this.props.removeMonster(this.props.monster)} />);
+			const inUse = this.props.encounters.some(enc => Napoleon.encounterHasMonster(enc, this.props.monster.id));
+			options.push(
+				<ConfirmButton key='remove' text='delete monster' disabled={inUse} onConfirm={() => this.props.removeMonster(this.props.monster)} />
+			);
 		}
 
 		return options;
