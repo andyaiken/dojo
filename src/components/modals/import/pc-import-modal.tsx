@@ -159,7 +159,7 @@ export default class PCImportModal extends React.Component<Props, State> {
 						{content}
 					</Col>
 					<Col span={12} className='scrollable'>
-						<PCCard pc={this.state.pc} mode='view' />
+						<PCCard pc={this.state.pc} />
 					</Col>
 				</Row>
 			);

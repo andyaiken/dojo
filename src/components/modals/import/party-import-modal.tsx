@@ -141,7 +141,7 @@ export default class PartyImportModal extends React.Component<Props, State> {
 						<GridPanel
 							heading={this.props.party.name}
 							columns={1}
-							content={this.props.party.pcs.map(pc => <PCCard key={pc.id} pc={pc} mode='view' />)}
+							content={this.props.party.pcs.map(pc => <PCCard key={pc.id} pc={pc} />)}
 						/>
 					</Col>
 				</Row>

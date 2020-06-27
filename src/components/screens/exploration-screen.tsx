@@ -6,8 +6,9 @@ import Gygax from '../../utils/gygax';
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { Exploration } from '../../models/map';
-import { Companion } from '../../models/party';
+import { Companion, PC } from '../../models/party';
 
+import PCCard from '../cards/pc-card';
 import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
 import CombatControlsPanel from '../panels/combat-controls-panel';
@@ -231,6 +232,12 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 			const selection = this.props.exploration.combatants.filter(c => this.state.selectedCombatantIDs.includes(c.id));
 			const items = this.props.exploration.map.items.filter(i => this.state.selectedCombatantIDs.includes(i.id));
 			if ((selection.length > 0) && (items.length === selection.length)) {
+				let statblock = null;
+				if (selection.length === 1) {
+					statblock = (
+						<PCCard pc={selection[0] as Combatant & PC} />
+					);
+				}
 				rightSidebar = (
 					<div className='section'>
 						<CombatControlsPanel
@@ -262,6 +269,7 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 							changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
 							nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
 						/>
+						{statblock}
 					</div>
 				);
 			} else {

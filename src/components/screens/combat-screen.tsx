@@ -758,12 +758,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 		switch (combatant.type) {
 			case 'pc':
 				return (
-					<PCCard
-						pc={combatant as Combatant & PC}
-						mode={'combat'}
-						changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
-						nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
-					/>
+					<PCCard pc={combatant as Combatant & PC} />
 				);
 			case 'monster':
 				return (
@@ -851,7 +846,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 							current = (
 								<div>
 									{this.createControls([combatant])}
-									<hr/>
 									{this.createCard(combatant)}
 								</div>
 							);

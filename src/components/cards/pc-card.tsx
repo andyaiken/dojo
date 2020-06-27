@@ -9,9 +9,8 @@ import PortraitPanel from '../panels/portrait-panel';
 
 interface Props {
 	pc: PC | (PC & Combatant);
-	mode: string;
+	mode: 'view' | 'edit';
 	changeValue: (pc: any, field: string, value: any) => void;
-	nudgeValue: (pc: any, field: string, delta: number) => void;
 	removePC: (pc: PC) => void;
 	editPC: (pc: PC) => void;
 	updatePC: (pc: PC) => void;
@@ -20,8 +19,8 @@ interface Props {
 
 export default class PCCard extends React.Component<Props> {
 	public static defaultProps = {
+		mode: 'view',
 		changeValue: null,
-		nudgeValue: null,
 		removePC: null,
 		editPC: null,
 		updatePC: null,
@@ -31,7 +30,7 @@ export default class PCCard extends React.Component<Props> {
 	public render() {
 		try {
 			const options = [];
-			if (this.props.mode.indexOf('edit') !== -1) {
+			if (this.props.mode === 'edit') {
 				options.push(<button key='edit' onClick={() => this.props.editPC(this.props.pc)}>edit pc</button>);
 				if (this.props.pc.url) {
 					options.push(<button key='import' onClick={() => this.props.updatePC(this.props.pc)}>update pc from d&amp;d beyond</button>);

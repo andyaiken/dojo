@@ -21,7 +21,7 @@ export default class StatBlockModal extends React.Component<Props> {
 			let content = null;
 			switch (this.props.source.type) {
 				case 'pc':
-					content = <PCCard pc={this.props.source as PC} mode='view' />;
+					content = <PCCard pc={this.props.source as PC} />;
 					break;
 				case 'monster':
 					content = <MonsterStatblockCard monster={this.props.source as Monster} />;
