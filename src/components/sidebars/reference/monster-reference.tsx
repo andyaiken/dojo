@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Monster } from '../../../models/monster';
 
-import MonsterCard from '../../cards/monster-card';
+import MonsterStatblockCard from '../../cards/monster-statblock-card';
 import Dropdown from '../../controls/dropdown';
 
 interface Props {
@@ -21,7 +21,7 @@ export default class MonsterReference extends React.Component<Props> {
 				statblock = (
 					<div>
 						<hr/>
-						<MonsterCard monster={monster} />
+						<MonsterStatblockCard monster={monster} />
 					</div>
 				);
 			}

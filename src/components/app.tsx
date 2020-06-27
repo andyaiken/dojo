@@ -1390,6 +1390,7 @@ export default class App extends React.Component<Props, State> {
 			if (group) {
 				const slot = Factory.createEncounterSlot();
 				slot.id = monster.id;
+				slot.monsterID = monster.id;
 				slot.monsterName = monster.name;
 				slot.monsterGroupName = group.name;
 				combatSetup.encounter.slots.push(slot);

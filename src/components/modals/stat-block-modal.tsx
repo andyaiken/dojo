@@ -4,7 +4,7 @@ import { Combatant } from '../../models/combat';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
-import MonsterCard from '../cards/monster-card';
+import MonsterStatblockCard from '../cards/monster-statblock-card';
 import PCCard from '../cards/pc-card';
 
 interface Props {
@@ -24,7 +24,7 @@ export default class StatBlockModal extends React.Component<Props> {
 					content = <PCCard pc={this.props.source as PC} mode='view' />;
 					break;
 				case 'monster':
-					content = <MonsterCard monster={this.props.source as Monster} />;
+					content = <MonsterStatblockCard monster={this.props.source as Monster} />;
 					break;
 			}
 

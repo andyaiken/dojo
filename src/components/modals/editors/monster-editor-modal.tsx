@@ -14,6 +14,7 @@ import { MonsterFilter } from '../../../models/encounter';
 import { CATEGORY_TYPES, Monster, MonsterGroup, Trait, TRAIT_TYPES } from '../../../models/monster';
 
 import MonsterCard from '../../cards/monster-card';
+import MonsterStatblockCard from '../../cards/monster-statblock-card';
 import Checkbox from '../../controls/checkbox';
 import Dropdown from '../../controls/dropdown';
 import Expander from '../../controls/expander';
@@ -727,7 +728,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 				<Col span={12} className='scrollable sidebar sidebar-right' style={{ padding: '5px' }}>
 					{stats}
 					{stats ? <hr/> : null}
-					<MonsterCard monster={this.state.monster} />
+					<MonsterStatblockCard monster={this.state.monster} />
 				</Col>
 			);
 		}
@@ -738,17 +739,29 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 	private getMonsterCards(monsters: Monster[], selected: boolean) {
 		const sorted = Utils.sort(monsters);
 		return sorted.map(m => {
-			return (
-				<div className='section' key={m.id}>
-					<MonsterCard
-						monster={m}
-						mode={'template ' + this.state.page + (selected ? ' selected' : '')}
-						copyTrait={trait => this.copyTrait(trait)}
-						selectMonster={monster => this.addToScratchpad(monster)}
-						deselectMonster={monster => this.removeFromScratchpad(monster)}
-					/>
-				</div>
-			);
+			if (selected) {
+				return (
+					<div className='section' key={m.id}>
+						<MonsterStatblockCard
+							monster={m}
+							mode='template'
+							section={this.state.page}
+							copyTrait={trait => this.copyTrait(trait)}
+							deselectMonster={monster => this.removeFromScratchpad(monster)}
+						/>
+					</div>
+				);
+			} else {
+				return (
+					<div className='section' key={m.id}>
+						<MonsterCard
+							monster={m}
+							mode='candidate'
+							selectMonster={monster => this.addToScratchpad(monster)}
+						/>
+					</div>
+				);
+			}
 		}).filter(m => !!m);
 	}
 

@@ -6,7 +6,7 @@ import Utils from '../../../utils/utils';
 
 import { MonsterGroup } from '../../../models/monster';
 
-import MonsterCard from '../../cards/monster-card';
+import MonsterStatblockCard from '../../cards/monster-statblock-card';
 import GridPanel from '../../panels/grid-panel';
 import Note from '../../panels/note';
 
@@ -74,7 +74,7 @@ export default class MonsterGroupImportModal extends React.Component<Props, Stat
 						<GridPanel
 							heading={this.props.group.name}
 							columns={1}
-							content={this.props.group.monsters.map(monster => <MonsterCard key={monster.id} monster={monster} />)}
+							content={this.props.group.monsters.map(monster => <MonsterStatblockCard key={monster.id} monster={monster} />)}
 						/>
 					</Col>
 				</Row>

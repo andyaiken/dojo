@@ -16,7 +16,7 @@ import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, Party, PC } from '../../models/party';
 
 import MapItemCard from '../cards/map-item-card';
-import MonsterCard from '../cards/monster-card';
+import MonsterStatblockCard from '../cards/monster-statblock-card';
 import PCCard from '../cards/pc-card';
 import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
@@ -767,9 +767,9 @@ export default class CombatScreen extends React.Component<Props, State> {
 				);
 			case 'monster':
 				return (
-					<MonsterCard
+					<MonsterStatblockCard
 						monster={combatant as Combatant & Monster}
-						mode={'combat'}
+						combat={true}
 						showRollButtons={this.state.showRollButtons}
 						useTrait={trait => this.props.useTrait(combatant as Combatant & Monster, trait)}
 						rechargeTrait={trait => this.props.rechargeTrait(combatant as Combatant & Monster, trait)}
@@ -784,7 +784,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 						const monster = group.monsters.find(m => m.id === comp.monsterID);
 						if (monster) {
 							card = (
-								<MonsterCard
+								<MonsterStatblockCard
 									monster={monster}
 									showRollButtons={this.state.showRollButtons}
 									onRollDice={(count, sides, constant) => this.props.onRollDice(count, sides, constant)}

@@ -6,7 +6,7 @@ import Frankenstein from '../../../utils/frankenstein';
 
 import { Monster } from '../../../models/monster';
 
-import MonsterCard from '../../cards/monster-card';
+import MonsterStatblockCard from '../../cards/monster-statblock-card';
 import Tabs from '../../controls/tabs';
 import Textbox from '../../controls/textbox';
 import Note from '../../panels/note';
@@ -131,7 +131,7 @@ export default class MonsterImportModal extends React.Component<Props, State> {
 						{content}
 					</Col>
 					<Col span={12} className='scrollable' style={{ padding: '5px' }}>
-						<MonsterCard monster={this.state.monster} />
+						<MonsterStatblockCard monster={this.state.monster} />
 					</Col>
 				</Row>
 			);

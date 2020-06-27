@@ -7,7 +7,7 @@ import { Encounter, EncounterSlot } from '../../models/encounter';
 import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
-import MonsterCard from '../cards/monster-card';
+import MonsterStatblockCard from '../cards/monster-statblock-card';
 import ConfirmButton from '../controls/confirm-button';
 import Dropdown from '../controls/dropdown';
 import Textbox from '../controls/textbox';
@@ -52,7 +52,7 @@ export default class EncounterScreen extends React.Component<Props> {
 								copy.name += ' (' + s.faction + ')';
 							}
 							return (
-								<MonsterCard key={s.id} monster={copy}/>
+								<MonsterStatblockCard key={s.id} monster={copy}/>
 							);
 						}
 
