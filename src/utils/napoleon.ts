@@ -96,17 +96,17 @@ export default class Napoleon {
 				slot.count += 1;
 			} else {
 				// Pick a new monster
-				const candidates: { groupName: string, monsterName: string }[] = [];
+				const candidates: { id: string, monsterName: string, groupName: string }[] = [];
 				groups.forEach(group => {
 					group.monsters
 						.filter(monster => Napoleon.matchMonster(monster, filter))
 						.filter(monster => !encounter.slots.find(slot => (slot.monsterGroupName === group.name) && (slot.monsterName === monster.name)))
-						.forEach(monster => candidates.push({groupName: group.name, monsterName: monster.name}));
+						.forEach(monster => candidates.push({ id: monster.id, monsterName: monster.name, groupName: group.name }));
 				});
 				if (candidates.length > 0) {
 					const index = Math.floor(Math.random() * candidates.length);
 					const slot = Factory.createEncounterSlot();
-					slot.monsterID = candidates.[0].id;
+					slot.monsterID = candidates[index].id;
 					slot.monsterName = candidates[index].monsterName;
 					slot.monsterGroupName = candidates[index].groupName;
 					encounter.slots.push(slot);
