@@ -2120,20 +2120,13 @@ export default class App extends React.Component<Props, State> {
 	}
 
 	private mapAdd(combatant: Combatant, x: number, y: number, currentCombatants: Combatant[], map: Map) {
-		const combatants = [combatant];
-		if (!!combatant.mountID) {
-			const mount = currentCombatants.find(cmb => cmb.id === combatant.mountID);
-			if (mount) {
-				combatants.push(mount);
-			}
+		const list = this.getMountsAndRiders([combatant.id], currentCombatants);
+		if (map) {
+			// Make sure none of our list are already on the map
+			const ids = list.map(cbt => cbt.id);
+			map.items = map.items.filter(i => !ids.includes(i.id));
 		}
-		combatants.forEach(c => {
-			if (map) {
-				// Make sure no-one is already on the map
-				const ids = combatants.map(cbt => cbt.id);
-				map.items = map.items.filter(i => !ids.includes(i.id));
-			}
-
+		list.forEach(c => {
 			const item = Factory.createMapItem();
 			item.id = c.id;
 			item.type = c.type as 'pc' | 'monster' | 'companion';
@@ -2156,9 +2149,10 @@ export default class App extends React.Component<Props, State> {
 	}
 
 	private mapMove(ids: string[], dir: string, combatants: Combatant[], map: Map) {
-		ids.forEach(id => {
+		const list = this.getMountsAndRiders(ids, combatants);
+		list.forEach(c => {
 			if (map) {
-				const item = map.items.find(i => i.id === id);
+				const item = map.items.find(i => i.id === c.id);
 				if (item) {
 					switch (dir) {
 						case 'N':
@@ -2195,7 +2189,7 @@ export default class App extends React.Component<Props, State> {
 					}
 
 					if (this.state.view === 'encounters') {
-						const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
+						const combat = this.state.combats.find(cbt => cbt.id === this.state.selectedCombatID);
 						if (combat) {
 							if (item.type === 'pc') {
 								const entry = Factory.createCombatReportEntry();
@@ -2218,16 +2212,9 @@ export default class App extends React.Component<Props, State> {
 	}
 
 	private mapRemove(ids: string[], combatants: Combatant[], map: Map) {
-		const allIDs = [...ids];
-		ids.forEach(id => {
-			const combatant = combatants.find(cbt => cbt.id === id);
-			if (combatant && combatant.mountID) {
-				allIDs.push(combatant.mountID);
-			}
-		});
-
-		allIDs.forEach(id => {
-			const item = map.items.find(i => i.id === id);
+		const list = this.getMountsAndRiders(ids, combatants);
+		list.forEach(c => {
+			const item = map.items.find(i => i.id === c.id);
 			if (item) {
 				const index = map.items.indexOf(item);
 				map.items.splice(index, 1);
@@ -2238,6 +2225,23 @@ export default class App extends React.Component<Props, State> {
 			combats: this.state.combats,
 			explorations: this.state.explorations
 		});
+	}
+
+	private setAltitude(combatant: Combatant, value: number, combatants: Combatant[]) {
+		const list = this.getMountsAndRiders([combatant.id], combatants);
+		list.forEach(c => c.altitude = value);
+
+		this.setState({
+			combats: this.state.combats,
+			explorations: this.state.explorations
+		});
+	}
+
+	private getMountsAndRiders(ids: string[], combatants: Combatant[]) {
+		const list = ids.map(id => combatants.find(c => c.id === id)).filter(c => c !== undefined) as Combatant[];
+		const mounts = list.map(c => combatants.find(mount => mount.id === c.mountID)).filter(c => c !== undefined) as Combatant[];
+		const riders = list.map(c => combatants.find(rider => rider.mountID === c.id)).filter(c => c !== undefined) as Combatant[];
+		return list.concat(mounts).concat(riders);
 	}
 
 	private setMountPositions(combatants: Combatant[], map: Map) {
@@ -2425,6 +2429,10 @@ export default class App extends React.Component<Props, State> {
 								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
 								this.mapRemove(ids, combat.combatants, combat.map as Map);
 							}}
+							onChangeAltitude={(combatant, value) => {
+								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
+								this.setAltitude(combatant, value, combat.combatants);
+							}}
 							endTurn={combatant => this.endTurn(combatant)}
 							changeHP={values => this.changeHP(values)}
 							closeNotification={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
@@ -2511,10 +2519,15 @@ export default class App extends React.Component<Props, State> {
 								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
 								this.mapRemove(ids, ex.combatants, ex.map);
 							}}
+							onChangeAltitude={(combatant, value) => {
+								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
+								this.setAltitude(combatant, value, ex.combatants);
+							}}
 							rotateMap={() => {
 								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
 								this.rotateMap(ex.map);
 							}}
+							getMonster={id => this.getMonster(id)}
 							pauseExploration={() => this.pauseExploration()}
 							endExploration={exploration => this.endExploration(exploration)}
 						/>

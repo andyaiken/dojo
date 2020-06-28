@@ -42,7 +42,6 @@ interface Props {
 	pauseCombat: () => void;
 	endCombat: (combat: Combat, goToMap: boolean) => void;
 	closeNotification: (notification: Notification, removeCondition: boolean) => void;
-	mapAdd: (combatant: Combatant, x: number, y: number) => void;
 	makeCurrent: (combatant: Combatant) => void;
 	makeActive: (combatants: Combatant[]) => void;
 	makeDefeated: (combatants: Combatant[]) => void;
@@ -56,8 +55,10 @@ interface Props {
 	addCondition: (combatants: Combatant[]) => void;
 	editCondition: (combatant: Combatant, condition: Condition) => void;
 	removeCondition: (combatant: Combatant, condition: Condition) => void;
+	mapAdd: (combatant: Combatant, x: number, y: number) => void;
 	mapMove: (ids: string[], dir: string) => void;
 	mapRemove: (ids: string[]) => void;
+	onChangeAltitude: (combatant: Combatant, value: number) => void;
 	endTurn: (combatant: Combatant) => void;
 	changeHP: (values: {id: string, hp: number, temp: number, damage: number}[]) => void;
 	changeValue: (source: {}, type: string, value: any) => void;
@@ -744,6 +745,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 				mapAdd={combatant => this.setAddingToMapID(this.state.addingToMapID ? null : combatant.id)}
 				mapMove={(combatants, dir) => this.props.mapMove(combatants.map(c => c.id), dir)}
 				mapRemove={combatants => this.props.mapRemove(combatants.map(c => c.id))}
+				onChangeAltitude={(combatant, value) => this.props.onChangeAltitude(combatant, value)}
 				// Adv tab
 				removeCombatants={combatants => this.removeCombatants(combatants)}
 				addCompanion={companion => this.props.addCompanion(companion)}

@@ -42,6 +42,7 @@ interface Props {
 	mapAdd: (combatant: Combatant) => void;
 	mapMove: (combatants: Combatant[], dir: string) => void;
 	mapRemove: (combatants: Combatant[]) => void;
+	onChangeAltitude: (combatant: Combatant, value: number) => void;
 	// Adv tab
 	removeCombatants: ((combatants: Combatant[]) => void) | null;
 	addCompanion: (companion: Companion) => void;
@@ -503,7 +504,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 					<NumberSpin
 						value={combatant.altitude + ' ft.'}
 						label='altitude'
-						onNudgeValue={delta => this.props.nudgeValue(combatant, 'altitude', delta * 5)}
+						onNudgeValue={delta => this.props.onChangeAltitude(combatant, combatant.altitude + (delta * 5))}
 					/>
 				);
 				let auraDetails = null;

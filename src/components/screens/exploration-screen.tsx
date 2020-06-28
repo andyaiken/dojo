@@ -6,8 +6,10 @@ import Gygax from '../../utils/gygax';
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { Exploration } from '../../models/map';
+import { Monster } from '../../models/monster';
 import { Companion, PC } from '../../models/party';
 
+import MonsterStatblockCard from '../cards/monster-statblock-card';
 import PCCard from '../cards/pc-card';
 import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
@@ -35,7 +37,9 @@ interface Props {
 	mapAdd: (combatant: Combatant, x: number, y: number) => void;
 	mapMove: (ids: string[], dir: string) => void;
 	mapRemove: (ids: string[]) => void;
+	onChangeAltitude: (combatant: Combatant, value: number) => void;
 	rotateMap: () => void;
+	getMonster: (id: string) => Monster | null;
 	pauseExploration: () => void;
 	endExploration: (exploration: Exploration) => void;
 }
@@ -234,9 +238,24 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 			if ((selection.length > 0) && (items.length === selection.length)) {
 				let statblock = null;
 				if (selection.length === 1) {
-					statblock = (
-						<PCCard pc={selection[0] as Combatant & PC} />
-					);
+					switch (selection[0].type) {
+						case 'pc':
+							statblock = (
+								<PCCard pc={selection[0] as Combatant & PC} />
+							);
+							break;
+						case 'companion':
+							const companion = selection[0] as Combatant & Companion;
+							if (companion.monsterID) {
+								const monster = this.props.getMonster(companion.monsterID);
+								if (monster) {
+									statblock = (
+										<MonsterStatblockCard monster={monster} />
+									);
+								}
+							}
+							break;
+					}
 				}
 				rightSidebar = (
 					<div className='section'>
@@ -262,6 +281,7 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 							mapAdd={combatant => null}
 							mapMove={(combatants, dir) => this.props.mapMove(combatants.map(c => c.id), dir)}
 							mapRemove={combatants => this.mapRemove(combatants)}
+							onChangeAltitude={(combatant, value) => this.props.onChangeAltitude(combatant, value)}
 							// Adv tab
 							removeCombatants={null}
 							addCompanion={companion => this.addCompanion(companion)}
