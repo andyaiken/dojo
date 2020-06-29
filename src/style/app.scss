@@ -59,21 +59,6 @@ body,
 	}
 }
 
-.app-title {
-	display: inline-block;
-	vertical-align: top;
-	padding: 5px 5px 5px 10px;
-	height: 30px;
-	line-height: 20px;
-	font-size: 20px;
-	font-weight: 600;
-	color: $header-foreground;
-	border-left: 5px solid $header-foreground;
-	text-transform: uppercase;
-	letter-spacing: 2px;
-	white-space: nowrap;
-}
-
 .app-name {
 	text-transform: uppercase;
 	font-weight: 600;

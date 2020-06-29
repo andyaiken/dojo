@@ -2,6 +2,11 @@ import { BookOutlined, BulbOutlined, InfoCircleOutlined, SearchOutlined, ToolOut
 import React from 'react';
 
 interface Props {
+	breadcrumbs: {
+		id: string,
+		text: string;
+		onClick: () => void;
+	}[];
 	sidebar: string | null;
 	onSelectSidebar: (type: string | null) => void;
 }
@@ -9,9 +14,19 @@ interface Props {
 export default class PageHeader extends React.Component<Props> {
 	public render() {
 		try {
+			const breadcrumbs = this.props.breadcrumbs.map(bc => {
+				return (
+					<div key={bc.id} className='breadcrumb' onClick={() => bc.onClick()}>
+						{bc.text}
+					</div>
+				);
+			});
+
 			return (
 				<div className='page-header'>
-					<div className='app-title app-name'>dojo</div>
+					<div className='app-title'>
+						{breadcrumbs}
+					</div>
 					<ToolOutlined
 						className={this.props.sidebar === 'tools' ? 'title-bar-icon selected' : 'title-bar-icon'}
 						title='tools'

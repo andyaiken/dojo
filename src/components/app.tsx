@@ -430,7 +430,8 @@ export default class App extends React.Component<Props, State> {
 		this.save();
 		this.setState({
 			view: 'encounters',
-			selectedEncounterID: id
+			selectedEncounterID: id,
+			selectedCombatID: null
 		});
 	}
 
@@ -438,7 +439,26 @@ export default class App extends React.Component<Props, State> {
 		this.save();
 		this.setState({
 			view: 'maps',
-			selectedMapID: id
+			selectedMapID: id,
+			selectedExplorationID: null
+		});
+	}
+
+	private selectCombatByID(id: string | null) {
+		this.save();
+		this.setState({
+			view: 'encounters',
+			selectedEncounterID: null,
+			selectedCombatID: id
+		});
+	}
+
+	private selectExplorationByID(id: string | null) {
+		this.save();
+		this.setState({
+			view: 'maps',
+			selectedMapID: null,
+			selectedExplorationID: id
 		});
 	}
 
@@ -2306,6 +2326,97 @@ export default class App extends React.Component<Props, State> {
 
 	//#region Rendering
 
+	private getBreadcrumbs() {
+		const breadcrumbs: { id: string, text: string; onClick: () => void }[] = [];
+
+		breadcrumbs.push({
+			id: 'home',
+			text: 'dojo',
+			onClick: () => this.setView('home')
+		});
+
+		switch (this.state.view) {
+			case 'parties':
+				breadcrumbs.push({
+					id: 'parties',
+					text: 'pcs',
+					onClick: () => this.selectPartyByID(null)
+				});
+				if (this.state.selectedPartyID) {
+					const party = this.state.parties.find(p => p.id === this.state.selectedPartyID) as Party;
+					breadcrumbs.push({
+						id: party.id,
+						text: party.name || 'unnamed party',
+						onClick: () => this.selectPartyByID(this.state.selectedPartyID)
+					});
+				}
+				break;
+			case 'library':
+				breadcrumbs.push({
+					id: 'library',
+					text: 'monsters',
+					onClick: () => this.selectMonsterGroupByID(null)
+				});
+				if (this.state.selectedMonsterGroupID) {
+					const group = this.state.library.find(g => g.id === this.state.selectedMonsterGroupID) as MonsterGroup;
+					breadcrumbs.push({
+						id: group.id,
+						text: group.name || 'unnamed group',
+						onClick: () => this.selectMonsterGroupByID(this.state.selectedMonsterGroupID)
+					});
+				}
+				break;
+			case 'encounters':
+				breadcrumbs.push({
+					id: 'encounters',
+					text: 'encounters',
+					onClick: () => this.selectEncounterByID(null)
+				});
+				if (this.state.selectedEncounterID) {
+					const enc = this.state.encounters.find(e => e.id === this.state.selectedEncounterID) as Encounter;
+					breadcrumbs.push({
+						id: enc.id,
+						text: enc.name || 'unnamed encounter',
+						onClick: () => this.selectEncounterByID(this.state.selectedEncounterID)
+					});
+				}
+				if (this.state.selectedCombatID) {
+					const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
+					breadcrumbs.push({
+						id: combat.id,
+						text: combat.name || 'unnamed combat',
+						onClick: () => this.selectCombatByID(this.state.selectedCombatID)
+					});
+				}
+				break;
+			case 'maps':
+				breadcrumbs.push({
+					id: 'maps',
+					text: 'maps',
+					onClick: () => this.selectMapByID(null)
+				});
+				if (this.state.selectedMapID) {
+					const map = this.state.maps.find(m => m.id === this.state.selectedMapID) as Map;
+					breadcrumbs.push({
+						id: map.id,
+						text: map.name || 'unnamed map',
+						onClick: () => this.selectMapByID(this.state.selectedMapID)
+					});
+				}
+				if (this.state.selectedExplorationID) {
+					const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
+					breadcrumbs.push({
+						id: ex.id,
+						text: ex.name || 'unnamed exploration',
+						onClick: () => this.selectExplorationByID(this.state.selectedExplorationID)
+					});
+				}
+				break;
+		}
+
+		return breadcrumbs;
+	}
+
 	private getContent() {
 		let hasPCs = false;
 		this.state.parties.forEach(party => hasPCs = hasPCs || party.pcs.length > 0);
@@ -3034,11 +3145,13 @@ export default class App extends React.Component<Props, State> {
 		try {
 			const sidebar = this.getSidebar();
 			const drawer = this.getDrawer();
+			const breadcrumbs = this.getBreadcrumbs();
 
 			return (
 				<div className='dojo'>
 					<ErrorBoundary>
 						<PageHeader
+							breadcrumbs={breadcrumbs}
 							sidebar={this.state.sidebar ? this.state.sidebar.type : null}
 							onSelectSidebar={type => this.setSidebar(type)}
 						/>

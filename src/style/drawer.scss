@@ -1,8 +1,19 @@
 .drawer-header {
 	height: 50px;
 	background-color: $header-background;
-	border-bottom: 1px solid $control-border;
 	padding: 10px;
+
+	.app-title {
+		border-left: 5px solid $header-foreground;
+		padding: 5px 5px 5px 10px;
+		line-height: 20px;
+		font-size: 20px;
+		font-weight: 600;
+		color: $header-foreground;
+		text-transform: uppercase;
+		letter-spacing: 2px;
+		white-space: nowrap;
+	}
 }
 
 .drawer-content {

@@ -24,6 +24,32 @@
 	.app-title {
 		flex-grow: 1;
 		margin: 0 10px;
+		display: flex;
+		align-items: center;
+
+		.breadcrumb {
+			border-left: 5px solid $header-foreground;
+			margin-right: 20px;
+			padding: 5px 10px;
+			line-height: 20px;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 2px;
+			white-space: nowrap;
+			cursor: pointer;
+
+			&:nth-of-type(1) {
+				font-size: 20px;
+			}
+
+			&:nth-last-child(1) {
+				pointer-events: none;
+			}
+
+			&:hover {
+				background-color: $highlight05;
+			}
+		}
 	}
 
 	.title-bar-icon {
