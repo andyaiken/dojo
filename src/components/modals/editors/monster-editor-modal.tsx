@@ -677,57 +677,12 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 				</Col>
 			);
 		} else {
-			let stats = null;
-			const details = Gygax.challengeDetails().find(x => x.cr === this.state.monster.challenge);
-			if (details) {
-				stats = (
-					<Expander text='suggested stats'>
-						<div className='section'>
-							<Row>
-								<Col span={16}>challenge rating</Col>
-								<Col span={8} className='statistic-value'>{details.cr}</Col>
-							</Row>
-						</div>
-						<div className='subheading'>defensive</div>
-						<div className='section'>
-							<Row>
-								<Col span={16}>armor class</Col>
-								<Col span={8} className='statistic-value'>{details.ac}</Col>
-							</Row>
-						</div>
-						<div className='section'>
-							<Row>
-								<Col span={16}>hit points</Col>
-								<Col span={8} className='statistic-value'>{details.hpMin} - {details.hpMax}</Col>
-							</Row>
-						</div>
-						<div className='subheading'>offensive</div>
-						<div className='section'>
-							<Row>
-								<Col span={16}>attack bonus</Col>
-								<Col span={8} className='statistic-value'>{details.attack}</Col>
-							</Row>
-						</div>
-						<div className='section'>
-							<Row>
-								<Col span={16}>damage / rnd</Col>
-								<Col span={8} className='statistic-value'>{details.dmgMin} - {details.dmgMax}</Col>
-							</Row>
-						</div>
-						<div className='section'>
-							<Row>
-								<Col span={16}>save dc</Col>
-								<Col span={8} className='statistic-value'>{details.save}</Col>
-							</Row>
-						</div>
-					</Expander>
-				);
-			}
-
 			sidebar = (
 				<Col span={12} className='scrollable sidebar sidebar-right' style={{ padding: '5px' }}>
-					{stats}
-					{stats ? <hr/> : null}
+					<Expander text='guidelines'>
+						<GuidelinesPanel monster={this.state.monster} />
+					</Expander>
+					<hr/>
 					<MonsterStatblockCard monster={this.state.monster} />
 				</Col>
 			);
@@ -1268,6 +1223,108 @@ class TraitEditorPanel extends React.Component<TraitEditorPanelProps> {
 					/>
 					<hr/>
 					<button onClick={() => this.props.removeTrait(this.props.trait)}>remove this trait</button>
+				</div>
+			);
+		} catch (e) {
+			console.error(e);
+			return <div className='render-error'/>;
+		}
+	}
+}
+
+interface GuidelinesPanelProps {
+	monster: Monster;
+}
+
+class GuidelinesPanel extends React.Component<GuidelinesPanelProps> {
+	public render() {
+		try {
+			const details = Gygax.challengeDetails();
+
+			let hpMultiplier = 1;
+			if (this.props.monster.damage.immune) {
+				if (this.props.monster.challenge < 11) {
+					hpMultiplier = 2;
+				} else if (this.props.monster.challenge < 17) {
+					hpMultiplier = 1.5;
+				} else {
+					hpMultiplier = 1.25;
+				}
+			} else if (this.props.monster.damage.resist) {
+				if (this.props.monster.challenge < 5) {
+					hpMultiplier = 2;
+				} else if (this.props.monster.challenge < 11) {
+					hpMultiplier = 1.5;
+				} else if (this.props.monster.challenge < 17) {
+					hpMultiplier = 1.25;
+				} else {
+					hpMultiplier = 1;
+				}
+			}
+			const hp = Frankenstein.getTypicalHP(this.props.monster) * hpMultiplier;
+
+			let saves: number[] = [];
+			let attacks: number[] = [];
+			this.props.monster.traits.forEach(t => {
+				attacks = attacks.concat(Frankenstein.getToHitExpressions(t).map(exp => exp.bonus));
+				saves = saves.concat(Frankenstein.getSaveExpressions(t).map(exp => exp.dc));
+			});
+			const attackMin = Math.min(...attacks);
+			const attackMax = Math.max(...attacks);
+			const saveMin = Math.min(...saves);
+			const saveMax = Math.max(...saves);
+
+			return (
+				<div>
+					<Row key='header' gutter={10}>
+						<Col span={4} className='guideline-value col-header'>
+							cr
+						</Col>
+						<Col span={4} className='guideline-value col-header'>
+							ac
+						</Col>
+						<Col span={4} className='guideline-value col-header'>
+							effective hp
+						</Col>
+						<Col span={4} className='guideline-value col-header'>
+							attack bonus
+						</Col>
+						<Col span={4} className='guideline-value col-header'>
+							save dc
+						</Col>
+						<Col span={4} className='guideline-value col-header'>
+							dmg / rnd
+						</Col>
+					</Row>
+					{details.map(data => {
+						const matchCR = data.cr === this.props.monster.challenge;
+						const matchAC = data.ac === this.props.monster.ac;
+						const matchHP = (data.hpMin <= hp) && (data.hpMax >= hp);
+						const matchAttack = (attackMin <= data.attack) && (attackMax >= data.attack);
+						const matchSave = (saveMin <= data.save) && (saveMax >= data.save);
+						return (
+							<Row key={data.cr} gutter={10}>
+								<Col span={4} className={matchCR ? 'guideline-value match' : 'guideline-value'}>
+									{Gygax.challenge(data.cr)}
+								</Col>
+								<Col span={4} className={matchAC ? 'guideline-value match' : 'guideline-value'}>
+									{data.ac}
+								</Col>
+								<Col span={4} className={matchHP ? 'guideline-value match' : 'guideline-value'}>
+									{data.hpMin} - {data.hpMax}
+								</Col>
+								<Col span={4} className={matchAttack ? 'guideline-value match' : 'guideline-value'}>
+									+{data.attack}
+								</Col>
+								<Col span={4} className={matchSave ? 'guideline-value match' : 'guideline-value'}>
+									{data.save}
+								</Col>
+								<Col span={4} className='guideline-value'>
+									{data.dmgMin} - {data.dmgMax}
+								</Col>
+							</Row>
+						);
+					})}
 				</div>
 			);
 		} catch (e) {

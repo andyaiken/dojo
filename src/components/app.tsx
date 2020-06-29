@@ -2850,7 +2850,7 @@ export default class App extends React.Component<Props, State> {
 					);
 					header = 'pc editor';
 					footer = (
-						<Row gutter={10}>
+						<Row gutter={20}>
 							<Col span={12}>
 								<button onClick={() => this.savePC()}>save changes</button>
 							</Col>
@@ -2912,7 +2912,7 @@ export default class App extends React.Component<Props, State> {
 					);
 					header = 'monster editor';
 					footer = (
-						<Row gutter={10}>
+						<Row gutter={20}>
 							<Col span={6}>
 								<button onClick={() => this.saveMonster()}>save changes</button>
 							</Col>
@@ -2964,7 +2964,7 @@ export default class App extends React.Component<Props, State> {
 					);
 					header = 'encounter editor';
 					footer = (
-						<Row gutter={10}>
+						<Row gutter={20}>
 							<Col span={12}>
 								<button onClick={() => this.saveEncounter()}>save changes</button>
 							</Col>
@@ -2983,7 +2983,7 @@ export default class App extends React.Component<Props, State> {
 					);
 					header = 'map editor';
 					footer = (
-						<Row gutter={10}>
+						<Row gutter={20}>
 							<Col span={12}>
 								<button onClick={() => this.saveMap()}>save changes</button>
 							</Col>
@@ -3002,7 +3002,7 @@ export default class App extends React.Component<Props, State> {
 					);
 					header = 'import map';
 					footer = (
-						<Row gutter={10}>
+						<Row gutter={20}>
 							<Col span={12}>
 								<button onClick={() => this.acceptImportedMap()}>save changes</button>
 							</Col>
@@ -3109,7 +3109,7 @@ export default class App extends React.Component<Props, State> {
 					);
 					header = 'edit condition';
 					footer = (
-						<Row gutter={10}>
+						<Row gutter={20}>
 							<Col span={12}>
 								<button onClick={() => this.editConditionFromModal()}>save changes</button>
 							</Col>

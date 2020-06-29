@@ -53,6 +53,20 @@
 		}
 	}
 
+	.guideline-value {
+		text-align: center;
+
+		&.col-header {
+			font-weight: 600;
+			border-bottom: 1px solid $control-border;
+		}
+
+		&.match {
+			background-color: $highlight;
+			color: $background;
+		}
+	}
+
 	.monster-help {
 		margin-top: 20px;
 
