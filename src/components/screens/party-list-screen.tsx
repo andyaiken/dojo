@@ -18,6 +18,7 @@ interface Props {
 	selectParty: (party: Party) => void;
 	deleteParty: (party: Party) => void;
 	runEncounter: (party: Party, encounterID: string) => void;
+	showReference: (party: Party) => void;
 	openStatBlock: (pc: PC) => void;
 }
 
@@ -34,6 +35,7 @@ export default class PartyListScreen extends React.Component<Props> {
 					open={party => this.props.selectParty(party)}
 					delete={party => this.props.deleteParty(party)}
 					runEncounter={(party, encounterID) => this.props.runEncounter(party, encounterID)}
+					showReference={party => this.props.showReference(party)}
 					openStatBlock={pc => this.props.openStatBlock(pc)}
 				/>
 			));

@@ -74,6 +74,7 @@ export default class Factory {
 				cha: 10
 			},
 			ac: 10,
+			acInfo: '',
 			hitDice: 1,
 			damage: {
 				resist: '',

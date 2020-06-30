@@ -23,6 +23,7 @@ export interface Monster {
 		cha: number;
 	};
 	ac: number;
+	acInfo: string;
 	hitDice: number;
 	damage: {
 		resist: string;

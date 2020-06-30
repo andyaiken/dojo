@@ -249,26 +249,26 @@ export default class Shakespeare {
 	public static generatePotion() {
 		let str = '';
 
-		const color = Shakespeare.potionColour(true);
+		const colour = Shakespeare.potionColour(true);
 		const liquid = Shakespeare.potionLiquid();
 		const adj = Shakespeare.potionAdjective();
 		const feature = Shakespeare.potionFeature();
 
 		switch (Utils.randomNumber(5)) {
 			case 0:
-				str = color + ' ' + liquid;
+				str = colour + ' ' + liquid;
 				break;
 			case 1:
-				str = color + ' ' + liquid + ' ' + feature;
+				str = colour + ' ' + liquid + ' ' + feature;
 				break;
 			case 2:
-				str = adj + ' ' + color + ' ' + liquid;
+				str = adj + ' ' + colour + ' ' + liquid;
 				break;
 			case 3:
-				str = adj + ' ' + color + ' ' + liquid + ' ' + feature;
+				str = adj + ' ' + colour + ' ' + liquid + ' ' + feature;
 				break;
 			case 4:
-				str = adj + ' ' + liquid + ', ' + color + ' ' + feature;
+				str = adj + ' ' + liquid + ', ' + colour + ' ' + feature;
 				break;
 		}
 
@@ -891,6 +891,17 @@ export default class Shakespeare {
 			]);
 		}
 
+		if (complex && (Utils.randomNumber(5) === 0)) {
+			const index1 = Utils.randomNumber(values.length);
+			const index2 = Utils.randomNumber(values.length);
+
+			// Make sure the shorter one is first
+			const colours = [values[index1], values[index2]];
+			Utils.sort(colours, [{ field: 'length', dir: 'asc' }]);
+
+			return colours[0] + ' and ' + colours[1];
+		}
+
 		const index = Utils.randomNumber(values.length);
 		return values[index];
 	}
@@ -930,7 +941,7 @@ export default class Shakespeare {
 	}
 
 	private static potionFeature() {
-		switch (Utils.randomNumber(5)) {
+		switch (Utils.randomNumber(6)) {
 			case 0:
 				return 'with ' + this.potionColour(true) + ' specks';
 			case 1:
@@ -943,6 +954,8 @@ export default class Shakespeare {
 				return 'with a floating ' + this.potionColour(true) + ' layer';
 			case 4:
 				return 'with a ribbon of ' + this.potionColour(false);
+			case 5:
+				return 'with ' + this.potionColour(true) + ' marbling';
 		}
 
 		return '';

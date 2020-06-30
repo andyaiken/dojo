@@ -1159,8 +1159,8 @@ class NotificationPanel extends React.Component<NotificationProps> {
 						saveType = saveType.toUpperCase();
 					}
 					return (
-						<div key={this.props.notification.id} className='descriptive'>
-							<div className='text'>
+						<Note key={this.props.notification.id}>
+							<div className='section'>
 								{name} must make a {saveType} save against dc {duration.saveDC}
 							</div>
 							<Row gutter={10}>
@@ -1171,21 +1171,21 @@ class NotificationPanel extends React.Component<NotificationProps> {
 									<button key='close' onClick={() => this.close()}>close</button>
 								</Col>
 							</Row>
-						</div>
+						</Note>
 					);
 				case 'condition-end':
 					return (
-						<div key={this.props.notification.id} className='descriptive'>
-							<div className='text'>
+						<Note key={this.props.notification.id}>
+							<div className='section'>
 								{name} is no longer affected by condition {condition.name}
 							</div>
 							<button onClick={() => this.close()}>close</button>
-						</div>
+						</Note>
 					);
 				case 'trait-recharge':
 					return (
-						<div key={this.props.notification.id} className='descriptive'>
-							<div className='text'>
+						<Note key={this.props.notification.id}>
+							<div className='section'>
 								{name} can attempt to recharge {trait.name} ({trait.usage})
 							</div>
 							<Row gutter={10}>
@@ -1196,7 +1196,7 @@ class NotificationPanel extends React.Component<NotificationProps> {
 									<button key='close' onClick={() => this.close()}>close</button>
 								</Col>
 							</Row>
-						</div>
+						</Note>
 					);
 				default:
 					return null;

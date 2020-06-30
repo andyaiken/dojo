@@ -13,6 +13,7 @@ interface Props {
 	open: (party: Party) => void;
 	delete: (party: Party) => void;
 	runEncounter: (party: Party, encounterID: string) => void;
+	showReference: (party: Party) => void;
 	openStatBlock: (pc: PC) => void;
 }
 
@@ -74,6 +75,7 @@ export default class PartyCard extends React.Component<Props> {
 						<hr/>
 						<button onClick={() => this.props.open(this.props.party)}>open party</button>
 						{run}
+						<button onClick={() => this.props.showReference(this.props.party)}>show party reference</button>
 						<ConfirmButton text='delete party' onConfirm={() => this.props.delete(this.props.party)} />
 					</div>
 				</div>

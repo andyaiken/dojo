@@ -1000,14 +1000,21 @@ class CombatTab extends React.Component<CombatTabProps> {
 							downEnabled={this.props.monster.ac > 0}
 							onNudgeValue={delta => this.props.nudgeValue('ac', delta)}
 						/>
+						<div className='subheading'>armor type</div>
+						<Textbox
+							text={this.props.monster.acInfo}
+							onChange={value => this.props.changeValue('acInfo', value)}
+						/>
 						<div className='subheading'>hit dice</div>
 						<NumberSpin
-							value={this.props.monster.hitDice + 'd' + Gygax.hitDieType(this.props.monster.size)}
+							value={this.props.monster.hitDice}
 							downEnabled={this.props.monster.hitDice > 1}
 							onNudgeValue={delta => this.props.nudgeValue('hitDice', delta)}
 						/>
 						<div className='subheading'>hit points</div>
-						<div className='hp-value'>{Frankenstein.getTypicalHP(this.props.monster)} hp</div>
+						<div className='hp-value'>
+							{Frankenstein.getTypicalHP(this.props.monster) + ' hp (' + Frankenstein.getTypicalHPString(this.props.monster) + ')'}
+						</div>
 						<div className='subheading'>legendary actions</div>
 						<NumberSpin
 							value={this.props.monster.legendaryActions}
@@ -1276,55 +1283,61 @@ class GuidelinesPanel extends React.Component<GuidelinesPanelProps> {
 
 			return (
 				<div>
-					<Row key='header' gutter={10}>
-						<Col span={4} className='guideline-value col-header'>
-							cr
-						</Col>
-						<Col span={4} className='guideline-value col-header'>
-							ac
-						</Col>
-						<Col span={4} className='guideline-value col-header'>
-							effective hp
-						</Col>
-						<Col span={4} className='guideline-value col-header'>
-							attack bonus
-						</Col>
-						<Col span={4} className='guideline-value col-header'>
-							save dc
-						</Col>
-						<Col span={4} className='guideline-value col-header'>
-							dmg / rnd
-						</Col>
-					</Row>
-					{details.map(data => {
-						const matchCR = data.cr === this.props.monster.challenge;
-						const matchAC = data.ac === this.props.monster.ac;
-						const matchHP = (data.hpMin <= hp) && (data.hpMax >= hp);
-						const matchAttack = (attackMin <= data.attack) && (attackMax >= data.attack);
-						const matchSave = (saveMin <= data.save) && (saveMax >= data.save);
-						return (
-							<Row key={data.cr} gutter={10}>
-								<Col span={4} className={matchCR ? 'guideline-value match' : 'guideline-value'}>
-									{Gygax.challenge(data.cr)}
-								</Col>
-								<Col span={4} className={matchAC ? 'guideline-value match' : 'guideline-value'}>
-									{data.ac}
-								</Col>
-								<Col span={4} className={matchHP ? 'guideline-value match' : 'guideline-value'}>
-									{data.hpMin} - {data.hpMax}
-								</Col>
-								<Col span={4} className={matchAttack ? 'guideline-value match' : 'guideline-value'}>
-									+{data.attack}
-								</Col>
-								<Col span={4} className={matchSave ? 'guideline-value match' : 'guideline-value'}>
-									{data.save}
-								</Col>
-								<Col span={4} className='guideline-value'>
-									{data.dmgMin} - {data.dmgMax}
-								</Col>
-							</Row>
-						);
-					})}
+					<Note>
+						<p>this table shows typical values for certain stats (ac, hp, etc) for a given challenge rating</p>
+						<p>to gauge a monster's cr, take the average of its defensive cr (from ac and hp) and offensive cr (from attack bonus, save dc, and damage per round)</p>
+					</Note>
+					<div className='table alternating'>
+						<Row className='table-row table-row-header'>
+							<Col span={4} className='table-cell'>
+								cr
+							</Col>
+							<Col span={4} className='table-cell'>
+								ac
+							</Col>
+							<Col span={4} className='table-cell'>
+								effective hp
+							</Col>
+							<Col span={4} className='table-cell'>
+								attack bonus
+							</Col>
+							<Col span={4} className='table-cell'>
+								save dc
+							</Col>
+							<Col span={4} className='table-cell'>
+								dmg / rnd
+							</Col>
+						</Row>
+						{details.map(data => {
+							const matchCR = data.cr === this.props.monster.challenge;
+							const matchAC = data.ac === this.props.monster.ac;
+							const matchHP = (data.hpMin <= hp) && (data.hpMax >= hp);
+							const matchAttack = (attackMin <= data.attack) && (attackMax >= data.attack);
+							const matchSave = (saveMin <= data.save) && (saveMax >= data.save);
+							return (
+								<Row key={data.cr} className='table-row'>
+									<Col span={4} className={matchCR ? 'table-cell table-cell-highlight' : 'table-cell'}>
+										{Gygax.challenge(data.cr)}
+									</Col>
+									<Col span={4} className={matchAC ? 'table-cell table-cell-highlight' : 'table-cell'}>
+										{data.ac}
+									</Col>
+									<Col span={4} className={matchHP ? 'table-cell table-cell-highlight' : 'table-cell'}>
+										{data.hpMin} - {data.hpMax}
+									</Col>
+									<Col span={4} className={matchAttack ? 'table-cell table-cell-highlight' : 'table-cell'}>
+										+{data.attack}
+									</Col>
+									<Col span={4} className={matchSave ? 'table-cell table-cell-highlight' : 'table-cell'}>
+										{data.save}
+									</Col>
+									<Col span={4} className='table-cell'>
+										{data.dmgMin} - {data.dmgMax}
+									</Col>
+								</Row>
+							);
+						})}
+					</div>
 				</div>
 			);
 		} catch (e) {

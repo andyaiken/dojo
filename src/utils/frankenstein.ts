@@ -85,6 +85,7 @@ export default class Frankenstein {
 		monster.abilityScores.wis = 10;
 		monster.abilityScores.cha = 10;
 		monster.ac = 10;
+		monster.acInfo = '';
 		monster.hitDice = 1;
 		monster.damage.resist = '';
 		monster.damage.vulnerable = '';
@@ -116,6 +117,7 @@ export default class Frankenstein {
 		monster.alignment = data.alignment;
 		monster.challenge = Gygax.parseChallenge(data.challenge_rating);
 		monster.ac = data.armor_class;
+		monster.acInfo = '';
 		monster.speed = data.speed;
 		monster.senses = data.senses;
 		monster.languages = data.languages;
@@ -353,6 +355,11 @@ export default class Frankenstein {
 				switch (label) {
 					case 'armor class':
 						monster.ac = Number.parseInt(value, 10);
+						let info = (attr.getElementsByClassName('mon-stat-block__attribute-data-extra')[0] as HTMLElement).innerText.toLowerCase().trim();
+						if (info.startsWith('(')) {
+							info = info.substr(1, info.length - 2);
+						}
+						monster.acInfo = info;
 						break;
 					case 'hit points':
 						const extra = (attr.getElementsByClassName('mon-stat-block__attribute-data-extra')[0] as HTMLElement).innerText.toLowerCase().trim();
@@ -542,6 +549,7 @@ export default class Frankenstein {
 			'savingThrows',
 			'skills',
 			'ac',
+			'acInfo',
 			'hitDice',
 			'damage.resist',
 			'damage.vulnerable',

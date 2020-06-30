@@ -43,6 +43,14 @@ export default class MonsterStatblockCard extends React.Component<Props> {
 		onRollDice: null
 	};
 
+	private getAC() {
+		let value = this.props.monster.ac.toString();
+		if (this.props.monster.acInfo) {
+			value += ' (' + this.props.monster.acInfo + ')';
+		}
+		return value;
+	}
+
 	private getHP() {
 		const combatant = this.props.monster as Monster & Combatant;
 		if ((combatant.hpCurrent === null) || (combatant.hpCurrent === undefined)) {
@@ -161,7 +169,7 @@ export default class MonsterStatblockCard extends React.Component<Props> {
 				case 'cbt-stats':
 					return (
 						<div className='stats'>
-							{this.statSection('ac', this.props.monster.ac.toString())}
+							{this.statSection('ac', this.getAC())}
 							{this.statSection('hp', this.getHP())}
 							{this.statSection('damage resistances', this.props.monster.damage.resist)}
 							{this.statSection('damage vulnerabilities', this.props.monster.damage.vulnerable)}
@@ -194,7 +202,7 @@ export default class MonsterStatblockCard extends React.Component<Props> {
 						onRollDice={(count, sides, constant) => this.props.onRollDice(count, sides, constant)}
 					/>
 				</div>
-				{this.statSection('ac', this.props.monster.ac.toString())}
+				{this.statSection('ac', this.getAC())}
 				{this.statSection('hp', this.getHP())}
 				{this.statSection('saving throws', this.props.monster.savingThrows, this.props.showRollButtons)}
 				{this.statSection('skills', this.props.monster.skills, this.props.showRollButtons)}

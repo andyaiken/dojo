@@ -203,8 +203,8 @@ export default class Mercator {
 		room.type = 'tile';
 		room.terrain = 'default';
 		room.style = 'square';
-		room.width = Gygax.dieRoll(6, 3) + 3;
-		room.height = Gygax.dieRoll(6, 3) + 3;
+		room.width = Gygax.dieRoll(6, 2) + 2;
+		room.height = Gygax.dieRoll(6, 2) + 2;
 
 		const dimensions = Mercator.mapDimensions(map);
 		if (dimensions) {

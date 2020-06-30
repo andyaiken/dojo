@@ -21,9 +21,39 @@ interface Props {
 	goBack: () => void;
 }
 
-export default class MapScreen extends React.Component<Props> {
+interface State {
+	selectedAreaID: string | null;
+}
+
+export default class MapScreen extends React.Component<Props, State> {
+	constructor(props: Props) {
+		super(props);
+		this.state = {
+			selectedAreaID: null
+		};
+	}
+
+	private setSelectedAreaID(id: string | null) {
+		this.setState({
+			selectedAreaID: id
+		});
+	}
+
 	public render() {
 		try {
+			let viewport = null;
+			if (this.state.selectedAreaID) {
+				const area = this.props.map.areas.find(a => a.id === this.state.selectedAreaID);
+				if (area) {
+					viewport = {
+						minX: area.x,
+						minY: area.y,
+						maxX: area.x + area.width - 1,
+						maxY: area.y + area.height - 1
+					};
+				}
+			}
+
 			return (
 				<Row className='full-height'>
 					<Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar sidebar-left'>
@@ -57,6 +87,8 @@ export default class MapScreen extends React.Component<Props> {
 									key={this.props.map.id}
 									map={this.props.map}
 									mode={'combat'}
+									viewport={viewport}
+									areaSelected={id => this.setSelectedAreaID(id)}
 								/>
 							]}
 						/>

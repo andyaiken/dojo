@@ -98,6 +98,9 @@ export default class App extends React.Component<Props, State> {
 
 				library.forEach(group => {
 					group.monsters.forEach(m => {
+						if (m.acInfo === undefined) {
+							m.acInfo = '';
+						}
 						if (m.legendaryActions === undefined) {
 							const value = m.traits.some(t => (t.type === 'legendary') || (t.type === 'mythic')) ? 3 : 0;
 							m.legendaryActions = value;
@@ -635,6 +638,17 @@ export default class App extends React.Component<Props, State> {
 		this.setState({
 			parties: this.state.parties,
 			drawer: null
+		});
+	}
+
+	private showPartyReference(party: Party) {
+		this.setState({
+			sidebar: {
+				type: 'reference',
+				subtype: 'party',
+				selectedPartyID: party.id,
+				selectedMonsterID: null
+			}
 		});
 	}
 
@@ -2459,6 +2473,7 @@ export default class App extends React.Component<Props, State> {
 								this.createCombat(encounter, party.id);
 							}
 						}}
+						showReference={party => this.showPartyReference(party)}
 						openStatBlock={pc => this.setState({drawer: { type: 'statblock', source: pc }})}
 					/>
 				);

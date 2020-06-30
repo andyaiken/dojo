@@ -423,6 +423,13 @@ export default class MapPanel extends React.Component<Props, State> {
 				tokens = this.props.map.items
 					.filter(i => (i.type === 'monster') || (i.type === 'pc') || (i.type === 'companion') || (i.type === 'token'))
 					.filter(i => !mountIDs.includes(i.id))
+					.sort((a, b) => {
+						const combatantA = this.props.combatants.find(c => c.id === a.id);
+						const combatantB = this.props.combatants.find(c => c.id === b.id);
+						const sizeA = combatantA ? combatantA.displaySize : a.size;
+						const sizeB = combatantB ? combatantB.displaySize : b.size;
+						return Gygax.miniSize(sizeB) - Gygax.miniSize(sizeA);
+					})
 					.map(i => {
 						let miniSize = Gygax.miniSize(i.size);
 						let isPC = false;
@@ -453,8 +460,7 @@ export default class MapPanel extends React.Component<Props, State> {
 								select={(id, ctrl) => this.props.itemSelected(id, ctrl)}
 							/>
 						);
-					})
-					.filter(mt => mt !== null) as JSX.Element[];
+					});
 			}
 
 			// Draw the grid
