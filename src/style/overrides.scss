@@ -45,13 +45,17 @@ textarea {
 	}
 }
 
-ul, ol {
+ul,
+ol {
 	padding-left: 20px;
 	margin: 5px 0;
+
+	li {
+		margin: 5px 0;
+	}
 }
 
-li {
-	margin: 5px 0;
+ul li {
 	list-style-type: square;
 }
 
