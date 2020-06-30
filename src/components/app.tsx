@@ -3167,8 +3167,6 @@ export default class App extends React.Component<Props, State> {
 					<ErrorBoundary>
 						<PageHeader
 							breadcrumbs={breadcrumbs}
-							sidebar={this.state.sidebar ? this.state.sidebar.type : null}
-							onSelectSidebar={type => this.setSidebar(type)}
 						/>
 					</ErrorBoundary>
 					<div className='page-content'>
@@ -3182,7 +3180,9 @@ export default class App extends React.Component<Props, State> {
 					<ErrorBoundary>
 						<PageFooter
 							view={this.state.view}
+							sidebar={this.state.sidebar ? this.state.sidebar.type : null}
 							onSelectView={view => this.setView(view)}
+							onSelectSidebar={type => this.setSidebar(type)}
 						/>
 					</ErrorBoundary>
 					<ErrorBoundary>

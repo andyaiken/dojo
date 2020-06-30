@@ -51,19 +51,6 @@
 			}
 		}
 	}
-
-	.title-bar-icon {
-		padding: 15px 30px;
-		font-size: 20px;
-
-		&:hover {
-			background-color: $highlight05;
-		}
-
-		&.selected {
-			background-color: $highlight;
-		}
-	}
 }
 
 .page-content {
@@ -251,16 +238,20 @@
 		}
 	}
 
-	.anticon {
-		flex-grow: 0;
-		flex-shrink: 0;
-		flex-basis: auto;
-		margin: 5px;
-		padding: 5px;
-		font-size: 20px;
+	.sidebar-icons {
+		border-left: 1px solid $header-foreground;
 
-		&:hover {
-			background-color: $highlight05;
+		.sidebar-icon {
+			padding: 15px 30px;
+			font-size: 20px;
+
+			&:hover {
+				background-color: $highlight05;
+			}
+
+			&.selected {
+				background-color: $highlight;
+			}
 		}
 	}
 }
