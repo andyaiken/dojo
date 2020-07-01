@@ -3,6 +3,7 @@
 import Factory from './factory';
 import Gygax from './gygax';
 import Shakespeare from './shakespeare';
+import Utils from './utils';
 
 import { Combat, Combatant } from '../models/combat';
 import { DOORWAY_TYPES, Map, MapItem } from '../models/map';
@@ -19,7 +20,7 @@ export default class Mercator {
 		// Find map dimensions
 		const tiles = combat.map.items.filter(item => item.type === 'tile');
 		if (tiles.length > 0) {
-			const dimensions = Mercator.mapDimensions(combat.map);
+			const dimensions = Mercator.mapDimensions(combat.map.items);
 			if (dimensions) {
 				const monsters = combat.combatants.filter(combatant => combatant.type === type);
 				monsters.forEach(combatant => {
@@ -55,8 +56,8 @@ export default class Mercator {
 		}
 	}
 
-	public static mapDimensions(map: Map) {
-		const tiles = map.items.filter(item => item.type === 'tile');
+	public static mapDimensions(items: MapItem[]) {
+		const tiles = items.filter(item => item.type === 'tile');
 		if (tiles.length > 0) {
 			let minX: number = tiles[0].x;
 			let minY: number = tiles[0].y;
@@ -80,13 +81,13 @@ export default class Mercator {
 		}
 	}
 
-	public static canAddTileHere(map: Map, tile: MapItem, x: number, y: number, minGapX: number, minGapY: number) {
+	public static canAddTileHere(map: Map, x: number, y: number, width: number, height: number, minGapX: number, minGapY: number) {
 		const coveredSquares: boolean[] = [];
 
 		const left = x - minGapX;
 		const top = y - minGapY;
-		const right = x + (tile.width - 1) + minGapX;
-		const bottom = y + (tile.height - 1) + minGapY;
+		const right = x + (width - 1) + minGapX;
+		const bottom = y + (height - 1) + minGapY;
 		for (let x1 = left; x1 <= right; ++x1) {
 			for (let y1 = top; y1 <= bottom; ++y1) {
 				// Is this square free of tiles?
@@ -206,7 +207,9 @@ export default class Mercator {
 		room.width = Gygax.dieRoll(6, 2) + 2;
 		room.height = Gygax.dieRoll(6, 2) + 2;
 
-		const dimensions = Mercator.mapDimensions(map);
+		let extra = null;
+
+		const dimensions = Mercator.mapDimensions(map.items);
 		if (dimensions) {
 			// Try to find a place we can add this tile
 			const minGap = 1;
@@ -218,7 +221,7 @@ export default class Mercator {
 			const candidates = [];
 			for (let x = dimensions.minX; x !== dimensions.maxX; ++x) {
 				for (let y = dimensions.minY; y !== dimensions.maxY; ++y) {
-					const canAdd = Mercator.canAddTileHere(map, room, x, y, minGap, minGap);
+					const canAdd = Mercator.canAddTileHere(map, x, y, room.width, room.height, minGap, minGap);
 					if (canAdd) {
 						candidates.push({ x: x, y: y });
 					}
@@ -251,7 +254,7 @@ export default class Mercator {
 						corridor.y = corridorTop;
 						corridor.width = 2;
 						corridor.height = corridorBottom - corridorTop + 1;
-						if (Mercator.canAddTileHere(map, corridor, corridor.x, corridor.y, 1, 0)) {
+						if (Mercator.canAddTileHere(map, corridor.x, corridor.y, corridor.width, corridor.height, 1, 0)) {
 							corridors.push({ tile: corridor, horizontal: false });
 						}
 					}
@@ -273,7 +276,7 @@ export default class Mercator {
 						corridor.y = y;
 						corridor.width = corridorRight - corridorLeft + 1;
 						corridor.height = 2;
-						if (Mercator.canAddTileHere(map, corridor, corridor.x, corridor.y, 0, 1)) {
+						if (Mercator.canAddTileHere(map, corridor.x, corridor.y, corridor.width, corridor.height, 0, 1)) {
 							corridors.push({ tile: corridor, horizontal: true });
 						}
 					}
@@ -363,24 +366,106 @@ export default class Mercator {
 					}
 				}
 
+				extra = this.getRoomAdjunct(room, map);
 				map.items.push(corridor.tile);
 				map.items.push(room);
+				if (extra) {
+					map.items.push(extra);
+				}
 			} else {
 				return false;
 			}
 		} else {
+			extra = this.getRoomAdjunct(room, map);
 			map.items.push(room);
+			if (extra) {
+				map.items.push(extra);
+			}
 		}
 
-		const area = Factory.createMapArea();
-		area.name = Shakespeare.capitalise(Shakespeare.generateRoomName());
-		area.x = room.x - 1;
-		area.y = room.y - 1;
-		area.width = room.width + 2;
-		area.height = room.height + 2;
-		map.areas.push(area);
+		const roomTiles = [room];
+		if (extra) {
+			roomTiles.push(extra);
+		}
+		const roomDims = this.mapDimensions(roomTiles);
+		if (roomDims) {
+			const area = Factory.createMapArea();
+			area.name = Shakespeare.capitalise(Shakespeare.generateRoomName());
+			area.x = roomDims.minX - 1;
+			area.y = roomDims.minY - 1;
+			area.width = (roomDims.maxX - roomDims.minX) + 3;
+			area.height = (roomDims.maxY - roomDims.minY) + 3;
+			map.areas.push(area);
+		}
 
 		return true;
+	}
+
+	private static getRoomAdjunct(room: MapItem, map: Map) {
+		if (Utils.randomBoolean()) {
+			return null;
+		}
+
+		let width = 0;
+		let height = 0;
+		const candidates = [];
+		switch (Utils.randomNumber(2)) {
+			case 0:
+				// Top or bottom
+				width = Utils.randomNumber(room.width - 2) + 2;
+				height = Gygax.dieRoll(4, 2);
+				const diffX = room.width - width;
+				for (let dx = 0; dx !== diffX; ++dx) {
+					const x = room.x + dx;
+					// Can we put this on the top?
+					const y1 = room.y - height;
+					if (Mercator.canAddTileHere(map, x, y1, width, height, 1, 1)) {
+						candidates.push({ x: x, y: y1 });
+					}
+					// Can we put this on the bottom?
+					const y2 = room.y + room.height;
+					if (Mercator.canAddTileHere(map, x, y2, width, height, 1, 1)) {
+						candidates.push({ x: x, y: y2 });
+					}
+				}
+				break;
+			case 1:
+				// Left or right
+				width = Gygax.dieRoll(4, 2);
+				height = Utils.randomNumber(room.height - 2) + 2;
+				const diffY = room.height - height;
+				for (let dy = 0; dy !== diffY; ++dy) {
+					const y = room.y + dy;
+					// Can we put this on the left?
+					const x1 = room.x - width;
+					if (Mercator.canAddTileHere(map, x1, y, width, height, 1, 1)) {
+						candidates.push({ x: x1, y: y });
+					}
+					// Can we put this on the right?
+					const x2 = room.x + room.width;
+					if (Mercator.canAddTileHere(map, x2, y, width, height, 1, 1)) {
+						candidates.push({ x: x2, y: y });
+					}
+				}
+				break;
+		}
+		if (candidates.length > 0) {
+			const index = Utils.randomNumber(candidates.length);
+			const selected = candidates[index];
+
+			const extra = Factory.createMapItem();
+			extra.type = 'tile';
+			extra.terrain = 'default';
+			extra.style = 'square';
+			extra.x = selected.x;
+			extra.y = selected.y;
+			extra.width = width;
+			extra.height = height;
+
+			return extra;
+		}
+
+		return null;
 	}
 
 	private static getRandomDoorwayStyle() {

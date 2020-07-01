@@ -1194,7 +1194,7 @@ export default class App extends React.Component<Props, State> {
 		const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID);
 		if (ex) {
 			const fog: { x: number, y: number }[] = [];
-			const dims = Mercator.mapDimensions(ex.map);
+			const dims = Mercator.mapDimensions(ex.map.items);
 			if (dims) {
 				for (let x = dims.minX; x <= dims.maxX; ++x) {
 					for (let y = dims.minY; y <= dims.maxY; ++y) {
@@ -3167,6 +3167,8 @@ export default class App extends React.Component<Props, State> {
 					<ErrorBoundary>
 						<PageHeader
 							breadcrumbs={breadcrumbs}
+							sidebar={this.state.sidebar ? this.state.sidebar.type : null}
+							onSelectSidebar={type => this.setSidebar(type)}
 						/>
 					</ErrorBoundary>
 					<div className='page-content'>
@@ -3182,7 +3184,7 @@ export default class App extends React.Component<Props, State> {
 							view={this.state.view}
 							sidebar={this.state.sidebar ? this.state.sidebar.type : null}
 							onSelectView={view => this.setView(view)}
-							onSelectSidebar={type => this.setSidebar(type)}
+							onCloseSidebar={() => this.setSidebar(null)}
 						/>
 					</ErrorBoundary>
 					<ErrorBoundary>

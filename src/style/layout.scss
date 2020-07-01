@@ -51,6 +51,29 @@
 			}
 		}
 	}
+
+	.sidebar-icons {
+		border-left: 1px solid $header-foreground;
+		width: 400px;
+		display: flex;
+		align-items: center;
+
+		.sidebar-icon {
+			flex-grow: 1;
+			flex-shrink: 1;
+			flex-basis: 0;
+			padding: 15px 0;
+			font-size: 20px;
+
+			&:hover {
+				background-color: $highlight05;
+			}
+
+			&.selected {
+				background-color: $highlight;
+			}
+		}
+	}
 }
 
 .page-content {
@@ -238,19 +261,17 @@
 		}
 	}
 
-	.sidebar-icons {
+	.sidebar-padding {
+		width: 400px;
+		height: 50px;
 		border-left: 1px solid $header-foreground;
 
-		.sidebar-icon {
-			padding: 15px 30px;
+		.anticon {
 			font-size: 20px;
+			padding: 15px;
 
 			&:hover {
 				background-color: $highlight05;
-			}
-
-			&.selected {
-				background-color: $highlight;
 			}
 		}
 	}

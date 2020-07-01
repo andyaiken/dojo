@@ -55,7 +55,7 @@ export default class HomeScreen extends React.Component<Props> {
 					<div key='epilogue'>
 						<p className='heading'>to get started</p>
 						<p>use the buttons at the bottom of the screen to explore <span className='app-name'>dojo</span>'s main features</p>
-						<p>the icons at the bottom right give you additional tools like a die roller, some useful random generators, and rules references</p>
+						<p>the icons at the top right give you additional tools like a die roller, some useful random generators, and rules references</p>
 					</div>
 				</Carousel>
 			);

@@ -67,6 +67,10 @@ export default class Utils {
 	}
 
 	public static randomNumber(max: number) {
+		if (max <= 0) {
+			return 0;
+		}
+
 		return Math.floor(Math.random() * max);
 	}
 

@@ -181,7 +181,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 	private fillFog() {
 		if (this.props.combat.map) {
 			const fog: { x: number, y: number }[] = [];
-			const dims = Mercator.mapDimensions(this.props.combat.map);
+			const dims = Mercator.mapDimensions(this.props.combat.map.items);
 			if (dims) {
 				for (let x = dims.minX; x <= dims.maxX; ++x) {
 					for (let y = dims.minY; y <= dims.maxY; ++y) {
