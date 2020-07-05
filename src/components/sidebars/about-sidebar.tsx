@@ -1,4 +1,4 @@
-import { Col, Drawer, Row } from 'antd';
+import { Col, Row } from 'antd';
 import React from 'react';
 
 import Utils from '../../utils/utils';
@@ -10,7 +10,6 @@ import { Party } from '../../models/party';
 
 import ConfirmButton from '../controls/confirm-button';
 import Selector from '../controls/selector';
-import ImageSelectionModal from '../modals/image-selection-modal';
 import Note from '../panels/note';
 
 import pkg from '../../../package.json';
@@ -25,15 +24,13 @@ interface Props {
 
 interface State {
 	view: string;
-	showImages: boolean;
 }
 
 export default class AboutSidebar extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {
-			view: 'dojo',
-			showImages: false
+			view: 'dojo'
 		};
 	}
 
@@ -43,9 +40,54 @@ export default class AboutSidebar extends React.Component<Props, State> {
 		});
 	}
 
-	private toggleImages() {
+	private clearImages() {
+		const images = [];
+		for (let n = 0; n !== window.localStorage.length; ++n) {
+			const key = window.localStorage.key(n);
+			if (key && key.startsWith('image-')) {
+				const data = window.localStorage.getItem(key);
+				if (data) {
+					const img = JSON.parse(data);
+					images.push({
+						id: img.id,
+						name: img.name,
+						data: img.data
+					});
+				}
+			}
+		}
+
+		images.forEach(img => {
+			// Work out if the image is used in a PC, a monster, or a map tile
+			let used = false;
+			this.props.parties.forEach(party => {
+				if (party.pcs.find(pc => pc.portrait === img.id)) {
+					used = true;
+				}
+			});
+			this.props.library.forEach(group => {
+				if (group.monsters.find(monster => monster.portrait === img.id)) {
+					used = true;
+				}
+			});
+			this.props.maps.forEach(map => {
+				if (map.items.find(mi => mi.customBackground === img.id)) {
+					used = true;
+				}
+			});
+			this.props.combats.forEach(combat => {
+				if (combat.map && combat.map.items.find(mi => mi.customBackground === img.id)) {
+					used = true;
+				}
+			});
+
+			if (!used) {
+				window.localStorage.removeItem('image-' + img.id);
+			}
+		});
+
 		this.setState({
-			showImages: !this.state.showImages
+			view: this.state.view
 		});
 	}
 
@@ -103,7 +145,15 @@ export default class AboutSidebar extends React.Component<Props, State> {
 								</div>
 							</Note>
 							<ConfirmButton text='clear all data' onConfirm={() => this.props.resetAll()} />
-							<button onClick={() => this.toggleImages()}>show images</button>
+							<Note>
+								<div className='section'>
+									the browser has a limited amount of image storage space
+								</div>
+								<div className='section'>
+									use this button to delete anything that isn't currently being used
+								</div>
+							</Note>
+							<button onClick={() => this.clearImages()}>remove unused images</button>
 							<hr/>
 							<div className='subheading'>
 								data
@@ -161,20 +211,11 @@ export default class AboutSidebar extends React.Component<Props, State> {
 			return (
 				<div className='sidebar-container'>
 					<div className='sidebar-header'>
-						<div className='heading'>about</div>
 						<Selector options={options} selectedID={this.state.view} onSelect={id => this.setView(id)} />
 					</div>
 					<div className='sidebar-content'>
 						{content}
 					</div>
-					<Drawer visible={this.state.showImages} closable={false} onClose={() => this.toggleImages()}>
-						<ImageSelectionModal
-							parties={this.props.parties}
-							library={this.props.library}
-							maps={this.props.maps}
-							combats={this.props.combats}
-						/>
-					</Drawer>
 				</div>
 			);
 		} catch (ex) {

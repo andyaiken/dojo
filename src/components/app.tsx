@@ -33,6 +33,7 @@ import LeaderboardModal from './modals/leaderboard-modal';
 import StatBlockModal from './modals/stat-block-modal';
 import PageFooter from './panels/page-footer';
 import PageHeader from './panels/page-header';
+import PageSidebar, { Sidebar } from './panels/page-sidebar';
 import CombatScreen from './screens/combat-screen';
 import EncounterListScreen from './screens/encounter-list-screen';
 import EncounterScreen from './screens/encounter-screen';
@@ -44,11 +45,6 @@ import MonsterGroupListScreen from './screens/monster-group-list-screen';
 import MonsterGroupScreen from './screens/monster-group-screen';
 import PartyListScreen from './screens/party-list-screen';
 import PartyScreen from './screens/party-screen';
-import AboutSidebar from './sidebars/about-sidebar';
-import GeneratorsSidebar from './sidebars/generators-sidebar';
-import ReferenceSidebar from './sidebars/reference-sidebar';
-import SearchSidebar from './sidebars/search-sidebar';
-import ToolsSidebar from './sidebars/tools-sidebar';
 
 interface Props {
 }
@@ -56,7 +52,7 @@ interface Props {
 interface State {
 	view: string;
 	drawer: any;
-	sidebar: any;
+	sidebar: Sidebar;
 
 	parties: Party[];
 	library: MonsterGroup[];
@@ -287,10 +283,22 @@ export default class App extends React.Component<Props, State> {
 			console.error('Could not parse JSON: ', ex);
 		}
 
+		const dice: { [sides: number]: number } = {};
+		[4, 6, 8, 10, 12, 20, 100].forEach(n => dice[n] = 0);
+		dice[20] = 1;
+
 		this.state = {
 			view: 'home',
 			drawer: null,
-			sidebar: null,
+			sidebar: {
+				visible: false,
+				type: 'tools',
+				subtype: 'die',
+				dice: dice,
+				constant: 0,
+				selectedPartyID: null,
+				selectedMonsterID: null
+			},
 			parties: parties,
 			library: library,
 			encounters: encounters,
@@ -336,51 +344,36 @@ export default class App extends React.Component<Props, State> {
 		});
 	}
 
-	private setSidebar(type: string | null) {
-		if (type) {
-			switch (type) {
-				case 'tools':
-					const dice: { [sides: number]: number } = {};
-					[4, 6, 8, 10, 12, 20, 100].forEach(n => dice[n] = 0);
-					this.setState({
-						sidebar: {
-							type: 'tools',
-							subtype: 'die',
-							dice: dice,
-							constant: 0
-						}
-					});
-					break;
-				case 'generators':
-					this.setState({
-						sidebar: {
-							type: 'generators',
-							subtype: 'name'
-						}
-					});
-					break;
-				case 'reference':
-					this.setState({
-						sidebar: {
-							type: 'reference',
-							subtype: 'skills',
-							selectedPartyID: null,
-							selectedMonsterID: null
-						}
-					});
-					break;
-				default:
-					this.setState({
-						sidebar: {
-							type: type
-						}
-					});
-			}
-		} else {
-			this.setState({
-				sidebar: null
-			});
+	private setSidebar(type: string) {
+		let subtype = '';
+		switch (type) {
+			case 'tools':
+				subtype = 'die';
+				break;
+			case 'generators':
+				subtype = 'name';
+				break;
+			case 'reference':
+				subtype = 'skills';
+				break;
 		}
+
+		const sidebar = this.state.sidebar;
+		sidebar.visible = true;
+		sidebar.type = type;
+		sidebar.subtype = subtype;
+
+		this.setState({
+			sidebar: sidebar
+		});
+	}
+
+	private toggleSidebar() {
+		const sidebar = this.state.sidebar;
+		sidebar.visible = !sidebar.visible;
+		this.setState({
+			sidebar: sidebar
+		});
 	}
 
 	private closeDrawer() {
@@ -470,13 +463,15 @@ export default class App extends React.Component<Props, State> {
 		[4, 6, 8, 10, 12, 20, 100].forEach(n => dice[n] = 0);
 		dice[sides] = count;
 
+		const sidebar = this.state.sidebar;
+		sidebar.visible = true;
+		sidebar.type = 'tools';
+		sidebar.subtype = 'die';
+		sidebar.dice = dice;
+		sidebar.constant = constant;
+
 		this.setState({
-			sidebar: {
-				type: 'tools',
-				subtype: 'die',
-				dice: dice,
-				constant: constant
-			}
+			sidebar: sidebar
 		});
 	}
 
@@ -642,13 +637,14 @@ export default class App extends React.Component<Props, State> {
 	}
 
 	private showPartyReference(party: Party) {
+		const sidebar = this.state.sidebar;
+		sidebar.visible = true;
+		sidebar.type = 'reference';
+		sidebar.subtype = 'party';
+		sidebar.selectedPartyID = party.id;
+
 		this.setState({
-			sidebar: {
-				type: 'reference',
-				subtype: 'party',
-				selectedPartyID: party.id,
-				selectedMonsterID: null
-			}
+			sidebar: sidebar
 		});
 	}
 
@@ -2694,136 +2690,6 @@ export default class App extends React.Component<Props, State> {
 		return null;
 	}
 
-	private getSidebar() {
-		if (!this.state.sidebar) {
-			return null;
-		}
-
-		let content = null;
-		switch (this.state.sidebar.type) {
-			case 'tools':
-				content = (
-					<ToolsSidebar
-						view={this.state.sidebar.subtype}
-						setView={view => {
-							const sidebar = this.state.sidebar;
-							sidebar.subtype = view;
-							this.setState({
-								sidebar: sidebar
-							});
-						}}
-						dice={this.state.sidebar.dice}
-						constant={this.state.sidebar.constant}
-						setDie={(sides, count) => {
-							const sidebar = this.state.sidebar;
-							sidebar.dice[sides] = count;
-							this.setState({
-								sidebar: sidebar
-							});
-						}}
-						setConstant={value => {
-							const sidebar = this.state.sidebar;
-							sidebar.constant = value;
-							this.setState({
-								sidebar: sidebar
-							});
-						}}
-						resetDice={() => {
-							const sidebar = this.state.sidebar;
-							[4, 6, 8, 10, 12, 20, 100].forEach(n => sidebar.dice[n] = 0);
-							sidebar.constant = 0;
-							this.setState({
-								sidebar: sidebar
-							});
-						}}
-					/>
-				);
-				break;
-			case 'generators':
-				content = (
-					<GeneratorsSidebar
-						view={this.state.sidebar.subtype}
-						setView={view => {
-							const sidebar = this.state.sidebar;
-							sidebar.subtype = view;
-							this.setState({
-								sidebar: sidebar
-							});
-						}}
-					/>
-				);
-				break;
-			case 'reference':
-				const monsters: Monster[] = [];
-				this.state.library.forEach(g => {
-					g.monsters.forEach(m => monsters.push(m));
-				});
-				Utils.sort(monsters);
-				content = (
-					<ReferenceSidebar
-						view={this.state.sidebar.subtype}
-						setView={view => {
-							const sidebar = this.state.sidebar;
-							sidebar.subtype = view;
-							this.setState({
-								sidebar: sidebar
-							});
-						}}
-						selectedPartyID={this.state.sidebar.selectedPartyID}
-						parties={this.state.parties}
-						selectPartyID={id => {
-							const sidebar = this.state.sidebar;
-							sidebar.selectedPartyID = id;
-							this.setState({
-								sidebar: sidebar
-							});
-						}}
-						selectedMonsterID={this.state.sidebar.selectedMonsterID}
-						monsters={monsters}
-						selectMonsterID={id => {
-							const sidebar = this.state.sidebar;
-							sidebar.selectedMonsterID = id;
-							this.setState({
-								sidebar: sidebar
-							});
-						}}
-					/>
-				);
-				break;
-			case 'search':
-				content = (
-					<SearchSidebar
-						parties={this.state.parties}
-						library={this.state.library}
-						encounters={this.state.encounters}
-						maps={this.state.maps}
-						openParty={id => this.selectPartyByID(id)}
-						openGroup={id => this.selectMonsterGroupByID(id)}
-						openEncounter={id => this.selectEncounterByID(id)}
-						openMap={id => this.selectMapByID(id)}
-					/>
-				);
-				break;
-			case 'about':
-				content = (
-					<AboutSidebar
-						parties={this.state.parties}
-						library={this.state.library}
-						maps={this.state.maps}
-						combats={this.state.combats}
-						resetAll={() => this.resetAll()}
-					/>
-				);
-				break;
-		}
-
-		return (
-			<div className='sidebar sidebar-right'>
-				{content}
-			</div>
-		);
-	}
-
 	private getDrawer() {
 		let content = null;
 		let header = null;
@@ -3158,33 +3024,46 @@ export default class App extends React.Component<Props, State> {
 
 	public render() {
 		try {
-			const sidebar = this.getSidebar();
 			const drawer = this.getDrawer();
 			const breadcrumbs = this.getBreadcrumbs();
 
 			return (
 				<div className='dojo'>
-					<ErrorBoundary>
-						<PageHeader
-							breadcrumbs={breadcrumbs}
-							sidebar={this.state.sidebar ? this.state.sidebar.type : null}
-							onSelectSidebar={type => this.setSidebar(type)}
-						/>
-					</ErrorBoundary>
-					<div className='page-content'>
+					<div className='app'>
 						<ErrorBoundary>
-							<div className={this.state.sidebar ? 'content with-sidebar' : 'content'}>{this.getContent()}</div>
+							<PageHeader
+								breadcrumbs={breadcrumbs}
+								sidebar={this.state.sidebar}
+								onToggleSidebar={() => this.toggleSidebar()}
+							/>
 						</ErrorBoundary>
 						<ErrorBoundary>
-							{sidebar}
+							<div className='page-content'>
+								{this.getContent()}
+							</div>
+						</ErrorBoundary>
+						<ErrorBoundary>
+							<PageFooter
+								view={this.state.view}
+								onSelectView={view => this.setView(view)}
+							/>
 						</ErrorBoundary>
 					</div>
 					<ErrorBoundary>
-						<PageFooter
-							view={this.state.view}
-							sidebar={this.state.sidebar ? this.state.sidebar.type : null}
-							onSelectView={view => this.setView(view)}
-							onCloseSidebar={() => this.setSidebar(null)}
+						<PageSidebar
+							sidebar={this.state.sidebar}
+							parties={this.state.parties}
+							library={this.state.library}
+							encounters={this.state.encounters}
+							maps={this.state.maps}
+							combats={this.state.combats}
+							onSelectSidebar={type => this.setSidebar(type)}
+							onUpdateSidebar={sidebar => this.setState({ sidebar: sidebar })}
+							onResetAll={() => this.resetAll()}
+							selectParty={id => this.selectPartyByID(id)}
+							selectMonsterGroup={id => this.selectMonsterGroupByID(id)}
+							selectEncounter={id => this.selectEncounterByID(id)}
+							selectMap={id => this.selectMapByID(id)}
 						/>
 					</ErrorBoundary>
 					<ErrorBoundary>

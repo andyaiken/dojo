@@ -160,7 +160,6 @@ export default class SearchSidebar extends React.Component<Props, State> {
 			return (
 				<div className='sidebar-container'>
 					<div className='sidebar-header'>
-						<div className='heading'>search</div>
 						<Textbox
 							text={this.state.text}
 							placeholder='enter your search term here'

@@ -46,15 +46,18 @@
 				font-weight: 600;
 				font-size: 14px;
 				height: 45px;
-				margin-bottom: 10px;
 				text-align: center;
 			}
 
 			.oracle-card-reversed {
 				font-size: 10px;
 				height: 20px;
-				margin-bottom: 20px;
+				margin: 10px 0;
 				text-align: center;
+			}
+
+			.oracle-card-meaning {
+				font-size: 10px;
 			}
 		}
 	}

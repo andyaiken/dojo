@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface Props {
-	options: { id: string; text: string; disabled?: boolean }[];
+	options: { id: string; text: string; disabled?: boolean, display?: JSX.Element }[];
 	selectedID: string | null;
 	disabled: boolean;
 	onSelect: (optionID: string) => void;
@@ -38,7 +38,7 @@ export default class Tabs extends React.Component<Props> {
 }
 
 interface TabProps {
-	option: { id: string; text: string; disabled?: boolean };
+	option: { id: string; text: string; disabled?: boolean, display?: JSX.Element };
 	selected: boolean;
 	onSelect: (optionID: string) => void;
 }
@@ -61,9 +61,18 @@ class Tab extends React.Component<TabProps> {
 				style += ' disabled';
 			}
 
+			let content = null;
+			if (this.props.option.display) {
+				content = this.props.option.display;
+			} else {
+				content = (
+					<div>{this.props.option.text}</div>
+				);
+			}
+
 			return (
 				<div key={this.props.option.id} className={style} title={this.props.option.text} onClick={e => this.click(e)}>
-					{this.props.option.text}
+					{content}
 				</div>
 			);
 		} catch (ex) {

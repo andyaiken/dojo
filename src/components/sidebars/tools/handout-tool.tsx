@@ -94,7 +94,9 @@ export default class HandoutTool extends React.Component<Props, State> {
 			} else {
 				image = (
 					<div>
-						<Note>no handout loaded</Note>
+						<Note>
+							<p>you can use this tool to select an image and show it to your players</p>
+						</Note>
 						<Upload.Dragger accept='image/*' showUploadList={false} beforeUpload={file => this.readFile(file)}>
 							<p className='ant-upload-drag-icon'>
 								<FileOutlined />

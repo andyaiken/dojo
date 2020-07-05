@@ -5,19 +5,10 @@ import React from 'react';
 import Sherlock from '../../utils/sherlock';
 import Utils from '../../utils/utils';
 
-import { Combat } from '../../models/combat';
-import { Map } from '../../models/map';
-import { MonsterGroup } from '../../models/monster';
-import { Party } from '../../models/party';
-
 import Textbox from '../controls/textbox';
 import Note from '../panels/note';
 
 interface Props {
-	parties: Party[];
-	library: MonsterGroup[];
-	maps: Map[];
-	combats: Combat[];
 	select: (id: string) => void;
 	cancel: () => void;
 }
@@ -34,15 +25,6 @@ interface SavedImage {
 }
 
 export default class ImageSelectionModal extends React.Component<Props, State> {
-	public static defaultProps = {
-		parties: [],
-		library: [],
-		maps: [],
-		combats: [],
-		select: null,
-		cancel: null
-	};
-
 	constructor(props: Props) {
 		super(props);
 
@@ -109,77 +91,21 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
 		return false;
 	}
 
-	private delete(id: string) {
-		window.localStorage.removeItem('image-' + id);
-
-		this.setState({
-			images: this.listImages()
-		});
-	}
-
 	public render() {
 		try {
 			const images = this.state.images
 				.filter(img => Sherlock.match(this.state.filter, img.name))
-				.map(img => {
-					let deleteBtn = null;
-					const data = this.props.parties.length + this.props.library.length + this.props.maps.length + this.props.combats.length;
-					if (data > 0) {
-						// Work out if the image is used in a PC, a monster, or a map tile
-						let used = false;
-						this.props.parties.forEach(party => {
-							if (party.pcs.find(pc => pc.portrait === img.id)) {
-								used = true;
-							}
-						});
-						this.props.library.forEach(group => {
-							if (group.monsters.find(monster => monster.portrait === img.id)) {
-								used = true;
-							}
-						});
-						this.props.maps.forEach(map => {
-							if (map.items.find(mi => mi.customBackground === img.id)) {
-								used = true;
-							}
-						});
-						this.props.combats.forEach(combat => {
-							if (combat.map && combat.map.items.find(mi => mi.customBackground === img.id)) {
-								used = true;
-							}
-						});
-
-						if (!used) {
-							deleteBtn = (
-								<div>
-									<Note>not used ({Utils.toData(img.data.length)})</Note>
-									<button onClick={() => this.delete(img.id)}>delete this image</button>
-								</div>
-							);
-						}
-					}
-
-					let imgSection = (
-						<img className='section nonselectable-image' src={img.data} alt={img.name} />
-					);
-					if (!!this.props.select) {
-						imgSection = (
-							<img
-								className='section selectable-image'
-								src={img.data}
-								alt={img.name}
-								onClick={() => this.props.select ? this.props.select(img.id) : null}
-							/>
-						);
-					}
-
-					return (
-						<div key={img.id} className='group-panel'>
-							<div className='subheading'>{img.name}</div>
-							{imgSection}
-							{deleteBtn}
-						</div>
-					);
-				});
+				.map(img => (
+					<div key={img.id} className='group-panel'>
+						<div className='subheading'>{img.name}</div>
+						<img
+							className='section selectable-image'
+							src={img.data}
+							alt={img.name}
+							onClick={() => this.props.select ? this.props.select(img.id) : null}
+						/>
+					</div>
+				));
 
 			if (images.length === 0) {
 				images.push(
@@ -195,13 +121,6 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
 						placeholder='search for an image'
 						onChange={value => this.setFilter(value)}
 					/>
-				);
-			}
-
-			let footer = null;
-			if (!!this.props.cancel) {
-				footer = (
-					<button onClick={() => this.props.cancel ? this.props.cancel() : null}>cancel</button>
 				);
 			}
 
@@ -224,7 +143,7 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
 						</div>
 					</div>
 					<div className='drawer-footer'>
-						{footer}
+						<button onClick={() => this.props.cancel ? this.props.cancel() : null}>cancel</button>
 					</div>
 				</div>
 			);
