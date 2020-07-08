@@ -95,7 +95,7 @@ export default class MapItemCard extends React.Component<Props, State> {
 						max={255}
 						value={this.props.item.opacity}
 						tooltipVisible={false}
-						onChange={value => this.props.changeValue(this.props.item, 'opacity', value)}
+						onChange={(value: any) => this.props.changeValue(this.props.item, 'opacity', value)}
 					/>
 				</div>
 				<div style={{ display: this.props.item.type === 'token' ? 'block' : 'none' }}>

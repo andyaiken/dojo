@@ -389,6 +389,7 @@ button.danger {
 
 .tabs {
 	margin: 10px 0;
+	height: 32px;
 	background-color: transparent;
 	display: flex;
 
@@ -402,7 +403,7 @@ button.danger {
 		font-size: 13px;
 		font-weight: 600;
 		letter-spacing: 1px;
-		line-height: 20px;
+		line-height: 24px;
 		overflow-x: hidden;
 		overflow-y: hidden;
 		text-overflow: ellipsis;

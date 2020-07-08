@@ -3,15 +3,18 @@ import { Col, Row, Tag } from 'antd';
 import React from 'react';
 
 import Gygax from '../../../utils/gygax';
+import Utils from '../../../utils/utils';
 
 import Selector from '../../controls/selector';
 
 interface Roll {
+	id: string;
 	sides: number;
 	value: number;
 }
 
 interface RollResult {
+	id: string;
 	rolls: Roll[];
 	constant: number;
 	option: string;
@@ -42,10 +45,12 @@ export default class DieRollerTool extends React.Component<Props, State> {
 
 	private rollDice() {
 		const result: RollResult = {
+			id: Utils.guid(),
 			rolls: [],
 			constant: this.props.constant,
 			option: this.state.option
 		};
+
 		[4, 6, 8, 10, 12, 20, 100].forEach(sides => {
 			const count = this.props.dice[sides];
 			for (let n = 0; n !== count; ++n) {
@@ -59,11 +64,13 @@ export default class DieRollerTool extends React.Component<Props, State> {
 						break;
 				}
 				result.rolls.push({
+					id: Utils.guid(),
 					sides: sides,
 					value: value
 				});
 			}
 		});
+
 		this.state.results.unshift(result);
 
 		this.setState({
@@ -119,10 +126,10 @@ export default class DieRollerTool extends React.Component<Props, State> {
 		);
 	}
 
-	private renderRoll(result: RollResult, resultIndex: number) {
+	private renderRoll(result: RollResult) {
 		const rolls: JSX.Element[] = [];
 		let sum = 0;
-		result.rolls.forEach((roll, rollIndex) => {
+		result.rolls.forEach(roll => {
 			let style = '';
 			if (roll.sides === 20) {
 				if (roll.value === 1) {
@@ -133,7 +140,7 @@ export default class DieRollerTool extends React.Component<Props, State> {
 				}
 			}
 			rolls.push(
-				<Tag key={'d' + roll.sides + '.' + rollIndex} className={style}>
+				<Tag key={roll.id} className={style}>
 					d{roll.sides}: <b>{roll.value}</b>
 				</Tag>
 			);
@@ -152,7 +159,7 @@ export default class DieRollerTool extends React.Component<Props, State> {
 		const icon = (result.option === 'normal') ? null : <ExclamationCircleOutlined className={'roll-icon ' + result.option} title={result.option} />;
 
 		return (
-			<div key={resultIndex} className='die-roll group-panel'>
+			<div key={result.id} className='die-roll group-panel'>
 				<div className='rolls'>
 					{rolls}
 					{icon}
@@ -166,7 +173,7 @@ export default class DieRollerTool extends React.Component<Props, State> {
 
 	public render() {
 		try {
-			const results = this.state.results.map((result, resultIndex) => this.renderRoll(result, resultIndex));
+			const results = this.state.results.map(result => this.renderRoll(result));
 
 			const total = this.props.dice[4]
 				+ this.props.dice[6]

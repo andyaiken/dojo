@@ -466,7 +466,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 
 			return (
 				<Popout title='Encounter' onCloseWindow={() => this.setPlayerViewOpen(false)}>
-					<Row className='full-height'>
+					<Row className='full-height full-width'>
 						<Col xs={24} sm={24} md={12} lg={16} xl={18} className='scrollable both-ways'>
 							<MapPanel
 								key='map'
@@ -490,7 +490,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 		} else {
 			return (
 				<Popout title='Encounter' onCloseWindow={() => this.setPlayerViewOpen(false)}>
-					<div className='scrollable'>
+					<div className='scrollable full-width'>
 						<div className='heading'>initiative order</div>
 						{initList}
 					</div>

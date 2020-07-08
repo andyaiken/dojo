@@ -885,7 +885,7 @@ class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
 						min={min}
 						max={max}
 						value={source[field]}
-						onChange={value => this.props.changeValue(source, field, value)}
+						onChange={(value: any) => this.props.changeValue(source, field, value)}
 					/>
 				</Col>
 				<Col span={4}>
