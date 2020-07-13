@@ -11323,7 +11323,7 @@
 		"actions": [
 			{
 				"name": "Multiattack",
-				"desc": "The medusa makes either three melee attacks —  one with its snake hair and two with its shortsword — or two ranged attacks with its longbow.",
+				"desc": "The medusa makes either three melee attacks — one with its snake hair and two with its shortsword — or two ranged attacks with its longbow.",
 				"attack_bonus": 0
 			},
 			{
@@ -11836,7 +11836,7 @@
 		"actions": [
 			{
 				"name": "Multiattack",
-				"desc": "The nalfeshnee uses Horror Nimbus if it can.  It then makes three attacks: one with its bite and two with its claws.",
+				"desc": "The nalfeshnee uses Horror Nimbus if it can. It then makes three attacks: one with its bite and two with its claws.",
 				"attack_bonus": 0
 			},
 			{

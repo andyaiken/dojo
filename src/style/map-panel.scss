@@ -1,18 +1,19 @@
 .map-panel {
-	overflow-x: auto;
-	overflow-y: auto;
 
 	.map-menu {
-		position: absolute;
-		top: 0;
-		right: 0;
-		min-width: 44px;
-		min-height: 44px;
+		position: relative;
+		z-index: 4;
+		width: 44px;
+		height: 44px;
 		background-color: white;
 		border: 1px solid $control-border;
 		display: flex;
 		align-items: flex-start;
 		opacity: 0.5;
+
+		&.open {
+			width: 252px;
+		}
 
 		&:hover {
 			opacity: 1;
@@ -23,6 +24,7 @@
 			margin: 6px;
 			padding: 5px;
 			font-size: 20px;
+			border-radius: 50%;
 
 			&:hover {
 				background-color: $highlight02;
@@ -40,6 +42,8 @@
 	.grid {
 		position: relative;
 		margin: 0 auto;
+		width: 100%;
+		height: calc(100% - 44px);
 		overflow: hidden;
 
 		.grid-square {
@@ -64,9 +68,10 @@
 	}
 
 	&.thumbnail {
-		pointer-events: none;
-		overflow-x: hidden;
-		overflow-y: hidden;
+
+		.grid {
+			height: 100%;
+		}
 	}
 
 	&.edit {
@@ -75,10 +80,6 @@
 		background-color: #B8C7F4;
 		background-image: radial-gradient(cornflowerblue, royalblue);
 
-		.grid {
-			margin: 10px auto;
-		}
-
 		.tile:hover {
 			border-color: $highlight;
 		}
@@ -86,7 +87,6 @@
 
 	&.combat,
 	&.combat-player {
-		padding: 10px 0;
 
 		.overlay:hover,
 		.token:hover {

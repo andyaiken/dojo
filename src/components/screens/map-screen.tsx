@@ -8,7 +8,6 @@ import { Party } from '../../models/party';
 import ConfirmButton from '../controls/confirm-button';
 import Dropdown from '../controls/dropdown';
 import Textbox from '../controls/textbox';
-import GridPanel from '../panels/grid-panel';
 import MapPanel from '../panels/map-panel';
 
 interface Props {
@@ -79,18 +78,11 @@ export default class MapScreen extends React.Component<Props, State> {
 						</div>
 					</Col>
 					<Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable both-ways'>
-						<GridPanel
-							heading={this.props.map.name}
-							columns={1}
-							content={[
-								<MapPanel
-									key={this.props.map.id}
-									map={this.props.map}
-									mode={'combat'}
-									viewport={viewport}
-									areaSelected={id => this.setSelectedAreaID(id)}
-								/>
-							]}
+						<MapPanel
+							map={this.props.map}
+							mode={'combat'}
+							viewport={viewport}
+							areaSelected={id => this.setSelectedAreaID(id)}
 						/>
 					</Col>
 				</Row>

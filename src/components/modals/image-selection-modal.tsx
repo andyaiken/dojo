@@ -67,7 +67,7 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
 				const content = progress.target.result as string;
 				const image = {
 					id: Utils.guid(),
-					name:  file.name,
+					name: file.name,
 					data: content
 				};
 

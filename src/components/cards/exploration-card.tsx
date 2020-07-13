@@ -23,13 +23,11 @@ export default class ExplorationCard extends React.Component<Props> {
 					</div>
 					<div className='card-content'>
 						<div className='fixed-height'>
-							<div className='section'>
-								<MapPanel
-									map={this.props.exploration.map}
-									fog={this.props.exploration.fog}
-									combatants={this.props.exploration.combatants}
-								/>
-							</div>
+							<MapPanel
+								map={this.props.exploration.map}
+								fog={this.props.exploration.fog}
+								combatants={this.props.exploration.combatants}
+							/>
 						</div>
 						<hr/>
 						<button onClick={() => this.props.resume(this.props.exploration)}>resume exploration</button>

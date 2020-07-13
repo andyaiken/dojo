@@ -13,8 +13,8 @@
 	overflow-y: auto;
 
 	&.both-ways {
+		padding: 10px;
 		overflow-x: auto;
-		overflow-y: auto;
 	}
 
 	&.padded {

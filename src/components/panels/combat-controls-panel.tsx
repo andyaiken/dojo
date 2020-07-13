@@ -642,10 +642,10 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 					.filter(c => c.id !== combatant.id)
 					.filter(c => !!c.mountID).map(c => c.mountID);
 				const mountOptions = this.props.allCombatants
-					.filter(c => c.id !== combatant.id)             // Don't include me
-					.filter(c => c.type !== 'placeholder')          // Don't include placeholders
-					.filter(c => !c.mountID)                        // Don't include anyone that's mounted
-					.filter(c => !currentMountIDs.includes(c.id))   // Don't include anyone that is a mount for anyone else
+					.filter(c => c.id !== combatant.id)				// Don't include me
+					.filter(c => c.type !== 'placeholder')			// Don't include placeholders
+					.filter(c => !c.mountID)						// Don't include anyone that's mounted
+					.filter(c => !currentMountIDs.includes(c.id))	// Don't include anyone that is a mount for anyone else
 					.map(c => ({ id: c.id, text: c.displayName }));
 				Utils.sort(mountOptions, [{ field: 'text', dir: 'asc' }]);
 				let mountSelector = null;

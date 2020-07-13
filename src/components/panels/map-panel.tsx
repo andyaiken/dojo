@@ -1,4 +1,4 @@
-import { DownSquareTwoTone, LeftCircleOutlined, StarTwoTone, UpSquareTwoTone } from '@ant-design/icons';
+import { DownSquareTwoTone, RightCircleOutlined, StarTwoTone, UpSquareTwoTone } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
@@ -10,7 +10,6 @@ import { Map, MapItem } from '../../models/map';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
-import Dropdown from '../controls/dropdown';
 import NumberSpin from '../controls/number-spin';
 import HitPointGauge from './hit-point-gauge';
 
@@ -490,54 +489,38 @@ export default class MapPanel extends React.Component<Props, State> {
 			if (this.props.mode !== 'thumbnail') {
 				let ctrls = null;
 				if (this.state.showControls) {
-					let areaControl = null;
-					if (this.props.mode === 'combat') {
-						if (this.props.viewport) {
-							areaControl = (
-								<button
-									onClick={e => {
-										e.stopPropagation();
-										this.props.areaSelected(null);
-									}}
-								>
-									show full map
-								</button>
-							);
-						} else {
-							areaControl = (
-								<Dropdown
-									placeholder={'show map area...'}
-									options={this.props.map.areas.map(a => ({ id: a.id, text: a.name }))}
-									onSelect={id => this.props.areaSelected(id)}
-								/>
-							);
-						}
-					}
 					ctrls = (
-						<div>
-							<NumberSpin
-								value='zoom'
-								downEnabled={this.state.size > 3}
-								onNudgeValue={delta => this.nudgeSize(delta * 3)}
-							/>
-							{areaControl}
-						</div>
+						<NumberSpin
+							value='zoom'
+							downEnabled={this.state.size > 3}
+							onNudgeValue={delta => this.nudgeSize(delta * 3)}
+						/>
 					);
 				}
 				controls = (
-					<div className='map-menu'>
-						<LeftCircleOutlined className={this.state.showControls ? 'menu-icon rotate' : 'menu-icon'} onClick={e => this.menuClick(e)} />
+					<div className={ctrls ? 'map-menu open' : 'map-menu'}>
+						<RightCircleOutlined className={this.state.showControls ? 'menu-icon rotate' : 'menu-icon'} onClick={e => this.menuClick(e)} />
 						{ctrls}
 					</div>
 				);
 			}
 
 			const style = 'map-panel ' + this.props.mode;
-			const mapWidth = 1 + mapDimensions.maxX - mapDimensions.minX;
-			const mapHeight = 1 + mapDimensions.maxY - mapDimensions.minY;
+			const squareWidth = 1 + mapDimensions.maxX - mapDimensions.minX;
+			const squareHeight = 1 + mapDimensions.maxY - mapDimensions.minY;
+			const mapWidth = (this.state.size * squareWidth) + 2;
+			let mapHeight = (this.state.size * squareHeight) + 2;
+			if (controls) {
+				mapHeight += 44;
+			}
 			return (
-				<div className={style} onClick={() => this.props.itemSelected ? this.props.itemSelected(null, false) : null}>
-					<div className='grid' style={{ width: ((this.state.size * mapWidth) + 2) + 'px', height: ((this.state.size * mapHeight) + 2) + 'px' }}>
+				<div
+					className={style}
+					style={{ width: mapWidth + 'px', height: mapHeight + 'px' }}
+					onClick={() => this.props.itemSelected ? this.props.itemSelected(null, false) : null}
+				>
+					{controls}
+					<div className='grid'>
 						{areas}
 						{tiles}
 						{fog}
@@ -546,7 +529,6 @@ export default class MapPanel extends React.Component<Props, State> {
 						{tokens}
 						{grid}
 					</div>
-					{controls}
 				</div>
 			);
 		} catch (e) {

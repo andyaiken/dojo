@@ -96,10 +96,10 @@ export default class CombatScreen extends React.Component<Props, State> {
 		this.state = {
 			showDefeatedCombatants: false,
 			showRollButtons: false,
-			selectedItemIDs: [],            // The IDs of the combatants or map items that are selected
+			selectedItemIDs: [],			// The IDs of the combatants or map items that are selected
 			selectedAreaID: null,			// The ID of the selected map area
-			addingToMapID: null,            // The ID of the combatant we're adding to the map
-			addingOverlay: false,           // True if we're adding a custom overlay to the map
+			addingToMapID: null,			// The ID of the combatant we're adding to the map
+			addingOverlay: false,			// True if we're adding a custom overlay to the map
 			addingFog: false,
 			playerView: {
 				open: false,
@@ -940,20 +940,21 @@ export default class CombatScreen extends React.Component<Props, State> {
 			let mapSection = null;
 			if (this.props.combat.map) {
 				mapSection = (
-					<MapPanel
-						key='map'
-						map={this.props.combat.map}
-						mode='combat'
-						viewport={this.getMapViewport()}
-						showGrid={(this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.addingFog}
-						combatants={this.props.combat.combatants}
-						selectedItemIDs={this.state.selectedItemIDs}
-						fog={this.props.combat.fog}
-						itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
-						areaSelected={id => this.setSelectedAreaID(id)}
-						gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
-						gridRectangleSelected={(x1, y1, x2, y2) => this.toggleFog(x1, y1, x2, y2)}
-					/>
+					<div key='map' className='scrollable both-ways'>
+						<MapPanel
+							map={this.props.combat.map}
+							mode='combat'
+							viewport={this.getMapViewport()}
+							showGrid={(this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.addingFog}
+							combatants={this.props.combat.combatants}
+							selectedItemIDs={this.state.selectedItemIDs}
+							fog={this.props.combat.fog}
+							itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
+							areaSelected={id => this.setSelectedAreaID(id)}
+							gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
+							gridRectangleSelected={(x1, y1, x2, y2) => this.toggleFog(x1, y1, x2, y2)}
+						/>
+					</div>
 				);
 			}
 

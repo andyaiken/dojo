@@ -12,15 +12,15 @@ export interface MapItem {
 	type: 'tile' | 'pc' | 'monster' | 'companion' | 'overlay' | 'token';
 	x: number;
 	y: number;
-	width: number;                                                          // Used by tiles
-	height: number;                                                         // Used by tiles
-	terrain: string;                                                        // Used by tiles
-	customBackground: string;                                               // Used by tiles
-	content: { type: string, orientation: string, style: string } | null;   // Used by tiles
-	size: string;                                                           // Used by overlays
-	color: string;                                                          // Used by overlays
-	opacity: number;                                                        // Used by overlays
-	style: 'square' | 'rounded' | 'circle' | null;                          // Used by tiles and overlays
+	width: number;															// Used by tiles
+	height: number;															// Used by tiles
+	terrain: string;														// Used by tiles
+	customBackground: string;												// Used by tiles
+	content: { type: string, orientation: string, style: string } | null;	// Used by tiles
+	size: string;															// Used by overlays
+	color: string;															// Used by overlays
+	opacity: number;														// Used by overlays
+	style: 'square' | 'rounded' | 'circle' | null;							// Used by tiles and overlays
 }
 
 export interface MapArea {

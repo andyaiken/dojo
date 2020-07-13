@@ -49,7 +49,7 @@ export interface Combatant {
 	faction: 'foe' | 'neutral' | 'ally';
 	displayName: string;
 	displaySize: string;
-	showOnMap: boolean;     // Whether or not the combatant is hidden
+	showOnMap: boolean;		// Whether or not the combatant is hidden
 	current: boolean;
 	pending: boolean;
 	active: boolean;

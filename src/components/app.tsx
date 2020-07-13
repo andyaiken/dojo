@@ -3029,7 +3029,7 @@ export default class App extends React.Component<Props, State> {
 
 			return (
 				<div className='dojo'>
-					<div className='app'>
+					<div className={this.state.sidebar.visible ? 'app with-sidebar' : 'app'}>
 						<ErrorBoundary>
 							<PageHeader
 								breadcrumbs={breadcrumbs}

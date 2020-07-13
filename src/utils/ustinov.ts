@@ -2,7 +2,7 @@
 
 export default class Ustinov {
 	public static async say(text: string, languages: string[]) {
-		// If we're  already saying something, stop it
+		// If we're already saying something, stop it
 		window.speechSynthesis.cancel();
 
 		const utterance = new SpeechSynthesisUtterance(text);

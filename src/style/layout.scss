@@ -4,13 +4,16 @@
 	background-color: $background;
 	box-sizing: border-box;
 	user-select: none;
-	display: flex;
 
 	.app {
 		height: 100%;
-		flex-grow: 1;
-		flex-shrink: 1;
-		flex-basis: 0;
+		width: 100%;
+
+		&.with-sidebar {
+			width: calc(100% - 400px);
+			display: inline-block;
+			vertical-align: top;
+		}
 
 		.page-header {
 			display: flex;
@@ -102,9 +105,9 @@
 	}
 
 	.sidebar {
-		flex-grow: 0;
-		flex-shrink: 0;
-		flex-basis: 400px;
+		width: 400px;
+		height: 100%;
+		display: inline-block;
 
 		.sidebar-icons {
 			background-color: $header-background;

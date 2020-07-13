@@ -337,11 +337,7 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 						{leftSidebar}
 					</Col>
 					<Col xs={24} sm={24} md={8} lg={12} xl={16} className='scrollable both-ways'>
-						<GridPanel
-							heading={this.props.exploration.name}
-							columns={1}
-							content={[this.getMap(false)]}
-						/>
+						{this.getMap(false)}
 					</Col>
 					<Col xs={24} sm={24} md={8} lg={6} xl={4} className='scrollable'>
 						{rightSidebar}

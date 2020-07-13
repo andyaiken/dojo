@@ -79,7 +79,7 @@ export default class Napoleon {
 		}
 		const min = Gygax.challenge(filter.challengeMin);
 		const max = Gygax.challenge(filter.challengeMax);
-		const cr =  (filter.challengeMin === filter.challengeMax) ? min : min + ' to ' + max;
+		const cr = (filter.challengeMin === filter.challengeMax) ? min : min + ' to ' + max;
 		summary += ' monsters of cr ' + cr;
 		return summary;
 	}

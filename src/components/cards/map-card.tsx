@@ -1,4 +1,3 @@
-import { Col, Row } from 'antd';
 import React from 'react';
 
 import { Map } from '../../models/map';
@@ -65,13 +64,11 @@ export default class MapCard extends React.Component<Props, State> {
 						</div>
 					</div>
 					<div className='card-content'>
-						<Row align='middle' justify='center' className='fixed-height'>
-							<Col span={24}>
-								<MapPanel
-									map={this.props.map}
-								/>
-							</Col>
-						</Row>
+						<div className='fixed-height'>
+							<MapPanel
+								map={this.props.map}
+							/>
+						</div>
 						<hr/>
 						<button onClick={() => this.props.viewMap(this.props.map)}>open map</button>
 						<button onClick={() => this.props.editMap(this.props.map)}>edit map</button>

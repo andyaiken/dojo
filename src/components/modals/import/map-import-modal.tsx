@@ -65,7 +65,7 @@ export default class MapImportModal extends React.Component<Props, State> {
 				try {
 					const image = {
 						id: Utils.guid(),
-						name:  file.name,
+						name: file.name,
 						data: content
 					};
 					const json = JSON.stringify(image);
