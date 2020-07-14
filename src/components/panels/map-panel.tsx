@@ -6,10 +6,11 @@ import Showdown from 'showdown';
 import Gygax from '../../utils/gygax';
 
 import { Combatant } from '../../models/combat';
-import { Map, MapItem } from '../../models/map';
+import { Map, MapArea, MapItem } from '../../models/map';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
+import Dropdown from '../controls/dropdown';
 import NumberSpin from '../controls/number-spin';
 import HitPointGauge from './hit-point-gauge';
 
@@ -33,7 +34,6 @@ interface Props {
 }
 
 interface State {
-	showControls: boolean;
 	size: number;
 	selectionStartSquare: {
 		x: number,
@@ -84,7 +84,6 @@ export default class MapPanel extends React.Component<Props, State> {
 		super(props);
 
 		this.state = {
-			showControls: false,
 			size: (props.mode === 'thumbnail') ? 15 : 45,
 			selectionStartSquare: null,
 			selectionEndSquare: null
@@ -151,19 +150,6 @@ export default class MapPanel extends React.Component<Props, State> {
 		}
 
 		return false;
-	}
-
-	private toggleShowControls() {
-		this.setState({
-			showControls: !this.state.showControls
-		});
-	}
-
-	private nudgeSize(delta: number) {
-		const value = Math.max(this.state.size + delta, 3);
-		this.setState({
-			size: value
-		});
 	}
 
 	private getMapDimensions(): MapDimensions | null {
@@ -303,13 +289,21 @@ export default class MapPanel extends React.Component<Props, State> {
 		};
 	}
 
-	private menuClick(e: React.MouseEvent) {
-		e.stopPropagation();
-		this.toggleShowControls();
-	}
-
 	public render() {
 		try {
+			let controls = null;
+			if (this.props.mode !== 'thumbnail') {
+				controls = (
+					<Controls
+						mapSize={this.state.size}
+						setMapSize={size => this.setState({ size: size })}
+						showAreas={(this.props.mode === 'combat') && (this.props.map.areas.length > 0)}
+						areas={this.props.map.areas}
+						selectArea={id => this.props.areaSelected(id)}
+					/>
+				);
+			}
+
 			const mapDimensions = this.getMapDimensions();
 			if (!mapDimensions) {
 				return (
@@ -485,33 +479,13 @@ export default class MapPanel extends React.Component<Props, State> {
 				}
 			}
 
-			let controls = null;
-			if (this.props.mode !== 'thumbnail') {
-				let ctrls = null;
-				if (this.state.showControls) {
-					ctrls = (
-						<NumberSpin
-							value='zoom'
-							downEnabled={this.state.size > 3}
-							onNudgeValue={delta => this.nudgeSize(delta * 3)}
-						/>
-					);
-				}
-				controls = (
-					<div className={ctrls ? 'map-menu open' : 'map-menu'}>
-						<RightCircleOutlined className={this.state.showControls ? 'menu-icon rotate' : 'menu-icon'} onClick={e => this.menuClick(e)} />
-						{ctrls}
-					</div>
-				);
-			}
-
 			const style = 'map-panel ' + this.props.mode;
 			const squareWidth = 1 + mapDimensions.maxX - mapDimensions.minX;
 			const squareHeight = 1 + mapDimensions.maxY - mapDimensions.minY;
 			const mapWidth = (this.state.size * squareWidth) + 2;
 			let mapHeight = (this.state.size * squareHeight) + 2;
 			if (controls) {
-				mapHeight += 44;
+				mapHeight += 42;
 			}
 			return (
 				<div
@@ -533,6 +507,78 @@ export default class MapPanel extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
+			return <div className='render-error'/>;
+		}
+	}
+}
+
+interface ControlsProps {
+	mapSize: number;
+	setMapSize: (size: number) => void;
+	showAreas: boolean;
+	areas: MapArea[];
+	selectArea: (id: string | null) => void;
+}
+
+interface ControlsState {
+	open: boolean;
+}
+
+class Controls extends React.Component<ControlsProps, ControlsState> {
+	constructor(props: ControlsProps) {
+		super(props);
+		this.state = {
+			open: false
+		};
+	}
+
+	private click(e: React.MouseEvent) {
+		e.stopPropagation();
+		this.setState({
+			open: !this.state.open
+		});
+	}
+
+	private nudgeSize(delta: number) {
+		const value = Math.max(this.props.mapSize + delta, 3);
+		this.props.setMapSize(value);
+	}
+
+	public render() {
+		try {
+			const controls = [];
+			if (this.state.open) {
+				controls.push(
+					<NumberSpin
+						key='zoom'
+						value='zoom'
+						downEnabled={this.props.mapSize > 3}
+						onNudgeValue={delta => this.nudgeSize(delta * 3)}
+					/>
+				);
+				if (this.props.showAreas) {
+					const areas = [{ id: '', text: 'whole map' }];
+					this.props.areas.forEach(a => {
+						areas.push({ id: a.id, text: a.name });
+					});
+					controls.push(
+						<Dropdown
+							key='areas'
+							options={areas}
+							placeholder='select a map area...'
+							onSelect={id => this.props.selectArea(id)}
+						/>
+					);
+				}
+			}
+			return (
+				<div className={this.state.open ? 'map-menu open' : 'map-menu'}>
+					<RightCircleOutlined className={this.state.open ? 'menu-icon rotate' : 'menu-icon'} onClick={e => this.click(e)} />
+					{controls}
+				</div>
+			);
+		} catch (ex) {
+			console.error(ex);
 			return <div className='render-error'/>;
 		}
 	}
