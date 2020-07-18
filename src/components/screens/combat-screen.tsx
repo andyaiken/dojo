@@ -81,7 +81,9 @@ interface State {
 	selectedAreaID: string | null;
 	addingToMapID: string | null;
 	addingOverlay: boolean;
-	addingFog: boolean;
+	editFog: boolean;
+	highlightMapSquare: boolean;
+	highlightedSquare: { x: number, y: number} | null;
 	playerView: {
 		open: boolean;
 		showControls: boolean;
@@ -100,7 +102,9 @@ export default class CombatScreen extends React.Component<Props, State> {
 			selectedAreaID: null,			// The ID of the selected map area
 			addingToMapID: null,			// The ID of the combatant we're adding to the map
 			addingOverlay: false,			// True if we're adding a custom overlay to the map
-			addingFog: false,
+			editFog: false,
+			highlightMapSquare: false,
+			highlightedSquare: null,
 			playerView: {
 				open: false,
 				showControls: false
@@ -158,7 +162,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 		this.setState({
 			addingToMapID: id,
 			addingOverlay: false,
-			addingFog: false
+			editFog: false
 		});
 	}
 
@@ -166,15 +170,31 @@ export default class CombatScreen extends React.Component<Props, State> {
 		this.setState({
 			addingOverlay: !this.state.addingOverlay,
 			addingToMapID: null,
-			addingFog: false
+			editFog: false
 		});
 	}
 
-	private toggleAddingFog() {
+	private toggleEditFog() {
 		this.setState({
 			addingOverlay: false,
 			addingToMapID: null,
-			addingFog: !this.state.addingFog
+			editFog: !this.state.editFog
+		});
+	}
+
+	private toggleHighlightMapSquare() {
+		this.setState({
+			highlightMapSquare: !this.state.highlightMapSquare,
+			highlightedSquare: null
+		});
+	}
+
+	private setHighlightedSquare(x: number, y: number) {
+		this.setState({
+			highlightedSquare: {
+				x: x,
+				y: y
+			}
 		});
 	}
 
@@ -290,7 +310,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 			});
 		}
 
-		if (this.state.addingFog) {
+		if (this.state.editFog) {
 			this.toggleFog(x, y, x, y);
 		}
 	}
@@ -476,6 +496,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 								combatants={this.props.combat.combatants}
 								selectedItemIDs={this.state.selectedItemIDs}
 								fog={this.props.combat.fog}
+								focussedSquare={this.state.highlightedSquare}
 								itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
 							/>
 						</Col>
@@ -945,12 +966,14 @@ export default class CombatScreen extends React.Component<Props, State> {
 							map={this.props.combat.map}
 							mode='combat'
 							viewport={this.getMapViewport()}
-							showGrid={(this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.addingFog}
+							showGrid={(this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.editFog || this.state.highlightMapSquare}
 							combatants={this.props.combat.combatants}
 							selectedItemIDs={this.state.selectedItemIDs}
 							fog={this.props.combat.fog}
+							focussedSquare={this.state.highlightedSquare}
 							itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
 							areaSelected={id => this.setSelectedAreaID(id)}
+							gridSquareEntered={(x, y) => this.setHighlightedSquare(x, y)}
 							gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
 							gridRectangleSelected={(x1, y1, x2, y2) => this.toggleFog(x1, y1, x2, y2)}
 						/>
@@ -1062,11 +1085,16 @@ export default class CombatScreen extends React.Component<Props, State> {
 											onChecked={() => this.toggleAddingOverlay()}
 										/>
 										<Checkbox
-											label='edit fog of war'
-											checked={this.state.addingFog}
-											onChecked={() => this.toggleAddingFog()}
+											label='highlight map square'
+											checked={this.state.highlightMapSquare}
+											onChecked={() => this.toggleHighlightMapSquare()}
 										/>
-										<div style={{ display: this.state.addingFog ? '' : 'none' }}>
+										<Checkbox
+											label='edit fog of war'
+											checked={this.state.editFog}
+											onChecked={() => this.toggleEditFog()}
+										/>
+										<div style={{ display: this.state.editFog ? '' : 'none' }}>
 											<button onClick={() => this.fillFog()}>
 												fill fog of war
 											</button>

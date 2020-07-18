@@ -26,6 +26,7 @@ interface Props {
 	showGrid: boolean;
 	selectedItemIDs: string[];
 	fog: { x: number, y: number }[];
+	focussedSquare: { x: number, y: number } | null;
 	itemSelected: (itemID: string | null, ctrl: boolean) => void;
 	areaSelected: (areaID: string | null) => void;
 	gridSquareEntered: (x: number, y: number) => void;
@@ -72,6 +73,7 @@ export default class MapPanel extends React.Component<Props, State> {
 		showGrid: false,
 		selectedItemIDs: [],
 		fog: [],
+		focussedSquare: null,
 		itemSelected: null,
 		areaSelected: null,
 		gridSquareEntered: null,
@@ -479,6 +481,14 @@ export default class MapPanel extends React.Component<Props, State> {
 				}
 			}
 
+			let focus = null;
+			if (this.props.focussedSquare) {
+				const focusStyle = this.getStyle(this.props.focussedSquare.x - 1, this.props.focussedSquare.y - 1, 3, 3, 'circle', mapDimensions);
+				focus = (
+					<div className='grid-focus' style={focusStyle} />
+				);
+			}
+
 			const style = 'map-panel ' + this.props.mode;
 			const squareWidth = 1 + mapDimensions.maxX - mapDimensions.minX;
 			const squareHeight = 1 + mapDimensions.maxY - mapDimensions.minY;
@@ -502,6 +512,7 @@ export default class MapPanel extends React.Component<Props, State> {
 						{auras}
 						{tokens}
 						{grid}
+						{focus}
 					</div>
 				</div>
 			);

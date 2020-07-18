@@ -55,7 +55,7 @@
 
 				&:hover,
 				&.selected {
-					background-color: rgba(0, 0, 200, 0.2);
+					background-color: $highlight02
 				}
 			}
 
@@ -64,6 +64,12 @@
 				box-shadow: 0 0 10px 2px black;
 				pointer-events: none;
 			}
+		}
+
+		.grid-focus {
+			position: absolute;
+			border: 2px solid $highlight;
+			box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.5);
 		}
 	}
 

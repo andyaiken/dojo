@@ -47,6 +47,8 @@ interface Props {
 interface State {
 	playerViewOpen: boolean;
 	editFog: boolean;
+	highlightMapSquare: boolean;
+	highlightedSquare: { x: number, y: number} | null;
 	selectedCombatantIDs: string[];
 	selectedAreaID: string | null;
 }
@@ -57,6 +59,8 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 		this.state = {
 			playerViewOpen: false,
 			editFog: false,
+			highlightMapSquare: false,
+			highlightedSquare: null,
 			selectedCombatantIDs: [],
 			selectedAreaID: null
 		};
@@ -72,6 +76,22 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 		this.setState({
 			editFog: !this.state.editFog,
 			selectedCombatantIDs: []
+		});
+	}
+
+	private toggleHighlightMapSquare() {
+		this.setState({
+			highlightMapSquare: !this.state.highlightMapSquare,
+			highlightedSquare: null
+		});
+	}
+
+	private setHighlightedSquare(x: number, y: number) {
+		this.setState({
+			highlightedSquare: {
+				x: x,
+				y: y
+			}
 		});
 	}
 
@@ -180,9 +200,11 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 				mode={playerView ? 'combat-player' : 'combat'}
 				viewport={viewport}
 				combatants={this.props.exploration.combatants}
-				showGrid={(adding || this.state.editFog) && !playerView}
+				showGrid={(adding || this.state.editFog || this.state.highlightMapSquare) && !playerView}
 				selectedItemIDs={this.state.selectedCombatantIDs}
 				fog={this.props.exploration.fog}
+				focussedSquare={this.state.highlightedSquare}
+				gridSquareEntered={(x, y) => this.setHighlightedSquare(x, y)}
 				gridSquareClicked={(x, y) => this.gridSquareClicked(x, y, playerView)}
 				gridRectangleSelected={(x1, y1, x2, y2) => this.props.toggleFog(x1, y1, x2, y2)}
 				itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
@@ -193,6 +215,16 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 
 	public render() {
 		try {
+			let highlightSection = null;
+			if (this.state.highlightMapSquare) {
+				highlightSection = (
+					<Note>
+						<p>use your mouse to indicate a square on the map</p>
+						<p>that square will be highlighted on the player view map as well</p>
+					</Note>
+				);
+			}
+
 			let fogSection = null;
 			if (this.state.editFog) {
 				fogSection = (
@@ -213,6 +245,8 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 
 			const leftSidebar = (
 				<div>
+					<Checkbox label='highlight map square' checked={this.state.highlightMapSquare} onChecked={() => this.toggleHighlightMapSquare()} />
+					{highlightSection}
 					<Checkbox label='edit fog of war' checked={this.state.editFog} onChecked={() => this.toggleEditFog()} />
 					{fogSection}
 					<hr/>
