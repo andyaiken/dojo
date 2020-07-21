@@ -75,24 +75,30 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 	private toggleEditFog() {
 		this.setState({
 			editFog: !this.state.editFog,
-			selectedCombatantIDs: []
+			selectedCombatantIDs: [],
+			highlightMapSquare: false,
+			highlightedSquare: null
 		});
 	}
 
 	private toggleHighlightMapSquare() {
 		this.setState({
+			editFog: false,
+			selectedCombatantIDs: [],
 			highlightMapSquare: !this.state.highlightMapSquare,
 			highlightedSquare: null
 		});
 	}
 
-	private setHighlightedSquare(x: number, y: number) {
-		this.setState({
-			highlightedSquare: {
-				x: x,
-				y: y
-			}
-		});
+	private setHighlightedSquare(x: number, y: number, playerView: boolean) {
+		if (this.state.highlightMapSquare && !playerView) {
+			this.setState({
+				highlightedSquare: {
+					x: x,
+					y: y
+				}
+			});
+		}
 	}
 
 	private setSelectedCombatantIDs(ids: string[]) {
@@ -204,7 +210,7 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 				selectedItemIDs={this.state.selectedCombatantIDs}
 				fog={this.props.exploration.fog}
 				focussedSquare={this.state.highlightedSquare}
-				gridSquareEntered={(x, y) => this.setHighlightedSquare(x, y)}
+				gridSquareEntered={(x, y) => this.setHighlightedSquare(x, y, playerView)}
 				gridSquareClicked={(x, y) => this.gridSquareClicked(x, y, playerView)}
 				gridRectangleSelected={(x1, y1, x2, y2) => this.props.toggleFog(x1, y1, x2, y2)}
 				itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}

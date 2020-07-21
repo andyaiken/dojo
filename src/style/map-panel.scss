@@ -70,6 +70,7 @@
 			position: absolute;
 			border: 2px solid $highlight;
 			box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.5);
+			pointer-events: none;
 		}
 	}
 

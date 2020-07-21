@@ -162,7 +162,9 @@ export default class CombatScreen extends React.Component<Props, State> {
 		this.setState({
 			addingToMapID: id,
 			addingOverlay: false,
-			editFog: false
+			editFog: false,
+			highlightMapSquare: false,
+			highlightedSquare: null
 		});
 	}
 
@@ -170,7 +172,9 @@ export default class CombatScreen extends React.Component<Props, State> {
 		this.setState({
 			addingOverlay: !this.state.addingOverlay,
 			addingToMapID: null,
-			editFog: false
+			editFog: false,
+			highlightMapSquare: false,
+			highlightedSquare: null
 		});
 	}
 
@@ -178,24 +182,31 @@ export default class CombatScreen extends React.Component<Props, State> {
 		this.setState({
 			addingOverlay: false,
 			addingToMapID: null,
-			editFog: !this.state.editFog
+			editFog: !this.state.editFog,
+			highlightMapSquare: false,
+			highlightedSquare: null
 		});
 	}
 
 	private toggleHighlightMapSquare() {
 		this.setState({
+			addingOverlay: false,
+			addingToMapID: null,
+			editFog: false,
 			highlightMapSquare: !this.state.highlightMapSquare,
 			highlightedSquare: null
 		});
 	}
 
 	private setHighlightedSquare(x: number, y: number) {
-		this.setState({
-			highlightedSquare: {
-				x: x,
-				y: y
-			}
-		});
+		if (this.state.highlightMapSquare) {
+			this.setState({
+				highlightedSquare: {
+					x: x,
+					y: y
+				}
+			});
+		}
 	}
 
 	private fillFog() {
@@ -582,6 +593,41 @@ export default class CombatScreen extends React.Component<Props, State> {
 			);
 		}
 
+		let map = null;
+		if (this.props.combat.map) {
+			map = (
+				<div>
+					<div className='subheading'>map</div>
+					<button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
+					<button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
+					<Checkbox
+						label={this.state.addingOverlay ? 'click on the map to add the item, or click here to cancel' : 'add token / overlay'}
+						display='button'
+						checked={this.state.addingOverlay}
+						onChecked={() => this.toggleAddingOverlay()}
+					/>
+					<Checkbox
+						label='highlight map square'
+						checked={this.state.highlightMapSquare}
+						onChecked={() => this.toggleHighlightMapSquare()}
+					/>
+					<Checkbox
+						label='edit fog of war'
+						checked={this.state.editFog}
+						onChecked={() => this.toggleEditFog()}
+					/>
+					<div style={{ display: this.state.editFog ? '' : 'none' }}>
+						<button onClick={() => this.fillFog()}>
+							fill fog of war
+						</button>
+						<button className={this.props.combat.fog.length === 0 ? 'disabled' : ''} onClick={() => this.clearFog()}>
+							clear fog of war
+						</button>
+					</div>
+				</div>
+			);
+		}
+
 		return (
 			<div>
 				<div className='subheading'>encounter</div>
@@ -603,6 +649,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 					onChecked={value => this.setPlayerViewOpen(value)}
 				/>
 				{playerView}
+				{map}
 				<div className='subheading'>layout</div>
 				<Checkbox
 					label='show defeated combatants'
@@ -1074,36 +1121,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 								content={[mapSection]}
 								columns={1}
 								showToggle={true}
-								controls={(
-									<div>
-										<button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
-										<button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
-										<Checkbox
-											label={this.state.addingOverlay ? 'click on the map to add the item, or click here to cancel' : 'add token / overlay'}
-											display='button'
-											checked={this.state.addingOverlay}
-											onChecked={() => this.toggleAddingOverlay()}
-										/>
-										<Checkbox
-											label='highlight map square'
-											checked={this.state.highlightMapSquare}
-											onChecked={() => this.toggleHighlightMapSquare()}
-										/>
-										<Checkbox
-											label='edit fog of war'
-											checked={this.state.editFog}
-											onChecked={() => this.toggleEditFog()}
-										/>
-										<div style={{ display: this.state.editFog ? '' : 'none' }}>
-											<button onClick={() => this.fillFog()}>
-												fill fog of war
-											</button>
-											<button className={this.props.combat.fog.length === 0 ? 'disabled' : ''} onClick={() => this.clearFog()}>
-												clear fog of war
-											</button>
-										</div>
-									</div>
-								)}
 							/>
 							<GridPanel
 								heading='initiative order'

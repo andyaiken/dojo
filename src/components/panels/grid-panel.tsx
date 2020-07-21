@@ -1,5 +1,5 @@
-import { DownCircleOutlined, SettingOutlined } from '@ant-design/icons';
-import { Col, Popover, Row } from 'antd';
+import { DownCircleOutlined } from '@ant-design/icons';
+import { Col, Row } from 'antd';
 import React from 'react';
 
 interface Props {
@@ -7,7 +7,6 @@ interface Props {
 	columns: number;
 	heading: string;
 	showToggle: boolean;
-	controls: JSX.Element | JSX.Element[] | null;
 }
 
 interface State {
@@ -18,8 +17,7 @@ export default class GridPanel extends React.Component<Props, State> {
 	public static defaultProps = {
 		columns: 0,
 		heading: null,
-		showToggle: false,
-		controls: null
+		showToggle: false
 	};
 
 	constructor(props: Props) {
@@ -45,19 +43,6 @@ export default class GridPanel extends React.Component<Props, State> {
 
 			let heading = null;
 			if (this.props.heading) {
-				let controlsIcon = null;
-				if (this.props.controls && this.state.showContent) {
-					controlsIcon = (
-						<Popover
-							content={this.props.controls}
-							trigger='click'
-							placement='bottomRight'
-						>
-							<SettingOutlined />
-						</Popover>
-					);
-				}
-
 				let toggleIcon = null;
 				if (this.props.showToggle) {
 					toggleIcon = (
@@ -71,7 +56,6 @@ export default class GridPanel extends React.Component<Props, State> {
 				heading = (
 					<div className='heading fixed-top'>
 						<div className='title'>{this.props.heading}</div>
-						{controlsIcon}
 						{toggleIcon}
 					</div>
 				);
