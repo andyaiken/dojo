@@ -163,19 +163,23 @@ export default class CombatStartModal extends React.Component<Props, State> {
 		});
 	}
 
-	private nudgeCount(slotID: string, delta: number) {
+	private nudgeValue(source: any, field: string, delta: number) {
+		source[field] = source[field] + delta;
+
 		const setup = this.state.combatSetup;
 		if (setup.encounter) {
-			const slot = setup.encounter.slots.find(s => s.id === slotID);
-			if (slot) {
-				// Change number
-				slot.count = Math.max(0, slot.count + delta);
-				// Reset names
+			// Reset names
+			if (setup.waveID) {
+				const wave = setup.encounter.waves.find(w => w.id === setup.waveID);
+				if (wave) {
+					setup.slotInfo = Gygax.getCombatSlotData(wave, this.props.library);
+				}
+			} else {
 				setup.slotInfo = Gygax.getCombatSlotData(setup.encounter, this.props.library);
-				this.setState({
-					combatSetup: setup
-				});
 			}
+			this.setState({
+				combatSetup: setup
+			});
 		}
 	}
 
@@ -224,7 +228,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
 								parties={this.props.parties}
 								getMonster={id => this.props.getMonster(id)}
 								changeValue={(source, field, value) => this.changeValue(source, field, value)}
-								nudgeCount={(slotID, delta) => this.nudgeCount(slotID, delta)}
+								nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
 							/>
 						</div>
 					);
@@ -246,7 +250,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
 								parties={this.props.parties}
 								getMonster={id => this.props.getMonster(id)}
 								changeValue={(source, field, value) => this.changeValue(source, field, value)}
-								nudgeCount={(slotID, delta) => this.nudgeCount(slotID, delta)}
+								nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
 							/>
 						</div>
 					);
@@ -269,7 +273,7 @@ export default class CombatStartModal extends React.Component<Props, State> {
 								parties={this.props.parties}
 								getMonster={id => this.props.getMonster(id)}
 								changeValue={(source, field, value) => this.changeValue(source, field, value)}
-								nudgeCount={(slotID, delta) => this.nudgeCount(slotID, delta)}
+								nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
 							/>
 						</div>
 					);
@@ -431,35 +435,9 @@ class EncounterSection extends React.Component<EncounterSectionProps> {
 				);
 			}
 
-			const waves = this.props.combatSetup.encounter.waves.map(wave => {
-				if (wave.slots.length === 0) {
-					return null;
-				}
-
-				const waveMonsters = wave.slots.map(slot => {
-					let name = slot.monsterName || 'unnamed monster';
-					if (slot.count > 1) {
-						name += ' x' + slot.count;
-					}
-					return (
-						<div key={slot.id} className='group-panel'>
-							{name}
-						</div>
-					);
-				});
-
-				return (
-					<div key={wave.id}>
-						<div className='subheading'>{wave.name || 'unnamed wave'}</div>
-						{waveMonsters}
-					</div>
-				);
-			});
-
 			encounterContent = (
 				<div>
 					{monsterSections}
-					{waves}
 				</div>
 			);
 		}
@@ -752,7 +730,7 @@ interface MonsterSectionProps {
 	parties: Party[];
 	getMonster: (id: string) => Monster | null;
 	changeValue: (source: any, field: string, value: any) => void;
-	nudgeCount: (slotID: string, delta: number) => void;
+	nudgeValue: (source: any, field: string, delta: number) => void;
 }
 
 interface MonsterSectionState {
@@ -835,7 +813,7 @@ class MonsterSection extends React.Component<MonsterSectionProps, MonsterSection
 						monster={monster}
 						view={this.state.view}
 						changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
-						nudgeCount={(slotID, delta) => this.props.nudgeCount(slotID, delta)}
+						nudgeValue={(source, field, delta) => this.props.nudgeValue(source, field, delta)}
 					/>
 				);
 			});
@@ -860,7 +838,7 @@ interface MonsterSlotSectionProps {
 	monster: Monster;
 	view: string;
 	changeValue: (source: any, field: string, value: any) => void;
-	nudgeCount: (slotID: string, delta: number) => void;
+	nudgeValue: (source: any, field: string, delta: number) => void;
 }
 
 class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
@@ -1013,7 +991,7 @@ class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
 				<NumberSpin
 					value={'count: ' + this.props.encounterSlot.count}
 					downEnabled={this.props.encounterSlot.count > 1}
-					onNudgeValue={delta => this.props.nudgeCount(this.props.encounterSlot.id, delta)}
+					onNudgeValue={delta => this.props.nudgeValue(this.props.encounterSlot, 'count', delta)}
 				/>
 				<Dropdown
 					options={['foe', 'neutral', 'ally'].map(o => ({ id: o, text: 'faction: ' + o }))}

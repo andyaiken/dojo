@@ -1919,10 +1919,10 @@ export default class App extends React.Component<Props, State> {
 
 	// Map methods
 
-	private scatterCombatants(type: 'pc' | 'monster') {
+	private scatterCombatants(type: 'pc' | 'monster', areaID: string | null) {
 		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
 		if (combat && combat.map) {
-			Mercator.scatterCombatants(combat, type);
+			Mercator.scatterCombatants(combat, type, areaID);
 			this.setMountPositions(combat.combatants, combat.map);
 
 			this.setState({
@@ -2179,10 +2179,15 @@ export default class App extends React.Component<Props, State> {
 	}
 
 	private mapMove(ids: string[], dir: string, combatants: Combatant[], map: Map) {
-		const list = this.getMountsAndRiders(ids, combatants);
-		list.forEach(c => {
+		const list = this.getMountsAndRiders(ids, combatants).map(c => c.id);
+		ids.forEach(id => {
+			if (!list.includes(id)) {
+				list.push(id);
+			}
+		});
+		list.forEach(id => {
 			if (map) {
-				const item = map.items.find(i => i.id === c.id);
+				const item = map.items.find(i => i.id === id);
 				if (item) {
 					switch (dir) {
 						case 'N':
@@ -2242,9 +2247,14 @@ export default class App extends React.Component<Props, State> {
 	}
 
 	private mapRemove(ids: string[], combatants: Combatant[], map: Map) {
-		const list = this.getMountsAndRiders(ids, combatants);
-		list.forEach(c => {
-			const item = map.items.find(i => i.id === c.id);
+		const list = this.getMountsAndRiders(ids, combatants).map(c => c.id);
+		ids.forEach(id => {
+			if (!list.includes(id)) {
+				list.push(id);
+			}
+		});
+		list.forEach(id => {
+			const item = map.items.find(i => i.id === id);
 			if (item) {
 				const index = map.items.indexOf(item);
 				map.items.splice(index, 1);
@@ -2561,7 +2571,7 @@ export default class App extends React.Component<Props, State> {
 							toggleTag={(combatants, tag) => this.toggleTag(combatants, tag)}
 							toggleCondition={(combatants, condition) => this.toggleCondition(combatants, condition)}
 							toggleHidden={combatants => this.toggleHidden(combatants)}
-							scatterCombatants={type => this.scatterCombatants(type)}
+							scatterCombatants={(type, areaID) => this.scatterCombatants(type, areaID)}
 							rotateMap={() => {
 								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
 								this.rotateMap(combat.map as Map);

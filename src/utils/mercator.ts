@@ -9,7 +9,7 @@ import { Combat, Combatant } from '../models/combat';
 import { DOORWAY_TYPES, Map, MapItem } from '../models/map';
 
 export default class Mercator {
-	public static scatterCombatants(combat: Combat, type: 'pc' | 'monster') {
+	public static scatterCombatants(combat: Combat, type: 'pc' | 'monster', areaID: string | null) {
 		if (!combat.map) {
 			return;
 		}
@@ -20,7 +20,24 @@ export default class Mercator {
 		// Find map dimensions
 		const tiles = combat.map.items.filter(item => item.type === 'tile');
 		if (tiles.length > 0) {
-			const dimensions = Mercator.mapDimensions(combat.map.items);
+			let areaDimensions: {
+				minX: number;
+				minY: number;
+				maxX: number;
+				maxY: number;
+			} | null = null;
+			if (areaID) {
+				const area = combat.map.areas.find(a => a.id === areaID);
+				if (area) {
+					areaDimensions = {
+						minX: area.x,
+						minY: area.y,
+						maxX: area.x + area.width - 1,
+						maxY: area.y + area.height - 1
+					};
+				}
+			}
+			const dimensions = areaDimensions || Mercator.mapDimensions(combat.map.items);
 			if (dimensions) {
 				const monsters = combat.combatants.filter(combatant => combatant.type === type);
 				monsters.forEach(combatant => {

@@ -43,7 +43,8 @@ export default class EncounterCard extends React.Component<Props, State> {
 	}
 
 	private getText(slot: EncounterSlot) {
-		return <div className='name'>{slot.monsterName || slot.roles.join(', ') || 'unnamed monster'}</div>;
+		const name = slot.monsterName || slot.roles.join(', ') || 'unnamed monster';
+		return <div className='name'>{name}</div>;
 	}
 
 	private getValue(slot: EncounterSlot) {
@@ -94,6 +95,7 @@ export default class EncounterCard extends React.Component<Props, State> {
 					slots.push(
 						<div key={slot.id} className='combatant-row' onClick={() => this.props.openStatBlock(slot)}>
 							{this.getPortrait(slot)}
+							{this.getText(slot)}
 							{this.getValue(slot)}
 						</div>
 					);

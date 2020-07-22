@@ -66,7 +66,7 @@ interface Props {
 	toggleTag: (combatants: Combatant[], tag: string) => void;
 	toggleCondition: (combatants: Combatant[], condition: string) => void;
 	toggleHidden: (combatants: Combatant[]) => void;
-	scatterCombatants: (type: 'pc' | 'monster') => void;
+	scatterCombatants: (type: 'pc' | 'monster', areaID: string | null) => void;
 	rotateMap: () => void;
 	setFog: (fog: { x: number, y: number }[]) => void;
 	addOverlay: (overlay: MapItem) => void;
@@ -598,8 +598,8 @@ export default class CombatScreen extends React.Component<Props, State> {
 			map = (
 				<div>
 					<div className='subheading'>map</div>
-					<button onClick={() => this.props.scatterCombatants('monster')}>scatter monsters</button>
-					<button onClick={() => this.props.scatterCombatants('pc')}>scatter pcs</button>
+					<button onClick={() => this.props.scatterCombatants('monster', this.state.selectedAreaID)}>scatter monsters</button>
+					<button onClick={() => this.props.scatterCombatants('pc', this.state.selectedAreaID)}>scatter pcs</button>
 					<Checkbox
 						label={this.state.addingOverlay ? 'click on the map to add the item, or click here to cancel' : 'add token / overlay'}
 						display='button'

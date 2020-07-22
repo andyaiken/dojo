@@ -163,7 +163,6 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 
 			this.setState({
 				encounter: this.state.encounter,
-				//selectedWaveID: null,
 				selectedSlotID: null,
 				showLibrary: !closeLibrary,
 				selectedMonster: null
