@@ -1,4 +1,4 @@
-import { CrownFilled, CrownOutlined } from '@ant-design/icons';
+import { StarFilled, StarOutlined } from '@ant-design/icons';
 import React from 'react';
 import Showdown from 'showdown';
 
@@ -71,12 +71,12 @@ export default class TraitsPanel extends React.Component<Props> {
 							const icons = [];
 							for (let n = 0; n !== used; ++n) {
 								icons.push(
-									<CrownFilled key={'used ' + n} />
+									<StarFilled key={'used ' + n} />
 								);
 							}
 							for (let n = 0; n !== unused; ++n) {
 								icons.push(
-									<CrownOutlined key={'unused ' + n} />
+									<StarOutlined key={'unused ' + n} />
 								);
 							}
 							usage = (

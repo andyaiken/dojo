@@ -1,4 +1,4 @@
-import { DownSquareTwoTone, RightCircleOutlined, StarTwoTone, UpSquareTwoTone } from '@ant-design/icons';
+import { DownSquareTwoTone, StarTwoTone, UpSquareTwoTone } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
@@ -24,6 +24,7 @@ interface Props {
 	paddingSquares: number;
 	combatants: Combatant[];
 	showGrid: boolean;
+	showAreaNames: boolean;
 	selectedItemIDs: string[];
 	fog: { x: number, y: number }[];
 	focussedSquare: { x: number, y: number } | null;
@@ -71,6 +72,7 @@ export default class MapPanel extends React.Component<Props, State> {
 		paddingSquares: 0,
 		combatants: [],
 		showGrid: false,
+		showAreaNames: false,
 		selectedItemIDs: [],
 		fog: [],
 		focussedSquare: null,
@@ -346,6 +348,19 @@ export default class MapPanel extends React.Component<Props, State> {
 					);
 				});
 
+			// Draw area names
+			let areaNames: JSX.Element[] = [];
+			if (this.props.showAreaNames) {
+				areaNames = this.props.map.areas.map(area => {
+					const areaStyle = this.getStyle(area.x, area.y, area.width, area.height, null, mapDimensions);
+					return (
+						<div key={area.id + ' name'} className='map-area-name' style={areaStyle}>
+							{area.name}
+						</div>
+					);
+				});
+			}
+
 			// Draw fog of war
 			let fog: JSX.Element[] = [];
 			if (this.props.mode !== 'edit') {
@@ -507,6 +522,7 @@ export default class MapPanel extends React.Component<Props, State> {
 					<div className='grid'>
 						{areas}
 						{tiles}
+						{areaNames}
 						{fog}
 						{overlays}
 						{auras}
@@ -531,25 +547,7 @@ interface ControlsProps {
 	selectArea: (id: string | null) => void;
 }
 
-interface ControlsState {
-	open: boolean;
-}
-
-class Controls extends React.Component<ControlsProps, ControlsState> {
-	constructor(props: ControlsProps) {
-		super(props);
-		this.state = {
-			open: false
-		};
-	}
-
-	private click(e: React.MouseEvent) {
-		e.stopPropagation();
-		this.setState({
-			open: !this.state.open
-		});
-	}
-
+class Controls extends React.Component<ControlsProps> {
 	private nudgeSize(delta: number) {
 		const value = Math.max(this.props.mapSize + delta, 3);
 		this.props.setMapSize(value);
@@ -558,33 +556,33 @@ class Controls extends React.Component<ControlsProps, ControlsState> {
 	public render() {
 		try {
 			const controls = [];
-			if (this.state.open) {
+
+			controls.push(
+				<NumberSpin
+					key='zoom'
+					value='zoom'
+					downEnabled={this.props.mapSize > 3}
+					onNudgeValue={delta => this.nudgeSize(delta * 3)}
+				/>
+			);
+
+			if (this.props.showAreas) {
+				const areas = [{ id: '', text: 'whole map' }];
+				this.props.areas.forEach(a => {
+					areas.push({ id: a.id, text: a.name });
+				});
 				controls.push(
-					<NumberSpin
-						key='zoom'
-						value='zoom'
-						downEnabled={this.props.mapSize > 3}
-						onNudgeValue={delta => this.nudgeSize(delta * 3)}
+					<Dropdown
+						key='areas'
+						options={areas}
+						placeholder='select a map area...'
+						onSelect={id => this.props.selectArea(id)}
 					/>
 				);
-				if (this.props.showAreas) {
-					const areas = [{ id: '', text: 'whole map' }];
-					this.props.areas.forEach(a => {
-						areas.push({ id: a.id, text: a.name });
-					});
-					controls.push(
-						<Dropdown
-							key='areas'
-							options={areas}
-							placeholder='select a map area...'
-							onSelect={id => this.props.selectArea(id)}
-						/>
-					);
-				}
 			}
+
 			return (
-				<div className={this.state.open ? 'map-menu open' : 'map-menu'}>
-					<RightCircleOutlined className={this.state.open ? 'menu-icon rotate' : 'menu-icon'} onClick={e => this.click(e)} />
+				<div className='map-menu'>
 					{controls}
 				</div>
 			);

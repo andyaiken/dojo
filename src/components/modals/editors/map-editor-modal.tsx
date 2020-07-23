@@ -419,6 +419,7 @@ export default class MapEditorModal extends React.Component<Props, State> {
 							paddingSquares={5}
 							selectedItemIDs={selectedIDs}
 							showGrid={this.state.addingTile || this.state.addingArea}
+							showAreaNames={true}
 							itemSelected={(id, ctrl) => {
 								this.setSelectedTileID(id);
 								this.setSelectedAreaID(null);

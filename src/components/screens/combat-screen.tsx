@@ -1,5 +1,5 @@
-import { CloseCircleOutlined, MenuOutlined } from '@ant-design/icons';
-import { Col, Popover, Row } from 'antd';
+import { CloseCircleOutlined, SettingOutlined } from '@ant-design/icons';
+import { Col, Row } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
 
@@ -75,6 +75,7 @@ interface Props {
 }
 
 interface State {
+	showOptions: boolean;
 	showDefeatedCombatants: boolean;
 	showRollButtons: boolean;
 	selectedItemIDs: string[];
@@ -96,6 +97,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 		super(props);
 
 		this.state = {
+			showOptions: false,
 			showDefeatedCombatants: false,
 			showRollButtons: false,
 			selectedItemIDs: [],			// The IDs of the combatants or map items that are selected
@@ -116,6 +118,12 @@ export default class CombatScreen extends React.Component<Props, State> {
 	public componentDidMount() {
 		window.addEventListener('beforeunload', () => {
 			this.setPlayerViewOpen(false);
+		});
+	}
+
+	private toggleShowOptions() {
+		this.setState({
+			showOptions: !this.state.showOptions
 		});
 	}
 
@@ -531,7 +539,11 @@ export default class CombatScreen extends React.Component<Props, State> {
 		}
 	}
 
-	private getMenu() {
+	private getOptions() {
+		if (!this.state.showOptions) {
+			return null;
+		}
+
 		let notes = null;
 		if (this.props.combat.encounter.notes) {
 			notes = (
@@ -595,11 +607,23 @@ export default class CombatScreen extends React.Component<Props, State> {
 
 		let map = null;
 		if (this.props.combat.map) {
+			let pcs = null;
+			if (this.props.combat.combatants.some(c => c.type === 'pc')) {
+				pcs = (
+					<button onClick={() => this.props.scatterCombatants('pc', this.state.selectedAreaID)}>scatter pcs</button>
+				);
+			}
+			let monsters = null;
+			if (this.props.combat.combatants.some(c => c.type === 'monster')) {
+				monsters = (
+					<button onClick={() => this.props.scatterCombatants('monster', this.state.selectedAreaID)}>scatter monsters</button>
+				);
+			}
 			map = (
 				<div>
 					<div className='subheading'>map</div>
-					<button onClick={() => this.props.scatterCombatants('monster', this.state.selectedAreaID)}>scatter monsters</button>
-					<button onClick={() => this.props.scatterCombatants('pc', this.state.selectedAreaID)}>scatter pcs</button>
+					{pcs}
+					{monsters}
 					<Checkbox
 						label={this.state.addingOverlay ? 'click on the map to add the item, or click here to cancel' : 'add token / overlay'}
 						display='button'
@@ -629,45 +653,61 @@ export default class CombatScreen extends React.Component<Props, State> {
 		}
 
 		return (
-			<div>
-				<div className='subheading'>encounter</div>
-				{notes}
-				<button onClick={() => this.props.pauseCombat()}>pause combat</button>
-				<ConfirmButton text='end combat' onConfirm={() => this.props.endCombat(this.props.combat, false)} />
-				{exitToMap}
-				<div className='subheading'>leaderboard</div>
-				<button onClick={() => this.props.showLeaderboard()}>show leaderboard</button>
-				<div className='subheading'>combatants</div>
-				<button onClick={() => this.props.addCombatants()}>add combatants</button>
-				{addPCs}
-				{addWave}
-				<button onClick={() => this.props.addCompanion(null)}>add a companion</button>
-				<div className='subheading'>player view</div>
-				<Checkbox
-					label='show player view'
-					checked={this.state.playerView.open}
-					onChecked={value => this.setPlayerViewOpen(value)}
-				/>
-				{playerView}
-				{map}
-				<div className='subheading'>layout</div>
-				<Checkbox
-					label='show defeated combatants'
-					checked={this.state.showDefeatedCombatants}
-					onChecked={() => this.toggleShowDefeatedCombatants()}
-				/>
-				<Checkbox
-					label='show monster die rolls'
-					checked={this.state.showRollButtons}
-					onChecked={() => this.toggleShowRollButtons()}
-				/>
-				<NumberSpin
-					value='middle column size'
-					downEnabled={this.state.middleColumnWidth > 4}
-					upEnabled={this.state.middleColumnWidth < 14}
-					onNudgeValue={delta => this.nudgeMiddleColumnWidth(delta * 2)}
-				/>
-			</div>
+			<GridPanel
+				heading='options'
+				content={[
+					<div key='options'>
+						<div>
+							<div className='subheading'>encounter</div>
+							{notes}
+							<button onClick={() => this.props.pauseCombat()}>pause combat</button>
+							<ConfirmButton text='end combat' onConfirm={() => this.props.endCombat(this.props.combat, false)} />
+							{exitToMap}
+						</div>
+						<div>
+							<div className='subheading'>combatants</div>
+							<button onClick={() => this.props.addCombatants()}>add combatants</button>
+							{addPCs}
+							{addWave}
+							<button onClick={() => this.props.addCompanion(null)}>add a companion</button>
+						</div>
+						{map}
+						<div>
+							<div className='subheading'>player view</div>
+							<Checkbox
+								label='show player view'
+								checked={this.state.playerView.open}
+								onChecked={value => this.setPlayerViewOpen(value)}
+							/>
+							{playerView}
+						</div>
+						<div>
+							<div className='subheading'>layout</div>
+							<Checkbox
+								label='show defeated combatants'
+								checked={this.state.showDefeatedCombatants}
+								onChecked={() => this.toggleShowDefeatedCombatants()}
+							/>
+							<Checkbox
+								label='show monster die rolls'
+								checked={this.state.showRollButtons}
+								onChecked={() => this.toggleShowRollButtons()}
+							/>
+							<NumberSpin
+								value='middle column size'
+								downEnabled={this.state.middleColumnWidth > 4}
+								upEnabled={this.state.middleColumnWidth < 14}
+								onNudgeValue={delta => this.nudgeMiddleColumnWidth(delta * 2)}
+							/>
+						</div>
+						<div>
+							<div className='subheading'>tools</div>
+							<button onClick={() => this.props.showLeaderboard()}>show leaderboard</button>
+						</div>
+					</div>
+				]}
+				columns={1}
+			/>
 		);
 	}
 
@@ -1083,13 +1123,13 @@ export default class CombatScreen extends React.Component<Props, State> {
 						</Col>
 						<Col span={sideWidth}>
 							<div className='menu'>
-								<Popover
-									content={this.getMenu()}
-									trigger='click'
-									placement='bottomRight'
-								>
-									<MenuOutlined title='menu' />
-								</Popover>
+								{
+									this.state.showOptions
+									?
+									<CloseCircleOutlined title='close options' onClick={() => this.toggleShowOptions()} />
+									:
+									<SettingOutlined title='options' onClick={() => this.toggleShowOptions()} />
+								}
 							</div>
 						</Col>
 					</Row>
@@ -1130,6 +1170,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 							/>
 						</Col>
 						<Col span={sideWidth} className='scrollable'>
+							{this.getOptions()}
 							<GridPanel
 								heading='not on the map'
 								content={[notOnMap]}

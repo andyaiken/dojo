@@ -82,6 +82,7 @@ export default class MapScreen extends React.Component<Props, State> {
 							map={this.props.map}
 							mode={'combat'}
 							viewport={viewport}
+							showAreaNames={true}
 							areaSelected={id => this.setSelectedAreaID(id)}
 						/>
 					</Col>

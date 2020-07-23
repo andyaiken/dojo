@@ -3,39 +3,17 @@
 	.map-menu {
 		position: relative;
 		z-index: 4;
-		width: 42px;
 		height: 42px;
 		background-color: white;
 		display: flex;
 		align-items: flex-start;
-		opacity: 0.5;
-
-		&.open {
-			width: calc(100% - 10px);
-		}
-
-		&:hover {
-			opacity: 1;
-			border-color: $highlight;
-		}
-
-		.menu-icon {
-			margin: 6px;
-			padding: 5px;
-			font-size: 20px;
-			border-radius: 50%;
-
-			&:hover {
-				background-color: $highlight02;
-			}
-		}
 
 		.number-spin,
 		.dropdown {
 			margin: 5px;
 			flex-grow: 0;
 			flex-shrink: 0;
-			flex-basis: 200px;
+			flex-basis: 160px;
 		}
 	}
 
@@ -112,6 +90,16 @@
 			border: 1px solid black;
 			box-shadow: 0 0 20px 0px black;
 		}
+	}
+
+	.map-area-name {
+		position: absolute;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: black;
+		text-shadow: 0 0 5px white;
+		pointer-events: none;
 	}
 }
 
