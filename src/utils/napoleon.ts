@@ -11,13 +11,17 @@ import { Monster, MonsterGroup } from '../models/monster';
 import { Companion, PC } from '../models/party';
 
 export default class Napoleon {
-	public static getMonsterCount(encounter: Encounter) {
+	public static getMonsterCount(encounter: Encounter, waveID: string | null) {
 		let count = 0;
 
 		let slots: EncounterSlot[] = [];
-		slots = slots.concat(encounter.slots);
+		if ((waveID === null) || (waveID === encounter.id)) {
+			slots = slots.concat(encounter.slots);
+		}
 		encounter.waves.forEach(wave => {
-			slots = slots.concat(wave.slots);
+			if ((waveID === null) || (waveID === wave.id)) {
+				slots = slots.concat(wave.slots);
+			}
 		});
 
 		slots.filter(slot => slot.faction === 'foe').forEach(slot => {
@@ -27,13 +31,17 @@ export default class Napoleon {
 		return count;
 	}
 
-	public static getEncounterXP(encounter: Encounter, getMonster: (id: string) => Monster | null) {
+	public static getEncounterXP(encounter: Encounter, waveID: string | null, getMonster: (id: string) => Monster | null) {
 		let xp = 0;
 
 		let slots: EncounterSlot[] = [];
-		slots = slots.concat(encounter.slots);
+		if ((waveID === null) || (waveID === encounter.id)) {
+			slots = slots.concat(encounter.slots);
+		}
 		encounter.waves.forEach(wave => {
-			slots = slots.concat(wave.slots);
+			if ((waveID === null) || (waveID === wave.id)) {
+				slots = slots.concat(wave.slots);
+			}
 		});
 
 		slots.filter(slot => slot.faction === 'foe').forEach(slot => {
@@ -46,9 +54,9 @@ export default class Napoleon {
 		return xp;
 	}
 
-	public static getAdjustedEncounterXP(encounter: Encounter, getMonster: (id: string) => Monster | null) {
-		const count = this.getMonsterCount(encounter);
-		const xp = this.getEncounterXP(encounter, getMonster);
+	public static getAdjustedEncounterXP(encounter: Encounter, waveID: string | null, getMonster: (id: string) => Monster | null) {
+		const count = this.getMonsterCount(encounter, waveID);
+		const xp = this.getEncounterXP(encounter, waveID, getMonster);
 		return xp * Gygax.experienceFactor(count);
 	}
 
@@ -88,7 +96,7 @@ export default class Napoleon {
 		encounter: Encounter, xp: number, filter: MonsterFilter, groups: MonsterGroup[],
 		getMonster: (id: string) => Monster | null) {
 
-		while (Napoleon.getAdjustedEncounterXP(encounter, id => getMonster(id)) <= xp) {
+		while (Napoleon.getAdjustedEncounterXP(encounter, null, id => getMonster(id)) <= xp) {
 			if ((encounter.slots.length > 0) && (Gygax.dieRoll(3) > 1)) {
 				// Increment a slot
 				const index = Math.floor(Math.random() * encounter.slots.length);

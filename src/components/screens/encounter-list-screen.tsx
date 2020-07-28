@@ -110,7 +110,7 @@ export default class EncounterListScreen extends React.Component<Props> {
 								when you have set up a party and an encounter you can then run the encounter
 							</div>
 							<hr/>
-							<div className='section'>on the right you will see a list of encounters that you have created</div>
+							<div className='section'>on the right you will see the encounters that you have created</div>
 							<div className='section'>select an encounter from the list to add monsters to it</div>
 							<hr/>
 							<div className='section'>to start building an encounter, press the <b>create a new encounter</b> button</div>

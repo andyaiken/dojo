@@ -6,7 +6,7 @@
 	"homepage": "https://andyaiken.github.io/dojo/",
 	"dependencies": {
 		"@ant-design/icons": "^4.2.1",
-		"antd": "^4.4.3",
+		"antd": "^4.5.0",
 		"mousetrap": "^1.6.5",
 		"react": "^16.13.1",
 		"react-debounce-input": "^3.2.2",

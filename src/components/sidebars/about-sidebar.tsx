@@ -8,7 +8,6 @@ import { Map } from '../../models/map';
 import { MonsterGroup } from '../../models/monster';
 import { Party } from '../../models/party';
 
-import ConfirmButton from '../controls/confirm-button';
 import Selector from '../controls/selector';
 import Note from '../panels/note';
 
@@ -136,15 +135,6 @@ export default class AboutSidebar extends React.Component<Props, State> {
 					}
 					content = (
 						<div>
-							<Note>
-								<div className='section'>
-									the <b>clear all data</b> button will reset the entire app and cannot be undone
-								</div>
-								<div className='section'>
-									use it at your own risk
-								</div>
-							</Note>
-							<ConfirmButton text='clear all data' onConfirm={() => this.props.resetAll()} />
 							<Note>
 								<div className='section'>
 									the browser has a limited amount of image storage space

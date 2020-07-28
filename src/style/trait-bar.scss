@@ -1,10 +1,38 @@
+.trait-header-bar {
+	background-color: $highlight01;
+	padding: 5px;
+	display: flex;
+	align-items: center;
+
+	.subheading {
+		flex-grow: 1;
+		flex-shrink: 1;
+		flex-basis: 0;
+	}
+
+	.anticon {
+		flex-grow: 0;
+		flex-shrink: 0;
+		flex-basis: auto;
+		font-size: 14px;
+		border-radius: 50%;
+		padding: 3px;
+
+		&:hover {
+			background-color: $highlight02;
+		}
+	}
+}
+
 .trait-bar {
 	margin: 5px 0;
-	padding: 5px 0;
+	padding: 2px;
 	cursor: pointer;
 	z-index: 2000;
 	font-size: 14px;
 	font-weight: 600;
+	display: flex;
+	align-items: center;
 
 	&:hover, &.selected {
 		background-color: $highlight01;
@@ -16,11 +44,16 @@
 		cursor: default;
 	}
 
+	.anticon {
+		flex-grow: 0;
+		flex-shrink: 0;
+		flex-basis: auto;
+	}
+
 	.name {
-		display: inline-block;
-		vertical-align: top;
-		height: 20px;
-		line-height: 20px;
+		flex-grow: 1;
+		flex-shrink: 1;
+		flex-basis: 0;
 	}
 }
 

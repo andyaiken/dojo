@@ -134,7 +134,7 @@ export default class EncounterCard extends React.Component<Props, State> {
 							<div className='subheading'>monsters</div>
 							{slots}
 							<div className='subheading'>xp</div>
-							{Napoleon.getEncounterXP(this.props.encounter, this.props.getMonster)}
+							{Napoleon.getEncounterXP(this.props.encounter, null, this.props.getMonster)}
 						</div>
 						<hr/>
 						<button onClick={() => this.props.view(this.props.encounter)}>open encounter</button>

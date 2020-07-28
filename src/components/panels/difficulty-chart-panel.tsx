@@ -19,6 +19,7 @@ interface Props {
 
 interface State {
 	selectedPartyID: string | null;
+	selectedWaveID: string | null;
 }
 
 export default class DifficultyChartPanel extends React.Component<Props, State> {
@@ -29,7 +30,8 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
 	constructor(props: Props) {
 		super(props);
 		this.state = {
-			selectedPartyID: props.party ? props.party.id : null
+			selectedPartyID: props.party ? props.party.id : null,
+			selectedWaveID: null
 		};
 	}
 
@@ -39,18 +41,45 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
 		});
 	}
 
+	private setWave(waveID: string | null) {
+		this.setState({
+			selectedWaveID: waveID
+		});
+	}
+
 	public render() {
 		try {
-			const monsterCount = Napoleon.getMonsterCount(this.props.encounter);
-			const monsterXP = Napoleon.getEncounterXP(this.props.encounter, this.props.getMonster);
-			const adjustedXP = Napoleon.getAdjustedEncounterXP(this.props.encounter, this.props.getMonster);
+			const monsterCount = Napoleon.getMonsterCount(this.props.encounter, this.state.selectedWaveID);
+			const monsterXP = Napoleon.getEncounterXP(this.props.encounter, this.state.selectedWaveID, this.props.getMonster);
+			const adjustedXP = Napoleon.getAdjustedEncounterXP(this.props.encounter, this.state.selectedWaveID, this.props.getMonster);
+
+			let waveSelection = null;
+			if (this.props.encounter.waves.length > 0) {
+				const options = [
+					{ id: this.props.encounter.id, text: 'encounter' }
+				];
+				this.props.encounter.waves.forEach(wave => {
+					options.push({ id: wave.id, text: wave.name || 'unnamed wave' });
+				});
+				waveSelection = (
+					<Dropdown
+						placeholder='encounter plus all waves'
+						options={options}
+						selectedID={this.state.selectedWaveID}
+						onSelect={id => this.setWave(id)}
+						onClear={() => this.setWave(null)}
+					/>
+				);
+			}
 
 			const basicData = (
 				<div>
 					<hr/>
+					{waveSelection}
+					<hr/>
 					<div className='section'>
 						<Row>
-							<Col span={16}>xp for this encounter</Col>
+							<Col span={16}>xp for these monsters</Col>
 							<Col span={8} className='statistic-value'>{monsterXP} xp</Col>
 						</Row>
 					</div>

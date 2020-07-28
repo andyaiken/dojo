@@ -61,7 +61,7 @@ export default class MonsterGroupListScreen extends React.Component<Props> {
 							<div className='section'>you can maintain your menagerie of monsters here</div>
 							<div className='section'>you can then use these monsters to design combat encounters in the encounter builder</div>
 							<hr/>
-							<div className='section'>on the right you will see a list of monster groups</div>
+							<div className='section'>on the right you will see your monster groups</div>
 							<div className='section'>select a monster group from the list to see stat blocks for monsters in that group</div>
 							<hr/>
 							<div className='section'>to start adding monsters, press the <b>create a new monster group</b> button</div>

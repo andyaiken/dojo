@@ -1,4 +1,4 @@
-import { MenuOutlined, ReloadOutlined } from '@ant-design/icons';
+import { MenuOutlined, PlusCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Col, Drawer, Row } from 'antd';
 import React from 'react';
 import { List } from 'react-movable';
@@ -16,6 +16,7 @@ import { CATEGORY_TYPES, Monster, MonsterGroup, Trait, TRAIT_TYPES } from '../..
 import MonsterCard from '../../cards/monster-card';
 import MonsterStatblockCard from '../../cards/monster-statblock-card';
 import Checkbox from '../../controls/checkbox';
+import ConfirmButton from '../../controls/confirm-button';
 import Dropdown from '../../controls/dropdown';
 import Expander from '../../controls/expander';
 import NumberSpin from '../../controls/number-spin';
@@ -1088,41 +1089,34 @@ class TraitsTab extends React.Component<TraitsTabProps, TraitsTabState> {
 		});
 	}
 
-	private createTraitBar(trait: Trait) {
-		return (
-			<TraitBarPanel
-				key={trait.id}
-				trait={trait}
-				isSelected={trait.id === this.state.selectedTraitID}
-				select={id => this.setSelectedTraitID(id)}
-			/>
-		);
-	}
-
-	private moveTrait(trait: Trait, moveBefore: Trait) {
-		this.props.moveTrait(trait, moveBefore);
-	}
-
 	private createSection(traitsByType: { [id: string]: Trait[] }, type: string) {
 		const traits = traitsByType[type];
 
 		return (
 			<div>
-				<div className='section subheading'>{Gygax.traitType(type, true)}</div>
+				<div className='trait-header-bar'>
+					<div className='subheading'>{Gygax.traitType(type, true)}</div>
+					<PlusCircleOutlined
+						title='add'
+						onClick={() => this.props.addTrait(type as 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair')}
+					/>
+				</div>
 				<List
 					values={traits}
 					lockVertically={true}
-					onChange={({ oldIndex, newIndex }) => this.moveTrait(traits[oldIndex], traits[newIndex])}
+					onChange={({ oldIndex, newIndex }) => this.props.moveTrait(traits[oldIndex], traits[newIndex])}
 					renderList={({ children, props }) => <div {...props}>{children}</div>}
 					renderItem={({ value, props, isDragged }) => (
 						<div {...props} className={isDragged ? 'dragged' : ''}>
-							{this.createTraitBar(value)}
+							<TraitBarPanel
+								key={value.id}
+								trait={value}
+								isSelected={value.id === this.state.selectedTraitID}
+								select={id => this.setSelectedTraitID(id)}
+							/>
 						</div>
 					)}
 				/>
-				<button onClick={() => this.props.addTrait(type as 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair')}>
-					add a new {Gygax.traitType(type, false)}
-				</button>
 			</div>
 		);
 	}
@@ -1229,7 +1223,7 @@ class TraitEditorPanel extends React.Component<TraitEditorPanelProps> {
 						onChange={value => this.props.changeValue(this.props.trait, 'text', value)}
 					/>
 					<hr/>
-					<button onClick={() => this.props.removeTrait(this.props.trait)}>remove this trait</button>
+					<ConfirmButton text='remove this trait' onConfirm={() => this.props.removeTrait(this.props.trait)} />
 				</div>
 			);
 		} catch (e) {
