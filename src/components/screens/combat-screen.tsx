@@ -335,6 +335,10 @@ export default class CombatScreen extends React.Component<Props, State> {
 	}
 
 	private toggleFog(x1: number, y1: number, x2: number, y2: number) {
+		if (!this.state.editFog) {
+			return;
+		}
+
 		const fog = this.props.combat.fog;
 
 		for (let x = x1; x <= x2; ++x) {

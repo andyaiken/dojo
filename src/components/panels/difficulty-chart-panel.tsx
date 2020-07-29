@@ -62,19 +62,21 @@ export default class DifficultyChartPanel extends React.Component<Props, State> 
 					options.push({ id: wave.id, text: wave.name || 'unnamed wave' });
 				});
 				waveSelection = (
-					<Dropdown
-						placeholder='encounter plus all waves'
-						options={options}
-						selectedID={this.state.selectedWaveID}
-						onSelect={id => this.setWave(id)}
-						onClear={() => this.setWave(null)}
-					/>
+					<div>
+						<hr/>
+						<Dropdown
+							placeholder='encounter plus all waves'
+							options={options}
+							selectedID={this.state.selectedWaveID}
+							onSelect={id => this.setWave(id)}
+							onClear={() => this.setWave(null)}
+						/>
+					</div>
 				);
 			}
 
 			const basicData = (
 				<div>
-					<hr/>
 					{waveSelection}
 					<hr/>
 					<div className='section'>
