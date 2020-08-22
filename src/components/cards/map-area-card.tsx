@@ -37,7 +37,9 @@ export default class MapAreaCard extends React.Component<Props> {
 								text={this.props.area.name}
 								onChange={value => this.props.changeValue(this.props.area, 'name', value)}
 							/>
-							<ReloadOutlined onClick={() => this.randomName()} title='generate a random name' />
+							<div className='icons'>
+								<ReloadOutlined onClick={() => this.randomName()} title='generate a random name' />
+							</div>
 						</div>
 						<div className='section subheading'>notes</div>
 						<Textbox

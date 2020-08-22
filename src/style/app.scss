@@ -18,6 +18,7 @@
 @import './oracle-card.scss';
 @import './portrait.scss';
 @import './render-error.scss';
+@import './session.scss';
 @import './trait-bar.scss';
 @import './utility.scss';
 
@@ -249,10 +250,13 @@ p,
 .control-with-icons {
 	position: relative;
 
-	.anticon {
+	.icons {
 		position: absolute;
 		right: 0;
 		top: 5px;
+	}
+
+	.anticon {
 		opacity: 0.2;
 		font-size: 16px;
 		padding: 8px;

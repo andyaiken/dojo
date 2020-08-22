@@ -871,7 +871,9 @@ class OverviewTab extends React.Component<OverviewTabProps> {
 								text={this.props.monster.name}
 								onChange={value => this.props.changeValue('name', value)}
 							/>
-							<ReloadOutlined onClick={() => this.randomName()} title='generate a random name' />
+							<div className='icons'>
+								<ReloadOutlined onClick={() => this.randomName()} title='generate a random name' />
+							</div>
 						</div>
 					</Col>
 					<Col xs={24} sm={24} md={24} lg={12} xl={12}>

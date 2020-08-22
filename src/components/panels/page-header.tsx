@@ -1,19 +1,22 @@
 import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
 import React from 'react';
 
-import { Sidebar } from './page-sidebar';
-
 interface Props {
 	breadcrumbs: {
 		id: string,
 		text: string;
 		onClick: () => void;
 	}[];
-	sidebar: Sidebar;
+	sidebarVisible: boolean;
 	onToggleSidebar: () => void;
 }
 
 export default class PageHeader extends React.Component<Props> {
+	public static defaultProps = {
+		sidebarVisible: false,
+		onToggleSidebar: null
+	};
+
 	public render() {
 		try {
 			const breadcrumbs = this.props.breadcrumbs.map(bc => {
@@ -24,9 +27,12 @@ export default class PageHeader extends React.Component<Props> {
 				);
 			});
 
-			let toggle = <LeftCircleOutlined className='toggle' title='show sidebar' onClick={() => this.props.onToggleSidebar()} />;
-			if (this.props.sidebar.visible) {
-				toggle = <RightCircleOutlined className='toggle' title='hide sidebar' onClick={() => this.props.onToggleSidebar()} />;
+			let toggle = null;
+			if (this.props.onToggleSidebar) {
+				toggle = <LeftCircleOutlined className='toggle' title='show sidebar' onClick={() => this.props.onToggleSidebar()} />;
+				if (this.props.sidebarVisible) {
+					toggle = <RightCircleOutlined className='toggle' title='hide sidebar' onClick={() => this.props.onToggleSidebar()} />;
+				}
 			}
 
 			return (

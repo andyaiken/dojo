@@ -7,8 +7,10 @@ interface Props {
 	multiLine: boolean;
 	minLength: number;
 	disabled: boolean;
+	debounce: boolean;
 	noMargins: boolean;
 	onChange: (value: string) => void;
+	onPressEnter: () => void;
 }
 
 export default class Textbox extends React.Component<Props> {
@@ -17,8 +19,16 @@ export default class Textbox extends React.Component<Props> {
 		multiLine: false,
 		minLength: 0,
 		disabled: false,
-		noMargins: false
+		debounce: true,
+		noMargins: false,
+		onPressEnter: null
 	};
+
+	private keyDown(e: React.KeyboardEvent) {
+		if ((e.key === 'Enter') && (this.props.onPressEnter)) {
+			this.props.onPressEnter();
+		}
+	}
 
 	public render() {
 		try {
@@ -35,7 +45,7 @@ export default class Textbox extends React.Component<Props> {
 					<DebounceInput
 						element={'textarea'}
 						minLength={this.props.minLength}
-						debounceTimeout={500}
+						debounceTimeout={this.props.debounce ? 500 : 100}
 						className={style}
 						value={this.props.text}
 						placeholder={this.props.placeholder}
@@ -48,11 +58,12 @@ export default class Textbox extends React.Component<Props> {
 			return (
 				<DebounceInput
 					minLength={this.props.minLength}
-					debounceTimeout={500}
+					debounceTimeout={this.props.debounce ? 500 : 100}
 					className={style}
 					value={this.props.text}
 					placeholder={this.props.placeholder}
 					onChange={event => this.props.onChange(event.target.value)}
+					onKeyDown={e => this.keyDown(e)}
 				/>
 			);
 		} catch (ex) {

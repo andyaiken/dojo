@@ -1,4 +1,4 @@
-import { BookOutlined, BulbOutlined, InfoCircleOutlined, SearchOutlined, ToolOutlined } from '@ant-design/icons';
+import { BookOutlined, BulbOutlined, CommentOutlined, InfoCircleOutlined, SearchOutlined, ToolOutlined } from '@ant-design/icons';
 import React from 'react';
 
 import Utils from '../../utils/utils';
@@ -13,6 +13,7 @@ import AboutSidebar from '../sidebars/about-sidebar';
 import GeneratorsSidebar from '../sidebars/generators-sidebar';
 import ReferenceSidebar from '../sidebars/reference-sidebar';
 import SearchSidebar from '../sidebars/search-sidebar';
+import SessionSidebar from '../sidebars/session-sidebar';
 import ToolsSidebar from '../sidebars/tools-sidebar';
 
 export interface Sidebar {
@@ -123,6 +124,12 @@ export default class PageSidebar extends React.Component<Props> {
 						/>
 					);
 					break;
+				case 'session':
+					content = (
+						<SessionSidebar
+						/>
+					);
+					break;
 				case 'search':
 					content = (
 						<SearchSidebar
@@ -167,6 +174,11 @@ export default class PageSidebar extends React.Component<Props> {
 							className={this.props.sidebar.type === 'reference' ? 'sidebar-icon selected' : 'sidebar-icon'}
 							title='reference'
 							onClick={() => this.props.onSelectSidebar('reference')}
+						/>
+						<CommentOutlined
+							className={this.props.sidebar.type === 'session' ? 'sidebar-icon selected' : 'sidebar-icon'}
+							title='session'
+							onClick={() => this.props.onSelectSidebar('session')}
 						/>
 						<SearchOutlined
 							className={this.props.sidebar.type === 'search' ? 'sidebar-icon selected' : 'sidebar-icon'}

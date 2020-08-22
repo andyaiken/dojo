@@ -15,6 +15,7 @@
 		"member-ordering": [true, "fields-first"],
 		"no-console": [true, "log"],
 		"no-empty-interface": false,
+		"no-string-literal": false,
 		"object-literal-shorthand": false,
 		"object-literal-sort-keys": false,
 		"quotemark": [true, "single"],

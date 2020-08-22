@@ -1,0 +1,44 @@
+.connection-panel {
+	max-width: 300px;
+	margin: 100px auto;
+}
+
+.message-panel {
+	margin: 5px 0;
+
+	.message {
+		margin: 5px 0;
+		padding: 5px;
+		background-color: white;
+
+		&.from-me {
+			text-align: right;
+			padding-left: 25%;
+		}
+
+		&.to-me {
+			text-align: left;
+			padding-right: 25%;
+		}
+
+		&.private {
+			background-color: $highlight01;
+		}
+
+		.message-byline {
+			font-size: 10px;
+
+			.anticon {
+				margin-left: 3px;
+			}
+		}
+
+		.message-content {
+			font-size: 15px;
+
+			&.emote {
+				font-style: italic;
+			}
+		}
+	}
+}
