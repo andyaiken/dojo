@@ -3,13 +3,14 @@ import Peer, { DataConnection } from 'peerjs';
 import Utils from './utils';
 
 export interface Packet {
-	type: 'pulse' | 'message';
+	type: 'pulse' | 'player-info' | 'message';
 	payload: any;
 }
 
 export interface Person {
 	id: string;
-	label: string;
+	name: string;
+	status: string;
 }
 
 export interface Message {
@@ -36,7 +37,7 @@ export class Comms {
 			return;
 		}
 
-		this.peer = new Peer();
+		this.peer = new Peer(Utils.guid());
 		this.peer.on('open', id => console.info('peer ' + id + ' open'));
 		this.peer.on('close', () => console.info('peer closed'));
 		this.peer.on('disconnected', () => console.info('peer disconnected'));
@@ -49,13 +50,25 @@ export class Comms {
 
 	public static getName(id: string) {
 		const person = this.data.people.find(p => p.id === id);
-		return person ? person.label : 'unknown person';
+		return person ? person.name : 'unknown person';
+	}
+
+	public static getStatus(id: string) {
+		const person = this.data.people.find(p => p.id === id);
+		return person ? person.status : '';
 	}
 
 	public static processPacket(packet: Packet) {
 		switch (packet.type) {
 			case 'pulse':
 				this.data.people = packet.payload['people'];
+				break;
+			case 'player-info':
+				const id = packet.payload['player'];
+				const person = this.data.people.find(p => p.id === id);
+				if (person) {
+					person.status = packet.payload['status'];
+				}
 				break;
 			case 'message':
 				const msg: Message = {
@@ -107,7 +120,7 @@ export class CommsDM {
 
 				setInterval(() => {
 					this.sendPulse();
-				}, 20 * 1000);
+				}, 30 * 1000);
 
 				this.initialised = true;
 			}
@@ -119,12 +132,16 @@ export class CommsDM {
 			.filter(conn => conn.open)
 			.map(conn => ({
 				id: conn.peer,
-				label: conn.label
+				name: conn.label,
+				status: Comms.getStatus(conn.peer)
 			}));
+
+		Utils.sort(people);
 
 		people.unshift({
 			id: Comms.getID(),
-			label: 'DM'
+			name: 'DM',
+			status: ''
 		});
 
 		this.onDataReceived({
@@ -198,6 +215,16 @@ export class CommsPlayer {
 				this.onDataChanged();
 			});
 		}
+	}
+
+	public static sendUpdate(status: string) {
+		this.sendPacket({
+			type: 'player-info',
+			payload: {
+				player: Comms.getID(),
+				status: status
+			}
+		});
 	}
 
 	public static sendMessage(to: string[], text: string) {

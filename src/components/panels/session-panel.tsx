@@ -1,6 +1,7 @@
 import { CopyOutlined, LockOutlined, SendOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
+import Showdown from 'showdown';
 
 import { Comms, CommsDM, CommsPlayer, Message, Person } from '../../utils/comms';
 
@@ -9,6 +10,9 @@ import Expander from '../controls/expander';
 import Selector from '../controls/selector';
 import Textbox from '../controls/textbox';
 import Note from './note';
+
+const showdown = new Showdown.Converter();
+showdown.setOption('tables', true);
 
 interface Props {
 	type: 'dm' | 'player';
@@ -105,6 +109,7 @@ interface PlayerSessionPanelProps {
 interface PlayerSessionPanelState {
 	code: string;
 	name: string;
+	status: string;
 }
 
 class PlayerSessionPanel extends React.Component<PlayerSessionPanelProps, PlayerSessionPanelState> {
@@ -112,7 +117,8 @@ class PlayerSessionPanel extends React.Component<PlayerSessionPanelProps, Player
 		super(props);
 		this.state = {
 			code: '',
-			name: ''
+			name: '',
+			status: ''
 		};
 
 		CommsPlayer.onStateChanged = () => this.setState(this.state);
@@ -136,6 +142,12 @@ class PlayerSessionPanel extends React.Component<PlayerSessionPanelProps, Player
 		});
 	}
 
+	private setStatus(status: string) {
+		this.setState({
+			status: status
+		});
+	}
+
 	private canConnect() {
 		return (this.state.code !== '') && (this.state.name !== '');
 	}
@@ -144,6 +156,15 @@ class PlayerSessionPanel extends React.Component<PlayerSessionPanelProps, Player
 		if (this.canConnect()) {
 			CommsPlayer.connect(this.state.code, this.state.name);
 		}
+	}
+
+	private sendUpdate() {
+		const status = this.state.status;
+		this.setState({
+			status: ''
+		}, () => {
+			CommsPlayer.sendUpdate(status);
+		});
 	}
 
 	public render() {
@@ -170,6 +191,29 @@ class PlayerSessionPanel extends React.Component<PlayerSessionPanelProps, Player
 					return (
 						<Row className='full-height'>
 							<Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar sidebar-left'>
+								<Note>
+									<p>you can set your status here</p>
+								</Note>
+								<div className='group-panel'>
+									<div className='subheading'>
+										{Comms.getName(Comms.getID())}
+									</div>
+									<div className='control-with-icons'>
+										<Textbox
+											placeholder='update status'
+											debounce={false}
+											text={this.state.status}
+											onChange={status => this.setStatus(status)}
+											onPressEnter={() => this.sendUpdate()}
+										/>
+										<div className='icons'>
+											<SendOutlined
+												onClick={() => this.sendUpdate()}
+												title='update status'
+											/>
+										</div>
+									</div>
+								</div>
 								<Note>
 									<p>the following people are connected</p>
 								</Note>
@@ -211,8 +255,9 @@ class PeoplePanel extends React.Component<PeoplePanelProps> {
 
 			const people = this.props.people.map(data => {
 				return (
-					<div key={data.id} className='group-panel'>
-						{data.label}
+					<div key={data.id} className='group-panel person'>
+						<div className='name'>{data.name}</div>
+						<div className='status'>{data.status}</div>
 					</div>
 				);
 			});
@@ -284,8 +329,8 @@ class MessagePanel extends React.Component<MessagePanelProps> {
 		try {
 			let byline = Comms.getName(this.props.message.from);
 			let mainStyle = 'message';
+			let bylineStyle = 'message-byline';
 			let contentStyle = 'message-content';
-			let text = this.props.message.text;
 			let icon = null;
 
 			if (this.props.message.from === Comms.getID()) {
@@ -294,25 +339,34 @@ class MessagePanel extends React.Component<MessagePanelProps> {
 				mainStyle += ' to-me';
 			}
 
+			let content: JSX.Element;
 			if (this.props.message.text.startsWith('/')) {
 				contentStyle += ' emote';
-				text = Comms.getName(this.props.message.from) + ' ' + text.substr(1);
+				content = (
+					<div>
+						{Comms.getName(this.props.message.from) + ' ' + this.props.message.text.substr(1)}
+					</div>
+				);
+			} else {
+				content = (
+					<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.message.text) }} />
+				);
 			}
 
 			if (this.props.message.to.length !== 0) {
 				byline += ' to ' + this.props.message.to.map(rec => Comms.getName(rec)).join(', ');
-				mainStyle += ' private';
+				bylineStyle += ' private';
 				icon = <LockOutlined title='private message' />;
 			}
 
 			return (
 				<div className={mainStyle}>
-					<div className='message-byline'>
+					<div className={bylineStyle}>
 						{byline}
 						{icon}
 					</div>
 					<div className={contentStyle}>
-						{text}
+						{content}
 					</div>
 				</div>
 			);
@@ -431,7 +485,7 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 						.map(person => (
 							<Checkbox
 								key={person.id}
-								label={person.label}
+								label={person.name}
 								checked={this.state.recipients.includes(person.id)}
 								display='switch'
 								onChecked={value => value ? this.addRecipient(person.id) : this.removeRecipient(person.id)}
