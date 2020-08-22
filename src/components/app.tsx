@@ -7,7 +7,7 @@ import Player from './landing/player';
 export default class App extends React.Component {
 	public render() {
 		return (
-			<BrowserRouter>
+			<BrowserRouter basename={process.env.PUBLIC_URL}>
 				<Switch>
 					<Route path='/player'>
 						<Player />
