@@ -51,5 +51,16 @@
 				font-style: italic;
 			}
 		}
+
+		.buttons {
+			.link {
+				display: block;
+				border: 1px solid $control-border;
+				border-radius: 5px;
+				margin: 5px 0;
+				padding: 5px;
+				text-align: center;
+			}
+		}
 	}
 }

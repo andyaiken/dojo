@@ -359,6 +359,19 @@ class MessagePanel extends React.Component<MessagePanelProps> {
 				icon = <LockOutlined title='private message' />;
 			}
 
+			/* tslint:disable:max-line-length */
+			// eslint-disable-next-line
+			const regexp = /\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/gi;
+			/* tslint:enable:max-line-length */
+
+			const buttons = Array.from(this.props.message.text.matchAll(regexp))
+				.map(match => match[0])
+				.map((url, n) => (
+					<a key={n} className='link' href={url} target='_blank' rel='noopener noreferrer'>
+						{url}
+					</a>
+				));
+
 			return (
 				<div className={mainStyle}>
 					<div className={bylineStyle}>
@@ -367,6 +380,9 @@ class MessagePanel extends React.Component<MessagePanelProps> {
 					</div>
 					<div className={contentStyle}>
 						{content}
+					</div>
+					<div className='buttons'>
+						{buttons}
 					</div>
 				</div>
 			);
