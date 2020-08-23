@@ -232,6 +232,15 @@
 			}
 		}
 
+		.die-reset-button {
+			padding: 5px;
+			font-size: 15px;
+
+			&:hover {
+				background-color: $highlight02;
+			}
+		}
+
 		.die-roll {
 			display: flex;
 			align-items: center;

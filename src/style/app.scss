@@ -257,18 +257,11 @@ p,
 	}
 
 	.anticon {
-		opacity: 0.2;
 		font-size: 16px;
 		padding: 8px;
 
 		&:hover {
 			background-color: $highlight01;
-		}
-	}
-
-	&:hover {
-		.anticon {
-			opacity: 1;
 		}
 	}
 }

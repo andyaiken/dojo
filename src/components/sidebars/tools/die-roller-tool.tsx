@@ -1,11 +1,9 @@
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Col, Row, Tag } from 'antd';
 import React from 'react';
 
 import Gygax from '../../../utils/gygax';
 import Utils from '../../../utils/utils';
-
-import Selector from '../../controls/selector';
 
 interface Roll {
 	id: string;
@@ -17,7 +15,7 @@ interface RollResult {
 	id: string;
 	rolls: Roll[];
 	constant: number;
-	option: string;
+	mode: '' | 'advantage' | 'disadvantage';
 }
 
 interface Props {
@@ -29,7 +27,6 @@ interface Props {
 }
 
 interface State {
-	option: string;
 	results: RollResult[];
 }
 
@@ -38,24 +35,23 @@ export default class DieRollerTool extends React.Component<Props, State> {
 		super(props);
 
 		this.state = {
-			option: 'normal',
 			results: []
 		};
 	}
 
-	private rollDice() {
+	private rollDice(mode: '' | 'advantage' | 'disadvantage' = '') {
 		const result: RollResult = {
 			id: Utils.guid(),
 			rolls: [],
 			constant: this.props.constant,
-			option: this.state.option
+			mode: mode
 		};
 
 		[4, 6, 8, 10, 12, 20, 100].forEach(sides => {
 			const count = this.props.dice[sides];
 			for (let n = 0; n !== count; ++n) {
 				let value = Gygax.dieRoll(sides);
-				switch (result.option) {
+				switch (result.mode) {
 					case 'advantage':
 						value = Math.max(value, Gygax.dieRoll(sides));
 						break;
@@ -75,14 +71,6 @@ export default class DieRollerTool extends React.Component<Props, State> {
 
 		this.setState({
 			results: this.state.results
-		});
-	}
-
-	private reset() {
-		this.setState({
-			option: 'normal'
-		}, () => {
-			this.props.resetDice();
 		});
 	}
 
@@ -156,7 +144,7 @@ export default class DieRollerTool extends React.Component<Props, State> {
 			sum += result.constant;
 		}
 
-		const icon = (result.option === 'normal') ? null : <ExclamationCircleOutlined className={'roll-icon ' + result.option} title={result.option} />;
+		const icon = (result.mode === '') ? null : <ExclamationCircleOutlined className={'roll-icon ' + result.mode} title={result.mode} />;
 
 		return (
 			<div key={result.id} className='die-roll group-panel'>
@@ -203,6 +191,23 @@ export default class DieRollerTool extends React.Component<Props, State> {
 				expression += Math.abs(this.props.constant);
 			}
 
+			let buttons = null;
+			if ((total === 1) && (this.props.dice[20] === 1)) {
+				buttons = (
+					<Row gutter={10}>
+						<Col span={8}><button onClick={() => this.rollDice()}>roll {expression}</button></Col>
+						<Col span={8}><button onClick={() => this.rollDice('advantage')}>advantage</button></Col>
+						<Col span={8}><button onClick={() => this.rollDice('disadvantage')}>disadvantage</button></Col>
+					</Row>
+				);
+			} else {
+				buttons = (
+					<div>
+						<button className={total > 0 ? '' : 'disabled'} onClick={() => this.rollDice()}>roll {expression}</button>
+					</div>
+				);
+			}
+
 			return (
 				<div>
 					<div className='die-types'>
@@ -216,18 +221,16 @@ export default class DieRollerTool extends React.Component<Props, State> {
 						{this.getConstantBox()}
 					</div>
 					<hr/>
-					<Selector
-						options={['normal', 'advantage', 'disadvantage'].map(o => ({ id: o, text: o }))}
-						selectedID={this.state.option}
-						disabled={(total !== 1) || (this.props.dice[20] !== 1)}
-						onSelect={id => this.setState({ option: id })}
-					/>
-					<Row gutter={10}>
-						<Col span={12}>
-							<button className={total > 0 ? '' : 'disabled'} onClick={() => this.rollDice()}>roll {expression}</button>
+					<Row gutter={10} align='middle'>
+						<Col span={22}>
+							{buttons}
 						</Col>
-						<Col span={12}>
-							<button className={total > 0 ? '' : 'disabled'} onClick={() => this.reset()}>reset</button>
+						<Col span={2} className='section centered'>
+							<CloseCircleOutlined
+								className={total > 0 ? 'die-reset-button' : 'die-reset-button disabled'}
+								title='reset dice'
+								onClick={() => this.props.resetDice()}
+							/>
 						</Col>
 					</Row>
 					<hr/>

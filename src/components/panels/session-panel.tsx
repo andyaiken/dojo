@@ -1,4 +1,4 @@
-import { CopyOutlined, LockOutlined, SendOutlined } from '@ant-design/icons';
+import { CopyOutlined, ExpandOutlined, LockOutlined, SendOutlined, SettingOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
@@ -200,7 +200,7 @@ class PlayerSessionPanel extends React.Component<PlayerSessionPanelProps, Player
 									</div>
 									<div className='control-with-icons'>
 										<Textbox
-											placeholder='update status'
+											placeholder='update your status'
 											debounce={false}
 											text={this.state.status}
 											onChange={status => this.setStatus(status)}
@@ -402,6 +402,7 @@ interface SendMessagePanelProps {
 }
 
 interface SendMessagePanelState {
+	multiline: boolean;
 	showControls: boolean;
 	mode: string;
 	recipients: string[];
@@ -412,11 +413,18 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 	constructor(props: SendMessagePanelProps) {
 		super(props);
 		this.state = {
+			multiline: false,
 			showControls: false,
 			mode: 'public',
 			recipients: [],
 			message: ''
 		};
+	}
+
+	private toggleMultiline() {
+		this.setState({
+			multiline: !this.state.multiline
+		});
 	}
 
 	private toggleControls() {
@@ -476,7 +484,7 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 	private sendMessage() {
 		if (this.canSend()) {
 			const rec = [...this.state.recipients];
-			const msg = this.state.message;
+			const msg = this.state.message.replace('\n', '\n\n');
 			this.setState({
 				message: ''
 			}, () => {
@@ -541,26 +549,34 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 
 			return (
 				<div className='send-message-panel'>
-					{controls}
 					<div className='control-with-icons'>
 						<Textbox
 							placeholder='send a message'
+							multiLine={this.state.multiline}
 							debounce={false}
 							text={this.state.message}
 							onChange={msg => this.setMessage(msg)}
 							onPressEnter={() => this.sendMessage()}
 						/>
 						<div className='icons'>
-							<LockOutlined
-								onClick={() => this.toggleControls()}
-								title={this.state.mode + ' message'}
-							/>
 							<SendOutlined
 								onClick={() => this.sendMessage()}
 								title='send message'
+								className={this.canSend() ? '' : 'disabled'}
+							/>
+							<SettingOutlined
+								onClick={() => this.toggleControls()}
+								title={'settings'}
+								className={this.state.showControls ? 'active' : ''}
+							/>
+							<ExpandOutlined
+								onClick={() => this.toggleMultiline()}
+								title={'expand'}
+								className={this.state.multiline ? 'active' : ''}
 							/>
 						</div>
 					</div>
+					{controls}
 				</div>
 			);
 		} catch (ex) {

@@ -9,7 +9,7 @@ export default class Player extends React.Component {
 		try {
 			const breadcrumbs = [{
 				id: 'home',
-				text: 'player',
+				text: 'dojo - player',
 				onClick: () => null
 			}];
 
