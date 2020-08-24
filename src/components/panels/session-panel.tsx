@@ -1,14 +1,19 @@
-import { CopyOutlined, ExpandOutlined, LockOutlined, SendOutlined, SettingOutlined } from '@ant-design/icons';
-import { Col, Row } from 'antd';
+import { CopyOutlined, ExpandOutlined, FileOutlined, LockOutlined, SendOutlined } from '@ant-design/icons';
+import { Col, Row, Upload } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
 
 import { Comms, CommsDM, CommsPlayer, Message, Person } from '../../utils/comms';
+import Gygax from '../../utils/gygax';
+
+import { DieRollResult } from '../../models/dice';
 
 import Checkbox from '../controls/checkbox';
 import Expander from '../controls/expander';
 import Selector from '../controls/selector';
 import Textbox from '../controls/textbox';
+import DieRollPanel from './die-roll-panel';
+import DieRollResultPanel from './die-roll-result-panel';
 import Note from './note';
 
 const showdown = new Showdown.Converter();
@@ -58,7 +63,7 @@ class DMSessionPanel extends React.Component<DMSessionPanelProps, DMSessionPanel
 
 	public render() {
 		try {
-			const url = window.location + (window.location.toString().endsWith('/') ? '' : '/') + 'player';
+			const playerURL = window.location + (window.location.toString().endsWith('/') ? '' : '/') + 'player';
 
 			return (
 				<div>
@@ -78,10 +83,10 @@ class DMSessionPanel extends React.Component<DMSessionPanelProps, DMSessionPanel
 						<div className='generated-item group-panel'>
 							<div className='text-section'>
 								<p className='smallest'>player app url:</p>
-								<p className='smallest strong'>{url}</p>
+								<p className='smallest strong'>{playerURL}</p>
 							</div>
 							<div className='icon-section'>
-								<CopyOutlined title='copy' onClick={e => navigator.clipboard.writeText(url)} />
+								<CopyOutlined title='copy' onClick={e => navigator.clipboard.writeText(playerURL)} />
 							</div>
 						</div>
 					</Expander>
@@ -89,7 +94,12 @@ class DMSessionPanel extends React.Component<DMSessionPanelProps, DMSessionPanel
 						<PeoplePanel people={Comms.data.people} />
 					</Expander>
 					<MessagesPanel messages={Comms.data.messages} />
-					<SendMessagePanel sendMessage={(to, text) => CommsDM.sendMessage(to, text)} />
+					<SendMessagePanel
+						sendMessage={(to, text) => CommsDM.sendMessage(to, text)}
+						sendLink={(to, url) => CommsDM.sendLink(to, url)}
+						sendImage={(to, image) => CommsDM.sendImage(to, image)}
+						sendRoll={(to, roll) => CommsDM.sendRoll(to, roll)}
+					/>
 				</div>
 			);
 		} catch (ex) {
@@ -221,7 +231,12 @@ class PlayerSessionPanel extends React.Component<PlayerSessionPanelProps, Player
 							</Col>
 							<Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
 								<MessagesPanel messages={Comms.data.messages} />
-								<SendMessagePanel sendMessage={(to, text) => CommsPlayer.sendMessage(to, text)} />
+								<SendMessagePanel
+									sendMessage={(to, text) => CommsPlayer.sendMessage(to, text)}
+									sendLink={(to, url) => CommsPlayer.sendLink(to, url)}
+									sendImage={(to, image) => CommsPlayer.sendImage(to, image)}
+									sendRoll={(to, roll) => CommsPlayer.sendRoll(to, roll)}
+								/>
 							</Col>
 						</Row>
 					);
@@ -330,7 +345,7 @@ class MessagePanel extends React.Component<MessagePanelProps> {
 			let byline = Comms.getName(this.props.message.from);
 			let mainStyle = 'message';
 			let bylineStyle = 'message-byline';
-			let contentStyle = 'message-content';
+			let contentStyle = 'message-content ' + this.props.message.type;
 			let icon = null;
 
 			if (this.props.message.from === Comms.getID()) {
@@ -340,17 +355,42 @@ class MessagePanel extends React.Component<MessagePanelProps> {
 			}
 
 			let content: JSX.Element;
-			if (this.props.message.text.startsWith('/')) {
-				contentStyle += ' emote';
-				content = (
-					<div>
-						{Comms.getName(this.props.message.from) + ' ' + this.props.message.text.substr(1)}
-					</div>
-				);
-			} else {
-				content = (
-					<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.message.text) }} />
-				);
+			switch (this.props.message.type) {
+				case 'text':
+					const text = this.props.message.data['text'];
+					if (text.startsWith('/')) {
+						contentStyle += ' emote';
+						content = (
+							<div>
+								{Comms.getName(this.props.message.from) + ' ' + text.substr(1)}
+							</div>
+						);
+					} else {
+						content = (
+							<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(text) }} />
+						);
+					}
+					break;
+				case 'link':
+					const url = this.props.message.data['url'];
+					content = (
+						<a className='link' href={url} target='_blank' rel='noopener noreferrer'>
+							{url}
+						</a>
+					);
+					break;
+				case 'image':
+					const image = this.props.message.data['image'];
+					content = (
+						<img className='nonselectable-image' src={image} alt='' />
+					);
+					break;
+				case 'roll':
+					const roll = this.props.message.data['roll'];
+					content = (
+						<DieRollResultPanel result={roll} />
+					);
+					break;
 			}
 
 			if (this.props.message.to.length !== 0) {
@@ -358,19 +398,6 @@ class MessagePanel extends React.Component<MessagePanelProps> {
 				bylineStyle += ' private';
 				icon = <LockOutlined title='private message' />;
 			}
-
-			/* tslint:disable:max-line-length */
-			// eslint-disable-next-line
-			const regexp = /\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/gi;
-			/* tslint:enable:max-line-length */
-
-			const buttons = Array.from(this.props.message.text.matchAll(regexp))
-				.map(match => match[0])
-				.map((url, n) => (
-					<a key={n} className='link' href={url} target='_blank' rel='noopener noreferrer'>
-						{url}
-					</a>
-				));
 
 			return (
 				<div className={mainStyle}>
@@ -380,9 +407,6 @@ class MessagePanel extends React.Component<MessagePanelProps> {
 					</div>
 					<div className={contentStyle}>
 						{content}
-					</div>
-					<div className='buttons'>
-						{buttons}
 					</div>
 				</div>
 			);
@@ -399,26 +423,52 @@ class MessagePanel extends React.Component<MessagePanelProps> {
 
 interface SendMessagePanelProps {
 	sendMessage: (to: string[], text: string) => void;
+	sendLink: (to: string[], url: string) => void;
+	sendImage: (to: string[], image: string) => void;
+	sendRoll: (to: string[], roll: DieRollResult) => void;
 }
 
 interface SendMessagePanelState {
+	type: string;
+	message: string;
 	multiline: boolean;
-	showControls: boolean;
+	image: string;
+	dice: { [sides: number]: number };
+	constant: number;
 	mode: string;
 	recipients: string[];
-	message: string;
 }
 
 class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessagePanelState> {
 	constructor(props: SendMessagePanelProps) {
 		super(props);
+
+		const dice: { [sides: number]: number } = {};
+		[4, 6, 8, 10, 12, 20, 100].forEach(n => dice[n] = 0);
+		dice[20] = 1;
+
 		this.state = {
+			type: 'text',
+			message: '',
 			multiline: false,
-			showControls: false,
+			image: '',
+			dice: dice,
+			constant: 0,
 			mode: 'public',
-			recipients: [],
-			message: ''
+			recipients: []
 		};
+	}
+
+	private setType(type: string) {
+		this.setState({
+			type: type
+		});
+	}
+
+	private setMessage(message: string) {
+		this.setState({
+			message: message
+		});
 	}
 
 	private toggleMultiline() {
@@ -427,9 +477,43 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 		});
 	}
 
-	private toggleControls() {
+	private setImage(image: string) {
 		this.setState({
-			showControls: !this.state.showControls
+			image: image
+		});
+	}
+
+	private readFile(file: File) {
+		const reader = new FileReader();
+		reader.onload = progress => {
+			if (progress.target) {
+				const image = progress.target.result as string;
+				this.setImage(image);
+			}
+		};
+		reader.readAsDataURL(file);
+		return false;
+	}
+
+	private setDie(sides: number, count: number) {
+		const dice = this.state.dice;
+		dice[sides] = count;
+		this.setState({
+			dice: dice
+		});
+	}
+
+	private setConstant(value: number) {
+		this.setState({
+			constant: value
+		});
+	}
+
+	private resetDice() {
+		const dice = this.state.dice;
+		[4, 6, 8, 10, 12, 20, 100].forEach(n => dice[n] = 0);
+		this.setState({
+			dice: dice
 		});
 	}
 
@@ -437,12 +521,6 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 		this.setState({
 			mode: mode,
 			recipients: mode === 'public' ? [] : this.state.recipients
-		});
-	}
-
-	private setMessage(message: string) {
-		this.setState({
-			message: message
 		});
 	}
 
@@ -476,79 +554,71 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 				break;
 		}
 
-		const validMessage = (this.state.message !== '');
+		let validContent = false;
+		switch (this.state.type) {
+			case 'text':
+			case 'link':
+				validContent = (this.state.message !== '');
+				break;
+			case 'image':
+				validContent = (this.state.image !== '');
+				break;
+			case 'roll':
+				validContent = true;
+				break;
+		}
 
-		return validRecipients && validMessage;
+		return validRecipients && validContent;
 	}
 
 	private sendMessage() {
 		if (this.canSend()) {
 			const rec = [...this.state.recipients];
-			const msg = this.state.message.replace('\n', '\n\n');
+			const text = this.state.message.split('\n').join('\n\n');
 			this.setState({
 				message: ''
 			}, () => {
-				this.props.sendMessage(rec, msg);
+				this.props.sendMessage(rec, text);
 			});
 		}
 	}
 
-	public render() {
-		try {
-			// There should always be a DM at least
-			if (Comms.data.people.length < 2) {
-				return null;
-			}
+	private sendLink() {
+		if (this.canSend()) {
+			const rec = [...this.state.recipients];
+			const url = this.state.message;
+			this.setState({
+				message: ''
+			}, () => {
+				this.props.sendLink(rec, url);
+			});
+		}
+	}
 
-			let controls = null;
-			if (this.state.showControls) {
-				let recipients = null;
-				if (this.state.mode === 'private') {
-					const list = Comms.data.people
-						.filter(person => person.id !== Comms.getID())
-						.map(person => (
-							<Checkbox
-								key={person.id}
-								label={person.name}
-								checked={this.state.recipients.includes(person.id)}
-								display='switch'
-								onChecked={value => value ? this.addRecipient(person.id) : this.removeRecipient(person.id)}
-							/>
-						));
+	private sendImage() {
+		if (this.canSend()) {
+			const rec = [...this.state.recipients];
+			const image = this.state.image;
+			this.setState({
+				image: ''
+			}, () => {
+				this.props.sendImage(rec, image);
+			});
+		}
+	}
 
-					let info = null;
-					if (this.state.recipients.length === 0) {
-						info = (
-							<Note>
-								<p> for a private message, you must select at least one person</p>
-							</Note>
-						);
-					}
+	private sendRoll(mode: '' | 'advantage' | 'disadvantage') {
+		if (this.canSend()) {
+			const rec = [...this.state.recipients];
+			const result = Gygax.rollDice(this.state.dice, this.state.constant, mode);
+			this.props.sendRoll(rec, result);
+		}
+	}
 
-					recipients = (
-						<div>
-							<div className='subheading'>choose who to send your message to</div>
-							{list}
-							{info}
-						</div>
-					);
-				}
-
-				controls = (
-					<div className='group-panel'>
-						<div className='subheading'>message settings</div>
-						<Selector
-							options={['public', 'private'].map(o => ({ id: o, text: o }))}
-							selectedID={this.state.mode}
-							onSelect={mode => this.setMode(mode)}
-						/>
-						{recipients}
-					</div>
-				);
-			}
-
-			return (
-				<div className='send-message-panel'>
+	private getMessageSection() {
+		switch (this.state.type) {
+			case 'text':
+				return (
 					<div className='control-with-icons'>
 						<Textbox
 							placeholder='send a message'
@@ -559,24 +629,143 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 							onPressEnter={() => this.sendMessage()}
 						/>
 						<div className='icons'>
-							<SendOutlined
-								onClick={() => this.sendMessage()}
-								title='send message'
-								className={this.canSend() ? '' : 'disabled'}
-							/>
-							<SettingOutlined
-								onClick={() => this.toggleControls()}
-								title={'settings'}
-								className={this.state.showControls ? 'active' : ''}
-							/>
 							<ExpandOutlined
 								onClick={() => this.toggleMultiline()}
 								title={'expand'}
 								className={this.state.multiline ? 'active' : ''}
 							/>
+							<SendOutlined
+								onClick={() => this.sendMessage()}
+								title='send message'
+								className={this.canSend() ? '' : 'disabled'}
+							/>
 						</div>
 					</div>
-					{controls}
+				);
+			case 'link':
+				return (
+					<div className='control-with-icons'>
+						<Textbox
+							placeholder='send a link'
+							debounce={false}
+							text={this.state.message}
+							onChange={msg => this.setMessage(msg)}
+							onPressEnter={() => this.sendLink()}
+						/>
+						<div className='icons'>
+							<SendOutlined
+								onClick={() => this.sendLink()}
+								title='send message'
+								className={this.canSend() ? '' : 'disabled'}
+							/>
+						</div>
+					</div>
+				);
+			case 'image':
+				if (this.state.image !== '') {
+					return (
+						<div>
+							<img className='nonselectable-image' src={this.state.image} alt='' />
+							<Row gutter={10}>
+								<Col span={12}>
+									<button onClick={() => this.setImage('')}>clear</button>
+								</Col>
+								<Col span={12}>
+									<button onClick={() => this.sendImage()}>send</button>
+								</Col>
+							</Row>
+						</div>
+					);
+				}
+				return (
+					<div>
+						<Upload.Dragger accept='image/*' showUploadList={false} beforeUpload={file => this.readFile(file)}>
+							<p className='ant-upload-drag-icon'>
+								<FileOutlined />
+							</p>
+							<p className='ant-upload-text'>
+								click here, or drag a file here, to upload it
+							</p>
+						</Upload.Dragger>
+					</div>
+				);
+			case 'roll':
+				return (
+					<DieRollPanel
+						dice={this.state.dice}
+						constant={this.state.constant}
+						setDie={(sides, count) => this.setDie(sides, count)}
+						setConstant={value => this.setConstant(value)}
+						resetDice={() => this.resetDice()}
+						rollDice={mode => this.sendRoll(mode)}
+					/>
+				);
+		}
+
+		return null;
+	}
+
+	private getSettingsSection() {
+		let recipients = null;
+		if (this.state.mode === 'private') {
+			const list = Comms.data.people
+				.filter(person => person.id !== Comms.getID())
+				.map(person => (
+					<Checkbox
+						key={person.id}
+						label={person.name}
+						checked={this.state.recipients.includes(person.id)}
+						display='switch'
+						onChecked={value => value ? this.addRecipient(person.id) : this.removeRecipient(person.id)}
+					/>
+				));
+
+			let info = null;
+			if (this.state.recipients.length === 0) {
+				info = (
+					<Note>
+						<p>for a private message, you must select at least one person</p>
+					</Note>
+				);
+			}
+
+			recipients = (
+				<div>
+					<div className='subheading'>choose who to send your message to</div>
+					{list}
+					{info}
+				</div>
+			);
+		}
+
+		return (
+			<Expander text='settings'>
+				<Selector
+					options={['public', 'private'].map(o => ({ id: o, text: o }))}
+					selectedID={this.state.mode}
+					onSelect={mode => this.setMode(mode)}
+				/>
+				{recipients}
+			</Expander>
+		);
+	}
+
+	public render() {
+		try {
+			// There should always be a DM at least
+			if (Comms.data.people.length < 2) {
+				return null;
+			}
+
+			return (
+				<div className='send-message-panel'>
+					<Selector
+						options={['text', 'link', 'image', 'roll'].map(o => ({ id: o, text: o }))}
+						selectedID={this.state.type}
+						onSelect={type => this.setType(type)}
+					/>
+					{this.getMessageSection()}
+					{this.getSettingsSection()}
 				</div>
 			);
 		} catch (ex) {

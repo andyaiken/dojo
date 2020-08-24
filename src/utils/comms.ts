@@ -2,6 +2,8 @@ import Peer, { DataConnection } from 'peerjs';
 
 import Utils from './utils';
 
+import { DieRollResult } from '../models/dice';
+
 export interface Packet {
 	type: 'pulse' | 'player-info' | 'message';
 	payload: any;
@@ -17,7 +19,8 @@ export interface Message {
 	id: string;
 	from: string;
 	to: string[];
-	text: string;
+	type: 'text' | 'link' | 'image' | 'roll';
+	data: any;
 }
 
 export interface CommsData {
@@ -58,6 +61,66 @@ export class Comms {
 		return person ? person.status : '';
 	}
 
+	public static createTextPacket(to: string[], text: string): Packet {
+		return {
+			type: 'message',
+			payload: {
+				id: Utils.guid(),
+				from: Comms.getID(),
+				to: to,
+				type: 'text',
+				data: {
+					text: text
+				}
+			}
+		};
+	}
+
+	public static createLinkPacket(to: string[], url: string): Packet {
+		return {
+			type: 'message',
+			payload: {
+				id: Utils.guid(),
+				from: Comms.getID(),
+				to: to,
+				type: 'link',
+				data: {
+					url: url
+				}
+			}
+		};
+	}
+
+	public static createImagePacket(to: string[], image: string): Packet {
+		return {
+			type: 'message',
+			payload: {
+				id: Utils.guid(),
+				from: Comms.getID(),
+				to: to,
+				type: 'image',
+				data: {
+					image: image
+				}
+			}
+		};
+	}
+
+	public static createRollPacket(to: string[], roll: DieRollResult): Packet {
+		return {
+			type: 'message',
+			payload: {
+				id: Utils.guid(),
+				from: Comms.getID(),
+				to: to,
+				type: 'roll',
+				data: {
+					roll: roll
+				}
+			}
+		};
+	}
+
 	public static processPacket(packet: Packet) {
 		switch (packet.type) {
 			case 'pulse':
@@ -75,7 +138,8 @@ export class Comms {
 					id: packet.payload['id'],
 					from: packet.payload['from'],
 					to: packet.payload['to'],
-					text: packet.payload['text']
+					type: packet.payload['type'],
+					data: packet.payload['data']
 				};
 				this.data.messages.push(msg);
 				break;
@@ -153,15 +217,19 @@ export class CommsDM {
 	}
 
 	public static sendMessage(to: string[], text: string) {
-		this.onDataReceived({
-			type: 'message',
-			payload: {
-				id: Utils.guid(),
-				from: Comms.getID(),
-				to: to,
-				text: text
-			}
-		});
+		this.onDataReceived(Comms.createTextPacket(to, text));
+	}
+
+	public static sendLink(to: string[], url: string) {
+		this.onDataReceived(Comms.createLinkPacket(to, url));
+	}
+
+	public static sendImage(to: string[], image: string) {
+		this.onDataReceived(Comms.createImagePacket(to, image));
+	}
+
+	public static sendRoll(to: string[], roll: DieRollResult) {
+		this.onDataReceived(Comms.createRollPacket(to, roll));
 	}
 
 	private static onDataReceived(packet: Packet) {
@@ -228,15 +296,19 @@ export class CommsPlayer {
 	}
 
 	public static sendMessage(to: string[], text: string) {
-		this.sendPacket({
-			type: 'message',
-			payload: {
-				id: Utils.guid(),
-				from: Comms.getID(),
-				to: to,
-				text: text
-			}
-		});
+		this.sendPacket(Comms.createTextPacket(to, text));
+	}
+
+	public static sendLink(to: string[], url: string) {
+		this.sendPacket(Comms.createLinkPacket(to, url));
+	}
+
+	public static sendImage(to: string[], image: string) {
+		this.sendPacket(Comms.createImagePacket(to, image));
+	}
+
+	public static sendRoll(to: string[], roll: DieRollResult) {
+		this.sendPacket(Comms.createRollPacket(to, roll));
 	}
 
 	private static sendPacket(packet: Packet) {

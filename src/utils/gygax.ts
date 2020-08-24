@@ -6,6 +6,7 @@ import Utils from './utils';
 
 import { Combatant, CombatSlotInfo } from '../models/combat';
 import { Condition, ConditionDurationCombatant, ConditionDurationRounds, ConditionDurationSaves } from '../models/condition';
+import { DieRollResult } from '../models/dice';
 import { Encounter, EncounterWave } from '../models/encounter';
 import { Monster, MonsterGroup } from '../models/monster';
 import { PC } from '../models/party';
@@ -30,6 +31,37 @@ export default class Gygax {
 			total += Utils.randomNumber(sides) + 1;
 		}
 		return total;
+	}
+
+	public static rollDice(dice: { [sides: number]: number }, constant: number, mode: '' | 'advantage' | 'disadvantage'): DieRollResult {
+		const result: DieRollResult = {
+			id: Utils.guid(),
+			rolls: [],
+			constant: constant,
+			mode: mode
+		};
+
+		[4, 6, 8, 10, 12, 20, 100].forEach(sides => {
+			const count = dice[sides];
+			for (let n = 0; n !== count; ++n) {
+				let value = Gygax.dieRoll(sides);
+				switch (result.mode) {
+					case 'advantage':
+						value = Math.max(value, Gygax.dieRoll(sides));
+						break;
+					case 'disadvantage':
+						value = Math.min(value, Gygax.dieRoll(sides));
+						break;
+				}
+				result.rolls.push({
+					id: Utils.guid(),
+					sides: sides,
+					value: value
+				});
+			}
+		});
+
+		return result;
 	}
 
 	public static miniSize(size: string): number {

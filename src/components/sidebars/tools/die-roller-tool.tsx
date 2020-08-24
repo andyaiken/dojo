@@ -1,22 +1,11 @@
-import { CloseCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { Col, Row, Tag } from 'antd';
 import React from 'react';
 
 import Gygax from '../../../utils/gygax';
-import Utils from '../../../utils/utils';
 
-interface Roll {
-	id: string;
-	sides: number;
-	value: number;
-}
+import { DieRollResult } from '../../../models/dice';
 
-interface RollResult {
-	id: string;
-	rolls: Roll[];
-	constant: number;
-	mode: '' | 'advantage' | 'disadvantage';
-}
+import DieRollPanel from '../../panels/die-roll-panel';
+import DieRollResultPanel from '../../panels/die-roll-result-panel';
 
 interface Props {
 	dice: { [sides: number]: number };
@@ -27,7 +16,7 @@ interface Props {
 }
 
 interface State {
-	results: RollResult[];
+	results: DieRollResult[];
 }
 
 export default class DieRollerTool extends React.Component<Props, State> {
@@ -39,200 +28,28 @@ export default class DieRollerTool extends React.Component<Props, State> {
 		};
 	}
 
-	private rollDice(mode: '' | 'advantage' | 'disadvantage' = '') {
-		const result: RollResult = {
-			id: Utils.guid(),
-			rolls: [],
-			constant: this.props.constant,
-			mode: mode
-		};
-
-		[4, 6, 8, 10, 12, 20, 100].forEach(sides => {
-			const count = this.props.dice[sides];
-			for (let n = 0; n !== count; ++n) {
-				let value = Gygax.dieRoll(sides);
-				switch (result.mode) {
-					case 'advantage':
-						value = Math.max(value, Gygax.dieRoll(sides));
-						break;
-					case 'disadvantage':
-						value = Math.min(value, Gygax.dieRoll(sides));
-						break;
-				}
-				result.rolls.push({
-					id: Utils.guid(),
-					sides: sides,
-					value: value
-				});
-			}
-		});
-
+	private rollDice(mode: '' | 'advantage' | 'disadvantage') {
+		const result = Gygax.rollDice(this.props.dice, this.props.constant, mode);
 		this.state.results.unshift(result);
-
 		this.setState({
 			results: this.state.results
 		});
 	}
 
-	private dieTypeClicked(e: React.MouseEvent, sides: number, up: boolean) {
-		e.preventDefault();
-
-		if (sides === 0) {
-			const value = this.props.constant + (up ? 1 : -1);
-			this.props.setConstant(value);
-		} else {
-			const value = Math.max(this.props.dice[sides] + (up ? 1 : -1), 0);
-			this.props.setDie(sides, value);
-		}
-	}
-
-	private getDieTypeBox(sides: number) {
-		const count = this.props.dice[sides];
-		return (
-			<div
-				className={count > 0 ? 'die-type' : 'die-type none'}
-				onClick={e => this.dieTypeClicked(e, sides, true && !e.ctrlKey)}
-				onContextMenu={e => this.dieTypeClicked(e, sides, false)}
-			>
-				<div className='die-type-name'>d{sides}</div>
-				<div className='die-type-value'>{count}</div>
-			</div>
-		);
-	}
-
-	private getConstantBox() {
-		const count = this.props.constant;
-		return (
-			<div
-				className={count > 0 ? 'die-type' : 'die-type none'}
-				onClick={e => this.dieTypeClicked(e, 0, true && !e.ctrlKey)}
-				onContextMenu={e => this.dieTypeClicked(e, 0, false)}
-			>
-				<div className='die-type-name'>+/-</div>
-				<div className='die-type-value'>{count}</div>
-			</div>
-		);
-	}
-
-	private renderRoll(result: RollResult) {
-		const rolls: JSX.Element[] = [];
-		let sum = 0;
-		result.rolls.forEach(roll => {
-			let style = '';
-			if (roll.sides === 20) {
-				if (roll.value === 1) {
-					style = 'nat1';
-				}
-				if (roll.value === 20) {
-					style = 'nat20';
-				}
-			}
-			rolls.push(
-				<Tag key={roll.id} className={style}>
-					d{roll.sides}: <b>{roll.value}</b>
-				</Tag>
-			);
-			sum += roll.value;
-		});
-		if (result.constant !== 0) {
-			const sign = (result.constant > 0) ? '+' : '-';
-			rolls.push(
-				<Tag key='constant'>
-					{sign} <b>{Math.abs(result.constant)}</b>
-				</Tag>
-			);
-			sum += result.constant;
-		}
-
-		const icon = (result.mode === '') ? null : <ExclamationCircleOutlined className={'roll-icon ' + result.mode} title={result.mode} />;
-
-		return (
-			<div key={result.id} className='die-roll group-panel'>
-				<div className='rolls'>
-					{rolls}
-					{icon}
-				</div>
-				<div className='sum'>
-					{sum}
-				</div>
-			</div>
-		);
-	}
-
 	public render() {
 		try {
-			const results = this.state.results.map(result => this.renderRoll(result));
-
-			const total = this.props.dice[4]
-				+ this.props.dice[6]
-				+ this.props.dice[8]
-				+ this.props.dice[10]
-				+ this.props.dice[12]
-				+ this.props.dice[20]
-				+ this.props.dice[100];
-
-			let expression = '';
-			[100, 20, 12, 10, 8, 6, 4].forEach(sides => {
-				if (this.props.dice[sides] !== 0) {
-					if (expression) {
-						expression += ' + ';
-					}
-					expression += this.props.dice[sides] + 'd' + sides;
-				}
-			});
-			if (this.props.constant !== 0) {
-				if (expression) {
-					if (this.props.constant > 0) {
-						expression += ' + ';
-					} else {
-						expression += ' - ';
-					}
-				}
-				expression += Math.abs(this.props.constant);
-			}
-
-			let buttons = null;
-			if ((total === 1) && (this.props.dice[20] === 1)) {
-				buttons = (
-					<Row gutter={10}>
-						<Col span={8}><button onClick={() => this.rollDice()}>roll {expression}</button></Col>
-						<Col span={8}><button onClick={() => this.rollDice('advantage')}>advantage</button></Col>
-						<Col span={8}><button onClick={() => this.rollDice('disadvantage')}>disadvantage</button></Col>
-					</Row>
-				);
-			} else {
-				buttons = (
-					<div>
-						<button className={total > 0 ? '' : 'disabled'} onClick={() => this.rollDice()}>roll {expression}</button>
-					</div>
-				);
-			}
+			const results = this.state.results.map(result => <DieRollResultPanel key={result.id} result={result} />);
 
 			return (
 				<div>
-					<div className='die-types'>
-						{this.getDieTypeBox(4)}
-						{this.getDieTypeBox(6)}
-						{this.getDieTypeBox(8)}
-						{this.getDieTypeBox(10)}
-						{this.getDieTypeBox(12)}
-						{this.getDieTypeBox(20)}
-						{this.getDieTypeBox(100)}
-						{this.getConstantBox()}
-					</div>
-					<hr/>
-					<Row gutter={10} align='middle'>
-						<Col span={22}>
-							{buttons}
-						</Col>
-						<Col span={2} className='section centered'>
-							<CloseCircleOutlined
-								className={total > 0 ? 'die-reset-button' : 'die-reset-button disabled'}
-								title='reset dice'
-								onClick={() => this.props.resetDice()}
-							/>
-						</Col>
-					</Row>
+					<DieRollPanel
+						dice={this.props.dice}
+						constant={this.props.constant}
+						setDie={(sides, count) => this.props.setDie(sides, count)}
+						setConstant={value => this.props.setConstant(value)}
+						resetDice={() => this.props.resetDice()}
+						rollDice={mode => this.rollDice(mode)}
+					/>
 					<hr/>
 					{results}
 				</div>

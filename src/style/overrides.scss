@@ -122,7 +122,8 @@ button {
 		min-height: unset;
 		color: $highlight;
 
-		&:hover {
+		&:hover,
+		&:focus {
 			background-color: $highlight01;
 		}
 	}
@@ -131,7 +132,8 @@ button {
 		height: 50px;
 	}
 
-	&:hover {
+	&:hover,
+	&:focus {
 		border-color: $highlight;
 
 		.image {

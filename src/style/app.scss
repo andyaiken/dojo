@@ -9,6 +9,7 @@
 @import './combat-screen.scss';
 @import './condition-panel.scss';
 @import './controls.scss';
+@import './dice.scss';
 @import './difficulty-gauge.scss';
 @import './drawer.scss';
 @import './group-panel.scss';
@@ -250,17 +251,22 @@ p,
 .control-with-icons {
 	position: relative;
 
+	>input {
+		margin: 0;
+	}
+
 	.icons {
 		position: absolute;
 		right: 0;
-		top: 5px;
+		top: 0;
 	}
 
 	.anticon {
 		font-size: 16px;
 		padding: 8px;
 
-		&:hover {
+		&:hover,
+		&:focus {
 			background-color: $highlight01;
 		}
 	}

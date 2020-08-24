@@ -50,9 +50,7 @@
 			&.emote {
 				font-style: italic;
 			}
-		}
 
-		.buttons {
 			.link {
 				display: block;
 				border: 1px solid $control-border;
@@ -60,6 +58,7 @@
 				margin: 5px 0;
 				padding: 5px;
 				text-align: center;
+				font-size: 12px;
 			}
 		}
 	}
