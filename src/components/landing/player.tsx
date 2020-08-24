@@ -24,7 +24,7 @@ export default class Player extends React.Component {
 						<ErrorBoundary>
 							<div className='page-content player'>
 								<SessionPanel
-									type='player'
+									user='player'
 								/>
 							</div>
 						</ErrorBoundary>

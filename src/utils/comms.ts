@@ -3,6 +3,7 @@ import Peer, { DataConnection } from 'peerjs';
 import Utils from './utils';
 
 import { DieRollResult } from '../models/dice';
+import { Monster } from '../models/monster';
 
 export interface Packet {
 	type: 'pulse' | 'player-info' | 'message';
@@ -19,7 +20,7 @@ export interface Message {
 	id: string;
 	from: string;
 	to: string[];
-	type: 'text' | 'link' | 'image' | 'roll';
+	type: 'text' | 'link' | 'image' | 'roll' | 'monster';
 	data: any;
 }
 
@@ -116,6 +117,21 @@ export class Comms {
 				type: 'roll',
 				data: {
 					roll: roll
+				}
+			}
+		};
+	}
+
+	public static createMonsterPacket(to: string[], monster: Monster): Packet {
+		return {
+			type: 'message',
+			payload: {
+				id: Utils.guid(),
+				from: Comms.getID(),
+				to: to,
+				type: 'monster',
+				data: {
+					monster: monster
 				}
 			}
 		};
@@ -230,6 +246,10 @@ export class CommsDM {
 
 	public static sendRoll(to: string[], roll: DieRollResult) {
 		this.onDataReceived(Comms.createRollPacket(to, roll));
+	}
+
+	public static sendMonster(to: string[], monster: Monster) {
+		this.onDataReceived(Comms.createMonsterPacket(to, monster));
 	}
 
 	private static onDataReceived(packet: Packet) {

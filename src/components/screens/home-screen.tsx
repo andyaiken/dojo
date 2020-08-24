@@ -52,6 +52,13 @@ export default class HomeScreen extends React.Component<Props> {
 							<li>if you're using a tactical map, <span className='app-name'>dojo</span> keeps track of everyone's location</li>
 						</ul>
 					</div>
+					<div key='session'>
+						<p className='heading'>connect with your players</p>
+						<ul>
+							<li>send messages (or links, or images, or stat blocks) to the whole table - or to just one player</li>
+							<li>share die rolls</li>
+						</ul>
+					</div>
 					<div key='epilogue'>
 						<p className='heading'>to get started</p>
 						<p>use the buttons at the bottom of the screen to explore <span className='app-name'>dojo</span>'s main features</p>

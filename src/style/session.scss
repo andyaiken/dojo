@@ -45,10 +45,16 @@
 		}
 
 		.message-content {
-			font-size: 15px;
-
 			&.emote {
 				font-style: italic;
+			}
+
+			&.text {
+				font-size: 15px;
+			}
+
+			&.monster {
+				text-align: left;
 			}
 
 			.link {
@@ -58,7 +64,6 @@
 				margin: 5px 0;
 				padding: 5px;
 				text-align: center;
-				font-size: 12px;
 			}
 		}
 	}

@@ -127,6 +127,7 @@ export default class PageSidebar extends React.Component<Props> {
 				case 'session':
 					content = (
 						<SessionSidebar
+							library={this.props.library}
 						/>
 					);
 					break;

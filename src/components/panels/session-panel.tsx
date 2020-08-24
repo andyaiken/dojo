@@ -5,10 +5,14 @@ import Showdown from 'showdown';
 
 import { Comms, CommsDM, CommsPlayer, Message, Person } from '../../utils/comms';
 import Gygax from '../../utils/gygax';
+import Utils from '../../utils/utils';
 
 import { DieRollResult } from '../../models/dice';
+import { Monster, MonsterGroup } from '../../models/monster';
 
+import MonsterStatblockCard from '../cards/monster-statblock-card';
 import Checkbox from '../controls/checkbox';
+import Dropdown from '../controls/dropdown';
 import Expander from '../controls/expander';
 import Selector from '../controls/selector';
 import Textbox from '../controls/textbox';
@@ -20,17 +24,28 @@ const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);
 
 interface Props {
-	type: 'dm' | 'player';
+	user: 'dm' | 'player';
+	library: MonsterGroup[];
 }
 
 export default class SessionPanel extends React.Component<Props> {
+	public static defaultProps = {
+		library: []
+	};
+
 	public render() {
 		try {
-			switch (this.props.type) {
+			switch (this.props.user) {
 				case 'dm':
-					return <DMSessionPanel />;
+					return (
+						<DMSessionPanel
+							library={this.props.library}
+						/>
+					);
 				case 'player':
-					return <PlayerSessionPanel />;
+					return (
+						<PlayerSessionPanel />
+					);
 			}
 		} catch (ex) {
 			console.error(ex);
@@ -42,6 +57,7 @@ export default class SessionPanel extends React.Component<Props> {
 //#region DMSessionPanel
 
 interface DMSessionPanelProps {
+	library: MonsterGroup[];
 }
 
 interface DMSessionPanelState {
@@ -95,10 +111,13 @@ class DMSessionPanel extends React.Component<DMSessionPanelProps, DMSessionPanel
 					</Expander>
 					<MessagesPanel messages={Comms.data.messages} />
 					<SendMessagePanel
+						user='dm'
+						library={this.props.library}
 						sendMessage={(to, text) => CommsDM.sendMessage(to, text)}
 						sendLink={(to, url) => CommsDM.sendLink(to, url)}
 						sendImage={(to, image) => CommsDM.sendImage(to, image)}
 						sendRoll={(to, roll) => CommsDM.sendRoll(to, roll)}
+						sendMonster={(to, monster) => CommsDM.sendMonster(to, monster)}
 					/>
 				</div>
 			);
@@ -232,10 +251,12 @@ class PlayerSessionPanel extends React.Component<PlayerSessionPanelProps, Player
 							<Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
 								<MessagesPanel messages={Comms.data.messages} />
 								<SendMessagePanel
+									user='player'
 									sendMessage={(to, text) => CommsPlayer.sendMessage(to, text)}
 									sendLink={(to, url) => CommsPlayer.sendLink(to, url)}
 									sendImage={(to, image) => CommsPlayer.sendImage(to, image)}
 									sendRoll={(to, roll) => CommsPlayer.sendRoll(to, roll)}
+									sendMonster={(to, monster) => null}
 								/>
 							</Col>
 						</Row>
@@ -391,6 +412,12 @@ class MessagePanel extends React.Component<MessagePanelProps> {
 						<DieRollResultPanel result={roll} />
 					);
 					break;
+				case 'monster':
+					const monster = this.props.message.data['monster'];
+					content = (
+						<MonsterStatblockCard monster={monster} />
+					);
+					break;
 			}
 
 			if (this.props.message.to.length !== 0) {
@@ -422,10 +449,13 @@ class MessagePanel extends React.Component<MessagePanelProps> {
 //#region SendMessagePanel
 
 interface SendMessagePanelProps {
+	user: 'dm' | 'player';
+	library: MonsterGroup[];
 	sendMessage: (to: string[], text: string) => void;
 	sendLink: (to: string[], url: string) => void;
 	sendImage: (to: string[], image: string) => void;
 	sendRoll: (to: string[], roll: DieRollResult) => void;
+	sendMonster: (to: string[], monster: Monster) => void;
 }
 
 interface SendMessagePanelState {
@@ -435,11 +465,16 @@ interface SendMessagePanelState {
 	image: string;
 	dice: { [sides: number]: number };
 	constant: number;
+	monster: Monster | null;
 	mode: string;
 	recipients: string[];
 }
 
 class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessagePanelState> {
+	public static defaultProps = {
+		library: []
+	};
+
 	constructor(props: SendMessagePanelProps) {
 		super(props);
 
@@ -454,6 +489,7 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 			image: '',
 			dice: dice,
 			constant: 0,
+			monster: null,
 			mode: 'public',
 			recipients: []
 		};
@@ -517,6 +553,12 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 		});
 	}
 
+	private setMonster(monster: Monster | null) {
+		this.setState({
+			monster: monster
+		});
+	}
+
 	private setMode(mode: string) {
 		this.setState({
 			mode: mode,
@@ -566,6 +608,9 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 			case 'roll':
 				validContent = true;
 				break;
+			case 'monster':
+				validContent = (this.state.monster !== null);
+				break;
 		}
 
 		return validRecipients && validContent;
@@ -612,6 +657,18 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 			const rec = [...this.state.recipients];
 			const result = Gygax.rollDice(this.state.dice, this.state.constant, mode);
 			this.props.sendRoll(rec, result);
+		}
+	}
+
+	private sendMonster() {
+		if (this.canSend()) {
+			const rec = [...this.state.recipients];
+			const monster = this.state.monster as Monster;
+			this.setState({
+				monster: null
+			}, () => {
+				this.props.sendMonster(rec, monster);
+			});
 		}
 	}
 
@@ -671,7 +728,7 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 									<button onClick={() => this.setImage('')}>clear</button>
 								</Col>
 								<Col span={12}>
-									<button onClick={() => this.sendImage()}>send</button>
+									<button className={this.canSend() ? '' : 'disabled'} onClick={() => this.sendImage()}>send</button>
 								</Col>
 							</Row>
 						</div>
@@ -699,6 +756,28 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 						resetDice={() => this.resetDice()}
 						rollDice={mode => this.sendRoll(mode)}
 					/>
+				);
+			case 'monster':
+				const monsters: Monster[] = [];
+				this.props.library.forEach(group => {
+					group.monsters.forEach(m => monsters.push(m));
+				});
+				Utils.sort(monsters);
+				return (
+					<div>
+						<Dropdown
+							options={monsters.map(m => ({ id: m.id, text: m.name }))}
+							selectedID={this.state.monster ? this.state.monster.id : null}
+							placeholder='select a monster...'
+							onSelect={id => {
+								const monster = monsters.find(m => m.id === id);
+								this.setMonster(monster || null);
+							}}
+							onClear={() => this.setMonster(null)}
+						/>
+						{this.state.monster ? <MonsterStatblockCard monster={this.state.monster} /> : null}
+						<button className={this.canSend() ? '' : 'disabled'} onClick={() => this.sendMonster()}>send</button>
+					</div>
 				);
 		}
 
@@ -757,10 +836,15 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 				return null;
 			}
 
+			const options = ['text', 'link', 'image', 'roll'];
+			if (this.props.user === 'dm') {
+				options.push('monster');
+			}
+
 			return (
 				<div className='send-message-panel'>
 					<Selector
-						options={['text', 'link', 'image', 'roll'].map(o => ({ id: o, text: o }))}
+						options={options.map(o => ({ id: o, text: o }))}
 						selectedID={this.state.type}
 						onSelect={type => this.setType(type)}
 					/>
