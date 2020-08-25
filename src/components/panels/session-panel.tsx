@@ -1,4 +1,4 @@
-import { CopyOutlined, ExpandOutlined, FileOutlined, LockOutlined, SendOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, CopyOutlined, ExpandOutlined, FileOutlined, LockOutlined, SendOutlined, SettingOutlined } from '@ant-design/icons';
 import { Col, Row, Upload } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
@@ -9,6 +9,7 @@ import Utils from '../../utils/utils';
 
 import { DieRollResult } from '../../models/dice';
 import { Monster, MonsterGroup } from '../../models/monster';
+import { Party, PC } from '../../models/party';
 
 import MonsterStatblockCard from '../cards/monster-statblock-card';
 import Checkbox from '../controls/checkbox';
@@ -19,18 +20,26 @@ import Textbox from '../controls/textbox';
 import DieRollPanel from './die-roll-panel';
 import DieRollResultPanel from './die-roll-result-panel';
 import Note from './note';
+import PortraitPanel from './portrait-panel';
 
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);
 
 interface Props {
 	user: 'dm' | 'player';
+	parties: Party[];
 	library: MonsterGroup[];
+	update: () => void;
+	editPC: (pc: PC) => void;
+	openImage: (data: string) => void;
+	openStatBlock: (monster: Monster) => void;
 }
 
 export default class SessionPanel extends React.Component<Props> {
 	public static defaultProps = {
-		library: []
+		parties: [],
+		library: [],
+		editPC: null
 	};
 
 	public render() {
@@ -39,12 +48,21 @@ export default class SessionPanel extends React.Component<Props> {
 				case 'dm':
 					return (
 						<DMSessionPanel
+							parties={this.props.parties}
 							library={this.props.library}
+							update={() => this.props.update()}
+							openImage={data => this.props.openImage(data)}
+							openStatBlock={monster => this.props.openStatBlock(monster)}
 						/>
 					);
 				case 'player':
 					return (
-						<PlayerSessionPanel />
+						<PlayerSessionPanel
+							update={() => this.props.update()}
+							editPC={pc => this.props.editPC(pc)}
+							openImage={data => this.props.openImage(data)}
+							openStatBlock={monster => this.props.openStatBlock(monster)}
+						/>
 					);
 			}
 		} catch (ex) {
@@ -57,20 +75,17 @@ export default class SessionPanel extends React.Component<Props> {
 //#region DMSessionPanel
 
 interface DMSessionPanelProps {
+	parties: Party[];
 	library: MonsterGroup[];
+	update: () => void;
+	openImage: (data: string) => void;
+	openStatBlock: (monster: Monster) => void;
 }
 
-interface DMSessionPanelState {
-}
-
-class DMSessionPanel extends React.Component<DMSessionPanelProps, DMSessionPanelState> {
-	constructor(props: DMSessionPanelProps) {
-		super(props);
-		this.state = {
-		};
-
+class DMSessionPanel extends React.Component<DMSessionPanelProps> {
+	public componentDidMount() {
 		CommsDM.init();
-		CommsDM.onDataChanged = () => this.setState(this.state);
+		CommsDM.onDataChanged = () => this.props.update();
 	}
 
 	public componentWillUnmount() {
@@ -83,7 +98,7 @@ class DMSessionPanel extends React.Component<DMSessionPanelProps, DMSessionPanel
 
 			return (
 				<div>
-					<Expander text='information'>
+					<Expander text='session information'>
 						<Note>
 							<p>give your dm code to your players, and ask them to open the player app in their browser</p>
 						</Note>
@@ -105,11 +120,31 @@ class DMSessionPanel extends React.Component<DMSessionPanelProps, DMSessionPanel
 								<CopyOutlined title='copy' onClick={e => navigator.clipboard.writeText(playerURL)} />
 							</div>
 						</div>
+						<Dropdown
+							placeholder='select a party...'
+							options={this.props.parties.map(party => ({ id: party.id, text: party.name }))}
+							selectedID={Comms.getPartyID()}
+							onSelect={id => {
+								const party = this.props.parties.find(p => p.id === id);
+								CommsDM.setParty(party ?? null);
+							}}
+							onClear={() => {
+								CommsDM.setParty(null);
+							}}
+						/>
 					</Expander>
 					<Expander text='people'>
-						<PeoplePanel people={Comms.data.people} />
+						<PeoplePanel
+							user='dm'
+							people={Comms.data.people}
+							editPC={id => null}
+						/>
 					</Expander>
-					<MessagesPanel messages={Comms.data.messages} />
+					<MessagesPanel
+						messages={Comms.data.messages}
+						openImage={data => this.props.openImage(data)}
+						openStatBlock={monster => this.props.openStatBlock(monster)}
+					/>
 					<SendMessagePanel
 						user='dm'
 						library={this.props.library}
@@ -133,12 +168,15 @@ class DMSessionPanel extends React.Component<DMSessionPanelProps, DMSessionPanel
 //#region PlayerSessionPanel
 
 interface PlayerSessionPanelProps {
+	update: () => void;
+	editPC: (pc: PC) => void;
+	openImage: (data: string) => void;
+	openStatBlock: (monster: Monster) => void;
 }
 
 interface PlayerSessionPanelState {
 	code: string;
 	name: string;
-	status: string;
 }
 
 class PlayerSessionPanel extends React.Component<PlayerSessionPanelProps, PlayerSessionPanelState> {
@@ -146,12 +184,13 @@ class PlayerSessionPanel extends React.Component<PlayerSessionPanelProps, Player
 		super(props);
 		this.state = {
 			code: '',
-			name: '',
-			status: ''
+			name: ''
 		};
+	}
 
-		CommsPlayer.onStateChanged = () => this.setState(this.state);
-		CommsPlayer.onDataChanged = () => this.setState(this.state);
+	public componentDidMount() {
+		CommsPlayer.onStateChanged = () => this.props.update();
+		CommsPlayer.onDataChanged = () => this.props.update();
 	}
 
 	public componentWillUnmount() {
@@ -171,12 +210,6 @@ class PlayerSessionPanel extends React.Component<PlayerSessionPanelProps, Player
 		});
 	}
 
-	private setStatus(status: string) {
-		this.setState({
-			status: status
-		});
-	}
-
 	private canConnect() {
 		return (this.state.code !== '') && (this.state.name !== '');
 	}
@@ -187,13 +220,13 @@ class PlayerSessionPanel extends React.Component<PlayerSessionPanelProps, Player
 		}
 	}
 
-	private sendUpdate() {
-		const status = this.state.status;
-		this.setState({
-			status: ''
-		}, () => {
-			CommsPlayer.sendUpdate(status);
-		});
+	private editPC(id: string) {
+		if (Comms.data.party) {
+			const pc = Comms.data.party.pcs.find(p => p.id === id);
+			if (pc) {
+				this.props.editPC(pc);
+			}
+		}
 	}
 
 	public render() {
@@ -212,7 +245,7 @@ class PlayerSessionPanel extends React.Component<PlayerSessionPanelProps, Player
 					return (
 						<div className='connection-panel'>
 							<Note>
-								<p>connecting...</p>
+								<p>connecting to <span className='app-name'>dojo</span>...</p>
 							</Note>
 						</div>
 					);
@@ -221,35 +254,20 @@ class PlayerSessionPanel extends React.Component<PlayerSessionPanelProps, Player
 						<Row className='full-height'>
 							<Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar sidebar-left'>
 								<Note>
-									<p>you can set your status here</p>
-								</Note>
-								<div className='group-panel'>
-									<div className='subheading'>
-										{Comms.getName(Comms.getID())}
-									</div>
-									<div className='control-with-icons'>
-										<Textbox
-											placeholder='update your status'
-											debounce={false}
-											text={this.state.status}
-											onChange={status => this.setStatus(status)}
-											onPressEnter={() => this.sendUpdate()}
-										/>
-										<div className='icons'>
-											<SendOutlined
-												onClick={() => this.sendUpdate()}
-												title='update status'
-											/>
-										</div>
-									</div>
-								</div>
-								<Note>
 									<p>the following people are connected</p>
 								</Note>
-								<PeoplePanel people={Comms.data.people} />
+								<PeoplePanel
+									user='player'
+									people={Comms.data.people}
+									editPC={id => this.editPC(id)}
+								/>
 							</Col>
 							<Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
-								<MessagesPanel messages={Comms.data.messages} />
+								<MessagesPanel
+									messages={Comms.data.messages}
+									openImage={data => this.props.openImage(data)}
+									openStatBlock={monster => this.props.openStatBlock(monster)}
+								/>
 								<SendMessagePanel
 									user='player'
 									sendMessage={(to, text) => CommsPlayer.sendMessage(to, text)}
@@ -274,10 +292,102 @@ class PlayerSessionPanel extends React.Component<PlayerSessionPanelProps, Player
 //#region PeoplePanel
 
 interface PeoplePanelProps {
+	user: 'dm' | 'player';
 	people: Person[];
+	editPC: (id: string) => void;
 }
 
-class PeoplePanel extends React.Component<PeoplePanelProps> {
+interface PeoplePanelState {
+	showControls: boolean;
+	status: string;
+	pc: string;
+}
+
+class PeoplePanel extends React.Component<PeoplePanelProps, PeoplePanelState> {
+	constructor(props: PeoplePanelProps) {
+		super(props);
+		this.state = {
+			showControls: false,
+			status: '',
+			pc: ''
+		};
+	}
+
+	private toggleControls() {
+		this.setState({
+			showControls: !this.state.showControls
+		});
+	}
+
+	private setStatus(status: string) {
+		this.setState({
+			status: status
+		});
+	}
+
+	private setPC(id: string) {
+		this.setState({
+			pc: id
+		}, () => {
+			this.sendUpdate();
+		});
+	}
+
+	private sendUpdate() {
+		CommsPlayer.sendUpdate(this.state.status, this.state.pc);
+	}
+
+	private getControlsSection() {
+		let pcSection = null;
+		if (Comms.data.party) {
+			const pc = Comms.getPC(Comms.getID());
+			if (pc === '') {
+				pcSection = (
+					<Dropdown
+						options={Comms.data.party.pcs.map(p => {
+							const claimed = Comms.data.people.some(person => person.pc === p.id);
+							return {
+								id: p.id,
+								text: p.name,
+								disabled: claimed
+							};
+						})}
+						placeholder={'select your character...'}
+						selectedID={this.state.pc}
+						onSelect={id => this.setPC(id)}
+					/>
+				);
+			} else {
+				pcSection = (
+					<div>
+						<button onClick={() => this.props.editPC(pc)}>update character stats</button>
+					</div>
+				);
+			}
+		}
+
+		return (
+			<div className='controls-panel'>
+				{pcSection}
+				<div className='control-with-icons'>
+					<Textbox
+						placeholder='update your status'
+						debounce={false}
+						text={this.state.status}
+						onChange={status => this.setStatus(status)}
+						onPressEnter={() => this.sendUpdate()}
+					/>
+					<div className='icons'>
+						<SendOutlined
+							onClick={() => this.sendUpdate()}
+							title='update status'
+						/>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
 	public render() {
 		try {
 			// There should always be a DM at least
@@ -289,11 +399,44 @@ class PeoplePanel extends React.Component<PeoplePanelProps> {
 				);
 			}
 
-			const people = this.props.people.map(data => {
+			const people = this.props.people.map(person => {
+				let icon = null;
+
+				let content = (
+					<div>
+						<div className='status'>{person.status}</div>
+					</div>
+				);
+
+				if ((this.props.user === 'player') && (person.id === Comms.getID())) {
+					icon = (
+						<SettingOutlined
+							className={this.state.showControls ? 'control-icon active' : 'control-icon'}
+							onClick={() => this.toggleControls()}
+						/>
+					);
+
+					if (this.state.showControls) {
+						content = this.getControlsSection();
+					}
+				}
+
+				if ((this.props.user === 'dm') && (person.id !== Comms.getID())) {
+					icon = (
+						<CloseCircleOutlined
+							className='control-icon'
+							onClick={() => CommsDM.kick(person.id)}
+						/>
+					);
+				}
+
 				return (
-					<div key={data.id} className='group-panel person'>
-						<div className='name'>{data.name}</div>
-						<div className='status'>{data.status}</div>
+					<div key={person.id} className='group-panel person'>
+						<div className='top-line'>
+							<CharacterPanel person={person} />
+							{icon}
+						</div>
+						{content}
 					</div>
 				);
 			});
@@ -316,6 +459,8 @@ class PeoplePanel extends React.Component<PeoplePanelProps> {
 
 interface MessagesPanelProps {
 	messages: Message[];
+	openImage: (data: string) => void;
+	openStatBlock: (monster: Monster) => void;
 }
 
 class MessagesPanel extends React.Component<MessagesPanelProps> {
@@ -329,7 +474,14 @@ class MessagesPanel extends React.Component<MessagesPanelProps> {
 		try {
 			const messages = this.props.messages
 				.filter(message => this.showMessage(message))
-				.map(message => <MessagePanel key={message.id} message={message} />);
+				.map(message => (
+					<MessagePanel
+						key={message.id}
+						message={message}
+						openImage={data => this.props.openImage(data)}
+						openStatBlock={monster => this.props.openStatBlock(monster)}
+					/>
+				));
 
 			if (messages.length === 0) {
 				messages.push(
@@ -358,12 +510,14 @@ class MessagesPanel extends React.Component<MessagesPanelProps> {
 
 interface MessagePanelProps {
 	message: Message;
+	openImage: (data: string) => void;
+	openStatBlock: (monster: Monster) => void;
 }
 
 class MessagePanel extends React.Component<MessagePanelProps> {
 	public render() {
 		try {
-			let byline = Comms.getName(this.props.message.from);
+			let byline = Comms.getCurrentName(this.props.message.from);
 			let mainStyle = 'message';
 			let bylineStyle = 'message-byline';
 			let contentStyle = 'message-content ' + this.props.message.type;
@@ -403,7 +557,7 @@ class MessagePanel extends React.Component<MessagePanelProps> {
 				case 'image':
 					const image = this.props.message.data['image'];
 					content = (
-						<img className='nonselectable-image' src={image} alt='' />
+						<img className='selectable-image' src={image} alt='' onClick={() => this.props.openImage(image)} />
 					);
 					break;
 				case 'roll':
@@ -415,13 +569,15 @@ class MessagePanel extends React.Component<MessagePanelProps> {
 				case 'monster':
 					const monster = this.props.message.data['monster'];
 					content = (
-						<MonsterStatblockCard monster={monster} />
+						<button className='statblock' onClick={() => this.props.openStatBlock(monster)}>
+							{monster.name}
+						</button>
 					);
 					break;
 			}
 
 			if (this.props.message.to.length !== 0) {
-				byline += ' to ' + this.props.message.to.map(rec => Comms.getName(rec)).join(', ');
+				byline += ' to ' + this.props.message.to.map(rec => Comms.getCurrentName(rec)).join(', ');
 				bylineStyle += ' private';
 				icon = <LockOutlined title='private message' />;
 			}
@@ -792,7 +948,7 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 				.map(person => (
 					<Checkbox
 						key={person.id}
-						label={person.name}
+						label={Comms.getCurrentName(person.id)}
 						checked={this.state.recipients.includes(person.id)}
 						display='switch'
 						onChecked={value => value ? this.addRecipient(person.id) : this.removeRecipient(person.id)}
@@ -856,6 +1012,41 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 			console.error(ex);
 			return <div className='render-error'/>;
 		}
+	}
+}
+
+//#endregion
+
+//#region CharacterPanel
+
+interface CharacterPanelProps {
+	person: Person | null;
+}
+
+class CharacterPanel extends React.Component<CharacterPanelProps> {
+	public render() {
+		if (!this.props.person) {
+			return null;
+		}
+
+		if (Comms.data.party !== null) {
+			const id = this.props.person.pc;
+			const pc = Comms.data.party.pcs.find(p => p.id === id);
+			if (pc) {
+				return (
+					<div className='character-panel'>
+						<PortraitPanel source={pc} inline={true} />
+						<div className='name'>{pc.name}</div>
+					</div>
+				);
+			}
+		}
+
+		return (
+			<div className='character-panel'>
+				<div className='name'>{this.props.person.name}</div>
+			</div>
+		);
 	}
 }
 

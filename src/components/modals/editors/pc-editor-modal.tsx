@@ -197,7 +197,7 @@ export default class PCEditorModal extends React.Component<Props, State> {
 						<div className='subheading'>portrait</div>
 						<PortraitPanel
 							source={this.state.pc}
-							edit={() => this.toggleImageSelection()}
+							setPortrait={data => this.changeValue(this.state.pc, 'portrait', data)}
 							clear={() => this.changeValue(this.state.pc, 'portrait', '')}
 						/>
 						<div className='subheading'>companions:</div>

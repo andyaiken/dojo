@@ -1,4 +1,5 @@
-import { CloseCircleOutlined, UserOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, FileOutlined } from '@ant-design/icons';
+import { Upload } from 'antd';
 import React from 'react';
 
 import { Monster } from '../../models/monster';
@@ -7,35 +8,49 @@ import { PC } from '../../models/party';
 interface Props {
 	source: PC | Monster;
 	inline: boolean;
-	edit: () => void;
+	setPortrait: (data: string) => void;
 	clear: () => void;
 }
 
 export default class PortraitPanel extends React.Component<Props> {
 	public static defaultProps = {
 		inline: false,
-		edit: null,
+		setPortrait: null,
 		clear: null
 	};
 
+	private readFile(file: File) {
+		const reader = new FileReader();
+		reader.onload = progress => {
+			if (progress.target) {
+				const content = progress.target.result as string;
+				this.props.setPortrait(content);
+			}
+		};
+		reader.readAsDataURL(file);
+		return false;
+	}
+
 	private getEditor() {
+		let img = null;
 		let clearBtn = null;
-		if (this.props.source.portrait) {
+		if (this.props.source.portrait !== '') {
+			img = (
+				<img className='circle' src={this.props.source.portrait} alt='portrait' />
+			);
 			clearBtn = (
 				<CloseCircleOutlined className='clear' onClick={() => this.props.clear()} />
 			);
-		}
-
-		let img = null;
-		const data = window.localStorage.getItem('image-' + this.props.source.portrait);
-		if (data) {
-			const image = JSON.parse(data);
-			img = (
-				<img className='circle' src={image.data} alt='portrait' onClick={() => this.props.edit()} />
-			);
 		} else {
 			img = (
-				<UserOutlined className='circle' style={{ opacity: 0.5 }} onClick={() => this.props.edit()} />
+				<Upload.Dragger accept='image/*' showUploadList={false} beforeUpload={file => this.readFile(file)}>
+					<p className='ant-upload-drag-icon'>
+						<FileOutlined />
+					</p>
+					<p className='ant-upload-text'>
+						click here, or drag a file here, to upload it
+					</p>
+				</Upload.Dragger>
 			);
 		}
 
@@ -50,17 +65,7 @@ export default class PortraitPanel extends React.Component<Props> {
 	}
 
 	private getDisplay() {
-		if (!this.props.source.portrait) {
-			return null;
-		}
-
-		const data = window.localStorage.getItem('image-' + this.props.source.portrait);
-		if (!data) {
-			return null;
-		}
-
-		const image = JSON.parse(data);
-		if (!image.data) {
+		if (this.props.source.portrait === '') {
 			return null;
 		}
 
@@ -73,14 +78,14 @@ export default class PortraitPanel extends React.Component<Props> {
 
 		return (
 			<div className={style}>
-				<img className='circle' src={image.data} alt='portrait' />
+				<img className='circle' src={this.props.source.portrait} alt='portrait' />
 			</div>
 		);
 	}
 
 	public render() {
 		try {
-			return (this.props.edit !== null) ? this.getEditor() : this.getDisplay();
+			return (this.props.setPortrait !== null) ? this.getEditor() : this.getDisplay();
 		} catch (e) {
 			console.error(e);
 			return <div className='render-error'/>;

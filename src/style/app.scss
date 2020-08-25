@@ -251,7 +251,8 @@ p,
 .control-with-icons {
 	position: relative;
 
-	>input {
+	>input,
+	>textarea {
 		margin: 0;
 	}
 

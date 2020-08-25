@@ -2719,6 +2719,13 @@ export default class Main extends React.Component<Props, State> {
 					header = 'statblock';
 					closable = true;
 					break;
+				case 'image':
+					content = (
+						<img className='nonselectable-image' src={this.state.drawer.data} alt='' />
+					);
+					header = 'image';
+					closable = true;
+					break;
 				case 'import-party':
 					content = (
 						<PartyImportModal
@@ -3075,6 +3082,9 @@ export default class Main extends React.Component<Props, State> {
 							selectMonsterGroup={id => this.selectMonsterGroupByID(id)}
 							selectEncounter={id => this.selectEncounterByID(id)}
 							selectMap={id => this.selectMapByID(id)}
+							update={() => this.setState(this.state)}
+							openImage={data => this.setState({drawer: { type: 'image', data: data }})}
+							openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
 						/>
 					</ErrorBoundary>
 					<ErrorBoundary>

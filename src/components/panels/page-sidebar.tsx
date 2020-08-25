@@ -40,6 +40,9 @@ interface Props {
 	selectMonsterGroup: (id: string) => void;
 	selectEncounter: (id: string) => void;
 	selectMap: (id: string) => void;
+	update: () => void;
+	openImage: (data: string) => void;
+	openStatBlock: (monster: Monster) => void;
 }
 
 export default class PageSidebar extends React.Component<Props> {
@@ -127,7 +130,11 @@ export default class PageSidebar extends React.Component<Props> {
 				case 'session':
 					content = (
 						<SessionSidebar
+							parties={this.props.parties}
 							library={this.props.library}
+							update={() => this.props.update()}
+							openImage={data => this.props.openImage(data)}
+							openStatBlock={monster => this.props.openStatBlock(monster)}
 						/>
 					);
 					break;

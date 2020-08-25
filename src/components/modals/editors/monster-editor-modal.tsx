@@ -932,7 +932,7 @@ class OverviewTab extends React.Component<OverviewTabProps> {
 						<div className='subheading'>portrait</div>
 						<PortraitPanel
 							source={this.props.monster}
-							edit={() => this.props.toggleImageSelection()}
+							setPortrait={data => this.props.changeValue('portrait', data)}
 							clear={() => this.props.changeValue('portrait', '')}
 						/>
 					</Col>
