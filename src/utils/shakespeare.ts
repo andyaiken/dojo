@@ -3,6 +3,8 @@
 import Gygax from './gygax';
 import Utils from './utils';
 
+import { PC } from '../models/party';
+
 interface ModelLine {
 	prev: string;
 	freq: ModelChar[];
@@ -67,16 +69,20 @@ export default class Shakespeare {
 		}
 	}
 
-	public static generate(requiredResults: number): { line: string, fit: number }[] {
-		const lines: { line: string, fit: number }[] = [];
+	public static generateLine() {
+		const lines = this.generateLines(1);
+		return lines.length > 0 ? lines[0] : '';
+	}
+
+	public static generateLines(requiredResults: number) {
+		const lines: string[] = [];
 		const allowedFailures = 100;
 		let failures = 0;
 
 		while ((lines.length < requiredResults) && (failures < allowedFailures)) {
 			const line = Shakespeare.extractLine();
-			if (line && !lines.map(l => l.line).includes(line) && line.length <= Shakespeare.maxLength) {
-				const fit = Shakespeare.fit(line);
-				lines.push({ line, fit });
+			if (line && !lines.includes(line) && line.length <= Shakespeare.maxLength) {
+				lines.push(line);
 			} else {
 				failures += 1;
 			}
@@ -121,31 +127,108 @@ export default class Shakespeare {
 		}
 	}
 
-	private static fit(text: string): number {
-		text = String.fromCharCode(0, 1) + text + String.fromCharCode(2);
-
-		const values: number[] = [];
-		for (let n = 2; n !== text.length; ++n) {
-			const prev = text.substr(n - 2, 2);
-			const ch = text[n];
-
-			const line = Shakespeare.model.find(m => m.prev === prev);
-			if (line) {
-				const mc = line.freq.find(f => f.char === ch);
-				if (mc) {
-					const maxCount = line.freq.reduce((max, value) => Math.max(max, value.count), 0);
-					const fit = mc.count / maxCount;
-					values.push(fit);
-				} else {
-					values.push(0);
-				}
-			}
-		}
-
-		return values.reduce((sum, value) => sum + value, 0) / values.length;
+	public static getAllLanguages(): string[] {
+		// Note: When adding a language to this list, also check the Ustinov.getLanguageCode() method
+		return [
+			'afrikaans',
+			'amharic',
+			'armenian',
+			'basque',
+			'belarusian',
+			'bulgarian',
+			'chichewa',
+			'chinese',
+			'croatian',
+			'czech',
+			'danish',
+			'dutch',
+			'english',
+			'finnish',
+			'french',
+			'german',
+			'greek',
+			'hawaiian',
+			'hindi',
+			'hungarian',
+			'icelandic',
+			'irish',
+			'italian',
+			'japanese',
+			'kannada',
+			'kazakh',
+			'korean',
+			'kyrgyz',
+			'latvian',
+			'lithuanian',
+			'macedonian',
+			'malay',
+			'maltese',
+			'maori',
+			'myanmar',
+			'nepali',
+			'norwegian',
+			'polish',
+			'portuguese',
+			'punjabi',
+			'romanian',
+			'russian',
+			'samoan',
+			'serbian',
+			'shona',
+			'somali',
+			'spanish',
+			'swahili',
+			'swedish',
+			'thai',
+			'turkish',
+			'welsh',
+			'yiddish',
+			'zulu'
+		];
 	}
 
 	//#endregion
+
+	public static generateTranslation(original: string) {
+		const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+
+		let text = '';
+		for (let index = 0; index !== original.length; ++index) {
+			const ch = original.toLowerCase().charAt(index);
+			if (ch !== ' ') {
+				const n = Utils.randomNumber(alphabet.length);
+				text += alphabet[n];
+			} else {
+				text += ' ';
+			}
+		}
+
+		return Shakespeare.shuffle(text);
+	}
+
+	public static getSpokenLanguages(pcs: PC[]) {
+		return pcs
+			.map(pc => pc.languages.toLowerCase())
+			.join(', ')
+			.split(/[,;:]+/)
+			.map(val => val.trim())
+			.reduce((array: string[], value) => {
+				if (array.indexOf(value) === -1) {
+					array.push(value);
+				}
+				return array;
+			}, [])
+			.sort((a, b) => {
+				if (a === 'common') {
+					return -1;
+				}
+				if (b === 'common') {
+					return 1;
+				}
+				return a.localeCompare(b);
+			})
+			.map(lang => Shakespeare.capitalise(lang));
+	}
 
 	public static startsWithVowel(str: string) {
 		let result = false;
@@ -157,6 +240,19 @@ export default class Shakespeare {
 		});
 
 		return result;
+	}
+
+	public static shuffle(str: string) {
+		const chars = str.split('');
+
+		for (let i = chars.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			const tmp = chars[i];
+			chars[i] = chars[j];
+			chars[j] = tmp;
+		}
+
+		return chars.join('');
 	}
 
 	public static capitalise(str: string) {

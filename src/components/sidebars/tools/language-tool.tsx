@@ -30,66 +30,6 @@ export default class LanguageTool extends React.Component<Props, State> {
 		};
 	}
 
-	private getAllLanguages(): string[] {
-		// Note: When adding a language to this list, also check the Speech.getLanguageCode() method
-		return [
-			'afrikaans',
-			'amharic',
-			'armenian',
-			'basque',
-			'belarusian',
-			'bulgarian',
-			'chichewa',
-			'chinese',
-			'croatian',
-			'czech',
-			'danish',
-			'dutch',
-			'english',
-			'finnish',
-			'french',
-			'german',
-			'greek',
-			'hawaiian',
-			'hindi',
-			'hungarian',
-			'icelandic',
-			'irish',
-			'italian',
-			'japanese',
-			'kannada',
-			'kazakh',
-			'korean',
-			'kyrgyz',
-			'latvian',
-			'lithuanian',
-			'macedonian',
-			'malay',
-			'maltese',
-			'maori',
-			'myanmar',
-			'nepali',
-			'norwegian',
-			'polish',
-			'portuguese',
-			'punjabi',
-			'romanian',
-			'russian',
-			'samoan',
-			'serbian',
-			'shona',
-			'somali',
-			'spanish',
-			'swahili',
-			'swedish',
-			'thai',
-			'turkish',
-			'welsh',
-			'yiddish',
-			'zulu'
-		];
-	}
-
 	private addLanguage(language: string) {
 		this.state.languages.push(language);
 		this.setState({
@@ -133,7 +73,7 @@ export default class LanguageTool extends React.Component<Props, State> {
 	}
 
 	private random() {
-		const languages = this.getAllLanguages();
+		const languages = Shakespeare.getAllLanguages();
 
 		const selection: string[] = [];
 		while (selection.length !== 3) {
@@ -156,8 +96,9 @@ export default class LanguageTool extends React.Component<Props, State> {
 			const data = r.map(response => response.text());
 			Promise.all(data).then(text => {
 				Shakespeare.initModel(text);
+				const lines = Shakespeare.generateLines(5);
 				this.setState({
-					output: Shakespeare.generate(5).map(l => l.line)
+					output: lines
 				});
 			});
 		});
@@ -189,7 +130,7 @@ export default class LanguageTool extends React.Component<Props, State> {
 					selectedLanguages = 'none';
 				}
 
-				const languages = this.getAllLanguages()
+				const languages = Shakespeare.getAllLanguages()
 					.map(lang => {
 						const isSelected = this.state.languages.includes(lang);
 						return (
@@ -285,7 +226,7 @@ class GeneratedText extends React.Component<GeneratedTextProps> {
 					</div>
 					<div className='icon-section'>
 						<div>
-							<CopyOutlined title='copy' onClick={e => this.copy(e)} />
+							<CopyOutlined title='copy to clipboard' onClick={e => this.copy(e)} />
 						</div>
 						<div>
 							<SoundOutlined title='say (experimental)' onClick={e => this.say(e)} />

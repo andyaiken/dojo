@@ -334,8 +334,22 @@ button {
 		color: $highlight;
 	}
 
-	p.ant-upload-drag-icon .anticon {
-		color: $control-border;
+	.ant-upload {
+		padding: 0;
+	}
+
+	p.ant-upload-drag-icon {
+		margin: 10px 0;
+
+		.anticon {
+			color: $control-border;
+		}
+	}
+
+	p.ant-upload-text {
+		font-size: 12px;
+		text-align: left;
+    	padding: 5px 8px;
 	}
 }
 

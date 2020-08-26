@@ -2,6 +2,7 @@ import { Col, Drawer, Row } from 'antd';
 import Mousetrap from 'mousetrap';
 import React from 'react';
 
+import { Comms, CommsDM } from '../../utils/comms';
 import Factory from '../../utils/factory';
 import Frankenstein from '../../utils/frankenstein';
 import Gygax from '../../utils/gygax';
@@ -328,6 +329,9 @@ export default class Main extends React.Component<Props, State> {
 
 	public componentWillUnmount() {
 		Mousetrap.unbind('ctrl+f');
+
+		CommsDM.kickAll();
+		Comms.stop();
 	}
 
 	public componentDidUpdate() {

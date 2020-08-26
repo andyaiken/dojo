@@ -137,6 +137,9 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
 									<p className='ant-upload-text'>
 										click here, or drag a file here, to upload it
 									</p>
+									<p className='ant-upload-text'>
+										try to upload small images if possible
+									</p>
 								</Upload.Dragger>
 							</div>
 							{images}

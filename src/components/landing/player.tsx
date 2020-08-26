@@ -1,7 +1,7 @@
 import { Col, Drawer, Row } from 'antd';
 import React from 'react';
 
-import { CommsPlayer } from '../../utils/comms';
+import { Comms, CommsPlayer } from '../../utils/comms';
 
 import { PC } from '../../models/party';
 
@@ -24,6 +24,11 @@ export default class Player extends React.Component<Props, State> {
 		this.state = {
 			drawer: null
 		};
+	}
+
+	public componentWillUnmount() {
+		CommsPlayer.disconnect();
+		Comms.stop();
 	}
 
 	private editPC(pc: PC) {

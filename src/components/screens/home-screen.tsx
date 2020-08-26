@@ -57,6 +57,7 @@ export default class HomeScreen extends React.Component<Props> {
 						<ul>
 							<li>send messages (or links, or images, or stat blocks) to the whole table - or to just one player</li>
 							<li>share die rolls</li>
+							<li>each player can update their character's stats, so you don't have to</li>
 						</ul>
 					</div>
 					<div key='epilogue'>

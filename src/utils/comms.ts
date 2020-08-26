@@ -6,6 +6,9 @@ import { DieRollResult } from '../models/dice';
 import { Monster } from '../models/monster';
 import { Party, PC } from '../models/party';
 
+// This controls the interval, in seconds, between pulses
+const PULSE_INTERVAL = 60;
+
 export interface Packet {
 	type: 'pulse' | 'player-info' | 'character-info' | 'message';
 	payload: any;
@@ -33,8 +36,6 @@ export interface CommsData {
 }
 
 export class Comms {
-	private static server: any;
-
 	public static peer: Peer | null = null;
 	public static data: CommsData = {
 		people: [],
@@ -52,6 +53,13 @@ export class Comms {
 		this.peer.on('close', () => console.info('peer closed'));
 		this.peer.on('disconnected', () => console.info('peer disconnected'));
 		this.peer.on('error', err => console.error(err));
+	}
+
+	public static stop() {
+		if (this.peer) {
+			this.peer.disconnect();
+			this.peer = null;
+		}
 	}
 
 	public static getID() {
@@ -91,7 +99,7 @@ export class Comms {
 		return Comms.getName(id);
 	}
 
-	public static createTextPacket(to: string[], text: string): Packet {
+	public static createTextPacket(to: string[], text: string, language: string, untranslated: string): Packet {
 		return {
 			type: 'message',
 			payload: {
@@ -100,7 +108,9 @@ export class Comms {
 				to: to,
 				type: 'text',
 				data: {
-					text: text
+					text: text,
+					language: language,
+					untranslated: untranslated
 				}
 			}
 		};
@@ -246,7 +256,7 @@ export class CommsDM {
 
 				setInterval(() => {
 					this.sendPulse();
-				}, 30 * 1000);
+				}, PULSE_INTERVAL * 1000);
 
 				this.initialised = true;
 			}
@@ -267,6 +277,11 @@ export class CommsDM {
 
 			this.sendPulse();
 		}
+	}
+
+	public static kickAll() {
+		this.connections.forEach(conn => conn.close());
+		this.connections = [];
 	}
 
 	public static sendPulse() {
@@ -297,8 +312,8 @@ export class CommsDM {
 		});
 	}
 
-	public static sendMessage(to: string[], text: string) {
-		this.onDataReceived(Comms.createTextPacket(to, text));
+	public static sendMessage(to: string[], text: string, language: string, untranslated: string) {
+		this.onDataReceived(Comms.createTextPacket(to, text, language, untranslated));
 	}
 
 	public static sendLink(to: string[], url: string) {
@@ -377,6 +392,14 @@ export class CommsPlayer {
 		}
 	}
 
+	public static disconnect() {
+		if (this.connection) {
+			this.connection.close();
+			this.connection = null;
+			this.state = 'not connected';
+		}
+	}
+
 	public static sendUpdate(status: string, pc: string) {
 		this.sendPacket({
 			type: 'player-info',
@@ -388,8 +411,8 @@ export class CommsPlayer {
 		});
 	}
 
-	public static sendMessage(to: string[], text: string) {
-		this.sendPacket(Comms.createTextPacket(to, text));
+	public static sendMessage(to: string[], text: string, language: string, untranslated: string) {
+		this.sendPacket(Comms.createTextPacket(to, text, language, untranslated));
 	}
 
 	public static sendLink(to: string[], url: string) {

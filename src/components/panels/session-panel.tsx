@@ -5,6 +5,7 @@ import Showdown from 'showdown';
 
 import { Comms, CommsDM, CommsPlayer, Message, Person } from '../../utils/comms';
 import Gygax from '../../utils/gygax';
+import Shakespeare from '../../utils/shakespeare';
 import Utils from '../../utils/utils';
 
 import { DieRollResult } from '../../models/dice';
@@ -24,6 +25,8 @@ import PortraitPanel from './portrait-panel';
 
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);
+
+//#region SessionPanel
 
 interface Props {
 	user: 'dm' | 'player';
@@ -72,6 +75,8 @@ export default class SessionPanel extends React.Component<Props> {
 	}
 }
 
+//#endregion
+
 //#region DMSessionPanel
 
 interface DMSessionPanelProps {
@@ -108,7 +113,7 @@ class DMSessionPanel extends React.Component<DMSessionPanelProps> {
 								<p className='smallest strong'>{Comms.getID()}</p>
 							</div>
 							<div className='icon-section'>
-								<CopyOutlined title='copy' onClick={e => navigator.clipboard.writeText(Comms.getID())} />
+								<CopyOutlined title='copy to clipboard' onClick={e => navigator.clipboard.writeText(Comms.getID())} />
 							</div>
 						</div>
 						<div className='generated-item group-panel'>
@@ -117,7 +122,7 @@ class DMSessionPanel extends React.Component<DMSessionPanelProps> {
 								<p className='smallest strong'>{playerURL}</p>
 							</div>
 							<div className='icon-section'>
-								<CopyOutlined title='copy' onClick={e => navigator.clipboard.writeText(playerURL)} />
+								<CopyOutlined title='copy to clipboard' onClick={e => navigator.clipboard.writeText(playerURL)} />
 							</div>
 						</div>
 						<Dropdown
@@ -141,6 +146,7 @@ class DMSessionPanel extends React.Component<DMSessionPanelProps> {
 						/>
 					</Expander>
 					<MessagesPanel
+						user='dm'
 						messages={Comms.data.messages}
 						openImage={data => this.props.openImage(data)}
 						openStatBlock={monster => this.props.openStatBlock(monster)}
@@ -148,7 +154,7 @@ class DMSessionPanel extends React.Component<DMSessionPanelProps> {
 					<SendMessagePanel
 						user='dm'
 						library={this.props.library}
-						sendMessage={(to, text) => CommsDM.sendMessage(to, text)}
+						sendMessage={(to, text, language, untranslated) => CommsDM.sendMessage(to, text, language, untranslated)}
 						sendLink={(to, url) => CommsDM.sendLink(to, url)}
 						sendImage={(to, image) => CommsDM.sendImage(to, image)}
 						sendRoll={(to, roll) => CommsDM.sendRoll(to, roll)}
@@ -264,13 +270,14 @@ class PlayerSessionPanel extends React.Component<PlayerSessionPanelProps, Player
 							</Col>
 							<Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
 								<MessagesPanel
+									user='player'
 									messages={Comms.data.messages}
 									openImage={data => this.props.openImage(data)}
 									openStatBlock={monster => this.props.openStatBlock(monster)}
 								/>
 								<SendMessagePanel
 									user='player'
-									sendMessage={(to, text) => CommsPlayer.sendMessage(to, text)}
+									sendMessage={(to, text, language, untranslated) => CommsPlayer.sendMessage(to, text, language, untranslated)}
 									sendLink={(to, url) => CommsPlayer.sendLink(to, url)}
 									sendImage={(to, image) => CommsPlayer.sendImage(to, image)}
 									sendRoll={(to, roll) => CommsPlayer.sendRoll(to, roll)}
@@ -458,6 +465,7 @@ class PeoplePanel extends React.Component<PeoplePanelProps, PeoplePanelState> {
 //#region MessagesPanel
 
 interface MessagesPanelProps {
+	user: 'dm' | 'player';
 	messages: Message[];
 	openImage: (data: string) => void;
 	openStatBlock: (monster: Monster) => void;
@@ -477,6 +485,7 @@ class MessagesPanel extends React.Component<MessagesPanelProps> {
 				.map(message => (
 					<MessagePanel
 						key={message.id}
+						user={this.props.user}
 						message={message}
 						openImage={data => this.props.openImage(data)}
 						openStatBlock={monster => this.props.openStatBlock(monster)}
@@ -509,6 +518,7 @@ class MessagesPanel extends React.Component<MessagesPanelProps> {
 //#region MessagePanel
 
 interface MessagePanelProps {
+	user: 'dm' | 'player';
 	message: Message;
 	openImage: (data: string) => void;
 	openStatBlock: (monster: Monster) => void;
@@ -520,7 +530,7 @@ class MessagePanel extends React.Component<MessagePanelProps> {
 			let byline = Comms.getCurrentName(this.props.message.from);
 			let mainStyle = 'message';
 			let bylineStyle = 'message-byline';
-			let contentStyle = 'message-content ' + this.props.message.type;
+			const contentStyle = 'message-content';
 			let icon = null;
 
 			if (this.props.message.from === Comms.getID()) {
@@ -529,21 +539,45 @@ class MessagePanel extends React.Component<MessagePanelProps> {
 				mainStyle += ' to-me';
 			}
 
-			let content: JSX.Element;
+			let content: JSX.Element | null = null;
 			switch (this.props.message.type) {
 				case 'text':
 					const text = this.props.message.data['text'];
-					if (text.startsWith('/')) {
-						contentStyle += ' emote';
-						content = (
-							<div>
-								{Comms.getName(this.props.message.from) + ' ' + text.substr(1)}
-							</div>
-						);
-					} else {
-						content = (
-							<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(text) }} />
-						);
+					const language = this.props.message.data['language'];
+					const untranslated = this.props.message.data['untranslated'];
+					if ((this.props.user === 'player') && (language !== '')) {
+						// Only show the text if we know the language
+						let known = false;
+						if (Comms.data.party) {
+							const pc = Comms.data.party.pcs.find(p => Comms.getPC(Comms.getID()) === p.id);
+							if (pc) {
+								known = pc.languages.toLowerCase().indexOf(language.toLowerCase()) !== -1;
+							}
+						}
+						if (!known) {
+							content = (
+								<div className='text'>
+									<div className='text untranslated'>{untranslated}</div>
+									<div className='language'>in an unknown language</div>
+								</div>
+							);
+						}
+					}
+					if (!content) {
+						if (text.startsWith('/')) {
+							content = (
+								<div className='emote'>
+									{Comms.getName(this.props.message.from) + ' ' + text.substr(1)}
+								</div>
+							);
+						} else {
+							content = (
+								<div className='text'>
+									<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(text) }}  />
+									{language !== '' ? <div className='language'>in {language}</div> : null}
+								</div>
+							);
+						}
 					}
 					break;
 				case 'link':
@@ -607,7 +641,7 @@ class MessagePanel extends React.Component<MessagePanelProps> {
 interface SendMessagePanelProps {
 	user: 'dm' | 'player';
 	library: MonsterGroup[];
-	sendMessage: (to: string[], text: string) => void;
+	sendMessage: (to: string[], text: string, language: string, untranslated: string) => void;
 	sendLink: (to: string[], url: string) => void;
 	sendImage: (to: string[], image: string) => void;
 	sendRoll: (to: string[], roll: DieRollResult) => void;
@@ -617,7 +651,9 @@ interface SendMessagePanelProps {
 interface SendMessagePanelState {
 	type: string;
 	message: string;
+	language: string;
 	multiline: boolean;
+	url: string;
 	image: string;
 	dice: { [sides: number]: number };
 	constant: number;
@@ -641,7 +677,9 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 		this.state = {
 			type: 'text',
 			message: '',
+			language: '',
 			multiline: false,
+			url: '',
 			image: '',
 			dice: dice,
 			constant: 0,
@@ -663,9 +701,21 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 		});
 	}
 
+	private setLanguage(language: string) {
+		this.setState({
+			language: language
+		});
+	}
+
 	private toggleMultiline() {
 		this.setState({
 			multiline: !this.state.multiline
+		});
+	}
+
+	private setURL(url: string) {
+		this.setState({
+			url: url
 		});
 	}
 
@@ -755,8 +805,10 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 		let validContent = false;
 		switch (this.state.type) {
 			case 'text':
-			case 'link':
 				validContent = (this.state.message !== '');
+				break;
+			case 'link':
+				validContent = (this.state.url !== '');
 				break;
 			case 'image':
 				validContent = (this.state.image !== '');
@@ -772,14 +824,16 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 		return validRecipients && validContent;
 	}
 
-	private sendMessage() {
+	private async sendMessage() {
 		if (this.canSend()) {
 			const rec = [...this.state.recipients];
 			const text = this.state.message.split('\n').join('\n\n');
+			const language = this.state.language;
+			const untranslated = (language === '') ? '' : Shakespeare.generateTranslation(text);
 			this.setState({
 				message: ''
 			}, () => {
-				this.props.sendMessage(rec, text);
+				this.props.sendMessage(rec, text, language, untranslated);
 			});
 		}
 	}
@@ -787,9 +841,9 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 	private sendLink() {
 		if (this.canSend()) {
 			const rec = [...this.state.recipients];
-			const url = this.state.message;
+			const url = this.state.url;
 			this.setState({
-				message: ''
+				url: ''
 			}, () => {
 				this.props.sendLink(rec, url);
 			});
@@ -831,28 +885,55 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 	private getMessageSection() {
 		switch (this.state.type) {
 			case 'text':
-				return (
-					<div className='control-with-icons'>
-						<Textbox
-							placeholder='send a message'
-							multiLine={this.state.multiline}
-							debounce={false}
-							text={this.state.message}
-							onChange={msg => this.setMessage(msg)}
-							onPressEnter={() => this.sendMessage()}
+				let languageSection = null;
+				if (Comms.data.party) {
+					let languages: string[] = [];
+					if (this.props.user === 'dm') {
+						// Show all languages
+						languages = Shakespeare.getSpokenLanguages(Comms.data.party.pcs);
+						languages.push('(some other language)');
+					} else {
+						// Only show your languages
+						const character = Comms.data.party.pcs.find(pc => pc.id === Comms.getPC(Comms.getID()));
+						if (character) {
+							languages = Shakespeare.getSpokenLanguages([character]);
+						}
+					}
+					languageSection = (
+						<Dropdown
+							placeholder='(no language specified)'
+							options={languages.map(lang => ({ id: lang, text: lang }))}
+							selectedID={this.state.language}
+							onSelect={lang => this.setLanguage(lang)}
+							onClear={() => this.setLanguage('')}
 						/>
-						<div className='icons'>
-							<ExpandOutlined
-								onClick={() => this.toggleMultiline()}
-								title={'expand'}
-								className={this.state.multiline ? 'active' : ''}
+					);
+				}
+				return (
+					<div>
+						<div className='control-with-icons'>
+							<Textbox
+								placeholder='send a message'
+								multiLine={this.state.multiline}
+								debounce={false}
+								text={this.state.message}
+								onChange={msg => this.setMessage(msg)}
+								onPressEnter={() => this.sendMessage()}
 							/>
-							<SendOutlined
-								onClick={() => this.sendMessage()}
-								title='send message'
-								className={this.canSend() ? '' : 'disabled'}
-							/>
+							<div className='icons'>
+								<ExpandOutlined
+									onClick={() => this.toggleMultiline()}
+									title={'expand'}
+									className={this.state.multiline ? 'active' : ''}
+								/>
+								<SendOutlined
+									onClick={() => this.sendMessage()}
+									title='send message'
+									className={this.canSend() ? '' : 'disabled'}
+								/>
+							</div>
 						</div>
+						{languageSection}
 					</div>
 				);
 			case 'link':
@@ -861,14 +942,14 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 						<Textbox
 							placeholder='send a link'
 							debounce={false}
-							text={this.state.message}
-							onChange={msg => this.setMessage(msg)}
+							text={this.state.url}
+							onChange={url => this.setURL(url)}
 							onPressEnter={() => this.sendLink()}
 						/>
 						<div className='icons'>
 							<SendOutlined
 								onClick={() => this.sendLink()}
-								title='send message'
+								title='send link'
 								className={this.canSend() ? '' : 'disabled'}
 							/>
 						</div>
@@ -1005,6 +1086,7 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 						onSelect={type => this.setType(type)}
 					/>
 					{this.getMessageSection()}
+					<hr />
 					{this.getSettingsSection()}
 				</div>
 			);

@@ -31,8 +31,9 @@ export default class PlaceNameTool extends React.Component<Props, State> {
 
 	private generate() {
 		Shakespeare.initModel([this.state.source as string]);
+		const values = Shakespeare.generateLines(10);
 		this.setState({
-			values: Shakespeare.generate(10).map(l => l.line)
+			values: values
 		});
 	}
 
@@ -81,7 +82,7 @@ class GeneratedItem extends React.Component<GeneratedItemProps> {
 						{this.props.text.toLowerCase()}
 					</div>
 					<div className='icon-section'>
-						<CopyOutlined title='copy' onClick={e => this.copy(e)} />
+						<CopyOutlined title='copy to clipboard' onClick={e => this.copy(e)} />
 					</div>
 				</div>
 			);

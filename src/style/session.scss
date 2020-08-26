@@ -80,12 +80,21 @@
 		}
 
 		.message-content {
-			&.emote {
+			.text {
+				font-size: 15px;
+			}
+
+			.untranslated {
+				filter: blur(3px);
+			}
+
+			.language {
+				font-size: 10px;
 				font-style: italic;
 			}
 
-			&.text {
-				font-size: 15px;
+			.emote {
+				font-style: italic;
 			}
 
 			.link {

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import Shakespeare from '../../../utils/shakespeare';
+
 import { Party } from '../../../models/party';
 
 import Dropdown from '../../controls/dropdown';
@@ -28,29 +30,11 @@ export default class PartyReference extends React.Component<Props> {
 
 		const level = Math.round(activePCs.reduce((sum, current) => sum + current.level, 0) / activePCs.length);
 
-		const languages = activePCs
-			.map(pc => pc.languages.toLowerCase())
-			.join(', ')
-			.split(/[ ,;.:]+/)
-			.reduce((array: string[], value) => {
-				if (array.indexOf(value) === -1) {
-					array.push(value);
-				}
-				return array;
-			}, [])
-			.sort((a, b) => {
-				if (a === 'common') {
-					return -1;
-				}
-				if (b === 'common') {
-					return 1;
-				}
-				return a.localeCompare(b);
-			})
+		const languages = Shakespeare.getSpokenLanguages(activePCs)
 			.map(lang => {
-				const speakers = activePCs.filter(pc => pc.languages.toLowerCase().includes(lang));
+				const speakers = activePCs.filter(pc => pc.languages.toLowerCase().includes(lang.toLowerCase()));
 				const pcs = speakers.length === activePCs.length ? 'all pcs' : speakers.map(pc => pc.name).join(', ');
-				const langName = lang[0].toUpperCase() + lang.substr(1);
+				const langName = Shakespeare.capitalise(lang);
 				return (
 					<div key={langName} className='table-row'>
 						<div className='table-cell l'>{langName}</div>

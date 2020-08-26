@@ -43,14 +43,19 @@ export default class PortraitPanel extends React.Component<Props> {
 			);
 		} else {
 			img = (
-				<Upload.Dragger accept='image/*' showUploadList={false} beforeUpload={file => this.readFile(file)}>
-					<p className='ant-upload-drag-icon'>
-						<FileOutlined />
-					</p>
-					<p className='ant-upload-text'>
-						click here, or drag a file here, to upload it
-					</p>
-				</Upload.Dragger>
+				<div>
+					<Upload.Dragger accept='image/*' showUploadList={false} beforeUpload={file => this.readFile(file)}>
+						<p className='ant-upload-drag-icon'>
+							<FileOutlined />
+						</p>
+						<p className='ant-upload-text'>
+							click here, or drag a file here, to upload it
+						</p>
+						<p className='ant-upload-text'>
+							try to upload small images if possible
+						</p>
+					</Upload.Dragger>
+				</div>
 			);
 		}
 

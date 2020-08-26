@@ -89,7 +89,7 @@ class GeneratedItem extends React.Component<GeneratedItemProps> {
 						{this.props.text.toLowerCase()}
 					</div>
 					<div className='icon-section'>
-						<CopyOutlined title='copy' onClick={e => this.copy(e)} />
+						<CopyOutlined title='copy to clipboard' onClick={e => this.copy(e)} />
 					</div>
 				</div>
 			);
