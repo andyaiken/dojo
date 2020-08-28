@@ -1,6 +1,7 @@
 import { Col, Row } from 'antd';
 import React from 'react';
 
+import { Comms, CommsDM } from '../../utils/comms';
 import Gygax from '../../utils/gygax';
 
 import { Combatant } from '../../models/combat';
@@ -64,6 +65,18 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 			selectedCombatantIDs: [],
 			selectedAreaID: null
 		};
+	}
+
+	public componentDidMount() {
+		window.addEventListener('beforeunload', () => {
+			this.setPlayerViewOpen(false);
+		});
+	}
+
+	public componentDidUpdate() {
+		if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
+			CommsDM.sendShareUpdate();
+		}
 	}
 
 	private setPlayerViewOpen(open: boolean) {

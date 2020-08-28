@@ -1,4 +1,3 @@
-import { EnvironmentOutlined } from '@ant-design/icons';
 import { Col, Row, Tag } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
@@ -23,9 +22,6 @@ interface Props {
 	combat: Combat;
 	selected: boolean;
 	select: (combatant: Combatant, ctrl: boolean) => void;
-	nudgeValue: (combatant: Combatant, field: string, delta: number) => void;
-	makeActive: (combatant: Combatant) => void;
-	addToMap: (combatant: Combatant) => void;
 }
 
 export default class InitiativeEntry extends React.Component<Props> {
@@ -169,8 +165,7 @@ export default class InitiativeEntry extends React.Component<Props> {
 		if (this.props.combat.map && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
 			notes.push(
 				<Note key='not-on-map'>
-					<span>not on the map</span>
-					<EnvironmentOutlined className='icon-button' onClick={() => this.props.addToMap(this.props.combatant)} />
+					<p>not on the map</p>
 				</Note>
 			);
 		}

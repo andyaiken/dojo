@@ -386,4 +386,37 @@ export default class Napoleon {
 			}
 		];
 	}
+
+	public static getActiveCombatants(combat: Combat, playerView: boolean, showDefeated: boolean) {
+		const controlledMounts = combat.combatants
+			.filter(c => !!c.mountID && (c.mountType === 'controlled'))
+			.map(c => c.mountID || '');
+
+		const list = combat.combatants
+			.filter(c => !controlledMounts.includes(c.id))
+			.filter(c => c.active || (c.defeated && showDefeated))
+			.filter(c => {
+				// Ignore anything that's hidden, unless it's a PC
+				if (playerView && (c.type !== 'pc')) {
+					return c.showOnMap;
+				}
+				return true;
+			})
+			.filter(c => {
+				// If there's a map, ignore monsters that aren't on it
+				if (playerView && (c.type === 'monster') && (!!combat.map)) {
+					return !!combat.map.items.find(i => i.id === c.id);
+				}
+				return true;
+			})
+			.filter(c => {
+				// If it's a placeholder, only show it if this encounter has lair actions
+				if (c.type === 'placeholder') {
+					return Napoleon.combatHasLairActions(combat);
+				}
+				return true;
+			});
+
+		return list;
+	}
 }

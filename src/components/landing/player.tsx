@@ -3,13 +3,20 @@ import React from 'react';
 
 import { Comms, CommsPlayer } from '../../utils/comms';
 
-import { PC } from '../../models/party';
+import { Combat } from '../../models/combat';
+import { Exploration } from '../../models/map';
 
+import Textbox from '../controls/textbox';
 import PCEditorModal from '../modals/editors/pc-editor-modal';
 import StatBlockModal from '../modals/stat-block-modal';
 import ErrorBoundary from '../panels/error-boundary';
+import GridPanel from '../panels/grid-panel';
+import InitiativeOrder from '../panels/initiative-order';
+import MapPanel from '../panels/map-panel';
+import Note from '../panels/note';
+import PageFooter from '../panels/page-footer';
 import PageHeader from '../panels/page-header';
-import SessionPanel from '../panels/session-panel';
+import { MessagesPanel, PeoplePanel, SendMessagePanel } from '../panels/session-panel';
 
 interface Props {
 }
@@ -26,19 +33,31 @@ export default class Player extends React.Component<Props, State> {
 		};
 	}
 
-	public componentWillUnmount() {
-		CommsPlayer.disconnect();
-		Comms.stop();
+	public componentDidMount() {
+		CommsPlayer.onStateChanged = () => this.setState(this.state);
+		CommsPlayer.onDataChanged = () => this.setState(this.state);
 	}
 
-	private editPC(pc: PC) {
-		const copy = JSON.parse(JSON.stringify(pc));
-		this.setState({
-			drawer: {
-				type: 'pc',
-				pc: copy
+	public componentWillUnmount() {
+		CommsPlayer.onStateChanged = () => null;
+		CommsPlayer.onDataChanged = () => null;
+
+		CommsPlayer.disconnect();
+	}
+
+	private editPC(id: string) {
+		if (Comms.data.party) {
+			const pc = Comms.data.party.pcs.find(p => p.id === id);
+			if (pc) {
+				const copy = JSON.parse(JSON.stringify(pc));
+				this.setState({
+					drawer: {
+						type: 'pc',
+						pc: copy
+					}
+				});
 			}
-		});
+		}
 	}
 
 	private savePC() {
@@ -53,6 +72,171 @@ export default class Player extends React.Component<Props, State> {
 		this.setState({
 			drawer: null
 		});
+	}
+
+	private getBeadcrumbs() {
+		return [{
+			id: 'home',
+			text: 'dojo - player',
+			onClick: () => null
+		}];
+	}
+
+	private getContent() {
+		switch (CommsPlayer.getState()) {
+			case 'not connected':
+				return (
+					<Row align='middle' justify='center' className='full-height'>
+						<ConnectPanel />
+					</Row>
+				);
+			case 'connecting':
+				return (
+					<Row align='middle' justify='center' className='full-height'>
+						<div className='connection-panel'>
+							<Note>
+								<p>connecting to <span className='app-name'>dojo</span>...</p>
+							</Note>
+						</div>
+					</Row>
+				);
+			case 'connected':
+				let shared = null;
+				if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
+					const combat = Comms.data.shared.data as Combat;
+					shared = this.getCombatSection(combat);
+				}
+				if (Comms.data.shared && (Comms.data.shared.type === 'exploration')) {
+					const exploration = Comms.data.shared.data as Exploration;
+					shared = this.getExplorationSection(exploration);
+				}
+				if (shared !== null) {
+					return this.getSharedView(shared);
+				}
+				return this.getMessagesView();
+		}
+	}
+
+	private getMessagesView() {
+		return (
+			<Row className='full-height'>
+				<Col xs={24} sm={24} md={8} lg={6} xl={4} className='scrollable sidebar sidebar-left'>
+					<Note>
+						<p>the following people are connected</p>
+					</Note>
+					<PeoplePanel
+						user='player'
+						people={Comms.data.people}
+						editPC={id => this.editPC(id)}
+					/>
+				</Col>
+				<Col xs={24} sm={24} md={16} lg={18} xl={20} className='scrollable'>
+					<MessagesPanel
+						user='player'
+						messages={Comms.data.messages}
+						openImage={data => this.setState({drawer: { type: 'image', data: data }})}
+						openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
+					/>
+					<SendMessagePanel
+						user='player'
+						sendMessage={(to, text, language, untranslated) => CommsPlayer.sendMessage(to, text, language, untranslated)}
+						sendLink={(to, url) => CommsPlayer.sendLink(to, url)}
+						sendImage={(to, image) => CommsPlayer.sendImage(to, image)}
+						sendRoll={(to, roll) => CommsPlayer.sendRoll(to, roll)}
+						sendMonster={(to, monster) => null}
+					/>
+				</Col>
+			</Row>
+		);
+	}
+
+	private getSharedView(shared: JSX.Element) {
+		return (
+			<Row className='full-height'>
+				<Col xs={24} sm={24} md={12} lg={16} xl={18} className='full-height'>
+					{shared}
+				</Col>
+				<Col xs={24} sm={24} md={12} lg={8} xl={6} className='scrollable sidebar sidebar-right'>
+					<MessagesPanel
+						user='player'
+						messages={Comms.data.messages}
+						openImage={data => this.setState({drawer: { type: 'image', data: data }})}
+						openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
+					/>
+					<SendMessagePanel
+						user='player'
+						sendMessage={(to, text, language, untranslated) => CommsPlayer.sendMessage(to, text, language, untranslated)}
+						sendLink={(to, url) => CommsPlayer.sendLink(to, url)}
+						sendImage={(to, image) => CommsPlayer.sendImage(to, image)}
+						sendRoll={(to, roll) => CommsPlayer.sendRoll(to, roll)}
+						sendMonster={(to, monster) => null}
+					/>
+				</Col>
+			</Row>
+		);
+	}
+
+	private getCombatSection(combat: Combat) {
+		const initList = (
+			<InitiativeOrder
+				combat={combat}
+				playerView={true}
+				showDefeated={false}
+				help={null}
+				selectedItemIDs={[]}
+				toggleItemSelection={(id, ctrl) => null}
+			/>
+		);
+
+		let map = null;
+		if (combat.map) {
+			map = (
+				<div className='scrollable horizontal-only'>
+					<MapPanel
+						map={combat.map}
+						mode='combat-player'
+						fog={combat.fog}
+						combatants={combat.combatants}
+						itemSelected={(id, ctrl) => null}
+					/>
+				</div>
+			);
+		}
+
+		return (
+			<div className='scrollable'>
+				<GridPanel
+					heading='encounter map'
+					content={[map]}
+					columns={1}
+					showToggle={true}
+				/>
+				<GridPanel
+					heading='initiative order'
+					content={[initList]}
+					columns={1}
+					showToggle={true}
+				/>
+			</div>
+		);
+	}
+
+	private getExplorationSection(exploration: Exploration) {
+		return (
+			<div className='scrollable both-ways'>
+				<MapPanel
+					map={exploration.map}
+					mode='combat-player'
+					fog={exploration.fog}
+					combatants={exploration.combatants}
+					itemSelected={(id, ctrl) => null}
+				/>
+			</div>
+		);
+	}
+
+	private getTabs() {
+		return [];
 	}
 
 	private getDrawer() {
@@ -113,13 +297,10 @@ export default class Player extends React.Component<Props, State> {
 
 	public render() {
 		try {
+			const breadcrumbs = this.getBeadcrumbs();
+			const content = this.getContent();
+			const tabs = this.getTabs();
 			const drawer = this.getDrawer();
-
-			const breadcrumbs = [{
-				id: 'home',
-				text: 'dojo - player',
-				onClick: () => null
-			}];
 
 			return (
 				<div className='dojo'>
@@ -130,15 +311,15 @@ export default class Player extends React.Component<Props, State> {
 							/>
 						</ErrorBoundary>
 						<ErrorBoundary>
-							<div className='page-content player'>
-								<SessionPanel
-									user='player'
-									update={() => this.setState(this.state)}
-									editPC={pc => this.editPC(pc)}
-									openImage={data => this.setState({drawer: { type: 'image', data: data }})}
-									openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
-								/>
+							<div className='page-content'>
+								{content}
 							</div>
+						</ErrorBoundary>
+						<ErrorBoundary>
+							<PageFooter
+								tabs={tabs}
+								onSelectView={view => null}
+							/>
 						</ErrorBoundary>
 					</div>
 					<ErrorBoundary>
@@ -160,5 +341,56 @@ export default class Player extends React.Component<Props, State> {
 			console.error(ex);
 			return <div className='render-error'/>;
 		}
+	}
+}
+
+interface ConnectPanelProps {
+}
+
+interface ConnectPanelState {
+	code: string;
+	name: string;
+}
+
+class ConnectPanel extends React.Component<ConnectPanelProps, ConnectPanelState> {
+	constructor(props: ConnectPanelProps) {
+		super(props);
+		this.state = {
+			code: '',
+			name: ''
+		};
+	}
+
+	private setCode(code: string) {
+		this.setState({
+			code: code
+		});
+	}
+
+	private setName(name: string) {
+		this.setState({
+			name: name
+		});
+	}
+
+	private canConnect() {
+		return (this.state.code !== '') && (this.state.name !== '');
+	}
+
+	private connect() {
+		if (this.canConnect()) {
+			CommsPlayer.connect(this.state.code, this.state.name);
+		}
+	}
+
+	public render() {
+		return (
+			<div className='connection-panel'>
+				<div className='heading'>connect</div>
+				<Textbox placeholder='dm code' debounce={false} text={this.state.code} onChange={code => this.setCode(code)} />
+				<Textbox placeholder='your name' debounce={false} text={this.state.name} onChange={name => this.setName(name)} />
+				<button className={this.canConnect() ? '' : 'disabled'} onClick={() => this.connect()}>connect</button>
+			</div>
+		);
 	}
 }

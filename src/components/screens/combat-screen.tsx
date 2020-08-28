@@ -3,6 +3,7 @@ import { Col, Row } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
 
+import { Comms, CommsDM } from '../../utils/comms';
 import Factory from '../../utils/factory';
 import Mercator from '../../utils/mercator';
 import Napoleon from '../../utils/napoleon';
@@ -22,10 +23,10 @@ import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
 import Expander from '../controls/expander';
 import NumberSpin from '../controls/number-spin';
-import Radial from '../controls/radial';
 import CombatControlsPanel from '../panels/combat-controls-panel';
 import GridPanel from '../panels/grid-panel';
-import InitiativeEntry, { NotOnMapInitiativeEntry, PendingInitiativeEntry } from '../panels/initiative-entry';
+import { NotOnMapInitiativeEntry, PendingInitiativeEntry } from '../panels/initiative-entry';
+import InitiativeOrder from '../panels/initiative-order';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 import Popout from '../panels/popout';
@@ -61,8 +62,8 @@ interface Props {
 	onChangeAltitude: (combatant: Combatant, value: number) => void;
 	endTurn: (combatant: Combatant) => void;
 	changeHP: (values: {id: string, hp: number, temp: number, damage: number}[]) => void;
-	changeValue: (source: {}, type: string, value: any) => void;
-	nudgeValue: (source: {}, type: string, delta: number) => void;
+	changeValue: (source: any, type: string, value: any) => void;
+	nudgeValue: (source: any, type: string, delta: number) => void;
 	toggleTag: (combatants: Combatant[], tag: string) => void;
 	toggleCondition: (combatants: Combatant[], condition: string) => void;
 	toggleHidden: (combatants: Combatant[]) => void;
@@ -85,10 +86,7 @@ interface State {
 	editFog: boolean;
 	highlightMapSquare: boolean;
 	highlightedSquare: { x: number, y: number} | null;
-	playerView: {
-		open: boolean;
-		showControls: boolean;
-	};
+	playerViewOpen: boolean;
 	middleColumnWidth: number;
 }
 
@@ -107,10 +105,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 			editFog: false,
 			highlightMapSquare: false,
 			highlightedSquare: null,
-			playerView: {
-				open: false,
-				showControls: false
-			},
+			playerViewOpen: false,
 			middleColumnWidth: 8
 		};
 	}
@@ -119,6 +114,12 @@ export default class CombatScreen extends React.Component<Props, State> {
 		window.addEventListener('beforeunload', () => {
 			this.setPlayerViewOpen(false);
 		});
+	}
+
+	public componentDidUpdate() {
+		if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
+			CommsDM.sendShareUpdate();
+		}
 	}
 
 	private toggleShowOptions() {
@@ -237,18 +238,8 @@ export default class CombatScreen extends React.Component<Props, State> {
 	}
 
 	private setPlayerViewOpen(show: boolean) {
-		const pv = this.state.playerView;
-		pv.open = show;
 		this.setState({
-			playerView: pv
-		});
-	}
-
-	private setPlayerViewShowControls(show: boolean) {
-		const pv = this.state.playerView;
-		pv.showControls = show;
-		this.setState({
-			playerView: pv
+			playerViewOpen: show
 		});
 	}
 
@@ -355,20 +346,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 		this.props.setFog(fog);
 	}
 
-	private orderCombatants(combatants: Combatant[]) {
-		const current = combatants.find(c => c.current);
-		if (current) {
-			const index = combatants.indexOf(current);
-			if (index !== 0) {
-				const all: (Combatant | string)[] = [...combatants];
-				const first = all.splice(index);
-				return first.concat(['top of the round']).concat(all);
-			}
-		}
-
-		return combatants;
-	}
-
 	private getMapViewport() {
 		if (this.props.combat.map && this.state.selectedAreaID) {
 			const area = this.props.combat.map.areas.find(a => a.id === this.state.selectedAreaID);
@@ -388,125 +365,22 @@ export default class CombatScreen extends React.Component<Props, State> {
 	//#region Rendering helper methods
 
 	private getPlayerView() {
-		if (!this.state.playerView.open) {
+		if (!this.state.playerViewOpen) {
 			return null;
 		}
 
-		const controlledMounts = this.props.combat.combatants
-			.filter(c => !!c.mountID && (c.mountType === 'controlled'))
-			.map(c => c.mountID || '');
-		const activeCombatants = this.props.combat.combatants
-			.filter(c => (c.type === 'pc') || c.showOnMap)
-			.filter(c => !c.pending && c.active && !c.defeated)
-			.filter(c => !controlledMounts.includes(c.id))
-			.filter(c => {
-				if ((c.type === 'monster') && (!!this.props.combat.map)) {
-					// Only show this monster if it's on the map
-					return !!this.props.combat.map.items.find(i => i.id === c.id);
-				}
-				return true;
-			})
-			.filter(c => {
-				if (c.type === 'placeholder') {
-					return Napoleon.combatHasLairActions(this.props.combat);
-				}
-				return true;
-			});
-		const initList = this.orderCombatants(activeCombatants)
-			.map(c => this.createCombatantRow(c, true));
+		const initList = (
+			<InitiativeOrder
+				combat={this.props.combat}
+				playerView={true}
+				showDefeated={false}
+				help={null}
+				selectedItemIDs={this.state.selectedItemIDs}
+				toggleItemSelection={(id, ctrl) => null}
+			/>
+		);
 
 		if (this.props.combat.map) {
-			let controls = null;
-			if (this.props.combat.map && this.state.playerView.showControls) {
-				let selection = this.props.combat.combatants
-					.filter(c => this.props.combat.map !== null ? this.props.combat.map.items.find(item => item.id === c.id) : false)
-					.filter(c => c.showOnMap)
-					.filter(c => this.state.selectedItemIDs.includes(c.id));
-				if (selection.length === 0) {
-					selection = this.props.combat.combatants
-						.filter(c => this.props.combat.map !== null ? this.props.combat.map.items.find(item => item.id === c.id) : false)
-						.filter(c => c.showOnMap)
-						.filter(c => c.current);
-				}
-
-				if (selection.length === 1) {
-					const token = selection[0] as ((Combatant & PC) | (Combatant & Monster));
-					controls = (
-						<div>
-							<div className='heading lowercase'>{token.displayName}</div>
-							<Radial onClick={dir => this.props.mapMove([token.id], dir)} />
-							<hr/>
-							<NumberSpin
-								key='altitude'
-								value={token.altitude + ' ft.'}
-								label='altitude'
-								onNudgeValue={delta => this.props.nudgeValue(token, 'altitude', delta * 5)}
-							/>
-							<Row gutter={10}>
-								<Col span={8}>
-									<Checkbox
-										label='conc.'
-										display='button'
-										checked={token.tags.includes('conc')}
-										onChecked={value => this.props.toggleTag([token], 'conc')}
-									/>
-								</Col>
-								<Col span={8}>
-									<Checkbox
-										label='bane'
-										display='button'
-										checked={token.tags.includes('bane')}
-										onChecked={value => this.props.toggleTag([token], 'bane')}
-									/>
-								</Col>
-								<Col span={8}>
-									<Checkbox
-										label='bless'
-										display='button'
-										checked={token.tags.includes('bless')}
-										onChecked={value => this.props.toggleTag([token], 'bless')}
-									/>
-								</Col>
-							</Row>
-							<Row gutter={10}>
-								<Col span={8}>
-									<Checkbox
-										label='prone'
-										display='button'
-										checked={token.conditions.some(c => c.name === 'prone')}
-										onChecked={value => this.props.toggleCondition([token], 'prone')}
-									/>
-								</Col>
-								<Col span={8}>
-									<Checkbox
-										label='uncon.'
-										display='button'
-										checked={token.conditions.some(c => c.name === 'unconscious')}
-										onChecked={value => this.props.toggleCondition([token], 'unconscious')}
-									/>
-								</Col>
-								<Col span={8}>
-									<Checkbox
-										label='hidden'
-										display='button'
-										checked={!token.showOnMap}
-										onChecked={value => this.props.changeValue([token], 'showOnMap', !value)}
-									/>
-								</Col>
-							</Row>
-						</div>
-					);
-				}
-
-				if (selection.length > 1) {
-					controls = (
-						<Note>
-							<div className='section'>multiple items selected</div>
-						</Note>
-					);
-				}
-			}
-
 			return (
 				<Popout title='Encounter' onCloseWindow={() => this.setPlayerViewOpen(false)}>
 					<Row className='full-height full-width'>
@@ -524,7 +398,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 							/>
 						</Col>
 						<Col xs={24} sm={24} md={12} lg={8} xl={6} className='scrollable'>
-							{controls}
 							<div className='heading fixed-top'>initiative order</div>
 							{initList}
 						</Col>
@@ -593,19 +466,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 		if (!!this.props.combat.encounter && (this.props.combat.encounter.waves.length > 0)) {
 			addWave = (
 				<button onClick={() => this.props.addWave()}>add wave</button>
-			);
-		}
-
-		let playerView = null;
-		if (this.props.combat.map && this.state.playerView.open) {
-			playerView = (
-				<div>
-					<Checkbox
-						label='show map controls'
-						checked={this.state.playerView.showControls}
-						onChecked={value => this.setPlayerViewShowControls(value)}
-					/>
-				</div>
 			);
 		}
 
@@ -680,10 +540,9 @@ export default class CombatScreen extends React.Component<Props, State> {
 							<div className='subheading'>player view</div>
 							<Checkbox
 								label='show player view'
-								checked={this.state.playerView.open}
+								checked={this.state.playerViewOpen}
 								onChecked={value => this.setPlayerViewOpen(value)}
 							/>
-							{playerView}
 						</div>
 						<div>
 							<div className='subheading'>layout</div>
@@ -801,34 +660,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 		);
 	}
 
-	private createCombatantRow(combatant: Combatant | string, playerView: boolean) {
-		if (typeof combatant === 'string') {
-			return (
-				<div key={combatant} className='section init-separator'>{combatant}</div>
-			);
-		}
-
-		let selected = this.state.selectedItemIDs.includes(combatant.id);
-		// If we're in player view, and there's no map, don't show selection
-		if (playerView && !this.props.combat.map) {
-			selected = false;
-		}
-
-		return (
-			<InitiativeEntry
-				key={combatant.id}
-				combatant={combatant as Combatant}
-				combat={this.props.combat}
-				selected={selected}
-				minimal={playerView}
-				select={(c, ctrl) => this.toggleItemSelection(c.id, ctrl)}
-				addToMap={c => this.setAddingToMapID(this.state.addingToMapID ? null : c.id)}
-				nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
-				makeActive={c => this.props.makeActive([c])}
-			/>
-		);
-	}
-
 	private createControls(selectedCombatants: Combatant[]) {
 		if (selectedCombatants.some(c => c.type === 'placeholder')) {
 			return null;
@@ -939,39 +770,23 @@ export default class CombatScreen extends React.Component<Props, State> {
 				.filter(c => !!c.mountID && (c.mountType === 'controlled'))
 				.map(c => c.mountID || '');
 
-			let current: JSX.Element | null = null;
-			const pending: JSX.Element[] = [];
-			const active: Combatant[] = [];
-
-			this.props.combat.combatants
+			const initHolder = this.props.combat.combatants
 				.filter(combatant => !controlledMounts.includes(combatant.id))
-				.forEach(combatant => {
-					if (combatant.pending) {
-						pending.push(
-							<PendingInitiativeEntry
-								key={combatant.id}
-								combatant={combatant}
-								nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
-								makeActive={c => this.props.makeActive([c])}
-							/>
-						);
-					} else {
-						if (combatant.current) {
-							current = (
-								<div>
-									{this.createControls([combatant])}
-									{this.createCard(combatant)}
-								</div>
-							);
-						}
-						if (combatant.active || (combatant.defeated && this.state.showDefeatedCombatants)) {
-							active.push(combatant);
-						}
-					}
-				});
+				.find(c => c.current);
 
+			const pending = this.props.combat.combatants
+				.filter(combatant => !controlledMounts.includes(combatant.id))
+				.filter(combatant => combatant.pending);
+			const pendingList = pending.map(combatant => (
+				<PendingInitiativeEntry
+					key={combatant.id}
+					combatant={combatant}
+					nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
+					makeActive={c => this.props.makeActive([c])}
+				/>
+			));
 			if (pending.length !== 0) {
-				pending.unshift(
+				pendingList.unshift(
 					<Note key='pending-help'>
 						<div className='section'>these combatants are not yet part of the encounter</div>
 						<div className='section'>set initiative on each of them, then add them to the encounter</div>
@@ -979,59 +794,71 @@ export default class CombatScreen extends React.Component<Props, State> {
 				);
 			}
 
-			const activeCombatants = active
-				.filter(c => {
-					if (c.type === 'placeholder') {
-						return Napoleon.combatHasLairActions(this.props.combat);
-					}
-
-					return true;
-				});
-			const initList = this.orderCombatants(activeCombatants)
-				.map(c => this.createCombatantRow(c, false));
-
-			let notOnMap = null;
-			if (!current && this.props.combat.map) {
-				const missing = activeCombatants
-					.filter(c => this.props.combat.map && !this.props.combat.map.items.find(i => i.id === c.id))
-					.map(c => {
-						return (
-							<NotOnMapInitiativeEntry
-								key={c.id}
-								combatant={c}
-								addToMap={() => this.setAddingToMapID(c.id)}
-							/>
-						);
-					});
-				if (missing.length > 0) {
-					notOnMap = (
-						<div>
-							<Note>
-								<div className='section'>these combatants have not yet been placed on the map (which you'll find in the middle column)</div>
-								<div className='section'>to place one on the map, click the <b>place on map</b> button and then click on a map square</div>
-							</Note>
-							{missing}
-						</div>
-					);
-				}
-			}
-
-			if (!current) {
-				initList.unshift(
-					/* tslint:disable:max-line-length */
+			let initHelp = null;
+			if (!initHolder) {
+				/* tslint:disable:max-line-length */
+				initHelp = (
 					<Note key='init-help'>
 						<div className='section'>these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right)</div>
 						<div className='section'>they are listed in initiative order (with the highest initiative score at the top of the list, and the lowest at the bottom)</div>
 					</Note>
-					/* tslint:enable:max-line-length */
 				);
+				/* tslint:enable:max-line-length */
+			}
+			const initList = (
+				<InitiativeOrder
+					combat={this.props.combat}
+					playerView={false}
+					showDefeated={this.state.showDefeatedCombatants}
+					help={initHelp}
+					selectedItemIDs={this.state.selectedItemIDs}
+					toggleItemSelection={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
+				/>
+			);
 
-				current = (
+			let currentSection = null;
+			let notOnMapSection = null;
+			if (initHolder) {
+				currentSection = (
+					<div>
+						{this.createControls([initHolder])}
+						{this.createCard(initHolder)}
+					</div>
+				);
+			} else {
+				currentSection = (
 					<Note>
 						<div className='section'>when you're ready to begin the encounter, press the <b>start combat</b> button (above)</div>
 						<div className='section'>the current initiative holder will be displayed here</div>
 					</Note>
 				);
+
+				if (this.props.combat.map) {
+					const notOnMap = Napoleon.getActiveCombatants(this.props.combat, false, this.state.showDefeatedCombatants)
+						.filter(c => this.props.combat.map && !this.props.combat.map.items.find(i => i.id === c.id))
+						.map(c => {
+							return (
+								<NotOnMapInitiativeEntry
+									key={c.id}
+									combatant={c}
+									addToMap={() => this.setAddingToMapID(c.id)}
+								/>
+							);
+						});
+					if (notOnMap.length > 0) {
+						/* tslint:disable:max-line-length */
+						notOnMapSection = (
+							<div>
+								<Note>
+									<div className='section'>these combatants are in the initiative order, but have not yet been placed on the map (which you'll find in the middle column)</div>
+									<div className='section'>to place one on the map, click the <b>place on map</b> button and then click on a map square</div>
+								</Note>
+								{notOnMap}
+							</div>
+						);
+						/* tslint:enable:max-line-length */
+					}
+				}
 			}
 
 			let notificationSection = null;
@@ -1052,7 +879,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 			let mapSection = null;
 			if (this.props.combat.map) {
 				mapSection = (
-					<div key='map' className='scrollable both-ways'>
+					<div key='map' className='scrollable horizontal-only'>
 						<MapPanel
 							map={this.props.combat.map}
 							mode='combat'
@@ -1141,7 +968,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 						<Col span={sideWidth} className='scrollable'>
 							<GridPanel
 								heading='initiative holder'
-								content={[current]}
+								content={[currentSection]}
 								columns={1}
 								showToggle={false}
 							/>
@@ -1150,7 +977,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 							{notificationSection}
 							<GridPanel
 								heading='waiting for intiative'
-								content={pending}
+								content={pendingList}
 								columns={1}
 								showToggle={true}
 							/>
@@ -1168,7 +995,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 							/>
 							<GridPanel
 								heading='initiative order'
-								content={initList}
+								content={[initList]}
 								columns={1}
 								showToggle={true}
 							/>
@@ -1177,7 +1004,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 							{this.getOptions()}
 							<GridPanel
 								heading='not on the map'
-								content={[notOnMap]}
+								content={[notOnMapSection]}
 								columns={1}
 								showToggle={true}
 							/>

@@ -5,7 +5,7 @@ import Utils from '../../utils/utils';
 
 import { Combat } from '../../models/combat';
 import { Encounter } from '../../models/encounter';
-import { Map } from '../../models/map';
+import { Exploration, Map } from '../../models/map';
 import { Monster, MonsterGroup } from '../../models/monster';
 import { Party } from '../../models/party';
 
@@ -33,6 +33,8 @@ interface Props {
 	encounters: Encounter[];
 	maps: Map[];
 	combats: Combat[];
+	currentCombat: Combat | null;
+	currentExploration: Exploration | null;
 	onSelectSidebar: (type: string) => void;
 	onUpdateSidebar: (sidebar: any) => void;
 	onResetAll: () => void;
@@ -40,7 +42,6 @@ interface Props {
 	selectMonsterGroup: (id: string) => void;
 	selectEncounter: (id: string) => void;
 	selectMap: (id: string) => void;
-	update: () => void;
 	openImage: (data: string) => void;
 	openStatBlock: (monster: Monster) => void;
 }
@@ -132,7 +133,8 @@ export default class PageSidebar extends React.Component<Props> {
 						<SessionSidebar
 							parties={this.props.parties}
 							library={this.props.library}
-							update={() => this.props.update()}
+							combat={this.props.currentCombat}
+							exploration={this.props.currentExploration}
 							openImage={data => this.props.openImage(data)}
 							openStatBlock={monster => this.props.openStatBlock(monster)}
 						/>

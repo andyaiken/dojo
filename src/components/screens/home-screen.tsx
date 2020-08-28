@@ -70,7 +70,7 @@ export default class HomeScreen extends React.Component<Props> {
 			/* tslint:enable:max-line-length */
 
 			return (
-				<Row align='middle' justify='center' className='scrollable'>
+				<Row align='middle' justify='center' className='full-height'>
 					{carousel}
 				</Row>
 			);

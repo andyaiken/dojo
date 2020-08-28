@@ -2,6 +2,7 @@ import { CaretLeftOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
+import { Comms, CommsDM } from '../../utils/comms';
 import Utils from '../../utils/utils';
 
 import { Party, PC } from '../../models/party';
@@ -26,6 +27,12 @@ interface Props {
 }
 
 export default class PartyScreen extends React.Component<Props> {
+	public componentDidUpdate() {
+		if (Comms.data.party) {
+			CommsDM.sendPartyUpdate();
+		}
+	}
+
 	private export(pc: PC) {
 		const filename = pc.name + '.pc';
 		Utils.saveFile(filename, pc);

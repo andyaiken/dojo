@@ -17,6 +17,13 @@
 		overflow-x: auto;
 	}
 
+	&.horizontal-only {
+		height: unset;
+		padding: 10px 0;
+		overflow-x: auto;
+		overflow-y: hidden;
+	}
+
 	&.padded {
 		padding: 10px;
 	}

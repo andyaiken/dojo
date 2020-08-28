@@ -1,4 +1,4 @@
-import { CloseCircleOutlined, CopyOutlined, ExpandOutlined, FileOutlined, LockOutlined, SendOutlined, SettingOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, ExpandOutlined, FileOutlined, LockOutlined, SendOutlined, SettingOutlined } from '@ant-design/icons';
 import { Col, Row, Upload } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
@@ -10,7 +10,6 @@ import Utils from '../../utils/utils';
 
 import { DieRollResult } from '../../models/dice';
 import { Monster, MonsterGroup } from '../../models/monster';
-import { Party, PC } from '../../models/party';
 
 import MonsterStatblockCard from '../cards/monster-statblock-card';
 import Checkbox from '../controls/checkbox';
@@ -26,276 +25,6 @@ import PortraitPanel from './portrait-panel';
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);
 
-//#region SessionPanel
-
-interface Props {
-	user: 'dm' | 'player';
-	parties: Party[];
-	library: MonsterGroup[];
-	update: () => void;
-	editPC: (pc: PC) => void;
-	openImage: (data: string) => void;
-	openStatBlock: (monster: Monster) => void;
-}
-
-export default class SessionPanel extends React.Component<Props> {
-	public static defaultProps = {
-		parties: [],
-		library: [],
-		editPC: null
-	};
-
-	public render() {
-		try {
-			switch (this.props.user) {
-				case 'dm':
-					return (
-						<DMSessionPanel
-							parties={this.props.parties}
-							library={this.props.library}
-							update={() => this.props.update()}
-							openImage={data => this.props.openImage(data)}
-							openStatBlock={monster => this.props.openStatBlock(monster)}
-						/>
-					);
-				case 'player':
-					return (
-						<PlayerSessionPanel
-							update={() => this.props.update()}
-							editPC={pc => this.props.editPC(pc)}
-							openImage={data => this.props.openImage(data)}
-							openStatBlock={monster => this.props.openStatBlock(monster)}
-						/>
-					);
-			}
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
-		}
-	}
-}
-
-//#endregion
-
-//#region DMSessionPanel
-
-interface DMSessionPanelProps {
-	parties: Party[];
-	library: MonsterGroup[];
-	update: () => void;
-	openImage: (data: string) => void;
-	openStatBlock: (monster: Monster) => void;
-}
-
-class DMSessionPanel extends React.Component<DMSessionPanelProps> {
-	public componentDidMount() {
-		CommsDM.init();
-		CommsDM.onDataChanged = () => this.props.update();
-	}
-
-	public componentWillUnmount() {
-		CommsDM.onDataChanged = () => null;
-	}
-
-	public render() {
-		try {
-			const playerURL = window.location + (window.location.toString().endsWith('/') ? '' : '/') + 'player';
-
-			return (
-				<div>
-					<Expander text='session information'>
-						<Note>
-							<p>give your dm code to your players, and ask them to open the player app in their browser</p>
-						</Note>
-						<div className='generated-item group-panel'>
-							<div className='text-section'>
-								<p className='smallest'>your dm code for this session:</p>
-								<p className='smallest strong'>{Comms.getID()}</p>
-							</div>
-							<div className='icon-section'>
-								<CopyOutlined title='copy to clipboard' onClick={e => navigator.clipboard.writeText(Comms.getID())} />
-							</div>
-						</div>
-						<div className='generated-item group-panel'>
-							<div className='text-section'>
-								<p className='smallest'>player app url:</p>
-								<p className='smallest strong'>{playerURL}</p>
-							</div>
-							<div className='icon-section'>
-								<CopyOutlined title='copy to clipboard' onClick={e => navigator.clipboard.writeText(playerURL)} />
-							</div>
-						</div>
-						<Dropdown
-							placeholder='select a party...'
-							options={this.props.parties.map(party => ({ id: party.id, text: party.name }))}
-							selectedID={Comms.getPartyID()}
-							onSelect={id => {
-								const party = this.props.parties.find(p => p.id === id);
-								CommsDM.setParty(party ?? null);
-							}}
-							onClear={() => {
-								CommsDM.setParty(null);
-							}}
-						/>
-					</Expander>
-					<Expander text='people'>
-						<PeoplePanel
-							user='dm'
-							people={Comms.data.people}
-							editPC={id => null}
-						/>
-					</Expander>
-					<MessagesPanel
-						user='dm'
-						messages={Comms.data.messages}
-						openImage={data => this.props.openImage(data)}
-						openStatBlock={monster => this.props.openStatBlock(monster)}
-					/>
-					<SendMessagePanel
-						user='dm'
-						library={this.props.library}
-						sendMessage={(to, text, language, untranslated) => CommsDM.sendMessage(to, text, language, untranslated)}
-						sendLink={(to, url) => CommsDM.sendLink(to, url)}
-						sendImage={(to, image) => CommsDM.sendImage(to, image)}
-						sendRoll={(to, roll) => CommsDM.sendRoll(to, roll)}
-						sendMonster={(to, monster) => CommsDM.sendMonster(to, monster)}
-					/>
-				</div>
-			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
-		}
-	}
-}
-
-//#endregion
-
-//#region PlayerSessionPanel
-
-interface PlayerSessionPanelProps {
-	update: () => void;
-	editPC: (pc: PC) => void;
-	openImage: (data: string) => void;
-	openStatBlock: (monster: Monster) => void;
-}
-
-interface PlayerSessionPanelState {
-	code: string;
-	name: string;
-}
-
-class PlayerSessionPanel extends React.Component<PlayerSessionPanelProps, PlayerSessionPanelState> {
-	constructor(props: PlayerSessionPanelProps) {
-		super(props);
-		this.state = {
-			code: '',
-			name: ''
-		};
-	}
-
-	public componentDidMount() {
-		CommsPlayer.onStateChanged = () => this.props.update();
-		CommsPlayer.onDataChanged = () => this.props.update();
-	}
-
-	public componentWillUnmount() {
-		CommsPlayer.onStateChanged = () => null;
-		CommsPlayer.onDataChanged = () => null;
-	}
-
-	private setCode(code: string) {
-		this.setState({
-			code: code
-		});
-	}
-
-	private setName(name: string) {
-		this.setState({
-			name: name
-		});
-	}
-
-	private canConnect() {
-		return (this.state.code !== '') && (this.state.name !== '');
-	}
-
-	private connect() {
-		if (this.canConnect()) {
-			CommsPlayer.connect(this.state.code, this.state.name);
-		}
-	}
-
-	private editPC(id: string) {
-		if (Comms.data.party) {
-			const pc = Comms.data.party.pcs.find(p => p.id === id);
-			if (pc) {
-				this.props.editPC(pc);
-			}
-		}
-	}
-
-	public render() {
-		try {
-			switch (CommsPlayer.getState()) {
-				case 'not connected':
-					return (
-						<div className='connection-panel'>
-							<div className='heading'>connect</div>
-							<Textbox placeholder='dm code' debounce={false} text={this.state.code} onChange={code => this.setCode(code)} />
-							<Textbox placeholder='your name' debounce={false} text={this.state.name} onChange={name => this.setName(name)} />
-							<button className={this.canConnect() ? '' : 'disabled'} onClick={() => this.connect()}>connect</button>
-						</div>
-					);
-				case 'connecting':
-					return (
-						<div className='connection-panel'>
-							<Note>
-								<p>connecting to <span className='app-name'>dojo</span>...</p>
-							</Note>
-						</div>
-					);
-				case 'connected':
-					return (
-						<Row className='full-height'>
-							<Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar sidebar-left'>
-								<Note>
-									<p>the following people are connected</p>
-								</Note>
-								<PeoplePanel
-									user='player'
-									people={Comms.data.people}
-									editPC={id => this.editPC(id)}
-								/>
-							</Col>
-							<Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
-								<MessagesPanel
-									user='player'
-									messages={Comms.data.messages}
-									openImage={data => this.props.openImage(data)}
-									openStatBlock={monster => this.props.openStatBlock(monster)}
-								/>
-								<SendMessagePanel
-									user='player'
-									sendMessage={(to, text, language, untranslated) => CommsPlayer.sendMessage(to, text, language, untranslated)}
-									sendLink={(to, url) => CommsPlayer.sendLink(to, url)}
-									sendImage={(to, image) => CommsPlayer.sendImage(to, image)}
-									sendRoll={(to, roll) => CommsPlayer.sendRoll(to, roll)}
-									sendMonster={(to, monster) => null}
-								/>
-							</Col>
-						</Row>
-					);
-			}
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
-		}
-	}
-}
-
-//#endregion
-
 //#region PeoplePanel
 
 interface PeoplePanelProps {
@@ -310,7 +39,7 @@ interface PeoplePanelState {
 	pc: string;
 }
 
-class PeoplePanel extends React.Component<PeoplePanelProps, PeoplePanelState> {
+export class PeoplePanel extends React.Component<PeoplePanelProps, PeoplePanelState> {
 	constructor(props: PeoplePanelProps) {
 		super(props);
 		this.state = {
@@ -347,12 +76,12 @@ class PeoplePanel extends React.Component<PeoplePanelProps, PeoplePanelState> {
 	private getControlsSection() {
 		let pcSection = null;
 		if (Comms.data.party) {
-			const pc = Comms.getPC(Comms.getID());
-			if (pc === '') {
+			const characterID = Comms.getCharacterID(Comms.getID());
+			if (characterID === '') {
 				pcSection = (
 					<Dropdown
 						options={Comms.data.party.pcs.map(p => {
-							const claimed = Comms.data.people.some(person => person.pc === p.id);
+							const claimed = Comms.data.people.some(person => person.characterID === p.id);
 							return {
 								id: p.id,
 								text: p.name,
@@ -367,7 +96,7 @@ class PeoplePanel extends React.Component<PeoplePanelProps, PeoplePanelState> {
 			} else {
 				pcSection = (
 					<div>
-						<button onClick={() => this.props.editPC(pc)}>update character stats</button>
+						<button onClick={() => this.props.editPC(characterID)}>update character stats</button>
 					</div>
 				);
 			}
@@ -471,7 +200,7 @@ interface MessagesPanelProps {
 	openStatBlock: (monster: Monster) => void;
 }
 
-class MessagesPanel extends React.Component<MessagesPanelProps> {
+export class MessagesPanel extends React.Component<MessagesPanelProps> {
 	private showMessage(message: Message) {
 		// Show messages from me, or to all (to is empty), or to me (to contains me)
 		const me = Comms.getID();
@@ -502,7 +231,6 @@ class MessagesPanel extends React.Component<MessagesPanelProps> {
 
 			return (
 				<div className='message-panel'>
-					<div className='heading'>messages</div>
 					{messages}
 				</div>
 			);
@@ -549,7 +277,8 @@ class MessagePanel extends React.Component<MessagePanelProps> {
 						// Only show the text if we know the language
 						let known = false;
 						if (Comms.data.party) {
-							const pc = Comms.data.party.pcs.find(p => Comms.getPC(Comms.getID()) === p.id);
+							const characterID = Comms.getCharacterID(Comms.getID());
+							const pc = Comms.data.party.pcs.find(p => p.id === characterID);
 							if (pc) {
 								known = pc.languages.toLowerCase().indexOf(language.toLowerCase()) !== -1;
 							}
@@ -662,7 +391,7 @@ interface SendMessagePanelState {
 	recipients: string[];
 }
 
-class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessagePanelState> {
+export class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessagePanelState> {
 	public static defaultProps = {
 		library: []
 	};
@@ -894,7 +623,8 @@ class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessag
 						languages.push('(some other language)');
 					} else {
 						// Only show your languages
-						const character = Comms.data.party.pcs.find(pc => pc.id === Comms.getPC(Comms.getID()));
+						const characterID = Comms.getCharacterID(Comms.getID());
+						const character = Comms.data.party.pcs.find(pc => pc.id === characterID);
 						if (character) {
 							languages = Shakespeare.getSpokenLanguages([character]);
 						}
@@ -1112,8 +842,8 @@ class CharacterPanel extends React.Component<CharacterPanelProps> {
 		}
 
 		if (Comms.data.party !== null) {
-			const id = this.props.person.pc;
-			const pc = Comms.data.party.pcs.find(p => p.id === id);
+			const characterID = this.props.person.characterID;
+			const pc = Comms.data.party.pcs.find(p => p.id === characterID);
 			if (pc) {
 				return (
 					<div className='character-panel'>

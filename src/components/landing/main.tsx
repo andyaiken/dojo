@@ -2,7 +2,7 @@ import { Col, Drawer, Row } from 'antd';
 import Mousetrap from 'mousetrap';
 import React from 'react';
 
-import { Comms, CommsDM } from '../../utils/comms';
+import { CommsDM } from '../../utils/comms';
 import Factory from '../../utils/factory';
 import Frankenstein from '../../utils/frankenstein';
 import Gygax from '../../utils/gygax';
@@ -325,13 +325,18 @@ export default class Main extends React.Component<Props, State> {
 			e.preventDefault();
 			this.setSidebar('search');
 		});
+
+		CommsDM.onStateChanged = () => this.setState(this.state);
+		CommsDM.onDataChanged = () => this.setState(this.state);
 	}
 
 	public componentWillUnmount() {
 		Mousetrap.unbind('ctrl+f');
 
-		CommsDM.kickAll();
-		Comms.stop();
+		CommsDM.onStateChanged = () => null;
+		CommsDM.onDataChanged = () => null;
+
+		CommsDM.shutdown();
 	}
 
 	public componentDidUpdate() {
@@ -2705,6 +2710,26 @@ export default class Main extends React.Component<Props, State> {
 		return null;
 	}
 
+	private getTabs() {
+		return [{
+			id: 'parties',
+			text: 'pcs',
+			selected: (this.state.view === 'parties')
+		}, {
+			id: 'library',
+			text: 'monsters',
+			selected: (this.state.view === 'library')
+		}, {
+			id: 'encounters',
+			text: 'encounters',
+			selected: (this.state.view === 'encounters')
+		}, {
+			id: 'maps',
+			text: 'maps',
+			selected: (this.state.view === 'maps')
+		}];
+	}
+
 	private getDrawer() {
 		let content = null;
 		let header = null;
@@ -3046,8 +3071,10 @@ export default class Main extends React.Component<Props, State> {
 
 	public render() {
 		try {
-			const drawer = this.getDrawer();
 			const breadcrumbs = this.getBreadcrumbs();
+			const content = this.getContent();
+			const tabs = this.getTabs();
+			const drawer = this.getDrawer();
 
 			return (
 				<div className='dojo'>
@@ -3061,12 +3088,12 @@ export default class Main extends React.Component<Props, State> {
 						</ErrorBoundary>
 						<ErrorBoundary>
 							<div className='page-content'>
-								{this.getContent()}
+								{content}
 							</div>
 						</ErrorBoundary>
 						<ErrorBoundary>
 							<PageFooter
-								view={this.state.view}
+								tabs={tabs}
 								onSelectView={view => this.setView(view)}
 							/>
 						</ErrorBoundary>
@@ -3079,6 +3106,8 @@ export default class Main extends React.Component<Props, State> {
 							encounters={this.state.encounters}
 							maps={this.state.maps}
 							combats={this.state.combats}
+							currentCombat={this.state.combats.find(c => c.id === this.state.selectedCombatID) ?? null}
+							currentExploration={this.state.explorations.find(e => e.id === this.state.selectedExplorationID) ?? null}
 							onSelectSidebar={type => this.setSidebar(type)}
 							onUpdateSidebar={sidebar => this.setState({ sidebar: sidebar })}
 							onResetAll={() => this.resetAll()}
@@ -3086,7 +3115,6 @@ export default class Main extends React.Component<Props, State> {
 							selectMonsterGroup={id => this.selectMonsterGroupByID(id)}
 							selectEncounter={id => this.selectEncounterByID(id)}
 							selectMap={id => this.selectMapByID(id)}
-							update={() => this.setState(this.state)}
 							openImage={data => this.setState({drawer: { type: 'image', data: data }})}
 							openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
 						/>

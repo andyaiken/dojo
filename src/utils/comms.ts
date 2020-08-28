@@ -2,7 +2,9 @@ import Peer, { DataConnection } from 'peerjs';
 
 import Utils from './utils';
 
+import { Combat } from '../models/combat';
 import { DieRollResult } from '../models/dice';
+import { Exploration } from '../models/map';
 import { Monster } from '../models/monster';
 import { Party, PC } from '../models/party';
 
@@ -10,7 +12,7 @@ import { Party, PC } from '../models/party';
 const PULSE_INTERVAL = 60;
 
 export interface Packet {
-	type: 'pulse' | 'player-info' | 'character-info' | 'message';
+	type: 'pulse' | 'party-update' | 'share-update' | 'player-info' | 'character-info' | 'message';
 	payload: any;
 }
 
@@ -18,7 +20,7 @@ export interface Person {
 	id: string;
 	name: string;
 	status: string;
-	pc: string;
+	characterID: string;
 }
 
 export interface Message {
@@ -29,10 +31,17 @@ export interface Message {
 	data: any;
 }
 
+export interface SharedExperience {
+	type: 'combat' | 'exploration';
+	data: any;
+	additional: any;
+}
+
 export interface CommsData {
 	people: Person[];
 	messages: Message[];
 	party: Party | null;
+	shared: SharedExperience | null;
 }
 
 export class Comms {
@@ -40,27 +49,9 @@ export class Comms {
 	public static data: CommsData = {
 		people: [],
 		messages: [],
-		party: null
+		party: null,
+		shared: null
 	};
-
-	public static init() {
-		if (this.peer) {
-			return;
-		}
-
-		this.peer = new Peer(Utils.guid());
-		this.peer.on('open', id => console.info('peer ' + id + ' open'));
-		this.peer.on('close', () => console.info('peer closed'));
-		this.peer.on('disconnected', () => console.info('peer disconnected'));
-		this.peer.on('error', err => console.error(err));
-	}
-
-	public static stop() {
-		if (this.peer) {
-			this.peer.disconnect();
-			this.peer = null;
-		}
-	}
 
 	public static getID() {
 		return this.peer ? this.peer.id : '';
@@ -80,16 +71,16 @@ export class Comms {
 		return person ? person.status : '';
 	}
 
-	public static getPC(id: string) {
+	public static getCharacterID(id: string) {
 		const person = this.data.people.find(p => p.id === id);
-		return person ? person.pc : '';
+		return person ? person.characterID : '';
 	}
 
 	public static getCurrentName(id: string) {
 		if (this.data.party) {
 			const person = this.data.people.find(p => p.id === id);
-			if (person && person.pc) {
-				const character = this.data.party.pcs.find(pc => pc.id === person.pc);
+			if (person && person.characterID) {
+				const character = this.data.party.pcs.find(pc => pc.id === person.characterID);
 				if (character) {
 					return character.name;
 				}
@@ -180,14 +171,19 @@ export class Comms {
 		switch (packet.type) {
 			case 'pulse':
 				this.data.people = packet.payload['people'];
+				break;
+			case 'party-update':
 				this.data.party = packet.payload['party'];
+				break;
+			case 'share-update':
+				this.data.shared = packet.payload['shared'];
 				break;
 			case 'player-info':
 				const id = packet.payload['player'];
 				const person = this.data.people.find(p => p.id === id);
 				if (person) {
 					person.status = packet.payload['status'];
-					person.pc = packet.payload['pc'];
+					person.characterID = packet.payload['characterID'];
 				}
 				break;
 			case 'character-info':
@@ -214,59 +210,107 @@ export class Comms {
 				break;
 		}
 	}
+
+	public static finish() {
+		if (Comms.peer) {
+			Comms.peer.destroy();
+			Comms.peer = null;
+		}
+
+		Comms.data = {
+			people: [],
+			messages: [],
+			party: null,
+			shared: null
+		};
+	}
 }
 
 export class CommsDM {
-	private static initialised: boolean = false;
 	private static connections: DataConnection[] = [];
+	private static state: 'not started' | 'starting' | 'started' = 'not started';
 
+	public static getState() {
+		return this.state;
+	}
+
+	public static onStateChanged: () => void;
 	public static onDataChanged: () => void;
 
 	public static init() {
-		if (!this.initialised) {
-			if (Comms.peer) {
-				Comms.peer.on('connection', conn => {
-					this.connections.push(conn);
-					conn.on('open', () => {
-						console.info('connection opened: ' + conn.label);
-						this.sendPulse();
-					});
-					conn.on('close', () => {
-						console.info('connection closed: ' + conn.label);
-						// Remove this connection
-						const index = this.connections.indexOf(conn);
-						if (index !== -1) {
-							this.connections.splice(index, 1);
-						}
-						this.sendPulse();
-					});
-					conn.on('error', err => {
-						console.error(err);
-						// Remove this connection
-						const index = this.connections.indexOf(conn);
-						if (index !== -1) {
-							this.connections.splice(index, 1);
-						}
-						this.sendPulse();
-					});
-					conn.on('data', packet => {
-						this.onDataReceived(packet);
-					});
-				});
-
-				setInterval(() => {
-					this.sendPulse();
-				}, PULSE_INTERVAL * 1000);
-
-				this.initialised = true;
-			}
+		if (this.state !== 'not started') {
+			return;
 		}
+
+		this.state = 'starting';
+		this.onStateChanged();
+
+		const dmCode = 'dm-' + Utils.guid();
+		Comms.peer = new Peer(dmCode);
+
+		Comms.peer.on('open', id => {
+			console.info('peer ' + id + ' open');
+
+			setInterval(() => {
+				this.sendPulse();
+			}, PULSE_INTERVAL * 1000);
+
+			this.state = 'started';
+			this.onStateChanged();
+		});
+		Comms.peer.on('close', () => {
+			console.info('peer closed');
+			this.shutdown();
+		});
+		Comms.peer.on('disconnected', () => {
+			console.info('peer disconnected');
+			this.shutdown();
+		});
+		Comms.peer.on('error', err => {
+			console.error(err);
+			this.shutdown();
+		});
+		Comms.peer.on('connection', conn => {
+			this.connections.push(conn);
+			conn.on('open', () => {
+				console.info('connection opened: ' + conn.label);
+				this.sendPulse();
+			});
+			conn.on('close', () => {
+				console.info('connection closed: ' + conn.label);
+				// Remove this connection
+				const index = this.connections.indexOf(conn);
+				if (index !== -1) {
+					this.connections.splice(index, 1);
+				}
+				this.sendPulse();
+			});
+			conn.on('error', err => {
+				console.error(err);
+				this.kick(conn.peer);
+			});
+			conn.on('data', packet => {
+				this.onDataReceived(packet);
+			});
+		});
+
+	}
+
+	public static shutdown() {
+		this.connections.forEach(conn => conn.close());
+		this.connections = [];
+
+		Comms.finish();
+
+		this.state = 'not started';
+		this.onStateChanged();
 	}
 
 	public static kick(id: string) {
 		const conn = this.connections
 			.filter(c => c.open)
 			.find(c => c.peer === id);
+
 		if (conn) {
 			conn.close();
 
@@ -279,11 +323,6 @@ export class CommsDM {
 		}
 	}
 
-	public static kickAll() {
-		this.connections.forEach(conn => conn.close());
-		this.connections = [];
-	}
-
 	public static sendPulse() {
 		const people = this.connections
 			.filter(conn => conn.open)
@@ -291,7 +330,7 @@ export class CommsDM {
 				id: conn.peer,
 				name: conn.label,
 				status: Comms.getStatus(conn.peer),
-				pc: Comms.getPC(conn.peer)
+				characterID: Comms.getCharacterID(conn.peer)
 			}));
 
 		Utils.sort(people);
@@ -300,14 +339,31 @@ export class CommsDM {
 			id: Comms.getID(),
 			name: 'DM',
 			status: '',
-			pc: ''
+			characterID: ''
 		});
 
 		this.onDataReceived({
 			type: 'pulse',
 			payload: {
-				people: people,
+				people: people
+			}
+		});
+	}
+
+	public static sendPartyUpdate() {
+		this.broadcast({
+			type: 'party-update',
+			payload: {
 				party: Comms.data.party
+			}
+		});
+	}
+
+	public static sendShareUpdate() {
+		this.broadcast({
+			type: 'share-update',
+			payload: {
+				shared: Comms.data.shared
 			}
 		});
 	}
@@ -335,7 +391,35 @@ export class CommsDM {
 	public static setParty(party: Party | null) {
 		Comms.data.party = party;
 		this.onDataChanged();
-		this.sendPulse();
+		this.sendPartyUpdate();
+	}
+
+	public static shareNothing() {
+		Comms.data.shared = null;
+		this.onDataChanged();
+		this.sendShareUpdate();
+	}
+
+	// TODO: Add params for map viewport, map highlighted square, map selected tokens; add these to additional object
+	public static shareCombat(combat: Combat) {
+		Comms.data.shared = {
+			type: 'combat',
+			data: combat,
+			additional: {}
+		};
+		this.onDataChanged();
+		this.sendShareUpdate();
+	}
+
+	// TODO: Add params for map viewport, map highlighted square, map selected tokens; add these to additional object
+	public static shareExploration(exploration: Exploration) {
+		Comms.data.shared = {
+			type: 'exploration',
+			data: exploration,
+			additional: {}
+		};
+		this.onDataChanged();
+		this.sendShareUpdate();
 	}
 
 	private static onDataReceived(packet: Packet) {
@@ -362,51 +446,76 @@ export class CommsPlayer {
 	public static onStateChanged: () => void;
 	public static onDataChanged: () => void;
 
-	public static connect(id: string, name: string) {
-		if (Comms.peer) {
-			this.state = 'connecting';
-			this.onStateChanged();
-			const conn = Comms.peer.connect(id, { label: name, reliable: true });
-			this.connection = conn;
-			conn.on('open', () => {
-				console.info('connection opened');
-				this.state = 'connected';
-				this.onStateChanged();
-			});
-			conn.on('close', () => {
-				console.info('connection closed');
-				this.state = 'not connected';
-				this.connection = null;
-				this.onStateChanged();
-			});
-			conn.on('error', err => {
-				console.error(err);
-				this.state = 'not connected';
-				this.connection = null;
-				this.onStateChanged();
-			});
-			conn.on('data', packet => {
-				Comms.processPacket(packet);
-				this.onDataChanged();
-			});
+	public static connect(dmCode: string, name: string) {
+		if (this.state !== 'not connected') {
+			return;
 		}
+
+		this.state = 'connecting';
+		this.onStateChanged();
+
+		const playerCode = 'player-' + Utils.guid();
+		Comms.peer = new Peer(playerCode);
+
+		Comms.peer.on('open', id => {
+			console.info('peer ' + id + ' open');
+
+			if (Comms.peer) {
+				// Connect to the DM
+				const conn = Comms.peer.connect(dmCode, { label: name, reliable: true });
+				this.connection = conn;
+				conn.on('open', () => {
+					console.info('connection opened');
+					this.state = 'connected';
+					this.onStateChanged();
+				});
+				conn.on('close', () => {
+					console.info('connection closed');
+					this.disconnect();
+				});
+				conn.on('error', err => {
+					console.error(err);
+					this.disconnect();
+				});
+				conn.on('data', packet => {
+					Comms.processPacket(packet);
+					this.onDataChanged();
+				});
+			}
+		});
+		Comms.peer.on('close', () => {
+			console.info('peer closed');
+			this.disconnect();
+		});
+		Comms.peer.on('disconnected', () => {
+			console.info('peer disconnected');
+			this.disconnect();
+		});
+		Comms.peer.on('error', err => {
+			console.error(err);
+			this.disconnect();
+		});
 	}
 
 	public static disconnect() {
 		if (this.connection) {
 			this.connection.close();
 			this.connection = null;
-			this.state = 'not connected';
 		}
+
+		Comms.finish();
+
+		this.state = 'not connected';
+		this.onStateChanged();
 	}
 
-	public static sendUpdate(status: string, pc: string) {
+	public static sendUpdate(status: string, characterID: string) {
 		this.sendPacket({
 			type: 'player-info',
 			payload: {
 				player: Comms.getID(),
 				status: status,
-				pc: pc
+				characterID: characterID
 			}
 		});
 	}
