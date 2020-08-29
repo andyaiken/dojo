@@ -359,7 +359,11 @@ export class CommsDM {
 		});
 	}
 
-	public static sendShareUpdate() {
+	public static sendShareUpdate(additional: any = {}) {
+		if (Comms.data.shared) {
+			Comms.data.shared.additional = additional;
+		}
+
 		this.broadcast({
 			type: 'share-update',
 			payload: {
@@ -400,8 +404,8 @@ export class CommsDM {
 		this.sendShareUpdate();
 	}
 
-	// TODO: Add params for map viewport, map highlighted square, map selected tokens; add these to additional object
 	public static shareCombat(combat: Combat) {
+		// TODO: Check for custom images
 		Comms.data.shared = {
 			type: 'combat',
 			data: combat,
@@ -411,8 +415,8 @@ export class CommsDM {
 		this.sendShareUpdate();
 	}
 
-	// TODO: Add params for map viewport, map highlighted square, map selected tokens; add these to additional object
 	public static shareExploration(exploration: Exploration) {
+		// TODO: Check for custom images
 		Comms.data.shared = {
 			type: 'exploration',
 			data: exploration,

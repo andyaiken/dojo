@@ -118,7 +118,11 @@ export default class CombatScreen extends React.Component<Props, State> {
 
 	public componentDidUpdate() {
 		if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
-			CommsDM.sendShareUpdate();
+			CommsDM.sendShareUpdate({
+				selectedItemIDs: this.state.selectedItemIDs,
+				selectedAreaID: this.state.selectedAreaID,
+				highlightedSquare: this.state.highlightedSquare
+			});
 		}
 	}
 
@@ -346,22 +350,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 		this.props.setFog(fog);
 	}
 
-	private getMapViewport() {
-		if (this.props.combat.map && this.state.selectedAreaID) {
-			const area = this.props.combat.map.areas.find(a => a.id === this.state.selectedAreaID);
-			if (area) {
-				return {
-					minX: area.x,
-					minY: area.y,
-					maxX: area.x + area.width - 1,
-					maxY: area.y + area.height - 1
-				};
-			}
-		}
-
-		return null;
-	}
-
 	//#region Rendering helper methods
 
 	private getPlayerView() {
@@ -389,7 +377,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 								key='map'
 								map={this.props.combat.map}
 								mode='combat-player'
-								viewport={this.getMapViewport()}
+								viewport={Mercator.getViewport(this.props.combat.map, this.state.selectedAreaID)}
 								combatants={this.props.combat.combatants}
 								selectedItemIDs={this.state.selectedItemIDs}
 								fog={this.props.combat.fog}
@@ -883,7 +871,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 						<MapPanel
 							map={this.props.combat.map}
 							mode='combat'
-							viewport={this.getMapViewport()}
+							viewport={Mercator.getViewport(this.props.combat.map, this.state.selectedAreaID)}
 							showGrid={(this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.editFog || this.state.highlightMapSquare}
 							combatants={this.props.combat.combatants}
 							selectedItemIDs={this.state.selectedItemIDs}

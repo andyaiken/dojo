@@ -78,23 +78,12 @@ export default class SessionSidebar extends React.Component<Props, State> {
 		switch (this.state.view) {
 			case 'messages':
 				return (
-					<div>
-						<MessagesPanel
-							user='dm'
-							messages={Comms.data.messages}
-							openImage={data => this.props.openImage(data)}
-							openStatBlock={monster => this.props.openStatBlock(monster)}
-						/>
-						<SendMessagePanel
-							user='dm'
-							library={this.props.library}
-							sendMessage={(to, text, language, untranslated) => CommsDM.sendMessage(to, text, language, untranslated)}
-							sendLink={(to, url) => CommsDM.sendLink(to, url)}
-							sendImage={(to, image) => CommsDM.sendImage(to, image)}
-							sendRoll={(to, roll) => CommsDM.sendRoll(to, roll)}
-							sendMonster={(to, monster) => CommsDM.sendMonster(to, monster)}
-						/>
-					</div>
+					<MessagesPanel
+						user='dm'
+						messages={Comms.data.messages}
+						openImage={data => this.props.openImage(data)}
+						openStatBlock={monster => this.props.openStatBlock(monster)}
+					/>
 				);
 			case 'people':
 				return (
@@ -190,6 +179,7 @@ export default class SessionSidebar extends React.Component<Props, State> {
 
 	public render() {
 		let header = null;
+		let footer = null;
 		if (CommsDM.getState() === 'started') {
 			header = (
 				<div className='sidebar-header'>
@@ -200,6 +190,22 @@ export default class SessionSidebar extends React.Component<Props, State> {
 					/>
 				</div>
 			);
+
+			if (this.state.view === 'messages') {
+				footer = (
+					<div className='sidebar-footer'>
+						<SendMessagePanel
+							user='dm'
+							library={this.props.library}
+							sendMessage={(to, text, language, untranslated) => CommsDM.sendMessage(to, text, language, untranslated)}
+							sendLink={(to, url) => CommsDM.sendLink(to, url)}
+							sendImage={(to, image) => CommsDM.sendImage(to, image)}
+							sendRoll={(to, roll) => CommsDM.sendRoll(to, roll)}
+							sendMonster={(to, monster) => CommsDM.sendMonster(to, monster)}
+						/>
+					</div>
+				);
+			}
 		}
 
 		return (
@@ -208,6 +214,7 @@ export default class SessionSidebar extends React.Component<Props, State> {
 				<div className='sidebar-content'>
 					{this.getContent()}
 				</div>
+				{footer}
 			</div>
 		);
 	}

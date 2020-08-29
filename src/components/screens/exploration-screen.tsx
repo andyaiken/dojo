@@ -3,6 +3,7 @@ import React from 'react';
 
 import { Comms, CommsDM } from '../../utils/comms';
 import Gygax from '../../utils/gygax';
+import Mercator from '../../utils/mercator';
 
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
@@ -75,7 +76,11 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 
 	public componentDidUpdate() {
 		if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
-			CommsDM.sendShareUpdate();
+			CommsDM.sendShareUpdate({
+				selectedItemIDs: this.state.selectedCombatantIDs,
+				selectedAreaID: this.state.selectedAreaID,
+				highlightedSquare: this.state.highlightedSquare
+			});
 		}
 	}
 
@@ -200,24 +205,11 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 	private getMap(playerView: boolean) {
 		const adding = (this.state.selectedCombatantIDs.length === 1) && !this.props.exploration.map.items.find(i => i.id === this.state.selectedCombatantIDs[0]);
 
-		let viewport = null;
-		if (this.state.selectedAreaID) {
-			const area = this.props.exploration.map.areas.find(a => a.id === this.state.selectedAreaID);
-			if (area) {
-				viewport = {
-					minX: area.x,
-					minY: area.y,
-					maxX: area.x + area.width - 1,
-					maxY: area.y + area.height - 1
-				};
-			}
-		}
-
 		return (
 			<MapPanel
 				map={this.props.exploration.map}
 				mode={playerView ? 'combat-player' : 'combat'}
-				viewport={viewport}
+				viewport={Mercator.getViewport(this.props.exploration.map, this.state.selectedAreaID)}
 				combatants={this.props.exploration.combatants}
 				showGrid={(adding || this.state.editFog || this.state.highlightMapSquare) && !playerView}
 				selectedItemIDs={this.state.selectedCombatantIDs}

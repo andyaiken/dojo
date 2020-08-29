@@ -2,6 +2,7 @@ import { Col, Drawer, Row } from 'antd';
 import React from 'react';
 
 import { Comms, CommsPlayer } from '../../utils/comms';
+import Mercator from '../../utils/mercator';
 
 import { Combat } from '../../models/combat';
 import { Exploration } from '../../models/map';
@@ -104,11 +105,13 @@ export default class Player extends React.Component<Props, State> {
 				let shared = null;
 				if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
 					const combat = Comms.data.shared.data as Combat;
-					shared = this.getCombatSection(combat);
+					const additional = Comms.data.shared.additional;
+					shared = this.getCombatSection(combat, additional);
 				}
 				if (Comms.data.shared && (Comms.data.shared.type === 'exploration')) {
 					const exploration = Comms.data.shared.data as Exploration;
-					shared = this.getExplorationSection(exploration);
+					const additional = Comms.data.shared.additional;
+					shared = this.getExplorationSection(exploration, additional);
 				}
 				if (shared !== null) {
 					return this.getSharedView(shared);
@@ -130,21 +133,27 @@ export default class Player extends React.Component<Props, State> {
 						editPC={id => this.editPC(id)}
 					/>
 				</Col>
-				<Col xs={24} sm={24} md={16} lg={18} xl={20} className='scrollable'>
-					<MessagesPanel
-						user='player'
-						messages={Comms.data.messages}
-						openImage={data => this.setState({drawer: { type: 'image', data: data }})}
-						openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
-					/>
-					<SendMessagePanel
-						user='player'
-						sendMessage={(to, text, language, untranslated) => CommsPlayer.sendMessage(to, text, language, untranslated)}
-						sendLink={(to, url) => CommsPlayer.sendLink(to, url)}
-						sendImage={(to, image) => CommsPlayer.sendImage(to, image)}
-						sendRoll={(to, roll) => CommsPlayer.sendRoll(to, roll)}
-						sendMonster={(to, monster) => null}
-					/>
+				<Col xs={24} sm={24} md={16} lg={18} xl={20} className='full-height sidebar'>
+					<div className='sidebar-container in-page'>
+						<div className='sidebar-content'>
+							<MessagesPanel
+								user='player'
+								messages={Comms.data.messages}
+								openImage={data => this.setState({drawer: { type: 'image', data: data }})}
+								openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
+							/>
+						</div>
+						<div className='sidebar-footer'>
+							<SendMessagePanel
+								user='player'
+								sendMessage={(to, text, language, untranslated) => CommsPlayer.sendMessage(to, text, language, untranslated)}
+								sendLink={(to, url) => CommsPlayer.sendLink(to, url)}
+								sendImage={(to, image) => CommsPlayer.sendImage(to, image)}
+								sendRoll={(to, roll) => CommsPlayer.sendRoll(to, roll)}
+								sendMonster={(to, monster) => null}
+							/>
+						</div>
+					</div>
 				</Col>
 			</Row>
 		);
@@ -156,34 +165,44 @@ export default class Player extends React.Component<Props, State> {
 				<Col xs={24} sm={24} md={12} lg={16} xl={18} className='full-height'>
 					{shared}
 				</Col>
-				<Col xs={24} sm={24} md={12} lg={8} xl={6} className='scrollable sidebar sidebar-right'>
-					<MessagesPanel
-						user='player'
-						messages={Comms.data.messages}
-						openImage={data => this.setState({drawer: { type: 'image', data: data }})}
-						openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
-					/>
-					<SendMessagePanel
-						user='player'
-						sendMessage={(to, text, language, untranslated) => CommsPlayer.sendMessage(to, text, language, untranslated)}
-						sendLink={(to, url) => CommsPlayer.sendLink(to, url)}
-						sendImage={(to, image) => CommsPlayer.sendImage(to, image)}
-						sendRoll={(to, roll) => CommsPlayer.sendRoll(to, roll)}
-						sendMonster={(to, monster) => null}
-					/>
+				<Col xs={24} sm={24} md={12} lg={8} xl={6} className='full-height sidebar sidebar-right'>
+					<div className='sidebar-container in-page'>
+						<div className='sidebar-content'>
+							<MessagesPanel
+								user='player'
+								messages={Comms.data.messages}
+								openImage={data => this.setState({drawer: { type: 'image', data: data }})}
+								openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
+							/>
+						</div>
+						<div className='sidebar-footer'>
+							<SendMessagePanel
+								user='player'
+								sendMessage={(to, text, language, untranslated) => CommsPlayer.sendMessage(to, text, language, untranslated)}
+								sendLink={(to, url) => CommsPlayer.sendLink(to, url)}
+								sendImage={(to, image) => CommsPlayer.sendImage(to, image)}
+								sendRoll={(to, roll) => CommsPlayer.sendRoll(to, roll)}
+								sendMonster={(to, monster) => null}
+							/>
+						</div>
+					</div>
 				</Col>
 			</Row>
 		);
 	}
 
-	private getCombatSection(combat: Combat) {
+	private getCombatSection(combat: Combat, additional: any) {
+		const selectedItemIDs = additional['selectedItemIDs'] as string[] ?? [];
+		const selectedAreaID = additional['selectedAreaID'] as string ?? '';
+		const highlightedSquare = additional['highlightedSquare'] as { x: number, y: number} | null ?? null;
+
 		const initList = (
 			<InitiativeOrder
 				combat={combat}
 				playerView={true}
 				showDefeated={false}
 				help={null}
-				selectedItemIDs={[]}
+				selectedItemIDs={selectedItemIDs}
 				toggleItemSelection={(id, ctrl) => null}
 			/>
 		);
@@ -194,9 +213,12 @@ export default class Player extends React.Component<Props, State> {
 				<div className='scrollable horizontal-only'>
 					<MapPanel
 						map={combat.map}
+						viewport={Mercator.getViewport(combat.map, selectedAreaID)}
 						mode='combat-player'
 						fog={combat.fog}
 						combatants={combat.combatants}
+						selectedItemIDs={selectedItemIDs}
+						focussedSquare={highlightedSquare}
 						itemSelected={(id, ctrl) => null}
 					/>
 				</div>
@@ -221,14 +243,21 @@ export default class Player extends React.Component<Props, State> {
 		);
 	}
 
-	private getExplorationSection(exploration: Exploration) {
+	private getExplorationSection(exploration: Exploration, additional: any) {
+		const selectedItemIDs = additional['selectedItemIDs'] as string[] ?? [];
+		const selectedAreaID = additional['selectedAreaID'] as string ?? '';
+		const highlightedSquare = additional['highlightedSquare'] as { x: number, y: number} | null ?? null;
+
 		return (
 			<div className='scrollable both-ways'>
 				<MapPanel
 					map={exploration.map}
+					viewport={Mercator.getViewport(exploration.map, selectedAreaID)}
 					mode='combat-player'
 					fog={exploration.fog}
 					combatants={exploration.combatants}
+					selectedItemIDs={selectedItemIDs}
+					focussedSquare={highlightedSquare}
 					itemSelected={(id, ctrl) => null}
 				/>
 			</div>

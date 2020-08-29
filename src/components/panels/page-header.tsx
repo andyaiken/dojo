@@ -1,4 +1,4 @@
-import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
+import { LeftCircleOutlined, RightCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import React from 'react';
 
 interface Props {
@@ -9,12 +9,14 @@ interface Props {
 	}[];
 	sidebarVisible: boolean;
 	onToggleSidebar: () => void;
+	onToggleSettings: () => void;
 }
 
 export default class PageHeader extends React.Component<Props> {
 	public static defaultProps = {
 		sidebarVisible: false,
-		onToggleSidebar: null
+		onToggleSidebar: null,
+		onToggleSettings: null
 	};
 
 	public render() {
@@ -27,12 +29,15 @@ export default class PageHeader extends React.Component<Props> {
 				);
 			});
 
-			let toggle = null;
+			let icon = null;
 			if (this.props.onToggleSidebar) {
-				toggle = <LeftCircleOutlined className='toggle' title='show sidebar' onClick={() => this.props.onToggleSidebar()} />;
+				icon = <LeftCircleOutlined className='toggle' title='show sidebar' onClick={() => this.props.onToggleSidebar()} />;
 				if (this.props.sidebarVisible) {
-					toggle = <RightCircleOutlined className='toggle' title='hide sidebar' onClick={() => this.props.onToggleSidebar()} />;
+					icon = <RightCircleOutlined className='toggle' title='hide sidebar' onClick={() => this.props.onToggleSidebar()} />;
 				}
+			}
+			if (this.props.onToggleSettings) {
+				icon = <SettingOutlined className='toggle' title='settings' onClick={() => this.props.onToggleSettings()} />;
 			}
 
 			return (
@@ -40,7 +45,7 @@ export default class PageHeader extends React.Component<Props> {
 					<div className='app-title'>
 						{breadcrumbs}
 					</div>
-					{toggle}
+					{icon}
 				</div>
 			);
 		} catch (e) {

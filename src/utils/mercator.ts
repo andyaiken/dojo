@@ -489,4 +489,20 @@ export default class Mercator {
 		const index = Math.floor(Math.random() * DOORWAY_TYPES.length);
 		return DOORWAY_TYPES[index];
 	}
+
+	public static getViewport(map: Map, areaID: string | null) {
+		if (areaID) {
+			const area = map.areas.find(a => a.id === areaID);
+			if (area) {
+				return {
+					minX: area.x,
+					minY: area.y,
+					maxX: area.x + area.width - 1,
+					maxY: area.y + area.height - 1
+				};
+			}
+		}
+
+		return null;
+	}
 }

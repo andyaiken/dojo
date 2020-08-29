@@ -2,7 +2,7 @@ import { Col, Drawer, Row } from 'antd';
 import Mousetrap from 'mousetrap';
 import React from 'react';
 
-import { CommsDM } from '../../utils/comms';
+import { Comms, CommsDM } from '../../utils/comms';
 import Factory from '../../utils/factory';
 import Frankenstein from '../../utils/frankenstein';
 import Gygax from '../../utils/gygax';
@@ -1175,6 +1175,10 @@ export default class Main extends React.Component<Props, State> {
 	}
 
 	private pauseExploration() {
+		if (Comms.data.shared && (Comms.data.shared.type === 'exploration')) {
+			CommsDM.shareNothing();
+		}
+
 		this.setState({
 			selectedExplorationID: null
 		});
@@ -1188,6 +1192,10 @@ export default class Main extends React.Component<Props, State> {
 	}
 
 	private endExploration(exploration: Exploration) {
+		if (Comms.data.shared && (Comms.data.shared.type === 'exploration')) {
+			CommsDM.shareNothing();
+		}
+
 		const index = this.state.explorations.indexOf(exploration);
 		this.state.explorations.splice(index, 1);
 		this.setState({
@@ -1499,6 +1507,10 @@ export default class Main extends React.Component<Props, State> {
 	// Combat management
 
 	private pauseCombat() {
+		if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
+			CommsDM.shareNothing();
+		}
+
 		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
 		if (combat) {
 			const entry = Factory.createCombatReportEntry();
@@ -1523,6 +1535,10 @@ export default class Main extends React.Component<Props, State> {
 	}
 
 	private endCombat(combat: Combat, goToMap: boolean = false) {
+		if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
+			CommsDM.shareNothing();
+		}
+
 		const entry = Factory.createCombatReportEntry();
 		entry.type = 'combat-end';
 		combat.report.push(entry);
