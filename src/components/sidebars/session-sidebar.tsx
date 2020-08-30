@@ -197,6 +197,7 @@ export default class SessionSidebar extends React.Component<Props, State> {
 						<SendMessagePanel
 							user='dm'
 							library={this.props.library}
+							openStatBlock={monster => this.props.openStatBlock(monster)}
 							sendMessage={(to, text, language, untranslated) => CommsDM.sendMessage(to, text, language, untranslated)}
 							sendLink={(to, url) => CommsDM.sendLink(to, url)}
 							sendImage={(to, image) => CommsDM.sendImage(to, image)}

@@ -125,4 +125,8 @@
 			background-color: $highlight01;
 		}
 	}
+
+	.nonselectable-image {
+		max-height: 100px;
+	}
 }

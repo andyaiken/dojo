@@ -11,7 +11,6 @@ import Utils from '../../utils/utils';
 import { DieRollResult } from '../../models/dice';
 import { Monster, MonsterGroup } from '../../models/monster';
 
-import MonsterStatblockCard from '../cards/monster-statblock-card';
 import Checkbox from '../controls/checkbox';
 import Dropdown from '../controls/dropdown';
 import Expander from '../controls/expander';
@@ -370,6 +369,7 @@ class MessagePanel extends React.Component<MessagePanelProps> {
 interface SendMessagePanelProps {
 	user: 'dm' | 'player';
 	library: MonsterGroup[];
+	openStatBlock: (monster: Monster) => void;
 	sendMessage: (to: string[], text: string, language: string, untranslated: string) => void;
 	sendLink: (to: string[], url: string) => void;
 	sendImage: (to: string[], image: string) => void;
@@ -742,8 +742,9 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 							}}
 							onClear={() => this.setMonster(null)}
 						/>
-						{this.state.monster ? <MonsterStatblockCard monster={this.state.monster} /> : null}
-						<button className={this.canSend() ? '' : 'disabled'} onClick={() => this.sendMonster()}>send</button>
+						<button className={this.canSend() ? '' : 'disabled'} onClick={() => this.sendMonster()}>
+							send statblock
+						</button>
 					</div>
 				);
 		}

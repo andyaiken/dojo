@@ -146,6 +146,7 @@ export default class Player extends React.Component<Props, State> {
 						<div className='sidebar-footer'>
 							<SendMessagePanel
 								user='player'
+								openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
 								sendMessage={(to, text, language, untranslated) => CommsPlayer.sendMessage(to, text, language, untranslated)}
 								sendLink={(to, url) => CommsPlayer.sendLink(to, url)}
 								sendImage={(to, image) => CommsPlayer.sendImage(to, image)}
@@ -178,6 +179,7 @@ export default class Player extends React.Component<Props, State> {
 						<div className='sidebar-footer'>
 							<SendMessagePanel
 								user='player'
+								openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
 								sendMessage={(to, text, language, untranslated) => CommsPlayer.sendMessage(to, text, language, untranslated)}
 								sendLink={(to, url) => CommsPlayer.sendLink(to, url)}
 								sendImage={(to, image) => CommsPlayer.sendImage(to, image)}
