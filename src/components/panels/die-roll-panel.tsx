@@ -2,7 +2,7 @@ import { CloseCircleOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
-interface DieRollPanelProps {
+interface Props {
 	dice: { [sides: number]: number };
 	constant: number;
 	setDie: (sides: number, count: number) => void;
@@ -11,7 +11,7 @@ interface DieRollPanelProps {
 	rollDice: (mode: '' | 'advantage' | 'disadvantage') => void;
 }
 
-export default class DieRollPanel extends React.Component<DieRollPanelProps> {
+export default class DieRollPanel extends React.Component<Props> {
 	private getDieTypeBox(sides: number) {
 		const count = this.props.dice[sides];
 		return (

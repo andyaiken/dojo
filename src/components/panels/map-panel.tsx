@@ -4,9 +4,10 @@ import React from 'react';
 import Showdown from 'showdown';
 
 import Gygax from '../../utils/gygax';
+import Matisse from '../../utils/matisse';
 
 import { Combatant } from '../../models/combat';
-import { Map, MapArea, MapItem } from '../../models/map';
+import { Map, MapArea, MapDimensions, MapItem } from '../../models/map';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
@@ -45,13 +46,6 @@ interface State {
 		x: number,
 		y: number
 	} | null;
-}
-
-interface MapDimensions {
-	minX: number;
-	maxX: number;
-	minY: number;
-	maxY: number;
 }
 
 interface MapItemStyle {
@@ -711,9 +705,8 @@ class MapTile extends React.Component<MapTileProps> {
 
 			let customImage = null;
 			if (this.props.tile.terrain === 'custom') {
-				const data = window.localStorage.getItem('image-' + this.props.tile.customBackground);
-				if (data) {
-					const image = JSON.parse(data);
+				const image = Matisse.getImage(this.props.tile.customBackground);
+				if (image) {
 					customImage = (
 						<img className='custom-image' alt='map tile' src={image.data} />
 					);
@@ -1020,19 +1013,10 @@ class MapToken extends React.Component<MapTokenProps> {
 			let altitudeBadge = null;
 			let conditionsBadge = null;
 			if (this.props.combatant && !this.props.simple) {
-				let src = '';
 				const c = this.props.combatant as (Combatant & PC) | (Combatant & Monster);
 				if (c && c.portrait) {
-					const data = window.localStorage.getItem('image-' + c.portrait);
-					if (data) {
-						const image = JSON.parse(data);
-						src = image.data;
-					}
-				}
-
-				if (src) {
 					content = (
-						<img className='portrait' src={src} alt={name} />
+						<img className='portrait' src={c.portrait} alt={name} />
 					);
 				} else {
 					const inits = name.toUpperCase()

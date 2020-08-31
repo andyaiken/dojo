@@ -2,8 +2,11 @@ import { FileOutlined } from '@ant-design/icons';
 import { notification, Upload } from 'antd';
 import React from 'react';
 
+import Matisse from '../../utils/matisse';
 import Sherlock from '../../utils/sherlock';
 import Utils from '../../utils/utils';
+
+import { SavedImage } from '../../models/misc';
 
 import Textbox from '../controls/textbox';
 import Note from '../panels/note';
@@ -18,40 +21,14 @@ interface State {
 	filter: string;
 }
 
-interface SavedImage {
-	id: string;
-	name: string;
-	data: string;
-}
-
 export default class ImageSelectionModal extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 
 		this.state = {
-			images: this.listImages(),
+			images: Matisse.allImages(),
 			filter: ''
 		};
-	}
-
-	private listImages() {
-		const images: SavedImage[] = [];
-		for (let n = 0; n !== window.localStorage.length; ++n) {
-			const key = window.localStorage.key(n);
-			if (key && key.startsWith('image-')) {
-				const data = window.localStorage.getItem(key);
-				if (data) {
-					const img = JSON.parse(data);
-					images.push({
-						id: img.id,
-						name: img.name,
-						data: img.data
-					});
-				}
-			}
-		}
-
-		return Utils.sort(images, [{ field: 'name', dir: 'asc'}]);
 	}
 
 	private setFilter(text: string) {
@@ -64,19 +41,11 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
 		const reader = new FileReader();
 		reader.onload = progress => {
 			if (progress.target) {
-				const content = progress.target.result as string;
-				const image = {
-					id: Utils.guid(),
-					name: file.name,
-					data: content
-				};
-
 				try {
-					const json = JSON.stringify(image);
-					window.localStorage.setItem('image-' + image.id, json);
-
+					const content = progress.target.result as string;
+					Matisse.saveImage(Utils.guid(), file.name, content);
 					this.setState({
-						images: this.listImages()
+						images: Matisse.allImages()
 					});
 				} catch {
 					// ERROR: Quota exceeded (probably)

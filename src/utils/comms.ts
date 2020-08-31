@@ -5,8 +5,10 @@ import Utils from './utils';
 import { Combat } from '../models/combat';
 import { DieRollResult } from '../models/dice';
 import { Exploration } from '../models/map';
+import { SavedImage } from '../models/misc';
 import { Monster } from '../models/monster';
 import { Party, PC } from '../models/party';
+import Matisse from './matisse';
 
 // This controls the interval, in seconds, between pulses
 const PULSE_INTERVAL = 60;
@@ -34,6 +36,7 @@ export interface Message {
 export interface SharedExperience {
 	type: 'combat' | 'exploration';
 	data: any;
+	images: SavedImage[];
 	additional: any;
 }
 
@@ -405,10 +408,21 @@ export class CommsDM {
 	}
 
 	public static shareCombat(combat: Combat) {
-		// TODO: Check for custom images
+		const images: SavedImage[] = [];
+		if (combat.map) {
+			combat.map.items
+				.filter(mi => (mi.terrain === 'custom') && (mi.customBackground !== ''))
+				.forEach(mi => {
+					const img = Matisse.getImage(mi.customBackground);
+					if (img) {
+						images.push(img);
+					}
+				});
+		}
 		Comms.data.shared = {
 			type: 'combat',
 			data: combat,
+			images: images,
 			additional: {}
 		};
 		this.onDataChanged();
@@ -416,10 +430,19 @@ export class CommsDM {
 	}
 
 	public static shareExploration(exploration: Exploration) {
-		// TODO: Check for custom images
+		const images: SavedImage[] = [];
+		exploration.map.items
+			.filter(mi => (mi.terrain === 'custom') && (mi.customBackground !== ''))
+			.forEach(mi => {
+				const img = Matisse.getImage(mi.customBackground);
+				if (img) {
+					images.push(img);
+				}
+			});
 		Comms.data.shared = {
 			type: 'exploration',
 			data: exploration,
+			images: images,
 			additional: {}
 		};
 		this.onDataChanged();

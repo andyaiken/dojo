@@ -3,14 +3,7 @@ import React from 'react';
 
 import Utils from '../../../utils/utils';
 
-interface OracleCard {
-	id: string;
-	name: string;
-	meanings: {
-		upright: string,
-		reversed: string
-	};
-}
+import { OracleCard } from '../../../models/misc';
 
 interface Props {
 }

@@ -7,6 +7,13 @@ export interface Map {
 	areas: MapArea[];
 }
 
+export interface MapDimensions {
+	minX: number;
+	maxX: number;
+	minY: number;
+	maxY: number;
+}
+
 export interface MapItem {
 	id: string;
 	type: 'tile' | 'pc' | 'monster' | 'companion' | 'overlay' | 'token';

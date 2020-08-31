@@ -2,10 +2,11 @@ import { Col, Drawer, Row } from 'antd';
 import React from 'react';
 
 import { Comms, CommsPlayer } from '../../utils/comms';
+import Matisse from '../../utils/matisse';
 import Mercator from '../../utils/mercator';
 
 import { Combat } from '../../models/combat';
-import { Exploration } from '../../models/map';
+import { Exploration, Map } from '../../models/map';
 
 import Textbox from '../controls/textbox';
 import PCEditorModal from '../modals/editors/pc-editor-modal';
@@ -32,11 +33,37 @@ export default class Player extends React.Component<Props, State> {
 		this.state = {
 			drawer: null
 		};
+
+		let maps: Map[] = [];
+		let combats: Combat[] = [];
+		let explorations: Exploration[] = [];
+		try {
+			const str1 = window.localStorage.getItem('data-maps');
+			if (str1) {
+				maps = JSON.parse(str1);
+			}
+			const str2 = window.localStorage.getItem('data-combats');
+			if (str2) {
+				combats = JSON.parse(str2);
+			}
+			const str3 = window.localStorage.getItem('data-explorations');
+			if (str3) {
+				explorations = JSON.parse(str3);
+			}
+
+			Matisse.clearUnusedImages(maps, combats, explorations);
+		} catch (ex) {
+			console.error('Could not parse JSON: ', ex);
+		}
 	}
 
 	public componentDidMount() {
 		CommsPlayer.onStateChanged = () => this.setState(this.state);
-		CommsPlayer.onDataChanged = () => this.setState(this.state);
+		CommsPlayer.onDataChanged = () => this.setState(this.state, () => {
+			if (Comms.data.shared) {
+				Comms.data.shared.images.forEach(img => Matisse.saveImage(img.id, img.name, img.data));
+			}
+		});
 	}
 
 	public componentWillUnmount() {

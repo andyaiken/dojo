@@ -1,10 +1,11 @@
 import { Col, Row } from 'antd';
 import React from 'react';
 
+import Matisse from '../../utils/matisse';
 import Utils from '../../utils/utils';
 
 import { Combat } from '../../models/combat';
-import { Map } from '../../models/map';
+import { Exploration, Map } from '../../models/map';
 import { MonsterGroup } from '../../models/monster';
 import { Party } from '../../models/party';
 
@@ -18,6 +19,7 @@ interface Props {
 	library: MonsterGroup[];
 	maps: Map[];
 	combats: Combat[];
+	explorations: Exploration[];
 	resetAll: () => void;
 }
 
@@ -40,50 +42,7 @@ export default class AboutSidebar extends React.Component<Props, State> {
 	}
 
 	private clearImages() {
-		const images = [];
-		for (let n = 0; n !== window.localStorage.length; ++n) {
-			const key = window.localStorage.key(n);
-			if (key && key.startsWith('image-')) {
-				const data = window.localStorage.getItem(key);
-				if (data) {
-					const img = JSON.parse(data);
-					images.push({
-						id: img.id,
-						name: img.name,
-						data: img.data
-					});
-				}
-			}
-		}
-
-		images.forEach(img => {
-			// Work out if the image is used in a PC, a monster, or a map tile
-			let used = false;
-			this.props.parties.forEach(party => {
-				if (party.pcs.find(pc => pc.portrait === img.id)) {
-					used = true;
-				}
-			});
-			this.props.library.forEach(group => {
-				if (group.monsters.find(monster => monster.portrait === img.id)) {
-					used = true;
-				}
-			});
-			this.props.maps.forEach(map => {
-				if (map.items.find(mi => mi.customBackground === img.id)) {
-					used = true;
-				}
-			});
-			this.props.combats.forEach(combat => {
-				if (combat.map && combat.map.items.find(mi => mi.customBackground === img.id)) {
-					used = true;
-				}
-			});
-
-			if (!used) {
-				window.localStorage.removeItem('image-' + img.id);
-			}
-		});
+		Matisse.clearUnusedImages(this.props.maps, this.props.combats, this.props.explorations);
 
 		this.setState({
 			view: this.state.view

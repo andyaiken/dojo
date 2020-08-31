@@ -4,11 +4,11 @@ import React from 'react';
 
 import { DieRollResult } from '../../models/dice';
 
-interface DieRollResultPanelProps {
+interface Props {
 	result: DieRollResult;
 }
 
-export default class DieRollResultPanel extends React.Component<DieRollResultPanelProps> {
+export default class DieRollResultPanel extends React.Component<Props> {
 	public render() {
 		const rolls: JSX.Element[] = [];
 		let sum = 0;

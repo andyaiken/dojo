@@ -33,6 +33,7 @@ interface Props {
 	encounters: Encounter[];
 	maps: Map[];
 	combats: Combat[];
+	explorations: Exploration[];
 	currentCombat: Combat | null;
 	currentExploration: Exploration | null;
 	onSelectSidebar: (type: string) => void;
@@ -161,6 +162,7 @@ export default class PageSidebar extends React.Component<Props> {
 							library={this.props.library}
 							maps={this.props.maps}
 							combats={this.props.combats}
+							explorations={this.props.explorations}
 							resetAll={() => this.props.onResetAll()}
 						/>
 					);

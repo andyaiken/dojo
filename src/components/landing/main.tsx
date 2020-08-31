@@ -6,6 +6,7 @@ import { Comms, CommsDM } from '../../utils/comms';
 import Factory from '../../utils/factory';
 import Frankenstein from '../../utils/frankenstein';
 import Gygax from '../../utils/gygax';
+import Matisse from '../../utils/matisse';
 import Mercator from '../../utils/mercator';
 import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
@@ -314,6 +315,8 @@ export default class Main extends React.Component<Props, State> {
 			selectedCombatID: null,
 			selectedExplorationID: null
 		};
+
+		Matisse.clearUnusedImages(maps, combats, explorations);
 	}
 
 	//#endregion
@@ -3122,6 +3125,7 @@ export default class Main extends React.Component<Props, State> {
 							encounters={this.state.encounters}
 							maps={this.state.maps}
 							combats={this.state.combats}
+							explorations={this.state.explorations}
 							currentCombat={this.state.combats.find(c => c.id === this.state.selectedCombatID) ?? null}
 							currentExploration={this.state.explorations.find(e => e.id === this.state.selectedExplorationID) ?? null}
 							onSelectSidebar={type => this.setSidebar(type)}
