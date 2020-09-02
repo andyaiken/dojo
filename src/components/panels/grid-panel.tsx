@@ -63,28 +63,26 @@ export default class GridPanel extends React.Component<Props, State> {
 
 			let content = null;
 			if (this.state.showContent) {
-				let span = { xs: 24, sm: 24, md: 12, lg: 8, xl: 6 };
+				let span = 6;
 				switch (this.props.columns) {
 					case 1:
 						// We specifically want one column
-						span = { xs: 24, sm: 24, md: 24, lg: 24, xl: 24 };
+						span = 24;
 						break;
 					case 2:
 						// We specifically want two columns
-						// Small or extra small displays will still use one column
-						span = { xs: 24, sm: 24, md: 12, lg: 12, xl: 12 };
+						span = 12;
 						break;
 					case 3:
 						// We specifically want three columns
-						// Small or extra small displays will still use one column
-						span = { xs: 24, sm: 24, md: 8, lg: 8, xl: 8 };
+						span = 8;
 						break;
 				}
 
 				content = (
 					<Row align='top' gutter={10}>
 						{items.map(item => (
-							<Col key={items.indexOf(item)} xs={span.xs} sm={span.sm} md={span.md} lg={span.lg} xl={span.xl}>
+							<Col key={items.indexOf(item)} span={span}>
 								{item}
 							</Col>
 						))}

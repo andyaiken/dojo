@@ -76,8 +76,7 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 
 	public componentDidUpdate() {
 		if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
-			CommsDM.sendShareUpdate({
-				selectedItemIDs: this.state.selectedCombatantIDs,
+			CommsDM.sendUpdate({
 				selectedAreaID: this.state.selectedAreaID,
 				highlightedSquare: this.state.highlightedSquare
 			});
@@ -378,13 +377,13 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 
 			return (
 				<Row className='full-height'>
-					<Col xs={24} sm={24} md={8} lg={6} xl={4} className='scrollable sidebar sidebar-left'>
+					<Col span={5} className='scrollable sidebar sidebar-left'>
 						{leftSidebar}
 					</Col>
-					<Col xs={24} sm={24} md={8} lg={12} xl={16} className='scrollable both-ways'>
+					<Col span={14} className='scrollable both-ways'>
 						{this.getMap(false)}
 					</Col>
-					<Col xs={24} sm={24} md={8} lg={6} xl={4} className='scrollable'>
+					<Col span={5} className='scrollable'>
 						{rightSidebar}
 					</Col>
 					{this.getPlayerView()}

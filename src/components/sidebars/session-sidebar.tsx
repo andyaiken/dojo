@@ -12,7 +12,7 @@ import ConfirmButton from '../controls/confirm-button';
 import Dropdown from '../controls/dropdown';
 import Selector from '../controls/selector';
 import Note from '../panels/note';
-import { MessagesPanel, PeoplePanel, SendMessagePanel } from '../panels/session-panel';
+import { ConnectionsPanel, MessagesPanel, SendMessagePanel } from '../panels/session-panel';
 
 interface Props {
 	parties: Party[];
@@ -87,13 +87,14 @@ export default class SessionSidebar extends React.Component<Props, State> {
 				);
 			case 'people':
 				return (
-					<div>
-						<PeoplePanel
-							user='dm'
-							people={Comms.data.people}
-							editPC={id => null}
-						/>
-					</div>
+					<ConnectionsPanel
+						user='dm'
+						people={Comms.data.people}
+						kick={id => {
+							CommsDM.kick(id);
+							this.forceUpdate();
+						}}
+					/>
 				);
 			case 'management':
 				return (

@@ -1,4 +1,4 @@
-import { Col, Drawer, Row } from 'antd';
+import { Col, Drawer, notification, Row } from 'antd';
 import Mousetrap from 'mousetrap';
 import React from 'react';
 
@@ -18,7 +18,7 @@ import { Exploration, Map, MapItem } from '../../models/map';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, Party, PC } from '../../models/party';
 
-import Checkbox from '../controls/checkbox';
+import Selector from '../controls/selector';
 import CombatStartModal from '../modals/combat-start-modal';
 import ConditionModal from '../modals/condition-modal';
 import DemographicsModal from '../modals/demographics-modal';
@@ -31,12 +31,13 @@ import MonsterGroupImportModal from '../modals/import/monster-group-import-modal
 import MonsterImportModal from '../modals/import/monster-import-modal';
 import PartyImportModal from '../modals/import/party-import-modal';
 import PCImportModal from '../modals/import/pc-import-modal';
-import LeaderboardModal from '../modals/leaderboard-modal';
 import StatBlockModal from '../modals/stat-block-modal';
+import CombatNotificationPanel from '../panels/combat-notification-panel';
 import ErrorBoundary from '../panels/error-boundary';
 import PageFooter from '../panels/page-footer';
 import PageHeader from '../panels/page-header';
 import PageSidebar, { Sidebar } from '../panels/page-sidebar';
+import { MessagePanel } from '../panels/session-panel';
 import CombatScreen from '../screens/combat-screen';
 import EncounterListScreen from '../screens/encounter-list-screen';
 import EncounterScreen from '../screens/encounter-screen';
@@ -260,10 +261,6 @@ export default class Main extends React.Component<Props, State> {
 					if (combat.fog === undefined) {
 						combat.fog = [];
 					}
-
-					if (combat.report === undefined) {
-						combat.report = [];
-					}
 				});
 			}
 		} catch (ex) {
@@ -331,6 +328,27 @@ export default class Main extends React.Component<Props, State> {
 
 		CommsDM.onStateChanged = () => this.setState(this.state);
 		CommsDM.onDataChanged = () => this.setState(this.state);
+		CommsDM.onNewConnection = name => {
+			notification.open({
+				message: (
+					<p>
+						<b>{name}</b> has joined
+					</p>
+				)
+			});
+		};
+		Comms.onNewMessage = message => {
+			notification.open({
+				message: (
+					<MessagePanel
+						user='dm'
+						message={message}
+						openImage={data => this.setState({drawer: { type: 'image', data: data }})}
+						openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
+					/>
+				)
+			});
+		};
 	}
 
 	public componentWillUnmount() {
@@ -338,6 +356,8 @@ export default class Main extends React.Component<Props, State> {
 
 		CommsDM.onStateChanged = () => null;
 		CommsDM.onDataChanged = () => null;
+		CommsDM.onNewConnection = () => null;
+		Comms.onNewMessage = () => null;
 
 		CommsDM.shutdown();
 	}
@@ -554,7 +574,7 @@ export default class Main extends React.Component<Props, State> {
 		if (type === 'mountID') {
 			const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
 			if (combat && combat.map) {
-				this.setMountPositions(combat.combatants, combat.map);
+				Napoleon.setMountPositions(combat.combatants, combat.map);
 			}
 		}
 
@@ -859,7 +879,7 @@ export default class Main extends React.Component<Props, State> {
 				drawer: {
 					type: 'monster',
 					monster: copy,
-					showSidebar: false
+					monsterEditorSidebar: 'sidebar'
 				}
 			});
 		}
@@ -871,7 +891,7 @@ export default class Main extends React.Component<Props, State> {
 			drawer: {
 				type: 'monster',
 				monster: copy,
-				showSidebar: false
+				monsterEditorSidebar: 'statblock'
 			}
 		});
 	}
@@ -894,9 +914,9 @@ export default class Main extends React.Component<Props, State> {
 		}
 	}
 
-	private toggleShowSidebar() {
+	private setMonsterEditorSidebar(sidebar: string) {
 		const drawer = this.state.drawer;
-		drawer.showSidebar = !drawer.showSidebar;
+		drawer.monsterEditorSidebar = sidebar;
 		this.setState({
 			drawer: drawer
 		});
@@ -1323,10 +1343,6 @@ export default class Main extends React.Component<Props, State> {
 			combat.name = partyName + ' vs ' + encounterName;
 			combat.encounter = JSON.parse(JSON.stringify(combatSetup.encounter));
 
-			const entry = Factory.createCombatReportEntry();
-			entry.type = 'combat-start';
-			combat.report.push(entry);
-
 			// Add any pre-existing combatants
 			combatSetup.combatants.forEach(c => {
 				combat.combatants.push(c);
@@ -1516,10 +1532,6 @@ export default class Main extends React.Component<Props, State> {
 
 		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
 		if (combat) {
-			const entry = Factory.createCombatReportEntry();
-			entry.type = 'combat-pause';
-			combat.report.push(entry);
-
 			this.setState({
 				selectedCombatID: null
 			});
@@ -1527,10 +1539,6 @@ export default class Main extends React.Component<Props, State> {
 	}
 
 	private resumeCombat(combat: Combat) {
-		const entry = Factory.createCombatReportEntry();
-		entry.type = 'combat-resume';
-		combat.report.push(entry);
-
 		this.setState({
 			view: 'encounters',
 			selectedCombatID: combat.id
@@ -1541,10 +1549,6 @@ export default class Main extends React.Component<Props, State> {
 		if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
 			CommsDM.shareNothing();
 		}
-
-		const entry = Factory.createCombatReportEntry();
-		entry.type = 'combat-end';
-		combat.report.push(entry);
 
 		const index = this.state.combats.indexOf(combat);
 		this.state.combats.splice(index, 1);
@@ -1624,11 +1628,21 @@ export default class Main extends React.Component<Props, State> {
 								case 'saves':
 									// If it's my condition, and point is START, notify the user
 									if (combatant && (actor.id === combatant.id) && (c.duration.point === 'start')) {
-										combat.notifications.push({
+										const n: Notification = {
 											id: Utils.guid(),
 											type: 'condition-save',
 											data: c,
 											combatant: actor
+										};
+										notification.open({
+											message: (
+												<CombatNotificationPanel
+													notification={n}
+													close={(note, removeCondition) => this.closeNotification(note, removeCondition)}
+												/>
+											),
+											key: n.id,
+											duration: null
 										});
 									}
 									break;
@@ -1638,11 +1652,21 @@ export default class Main extends React.Component<Props, State> {
 										const index = actor.conditions.indexOf(c);
 										actor.conditions.splice(index, 1);
 										// Notify the user
-										combat.notifications.push({
+										const n: Notification = {
 											id: Utils.guid(),
 											type: 'condition-end',
 											data: c,
 											combatant: actor
+										};
+										notification.open({
+											message: (
+												<CombatNotificationPanel
+													notification={n}
+													close={(note, removeCondition) => this.closeNotification(note, removeCondition)}
+												/>
+											),
+											key: n.id,
+											duration: null
 										});
 									}
 									break;
@@ -1653,15 +1677,25 @@ export default class Main extends React.Component<Props, State> {
 									}
 									// If it's now at 0, remove it
 									if (c.duration.count === 0) {
-										const n = actor.conditions.indexOf(c);
-										actor.conditions.splice(n, 1);
+										const index = actor.conditions.indexOf(c);
+										actor.conditions.splice(index, 1);
 										if (combat) {
 											// Notify the user
-											combat.notifications.push({
+											const n: Notification = {
 												id: Utils.guid(),
 												type: 'condition-end',
 												data: c,
 												combatant: actor
+											};
+											notification.open({
+												message: (
+													<CombatNotificationPanel
+														notification={n}
+														close={(note, removeCondition) => this.closeNotification(note, removeCondition)}
+													/>
+												),
+												key: n.id,
+												duration: null
 											});
 										}
 									}
@@ -1679,11 +1713,21 @@ export default class Main extends React.Component<Props, State> {
 				(combatant as Combatant & Monster).traits
 					.filter(t => (t.uses > 0) && t.usage.toLowerCase().startsWith('recharge '))
 					.forEach(t => {
-						combat.notifications.push({
+						const n: Notification = {
 							id: Utils.guid(),
 							type: 'trait-recharge',
 							data: t,
 							combatant: combatant
+						};
+						notification.open({
+							message: (
+								<CombatNotificationPanel
+									notification={n}
+									close={(note, removeCondition) => this.closeNotification(note, removeCondition)}
+								/>
+							),
+							key: n.id,
+							duration: null
 						});
 					});
 				(combatant as Combatant & Monster).traits
@@ -1698,13 +1742,6 @@ export default class Main extends React.Component<Props, State> {
 			});
 			if (combatant) {
 				combatant.current = true;
-
-				if (combatant.type === 'pc') {
-					const entry = Factory.createCombatReportEntry();
-					entry.type = 'turn-start';
-					entry.combatantID = combatant.id;
-					combat.report.push(entry);
-				}
 			}
 
 			if (newRound) {
@@ -1767,13 +1804,6 @@ export default class Main extends React.Component<Props, State> {
 				// If this combatant is on the map, remove them from it
 				if (combat.map) {
 					combat.map.items = combat.map.items.filter(item => item.id !== c.id);
-				}
-
-				if (current && (current.type === 'pc') && (c.type === 'monster')) {
-					const entry = Factory.createCombatReportEntry();
-					entry.type = 'kill';
-					entry.combatantID = current.id;
-					combat.report.push(entry);
 				}
 			});
 
@@ -1842,13 +1872,6 @@ export default class Main extends React.Component<Props, State> {
 	private endTurn(combatant: Combatant) {
 		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
 		if (combat) {
-			if (combatant.type === 'pc') {
-				const entry = Factory.createCombatReportEntry();
-				entry.type = 'turn-end';
-				entry.combatantID = combatant.id;
-				combat.report.push(entry);
-			}
-
 			// Handle end-of-turn conditions
 			combat.combatants.filter(actor => actor.conditions)
 				.forEach(actor => {
@@ -1858,11 +1881,21 @@ export default class Main extends React.Component<Props, State> {
 								case 'saves':
 									// If it's my condition, and point is END, notify the user
 									if ((actor.id === combatant.id) && (c.duration.point === 'end')) {
+										// Notify the user
 										const saveNotification = Factory.createNotification();
 										saveNotification.type = 'condition-save';
 										saveNotification.data = c;
 										saveNotification.combatant = actor;
-										combat.notifications.push(saveNotification);
+										notification.open({
+											message: (
+												<CombatNotificationPanel
+													notification={saveNotification}
+													close={(note, removeCondition) => this.closeNotification(note, removeCondition)}
+												/>
+											),
+											key: saveNotification.id,
+											duration: null
+										});
 									}
 									break;
 								case 'combatant':
@@ -1875,7 +1908,16 @@ export default class Main extends React.Component<Props, State> {
 										endNotification.type = 'condition-end';
 										endNotification.data = c;
 										endNotification.combatant = actor;
-										combat.notifications.push(endNotification);
+										notification.open({
+											message: (
+												<CombatNotificationPanel
+													notification={endNotification}
+													close={(note, removeCondition) => this.closeNotification(note, removeCondition)}
+												/>
+											),
+											key: endNotification.id,
+											duration: null
+										});
 									}
 									break;
 								case 'rounds':
@@ -1929,15 +1971,6 @@ export default class Main extends React.Component<Props, State> {
 					combatant.hpCurrent = v.hp;
 					combatant.hpTemp = v.temp;
 				}
-
-				const current = combat.combatants.find(c => c.current);
-				if (current && (current.type === 'pc')) {
-					const entry = Factory.createCombatReportEntry();
-					entry.type = 'damage';
-					entry.combatantID = current.id;
-					entry.value = v.damage;
-					combat.report.push(entry);
-				}
 			});
 
 			this.setState({
@@ -1952,7 +1985,7 @@ export default class Main extends React.Component<Props, State> {
 		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
 		if (combat && combat.map) {
 			Mercator.scatterCombatants(combat, type, areaID);
-			this.setMountPositions(combat.combatants, combat.map);
+			Napoleon.setMountPositions(combat.combatants, combat.map);
 
 			this.setState({
 				combats: this.state.combats
@@ -1984,33 +2017,17 @@ export default class Main extends React.Component<Props, State> {
 
 	/// Miscellaneous methods
 
-	private closeNotification(notification: Notification, removeCondition: boolean) {
-		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-		if (combat) {
-			const index = combat.notifications.indexOf(notification);
-			combat.notifications.splice(index, 1);
+	private closeNotification(note: Notification, removeCondition: boolean) {
+		notification.close(note.id);
 
-			if (removeCondition && notification.combatant && notification.data) {
-				const conditionIndex = notification.combatant.conditions.indexOf(notification.data as Condition);
-				notification.combatant.conditions.splice(conditionIndex, 1);
-			}
-
-			this.setState({
-				combats: this.state.combats
-			});
+		if (removeCondition && note.combatant && note.data) {
+			const conditionIndex = note.combatant.conditions.indexOf(note.data as Condition);
+			note.combatant.conditions.splice(conditionIndex, 1);
 		}
-	}
 
-	private showLeaderboard() {
-		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-		if (combat) {
-			this.setState({
-				drawer: {
-					type: 'leaderboard',
-					combat: combat
-				}
-			});
-		}
+		this.setState({
+			combats: this.state.combats
+		});
 	}
 
 	//#endregion
@@ -2034,28 +2051,14 @@ export default class Main extends React.Component<Props, State> {
 
 	private toggleCondition(combatants: Combatant[], condition: string) {
 		combatants.forEach(c => {
-			const existing = c.conditions.find(cond => cond.name === condition);
-			if (existing) {
-				this.removeCondition(c, existing);
+			if (c.conditions.some(cnd => cnd.name === condition)) {
+				c.conditions = c.conditions.filter(cnd => cnd.name !== condition);
 			} else {
 				const cnd = Factory.createCondition();
 				cnd.name = condition;
 				c.conditions.push(cnd);
 
 				c.conditions = Utils.sort(c.conditions, [{ field: 'name', dir: 'asc' }]);
-
-				if (this.state.view === 'encounters') {
-					const combat = this.state.combats.find(cbt => cbt.id === this.state.selectedCombatID);
-					if (combat) {
-						const current = combat.combatants.find(combatant => combatant.current);
-						if (current && (current.type === 'pc')) {
-							const entry = Factory.createCombatReportEntry();
-							entry.type = 'condition-add';
-							entry.combatantID = current.id;
-							combat.report.push(entry);
-						}
-					}
-				}
 			}
 		});
 
@@ -2096,19 +2099,6 @@ export default class Main extends React.Component<Props, State> {
 			condition.id = Utils.guid();
 			combatant.conditions.push(condition);
 			Utils.sort(combatant.conditions, [{ field: 'name', dir: 'asc' }]);
-
-			if (this.state.view === 'encounters') {
-				const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-				if (combat) {
-					const current = combat.combatants.find(c => c.current);
-					if (current && (current.type === 'pc')) {
-						const entry = Factory.createCombatReportEntry();
-						entry.type = 'condition-add';
-						entry.combatantID = current.id;
-						combat.report.push(entry);
-					}
-				}
-			}
 		});
 
 		this.setState({
@@ -2147,21 +2137,7 @@ export default class Main extends React.Component<Props, State> {
 	}
 
 	private removeCondition(combatant: Combatant, condition: Condition) {
-		const index = combatant.conditions.indexOf(condition);
-		combatant.conditions.splice(index, 1);
-
-		if (this.state.view === 'encounters') {
-			const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-			if (combat) {
-				const current = combat.combatants.find(c => c.current);
-				if (current && (current.type === 'pc')) {
-					const entry = Factory.createCombatReportEntry();
-					entry.type = 'condition-remove';
-					entry.combatantID = current.id;
-					combat.report.push(entry);
-				}
-			}
-		}
+		combatant.conditions = combatant.conditions.filter(cnd => cnd.name !== condition.name);
 
 		this.setState({
 			combats: this.state.combats,
@@ -2179,27 +2155,8 @@ export default class Main extends React.Component<Props, State> {
 	}
 
 	private mapAdd(combatant: Combatant, x: number, y: number, currentCombatants: Combatant[], map: Map) {
-		const list = this.getMountsAndRiders([combatant.id], currentCombatants);
-		if (map) {
-			// Make sure none of our list are already on the map
-			const ids = list.map(cbt => cbt.id);
-			map.items = map.items.filter(i => !ids.includes(i.id));
-		}
-		list.forEach(c => {
-			const item = Factory.createMapItem();
-			item.id = c.id;
-			item.type = c.type as 'pc' | 'monster' | 'companion';
-			item.x = x;
-			item.y = y;
-
-			const size = Gygax.miniSize(c.displaySize);
-			item.height = size;
-			item.width = size;
-
-			if (map) {
-				map.items.push(item);
-			}
-		});
+		const list = Napoleon.getMountsAndRiders([combatant.id], currentCombatants);
+		list.forEach(c => Mercator.add(map, c, x, y));
 
 		this.setState({
 			combats: this.state.combats,
@@ -2208,66 +2165,14 @@ export default class Main extends React.Component<Props, State> {
 	}
 
 	private mapMove(ids: string[], dir: string, combatants: Combatant[], map: Map) {
-		const list = this.getMountsAndRiders(ids, combatants).map(c => c.id);
+		const list = Napoleon.getMountsAndRiders(ids, combatants).map(c => c.id);
 		ids.forEach(id => {
 			if (!list.includes(id)) {
 				list.push(id);
 			}
 		});
-		list.forEach(id => {
-			if (map) {
-				const item = map.items.find(i => i.id === id);
-				if (item) {
-					switch (dir) {
-						case 'N':
-							item.y -= 1;
-							break;
-						case 'NE':
-							item.x += 1;
-							item.y -= 1;
-							break;
-						case 'E':
-							item.x += 1;
-							break;
-						case 'SE':
-							item.x += 1;
-							item.y += 1;
-							break;
-						case 'S':
-							item.y += 1;
-							break;
-						case 'SW':
-							item.x -= 1;
-							item.y += 1;
-							break;
-						case 'W':
-							item.x -= 1;
-							break;
-						case 'NW':
-							item.x -= 1;
-							item.y -= 1;
-							break;
-						default:
-							// Do nothing
-							break;
-					}
-
-					if (this.state.view === 'encounters') {
-						const combat = this.state.combats.find(cbt => cbt.id === this.state.selectedCombatID);
-						if (combat) {
-							if (item.type === 'pc') {
-								const entry = Factory.createCombatReportEntry();
-								entry.type = 'movement';
-								entry.combatantID = item.id;
-								combat.report.push(entry);
-							}
-						}
-					}
-				}
-			}
-		});
-
-		this.setMountPositions(combatants, map);
+		list.forEach(id => Mercator.move(map, id, dir));
+		Napoleon.setMountPositions(combatants, map);
 
 		this.setState({
 			combats: this.state.combats,
@@ -2276,19 +2181,13 @@ export default class Main extends React.Component<Props, State> {
 	}
 
 	private mapRemove(ids: string[], combatants: Combatant[], map: Map) {
-		const list = this.getMountsAndRiders(ids, combatants).map(c => c.id);
+		const list = Napoleon.getMountsAndRiders(ids, combatants).map(c => c.id);
 		ids.forEach(id => {
 			if (!list.includes(id)) {
 				list.push(id);
 			}
 		});
-		list.forEach(id => {
-			const item = map.items.find(i => i.id === id);
-			if (item) {
-				const index = map.items.indexOf(item);
-				map.items.splice(index, 1);
-			}
-		});
+		list.forEach(id => Mercator.remove(map, id));
 
 		this.setState({
 			combats: this.state.combats,
@@ -2297,33 +2196,12 @@ export default class Main extends React.Component<Props, State> {
 	}
 
 	private setAltitude(combatant: Combatant, value: number, combatants: Combatant[]) {
-		const list = this.getMountsAndRiders([combatant.id], combatants);
+		const list = Napoleon.getMountsAndRiders([combatant.id], combatants);
 		list.forEach(c => c.altitude = value);
 
 		this.setState({
 			combats: this.state.combats,
 			explorations: this.state.explorations
-		});
-	}
-
-	private getMountsAndRiders(ids: string[], combatants: Combatant[]) {
-		const list = ids.map(id => combatants.find(c => c.id === id)).filter(c => c !== undefined) as Combatant[];
-		const mounts = list.map(c => combatants.find(mount => mount.id === c.mountID)).filter(c => c !== undefined) as Combatant[];
-		const riders = list.map(c => combatants.find(rider => rider.mountID === c.id)).filter(c => c !== undefined) as Combatant[];
-		return list.concat(mounts).concat(riders);
-	}
-
-	private setMountPositions(combatants: Combatant[], map: Map) {
-		combatants.forEach(c => {
-			if (c.mountID) {
-				// Set mount location to equal rider location
-				const riderItem = map.items.find(i => i.id === c.id);
-				const mountItem = map.items.find(i => i.id === c.mountID);
-				if (riderItem && mountItem) {
-					mountItem.x = riderItem.x;
-					mountItem.y = riderItem.y;
-				}
-			}
 		});
 	}
 
@@ -2596,7 +2474,6 @@ export default class Main extends React.Component<Props, State> {
 							}}
 							endTurn={combatant => this.endTurn(combatant)}
 							changeHP={values => this.changeHP(values)}
-							closeNotification={(notification, removeCondition) => this.closeNotification(notification, removeCondition)}
 							toggleTag={(combatants, tag) => this.toggleTag(combatants, tag)}
 							toggleCondition={(combatants, condition) => this.toggleCondition(combatants, condition)}
 							toggleHidden={combatants => this.toggleHidden(combatants)}
@@ -2607,7 +2484,6 @@ export default class Main extends React.Component<Props, State> {
 							}}
 							setFog={fog => this.setFog(fog)}
 							addOverlay={overlay => this.addMapItem(overlay)}
-							showLeaderboard={() => this.showLeaderboard()}
 							onRollDice={(count, sides, constant) => this.setDice(count, sides, constant)}
 						/>
 					);
@@ -2854,7 +2730,7 @@ export default class Main extends React.Component<Props, State> {
 						<MonsterEditorModal
 							monster={this.state.drawer.monster}
 							library={this.state.library}
-							showSidebar={this.state.drawer.showSidebar}
+							sidebar={this.state.drawer.monsterEditorSidebar}
 						/>
 					);
 					header = 'monster editor';
@@ -2867,10 +2743,10 @@ export default class Main extends React.Component<Props, State> {
 								<button onClick={() => this.closeDrawer()}>discard changes</button>
 							</Col>
 							<Col span={12}>
-								<Checkbox
-									label='advanced tools'
-									checked={this.state.drawer.showSidebar}
-									onChecked={() => this.toggleShowSidebar()}
+								<Selector
+									options={['statblock', 'guidelines', 'advanced'].map(o => ({ id: o, text: o }))}
+									selectedID={this.state.drawer.monsterEditorSidebar}
+									onSelect={id => this.setMonsterEditorSidebar(id)}
 								/>
 							</Col>
 						</Row>
@@ -3066,15 +2942,6 @@ export default class Main extends React.Component<Props, State> {
 						</Row>
 					);
 					width = '75%';
-					break;
-				case 'leaderboard':
-					content = (
-						<LeaderboardModal
-							combat={this.state.drawer.combat}
-						/>
-					);
-					header = 'leaderboard';
-					closable = true;
 					break;
 			}
 		}

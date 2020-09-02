@@ -29,7 +29,7 @@ interface Props {
 export default class PartyScreen extends React.Component<Props> {
 	public componentDidUpdate() {
 		if (Comms.data.party) {
-			CommsDM.sendPartyUpdate();
+			CommsDM.sendUpdate();
 		}
 	}
 
@@ -80,7 +80,7 @@ export default class PartyScreen extends React.Component<Props> {
 
 			return (
 				<Row className='full-height'>
-					<Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar sidebar-left'>
+					<Col span={5} className='scrollable sidebar sidebar-left'>
 						<PartyInfo
 							party={this.props.party}
 							goBack={() => this.props.goBack()}
@@ -90,7 +90,7 @@ export default class PartyScreen extends React.Component<Props> {
 							removeParty={() => this.props.removeParty()}
 						/>
 					</Col>
-					<Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
+					<Col span={19} className='scrollable'>
 						<GridPanel
 							content={activeCards}
 							heading={this.props.party.name || 'unnamed party'}

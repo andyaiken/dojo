@@ -567,7 +567,7 @@ export default class Gygax {
 						saveType = saveType.toUpperCase();
 					}
 					const saves = saveDuration.count > 1 ? 'saves' : 'save';
-					return 'until you make ' + saveDuration.count + ' ' + saveType + ' ' + saves + ' at dc ' + saveDuration.saveDC;
+					return 'until they make ' + saveDuration.count + ' ' + saveType + ' ' + saves + ' at dc ' + saveDuration.saveDC;
 				case 'combatant':
 					const combatantDuration = condition.duration as ConditionDurationCombatant;
 					const point = combatantDuration.point;

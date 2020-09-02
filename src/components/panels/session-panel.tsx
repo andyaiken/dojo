@@ -1,9 +1,9 @@
-import { CloseCircleOutlined, ExpandOutlined, FileOutlined, LockOutlined, SendOutlined, SettingOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, ExpandOutlined, FileOutlined, LockOutlined, SendOutlined } from '@ant-design/icons';
 import { Col, Row, Upload } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
 
-import { Comms, CommsDM, CommsPlayer, Message, Person } from '../../utils/comms';
+import { Comms, CommsPlayer, Message, Person } from '../../utils/comms';
 import Gygax from '../../utils/gygax';
 import Shakespeare from '../../utils/shakespeare';
 import Utils from '../../utils/utils';
@@ -24,34 +24,80 @@ import PortraitPanel from './portrait-panel';
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);
 
-//#region PeoplePanel
+//#region ConnectionsPanel
 
-interface PeoplePanelProps {
+interface ConnectionsPanelProps {
 	user: 'dm' | 'player';
 	people: Person[];
+	kick: (id: string) => void;
+}
+
+export class ConnectionsPanel extends React.Component<ConnectionsPanelProps> {
+	public render() {
+		try {
+			// There should always be a DM at least
+			if (this.props.people.length < 2) {
+				return (
+					<Note key='empty'>
+						<p>no-one else is currently connected</p>
+					</Note>
+				);
+			}
+
+			const people = this.props.people.map(person => {
+				let icon = null;
+				if ((this.props.user === 'dm') && (person.id !== Comms.getID())) {
+					icon = (
+						<CloseCircleOutlined
+							className='control-icon'
+							onClick={() => this.props.kick(person.id)}
+						/>
+					);
+				}
+
+				return (
+					<div key={person.id} className='group-panel person'>
+						<div className='top-line'>
+							<CharacterPanel person={person} />
+							{icon}
+						</div>
+						<div className='status'>{person.status}</div>
+					</div>
+				);
+			});
+
+			return (
+				<div className='connections-panel'>
+					{people}
+				</div>
+			);
+		} catch (ex) {
+			console.error(ex);
+			return <div className='render-error'/>;
+		}
+	}
+}
+
+//#endregion
+
+//#region PlayerStatusPanel
+
+interface PlayerStatusPanelProps {
 	editPC: (id: string) => void;
 }
 
-interface PeoplePanelState {
-	showControls: boolean;
+interface PlayerStatusPanelState {
 	status: string;
 	pc: string;
 }
 
-export class PeoplePanel extends React.Component<PeoplePanelProps, PeoplePanelState> {
-	constructor(props: PeoplePanelProps) {
+export class PlayerStatusPanel extends React.Component<PlayerStatusPanelProps, PlayerStatusPanelState> {
+	constructor(props: PlayerStatusPanelProps) {
 		super(props);
 		this.state = {
-			showControls: false,
 			status: '',
 			pc: ''
 		};
-	}
-
-	private toggleControls() {
-		this.setState({
-			showControls: !this.state.showControls
-		});
 	}
 
 	private setStatus(status: string) {
@@ -72,7 +118,7 @@ export class PeoplePanel extends React.Component<PeoplePanelProps, PeoplePanelSt
 		CommsPlayer.sendUpdate(this.state.status, this.state.pc);
 	}
 
-	private getControlsSection() {
+	public render() {
 		let pcSection = null;
 		if (Comms.data.party) {
 			const characterID = Comms.getCharacterID(Comms.getID());
@@ -102,7 +148,7 @@ export class PeoplePanel extends React.Component<PeoplePanelProps, PeoplePanelSt
 		}
 
 		return (
-			<div className='controls-panel'>
+			<div className='player-status-panel'>
 				{pcSection}
 				<div className='control-with-icons'>
 					<Textbox
@@ -122,70 +168,6 @@ export class PeoplePanel extends React.Component<PeoplePanelProps, PeoplePanelSt
 			</div>
 		);
 	}
-
-	public render() {
-		try {
-			// There should always be a DM at least
-			if (this.props.people.length < 2) {
-				return (
-					<Note key='empty'>
-						<p>no-one else is currently connected</p>
-					</Note>
-				);
-			}
-
-			const people = this.props.people.map(person => {
-				let icon = null;
-
-				let content = (
-					<div>
-						<div className='status'>{person.status}</div>
-					</div>
-				);
-
-				if ((this.props.user === 'player') && (person.id === Comms.getID())) {
-					icon = (
-						<SettingOutlined
-							className={this.state.showControls ? 'control-icon active' : 'control-icon'}
-							onClick={() => this.toggleControls()}
-						/>
-					);
-
-					if (this.state.showControls) {
-						content = this.getControlsSection();
-					}
-				}
-
-				if ((this.props.user === 'dm') && (person.id !== Comms.getID())) {
-					icon = (
-						<CloseCircleOutlined
-							className='control-icon'
-							onClick={() => CommsDM.kick(person.id)}
-						/>
-					);
-				}
-
-				return (
-					<div key={person.id} className='group-panel person'>
-						<div className='top-line'>
-							<CharacterPanel person={person} />
-							{icon}
-						</div>
-						{content}
-					</div>
-				);
-			});
-
-			return (
-				<div className='people-panel'>
-					{people}
-				</div>
-			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
-		}
-	}
 }
 
 //#endregion
@@ -200,6 +182,22 @@ interface MessagesPanelProps {
 }
 
 export class MessagesPanel extends React.Component<MessagesPanelProps> {
+	private bottom = React.createRef<HTMLDivElement>();
+
+	public componentDidMount() {
+		this.scrollToBottom();
+	}
+
+	public componentDidUpdate() {
+		this.scrollToBottom();
+	}
+
+	private scrollToBottom = () => {
+		if (this.bottom && this.bottom.current) {
+			this.bottom.current.scrollIntoView({ behavior: 'smooth' });
+		}
+	}
+
 	private showMessage(message: Message) {
 		// Show messages from me, or to all (to is empty), or to me (to contains me)
 		const me = Comms.getID();
@@ -229,8 +227,9 @@ export class MessagesPanel extends React.Component<MessagesPanelProps> {
 			}
 
 			return (
-				<div className='message-panel'>
+				<div className='messages-panel'>
 					{messages}
+					<div ref={this.bottom} />
 				</div>
 			);
 		} catch (ex) {
@@ -251,7 +250,7 @@ interface MessagePanelProps {
 	openStatBlock: (monster: Monster) => void;
 }
 
-class MessagePanel extends React.Component<MessagePanelProps> {
+export class MessagePanel extends React.Component<MessagePanelProps> {
 	public render() {
 		try {
 			let byline = Comms.getCurrentName(this.props.message.from);

@@ -39,6 +39,7 @@ textarea {
 	border: 1px solid $control-border;
 	border-left-width: 5px;
 	width: 100%;
+	min-height: 105px;
 
 	&:hover,
 	&:focus {
@@ -219,7 +220,7 @@ button {
 	padding: 5px 10px;
 	font-weight: 600;
 	line-height: 20px;
-	color: unset;
+	color: rgba(0, 0, 0, 0.65);
 
 	.collapse-header-text {
 		width: calc(100% - 22px);
@@ -407,4 +408,25 @@ button {
 			font-size: 20px;
 		}
 	}
+}
+
+.ant-notification-notice {
+	padding: 10px;
+	border: 1px solid $control-border;
+}
+
+.ant-notification-notice-closable .ant-notification-notice-message {
+	margin-bottom: 0;
+	font-size: unset;
+	line-height: unset;
+	width: 100%;
+}
+
+.ant-notification-notice-content {
+	max-height: 150px;
+}
+
+.ant-notification-notice-close {
+	top: 10px;
+	right: 10px;
 }

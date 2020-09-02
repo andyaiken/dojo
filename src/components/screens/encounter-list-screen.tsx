@@ -49,7 +49,7 @@ export default class EncounterListScreen extends React.Component<Props> {
 				/* tslint:disable:max-line-length */
 				return (
 					<Row align='middle' justify='center' className='scrollable'>
-						<Col xs={20} sm={18} md={16} lg={12} xl={10}>
+						<div style={{ width: '400px' }}>
 							<Note>
 								<div className='section'>
 									this screen is for building encounters, but before you can do that you need to do these things first:
@@ -63,7 +63,7 @@ export default class EncounterListScreen extends React.Component<Props> {
 									</li>
 								</ul>
 							</Note>
-						</Col>
+						</div>
 					</Row>
 				);
 				/* tslint:enable:max-line-length */
@@ -100,7 +100,7 @@ export default class EncounterListScreen extends React.Component<Props> {
 
 			return (
 				<Row className='full-height'>
-					<Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar sidebar-left'>
+					<Col span={5} className='scrollable sidebar sidebar-left'>
 						<Note>
 							<div className='section'>on this page you can set up encounters</div>
 							<div className='section'>
@@ -124,7 +124,7 @@ export default class EncounterListScreen extends React.Component<Props> {
 							/>
 						</Expander>
 					</Col>
-					<Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
+					<Col span={19} className='scrollable'>
 						<GridPanel heading='in progress' content={combatItems} />
 						<GridPanel heading='encounters' content={encounterItems} />
 					</Col>

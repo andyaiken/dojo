@@ -1,16 +1,21 @@
-import { Col, Drawer, Row } from 'antd';
+import { Col, Drawer, notification, Row } from 'antd';
 import React from 'react';
 
 import { Comms, CommsPlayer } from '../../utils/comms';
+import Factory from '../../utils/factory';
 import Matisse from '../../utils/matisse';
 import Mercator from '../../utils/mercator';
+import Utils from '../../utils/utils';
 
-import { Combat } from '../../models/combat';
+import { Combat, Combatant } from '../../models/combat';
+import { Condition } from '../../models/condition';
 import { Exploration, Map } from '../../models/map';
 
 import Textbox from '../controls/textbox';
+import ConditionModal from '../modals/condition-modal';
 import PCEditorModal from '../modals/editors/pc-editor-modal';
 import StatBlockModal from '../modals/stat-block-modal';
+import CombatControlsPanel from '../panels/combat-controls-panel';
 import ErrorBoundary from '../panels/error-boundary';
 import GridPanel from '../panels/grid-panel';
 import InitiativeOrder from '../panels/initiative-order';
@@ -18,12 +23,13 @@ import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 import PageFooter from '../panels/page-footer';
 import PageHeader from '../panels/page-header';
-import { MessagesPanel, PeoplePanel, SendMessagePanel } from '../panels/session-panel';
+import { ConnectionsPanel, MessagePanel, MessagesPanel, PlayerStatusPanel, SendMessagePanel } from '../panels/session-panel';
 
 interface Props {
 }
 
 interface State {
+	addingToMap: boolean;
 	drawer: any;
 }
 
@@ -31,6 +37,7 @@ export default class Player extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {
+			addingToMap: false,
 			drawer: null
 		};
 
@@ -57,6 +64,12 @@ export default class Player extends React.Component<Props, State> {
 		}
 	}
 
+	private setAddingToMap(adding: boolean) {
+		this.setState({
+			addingToMap: adding
+		});
+	}
+
 	public componentDidMount() {
 		CommsPlayer.onStateChanged = () => this.setState(this.state);
 		CommsPlayer.onDataChanged = () => this.setState(this.state, () => {
@@ -64,11 +77,24 @@ export default class Player extends React.Component<Props, State> {
 				Comms.data.shared.images.forEach(img => Matisse.saveImage(img.id, img.name, img.data));
 			}
 		});
+		Comms.onNewMessage = message => {
+			notification.open({
+				message: (
+					<MessagePanel
+						user='player'
+						message={message}
+						openImage={data => this.setState({drawer: { type: 'image', data: data }})}
+						openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
+					/>
+				)
+			});
+		};
 	}
 
 	public componentWillUnmount() {
 		CommsPlayer.onStateChanged = () => null;
 		CommsPlayer.onDataChanged = () => null;
+		Comms.onNewMessage = () => null;
 
 		CommsPlayer.disconnect();
 	}
@@ -94,6 +120,73 @@ export default class Player extends React.Component<Props, State> {
 		this.setState({
 			drawer: null
 		});
+	}
+
+	private addCondition(combatants: Combatant[], allCombatants: Combatant[]) {
+		const condition = Factory.createCondition();
+		condition.name = 'blinded';
+
+		this.setState({
+			drawer: {
+				type: 'condition-add',
+				condition: condition,
+				combatants: combatants,
+				allCombatants: allCombatants
+			}
+		});
+	}
+
+	private addConditionFromModal() {
+		const condition: Condition = JSON.parse(JSON.stringify(this.state.drawer.condition));
+		condition.id = Utils.guid();
+
+		this.setState({
+			drawer: null
+		}, () => {
+			CommsPlayer.sendAction({
+				id: Comms.getCharacterID(Comms.getID()),
+				action: 'add-condition',
+				condition: condition
+			});
+		});
+	}
+
+	private editCondition(combatant: Combatant, condition: Condition, allCombatants: Combatant[]) {
+		this.setState({
+			drawer: {
+				type: 'condition-edit',
+				condition: condition,
+				combatants: [combatant],
+				allCombatants: allCombatants
+			}
+		});
+	}
+
+	private editConditionFromModal() {
+		const condition: Condition = JSON.parse(JSON.stringify(this.state.drawer.condition));
+
+		this.setState({
+			drawer: null
+		}, () => {
+			CommsPlayer.sendAction({
+				id: Comms.getCharacterID(Comms.getID()),
+				action: 'edit-condition',
+				condition: condition
+			});
+		});
+	}
+
+	private gridSquareClicked(x: number, y: number) {
+		if (this.state.addingToMap) {
+			CommsPlayer.sendAction({
+				id: Comms.getCharacterID(Comms.getID()),
+				action: 'map-add',
+				x: x,
+				y: y
+			});
+
+			this.setAddingToMap(false);
+		}
 	}
 
 	private closeDrawer() {
@@ -150,17 +243,21 @@ export default class Player extends React.Component<Props, State> {
 	private getMessagesView() {
 		return (
 			<Row className='full-height'>
-				<Col xs={24} sm={24} md={8} lg={6} xl={4} className='scrollable sidebar sidebar-left'>
+				<Col span={5} className='scrollable sidebar sidebar-left'>
 					<Note>
 						<p>the following people are connected</p>
 					</Note>
-					<PeoplePanel
+					<ConnectionsPanel
 						user='player'
 						people={Comms.data.people}
+						kick={id => null}
+					/>
+					<hr/>
+					<PlayerStatusPanel
 						editPC={id => this.editPC(id)}
 					/>
 				</Col>
-				<Col xs={24} sm={24} md={16} lg={18} xl={20} className='full-height sidebar'>
+				<Col span={19} className='full-height sidebar'>
 					<div className='sidebar-container in-page'>
 						<div className='sidebar-content'>
 							<MessagesPanel
@@ -190,10 +287,7 @@ export default class Player extends React.Component<Props, State> {
 	private getSharedView(shared: JSX.Element) {
 		return (
 			<Row className='full-height'>
-				<Col xs={24} sm={24} md={12} lg={16} xl={18} className='full-height'>
-					{shared}
-				</Col>
-				<Col xs={24} sm={24} md={12} lg={8} xl={6} className='full-height sidebar sidebar-right'>
+				<Col span={5} className='full-height sidebar sidebar-left'>
 					<div className='sidebar-container in-page'>
 						<div className='sidebar-content'>
 							<MessagesPanel
@@ -216,12 +310,18 @@ export default class Player extends React.Component<Props, State> {
 						</div>
 					</div>
 				</Col>
+				<Col span={14} className='full-height'>
+					{shared}
+				</Col>
+				<Col span={5} className='scrollable sidebar sidebar-right'>
+					{this.getControls()}
+				</Col>
 			</Row>
 		);
 	}
 
 	private getCombatSection(combat: Combat, additional: any) {
-		const selectedItemIDs = additional['selectedItemIDs'] as string[] ?? [];
+		const characterID = Comms.getCharacterID(Comms.getID());
 		const selectedAreaID = additional['selectedAreaID'] as string ?? '';
 		const highlightedSquare = additional['highlightedSquare'] as { x: number, y: number} | null ?? null;
 
@@ -231,7 +331,7 @@ export default class Player extends React.Component<Props, State> {
 				playerView={true}
 				showDefeated={false}
 				help={null}
-				selectedItemIDs={selectedItemIDs}
+				selectedItemIDs={[characterID]}
 				toggleItemSelection={(id, ctrl) => null}
 			/>
 		);
@@ -242,13 +342,15 @@ export default class Player extends React.Component<Props, State> {
 				<div className='scrollable horizontal-only'>
 					<MapPanel
 						map={combat.map}
-						viewport={Mercator.getViewport(combat.map, selectedAreaID)}
 						mode='combat-player'
-						fog={combat.fog}
+						viewport={Mercator.getViewport(combat.map, selectedAreaID)}
+						showGrid={this.state.addingToMap}
 						combatants={combat.combatants}
-						selectedItemIDs={selectedItemIDs}
+						selectedItemIDs={[characterID]}
+						fog={combat.fog}
 						focussedSquare={highlightedSquare}
 						itemSelected={(id, ctrl) => null}
+						gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
 					/>
 				</div>
 			);
@@ -273,7 +375,7 @@ export default class Player extends React.Component<Props, State> {
 	}
 
 	private getExplorationSection(exploration: Exploration, additional: any) {
-		const selectedItemIDs = additional['selectedItemIDs'] as string[] ?? [];
+		const characterID = Comms.getCharacterID(Comms.getID());
 		const selectedAreaID = additional['selectedAreaID'] as string ?? '';
 		const highlightedSquare = additional['highlightedSquare'] as { x: number, y: number} | null ?? null;
 
@@ -281,15 +383,124 @@ export default class Player extends React.Component<Props, State> {
 			<div className='scrollable both-ways'>
 				<MapPanel
 					map={exploration.map}
-					viewport={Mercator.getViewport(exploration.map, selectedAreaID)}
 					mode='combat-player'
-					fog={exploration.fog}
+					viewport={Mercator.getViewport(exploration.map, selectedAreaID)}
+					showGrid={this.state.addingToMap}
 					combatants={exploration.combatants}
-					selectedItemIDs={selectedItemIDs}
+					selectedItemIDs={[characterID]}
+					fog={exploration.fog}
 					focussedSquare={highlightedSquare}
 					itemSelected={(id, ctrl) => null}
+					gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
 				/>
 			</div>
+		);
+	}
+
+	private getControls() {
+		let allCombatants: Combatant[] = [];
+		let map: Map | null = null;
+
+		if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
+			const combat = Comms.data.shared.data as Combat;
+			allCombatants = combat.combatants;
+			map = combat.map;
+		}
+		if (Comms.data.shared && (Comms.data.shared.type === 'exploration')) {
+			const exploration = Comms.data.shared.data as Exploration;
+			allCombatants = exploration.combatants;
+			map = exploration.map;
+		}
+
+		const characterID = Comms.getCharacterID(Comms.getID());
+		const current = allCombatants.find(c => c.id === characterID);
+		if (!current) {
+			return (
+				<div>
+					<Note>
+						when you choose your character, you will be able to control it here
+					</Note>
+					<PlayerStatusPanel
+						editPC={id => this.editPC(id)}
+					/>
+				</div>
+			);
+		}
+
+		return (
+			<CombatControlsPanel
+				combatants={[current]}
+				allCombatants={allCombatants}
+				map={map}
+				defaultTab='main'
+				// Main tab
+				toggleTag={(combatants, tag) => CommsPlayer.sendAction({
+					id: Comms.getCharacterID(Comms.getID()),
+					action: 'toggle-tag',
+					tag: tag
+				})}
+				toggleCondition={(combatants, condition) => CommsPlayer.sendAction({
+					id: Comms.getCharacterID(Comms.getID()),
+					action: 'toggle-condition',
+					condition: condition
+				})}
+				toggleHidden={combatants => CommsPlayer.sendAction({
+					id: Comms.getCharacterID(Comms.getID()),
+					action: 'change-value',
+					field: 'showOnMap',
+					value: !current.showOnMap
+				})}
+				// Cond tab
+				addCondition={combatants => this.addCondition([current], allCombatants)}
+				editCondition={(combatant, condition) => this.editCondition(combatant, condition, allCombatants)}
+				removeCondition={(combatant, condition) => CommsPlayer.sendAction({
+					id: Comms.getCharacterID(Comms.getID()),
+					action: 'remove-condition',
+					conditionID: condition.id
+				})}
+				// Map tab
+				mapAdd={combatant => this.setAddingToMap(!this.state.addingToMap)}
+				mapMove={(combatants, dir) => CommsPlayer.sendAction({
+					id: Comms.getCharacterID(Comms.getID()),
+					action: 'map-move',
+					dir: dir
+				})}
+				mapRemove={combatants => CommsPlayer.sendAction({
+					id: Comms.getCharacterID(Comms.getID()),
+					action: 'map-remove'
+				})}
+				onChangeAltitude={(combatant, value) => CommsPlayer.sendAction({
+					id: Comms.getCharacterID(Comms.getID()),
+					action: 'change-value',
+					field: 'altitude',
+					value: value
+				})}
+				// Adv tab
+				addCompanion={companion => CommsPlayer.sendAction({
+					id: Comms.getCharacterID(Comms.getID()),
+					action: 'add-companion',
+					companion: companion
+				})}
+				// General
+				changeValue={(source, field, value) => {
+					// TODO: Special cases: aura style / color
+					CommsPlayer.sendAction({
+						id: Comms.getCharacterID(Comms.getID()),
+						action: 'change-value',
+						field: field,
+						value: value
+					});
+				}}
+				nudgeValue={(source, field, delta) => {
+					// TODO: Special cases: size, aura radius, exhaustion value
+					CommsPlayer.sendAction({
+						id: Comms.getCharacterID(Comms.getID()),
+						action: 'change-value',
+						field: field,
+						value: source[field] + delta
+					});
+				}}
+			/>
 		);
 	}
 
@@ -301,7 +512,7 @@ export default class Player extends React.Component<Props, State> {
 		let content = null;
 		let header = null;
 		let footer = null;
-		const width = '50%';
+		let width = '50%';
 		let closable = false;
 
 		if (this.state.drawer) {
@@ -340,6 +551,42 @@ export default class Player extends React.Component<Props, State> {
 							</Col>
 						</Row>
 					);
+					break;
+				case 'condition-add':
+					content = (
+						<ConditionModal
+							condition={this.state.drawer.condition}
+							combatants={this.state.drawer.combatants}
+							allCombatants={this.state.drawer.allCombatants}
+						/>
+					);
+					header = 'add a condition';
+					footer = (
+						<button onClick={() => this.addConditionFromModal()}>add</button>
+					);
+					width = '75%';
+					closable = true;
+					break;
+				case 'condition-edit':
+					content = (
+						<ConditionModal
+							condition={this.state.drawer.condition}
+							combatants={this.state.drawer.combatants}
+							allCombatants={this.state.drawer.allCombatants}
+						/>
+					);
+					header = 'edit condition';
+					footer = (
+						<Row gutter={20}>
+							<Col span={12}>
+								<button onClick={() => this.editConditionFromModal()}>save changes</button>
+							</Col>
+							<Col span={12}>
+								<button onClick={() => this.closeDrawer()}>discard changes</button>
+							</Col>
+						</Row>
+					);
+					width = '75%';
 					break;
 			}
 		}

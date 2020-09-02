@@ -73,7 +73,7 @@ export default class MonsterGroupScreen extends React.Component<Props> {
 
 			return (
 				<Row className='full-height'>
-					<Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar sidebar-left'>
+					<Col span={5} className='scrollable sidebar sidebar-left'>
 						<MonsterGroupInfo
 							monsterGroup={this.props.monsterGroup}
 							library={this.props.library}
@@ -85,7 +85,7 @@ export default class MonsterGroupScreen extends React.Component<Props> {
 							openDemographics={() => this.props.openDemographics(this.props.monsterGroup)}
 						/>
 					</Col>
-					<Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
+					<Col span={19} className='scrollable'>
 						<GridPanel
 							content={cards}
 							heading={this.props.monsterGroup.name || 'unnamed group'}

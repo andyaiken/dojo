@@ -7,6 +7,7 @@ import Utils from './utils';
 
 import { Combat, Combatant } from '../models/combat';
 import { Encounter, EncounterSlot, MonsterFilter } from '../models/encounter';
+import { Map } from '../models/map';
 import { Monster, MonsterGroup } from '../models/monster';
 import { Companion, PC } from '../models/party';
 
@@ -418,5 +419,26 @@ export default class Napoleon {
 			});
 
 		return list;
+	}
+
+	public static getMountsAndRiders(ids: string[], combatants: Combatant[]) {
+		const list = ids.map(id => combatants.find(c => c.id === id)).filter(c => c !== undefined) as Combatant[];
+		const mounts = list.map(c => combatants.find(mount => mount.id === c.mountID)).filter(c => c !== undefined) as Combatant[];
+		const riders = list.map(c => combatants.find(rider => rider.mountID === c.id)).filter(c => c !== undefined) as Combatant[];
+		return list.concat(mounts).concat(riders);
+	}
+
+	public static setMountPositions(combatants: Combatant[], map: Map) {
+		combatants.forEach(c => {
+			if (c.mountID) {
+				// Set mount location to equal rider location
+				const riderItem = map.items.find(i => i.id === c.id);
+				const mountItem = map.items.find(i => i.id === c.mountID);
+				if (riderItem && mountItem) {
+					mountItem.x = riderItem.x;
+					mountItem.y = riderItem.y;
+				}
+			}
+		});
 	}
 }

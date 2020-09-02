@@ -9,8 +9,8 @@ import Mercator from '../../utils/mercator';
 import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
-import { Combat, Combatant, Notification } from '../../models/combat';
-import { Condition, ConditionDurationSaves } from '../../models/condition';
+import { Combat, Combatant } from '../../models/combat';
+import { Condition } from '../../models/condition';
 import { Encounter } from '../../models/encounter';
 import { MapItem } from '../../models/map';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
@@ -42,7 +42,6 @@ interface Props {
 	encounters: Encounter[];
 	pauseCombat: () => void;
 	endCombat: (combat: Combat, goToMap: boolean) => void;
-	closeNotification: (notification: Notification, removeCondition: boolean) => void;
 	makeCurrent: (combatant: Combatant) => void;
 	makeActive: (combatants: Combatant[]) => void;
 	makeDefeated: (combatants: Combatant[]) => void;
@@ -71,7 +70,6 @@ interface Props {
 	rotateMap: () => void;
 	setFog: (fog: { x: number, y: number }[]) => void;
 	addOverlay: (overlay: MapItem) => void;
-	showLeaderboard: () => void;
 	onRollDice: (count: number, sides: number, constant: number) => void;
 }
 
@@ -118,8 +116,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 
 	public componentDidUpdate() {
 		if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
-			CommsDM.sendShareUpdate({
-				selectedItemIDs: this.state.selectedItemIDs,
+			CommsDM.sendUpdate({
 				selectedAreaID: this.state.selectedAreaID,
 				highlightedSquare: this.state.highlightedSquare
 			});
@@ -372,7 +369,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 			return (
 				<Popout title='Encounter' onCloseWindow={() => this.setPlayerViewOpen(false)}>
 					<Row className='full-height full-width'>
-						<Col xs={24} sm={24} md={12} lg={16} xl={18} className='scrollable both-ways'>
+						<Col span={5} className='scrollable both-ways'>
 							<MapPanel
 								key='map'
 								map={this.props.combat.map}
@@ -385,7 +382,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 								itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
 							/>
 						</Col>
-						<Col xs={24} sm={24} md={12} lg={8} xl={6} className='scrollable'>
+						<Col span={19} className='scrollable'>
 							<div className='heading fixed-top'>initiative order</div>
 							{initList}
 						</Col>
@@ -550,10 +547,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 								upEnabled={this.state.middleColumnWidth < 14}
 								onNudgeValue={delta => this.nudgeMiddleColumnWidth(delta * 2)}
 							/>
-						</div>
-						<div>
-							<div className='subheading'>tools</div>
-							<button onClick={() => this.props.showLeaderboard()}>show leaderboard</button>
 						</div>
 					</div>
 				]}
@@ -849,21 +842,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 				}
 			}
 
-			let notificationSection = null;
-			if (this.props.combat.notifications.length > 0) {
-				notificationSection = (
-					<div className='notifications'>
-						{this.props.combat.notifications.map(n => (
-							<NotificationPanel
-								key={n.id}
-								notification={n}
-								close={(notification, removeCondition) => this.props.closeNotification(notification, removeCondition)}
-							/>
-						))}
-					</div>
-				);
-			}
-
 			let mapSection = null;
 			if (this.props.combat.map) {
 				mapSection = (
@@ -962,7 +940,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 							/>
 						</Col>
 						<Col span={middleWidth} className='scrollable'>
-							{notificationSection}
 							<GridPanel
 								heading='waiting for intiative'
 								content={pendingList}
@@ -1008,107 +985,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
-		}
-	}
-}
-
-interface NotificationProps {
-	notification: Notification;
-	close: (notification: Notification, removeCondition: boolean) => void;
-}
-
-class NotificationPanel extends React.Component<NotificationProps> {
-	private success() {
-		switch (this.props.notification.type) {
-			case 'condition-save':
-			case 'condition-end':
-				const condition = this.props.notification.data as Condition;
-				if (condition.duration) {
-					// Reduce save by 1
-					if ((condition.duration.type === 'saves') || (condition.duration.type === 'rounds')) {
-						condition.duration.count -= 1;
-						if (condition.duration.count === 0) {
-							// Remove the condition
-							this.close(true);
-						} else {
-							this.close();
-						}
-					}
-				}
-				break;
-			case 'trait-recharge':
-				// Mark trait as recharged
-				const trait = this.props.notification.data as Trait;
-				trait.uses = 0;
-				this.close();
-				break;
-		}
-	}
-
-	private close(removeCondition = false) {
-		this.props.close(this.props.notification, removeCondition);
-	}
-
-	public render() {
-		try {
-			const combatant = this.props.notification.combatant as (Combatant & Monster);
-			const condition = this.props.notification.data as Condition;
-			const trait = this.props.notification.data as Trait;
-
-			const name = combatant.displayName || combatant.name || 'unnamed monster';
-			switch (this.props.notification.type) {
-				case 'condition-save':
-					const duration = condition.duration as ConditionDurationSaves;
-					let saveType = duration.saveType.toString();
-					if (saveType !== 'death') {
-						saveType = saveType.toUpperCase();
-					}
-					return (
-						<Note key={this.props.notification.id}>
-							<div className='section'>
-								{name} must make a {saveType} save against dc {duration.saveDC}
-							</div>
-							<Row gutter={10}>
-								<Col span={12}>
-									<button key='success' onClick={() => this.success()}>success</button>
-								</Col>
-								<Col span={12}>
-									<button key='close' onClick={() => this.close()}>close</button>
-								</Col>
-							</Row>
-						</Note>
-					);
-				case 'condition-end':
-					return (
-						<Note key={this.props.notification.id}>
-							<div className='section'>
-								{name} is no longer affected by condition {condition.name}
-							</div>
-							<button onClick={() => this.close()}>close</button>
-						</Note>
-					);
-				case 'trait-recharge':
-					return (
-						<Note key={this.props.notification.id}>
-							<div className='section'>
-								{name} can attempt to recharge {trait.name} ({trait.usage})
-							</div>
-							<Row gutter={10}>
-								<Col span={12}>
-									<button key='recharge' onClick={() => this.success()}>recharge</button>
-								</Col>
-								<Col span={12}>
-									<button key='close' onClick={() => this.close()}>close</button>
-								</Col>
-							</Row>
-						</Note>
-					);
-				default:
-					return null;
-			}
-		} catch (ex) {
-			console.error(ex);
 			return <div className='render-error'/>;
 		}
 	}

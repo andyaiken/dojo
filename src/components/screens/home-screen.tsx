@@ -55,8 +55,8 @@ export default class HomeScreen extends React.Component<Props> {
 					<div key='session'>
 						<p className='heading'>connect with your players</p>
 						<ul>
-							<li>send messages (or links, or images, or stat blocks) to the whole table - or to just one player</li>
-							<li>share die rolls</li>
+							<li>send messages (or links, or images, or die rolls, or stat blocks) to the whole table - or whisper them to just one player</li>
+							<li>during combat, show the initiative order and the encounter map to your players, and let them control their own characters</li>
 							<li>each player can update their character's stats, so you don't have to</li>
 						</ul>
 					</div>

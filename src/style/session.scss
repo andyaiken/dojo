@@ -3,7 +3,7 @@
 	margin-bottom: 100px;
 }
 
-.people-panel {
+.connections-panel {
 	.person {
 		.top-line {
 			display: flex;
@@ -49,71 +49,73 @@
 	}
 }
 
-.message-panel {
+.messages-panel {
 	margin: 5px 0;
 
 	.message {
-		margin: 5px 0;
-		padding: 10px 10px 5px 10px;
-		border-radius: 10px;
-		background-color: white;
-
 		&.from-me {
 			text-align: right;
 			margin-left: 25%;
 		}
-
+	
 		&.to-me {
 			text-align: left;
 			margin-right: 25%;
 		}
+	}
+}
 
-		.message-byline {
-			font-size: 10px;
+.message {
+	margin: 5px 0;
+	padding: 10px 10px 5px 10px;
+	border-radius: 10px;
+	background-color: white;
 
-			.anticon {
-				margin-left: 3px;
-			}
+	.message-byline {
+		font-size: 10px;
 
-			&.private {
-				color: $highlight;
-			}
+		.anticon {
+			margin-left: 3px;
 		}
 
-		.message-content {
-			.text {
-				font-size: 15px;
-			}
+		&.private {
+			color: $highlight;
+		}
+	}
 
-			.untranslated {
-				filter: blur(3px);
-			}
+	.message-content {
+		.text {
+			font-size: 15px;
+		}
 
-			.language {
-				font-size: 10px;
-				font-style: italic;
-			}
+		.untranslated {
+			filter: blur(3px);
+		}
 
-			.emote {
-				font-style: italic;
-			}
+		.language {
+			font-size: 10px;
+			font-style: italic;
+		}
 
-			.link {
-				display: block;
-				border: 1px solid $control-border;
-				border-radius: 5px;
-				margin: 5px 0;
-				padding: 5px;
-				text-align: center;
-			}
+		.emote {
+			font-style: italic;
+		}
 
-			.selectable-image {
-				max-height: 100px;
-			}
+		.link {
+			display: block;
+			border: 1px solid $control-border;
+			border-radius: 5px;
+			margin: 5px 0;
+			padding: 5px;
+			text-align: center;
+		}
 
-			.statblock {
-				display: block;
-			}
+		.selectable-image {
+			max-height: 100px;
+		}
+
+		.statblock {
+			display: block;
 		}
 	}
 }

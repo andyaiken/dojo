@@ -576,7 +576,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 									columns={3}
 								/>
 								<Row>
-									<Col xs={24} sm={24} md={8} lg={8} xl={8}>
+									<Col span={8}>
 										<button onClick={() => this.openSlot(w.id, null)}>add a monster to this wave</button>
 									</Col>
 								</Row>
@@ -591,7 +591,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 								columns={3}
 							/>
 							<Row>
-								<Col xs={24} sm={24} md={8} lg={8} xl={8}>
+								<Col span={8}>
 									<button onClick={() => this.openSlot(null, null)}>add a monster to the encounter</button>
 								</Col>
 							</Row>

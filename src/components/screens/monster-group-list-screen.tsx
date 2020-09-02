@@ -28,7 +28,7 @@ export default class MonsterGroupListScreen extends React.Component<Props> {
 				/* tslint:disable:max-line-length */
 				return (
 					<Row align='middle' justify='center' className='scrollable'>
-						<Col xs={20} sm={18} md={16} lg={12} xl={10}>
+						<div style={{ width: '400px' }}>
 							<Note>
 								<div className='section'>
 									to kickstart your monster collection, let's import all the monsters from the <a href='http://dnd.wizards.com/articles/features/systems-reference-document-srd' target='_blank' rel='noopener noreferrer'>d&amp;d system reference document</a>
@@ -36,7 +36,7 @@ export default class MonsterGroupListScreen extends React.Component<Props> {
 								<hr/>
 								<button onClick={() => this.props.addOpenGameContent()}>import monsters</button>
 							</Note>
-						</Col>
+						</div>
 					</Row>
 				);
 				/* tslint:enable:max-line-length */
@@ -56,7 +56,7 @@ export default class MonsterGroupListScreen extends React.Component<Props> {
 
 			return (
 				<Row className='full-height'>
-					<Col xs={12} sm={12} md={8} lg={6} xl={4} className='scrollable sidebar sidebar-left'>
+					<Col span={5} className='scrollable sidebar sidebar-left'>
 						<Note>
 							<div className='section'>you can maintain your menagerie of monsters here</div>
 							<div className='section'>you can then use these monsters to design combat encounters in the encounter builder</div>
@@ -70,7 +70,7 @@ export default class MonsterGroupListScreen extends React.Component<Props> {
 						<button onClick={() => this.props.importMonsterGroup()}>import a monster group</button>
 						<button onClick={() => this.props.openDemographics(null)}>show demographics</button>
 					</Col>
-					<Col xs={12} sm={12} md={16} lg={18} xl={20} className='scrollable'>
+					<Col span={19} className='scrollable'>
 						<GridPanel heading='monster groups' content={listItems} />
 					</Col>
 				</Row>

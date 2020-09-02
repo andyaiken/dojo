@@ -59,6 +59,14 @@ interface State {
 }
 
 export default class CombatControlsPanel extends React.Component<Props, State> {
+	public static defaultProps = {
+		makeCurrent: null,
+		makeActive: null,
+		makeDefeated: null,
+		changeHP: null,
+		removeCombatants: null
+	};
+
 	constructor(props: Props) {
 		super(props);
 
@@ -97,6 +105,10 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 	}
 
 	private heal() {
+		if (this.props.changeHP === null) {
+			return;
+		}
+
 		const value = this.state.healingValue;
 
 		this.setState({
@@ -122,6 +134,10 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 	}
 
 	private damage() {
+		if (this.props.changeHP === null) {
+			return;
+		}
+
 		const value = this.state.damageValue;
 
 		this.setState({
@@ -163,16 +179,18 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 		const engaged: JSX.Element[] = [];
 
 		if (this.props.combatants.every(c => c.active)) {
-			if (this.props.combatants.every(c => c.current)) {
-				actions.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(this.props.combatants)}>mark as defeated and end turn</button>);
-			} else {
-				if (this.props.combatants.length === 1) {
-					const isMount = !!this.props.allCombatants.find(c => c.mountID === this.props.combatants[0].id);
-					if (!isMount) {
-						actions.push(<button key='makeCurrent' onClick={() => this.props.makeCurrent(this.props.combatants[0])}>start turn</button>);
+			if (this.props.makeCurrent && this.props.makeDefeated) {
+				if (this.props.combatants.every(c => c.current)) {
+					actions.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(this.props.combatants)}>mark as defeated and end turn</button>);
+				} else {
+					if (this.props.combatants.length === 1) {
+						const isMount = !!this.props.allCombatants.find(c => c.mountID === this.props.combatants[0].id);
+						if (!isMount) {
+							actions.push(<button key='makeCurrent' onClick={() => this.props.makeCurrent(this.props.combatants[0])}>start turn</button>);
+						}
 					}
+					actions.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(this.props.combatants)}>mark as defeated</button>);
 				}
-				actions.push(<button key='makeDefeated' onClick={() => this.props.makeDefeated(this.props.combatants)}>mark as defeated</button>);
 			}
 
 			if (this.props.combatants.every(c => c.type !== 'pc')) {
@@ -192,7 +210,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 			}
 		}
 
-		if (this.props.combatants.every(c => c.defeated)) {
+		if (this.props.makeActive && this.props.combatants.every(c => c.defeated)) {
 			actions.push(<button key='makeActive' onClick={() => this.props.makeActive(this.props.combatants)}>mark as active</button>);
 		}
 
@@ -213,6 +231,19 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 					<b>engaged with: </b>
 					{engaged}
 				</div>
+			);
+		}
+
+		let notesSection = null;
+		if (this.props.combatants.length === 1) {
+			const combatant = this.props.combatants[0];
+			notesSection = (
+				<Textbox
+					text={combatant.note}
+					placeholder='notes'
+					multiLine={true}
+					onChange={value => this.props.changeValue(combatant, 'note', value)}
+				/>
 			);
 		}
 
@@ -240,6 +271,15 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 						bless
 					</Tag.CheckableTag>
 					<Tag.CheckableTag
+						checked={!this.props.combatants.every(c => c.showOnMap)}
+						onChange={() => this.props.toggleHidden(this.props.combatants)}
+					>
+						hidden
+					</Tag.CheckableTag>
+				</div>
+				<div className='section'>
+					<b>quick conditions: </b>
+					<Tag.CheckableTag
 						checked={this.props.combatants.every(c => c.conditions.some(condition => condition.name === 'prone'))}
 						onChange={() => this.props.toggleCondition(this.props.combatants, 'prone')}
 					>
@@ -251,14 +291,9 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 					>
 						unconscious
 					</Tag.CheckableTag>
-					<Tag.CheckableTag
-						checked={!this.props.combatants.every(c => c.showOnMap)}
-						onChange={() => this.props.toggleHidden(this.props.combatants)}
-					>
-						hidden
-					</Tag.CheckableTag>
 				</div>
 				{engagedSection}
+				{notesSection}
 			</div>
 		);
 	}
@@ -321,11 +356,9 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 			}
 			if (monster.tags.includes('conc')) {
 				conc = (
-					<Note>
-						<div className='section'>
-							{monster.displayName} is <b>concentrating</b>, and will need to make a check if they take damage
-						</div>
-					</Note>
+					<div className='section'>
+						{monster.displayName} is <b>concentrating</b>, and will need to make a check if they take damage
+					</div>
 				);
 			}
 			if (resist || vuln || immune || conc) {
@@ -542,7 +575,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 					<Expander text='aura'>
 						<NumberSpin
 							value={combatant.aura.radius + ' ft.'}
-							label='size'
+							label='radius'
 							downEnabled={combatant.aura.radius > 0}
 							onNudgeValue={delta => this.props.nudgeValue(combatant.aura, 'radius', delta * 5)}
 						/>
@@ -704,19 +737,6 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 					});
 				});
 
-		let notes = null;
-		if (this.props.combatants.length === 1) {
-			const combatant = this.props.combatants[0];
-			notes = (
-				<Textbox
-					text={combatant.note}
-					placeholder='notes'
-					multiLine={true}
-					onChange={value => this.props.changeValue(combatant, 'note', value)}
-				/>
-			);
-		}
-
 		return (
 			<div>
 				{remove}
@@ -726,7 +746,6 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 				{changeFaction}
 				{mountedCombat}
 				{companions}
-				{notes}
 			</div>
 		);
 	}

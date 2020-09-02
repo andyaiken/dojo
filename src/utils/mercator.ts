@@ -505,4 +505,66 @@ export default class Mercator {
 
 		return null;
 	}
+
+	public static add(map: Map, combatant: Combatant, x: number, y: number) {
+		let item = map.items.find(mi => mi.id === combatant.id);
+		if (!item) {
+			item = Factory.createMapItem();
+			item.id = combatant.id;
+			item.type = combatant.type as 'pc' | 'monster' | 'companion';
+
+			const size = Gygax.miniSize(combatant.displaySize);
+			item.height = size;
+			item.width = size;
+
+			map.items.push(item);
+		}
+
+		item.x = x;
+		item.y = y;
+	}
+
+	public static move(map: Map, id: string, dir: string) {
+		const item = map.items.find(i => i.id === id);
+		if (item) {
+			switch (dir) {
+				case 'N':
+					item.y -= 1;
+					break;
+				case 'NE':
+					item.x += 1;
+					item.y -= 1;
+					break;
+				case 'E':
+					item.x += 1;
+					break;
+				case 'SE':
+					item.x += 1;
+					item.y += 1;
+					break;
+				case 'S':
+					item.y += 1;
+					break;
+				case 'SW':
+					item.x -= 1;
+					item.y += 1;
+					break;
+				case 'W':
+					item.x -= 1;
+					break;
+				case 'NW':
+					item.x -= 1;
+					item.y -= 1;
+					break;
+			}
+		}
+	}
+
+	public static remove(map: Map, id: string) {
+		const item = map.items.find(i => i.id === id);
+		if (item) {
+			const index = map.items.indexOf(item);
+			map.items.splice(index, 1);
+		}
+	}
 }

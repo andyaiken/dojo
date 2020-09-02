@@ -1,20 +1,24 @@
 import Peer, { DataConnection } from 'peerjs';
 
+import Factory from './factory';
+import Matisse from './matisse';
+import Mercator from './mercator';
+import Napoleon from './napoleon';
 import Utils from './utils';
 
 import { Combat } from '../models/combat';
+import { Condition } from '../models/condition';
 import { DieRollResult } from '../models/dice';
 import { Exploration } from '../models/map';
 import { SavedImage } from '../models/misc';
 import { Monster } from '../models/monster';
-import { Party, PC } from '../models/party';
-import Matisse from './matisse';
+import { Companion, Party, PC } from '../models/party';
 
 // This controls the interval, in seconds, between pulses
 const PULSE_INTERVAL = 60;
 
 export interface Packet {
-	type: 'pulse' | 'party-update' | 'share-update' | 'player-info' | 'character-info' | 'message';
+	type: 'update' | 'player-info' | 'character-info' | 'message' | 'action';
 	payload: any;
 }
 
@@ -55,6 +59,9 @@ export class Comms {
 		party: null,
 		shared: null
 	};
+	public static sentImageIDs: string[] = [];
+
+	public static onNewMessage: (message: Message) => void;
 
 	public static getID() {
 		return this.peer ? this.peer.id : '';
@@ -91,6 +98,38 @@ export class Comms {
 		}
 
 		return Comms.getName(id);
+	}
+
+	public static getCombatant(id: string) {
+		return Comms.getCombatants().find(c => c.id === id) ?? null;
+	}
+
+	public static getCombatants() {
+		if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
+			const combat = Comms.data.shared.data as Combat;
+			return combat.combatants;
+		}
+
+		if (Comms.data.shared && (Comms.data.shared.type === 'exploration')) {
+			const exploration = Comms.data.shared.data as Exploration;
+			return exploration.combatants;
+		}
+
+		return [];
+	}
+
+	public static getMap() {
+		if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
+			const combat = Comms.data.shared.data as Combat;
+			return combat.map;
+		}
+
+		if (Comms.data.shared && (Comms.data.shared.type === 'exploration')) {
+			const exploration = Comms.data.shared.data as Exploration;
+			return exploration.map;
+		}
+
+		return null;
 	}
 
 	public static createTextPacket(to: string[], text: string, language: string, untranslated: string): Packet {
@@ -172,13 +211,9 @@ export class Comms {
 
 	public static processPacket(packet: Packet) {
 		switch (packet.type) {
-			case 'pulse':
+			case 'update':
 				this.data.people = packet.payload['people'];
-				break;
-			case 'party-update':
 				this.data.party = packet.payload['party'];
-				break;
-			case 'share-update':
 				this.data.shared = packet.payload['shared'];
 				break;
 			case 'player-info':
@@ -210,6 +245,102 @@ export class Comms {
 					data: packet.payload['data']
 				};
 				this.data.messages.push(msg);
+				if (msg.from !== Comms.getID()) {
+					if ((msg.to.length === 0) || (msg.to.includes(Comms.getID()))) {
+						this.onNewMessage(msg);
+					}
+				}
+				break;
+			case 'action':
+				const action = packet.payload['action'];
+				const combatant = Comms.getCombatant(packet.payload['id']);
+				const map = Comms.getMap();
+				switch (action) {
+					case 'change-value':
+						if (combatant) {
+							const field = packet.payload['field'] as string;
+							const value = packet.payload['value'];
+							(combatant as any)[field] = value;
+							if ((field === 'initiative') && Comms.data.shared && (Comms.data.shared.type === 'combat')) {
+								Napoleon.sortCombatants(Comms.data.shared.data as Combat);
+							}
+						}
+						break;
+					case 'toggle-tag':
+						if (combatant) {
+							const tag = packet.payload['tag'] as string;
+							if (combatant.tags.includes(tag)) {
+								combatant.tags = combatant.tags.filter(t => t !== tag);
+							} else {
+								combatant.tags.push(tag);
+							}
+						}
+						break;
+					case 'toggle-condition':
+						if (combatant) {
+							const condition = packet.payload['condition'] as string;
+							if (combatant.conditions.some(cnd => cnd.name === condition)) {
+								combatant.conditions.filter(c => c.name !== condition);
+							} else {
+								const cnd = Factory.createCondition();
+								cnd.name = condition;
+								combatant.conditions.push(cnd);
+								combatant.conditions = Utils.sort(combatant.conditions, [{ field: 'name', dir: 'asc' }]);
+							}
+						}
+						break;
+					case 'add-condition':
+						if (combatant) {
+							const condition = packet.payload['condition'] as Condition;
+							combatant.conditions.push(condition);
+						}
+						break;
+					case 'edit-condition':
+						if (combatant) {
+							const condition = packet.payload['condition'] as Condition;
+							const index = combatant.conditions.findIndex(c => c.id === condition.id);
+							if (index !== -1) {
+								combatant.conditions[index] = condition;
+							}
+						}
+						break;
+					case 'remove-condition':
+						if (combatant) {
+							const conditionID = packet.payload['conditionID'] as string;
+							const index = combatant.conditions.findIndex(c => c.id === conditionID);
+							if (index !== -1) {
+								combatant.conditions.splice(index, 1);
+							}
+						}
+						break;
+					case 'map-add':
+						if (combatant && map) {
+							const x = packet.payload['x'] as number;
+							const y = packet.payload['y'] as number;
+							const list = Napoleon.getMountsAndRiders([combatant.id], Comms.getCombatants());
+							list.forEach(c => Mercator.add(map, c, x, y));
+						}
+						break;
+					case 'map-move':
+						if (combatant && map) {
+							const dir = packet.payload['dir'] as string;
+							const ids = Napoleon.getMountsAndRiders([combatant.id], Comms.getCombatants()).map(c => c.id);
+							ids.forEach(movingID => Mercator.move(map, movingID, dir));
+							Napoleon.setMountPositions(Comms.getCombatants(), map);
+						}
+						break;
+					case 'map-remove':
+						if (combatant && map) {
+							const ids = Napoleon.getMountsAndRiders([combatant.id], Comms.getCombatants()).map(c => c.id);
+							ids.forEach(removingID => Mercator.remove(map, removingID));
+						}
+						break;
+					case 'add-companion':
+						const companion = packet.payload['companion'] as Companion;
+						const companionCombatant = Napoleon.convertCompanionToCombatant(companion);
+						Comms.getCombatants().push(companionCombatant);
+						break;
+				}
 				break;
 		}
 	}
@@ -239,6 +370,7 @@ export class CommsDM {
 
 	public static onStateChanged: () => void;
 	public static onDataChanged: () => void;
+	public static onNewConnection: (name: string) => void;
 
 	public static init() {
 		if (this.state !== 'not started') {
@@ -255,7 +387,7 @@ export class CommsDM {
 			console.info('peer ' + id + ' open');
 
 			setInterval(() => {
-				this.sendPulse();
+				this.sendUpdate();
 			}, PULSE_INTERVAL * 1000);
 
 			this.state = 'started';
@@ -277,7 +409,8 @@ export class CommsDM {
 			this.connections.push(conn);
 			conn.on('open', () => {
 				console.info('connection opened: ' + conn.label);
-				this.sendPulse();
+				this.onNewConnection(conn.label);
+				this.sendUpdate();
 			});
 			conn.on('close', () => {
 				console.info('connection closed: ' + conn.label);
@@ -286,7 +419,7 @@ export class CommsDM {
 				if (index !== -1) {
 					this.connections.splice(index, 1);
 				}
-				this.sendPulse();
+				this.sendUpdate();
 			});
 			conn.on('error', err => {
 				console.error(err);
@@ -322,11 +455,11 @@ export class CommsDM {
 				this.connections.splice(index, 1);
 			}
 
-			this.sendPulse();
+			this.sendUpdate();
 		}
 	}
 
-	public static sendPulse() {
+	public static sendUpdate(additional: any = null) {
 		const people = this.connections
 			.filter(conn => conn.open)
 			.map(conn => ({
@@ -345,34 +478,20 @@ export class CommsDM {
 			characterID: ''
 		});
 
-		this.onDataReceived({
-			type: 'pulse',
-			payload: {
-				people: people
-			}
-		});
-	}
-
-	public static sendPartyUpdate() {
-		this.broadcast({
-			type: 'party-update',
-			payload: {
-				party: Comms.data.party
-			}
-		});
-	}
-
-	public static sendShareUpdate(additional: any = {}) {
 		if (Comms.data.shared) {
-			Comms.data.shared.additional = additional;
+			Comms.data.shared.additional = additional ?? Comms.data.shared.additional;
 		}
 
-		this.broadcast({
-			type: 'share-update',
+		const packet: Packet = {
+			type: 'update',
 			payload: {
+				people: people,
+				party: Comms.data.party,
 				shared: Comms.data.shared
 			}
-		});
+		};
+		Comms.processPacket(packet);
+		this.broadcast(packet);
 	}
 
 	public static sendMessage(to: string[], text: string, language: string, untranslated: string) {
@@ -398,13 +517,13 @@ export class CommsDM {
 	public static setParty(party: Party | null) {
 		Comms.data.party = party;
 		this.onDataChanged();
-		this.sendPartyUpdate();
+		this.sendUpdate();
 	}
 
 	public static shareNothing() {
 		Comms.data.shared = null;
 		this.onDataChanged();
-		this.sendShareUpdate();
+		this.sendUpdate();
 	}
 
 	public static shareCombat(combat: Combat) {
@@ -415,7 +534,9 @@ export class CommsDM {
 				.forEach(mi => {
 					const img = Matisse.getImage(mi.customBackground);
 					if (img) {
-						images.push(img);
+						if (!Comms.sentImageIDs.includes(img.id)) {
+							images.push(img);
+						}
 					}
 				});
 		}
@@ -426,7 +547,8 @@ export class CommsDM {
 			additional: {}
 		};
 		this.onDataChanged();
-		this.sendShareUpdate();
+		this.sendUpdate();
+		images.forEach(img => Comms.sentImageIDs.push(img.id));
 	}
 
 	public static shareExploration(exploration: Exploration) {
@@ -436,7 +558,9 @@ export class CommsDM {
 			.forEach(mi => {
 				const img = Matisse.getImage(mi.customBackground);
 				if (img) {
-					images.push(img);
+					if (!Comms.sentImageIDs.includes(img.id)) {
+						images.push(img);
+					}
 				}
 			});
 		Comms.data.shared = {
@@ -446,13 +570,21 @@ export class CommsDM {
 			additional: {}
 		};
 		this.onDataChanged();
-		this.sendShareUpdate();
+		this.sendUpdate();
+		images.forEach(img => Comms.sentImageIDs.push(img.id));
 	}
 
 	private static onDataReceived(packet: Packet) {
 		Comms.processPacket(packet);
 		this.onDataChanged();
-		this.broadcast(packet);
+
+		// If it's an action, we've incorporated it, so send an update
+		// Otherwise, broadcast it
+		if (packet.type === 'action') {
+			this.sendUpdate();
+		} else {
+			this.broadcast(packet);
+		}
 	}
 
 	private static broadcast(packet: Packet) {
@@ -569,6 +701,13 @@ export class CommsPlayer {
 			payload: {
 				pc: pc
 			}
+		});
+	}
+
+	public static sendAction(data: any) {
+		this.sendPacket({
+			type: 'action',
+			payload: data
 		});
 	}
 

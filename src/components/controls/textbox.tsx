@@ -49,7 +49,7 @@ export default class Textbox extends React.Component<Props> {
 						className={style}
 						value={this.props.text}
 						placeholder={this.props.placeholder}
-						rows={10}
+						rows={5}
 						onChange={event => this.props.onChange(event.target.value)}
 					/>
 				);

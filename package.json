@@ -1,6 +1,6 @@
 {
 	"name": "dojo",
-	"version": "9.9.0",
+	"version": "10.0.0",
 	"license": "MIT",
 	"repository": "https://github.com/andyaiken/dojo.git",
 	"homepage": "https://andyaiken.github.io/dojo/",
@@ -18,7 +18,7 @@
 	},
 	"devDependencies": {
 		"@types/mousetrap": "^1.6.3",
-		"@types/react": "^16.9.48",
+		"@types/react": "^16.9.49",
 		"@types/react-dom": "^16.9.8",
 		"@types/react-router-dom": "^5.1.5",
 		"@types/showdown": "^1.9.3",
