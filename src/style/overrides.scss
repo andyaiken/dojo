@@ -411,22 +411,29 @@ button {
 }
 
 .ant-notification-notice {
+	width: 400px;
 	padding: 10px;
 	border: 1px solid $control-border;
-}
-
-.ant-notification-notice-closable .ant-notification-notice-message {
-	margin-bottom: 0;
-	font-size: unset;
 	line-height: unset;
-	width: 100%;
-}
+	font-family: 'Open Sans', 'Segoe UI', sans-serif;
+	user-select: none;
 
-.ant-notification-notice-content {
-	max-height: 150px;
-}
+	&.ant-notification-notice-closable {
 
-.ant-notification-notice-close {
-	top: 10px;
-	right: 10px;
+		.ant-notification-notice-content {
+			max-height: 250px;
+
+			.ant-notification-notice-message {
+				padding-right: unset;
+				margin-bottom: 0;
+				font-size: 12px;
+				line-height: unset;
+				width: 100%;
+			}
+		}
+
+		.ant-notification-notice-close {
+			display: none;
+		}
+	}
 }

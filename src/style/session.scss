@@ -5,31 +5,29 @@
 
 .connections-panel {
 	.person {
-		.top-line {
-			display: flex;
-			align-items: center;
+		display: flex;
+		align-items: center;
+
+		.person-details {
+			flex-grow: 1;
+			flex-shrink: 1;
+			flex-basis: 0;
 
 			.name {
 				font-weight: 600;
 			}
+		}
 
-			.name,
-			.character-panel {
-				flex-grow: 1;
-				flex-shrink: 1;
-				flex-basis: 0;
-			}
+		.person-icon {
+			flex-grow: 0;
+			flex-shrink: 0;
+			flex-basis: auto;
+			padding: 0 5px;
+			font-size: 18px;
 
-			.control-icon {
-				flex-grow: 0;
-				flex-shrink: 0;
-				flex-basis: auto;
-				padding: 5px;
-
-				&:hover,
-				&.active {
-					background-color: $highlight01;
-				}
+			&:hover,
+			&.active {
+				background-color: $highlight01;
 			}
 		}
 

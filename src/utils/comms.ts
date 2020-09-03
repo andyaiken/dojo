@@ -18,7 +18,7 @@ import { Companion, Party, PC } from '../models/party';
 const PULSE_INTERVAL = 60;
 
 export interface Packet {
-	type: 'update' | 'player-info' | 'character-info' | 'message' | 'action';
+	type: 'update' | 'player-info' | 'character-info' | 'message' | 'ask-for-roll' | 'roll-result' | 'action';
 	payload: any;
 }
 
@@ -62,6 +62,7 @@ export class Comms {
 	public static sentImageIDs: string[] = [];
 
 	public static onNewMessage: (message: Message) => void;
+	public static onPromptForRoll: (type: string) => void;
 
 	public static getID() {
 		return this.peer ? this.peer.id : '';
@@ -217,16 +218,16 @@ export class Comms {
 				this.data.shared = packet.payload['shared'];
 				break;
 			case 'player-info':
-				const id = packet.payload['player'];
-				const person = this.data.people.find(p => p.id === id);
+				const playerID = packet.payload['player'];
+				const person = this.data.people.find(p => p.id === playerID);
 				if (person) {
 					person.status = packet.payload['status'];
 					person.characterID = packet.payload['characterID'];
 				}
 				break;
 			case 'character-info':
-				const pc = packet.payload['pc'];
 				if (Comms.data.party) {
+					const pc = packet.payload['pc'];
 					const original = Comms.data.party.pcs.find(p => p.id === pc.id);
 					if (original) {
 						const index = Comms.data.party.pcs.indexOf(original);
@@ -248,6 +249,21 @@ export class Comms {
 				if (msg.from !== Comms.getID()) {
 					if ((msg.to.length === 0) || (msg.to.includes(Comms.getID()))) {
 						this.onNewMessage(msg);
+					}
+				}
+				break;
+			case 'ask-for-roll':
+				this.onPromptForRoll(packet.payload['roll']);
+				break;
+			case 'roll-result':
+				if (packet.payload['roll'] === 'initiative') {
+					const id = packet.payload['id'];
+					const combatants = Comms.getCombatants();
+					const initCombatant = combatants.find(c => c.id === id);
+					if (initCombatant) {
+						initCombatant.initiative = packet.payload['result'];
+						initCombatant.pending = false;
+						initCombatant.active = true;
 					}
 				}
 				break;
@@ -428,7 +444,8 @@ export class CommsDM {
 				console.error(err);
 				this.kick(conn.peer);
 			});
-			conn.on('data', packet => {
+			conn.on('data', data => {
+				const packet = data as Packet;
 				this.onDataReceived(packet);
 			});
 		});
@@ -577,6 +594,16 @@ export class CommsDM {
 		images.forEach(img => Comms.sentImageIDs.push(img.id));
 	}
 
+	public static askForRoll(type: string) {
+		const packet: Packet = {
+			type: 'ask-for-roll',
+			payload: {
+				roll: type
+			}
+		};
+		this.broadcast(packet);
+	}
+
 	private static onDataReceived(packet: Packet) {
 		Comms.processPacket(packet);
 		this.onDataChanged();
@@ -639,7 +666,8 @@ export class CommsPlayer {
 					console.error(err);
 					this.disconnect();
 				});
-				conn.on('data', packet => {
+				conn.on('data', data => {
+					const packet = data as Packet;
 					Comms.processPacket(packet);
 					this.onDataChanged();
 				});
@@ -703,6 +731,17 @@ export class CommsPlayer {
 			type: 'character-info',
 			payload: {
 				pc: pc
+			}
+		});
+	}
+
+	public static sendRollResult(type: string, result: number) {
+		this.sendPacket({
+			type: 'roll-result',
+			payload: {
+				id: Comms.getCharacterID(Comms.getID()),
+				roll: type,
+				result: result
 			}
 		});
 	}

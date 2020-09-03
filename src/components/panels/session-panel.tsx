@@ -49,7 +49,6 @@ export class ConnectionsPanel extends React.Component<ConnectionsPanelProps> {
 				if ((this.props.user === 'dm') && (person.id !== Comms.getID())) {
 					icon = (
 						<CloseCircleOutlined
-							className='control-icon'
 							title='kick'
 							onClick={() => this.props.kick(person.id)}
 						/>
@@ -58,11 +57,13 @@ export class ConnectionsPanel extends React.Component<ConnectionsPanelProps> {
 
 				return (
 					<div key={person.id} className='group-panel person'>
-						<div className='top-line'>
+						<div className='person-details'>
 							<CharacterPanel person={person} />
+							<div className='status'>{person.status}</div>
+						</div>
+						<div className='person-icon'>
 							{icon}
 						</div>
-						<div className='status'>{person.status}</div>
 					</div>
 				);
 			});

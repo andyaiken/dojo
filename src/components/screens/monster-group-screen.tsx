@@ -113,19 +113,25 @@ interface MonsterGroupInfoProps {
 
 interface MonsterGroupInfoState {
 	cr: number;
-	type: string | null;
 	size: string | null;
+	type: string | null;
 	role: string | null;
 }
 
 class MonsterGroupInfo extends React.Component<MonsterGroupInfoProps, MonsterGroupInfoState> {
 	constructor(props: MonsterGroupInfoProps) {
 		super(props);
+
+		const cr = Math.round(props.monsterGroup.monsters.map(m => m.challenge).reduce((a, b) => a + b, 0) / props.monsterGroup.monsters.length);
+		const sizes = props.monsterGroup.monsters.map(m => m.size).filter((value, index, array) => array.indexOf(value) === index);
+		const types = props.monsterGroup.monsters.map(m => m.category).filter((value, index, array) => array.indexOf(value) === index);
+		const roles = props.monsterGroup.monsters.map(m => m.role).filter((value, index, array) => array.indexOf(value) === index);
+
 		this.state = {
-			cr: 1,
-			type: null,
-			size: null,
-			role: null
+			cr: cr,
+			size: sizes.length === 1 ? sizes[0] : null,
+			type: types.length === 1 ? types[0] : null,
+			role: roles.length === 1 ? roles[0] : null
 		};
 	}
 
@@ -168,8 +174,8 @@ class MonsterGroupInfo extends React.Component<MonsterGroupInfoProps, MonsterGro
 	}
 
 	private getGenerator() {
-		const categoryOptions = CATEGORY_TYPES.map(c => ({ id: c, text: c }));
 		const sizeOptions = SIZE_TYPES.map(s => ({ id: s, text: s }));
+		const categoryOptions = CATEGORY_TYPES.map(c => ({ id: c, text: c }));
 		const roleOptions = ROLE_TYPES.map(r => ({ id: r, text: r }));
 
 		const monsters: Monster[] = [];
@@ -181,11 +187,11 @@ class MonsterGroupInfo extends React.Component<MonsterGroupInfoProps, MonsterGro
 					match = false;
 				}
 
-				if (this.state.type && (m.category !== this.state.type)) {
+				if (this.state.size && (m.size !== this.state.size)) {
 					match = false;
 				}
 
-				if (this.state.size && (m.size !== this.state.size)) {
+				if (this.state.type && (m.category !== this.state.type)) {
 					match = false;
 				}
 
@@ -209,17 +215,6 @@ class MonsterGroupInfo extends React.Component<MonsterGroupInfoProps, MonsterGro
 					})}
 				/>
 				<Dropdown
-					options={categoryOptions}
-					selectedID={this.state.type}
-					placeholder='any type'
-					onSelect={id => this.setState({
-						type: id
-					})}
-					onClear={() => this.setState({
-						type: null
-					})}
-				/>
-				<Dropdown
 					options={sizeOptions}
 					selectedID={this.state.size}
 					placeholder='any size'
@@ -228,6 +223,17 @@ class MonsterGroupInfo extends React.Component<MonsterGroupInfoProps, MonsterGro
 					})}
 					onClear={() => this.setState({
 						size: null
+					})}
+				/>
+				<Dropdown
+					options={categoryOptions}
+					selectedID={this.state.type}
+					placeholder='any type'
+					onSelect={id => this.setState({
+						type: id
+					})}
+					onClear={() => this.setState({
+						type: null
 					})}
 				/>
 				<Dropdown

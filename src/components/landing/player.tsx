@@ -12,11 +12,14 @@ import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { Exploration, Map } from '../../models/map';
 
+import NumberSpin from '../controls/number-spin';
+import Selector from '../controls/selector';
 import Textbox from '../controls/textbox';
 import ConditionModal from '../modals/condition-modal';
 import PCEditorModal from '../modals/editors/pc-editor-modal';
 import StatBlockModal from '../modals/stat-block-modal';
 import CombatControlsPanel from '../panels/combat-controls-panel';
+import DieRollPanel from '../panels/die-roll-panel';
 import ErrorBoundary from '../panels/error-boundary';
 import GridPanel from '../panels/grid-panel';
 import InitiativeOrder from '../panels/initiative-order';
@@ -24,7 +27,7 @@ import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 import PageFooter from '../panels/page-footer';
 import PageHeader from '../panels/page-header';
-import { ConnectionsPanel, MessagePanel, MessagesPanel, PlayerStatusPanel, SendMessagePanel } from '../panels/session-panel';
+import { ConnectionsPanel, MessagesPanel, PlayerStatusPanel, SendMessagePanel } from '../panels/session-panel';
 
 interface Props {
 }
@@ -78,16 +81,14 @@ export default class Player extends React.Component<Props, State> {
 				Comms.data.shared.images.forEach(img => Matisse.saveImage(img.id, img.name, img.data));
 			}
 		});
-		Comms.onNewMessage = message => {
+		Comms.onPromptForRoll = type => {
+			const key = Utils.guid();
 			notification.open({
+				key: key,
 				message: (
-					<MessagePanel
-						user='player'
-						message={message}
-						openImage={data => this.setState({drawer: { type: 'image', data: data }})}
-						openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
-					/>
-				)
+					<RollPrompt type={type} notificationKey={key} />
+				),
+				duration: null
 			});
 		};
 	}
@@ -95,7 +96,7 @@ export default class Player extends React.Component<Props, State> {
 	public componentWillUnmount() {
 		CommsPlayer.onStateChanged = () => null;
 		CommsPlayer.onDataChanged = () => null;
-		Comms.onNewMessage = () => null;
+		Comms.onPromptForRoll = () => null;
 
 		CommsPlayer.disconnect();
 	}
@@ -244,7 +245,7 @@ export default class Player extends React.Component<Props, State> {
 	private getMessagesView() {
 		return (
 			<Row className='full-height'>
-				<Col span={5} className='scrollable sidebar sidebar-left'>
+				<Col span={5} className='scrollable sidebar sidebar-left padded'>
 					<Note>
 						<p>the following people are connected</p>
 					</Note>
@@ -719,6 +720,130 @@ class ConnectPanel extends React.Component<ConnectPanelProps, ConnectPanelState>
 				<Textbox placeholder='dm code' debounce={false} text={this.state.code} onChange={code => this.setCode(code)} />
 				<Textbox placeholder='your name' debounce={false} text={this.state.name} onChange={name => this.setName(name)} />
 				<button className={this.canConnect() ? '' : 'disabled'} onClick={() => this.connect()}>connect</button>
+			</div>
+		);
+	}
+}
+
+interface RollPromptProps {
+	type: string;
+	notificationKey: string;
+}
+
+interface RollPromptState {
+	mode: string;
+	dice: { [sides: number]: number };
+	constant: number;
+	entry: number;
+}
+
+class RollPrompt extends React.Component<RollPromptProps, RollPromptState> {
+	constructor(props: RollPromptProps) {
+		super(props);
+
+		const dice: { [sides: number]: number } = {};
+		[4, 6, 8, 10, 12, 20, 100].forEach(n => dice[n] = 0);
+		dice[20] = 1;
+
+		this.state = {
+			mode: 'roll',
+			dice: dice,
+			constant: 0,
+			entry: 10
+		};
+	}
+
+	private setMode(mode: string) {
+		this.setState({
+			mode: mode
+		});
+	}
+
+	private setDie(sides: number, count: number) {
+		const dice = this.state.dice;
+		dice[sides] = count;
+		this.setState({
+			dice: dice
+		});
+	}
+
+	private setConstant(value: number) {
+		this.setState({
+			constant: value
+		});
+	}
+
+	private resetDice() {
+		const dice = this.state.dice;
+		[4, 6, 8, 10, 12, 20, 100].forEach(n => dice[n] = 0);
+		this.setState({
+			dice: dice
+		});
+	}
+
+	private setEntry(entry: number) {
+		this.setState({
+			entry: entry
+		});
+	}
+
+	private roll(mode: '' | 'advantage' | 'disadvantage') {
+		const result = Gygax.rollDice(this.state.dice, this.state.constant, mode);
+
+		let sum = result.constant;
+		result.rolls.forEach(roll => {
+			sum += roll.value;
+		});
+
+		this.sendRoll(sum);
+	}
+
+	private sendRoll(result: number) {
+		CommsPlayer.sendRollResult(this.props.type, result);
+		notification.close(this.props.notificationKey);
+	}
+
+	public render() {
+		let content = null;
+		switch (this.state.mode) {
+			case 'roll':
+				content = (
+					<div>
+						<DieRollPanel
+							dice={this.state.dice}
+							constant={this.state.constant}
+							setDie={(sides, count) => this.setDie(sides, count)}
+							setConstant={value => this.setConstant(value)}
+							resetDice={() => this.resetDice()}
+							rollDice={mode => this.roll(mode)}
+						/>
+					</div>
+				);
+				break;
+			case 'enter':
+				content = (
+					<div>
+						<NumberSpin
+							value={this.state.entry}
+							label={this.props.type}
+							onNudgeValue={delta => this.setEntry(this.state.entry + delta)}
+						/>
+						<button onClick={() => this.sendRoll(this.state.entry)}>send</button>
+					</div>
+				);
+				break;
+		}
+
+		return (
+			<div>
+				<div className='heading'>{this.props.type}</div>
+				<Selector
+					options={['roll', 'enter'].map(o => ({ id: o, text: o }))}
+					selectedID={this.state.mode}
+					onSelect={mode => this.setMode(mode)}
+				/>
+				<hr/>
+				{content}
 			</div>
 		);
 	}

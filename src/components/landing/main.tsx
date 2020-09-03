@@ -334,7 +334,8 @@ export default class Main extends React.Component<Props, State> {
 					<p>
 						<b>{name}</b> has joined
 					</p>
-				)
+				),
+				duration: 5
 			});
 		};
 		Comms.onNewMessage = message => {
@@ -346,7 +347,8 @@ export default class Main extends React.Component<Props, State> {
 						openImage={data => this.setState({drawer: { type: 'image', data: data }})}
 						openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
 					/>
-				)
+				),
+				duration: 5
 			});
 		};
 	}

@@ -1,3 +1,4 @@
+import { Col, Row } from 'antd';
 import React from 'react';
 
 import { Combatant, Notification } from '../../models/combat';
@@ -55,7 +56,14 @@ export default class CombatNotificationPanel extends React.Component<Props> {
 							<div className='section'>
 								<b>{name}</b> must make a {saveType} save against dc {duration.saveDC}
 							</div>
-							<button onClick={() => this.success()}>success</button>
+							<Row gutter={10}>
+								<Col span={12}>
+									<button onClick={() => this.success()}>success</button>
+								</Col>
+								<Col span={12}>
+									<button onClick={() => this.close(false)}>failure</button>
+								</Col>
+							</Row>
 						</div>
 					);
 				case 'condition-end':
@@ -63,6 +71,7 @@ export default class CombatNotificationPanel extends React.Component<Props> {
 						<div>
 							<div className='section'>
 								<b>{name}</b> is no longer affected by condition <b>{condition.name}</b>
+								<button onClick={() => this.close(false)}>close</button>
 							</div>
 						</div>
 					);
@@ -75,7 +84,14 @@ export default class CombatNotificationPanel extends React.Component<Props> {
 							<div className='section'>
 								{trait.usage}
 							</div>
-							<button onClick={() => this.success()}>recharge</button>
+							<Row gutter={10}>
+								<Col span={12}>
+									<button onClick={() => this.success()}>recharge</button>
+								</Col>
+								<Col span={12}>
+									<button onClick={() => this.close(false)}>close</button>
+								</Col>
+							</Row>
 						</div>
 					);
 			}

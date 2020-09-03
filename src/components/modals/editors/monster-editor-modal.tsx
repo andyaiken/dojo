@@ -623,10 +623,10 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 								this is your <b>scratchpad</b> list; you can add monsters to it from the list to the right
 							</div>
 							<div className='section'>
-								you might find this useful if you're creating a monster and want it to have similar abilities to other monsters
+								when there are monsters in this list, their combined stats will be shown on the left
 							</div>
 							<div className='section'>
-								when there are monsters in this list, their combined stats will be shown on the left
+								you might find this useful if you're creating a monster and want it to have similar abilities to other monsters
 							</div>
 							<div className='section'>
 								you can also quickly blend together all the monters in this list to create a new monster by clicking the <b>generate hybrid monster</b> button above

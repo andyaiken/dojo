@@ -767,10 +767,17 @@ export default class CombatScreen extends React.Component<Props, State> {
 				/>
 			));
 			if (pending.length !== 0) {
+				let ask = null;
+				if (CommsDM.getState() === 'started') {
+					ask = (
+						<button onClick={() => CommsDM.askForRoll('initiative')}>ask for initiative rolls</button>
+					);
+				}
 				pendingList.unshift(
 					<Note key='pending-help'>
 						<div className='section'>these combatants are not yet part of the encounter</div>
 						<div className='section'>set initiative on each of them, then add them to the encounter</div>
+						{ask}
 					</Note>
 				);
 			}
