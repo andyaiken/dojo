@@ -3,6 +3,7 @@ import React from 'react';
 
 import { Comms, CommsPlayer } from '../../utils/comms';
 import Factory from '../../utils/factory';
+import Gygax from '../../utils/gygax';
 import Matisse from '../../utils/matisse';
 import Mercator from '../../utils/mercator';
 import Utils from '../../utils/utils';
@@ -434,70 +435,93 @@ export default class Player extends React.Component<Props, State> {
 				map={map}
 				defaultTab='main'
 				// Main tab
-				toggleTag={(combatants, tag) => CommsPlayer.sendAction({
-					id: Comms.getCharacterID(Comms.getID()),
-					action: 'toggle-tag',
-					tag: tag
-				})}
-				toggleCondition={(combatants, condition) => CommsPlayer.sendAction({
-					id: Comms.getCharacterID(Comms.getID()),
-					action: 'toggle-condition',
-					condition: condition
-				})}
-				toggleHidden={combatants => CommsPlayer.sendAction({
-					id: Comms.getCharacterID(Comms.getID()),
-					action: 'change-value',
-					field: 'showOnMap',
-					value: !current.showOnMap
-				})}
+				toggleTag={(combatants, tag) => {
+					CommsPlayer.sendAction({
+						id: Comms.getCharacterID(Comms.getID()),
+						action: 'toggle-tag',
+						tag: tag
+					});
+				}}
+				toggleCondition={(combatants, condition) => {
+					CommsPlayer.sendAction({
+						id: Comms.getCharacterID(Comms.getID()),
+						action: 'toggle-condition',
+						condition: condition
+					});
+				}}
+				toggleHidden={combatants => {
+					current.showOnMap = !current.showOnMap;
+					CommsPlayer.sendAction({
+						id: Comms.getCharacterID(Comms.getID()),
+						action: 'update-combatant',
+						combatant: current
+					});
+				}}
 				// Cond tab
 				addCondition={combatants => this.addCondition([current], allCombatants)}
 				editCondition={(combatant, condition) => this.editCondition(combatant, condition, allCombatants)}
-				removeCondition={(combatant, condition) => CommsPlayer.sendAction({
-					id: Comms.getCharacterID(Comms.getID()),
-					action: 'remove-condition',
-					conditionID: condition.id
-				})}
-				// Map tab
-				mapAdd={combatant => this.setAddingToMap(!this.state.addingToMap)}
-				mapMove={(combatants, dir) => CommsPlayer.sendAction({
-					id: Comms.getCharacterID(Comms.getID()),
-					action: 'map-move',
-					dir: dir
-				})}
-				mapRemove={combatants => CommsPlayer.sendAction({
-					id: Comms.getCharacterID(Comms.getID()),
-					action: 'map-remove'
-				})}
-				onChangeAltitude={(combatant, value) => CommsPlayer.sendAction({
-					id: Comms.getCharacterID(Comms.getID()),
-					action: 'change-value',
-					field: 'altitude',
-					value: value
-				})}
-				// Adv tab
-				addCompanion={companion => CommsPlayer.sendAction({
-					id: Comms.getCharacterID(Comms.getID()),
-					action: 'add-companion',
-					companion: companion
-				})}
-				// General
-				changeValue={(source, field, value) => {
-					// TODO: Special cases: aura style / color
+				removeCondition={(combatant, condition) => {
 					CommsPlayer.sendAction({
 						id: Comms.getCharacterID(Comms.getID()),
-						action: 'change-value',
-						field: field,
-						value: value
+						action: 'remove-condition',
+						conditionID: condition.id
+					});
+				}}
+				// Map tab
+				mapAdd={combatant => this.setAddingToMap(!this.state.addingToMap)}
+				mapMove={(combatants, dir) => {
+					CommsPlayer.sendAction({
+						id: Comms.getCharacterID(Comms.getID()),
+						action: 'map-move',
+						dir: dir
+					});
+				}}
+				mapRemove={combatants => {
+					CommsPlayer.sendAction({
+						id: Comms.getCharacterID(Comms.getID()),
+						action: 'map-remove'
+					});
+				}}
+				onChangeAltitude={(combatant, value) => {
+					current.altitude = value;
+					CommsPlayer.sendAction({
+						id: Comms.getCharacterID(Comms.getID()),
+						action: 'update-combatant',
+						combatant: current
+					});
+				}}
+				// Adv tab
+				addCompanion={companion => {
+					CommsPlayer.sendAction({
+						id: Comms.getCharacterID(Comms.getID()),
+						action: 'add-companion',
+						companion: companion
+					});
+				}}
+				// General
+				changeValue={(source, field, value) => {
+					source[field] = value;
+					CommsPlayer.sendAction({
+						id: Comms.getCharacterID(Comms.getID()),
+						action: 'update-combatant',
+						combatant: current
 					});
 				}}
 				nudgeValue={(source, field, delta) => {
-					// TODO: Special cases: size, aura radius, exhaustion value
+					let value = null;
+					switch (field) {
+						case 'displaySize':
+							value = Gygax.nudgeSize(source.displaySize, delta);
+							break;
+						default:
+							value = source[field] + delta;
+							break;
+					}
+					source[field] = value;
 					CommsPlayer.sendAction({
 						id: Comms.getCharacterID(Comms.getID()),
-						action: 'change-value',
-						field: field,
-						value: source[field] + delta
+						action: 'update-combatant',
+						combatant: current
 					});
 				}}
 			/>

@@ -50,6 +50,7 @@ export class ConnectionsPanel extends React.Component<ConnectionsPanelProps> {
 					icon = (
 						<CloseCircleOutlined
 							className='control-icon'
+							title='kick'
 							onClick={() => this.props.kick(person.id)}
 						/>
 					);

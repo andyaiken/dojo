@@ -6,7 +6,7 @@ import Mercator from './mercator';
 import Napoleon from './napoleon';
 import Utils from './utils';
 
-import { Combat } from '../models/combat';
+import { Combat, Combatant } from '../models/combat';
 import { Condition } from '../models/condition';
 import { DieRollResult } from '../models/dice';
 import { Exploration } from '../models/map';
@@ -256,13 +256,16 @@ export class Comms {
 				const combatant = Comms.getCombatant(packet.payload['id']);
 				const map = Comms.getMap();
 				switch (action) {
-					case 'change-value':
+					case 'update-combatant':
 						if (combatant) {
-							const field = packet.payload['field'] as string;
-							const value = packet.payload['value'];
-							(combatant as any)[field] = value;
-							if ((field === 'initiative') && Comms.data.shared && (Comms.data.shared.type === 'combat')) {
-								Napoleon.sortCombatants(Comms.data.shared.data as Combat);
+							const updated = packet.payload['combatant'] as Combatant;
+							const all = Comms.getCombatants();
+							const index = all.findIndex(c => c.id === updated.id);
+							if (index !== -1) {
+								all[index] = updated;
+								if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
+									Napoleon.sortCombatants(Comms.data.shared.data as Combat);
+								}
 							}
 						}
 						break;
@@ -280,7 +283,7 @@ export class Comms {
 						if (combatant) {
 							const condition = packet.payload['condition'] as string;
 							if (combatant.conditions.some(cnd => cnd.name === condition)) {
-								combatant.conditions.filter(c => c.name !== condition);
+								combatant.conditions = combatant.conditions.filter(c => c.name !== condition);
 							} else {
 								const cnd = Factory.createCondition();
 								cnd.name = condition;

@@ -177,6 +177,8 @@ hr {
 		> .title {
 			flex-grow: 1;
 			flex-shrink: 1;
+			white-space: nowrap;
+			text-overflow: ellipsis;
 		}
 
 		> .anticon {

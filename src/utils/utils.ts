@@ -1,7 +1,8 @@
+import { v4 as uuid4 } from 'uuid';
+
 export default class Utils {
 	public static guid(): string {
-		const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-		return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+		return uuid4();
 	}
 
 	public static sort(collection: any[], sorts: { field: string, dir: 'asc' | 'desc' }[] = []): any[] {
