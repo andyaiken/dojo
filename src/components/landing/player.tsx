@@ -10,6 +10,7 @@ import Utils from '../../utils/utils';
 
 import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
+import { DieRollResult } from '../../models/dice';
 import { Exploration, Map } from '../../models/map';
 
 import NumberSpin from '../controls/number-spin';
@@ -20,6 +21,7 @@ import PCEditorModal from '../modals/editors/pc-editor-modal';
 import StatBlockModal from '../modals/stat-block-modal';
 import CombatControlsPanel from '../panels/combat-controls-panel';
 import DieRollPanel from '../panels/die-roll-panel';
+import DieRollResultPanel from '../panels/die-roll-result-panel';
 import ErrorBoundary from '../panels/error-boundary';
 import GridPanel from '../panels/grid-panel';
 import InitiativeOrder from '../panels/initiative-order';
@@ -82,6 +84,10 @@ export default class Player extends React.Component<Props, State> {
 			}
 		});
 		Comms.onPromptForRoll = type => {
+			if (Comms.getCharacterID(Comms.getID()) === '') {
+				return;
+			}
+
 			const key = Utils.guid();
 			notification.open({
 				key: key,
@@ -734,6 +740,7 @@ interface RollPromptState {
 	mode: string;
 	dice: { [sides: number]: number };
 	constant: number;
+	result: DieRollResult | null;
 	entry: number;
 }
 
@@ -749,6 +756,7 @@ class RollPrompt extends React.Component<RollPromptProps, RollPromptState> {
 			mode: 'roll',
 			dice: dice,
 			constant: 0,
+			result: null,
 			entry: 10
 		};
 	}
@@ -789,17 +797,20 @@ class RollPrompt extends React.Component<RollPromptProps, RollPromptState> {
 
 	private roll(mode: '' | 'advantage' | 'disadvantage') {
 		const result = Gygax.rollDice(this.state.dice, this.state.constant, mode);
-
-		let sum = result.constant;
-		result.rolls.forEach(roll => {
-			sum += roll.value;
+		this.setState({
+			result: result
 		});
-
-		this.sendRoll(sum);
 	}
 
-	private sendRoll(result: number) {
-		CommsPlayer.sendRollResult(this.props.type, result);
+	private sendRoll() {
+		let value = this.state.entry;
+		if ((this.state.mode === 'roll') && (this.state.result !== null)) {
+			value = this.state.result.constant;
+			this.state.result.rolls.forEach(roll => {
+				value += roll.value;
+			});
+		}
+		CommsPlayer.sendRollResult(this.props.type, value);
 		notification.close(this.props.notificationKey);
 	}
 
@@ -807,6 +818,7 @@ class RollPrompt extends React.Component<RollPromptProps, RollPromptState> {
 		let content = null;
 		switch (this.state.mode) {
 			case 'roll':
+				if (this.state.result === null) {
 				content = (
 					<div>
 						<DieRollPanel
@@ -819,6 +831,14 @@ class RollPrompt extends React.Component<RollPromptProps, RollPromptState> {
 						/>
 					</div>
 				);
+				} else {
+					content = (
+						<div>
+							<DieRollResultPanel result={this.state.result} />
+							<button onClick={() => this.sendRoll()}>send</button>
+						</div>
+					);
+				}
 				break;
 			case 'enter':
 				content = (
@@ -828,7 +848,7 @@ class RollPrompt extends React.Component<RollPromptProps, RollPromptState> {
 							label={this.props.type}
 							onNudgeValue={delta => this.setEntry(this.state.entry + delta)}
 						/>
-						<button onClick={() => this.sendRoll(this.state.entry)}>send</button>
+						<button onClick={() => this.sendRoll()}>send</button>
 					</div>
 				);
 				break;
