@@ -785,7 +785,8 @@ class RollPrompt extends React.Component<RollPromptProps, RollPromptState> {
 		const dice = this.state.dice;
 		[4, 6, 8, 10, 12, 20, 100].forEach(n => dice[n] = 0);
 		this.setState({
-			dice: dice
+			dice: dice,
+			constant: 0
 		});
 	}
 

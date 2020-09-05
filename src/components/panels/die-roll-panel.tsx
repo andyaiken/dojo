@@ -20,7 +20,7 @@ export default class DieRollPanel extends React.Component<Props> {
 				onClick={e => this.dieTypeClicked(e, sides, true && !e.ctrlKey)}
 				onContextMenu={e => this.dieTypeClicked(e, sides, false)}
 			>
-				<div className='die-type-name'>d{sides}</div>
+				<div className='die-type-name'>d{sides === 100 ? '%' : sides}</div>
 				<div className='die-type-value'>{count}</div>
 			</div>
 		);
