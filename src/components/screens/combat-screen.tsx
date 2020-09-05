@@ -369,7 +369,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 			return (
 				<Popout title='Encounter' onCloseWindow={() => this.setPlayerViewOpen(false)}>
 					<Row className='full-height full-width'>
-						<Col span={5} className='scrollable both-ways'>
+						<Col span={18} className='scrollable both-ways'>
 							<MapPanel
 								key='map'
 								map={this.props.combat.map}
@@ -382,7 +382,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 								itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
 							/>
 						</Col>
-						<Col span={19} className='scrollable'>
+						<Col span={6} className='scrollable'>
 							<div className='heading fixed-top'>initiative order</div>
 							{initList}
 						</Col>
@@ -522,11 +522,17 @@ export default class CombatScreen extends React.Component<Props, State> {
 						</div>
 						{map}
 						<div>
-							<div className='subheading'>player view</div>
+							<div className='subheading'>sharing</div>
 							<Checkbox
-								label='show player view'
+								label='share in player view'
 								checked={this.state.playerViewOpen}
 								onChecked={value => this.setPlayerViewOpen(value)}
+							/>
+							<Checkbox
+								label='share in session'
+								disabled={CommsDM.getState() !== 'started'}
+								checked={(Comms.data.shared !== null) && (Comms.data.shared.type === 'combat')}
+								onChecked={value => value ? CommsDM.shareCombat(this.props.combat) : CommsDM.shareNothing()}
 							/>
 						</div>
 						<div>

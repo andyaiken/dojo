@@ -262,10 +262,17 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 					<hr/>
 					<button onClick={() => this.props.startCombat(this.props.exploration)}>start combat</button>
 					<button onClick={() => this.props.rotateMap()}>rotate map</button>
+					<hr/>
 					<Checkbox
-						label='show player view'
+						label='share in player view'
 						checked={this.state.playerViewOpen}
 						onChecked={value => this.setPlayerViewOpen(value)}
+					/>
+					<Checkbox
+						label='share in session'
+						disabled={CommsDM.getState() !== 'started'}
+						checked={(Comms.data.shared !== null) && (Comms.data.shared.type === 'exploration')}
+						onChecked={value => value ? CommsDM.shareExploration(this.props.exploration) : CommsDM.shareNothing()}
 					/>
 					<hr />
 					<div className='section'>

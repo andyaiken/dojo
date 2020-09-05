@@ -119,6 +119,25 @@
 }
 
 .send-message-panel {
+	.message-controls {
+		display: flex;
+		align-items: center;
+		width: 100%;
+
+		.selector {
+			flex: 1 1 0;
+		}
+
+		.anticon {
+			font-size: 16px;
+			padding: 8px;
+
+			&:hover {
+				background-color: $highlight01;
+			}
+		}
+	}
+
 	.icons {
 		.active {
 			color: $highlight;

@@ -56,10 +56,19 @@ export default class SessionSidebar extends React.Component<Props, State> {
 		return (
 			<div>
 				<Note>
-					<p>click the button below to allow your players to connect to the session</p>
+					<p>select a party, then click the 'start' button to allow your players to connect to the game session</p>
 					<p>you can then send messages and share combat encounters and map explorations</p>
 				</Note>
-				<button onClick={() => CommsDM.init()}>start the session</button>
+				<Dropdown
+					placeholder='select a party...'
+					options={this.props.parties.map(party => ({ id: party.id, text: party.name }))}
+					selectedID={Comms.getPartyID()}
+					onSelect={id => {
+						const party = this.props.parties.find(p => p.id === id);
+						CommsDM.setParty(party ?? null);
+					}}
+				/>
+				<button className={Comms.getPartyID() === '' ? 'disabled' : ''} onClick={() => CommsDM.init()}>start the session</button>
 			</div>
 		);
 	}
@@ -120,52 +129,6 @@ export default class SessionSidebar extends React.Component<Props, State> {
 								<CopyOutlined title='copy to clipboard' onClick={e => navigator.clipboard.writeText(playerURL)} />
 							</div>
 						</div>
-						<div className='subheading'>shared experience</div>
-						<Dropdown
-							placeholder='select a party...'
-							options={this.props.parties.map(party => ({ id: party.id, text: party.name }))}
-							selectedID={Comms.getPartyID()}
-							onSelect={id => {
-								const party = this.props.parties.find(p => p.id === id);
-								CommsDM.setParty(party ?? null);
-							}}
-							onClear={() => {
-								CommsDM.setParty(null);
-							}}
-						/>
-						<Selector
-							options={[{
-								id: 'nothing',
-								text: 'nothing',
-								disabled: false
-							}, {
-								id: 'combat',
-								text: 'combat',
-								disabled: (this.props.combat === null)
-							}, {
-								id: 'exploration',
-								text: 'exploration',
-								disabled: (this.props.exploration === null)
-							}]}
-							selectedID={Comms.data.shared ? Comms.data.shared.type : 'nothing'}
-							onSelect={id => {
-								switch (id) {
-									case 'nothing':
-										CommsDM.shareNothing();
-										break;
-									case 'combat':
-										if (this.props.combat) {
-											CommsDM.shareCombat(this.props.combat);
-										}
-										break;
-									case 'exploration':
-										if (this.props.exploration) {
-											CommsDM.shareExploration(this.props.exploration);
-										}
-										break;
-								}
-							}}
-						/>
 						<div className='subheading'>options</div>
 						<ConfirmButton
 							text='end the session'

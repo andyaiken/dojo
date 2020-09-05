@@ -356,10 +356,10 @@ export default class Main extends React.Component<Props, State> {
 	public componentWillUnmount() {
 		Mousetrap.unbind('ctrl+f');
 
-		CommsDM.onStateChanged = () => null;
-		CommsDM.onDataChanged = () => null;
-		CommsDM.onNewConnection = () => null;
-		Comms.onNewMessage = () => null;
+		CommsDM.onStateChanged = null;
+		CommsDM.onDataChanged = null;
+		CommsDM.onNewConnection = null;
+		Comms.onNewMessage = null;
 
 		CommsDM.shutdown();
 	}

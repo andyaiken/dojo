@@ -94,9 +94,9 @@ export default class Player extends React.Component<Props, State> {
 	}
 
 	public componentWillUnmount() {
-		CommsPlayer.onStateChanged = () => null;
-		CommsPlayer.onDataChanged = () => null;
-		Comms.onPromptForRoll = () => null;
+		CommsPlayer.onStateChanged = null;
+		CommsPlayer.onDataChanged = null;
+		Comms.onPromptForRoll = null;
 
 		CommsPlayer.disconnect();
 	}

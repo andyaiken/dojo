@@ -61,8 +61,8 @@ export class Comms {
 	};
 	public static sentImageIDs: string[] = [];
 
-	public static onNewMessage: (message: Message) => void;
-	public static onPromptForRoll: (type: string) => void;
+	public static onNewMessage: ((message: Message) => void) | null;
+	public static onPromptForRoll: ((type: string) => void) | null;
 
 	public static getID() {
 		return this.peer ? this.peer.id : '';
@@ -248,12 +248,16 @@ export class Comms {
 				this.data.messages.push(msg);
 				if (msg.from !== Comms.getID()) {
 					if ((msg.to.length === 0) || (msg.to.includes(Comms.getID()))) {
-						this.onNewMessage(msg);
+						if (this.onNewMessage) {
+							this.onNewMessage(msg);
+						}
 					}
 				}
 				break;
 			case 'ask-for-roll':
-				this.onPromptForRoll(packet.payload['roll']);
+				if (this.onPromptForRoll) {
+					this.onPromptForRoll(packet.payload['roll']);
+				}
 				break;
 			case 'roll-result':
 				if (packet.payload['roll'] === 'initiative') {
@@ -387,9 +391,9 @@ export class CommsDM {
 		return this.state;
 	}
 
-	public static onStateChanged: () => void;
-	public static onDataChanged: () => void;
-	public static onNewConnection: (name: string) => void;
+	public static onStateChanged: (() => void) | null;
+	public static onDataChanged: (() => void) | null;
+	public static onNewConnection: ((name: string) => void) | null;
 
 	public static init() {
 		if (this.state !== 'not started') {
@@ -397,7 +401,9 @@ export class CommsDM {
 		}
 
 		this.state = 'starting';
-		this.onStateChanged();
+		if (this.onStateChanged) {
+			this.onStateChanged();
+		}
 
 		const dmCode = 'dm-' + Utils.guid();
 		Comms.peer = new Peer(dmCode);
@@ -410,7 +416,9 @@ export class CommsDM {
 			}, PULSE_INTERVAL * 1000);
 
 			this.state = 'started';
-			this.onStateChanged();
+			if (this.onStateChanged) {
+				this.onStateChanged();
+			}
 		});
 		Comms.peer.on('close', () => {
 			console.info('peer closed');
@@ -428,7 +436,9 @@ export class CommsDM {
 			this.connections.push(conn);
 			conn.on('open', () => {
 				console.info('connection opened: ' + conn.label);
-				this.onNewConnection(conn.label);
+				if (this.onNewConnection) {
+					this.onNewConnection(conn.label);
+				}
 				this.sendUpdate();
 			});
 			conn.on('close', () => {
@@ -459,7 +469,9 @@ export class CommsDM {
 		Comms.finish();
 
 		this.state = 'not started';
-		this.onStateChanged();
+		if (this.onStateChanged) {
+			this.onStateChanged();
+		}
 	}
 
 	public static kick(id: string) {
@@ -536,13 +548,17 @@ export class CommsDM {
 
 	public static setParty(party: Party | null) {
 		Comms.data.party = party;
-		this.onDataChanged();
+		if (this.onDataChanged) {
+			this.onDataChanged();
+		}
 		this.sendUpdate();
 	}
 
 	public static shareNothing() {
 		Comms.data.shared = null;
-		this.onDataChanged();
+		if (this.onDataChanged) {
+			this.onDataChanged();
+		}
 		this.sendUpdate();
 	}
 
@@ -566,7 +582,9 @@ export class CommsDM {
 			images: images,
 			additional: {}
 		};
-		this.onDataChanged();
+		if (this.onDataChanged) {
+			this.onDataChanged();
+		}
 		this.sendUpdate();
 		images.forEach(img => Comms.sentImageIDs.push(img.id));
 	}
@@ -589,7 +607,9 @@ export class CommsDM {
 			images: images,
 			additional: {}
 		};
-		this.onDataChanged();
+		if (this.onDataChanged) {
+			this.onDataChanged();
+		}
 		this.sendUpdate();
 		images.forEach(img => Comms.sentImageIDs.push(img.id));
 	}
@@ -606,7 +626,9 @@ export class CommsDM {
 
 	private static onDataReceived(packet: Packet) {
 		Comms.processPacket(packet);
-		this.onDataChanged();
+		if (this.onDataChanged) {
+			this.onDataChanged();
+		}
 
 		// If it's an action, we've incorporated it, so send an update
 		// Otherwise, broadcast it
@@ -632,8 +654,8 @@ export class CommsPlayer {
 		return this.state;
 	}
 
-	public static onStateChanged: () => void;
-	public static onDataChanged: () => void;
+	public static onStateChanged: (() => void) | null;
+	public static onDataChanged: (() => void) | null;
 
 	public static connect(dmCode: string, name: string) {
 		if (this.state !== 'not connected') {
@@ -641,7 +663,9 @@ export class CommsPlayer {
 		}
 
 		this.state = 'connecting';
-		this.onStateChanged();
+		if (this.onStateChanged) {
+			this.onStateChanged();
+		}
 
 		const playerCode = 'player-' + Utils.guid();
 		Comms.peer = new Peer(playerCode);
@@ -656,7 +680,9 @@ export class CommsPlayer {
 				conn.on('open', () => {
 					console.info('connection opened');
 					this.state = 'connected';
-					this.onStateChanged();
+					if (this.onStateChanged) {
+						this.onStateChanged();
+					}
 				});
 				conn.on('close', () => {
 					console.info('connection closed');
@@ -669,7 +695,9 @@ export class CommsPlayer {
 				conn.on('data', data => {
 					const packet = data as Packet;
 					Comms.processPacket(packet);
-					this.onDataChanged();
+					if (this.onDataChanged) {
+						this.onDataChanged();
+					}
 				});
 			}
 		});
@@ -696,7 +724,9 @@ export class CommsPlayer {
 		Comms.finish();
 
 		this.state = 'not connected';
-		this.onStateChanged();
+		if (this.onStateChanged) {
+			this.onStateChanged();
+		}
 	}
 
 	public static sendUpdate(status: string, characterID: string) {

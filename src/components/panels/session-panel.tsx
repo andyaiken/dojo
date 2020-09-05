@@ -1,4 +1,4 @@
-import { CloseCircleOutlined, ExpandOutlined, FileOutlined, LockOutlined, SendOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, ExpandOutlined, FileOutlined, LockOutlined, SendOutlined, SettingOutlined } from '@ant-design/icons';
 import { Col, Row, Upload } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
@@ -13,7 +13,6 @@ import { Monster, MonsterGroup } from '../../models/monster';
 
 import Checkbox from '../controls/checkbox';
 import Dropdown from '../controls/dropdown';
-import Expander from '../controls/expander';
 import Selector from '../controls/selector';
 import Textbox from '../controls/textbox';
 import DieRollPanel from './die-roll-panel';
@@ -748,6 +747,8 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 						</button>
 					</div>
 				);
+			case 'settings':
+				return this.getSettingsSection();
 		}
 
 		return null;
@@ -787,14 +788,14 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 		}
 
 		return (
-			<Expander text='settings'>
+			<div>
 				<Selector
 					options={['public', 'private'].map(o => ({ id: o, text: o }))}
 					selectedID={this.state.mode}
 					onSelect={mode => this.setMode(mode)}
 				/>
 				{recipients}
-			</Expander>
+			</div>
 		);
 	}
 
@@ -812,14 +813,15 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 
 			return (
 				<div className='send-message-panel'>
-					<Selector
-						options={options.map(o => ({ id: o, text: o }))}
-						selectedID={this.state.type}
-						onSelect={type => this.setType(type)}
-					/>
+					<div className='message-controls'>
+						<Selector
+							options={options.map(o => ({ id: o, text: o }))}
+							selectedID={this.state.type}
+							onSelect={type => this.setType(type)}
+						/>
+						<SettingOutlined title='settings' onClick={() => this.setType('settings')} />
+					</div>
 					{this.getMessageSection()}
-					<hr />
-					{this.getSettingsSection()}
 				</div>
 			);
 		} catch (ex) {
