@@ -8,12 +8,12 @@ import { Exploration } from '../../models/map';
 import { Monster, MonsterGroup } from '../../models/monster';
 import { Party } from '../../models/party';
 
+import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
 import Dropdown from '../controls/dropdown';
 import Selector from '../controls/selector';
 import Note from '../panels/note';
 import { ConnectionsPanel, MessagesPanel, SendMessagePanel } from '../panels/session-panel';
-import Checkbox from '../controls/checkbox';
 
 interface Props {
 	parties: Party[];
