@@ -100,7 +100,7 @@ export default class EncounterListScreen extends React.Component<Props> {
 
 			return (
 				<Row className='full-height'>
-					<Col span={5} className='scrollable sidebar sidebar-left'>
+					<Col span={6} className='scrollable sidebar sidebar-left'>
 						<Note>
 							<div className='section'>on this page you can set up encounters</div>
 							<div className='section'>
@@ -124,7 +124,7 @@ export default class EncounterListScreen extends React.Component<Props> {
 							/>
 						</Expander>
 					</Col>
-					<Col span={19} className='scrollable'>
+					<Col span={18} className='scrollable'>
 						<GridPanel heading='in progress' content={combatItems} />
 						<GridPanel heading='encounters' content={encounterItems} />
 					</Col>

@@ -1,4 +1,4 @@
-import { CloseCircleOutlined, ExpandOutlined, FileOutlined, LockOutlined, SendOutlined, SettingOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, ExpandOutlined, FileOutlined, LockOutlined, SendOutlined, UnlockOutlined } from '@ant-design/icons';
 import { Col, Row, Upload } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
@@ -111,11 +111,11 @@ export class PlayerStatusPanel extends React.Component<PlayerStatusPanelProps, P
 		this.setState({
 			pc: id
 		}, () => {
-			this.sendUpdate();
+			this.sendPlayerUpdate();
 		});
 	}
 
-	private sendUpdate() {
+	private sendPlayerUpdate() {
 		CommsPlayer.sendUpdate(this.state.status, this.state.pc);
 	}
 
@@ -157,11 +157,11 @@ export class PlayerStatusPanel extends React.Component<PlayerStatusPanelProps, P
 						debounce={false}
 						text={this.state.status}
 						onChange={status => this.setStatus(status)}
-						onPressEnter={() => this.sendUpdate()}
+						onPressEnter={() => this.sendPlayerUpdate()}
 					/>
 					<div className='icons'>
 						<SendOutlined
-							onClick={() => this.sendUpdate()}
+							onClick={() => this.sendPlayerUpdate()}
 							title='update status'
 						/>
 					</div>
@@ -812,6 +812,17 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 				options.push('monster');
 			}
 
+			let icon = null;
+			if (this.state.mode === 'public') {
+				icon = (
+					<UnlockOutlined title='settings' onClick={() => this.setType('settings')} />
+				);
+			} else {
+				icon = (
+					<LockOutlined title='settings' onClick={() => this.setType('settings')} />
+				);
+			}
+
 			return (
 				<div className='send-message-panel'>
 					<div className='message-controls'>
@@ -820,7 +831,7 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 							selectedID={this.state.type}
 							onSelect={type => this.setType(type)}
 						/>
-						<SettingOutlined title='settings' onClick={() => this.setType('settings')} />
+						{icon}
 					</div>
 					{this.getMessageSection()}
 				</div>

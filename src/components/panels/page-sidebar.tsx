@@ -132,6 +132,12 @@ export default class PageSidebar extends React.Component<Props> {
 				case 'session':
 					content = (
 						<SessionSidebar
+							view={this.props.sidebar.subtype}
+							setView={view => {
+								const sidebar = this.props.sidebar;
+								sidebar.subtype = view;
+								this.props.onUpdateSidebar(this.props.sidebar);
+							}}
 							parties={this.props.parties}
 							library={this.props.library}
 							combat={this.props.currentCombat}

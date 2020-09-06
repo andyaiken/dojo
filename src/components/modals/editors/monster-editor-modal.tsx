@@ -1164,7 +1164,7 @@ class TraitsTab extends React.Component<TraitsTabProps, TraitsTabState> {
 						{this.createSection(traitsByType, 'mythic')}
 						{this.createSection(traitsByType, 'lair')}
 					</Col>
-					<Col span={14}>
+					<Col span={12}>
 						{selection}
 					</Col>
 				</Row>

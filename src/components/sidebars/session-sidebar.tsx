@@ -16,32 +16,17 @@ import Note from '../panels/note';
 import { ConnectionsPanel, MessagesPanel, SendMessagePanel } from '../panels/session-panel';
 
 interface Props {
+	view: string;
 	parties: Party[];
 	library: MonsterGroup[];
 	combat: Combat | null;
 	exploration: Exploration | null;
+	setView: (view: string) => void;
 	openImage: (data: string) => void;
 	openStatBlock: (monster: Monster) => void;
 }
 
-interface State {
-	view: string;
-}
-
-export default class SessionSidebar extends React.Component<Props, State> {
-	constructor(props: Props) {
-		super(props);
-		this.state = {
-			view: 'management'
-		};
-	}
-
-	private setView(view: string) {
-		this.setState({
-			view: view
-		});
-	}
-
+export default class SessionSidebar extends React.Component<Props> {
 	private getContent() {
 		switch (CommsDM.getState()) {
 			case 'not started':
@@ -85,7 +70,7 @@ export default class SessionSidebar extends React.Component<Props, State> {
 	private getStartedContent() {
 		const playerURL = window.location + (window.location.toString().endsWith('/') ? '' : '/') + 'player';
 
-		switch (this.state.view) {
+		switch (this.props.view) {
 			case 'messages':
 				return (
 					<MessagesPanel
@@ -137,7 +122,7 @@ export default class SessionSidebar extends React.Component<Props, State> {
 							onChecked={value => {
 								Comms.data.options.allowControls = value;
 								this.setState(this.state, () => {
-									CommsDM.sendUpdate();
+									CommsDM.sendOptionsUpdate();
 								});
 							}}
 						/>
@@ -160,13 +145,13 @@ export default class SessionSidebar extends React.Component<Props, State> {
 				<div className='sidebar-header'>
 					<Selector
 						options={['messages', 'people', 'management'].map(o => ({ id: o, text: o }))}
-						selectedID={this.state.view}
-						onSelect={view => this.setView(view)}
+						selectedID={this.props.view}
+						onSelect={view => this.props.setView(view)}
 					/>
 				</div>
 			);
 
-			if (this.state.view === 'messages') {
+			if (this.props.view === 'messages') {
 				footer = (
 					<div className='sidebar-footer'>
 						<SendMessagePanel

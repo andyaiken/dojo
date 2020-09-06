@@ -473,7 +473,7 @@ export default class EncounterEditorModal extends React.Component<Props, State> 
 							<hr/>
 							{left}
 						</Col>
-						<Col span={14} className='scrollable'>
+						<Col span={12} className='scrollable'>
 							{right}
 						</Col>
 					</Row>

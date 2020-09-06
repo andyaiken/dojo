@@ -1,3 +1,4 @@
+import LZString from 'lz-string';
 import Peer, { DataConnection } from 'peerjs';
 
 import Factory from './factory';
@@ -13,6 +14,9 @@ import { Exploration } from '../models/map';
 import { SavedImage } from '../models/misc';
 import { Monster } from '../models/monster';
 import { Companion, Party, PC } from '../models/party';
+
+// This controls the interval, in seconds, between pulses
+const PULSE_INTERVAL = 60;
 
 export interface Packet {
 	type: 'update' | 'player-info' | 'character-info' | 'message' | 'ask-for-roll' | 'roll-result' | 'action';
@@ -217,13 +221,32 @@ export class Comms {
 		};
 	}
 
+	public static packetToString(packet: Packet) {
+		const str = JSON.stringify(packet);
+		const s = LZString.compressToUTF16(str);
+		return s;
+	}
+
+	public static stringToPacket(str: string): Packet {
+		const s = LZString.decompressFromUTF16(str) as string;
+		return JSON.parse(s) as Packet;
+	}
+
 	public static processPacket(packet: Packet) {
 		switch (packet.type) {
 			case 'update':
-				this.data.people = packet.payload['people'];
-				this.data.party = packet.payload['party'];
-				this.data.shared = packet.payload['shared'];
-				this.data.options = packet.payload['options'];
+				if (packet.payload['people']) {
+					this.data.people = packet.payload['people'];
+				}
+				if (packet.payload['party']) {
+					this.data.party = packet.payload['party'];
+				}
+				if (packet.payload['shared']) {
+					this.data.shared = packet.payload['shared'];
+				}
+				if (packet.payload['options']) {
+					this.data.options = packet.payload['options'];
+				}
 				break;
 			case 'player-info':
 				const playerID = packet.payload['player'];
@@ -411,19 +434,17 @@ export class CommsDM {
 		const dmCode = 'dm-' + Utils.guid();
 		Comms.peer = new Peer(dmCode);
 
-		Comms.peer.on('open', id => {
-			console.info('peer ' + id + ' open');
+		Comms.peer.on('open', () => {
+			setInterval(() => this.sendPulse(), PULSE_INTERVAL * 1000);
 			this.state = 'started';
 			if (this.onStateChanged) {
 				this.onStateChanged();
 			}
 		});
 		Comms.peer.on('close', () => {
-			console.info('peer closed');
 			this.shutdown();
 		});
 		Comms.peer.on('disconnected', () => {
-			console.info('peer disconnected');
 			this.shutdown();
 		});
 		Comms.peer.on('error', err => {
@@ -433,27 +454,28 @@ export class CommsDM {
 		Comms.peer.on('connection', conn => {
 			this.connections.push(conn);
 			conn.on('open', () => {
-				console.info('connection opened: ' + conn.label);
 				if (this.onNewConnection) {
 					this.onNewConnection(conn.label);
 				}
-				this.sendUpdate();
+				this.sendPeopleUpdate();
+				this.sendPartyUpdate(conn);
+				this.sendSharedUpdate(conn);
+				this.sendOptionsUpdate(conn);
 			});
 			conn.on('close', () => {
-				console.info('connection closed: ' + conn.label);
 				// Remove this connection
 				const index = this.connections.indexOf(conn);
 				if (index !== -1) {
 					this.connections.splice(index, 1);
 				}
-				this.sendUpdate();
+				this.sendPeopleUpdate();
 			});
 			conn.on('error', err => {
 				console.error(err);
 				this.kick(conn.peer);
 			});
 			conn.on('data', data => {
-				const packet = data as Packet;
+				const packet = Comms.stringToPacket(data);
 				this.onDataReceived(packet);
 			});
 		});
@@ -485,11 +507,18 @@ export class CommsDM {
 				this.connections.splice(index, 1);
 			}
 
-			this.sendUpdate();
+			this.sendPeopleUpdate();
 		}
 	}
 
-	public static sendUpdate(additional: any = null) {
+	public static sendPulse() {
+		this.sendPeopleUpdate();
+		this.sendPartyUpdate();
+		this.sendSharedUpdate();
+		this.sendOptionsUpdate();
+	}
+
+	public static sendPeopleUpdate() {
 		const people = this.connections
 			.filter(conn => conn.open)
 			.map(conn => ({
@@ -508,21 +537,44 @@ export class CommsDM {
 			characterID: ''
 		});
 
-		if (Comms.data.shared) {
-			Comms.data.shared.additional = additional ?? Comms.data.shared.additional;
-		}
-
 		const packet: Packet = {
 			type: 'update',
 			payload: {
-				people: people,
-				party: Comms.data.party,
-				shared: Comms.data.shared,
-				options: Comms.data.options
+				people: people
 			}
 		};
 		Comms.processPacket(packet);
 		this.broadcast(packet);
+	}
+
+	public static sendPartyUpdate(conn: DataConnection | null = null) {
+		const packet: Packet = {
+			type: 'update',
+			payload: {
+				party: Comms.data.party
+			}
+		};
+		this.broadcast(packet, conn);
+	}
+
+	public static sendSharedUpdate(conn: DataConnection | null = null) {
+		const packet: Packet = {
+			type: 'update',
+			payload: {
+				shared: Comms.data.shared
+			}
+		};
+		this.broadcast(packet, conn);
+	}
+
+	public static sendOptionsUpdate(conn: DataConnection | null = null) {
+		const packet: Packet = {
+			type: 'update',
+			payload: {
+				options: Comms.data.options
+			}
+		};
+		this.broadcast(packet, conn);
 	}
 
 	public static sendMessage(to: string[], text: string, language: string, untranslated: string) {
@@ -550,7 +602,7 @@ export class CommsDM {
 		if (this.onDataChanged) {
 			this.onDataChanged();
 		}
-		this.sendUpdate();
+		this.sendPartyUpdate();
 	}
 
 	public static shareNothing() {
@@ -558,7 +610,7 @@ export class CommsDM {
 		if (this.onDataChanged) {
 			this.onDataChanged();
 		}
-		this.sendUpdate();
+		this.sendSharedUpdate();
 	}
 
 	public static shareCombat(combat: Combat) {
@@ -584,7 +636,7 @@ export class CommsDM {
 		if (this.onDataChanged) {
 			this.onDataChanged();
 		}
-		this.sendUpdate();
+		this.sendSharedUpdate();
 		images.forEach(img => Comms.sentImageIDs.push(img.id));
 	}
 
@@ -609,7 +661,7 @@ export class CommsDM {
 		if (this.onDataChanged) {
 			this.onDataChanged();
 		}
-		this.sendUpdate();
+		this.sendSharedUpdate();
 		images.forEach(img => Comms.sentImageIDs.push(img.id));
 	}
 
@@ -629,19 +681,24 @@ export class CommsDM {
 			this.onDataChanged();
 		}
 
-		// If it's an action, we've incorporated it, so send an update
+		// If it's an action, we've incorporated it into the shared content, so send an update
 		// Otherwise, broadcast it
 		if (packet.type === 'action') {
-			this.sendUpdate();
+			this.sendSharedUpdate();
 		} else {
 			this.broadcast(packet);
 		}
 	}
 
-	private static broadcast(packet: Packet) {
-		this.connections
-			.filter(conn => conn.open)
-			.forEach(conn => conn.send(packet));
+	private static broadcast(packet: Packet, connection: DataConnection | null = null) {
+		const str = Comms.packetToString(packet);
+		if (connection) {
+			connection.send(str);
+		} else {
+			this.connections
+				.filter(conn => conn.open)
+				.forEach(conn => conn.send(str));
+		}
 	}
 }
 
@@ -669,22 +726,18 @@ export class CommsPlayer {
 		const playerCode = 'player-' + Utils.guid();
 		Comms.peer = new Peer(playerCode);
 
-		Comms.peer.on('open', id => {
-			console.info('peer ' + id + ' open');
-
+		Comms.peer.on('open', () => {
 			if (Comms.peer) {
 				// Connect to the DM
 				const conn = Comms.peer.connect(dmCode, { label: name, reliable: true });
 				this.connection = conn;
 				conn.on('open', () => {
-					console.info('connection opened');
 					this.state = 'connected';
 					if (this.onStateChanged) {
 						this.onStateChanged();
 					}
 				});
 				conn.on('close', () => {
-					console.info('connection closed');
 					this.disconnect();
 				});
 				conn.on('error', err => {
@@ -692,7 +745,7 @@ export class CommsPlayer {
 					this.disconnect();
 				});
 				conn.on('data', data => {
-					const packet = data as Packet;
+					const packet = Comms.stringToPacket(data);
 					Comms.processPacket(packet);
 					if (this.onDataChanged) {
 						this.onDataChanged();
@@ -701,11 +754,9 @@ export class CommsPlayer {
 			}
 		});
 		Comms.peer.on('close', () => {
-			console.info('peer closed');
 			this.disconnect();
 		});
 		Comms.peer.on('disconnected', () => {
-			console.info('peer disconnected');
 			this.disconnect();
 		});
 		Comms.peer.on('error', err => {
@@ -784,7 +835,7 @@ export class CommsPlayer {
 
 	private static sendPacket(packet: Packet) {
 		if (this.connection) {
-			this.connection.send(packet);
+			this.connection.send(Comms.packetToString(packet));
 		}
 	}
 }

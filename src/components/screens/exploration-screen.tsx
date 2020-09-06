@@ -76,10 +76,11 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 
 	public componentDidUpdate() {
 		if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
-			CommsDM.sendUpdate({
+			Comms.data.shared.additional = {
 				selectedAreaID: this.state.selectedAreaID,
 				highlightedSquare: this.state.highlightedSquare
-			});
+			};
+			CommsDM.sendSharedUpdate();
 		}
 	}
 
@@ -384,13 +385,13 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 
 			return (
 				<Row className='full-height'>
-					<Col span={5} className='scrollable sidebar sidebar-left'>
+					<Col span={6} className='scrollable sidebar sidebar-left'>
 						{leftSidebar}
 					</Col>
-					<Col span={14} className='scrollable both-ways'>
+					<Col span={12} className='scrollable both-ways'>
 						{this.getMap(false)}
 					</Col>
-					<Col span={5} className='scrollable'>
+					<Col span={6} className='scrollable'>
 						{rightSidebar}
 					</Col>
 					{this.getPlayerView()}

@@ -59,7 +59,7 @@ export default class MapListScreen extends React.Component<Props> {
 
 			return (
 				<Row className='full-height'>
-					<Col span={5} className='scrollable sidebar sidebar-left'>
+					<Col span={6} className='scrollable sidebar sidebar-left'>
 						<Note>
 							<div className='section'>on this page you can set up tactical maps</div>
 							<div className='section'>when you have created a map you can explore it with a party of pcs, or use it in the combat manager</div>
@@ -75,7 +75,7 @@ export default class MapListScreen extends React.Component<Props> {
 							<button onClick={() => this.props.generateMap('delve')}>create a new delve map</button>
 						</Expander>
 					</Col>
-					<Col span={19} className='scrollable'>
+					<Col span={18} className='scrollable'>
 						<GridPanel heading='in progress' content={explorationItems} />
 						<GridPanel heading='maps' content={mapItems} />
 					</Col>

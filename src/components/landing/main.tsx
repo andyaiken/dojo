@@ -329,27 +329,33 @@ export default class Main extends React.Component<Props, State> {
 		CommsDM.onStateChanged = () => this.setState(this.state);
 		CommsDM.onDataChanged = () => this.setState(this.state);
 		CommsDM.onNewConnection = name => {
-			notification.open({
-				message: (
-					<p>
-						<b>{name}</b> has joined
-					</p>
-				),
-				duration: 5
-			});
+			const peopleVisible = this.state.sidebar.visible && (this.state.sidebar.type === 'session') && (this.state.sidebar.subtype === 'people');
+			if (!peopleVisible) {
+				notification.open({
+					message: (
+						<p>
+							<b>{name}</b> has joined
+						</p>
+					),
+					duration: 5
+				});
+			}
 		};
 		Comms.onNewMessage = message => {
-			notification.open({
-				message: (
-					<MessagePanel
-						user='dm'
-						message={message}
-						openImage={data => this.setState({drawer: { type: 'image', data: data }})}
-						openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
-					/>
-				),
-				duration: 5
-			});
+			const messagesVisible = this.state.sidebar.visible && (this.state.sidebar.type === 'session') && (this.state.sidebar.subtype === 'messages');
+			if (!messagesVisible) {
+				notification.open({
+					message: (
+						<MessagePanel
+							user='dm'
+							message={message}
+							openImage={data => this.setState({drawer: { type: 'image', data: data }})}
+							openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
+						/>
+					),
+					duration: 5
+				});
+			}
 		};
 	}
 
@@ -390,6 +396,9 @@ export default class Main extends React.Component<Props, State> {
 				break;
 			case 'reference':
 				subtype = 'skills';
+				break;
+			case 'session':
+				subtype = 'management';
 				break;
 		}
 
@@ -2244,7 +2253,6 @@ export default class Main extends React.Component<Props, State> {
 	private saveKey(obj: any, key: string) {
 		try {
 			const json = JSON.stringify(obj);
-			console.info('Saving (' + key + '): ' + Utils.toData(json.length));
 			window.localStorage.setItem(key, json);
 		} catch (ex) {
 			console.error('Could not stringify data: ', ex);

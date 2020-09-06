@@ -251,7 +251,7 @@ export default class Player extends React.Component<Props, State> {
 	private getMessagesView() {
 		return (
 			<Row className='full-height'>
-				<Col span={5} className='scrollable sidebar sidebar-left padded'>
+				<Col span={6} className='scrollable sidebar sidebar-left padded'>
 					<Note>
 						<p>the following people are connected</p>
 					</Note>
@@ -265,7 +265,7 @@ export default class Player extends React.Component<Props, State> {
 						editPC={id => this.editPC(id)}
 					/>
 				</Col>
-				<Col span={19} className='full-height sidebar'>
+				<Col span={18} className='full-height sidebar'>
 					<div className='sidebar-container in-page'>
 						<div className='sidebar-content'>
 							<MessagesPanel
@@ -296,7 +296,7 @@ export default class Player extends React.Component<Props, State> {
 		let controls = null;
 		if (Comms.data.options.allowControls) {
 			controls = (
-				<Col span={5} className='scrollable sidebar sidebar-right'>
+				<Col span={6} className='scrollable sidebar sidebar-right'>
 					{this.getControls()}
 				</Col>
 			);
@@ -304,7 +304,7 @@ export default class Player extends React.Component<Props, State> {
 
 		return (
 			<Row className='full-height'>
-				<Col span={5} className='full-height sidebar sidebar-left'>
+				<Col span={6} className='full-height sidebar sidebar-left'>
 					<div className='sidebar-container in-page'>
 						<div className='sidebar-content'>
 							<MessagesPanel
@@ -327,7 +327,7 @@ export default class Player extends React.Component<Props, State> {
 						</div>
 					</div>
 				</Col>
-				<Col span={Comms.data.options.allowControls ? 14 : 19} className='full-height'>
+				<Col span={Comms.data.options.allowControls ? 12 : 18} className='full-height'>
 					{shared}
 				</Col>
 				{controls}
@@ -687,6 +687,8 @@ export default class Player extends React.Component<Props, State> {
 	}
 }
 
+//#region ConnectPanel
+
 interface ConnectPanelProps {
 }
 
@@ -737,6 +739,10 @@ class ConnectPanel extends React.Component<ConnectPanelProps, ConnectPanelState>
 		);
 	}
 }
+
+//#endregion
+
+//#region RollPrompt
 
 interface RollPromptProps {
 	type: string;
@@ -876,3 +882,5 @@ class RollPrompt extends React.Component<RollPromptProps, RollPromptState> {
 		);
 	}
 }
+
+//#endregion

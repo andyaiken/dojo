@@ -116,10 +116,11 @@ export default class CombatScreen extends React.Component<Props, State> {
 
 	public componentDidUpdate() {
 		if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
-			CommsDM.sendUpdate({
+			Comms.data.shared.additional = {
 				selectedAreaID: this.state.selectedAreaID,
 				highlightedSquare: this.state.highlightedSquare
-			});
+			};
+			CommsDM.sendSharedUpdate();
 		}
 	}
 

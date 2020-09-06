@@ -67,7 +67,7 @@ export default class EncounterScreen extends React.Component<Props> {
 		try {
 			return (
 				<Row className='full-height'>
-					<Col span={5} className='scrollable sidebar sidebar-left'>
+					<Col span={6} className='scrollable sidebar sidebar-left'>
 						<EncounterInfo
 							encounter={this.props.encounter}
 							parties={this.props.parties}
@@ -78,7 +78,7 @@ export default class EncounterScreen extends React.Component<Props> {
 							goBack={() => this.props.goBack()}
 						/>
 					</Col>
-					<Col span={19} className='scrollable'>
+					<Col span={18} className='scrollable'>
 						<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.encounter.notes) }} />
 						{this.getSlots(this.props.encounter.id, this.props.encounter.name ?? 'unnamed encounter', this.props.encounter.slots)}
 						{this.props.encounter.waves.map(wave => this.getSlots(wave.id, wave.name ?? 'wave', wave.slots))}

@@ -55,7 +55,7 @@ export default class MapScreen extends React.Component<Props, State> {
 
 			return (
 				<Row className='full-height'>
-					<Col span={5} className='scrollable sidebar sidebar-left'>
+					<Col span={6} className='scrollable sidebar sidebar-left'>
 						<div className='section'>
 							<div className='subheading'>map name</div>
 							<Textbox
@@ -77,7 +77,7 @@ export default class MapScreen extends React.Component<Props, State> {
 							<button onClick={() => this.props.goBack()}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>
 						</div>
 					</Col>
-					<Col span={19} className='scrollable both-ways'>
+					<Col span={18} className='scrollable both-ways'>
 						<MapPanel
 							map={this.props.map}
 							mode={'combat'}
