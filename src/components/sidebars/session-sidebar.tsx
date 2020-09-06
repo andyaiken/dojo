@@ -13,6 +13,7 @@ import Dropdown from '../controls/dropdown';
 import Selector from '../controls/selector';
 import Note from '../panels/note';
 import { ConnectionsPanel, MessagesPanel, SendMessagePanel } from '../panels/session-panel';
+import Checkbox from '../controls/checkbox';
 
 interface Props {
 	parties: Party[];
@@ -130,6 +131,16 @@ export default class SessionSidebar extends React.Component<Props, State> {
 							</div>
 						</div>
 						<div className='subheading'>options</div>
+						<Checkbox
+							label='allow players to control their characters'
+							checked={Comms.data.options.allowControls}
+							onChecked={value => {
+								Comms.data.options.allowControls = value;
+								this.setState(this.state, () => {
+									CommsDM.sendUpdate();
+								});
+							}}
+						/>
 						<ConfirmButton
 							text='end the session'
 							onConfirm={() => CommsDM.shutdown()}

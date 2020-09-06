@@ -293,6 +293,15 @@ export default class Player extends React.Component<Props, State> {
 	}
 
 	private getSharedView(shared: JSX.Element) {
+		let controls = null;
+		if (Comms.data.options.allowControls) {
+			controls = (
+				<Col span={5} className='scrollable sidebar sidebar-right'>
+					{this.getControls()}
+				</Col>
+			);
+		}
+
 		return (
 			<Row className='full-height'>
 				<Col span={5} className='full-height sidebar sidebar-left'>
@@ -318,12 +327,10 @@ export default class Player extends React.Component<Props, State> {
 						</div>
 					</div>
 				</Col>
-				<Col span={14} className='full-height'>
+				<Col span={Comms.data.options.allowControls ? 14 : 19} className='full-height'>
 					{shared}
 				</Col>
-				<Col span={5} className='scrollable sidebar sidebar-right'>
-					{this.getControls()}
-				</Col>
+				{controls}
 			</Row>
 		);
 	}

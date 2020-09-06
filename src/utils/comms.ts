@@ -14,9 +14,6 @@ import { SavedImage } from '../models/misc';
 import { Monster } from '../models/monster';
 import { Companion, Party, PC } from '../models/party';
 
-// This controls the interval, in seconds, between pulses
-const PULSE_INTERVAL = 60;
-
 export interface Packet {
 	type: 'update' | 'player-info' | 'character-info' | 'message' | 'ask-for-roll' | 'roll-result' | 'action';
 	payload: any;
@@ -49,20 +46,30 @@ export interface CommsData {
 	messages: Message[];
 	party: Party | null;
 	shared: SharedExperience | null;
+	options: {
+		allowControls: boolean
+	};
 }
 
 export class Comms {
 	public static peer: Peer | null = null;
-	public static data: CommsData = {
-		people: [],
-		messages: [],
-		party: null,
-		shared: null
-	};
+	public static data: CommsData = Comms.getDefaultData();
 	public static sentImageIDs: string[] = [];
 
 	public static onNewMessage: ((message: Message) => void) | null;
 	public static onPromptForRoll: ((type: string) => void) | null;
+
+	public static getDefaultData() {
+		return {
+			people: [],
+			messages: [],
+			party: null,
+			shared: null,
+			options: {
+				allowControls: false
+			}
+		};
+	}
 
 	public static getID() {
 		return this.peer ? this.peer.id : '';
@@ -216,6 +223,7 @@ export class Comms {
 				this.data.people = packet.payload['people'];
 				this.data.party = packet.payload['party'];
 				this.data.shared = packet.payload['shared'];
+				this.data.options = packet.payload['options'];
 				break;
 			case 'player-info':
 				const playerID = packet.payload['player'];
@@ -374,12 +382,7 @@ export class Comms {
 			Comms.peer = null;
 		}
 
-		Comms.data = {
-			people: [],
-			messages: [],
-			party: null,
-			shared: null
-		};
+		Comms.data = this.getDefaultData();
 	}
 }
 
@@ -410,11 +413,6 @@ export class CommsDM {
 
 		Comms.peer.on('open', id => {
 			console.info('peer ' + id + ' open');
-
-			setInterval(() => {
-				this.sendUpdate();
-			}, PULSE_INTERVAL * 1000);
-
 			this.state = 'started';
 			if (this.onStateChanged) {
 				this.onStateChanged();
@@ -519,7 +517,8 @@ export class CommsDM {
 			payload: {
 				people: people,
 				party: Comms.data.party,
-				shared: Comms.data.shared
+				shared: Comms.data.shared,
+				options: Comms.data.options
 			}
 		};
 		Comms.processPacket(packet);
