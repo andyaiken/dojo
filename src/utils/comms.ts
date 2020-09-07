@@ -1,5 +1,6 @@
 import LZString from 'lz-string';
 import Peer, { DataConnection } from 'peerjs';
+import recursivediff from 'recursive-diff';
 
 import Factory from './factory';
 import Matisse from './matisse';
@@ -59,6 +60,7 @@ export class Comms {
 	public static peer: Peer | null = null;
 	public static data: CommsData = Comms.getDefaultData();
 	public static sentImageIDs: string[] = [];
+	public static previousSharedState: any = null;
 
 	public static onNewMessage: ((message: Message) => void) | null;
 	public static onPromptForRoll: ((type: string) => void) | null;
@@ -243,6 +245,10 @@ export class Comms {
 				}
 				if (packet.payload['shared']) {
 					this.data.shared = packet.payload['shared'];
+				}
+				if (packet.payload['sharedDiff']) {
+					const diff = packet.payload['sharedDiff'];
+					recursivediff.applyDiff(Comms.data.shared, diff);
 				}
 				if (packet.payload['options']) {
 					this.data.options = packet.payload['options'];
@@ -459,7 +465,7 @@ export class CommsDM {
 				}
 				this.sendPeopleUpdate();
 				this.sendPartyUpdate(conn);
-				this.sendSharedUpdate(conn);
+				this.sendSharedUpdate(false, conn);
 				this.sendOptionsUpdate(conn);
 			});
 			conn.on('close', () => {
@@ -511,10 +517,24 @@ export class CommsDM {
 		}
 	}
 
+	public static setOption(option: 'allowControls', value: any) {
+		Comms.data.options[option] = value;
+		if (this.onDataChanged) {
+			this.onDataChanged();
+		}
+		const packet: Packet = {
+			type: 'update',
+			payload: {
+				options: Comms.data.options
+			}
+		};
+		this.broadcast(packet);
+	}
+
 	public static sendPulse() {
 		this.sendPeopleUpdate();
 		this.sendPartyUpdate();
-		this.sendSharedUpdate();
+		this.sendSharedUpdate(false);
 		this.sendOptionsUpdate();
 	}
 
@@ -557,14 +577,27 @@ export class CommsDM {
 		this.broadcast(packet, conn);
 	}
 
-	public static sendSharedUpdate(conn: DataConnection | null = null) {
+	public static sendSharedUpdate(simplify: boolean, conn: DataConnection | null = null) {
 		const packet: Packet = {
 			type: 'update',
 			payload: {
 				shared: Comms.data.shared
 			}
 		};
+
+		if (simplify && (Comms.previousSharedState !== null)) {
+			// Send only the difference since the previous state
+			packet.payload = {
+				sharedDiff: recursivediff.getDiff(Comms.previousSharedState, Comms.data.shared)
+			};
+		}
+
 		this.broadcast(packet, conn);
+
+		if (simplify) {
+			// Store the current state
+			Comms.previousSharedState = JSON.parse(JSON.stringify(Comms.data.shared));
+		}
 	}
 
 	public static sendOptionsUpdate(conn: DataConnection | null = null) {
@@ -606,11 +639,12 @@ export class CommsDM {
 	}
 
 	public static shareNothing() {
+		Comms.previousSharedState = null;
 		Comms.data.shared = null;
 		if (this.onDataChanged) {
 			this.onDataChanged();
 		}
-		this.sendSharedUpdate();
+		this.sendSharedUpdate(false);
 	}
 
 	public static shareCombat(combat: Combat) {
@@ -627,6 +661,7 @@ export class CommsDM {
 					}
 				});
 		}
+		Comms.previousSharedState = null;
 		Comms.data.shared = {
 			type: 'combat',
 			data: combat,
@@ -636,7 +671,7 @@ export class CommsDM {
 		if (this.onDataChanged) {
 			this.onDataChanged();
 		}
-		this.sendSharedUpdate();
+		this.sendSharedUpdate(true);
 		images.forEach(img => Comms.sentImageIDs.push(img.id));
 	}
 
@@ -652,6 +687,7 @@ export class CommsDM {
 					}
 				}
 			});
+		Comms.previousSharedState = null;
 		Comms.data.shared = {
 			type: 'exploration',
 			data: exploration,
@@ -661,7 +697,7 @@ export class CommsDM {
 		if (this.onDataChanged) {
 			this.onDataChanged();
 		}
-		this.sendSharedUpdate();
+		this.sendSharedUpdate(true);
 		images.forEach(img => Comms.sentImageIDs.push(img.id));
 	}
 
@@ -684,7 +720,7 @@ export class CommsDM {
 		// If it's an action, we've incorporated it into the shared content, so send an update
 		// Otherwise, broadcast it
 		if (packet.type === 'action') {
-			this.sendSharedUpdate();
+			this.sendSharedUpdate(true);
 		} else {
 			this.broadcast(packet);
 		}

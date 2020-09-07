@@ -119,12 +119,7 @@ export default class SessionSidebar extends React.Component<Props> {
 						<Checkbox
 							label='allow players to control their characters'
 							checked={Comms.data.options.allowControls}
-							onChecked={value => {
-								Comms.data.options.allowControls = value;
-								this.setState(this.state, () => {
-									CommsDM.sendOptionsUpdate();
-								});
-							}}
+							onChecked={value => CommsDM.setOption('allowControls', value)}
 						/>
 						<ConfirmButton
 							text='end the session'

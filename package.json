@@ -16,6 +16,7 @@
 		"react-dom": "^16.13.1",
 		"react-movable": "^2.5.1",
 		"react-router-dom": "^5.2.0",
+		"recursive-diff": "^1.0.8",
 		"showdown": "^1.9.1",
 		"uuid": "^8.3.0"
 	},
