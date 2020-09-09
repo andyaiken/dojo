@@ -6,6 +6,7 @@ import Factory from '../../utils/factory';
 import Gygax from '../../utils/gygax';
 import Matisse from '../../utils/matisse';
 import Mercator from '../../utils/mercator';
+import Napoleon from '../../utils/napoleon';
 import Utils from '../../utils/utils';
 
 import { Combat, Combatant } from '../../models/combat';
@@ -77,12 +78,13 @@ export default class Player extends React.Component<Props, State> {
 	}
 
 	public componentDidMount() {
-		CommsPlayer.onStateChanged = () => this.setState(this.state);
-		CommsPlayer.onDataChanged = () => this.setState(this.state, () => {
+		CommsPlayer.onStateChanged = () => this.forceUpdate();
+		CommsPlayer.onDataChanged = () => {
 			if (Comms.data.shared) {
 				Comms.data.shared.images.forEach(img => Matisse.saveImage(img.id, img.name, img.data));
 			}
-		});
+			this.forceUpdate();
+		};
 		Comms.onPromptForRoll = type => {
 			if (Comms.getCharacterID(Comms.getID()) === '') {
 				return;
@@ -145,17 +147,18 @@ export default class Player extends React.Component<Props, State> {
 	}
 
 	private addConditionFromModal() {
-		const condition: Condition = JSON.parse(JSON.stringify(this.state.drawer.condition));
-		condition.id = Utils.guid();
+		this.state.drawer.combatants.forEach((combatant: Combatant) => {
+			const condition: Condition = JSON.parse(JSON.stringify(this.state.drawer.condition));
+			condition.id = Utils.guid();
+			combatant.conditions.push(condition);
+			Utils.sort(combatant.conditions, [{ field: 'name', dir: 'asc' }]);
+		});
 
 		this.setState({
 			drawer: null
 		}, () => {
-			CommsPlayer.sendAction({
-				id: Comms.getCharacterID(Comms.getID()),
-				action: 'add-condition',
-				condition: condition
-			});
+			CommsPlayer.sendSharedUpdate();
+			this.forceUpdate();
 		});
 	}
 
@@ -171,30 +174,21 @@ export default class Player extends React.Component<Props, State> {
 	}
 
 	private editConditionFromModal() {
-		const condition: Condition = JSON.parse(JSON.stringify(this.state.drawer.condition));
+		this.state.drawer.combatants.forEach((combatant: Combatant) => {
+			const original = combatant.conditions.find(c => c.id === this.state.drawer.condition.id);
+			if (original) {
+				const index = combatant.conditions.indexOf(original);
+				combatant.conditions[index] = this.state.drawer.condition;
+				Utils.sort(combatant.conditions, [{ field: 'name', dir: 'asc' }]);
+			}
+		});
 
 		this.setState({
 			drawer: null
 		}, () => {
-			CommsPlayer.sendAction({
-				id: Comms.getCharacterID(Comms.getID()),
-				action: 'edit-condition',
-				condition: condition
-			});
+			CommsPlayer.sendSharedUpdate();
+			this.forceUpdate();
 		});
-	}
-
-	private gridSquareClicked(x: number, y: number) {
-		if (this.state.addingToMap) {
-			CommsPlayer.sendAction({
-				id: Comms.getCharacterID(Comms.getID()),
-				action: 'map-add',
-				x: x,
-				y: y
-			});
-
-			this.setAddingToMap(false);
-		}
 	}
 
 	private closeDrawer() {
@@ -365,7 +359,15 @@ export default class Player extends React.Component<Props, State> {
 						fog={combat.fog}
 						focussedSquare={highlightedSquare}
 						itemSelected={(id, ctrl) => null}
-						gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
+						gridSquareClicked={(x, y) => {
+							if (this.state.addingToMap) {
+								const list = Napoleon.getMountsAndRiders([characterID], combat.combatants);
+								list.forEach(c => Mercator.add(combat.map as Map, c, x, y));
+								this.setAddingToMap(false);
+								CommsPlayer.sendSharedUpdate();
+								this.forceUpdate();
+							}
+						}}
 					/>
 				</div>
 			);
@@ -406,7 +408,15 @@ export default class Player extends React.Component<Props, State> {
 					fog={exploration.fog}
 					focussedSquare={highlightedSquare}
 					itemSelected={(id, ctrl) => null}
-					gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
+					gridSquareClicked={(x, y) => {
+						if (this.state.addingToMap) {
+							const list = Napoleon.getMountsAndRiders([characterID], exploration.combatants);
+							list.forEach(c => Mercator.add(exploration.map as Map, c, x, y));
+							this.setAddingToMap(false);
+							CommsPlayer.sendSharedUpdate();
+							this.forceUpdate();
+						}
+					}}
 				/>
 			</div>
 		);
@@ -450,76 +460,89 @@ export default class Player extends React.Component<Props, State> {
 				defaultTab='main'
 				// Main tab
 				toggleTag={(combatants, tag) => {
-					CommsPlayer.sendAction({
-						id: Comms.getCharacterID(Comms.getID()),
-						action: 'toggle-tag',
-						tag: tag
+					combatants.forEach(c => {
+						if (c.tags.includes(tag)) {
+							c.tags = c.tags.filter(t => t !== tag);
+						} else {
+							c.tags.push(tag);
+						}
 					});
+					CommsPlayer.sendSharedUpdate();
+					this.forceUpdate();
 				}}
 				toggleCondition={(combatants, condition) => {
-					CommsPlayer.sendAction({
-						id: Comms.getCharacterID(Comms.getID()),
-						action: 'toggle-condition',
-						condition: condition
+					combatants.forEach(c => {
+						if (c.conditions.some(cnd => cnd.name === condition)) {
+							c.conditions = c.conditions.filter(cnd => cnd.name !== condition);
+						} else {
+							const cnd = Factory.createCondition();
+							cnd.name = condition;
+							c.conditions.push(cnd);
+
+							c.conditions = Utils.sort(c.conditions, [{ field: 'name', dir: 'asc' }]);
+						}
 					});
+					CommsPlayer.sendSharedUpdate();
+					this.forceUpdate();
 				}}
 				toggleHidden={combatants => {
-					current.showOnMap = !current.showOnMap;
-					CommsPlayer.sendAction({
-						id: Comms.getCharacterID(Comms.getID()),
-						action: 'update-combatant',
-						combatant: current
-					});
+					combatants.forEach(c => c.showOnMap = !c.showOnMap);
+					CommsPlayer.sendSharedUpdate();
+					this.forceUpdate();
 				}}
 				// Cond tab
-				addCondition={combatants => this.addCondition([current], allCombatants)}
+				addCondition={combatants => this.addCondition(combatants, allCombatants)}
 				editCondition={(combatant, condition) => this.editCondition(combatant, condition, allCombatants)}
 				removeCondition={(combatant, condition) => {
-					CommsPlayer.sendAction({
-						id: Comms.getCharacterID(Comms.getID()),
-						action: 'remove-condition',
-						conditionID: condition.id
-					});
+					combatant.conditions = combatant.conditions.filter(cnd => cnd.name !== condition.name);
+					CommsPlayer.sendSharedUpdate();
+					this.forceUpdate();
 				}}
 				// Map tab
 				mapAdd={combatant => this.setAddingToMap(!this.state.addingToMap)}
 				mapMove={(combatants, dir) => {
-					CommsPlayer.sendAction({
-						id: Comms.getCharacterID(Comms.getID()),
-						action: 'map-move',
-						dir: dir
+					const ids = combatants.map(c => c.id);
+					const list = Napoleon.getMountsAndRiders(ids, allCombatants).map(c => c.id);
+					ids.forEach(id => {
+						if (!list.includes(id)) {
+							list.push(id);
+						}
 					});
+					list.forEach(id => Mercator.move(map as Map, id, dir));
+					Napoleon.setMountPositions(allCombatants, map as Map);
+					CommsPlayer.sendSharedUpdate();
+					this.forceUpdate();
 				}}
 				mapRemove={combatants => {
-					CommsPlayer.sendAction({
-						id: Comms.getCharacterID(Comms.getID()),
-						action: 'map-remove'
+					const ids = combatants.map(c => c.id);
+					const list = Napoleon.getMountsAndRiders(ids, allCombatants).map(c => c.id);
+					ids.forEach(id => {
+						if (!list.includes(id)) {
+							list.push(id);
+						}
 					});
+					list.forEach(id => Mercator.remove(map as Map, id));
+					CommsPlayer.sendSharedUpdate();
+					this.forceUpdate();
 				}}
 				onChangeAltitude={(combatant, value) => {
-					current.altitude = value;
-					CommsPlayer.sendAction({
-						id: Comms.getCharacterID(Comms.getID()),
-						action: 'update-combatant',
-						combatant: current
-					});
+					const list = Napoleon.getMountsAndRiders([combatant.id], allCombatants);
+					list.forEach(c => c.altitude = value);
+					CommsPlayer.sendSharedUpdate();
+					this.forceUpdate();
 				}}
 				// Adv tab
 				addCompanion={companion => {
-					CommsPlayer.sendAction({
-						id: Comms.getCharacterID(Comms.getID()),
-						action: 'add-companion',
-						companion: companion
-					});
+					allCombatants.push(Napoleon.convertCompanionToCombatant(companion));
+					Utils.sort(allCombatants, [{ field: 'displayName', dir: 'asc' }]);
+					CommsPlayer.sendSharedUpdate();
+					this.forceUpdate();
 				}}
 				// General
 				changeValue={(source, field, value) => {
 					source[field] = value;
-					CommsPlayer.sendAction({
-						id: Comms.getCharacterID(Comms.getID()),
-						action: 'update-combatant',
-						combatant: current
-					});
+					CommsPlayer.sendSharedUpdate();
+					this.forceUpdate();
 				}}
 				nudgeValue={(source, field, delta) => {
 					let value = null;
@@ -532,11 +555,8 @@ export default class Player extends React.Component<Props, State> {
 							break;
 					}
 					source[field] = value;
-					CommsPlayer.sendAction({
-						id: Comms.getCharacterID(Comms.getID()),
-						action: 'update-combatant',
-						combatant: current
-					});
+					CommsPlayer.sendSharedUpdate();
+					this.forceUpdate();
 				}}
 			/>
 		);

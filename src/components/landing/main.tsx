@@ -1528,6 +1528,9 @@ export default class Main extends React.Component<Props, State> {
 		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
 		if (combat) {
 			combat.combatants.push(Napoleon.convertCompanionToCombatant(companion));
+
+			Utils.sort(combat.combatants, [{ field: 'displayName', dir: 'asc' }]);
+
 			this.setState({
 				combats: this.state.combats
 			});
@@ -2080,9 +2083,7 @@ export default class Main extends React.Component<Props, State> {
 	}
 
 	private toggleHidden(combatants: Combatant[]) {
-		combatants.forEach(c => {
-			c.showOnMap = !c.showOnMap;
-		});
+		combatants.forEach(c => c.showOnMap = !c.showOnMap);
 
 		this.setState({
 			combats: this.state.combats,

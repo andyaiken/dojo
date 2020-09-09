@@ -80,7 +80,7 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 				selectedAreaID: this.state.selectedAreaID,
 				highlightedSquare: this.state.highlightedSquare
 			};
-			CommsDM.sendSharedUpdate(true);
+			CommsDM.sendSharedDiffUpdate();
 		}
 	}
 

@@ -2,25 +2,21 @@ import LZString from 'lz-string';
 import Peer, { DataConnection } from 'peerjs';
 import recursivediff from 'recursive-diff';
 
-import Factory from './factory';
 import Matisse from './matisse';
-import Mercator from './mercator';
-import Napoleon from './napoleon';
 import Utils from './utils';
 
-import { Combat, Combatant } from '../models/combat';
-import { Condition } from '../models/condition';
+import { Combat } from '../models/combat';
 import { DieRollResult } from '../models/dice';
 import { Exploration } from '../models/map';
 import { SavedImage } from '../models/misc';
 import { Monster } from '../models/monster';
-import { Companion, Party, PC } from '../models/party';
+import { Party, PC } from '../models/party';
 
 // This controls the interval, in seconds, between pulses
 const PULSE_INTERVAL = 60;
 
 export interface Packet {
-	type: 'update' | 'player-info' | 'character-info' | 'message' | 'ask-for-roll' | 'roll-result' | 'action';
+	type: 'update' | 'player-info' | 'character-info' | 'message' | 'ask-for-roll' | 'roll-result' | 'player-shared-update';
 	payload: any;
 }
 
@@ -60,7 +56,8 @@ export class Comms {
 	public static peer: Peer | null = null;
 	public static data: CommsData = Comms.getDefaultData();
 	public static sentImageIDs: string[] = [];
-	public static previousSharedState: any = null;
+	public static previousSentSharedState: any = null;
+	public static previousReceivedSharedState: any = null;
 
 	public static onNewMessage: ((message: Message) => void) | null;
 	public static onPromptForRoll: ((type: string) => void) | null;
@@ -245,10 +242,12 @@ export class Comms {
 				}
 				if (packet.payload['shared']) {
 					this.data.shared = packet.payload['shared'];
+					Comms.previousReceivedSharedState = JSON.parse(JSON.stringify(this.data.shared));
 				}
 				if (packet.payload['sharedDiff']) {
 					const diff = packet.payload['sharedDiff'];
 					recursivediff.applyDiff(Comms.data.shared, diff);
+					Comms.previousReceivedSharedState = JSON.parse(JSON.stringify(this.data.shared));
 				}
 				if (packet.payload['options']) {
 					this.data.options = packet.payload['options'];
@@ -308,98 +307,13 @@ export class Comms {
 					}
 				}
 				break;
-			case 'action':
-				const action = packet.payload['action'];
-				const combatant = Comms.getCombatant(packet.payload['id']);
-				const map = Comms.getMap();
-				switch (action) {
-					case 'update-combatant':
-						if (combatant) {
-							const updated = packet.payload['combatant'] as Combatant;
-							const all = Comms.getCombatants();
-							const index = all.findIndex(c => c.id === updated.id);
-							if (index !== -1) {
-								all[index] = updated;
-								if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
-									Napoleon.sortCombatants(Comms.data.shared.data as Combat);
-								}
-							}
-						}
-						break;
-					case 'toggle-tag':
-						if (combatant) {
-							const tag = packet.payload['tag'] as string;
-							if (combatant.tags.includes(tag)) {
-								combatant.tags = combatant.tags.filter(t => t !== tag);
-							} else {
-								combatant.tags.push(tag);
-							}
-						}
-						break;
-					case 'toggle-condition':
-						if (combatant) {
-							const condition = packet.payload['condition'] as string;
-							if (combatant.conditions.some(cnd => cnd.name === condition)) {
-								combatant.conditions = combatant.conditions.filter(c => c.name !== condition);
-							} else {
-								const cnd = Factory.createCondition();
-								cnd.name = condition;
-								combatant.conditions.push(cnd);
-								combatant.conditions = Utils.sort(combatant.conditions, [{ field: 'name', dir: 'asc' }]);
-							}
-						}
-						break;
-					case 'add-condition':
-						if (combatant) {
-							const condition = packet.payload['condition'] as Condition;
-							combatant.conditions.push(condition);
-						}
-						break;
-					case 'edit-condition':
-						if (combatant) {
-							const condition = packet.payload['condition'] as Condition;
-							const index = combatant.conditions.findIndex(c => c.id === condition.id);
-							if (index !== -1) {
-								combatant.conditions[index] = condition;
-							}
-						}
-						break;
-					case 'remove-condition':
-						if (combatant) {
-							const conditionID = packet.payload['conditionID'] as string;
-							const index = combatant.conditions.findIndex(c => c.id === conditionID);
-							if (index !== -1) {
-								combatant.conditions.splice(index, 1);
-							}
-						}
-						break;
-					case 'map-add':
-						if (combatant && map) {
-							const x = packet.payload['x'] as number;
-							const y = packet.payload['y'] as number;
-							const list = Napoleon.getMountsAndRiders([combatant.id], Comms.getCombatants());
-							list.forEach(c => Mercator.add(map, c, x, y));
-						}
-						break;
-					case 'map-move':
-						if (combatant && map) {
-							const dir = packet.payload['dir'] as string;
-							const ids = Napoleon.getMountsAndRiders([combatant.id], Comms.getCombatants()).map(c => c.id);
-							ids.forEach(movingID => Mercator.move(map, movingID, dir));
-							Napoleon.setMountPositions(Comms.getCombatants(), map);
-						}
-						break;
-					case 'map-remove':
-						if (combatant && map) {
-							const ids = Napoleon.getMountsAndRiders([combatant.id], Comms.getCombatants()).map(c => c.id);
-							ids.forEach(removingID => Mercator.remove(map, removingID));
-						}
-						break;
-					case 'add-companion':
-						const companion = packet.payload['companion'] as Companion;
-						const companionCombatant = Napoleon.convertCompanionToCombatant(companion);
-						Comms.getCombatants().push(companionCombatant);
-						break;
+			case 'player-shared-update':
+				if (packet.payload['shared']) {
+					this.data.shared = packet.payload['shared'];
+				}
+				if (packet.payload['sharedDiff']) {
+					const diff = packet.payload['sharedDiff'];
+					recursivediff.applyDiff(Comms.data.shared, diff);
 				}
 				break;
 		}
@@ -465,7 +379,7 @@ export class CommsDM {
 				}
 				this.sendPeopleUpdate();
 				this.sendPartyUpdate(conn);
-				this.sendSharedUpdate(false, conn);
+				this.sendSharedUpdate(conn);
 				this.sendOptionsUpdate(conn);
 			});
 			conn.on('close', () => {
@@ -534,7 +448,7 @@ export class CommsDM {
 	public static sendPulse() {
 		this.sendPeopleUpdate();
 		this.sendPartyUpdate();
-		this.sendSharedUpdate(false);
+		this.sendSharedUpdate();
 		this.sendOptionsUpdate();
 	}
 
@@ -577,27 +491,46 @@ export class CommsDM {
 		this.broadcast(packet, conn);
 	}
 
-	public static sendSharedUpdate(simplify: boolean, conn: DataConnection | null = null) {
+	public static sendSharedUpdate(conn: DataConnection | null = null) {
 		const packet: Packet = {
 			type: 'update',
 			payload: {
 				shared: Comms.data.shared
 			}
 		};
-
-		if (simplify && (Comms.previousSharedState !== null)) {
-			// Send only the difference since the previous state
-			packet.payload = {
-				sharedDiff: recursivediff.getDiff(Comms.previousSharedState, Comms.data.shared)
-			};
-		}
-
 		this.broadcast(packet, conn);
 
-		if (simplify) {
+		if (conn === null) {
 			// Store the current state
-			Comms.previousSharedState = JSON.parse(JSON.stringify(Comms.data.shared));
+			Comms.previousSentSharedState = JSON.parse(JSON.stringify(Comms.data.shared));
 		}
+	}
+
+	public static sendSharedDiffUpdate() {
+		Utils.debounce(() => {
+			const packet: Packet = {
+				type: 'update',
+				payload: {
+					shared: Comms.data.shared
+				}
+			};
+
+			let send = true;
+			if (Comms.previousSentSharedState !== null) {
+				const diff = recursivediff.getDiff(Comms.previousSentSharedState, Comms.data.shared);
+				send = diff.length > 0;
+				packet.payload = {
+					sharedDiff: diff
+				};
+			}
+
+			if (send) {
+				this.broadcast(packet);
+
+				// Store the current state
+				Comms.previousSentSharedState = JSON.parse(JSON.stringify(Comms.data.shared));
+			}
+		}, 500)();
 	}
 
 	public static sendOptionsUpdate(conn: DataConnection | null = null) {
@@ -639,12 +572,13 @@ export class CommsDM {
 	}
 
 	public static shareNothing() {
-		Comms.previousSharedState = null;
+		Comms.previousSentSharedState = null;
+		Comms.previousReceivedSharedState = null;
 		Comms.data.shared = null;
 		if (this.onDataChanged) {
 			this.onDataChanged();
 		}
-		this.sendSharedUpdate(false);
+		this.sendSharedUpdate();
 	}
 
 	public static shareCombat(combat: Combat) {
@@ -661,7 +595,8 @@ export class CommsDM {
 					}
 				});
 		}
-		Comms.previousSharedState = null;
+		Comms.previousSentSharedState = null;
+		Comms.previousReceivedSharedState = null;
 		Comms.data.shared = {
 			type: 'combat',
 			data: combat,
@@ -671,7 +606,7 @@ export class CommsDM {
 		if (this.onDataChanged) {
 			this.onDataChanged();
 		}
-		this.sendSharedUpdate(true);
+		this.sendSharedDiffUpdate();
 		images.forEach(img => Comms.sentImageIDs.push(img.id));
 	}
 
@@ -687,7 +622,8 @@ export class CommsDM {
 					}
 				}
 			});
-		Comms.previousSharedState = null;
+		Comms.previousSentSharedState = null;
+		Comms.previousReceivedSharedState = null;
 		Comms.data.shared = {
 			type: 'exploration',
 			data: exploration,
@@ -697,7 +633,7 @@ export class CommsDM {
 		if (this.onDataChanged) {
 			this.onDataChanged();
 		}
-		this.sendSharedUpdate(true);
+		this.sendSharedDiffUpdate();
 		images.forEach(img => Comms.sentImageIDs.push(img.id));
 	}
 
@@ -717,10 +653,10 @@ export class CommsDM {
 			this.onDataChanged();
 		}
 
-		// If it's an action, we've incorporated it into the shared content, so send an update
+		// If it's a player shared content update, we've incorporated it into our shared content, so just send an update
 		// Otherwise, broadcast it
-		if (packet.type === 'action') {
-			this.sendSharedUpdate(true);
+		if (packet.type === 'player-shared-update') {
+		this.sendSharedDiffUpdate();
 		} else {
 			this.broadcast(packet);
 		}
@@ -862,11 +798,31 @@ export class CommsPlayer {
 		});
 	}
 
-	public static sendAction(data: any) {
-		this.sendPacket({
-			type: 'action',
-			payload: data
-		});
+	public static sendSharedUpdate() {
+		Utils.debounce(() => {
+			const packet: Packet = {
+				type: 'update',
+				payload: {
+					shared: Comms.data.shared
+				}
+			};
+
+			let send = true;
+			if (Comms.previousReceivedSharedState !== null) {
+				const diff = recursivediff.getDiff(Comms.previousReceivedSharedState, Comms.data.shared);
+				send = diff.length > 0;
+				packet.payload = {
+					sharedDiff: diff
+				};
+			}
+
+			if (send) {
+				this.sendPacket(packet);
+
+				// Store the current state
+				Comms.previousReceivedSharedState = JSON.parse(JSON.stringify(Comms.data.shared));
+			}
+		}, 500)();
 	}
 
 	private static sendPacket(packet: Packet) {

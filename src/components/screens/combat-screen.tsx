@@ -120,7 +120,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 				selectedAreaID: this.state.selectedAreaID,
 				highlightedSquare: this.state.highlightedSquare
 			};
-			CommsDM.sendSharedUpdate(true);
+			CommsDM.sendSharedDiffUpdate();
 		}
 	}
 
