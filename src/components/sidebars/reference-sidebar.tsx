@@ -14,11 +14,11 @@ interface Props {
 	// Party
 	selectedPartyID: string | null;
 	parties: Party[];
-	selectPartyID: (id: string) => void;
+	selectPartyID: (id: string | null) => void;
 	// Monster
 	selectedMonsterID: string | null;
 	monsters: Monster[];
-	selectMonsterID: (id: string) => void;
+	selectMonsterID: (id: string | null) => void;
 }
 
 export default class ReferenceSidebar extends React.Component<Props> {

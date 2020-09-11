@@ -45,7 +45,6 @@ interface Props {
 	selectEncounter: (id: string) => void;
 	selectMap: (id: string) => void;
 	openImage: (data: string) => void;
-	openStatBlock: (monster: Monster) => void;
 	editPC: (id: string) => void;
 }
 
@@ -223,11 +222,9 @@ export default class PageSidebar extends React.Component<Props> {
 								this.props.onUpdateSidebar(this.props.sidebar);
 							}}
 							parties={this.props.parties}
-							library={this.props.library}
 							combat={this.props.currentCombat}
 							exploration={this.props.currentExploration}
 							openImage={data => this.props.openImage(data)}
-							openStatBlock={monster => this.props.openStatBlock(monster)}
 						/>
 					);
 					break;

@@ -350,7 +350,6 @@ export default class Main extends React.Component<Props, State> {
 							user='dm'
 							message={message}
 							openImage={data => this.setState({drawer: { type: 'image', data: data }})}
-							openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
 						/>
 					),
 					duration: 5
@@ -3014,7 +3013,6 @@ export default class Main extends React.Component<Props, State> {
 							selectEncounter={id => this.selectEncounterByID(id)}
 							selectMap={id => this.selectMapByID(id)}
 							openImage={data => this.setState({drawer: { type: 'image', data: data }})}
-							openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
 						/>
 					</ErrorBoundary>
 					<ErrorBoundary>

@@ -13,7 +13,9 @@ import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { DieRollResult } from '../../models/dice';
 import { Exploration, Map } from '../../models/map';
+import { Monster } from '../../models/monster';
 
+import MonsterStatblockCard from '../cards/monster-statblock-card';
 import NumberSpin from '../controls/number-spin';
 import Selector from '../controls/selector';
 import Textbox from '../controls/textbox';
@@ -285,6 +287,10 @@ export default class Player extends React.Component<Props, State> {
 					const data = Comms.data.shared.data as string;
 					shared = this.getHandoutSection(data);
 				}
+				if (Comms.data.shared.type === 'monster') {
+					const monster = Comms.data.shared.data as Monster;
+					shared = this.getMonsterSection(monster);
+				}
 				return this.getConnectedView(shared);
 		}
 	}
@@ -308,18 +314,15 @@ export default class Player extends React.Component<Props, State> {
 								user='player'
 								messages={Comms.data.messages}
 								openImage={data => this.setState({drawer: { type: 'image', data: data }})}
-								openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
 							/>
 						</div>
 						<div className='sidebar-footer'>
 							<SendMessagePanel
 								user='player'
-								openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
 								sendMessage={(to, text, language, untranslated) => CommsPlayer.sendMessage(to, text, language, untranslated)}
 								sendLink={(to, url) => CommsPlayer.sendLink(to, url)}
 								sendImage={(to, image) => CommsPlayer.sendImage(to, image)}
 								sendRoll={(to, roll) => CommsPlayer.sendRoll(to, roll)}
-								sendMonster={(to, monster) => null}
 							/>
 						</div>
 					</div>
@@ -432,6 +435,14 @@ export default class Player extends React.Component<Props, State> {
 				src={data}
 				alt='handout'
 			/>
+		);
+	}
+
+	private getMonsterSection(monster: Monster) {
+		return (
+			<div className='scrollable'>
+				<MonsterStatblockCard monster={monster} />
+			</div>
 		);
 	}
 

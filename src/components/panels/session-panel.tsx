@@ -6,10 +6,8 @@ import Showdown from 'showdown';
 import { Comms, CommsPlayer, Message, Person } from '../../utils/comms';
 import Gygax from '../../utils/gygax';
 import Shakespeare from '../../utils/shakespeare';
-import Utils from '../../utils/utils';
 
 import { DieRollResult } from '../../models/dice';
-import { Monster, MonsterGroup } from '../../models/monster';
 
 import Checkbox from '../controls/checkbox';
 import ConfirmButton from '../controls/confirm-button';
@@ -181,7 +179,6 @@ interface MessagesPanelProps {
 	user: 'dm' | 'player';
 	messages: Message[];
 	openImage: (data: string) => void;
-	openStatBlock: (monster: Monster) => void;
 }
 
 export class MessagesPanel extends React.Component<MessagesPanelProps> {
@@ -217,7 +214,6 @@ export class MessagesPanel extends React.Component<MessagesPanelProps> {
 						user={this.props.user}
 						message={message}
 						openImage={data => this.props.openImage(data)}
-						openStatBlock={monster => this.props.openStatBlock(monster)}
 					/>
 				));
 
@@ -250,7 +246,6 @@ interface MessagePanelProps {
 	user: 'dm' | 'player';
 	message: Message;
 	openImage: (data: string) => void;
-	openStatBlock: (monster: Monster) => void;
 }
 
 export class MessagePanel extends React.Component<MessagePanelProps> {
@@ -330,14 +325,6 @@ export class MessagePanel extends React.Component<MessagePanelProps> {
 						<DieRollResultPanel result={roll} />
 					);
 					break;
-				case 'monster':
-					const monster = this.props.message.data['monster'];
-					content = (
-						<button className='statblock' onClick={() => this.props.openStatBlock(monster)}>
-							{monster.name}
-						</button>
-					);
-					break;
 			}
 
 			if (this.props.message.to.length !== 0) {
@@ -370,13 +357,10 @@ export class MessagePanel extends React.Component<MessagePanelProps> {
 
 interface SendMessagePanelProps {
 	user: 'dm' | 'player';
-	library: MonsterGroup[];
-	openStatBlock: (monster: Monster) => void;
 	sendMessage: (to: string[], text: string, language: string, untranslated: string) => void;
 	sendLink: (to: string[], url: string) => void;
 	sendImage: (to: string[], image: string) => void;
 	sendRoll: (to: string[], roll: DieRollResult) => void;
-	sendMonster: (to: string[], monster: Monster) => void;
 }
 
 interface SendMessagePanelState {
@@ -388,16 +372,11 @@ interface SendMessagePanelState {
 	image: string;
 	dice: { [sides: number]: number };
 	constant: number;
-	monster: Monster | null;
 	mode: string;
 	recipients: string[];
 }
 
 export class SendMessagePanel extends React.Component<SendMessagePanelProps, SendMessagePanelState> {
-	public static defaultProps = {
-		library: []
-	};
-
 	constructor(props: SendMessagePanelProps) {
 		super(props);
 
@@ -414,7 +393,6 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 			image: '',
 			dice: dice,
 			constant: 0,
-			monster: null,
 			mode: 'public',
 			recipients: []
 		};
@@ -491,12 +469,6 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 		});
 	}
 
-	private setMonster(monster: Monster | null) {
-		this.setState({
-			monster: monster
-		});
-	}
-
 	private setMode(mode: string) {
 		this.setState({
 			mode: mode,
@@ -548,9 +520,6 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 			case 'roll':
 				validContent = true;
 				break;
-			case 'monster':
-				validContent = (this.state.monster !== null);
-				break;
 		}
 
 		return validRecipients && validContent;
@@ -599,18 +568,6 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 			const rec = [...this.state.recipients];
 			const result = Gygax.rollDice(this.state.dice, this.state.constant, mode);
 			this.props.sendRoll(rec, result);
-		}
-	}
-
-	private sendMonster() {
-		if (this.canSend()) {
-			const rec = [...this.state.recipients];
-			const monster = this.state.monster as Monster;
-			this.setState({
-				monster: null
-			}, () => {
-				this.props.sendMonster(rec, monster);
-			});
 		}
 	}
 
@@ -727,29 +684,6 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 						rollDice={mode => this.sendRoll(mode)}
 					/>
 				);
-			case 'monster':
-				const monsters: Monster[] = [];
-				this.props.library.forEach(group => {
-					group.monsters.forEach(m => monsters.push(m));
-				});
-				Utils.sort(monsters);
-				return (
-					<div>
-						<Dropdown
-							options={monsters.map(m => ({ id: m.id, text: m.name }))}
-							selectedID={this.state.monster ? this.state.monster.id : null}
-							placeholder='select a monster...'
-							onSelect={id => {
-								const monster = monsters.find(m => m.id === id);
-								this.setMonster(monster || null);
-							}}
-							onClear={() => this.setMonster(null)}
-						/>
-						<button className={this.canSend() ? '' : 'disabled'} onClick={() => this.sendMonster()}>
-							send statblock
-						</button>
-					</div>
-				);
 			case 'settings':
 				return this.getSettingsSection();
 		}
@@ -809,19 +743,14 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 				return null;
 			}
 
-			const options = ['text', 'link', 'image', 'roll'];
-			if (this.props.user === 'dm') {
-				options.push('monster');
-			}
-
 			let icon = null;
 			if (this.state.mode === 'public') {
 				icon = (
-					<UnlockOutlined title='settings' onClick={() => this.setType('settings')} />
+					<UnlockOutlined title='public' onClick={() => this.setType('settings')} />
 				);
 			} else {
 				icon = (
-					<LockOutlined title='settings' onClick={() => this.setType('settings')} />
+					<LockOutlined title='private' onClick={() => this.setType('settings')} />
 				);
 			}
 
@@ -829,7 +758,7 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 				<div className='send-message-panel'>
 					<div className='message-controls'>
 						<Selector
-							options={options.map(o => ({ id: o, text: o }))}
+							options={['text', 'link', 'image', 'roll'].map(o => ({ id: o, text: o }))}
 							selectedID={this.state.type}
 							onSelect={type => this.setType(type)}
 						/>

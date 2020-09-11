@@ -9,7 +9,7 @@ import Dropdown from '../../controls/dropdown';
 interface Props {
 	selectedPartyID: string | null;
 	parties: Party[];
-	selectPartyID: (id: string) => void;
+	selectPartyID: (id: string | null) => void;
 }
 
 export default class PartyReference extends React.Component<Props> {
@@ -118,6 +118,7 @@ export default class PartyReference extends React.Component<Props> {
 						placeholder='select a party...'
 						selectedID={this.props.selectedPartyID}
 						onSelect={id => this.props.selectPartyID(id)}
+						onClear={() => this.props.selectPartyID(null)}
 					/>
 					{this.getSummary()}
 				</div>

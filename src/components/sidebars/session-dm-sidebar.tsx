@@ -5,7 +5,6 @@ import { Comms, CommsDM } from '../../utils/comms';
 
 import { Combat } from '../../models/combat';
 import { Exploration } from '../../models/map';
-import { Monster, MonsterGroup } from '../../models/monster';
 import { Party } from '../../models/party';
 
 import Checkbox from '../controls/checkbox';
@@ -18,12 +17,10 @@ import { ConnectionsPanel, MessagesPanel, SendMessagePanel } from '../panels/ses
 interface Props {
 	view: string;
 	parties: Party[];
-	library: MonsterGroup[];
 	combat: Combat | null;
 	exploration: Exploration | null;
 	setView: (view: string) => void;
 	openImage: (data: string) => void;
-	openStatBlock: (monster: Monster) => void;
 }
 
 export default class SessionDMSidebar extends React.Component<Props> {
@@ -77,7 +74,6 @@ export default class SessionDMSidebar extends React.Component<Props> {
 						user='dm'
 						messages={Comms.data.messages}
 						openImage={data => this.props.openImage(data)}
-						openStatBlock={monster => this.props.openStatBlock(monster)}
 					/>
 				);
 			case 'people':
@@ -151,13 +147,10 @@ export default class SessionDMSidebar extends React.Component<Props> {
 					<div className='sidebar-footer'>
 						<SendMessagePanel
 							user='dm'
-							library={this.props.library}
-							openStatBlock={monster => this.props.openStatBlock(monster)}
 							sendMessage={(to, text, language, untranslated) => CommsDM.sendMessage(to, text, language, untranslated)}
 							sendLink={(to, url) => CommsDM.sendLink(to, url)}
 							sendImage={(to, image) => CommsDM.sendImage(to, image)}
 							sendRoll={(to, roll) => CommsDM.sendRoll(to, roll)}
-							sendMonster={(to, monster) => CommsDM.sendMonster(to, monster)}
 						/>
 					</div>
 				);

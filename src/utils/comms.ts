@@ -31,12 +31,12 @@ export interface Message {
 	id: string;
 	from: string;
 	to: string[];
-	type: 'text' | 'link' | 'image' | 'roll' | 'monster';
+	type: 'text' | 'link' | 'image' | 'roll';
 	data: any;
 }
 
 export interface SharedExperience {
-	type: 'nothing' | 'combat' | 'exploration' | 'handout';
+	type: 'nothing' | 'combat' | 'exploration' | 'handout' | 'monster';
 	data: any;
 	images: SavedImage[];
 	additional: any;
@@ -207,21 +207,6 @@ export class Comms {
 				type: 'roll',
 				data: {
 					roll: roll
-				}
-			}
-		};
-	}
-
-	public static createMonsterPacket(to: string[], monster: Monster): Packet {
-		return {
-			type: 'message',
-			payload: {
-				id: Utils.guid(),
-				from: Comms.getID(),
-				to: to,
-				type: 'monster',
-				data: {
-					monster: monster
 				}
 			}
 		};
@@ -569,10 +554,6 @@ export class CommsDM {
 		this.onDataReceived(Comms.createRollPacket(to, roll));
 	}
 
-	public static sendMonster(to: string[], monster: Monster) {
-		this.onDataReceived(Comms.createMonsterPacket(to, monster));
-	}
-
 	public static setParty(party: Party | null) {
 		Comms.data.party = party;
 		if (this.onDataChanged) {
@@ -658,6 +639,21 @@ export class CommsDM {
 		Comms.data.shared = {
 			type: 'handout',
 			data: data,
+			images: [],
+			additional: {}
+		};
+		if (this.onDataChanged) {
+			this.onDataChanged();
+		}
+		this.sendSharedUpdate();
+	}
+
+	public static shareMonster(monster: Monster) {
+		Comms.previousSentSharedState = null;
+		Comms.previousReceivedSharedState = null;
+		Comms.data.shared = {
+			type: 'monster',
+			data: monster,
 			images: [],
 			additional: {}
 		};
