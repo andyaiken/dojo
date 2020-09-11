@@ -1209,7 +1209,7 @@ export default class Main extends React.Component<Props, State> {
 	}
 
 	private pauseExploration() {
-		if (Comms.data.shared && (Comms.data.shared.type === 'exploration')) {
+		if (Comms.data.shared.type === 'exploration') {
 			CommsDM.shareNothing();
 		}
 
@@ -1226,7 +1226,7 @@ export default class Main extends React.Component<Props, State> {
 	}
 
 	private endExploration(exploration: Exploration) {
-		if (Comms.data.shared && (Comms.data.shared.type === 'exploration')) {
+		if (Comms.data.shared.type === 'exploration') {
 			CommsDM.shareNothing();
 		}
 
@@ -1540,7 +1540,7 @@ export default class Main extends React.Component<Props, State> {
 	// Combat management
 
 	private pauseCombat() {
-		if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
+		if (Comms.data.shared.type === 'combat') {
 			CommsDM.shareNothing();
 		}
 
@@ -1560,7 +1560,7 @@ export default class Main extends React.Component<Props, State> {
 	}
 
 	private endCombat(combat: Combat, goToMap: boolean = false) {
-		if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
+		if (Comms.data.shared.type === 'combat') {
 			CommsDM.shareNothing();
 		}
 

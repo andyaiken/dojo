@@ -75,7 +75,7 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 	}
 
 	public componentDidUpdate() {
-		if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
+		if (Comms.data.shared.type === 'combat') {
 			Comms.data.shared.additional = {
 				selectedAreaID: this.state.selectedAreaID,
 				highlightedSquare: this.state.highlightedSquare
@@ -272,7 +272,7 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 					<Checkbox
 						label='share in session'
 						disabled={CommsDM.getState() !== 'started'}
-						checked={(Comms.data.shared !== null) && (Comms.data.shared.type === 'exploration')}
+						checked={Comms.data.shared.type === 'exploration'}
 						onChecked={value => value ? CommsDM.shareExploration(this.props.exploration) : CommsDM.shareNothing()}
 					/>
 					<hr />

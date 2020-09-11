@@ -115,7 +115,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 	}
 
 	public componentDidUpdate() {
-		if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
+		if (Comms.data.shared.type === 'combat') {
 			Comms.data.shared.additional = {
 				selectedAreaID: this.state.selectedAreaID,
 				highlightedSquare: this.state.highlightedSquare
@@ -532,7 +532,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 							<Checkbox
 								label='share in session'
 								disabled={CommsDM.getState() !== 'started'}
-								checked={(Comms.data.shared !== null) && (Comms.data.shared.type === 'combat')}
+								checked={Comms.data.shared.type === 'combat'}
 								onChecked={value => value ? CommsDM.shareCombat(this.props.combat) : CommsDM.shareNothing()}
 							/>
 						</div>
@@ -775,7 +775,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 			));
 			if (pending.length !== 0) {
 				let ask = null;
-				if (CommsDM.getState() === 'started') {
+				if ((CommsDM.getState() === 'started') && (Comms.data.people.some(p => p.characterID !== ''))) {
 					ask = (
 						<button onClick={() => CommsDM.askForRoll('initiative')}>ask for initiative rolls</button>
 					);

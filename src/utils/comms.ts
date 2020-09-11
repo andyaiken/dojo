@@ -36,7 +36,7 @@ export interface Message {
 }
 
 export interface SharedExperience {
-	type: 'combat' | 'exploration';
+	type: 'nothing' | 'combat' | 'exploration';
 	data: any;
 	images: SavedImage[];
 	additional: any;
@@ -46,7 +46,7 @@ export interface CommsData {
 	people: Person[];
 	messages: Message[];
 	party: Party | null;
-	shared: SharedExperience | null;
+	shared: SharedExperience;
 	options: {
 		allowControls: boolean
 	};
@@ -63,11 +63,18 @@ export class Comms {
 	public static onPromptForRoll: ((type: string) => void) | null;
 
 	public static getDefaultData() {
+		const shared: SharedExperience = {
+			type: 'nothing',
+			data: null,
+			images: [],
+			additional: {}
+		};
+
 		return {
 			people: [],
 			messages: [],
 			party: null,
-			shared: null,
+			shared: shared,
 			options: {
 				allowControls: false
 			}
@@ -116,12 +123,12 @@ export class Comms {
 	}
 
 	public static getCombatants() {
-		if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
+		if (Comms.data.shared.type === 'combat') {
 			const combat = Comms.data.shared.data as Combat;
 			return combat.combatants;
 		}
 
-		if (Comms.data.shared && (Comms.data.shared.type === 'exploration')) {
+		if (Comms.data.shared.type === 'exploration') {
 			const exploration = Comms.data.shared.data as Exploration;
 			return exploration.combatants;
 		}
@@ -130,12 +137,12 @@ export class Comms {
 	}
 
 	public static getMap() {
-		if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
+		if (Comms.data.shared.type === 'combat') {
 			const combat = Comms.data.shared.data as Combat;
 			return combat.map;
 		}
 
-		if (Comms.data.shared && (Comms.data.shared.type === 'exploration')) {
+		if (Comms.data.shared.type === 'exploration') {
 			const exploration = Comms.data.shared.data as Exploration;
 			return exploration.map;
 		}
@@ -374,13 +381,16 @@ export class CommsDM {
 		Comms.peer.on('connection', conn => {
 			this.connections.push(conn);
 			conn.on('open', () => {
-				if (this.onNewConnection) {
-					this.onNewConnection(conn.label);
-				}
 				this.sendPeopleUpdate();
 				this.sendPartyUpdate(conn);
 				this.sendSharedUpdate(conn);
 				this.sendOptionsUpdate(conn);
+				if (this.onNewConnection) {
+					this.onNewConnection(conn.label);
+				}
+				if (this.onDataChanged) {
+					this.onDataChanged();
+				}
 			});
 			conn.on('close', () => {
 				// Remove this connection
@@ -574,7 +584,12 @@ export class CommsDM {
 	public static shareNothing() {
 		Comms.previousSentSharedState = null;
 		Comms.previousReceivedSharedState = null;
-		Comms.data.shared = null;
+		Comms.data.shared = {
+			type: 'nothing',
+			data: null,
+			images: [],
+			additional: {}
+		};
 		if (this.onDataChanged) {
 			this.onDataChanged();
 		}

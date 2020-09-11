@@ -80,9 +80,7 @@ export default class Player extends React.Component<Props, State> {
 	public componentDidMount() {
 		CommsPlayer.onStateChanged = () => this.forceUpdate();
 		CommsPlayer.onDataChanged = () => {
-			if (Comms.data.shared) {
-				Comms.data.shared.images.forEach(img => Matisse.saveImage(img.id, img.name, img.data));
-			}
+			Comms.data.shared.images.forEach(img => Matisse.saveImage(img.id, img.name, img.data));
 			this.forceUpdate();
 		};
 		Comms.onPromptForRoll = type => {
@@ -225,12 +223,12 @@ export default class Player extends React.Component<Props, State> {
 				);
 			case 'connected':
 				let shared = null;
-				if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
+				if (Comms.data.shared.type === 'combat') {
 					const combat = Comms.data.shared.data as Combat;
 					const additional = Comms.data.shared.additional;
 					shared = this.getCombatSection(combat, additional);
 				}
-				if (Comms.data.shared && (Comms.data.shared.type === 'exploration')) {
+				if (Comms.data.shared.type === 'exploration') {
 					const exploration = Comms.data.shared.data as Exploration;
 					const additional = Comms.data.shared.additional;
 					shared = this.getExplorationSection(exploration, additional);
@@ -426,12 +424,12 @@ export default class Player extends React.Component<Props, State> {
 		let allCombatants: Combatant[] = [];
 		let map: Map | null = null;
 
-		if (Comms.data.shared && (Comms.data.shared.type === 'combat')) {
+		if (Comms.data.shared.type === 'combat') {
 			const combat = Comms.data.shared.data as Combat;
 			allCombatants = combat.combatants;
 			map = combat.map;
 		}
-		if (Comms.data.shared && (Comms.data.shared.type === 'exploration')) {
+		if (Comms.data.shared.type === 'exploration') {
 			const exploration = Comms.data.shared.data as Exploration;
 			allCombatants = exploration.combatants;
 			map = exploration.map;

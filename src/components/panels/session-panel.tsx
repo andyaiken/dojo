@@ -12,6 +12,7 @@ import { DieRollResult } from '../../models/dice';
 import { Monster, MonsterGroup } from '../../models/monster';
 
 import Checkbox from '../controls/checkbox';
+import ConfirmButton from '../controls/confirm-button';
 import Dropdown from '../controls/dropdown';
 import Selector from '../controls/selector';
 import Textbox from '../controls/textbox';
@@ -150,7 +151,6 @@ export class PlayerStatusPanel extends React.Component<PlayerStatusPanelProps, P
 
 		return (
 			<div className='player-status-panel'>
-				{pcSection}
 				<div className='control-with-icons'>
 					<Textbox
 						placeholder='update your status'
@@ -166,6 +166,8 @@ export class PlayerStatusPanel extends React.Component<PlayerStatusPanelProps, P
 						/>
 					</div>
 				</div>
+				{pcSection}
+				<ConfirmButton text='disconnect' onConfirm={() => CommsPlayer.disconnect()} />
 			</div>
 		);
 	}
