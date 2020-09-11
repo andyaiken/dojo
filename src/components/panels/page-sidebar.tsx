@@ -1,4 +1,4 @@
-import { BookOutlined, BulbOutlined, CommentOutlined, InfoCircleOutlined, SearchOutlined, ToolOutlined } from '@ant-design/icons';
+import { BookOutlined, BulbOutlined, InfoCircleOutlined, SearchOutlined, ShareAltOutlined, ToolOutlined } from '@ant-design/icons';
 import React from 'react';
 
 import Utils from '../../utils/utils';
@@ -13,7 +13,8 @@ import AboutSidebar from '../sidebars/about-sidebar';
 import GeneratorsSidebar from '../sidebars/generators-sidebar';
 import ReferenceSidebar from '../sidebars/reference-sidebar';
 import SearchSidebar from '../sidebars/search-sidebar';
-import SessionSidebar from '../sidebars/session-sidebar';
+import SessionDMSidebar from '../sidebars/session-dm-sidebar';
+import SessionPlayerSidebar from '../sidebars/session-player-sidebar';
 import ToolsSidebar from '../sidebars/tools-sidebar';
 
 export interface Sidebar {
@@ -28,6 +29,7 @@ export interface Sidebar {
 
 interface Props {
 	sidebar: Sidebar;
+	user: 'dm' | 'player';
 	parties: Party[];
 	library: MonsterGroup[];
 	encounters: Encounter[];
@@ -38,21 +40,103 @@ interface Props {
 	currentExploration: Exploration | null;
 	onSelectSidebar: (type: string) => void;
 	onUpdateSidebar: (sidebar: any) => void;
-	onResetAll: () => void;
 	selectParty: (id: string) => void;
 	selectMonsterGroup: (id: string) => void;
 	selectEncounter: (id: string) => void;
 	selectMap: (id: string) => void;
 	openImage: (data: string) => void;
 	openStatBlock: (monster: Monster) => void;
+	editPC: (id: string) => void;
 }
 
 export default class PageSidebar extends React.Component<Props> {
+	public static defaultProps = {
+		parties: [],
+		library: [],
+		encounters: [],
+		maps: [],
+		combats: [],
+		explorations: [],
+		currentCombat: null,
+		currentExploration: null,
+		selectParty: null,
+		selectMonsterGroup: null,
+		selectEncounter: null,
+		selectMap: null,
+		openImage: null,
+		openStatBlock: null,
+		editPC: null
+	};
+
 	public render() {
 		try {
 			if (!this.props.sidebar.visible) {
 				return null;
 			}
+
+			const options = [];
+			if (this.props.user === 'player') {
+				options.push(
+					<ShareAltOutlined
+						key='session-player'
+						className={this.props.sidebar.type === 'session-player' ? 'sidebar-icon selected' : 'sidebar-icon'}
+						title='session'
+						onClick={() => this.props.onSelectSidebar('session-player')}
+					/>
+				);
+			}
+			if (this.props.user === 'dm') {
+				options.push(
+					<ToolOutlined
+						key='tools'
+						className={this.props.sidebar.type === 'tools' ? 'sidebar-icon selected' : 'sidebar-icon'}
+						title='tools'
+						onClick={() => this.props.onSelectSidebar('tools')}
+					/>
+				);
+				options.push(
+					<BulbOutlined
+						key='generators'
+						className={this.props.sidebar.type === 'generators' ? 'sidebar-icon selected' : 'sidebar-icon'}
+						title='generators'
+						onClick={() => this.props.onSelectSidebar('generators')}
+					/>
+				);
+			}
+			options.push(
+				<BookOutlined
+					key='reference'
+					className={this.props.sidebar.type === 'reference' ? 'sidebar-icon selected' : 'sidebar-icon'}
+					title='reference'
+					onClick={() => this.props.onSelectSidebar('reference')}
+				/>
+			);
+			if (this.props.user === 'dm') {
+				options.push(
+					<ShareAltOutlined
+						key='session-dm'
+						className={this.props.sidebar.type === 'session-dm' ? 'sidebar-icon selected' : 'sidebar-icon'}
+						title='session'
+						onClick={() => this.props.onSelectSidebar('session-dm')}
+					/>
+				);
+				options.push(
+					<SearchOutlined
+						key='search'
+						className={this.props.sidebar.type === 'search' ? 'sidebar-icon selected' : 'sidebar-icon'}
+						title='search'
+						onClick={() => this.props.onSelectSidebar('search')}
+					/>
+				);
+			}
+			options.push(
+				<InfoCircleOutlined
+					key='about'
+					className={this.props.sidebar.type === 'about' ? 'sidebar-icon selected' : 'sidebar-icon'}
+					title='about'
+					onClick={() => this.props.onSelectSidebar('about')}
+				/>
+			);
 
 			let content = null;
 			switch (this.props.sidebar.type) {
@@ -129,9 +213,9 @@ export default class PageSidebar extends React.Component<Props> {
 						/>
 					);
 					break;
-				case 'session':
+				case 'session-dm':
 					content = (
-						<SessionSidebar
+						<SessionDMSidebar
 							view={this.props.sidebar.subtype}
 							setView={view => {
 								const sidebar = this.props.sidebar;
@@ -144,6 +228,13 @@ export default class PageSidebar extends React.Component<Props> {
 							exploration={this.props.currentExploration}
 							openImage={data => this.props.openImage(data)}
 							openStatBlock={monster => this.props.openStatBlock(monster)}
+						/>
+					);
+					break;
+				case 'session-player':
+					content = (
+						<SessionPlayerSidebar
+							editPC={id => this.props.editPC(id)}
 						/>
 					);
 					break;
@@ -169,7 +260,6 @@ export default class PageSidebar extends React.Component<Props> {
 							maps={this.props.maps}
 							combats={this.props.combats}
 							explorations={this.props.explorations}
-							resetAll={() => this.props.onResetAll()}
 						/>
 					);
 					break;
@@ -178,36 +268,7 @@ export default class PageSidebar extends React.Component<Props> {
 			return (
 				<div className='sidebar sidebar-right'>
 					<div className='sidebar-icons'>
-						<ToolOutlined
-							className={this.props.sidebar.type === 'tools' ? 'sidebar-icon selected' : 'sidebar-icon'}
-							title='tools'
-							onClick={() => this.props.onSelectSidebar('tools')}
-						/>
-						<BulbOutlined
-							className={this.props.sidebar.type === 'generators' ? 'sidebar-icon selected' : 'sidebar-icon'}
-							title='generators'
-							onClick={() => this.props.onSelectSidebar('generators')}
-						/>
-						<BookOutlined
-							className={this.props.sidebar.type === 'reference' ? 'sidebar-icon selected' : 'sidebar-icon'}
-							title='reference'
-							onClick={() => this.props.onSelectSidebar('reference')}
-						/>
-						<CommentOutlined
-							className={this.props.sidebar.type === 'session' ? 'sidebar-icon selected' : 'sidebar-icon'}
-							title='session'
-							onClick={() => this.props.onSelectSidebar('session')}
-						/>
-						<SearchOutlined
-							className={this.props.sidebar.type === 'search' ? 'sidebar-icon selected' : 'sidebar-icon'}
-							title='search'
-							onClick={() => this.props.onSelectSidebar('search')}
-						/>
-						<InfoCircleOutlined
-							className={this.props.sidebar.type === 'about' ? 'sidebar-icon selected' : 'sidebar-icon'}
-							title='about'
-							onClick={() => this.props.onSelectSidebar('about')}
-						/>
+						{options}
 					</div>
 					{content}
 				</div>

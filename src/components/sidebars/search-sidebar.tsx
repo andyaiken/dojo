@@ -25,7 +25,7 @@ interface State {
 	text: string;
 }
 
-export default class SearchSidebar extends React.Component<Props, State> {
+export default class SearchDMSidebar extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 

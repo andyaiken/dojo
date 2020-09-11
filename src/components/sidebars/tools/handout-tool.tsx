@@ -2,6 +2,8 @@ import { FileOutlined } from '@ant-design/icons';
 import { Upload } from 'antd';
 import React from 'react';
 
+import { Comms, CommsDM } from '../../../utils/comms';
+
 import Checkbox from '../../controls/checkbox';
 import Note from '../../panels/note';
 import Popout from '../../panels/popout';
@@ -49,6 +51,10 @@ export default class HandoutTool extends React.Component<Props, State> {
 	}
 
 	private clear() {
+		if (Comms.data.shared.type === 'handout') {
+			CommsDM.shareNothing();
+		}
+
 		this.setState({
 			filename: null,
 			data: null,
@@ -84,9 +90,15 @@ export default class HandoutTool extends React.Component<Props, State> {
 							alt={this.state.filename || ''}
 						/>
 						<Checkbox
-							label='show player view'
+							label='share in player view'
 							checked={this.state.playerViewOpen}
 							onChecked={value => this.setPlayerViewOpen(value)}
+						/>
+						<Checkbox
+							label='share in session'
+							disabled={CommsDM.getState() !== 'started'}
+							checked={Comms.data.shared.type === 'handout'}
+							onChecked={value => value ? CommsDM.shareHandout(this.state.data as string) : CommsDM.shareNothing()}
 						/>
 						<button onClick={() => this.clear()}>change handout</button>
 					</div>

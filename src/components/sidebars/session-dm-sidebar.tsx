@@ -26,7 +26,7 @@ interface Props {
 	openStatBlock: (monster: Monster) => void;
 }
 
-export default class SessionSidebar extends React.Component<Props> {
+export default class SessionDMSidebar extends React.Component<Props> {
 	private getContent() {
 		switch (CommsDM.getState()) {
 			case 'not started':

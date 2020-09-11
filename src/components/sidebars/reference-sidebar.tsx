@@ -36,16 +36,16 @@ export default class ReferenceSidebar extends React.Component<Props> {
 				{
 					id: 'actions',
 					text: 'actions'
-				},
-				{
-					id: 'party',
-					text: 'party'
-				},
-				{
-					id: 'monster',
-					text: 'monster'
 				}
 			];
+
+			if (this.props.parties.length > 0) {
+				options.push({ id: 'party', text: 'party' });
+			}
+
+			if (this.props.monsters.length > 0) {
+				options.push({ id: 'monster', text: 'monster' });
+			}
 
 			let content = null;
 			switch (this.props.view) {

@@ -30,7 +30,8 @@ import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 import PageFooter from '../panels/page-footer';
 import PageHeader from '../panels/page-header';
-import { ConnectionsPanel, MessagesPanel, PlayerStatusPanel, SendMessagePanel } from '../panels/session-panel';
+import PageSidebar, { Sidebar } from '../panels/page-sidebar';
+import { MessagesPanel, PlayerStatusPanel, SendMessagePanel } from '../panels/session-panel';
 
 interface Props {
 }
@@ -38,14 +39,29 @@ interface Props {
 interface State {
 	addingToMap: boolean;
 	drawer: any;
+	sidebar: Sidebar;
 }
 
 export default class Player extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
+
+		const dice: { [sides: number]: number } = {};
+		[4, 6, 8, 10, 12, 20, 100].forEach(n => dice[n] = 0);
+		dice[20] = 1;
+
 		this.state = {
 			addingToMap: false,
-			drawer: null
+			drawer: null,
+			sidebar: {
+				visible: false,
+				type: 'session-player',
+				subtype: '',
+				dice: dice,
+				constant: 0,
+				selectedPartyID: null,
+				selectedMonsterID: null
+			}
 		};
 
 		let maps: Map[] = [];
@@ -74,6 +90,24 @@ export default class Player extends React.Component<Props, State> {
 	private setAddingToMap(adding: boolean) {
 		this.setState({
 			addingToMap: adding
+		});
+	}
+
+	private setSidebar(type: string) {
+		let subtype = '';
+		switch (type) {
+			case 'reference':
+				subtype = 'skills';
+				break;
+		}
+
+		const sidebar = this.state.sidebar;
+		sidebar.visible = true;
+		sidebar.type = type;
+		sidebar.subtype = subtype;
+
+		this.setState({
+			sidebar: sidebar
 		});
 	}
 
@@ -189,6 +223,14 @@ export default class Player extends React.Component<Props, State> {
 		});
 	}
 
+	private toggleSidebar() {
+		const sidebar = this.state.sidebar;
+		sidebar.visible = !sidebar.visible;
+		this.setState({
+			sidebar: sidebar
+		});
+	}
+
 	private closeDrawer() {
 		this.setState({
 			drawer: null
@@ -222,7 +264,13 @@ export default class Player extends React.Component<Props, State> {
 					</Row>
 				);
 			case 'connected':
-				let shared = null;
+				let shared = (
+					<Row align='middle' justify='center' className='full-height'>
+						<Note>
+							<p>the dm is not currently sharing anything with you</p>
+						</Note>
+					</Row>
+				);
 				if (Comms.data.shared.type === 'combat') {
 					const combat = Comms.data.shared.data as Combat;
 					const additional = Comms.data.shared.additional;
@@ -233,58 +281,15 @@ export default class Player extends React.Component<Props, State> {
 					const additional = Comms.data.shared.additional;
 					shared = this.getExplorationSection(exploration, additional);
 				}
-				if (shared !== null) {
-					return this.getSharedView(shared);
+				if (Comms.data.shared.type === 'handout') {
+					const data = Comms.data.shared.data as string;
+					shared = this.getHandoutSection(data);
 				}
-				return this.getMessagesView();
+				return this.getConnectedView(shared);
 		}
 	}
 
-	private getMessagesView() {
-		return (
-			<Row className='full-height'>
-				<Col span={6} className='scrollable sidebar sidebar-left padded'>
-					<Note>
-						<p>the following people are connected</p>
-					</Note>
-					<ConnectionsPanel
-						user='player'
-						people={Comms.data.people}
-						kick={id => null}
-					/>
-					<hr/>
-					<PlayerStatusPanel
-						editPC={id => this.editPC(id)}
-					/>
-				</Col>
-				<Col span={18} className='full-height sidebar'>
-					<div className='sidebar-container in-page'>
-						<div className='sidebar-content'>
-							<MessagesPanel
-								user='player'
-								messages={Comms.data.messages}
-								openImage={data => this.setState({drawer: { type: 'image', data: data }})}
-								openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
-							/>
-						</div>
-						<div className='sidebar-footer'>
-							<SendMessagePanel
-								user='player'
-								openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
-								sendMessage={(to, text, language, untranslated) => CommsPlayer.sendMessage(to, text, language, untranslated)}
-								sendLink={(to, url) => CommsPlayer.sendLink(to, url)}
-								sendImage={(to, image) => CommsPlayer.sendImage(to, image)}
-								sendRoll={(to, roll) => CommsPlayer.sendRoll(to, roll)}
-								sendMonster={(to, monster) => null}
-							/>
-						</div>
-					</div>
-				</Col>
-			</Row>
-		);
-	}
-
-	private getSharedView(shared: JSX.Element) {
+	private getConnectedView(shared: JSX.Element) {
 		let controls = null;
 		if (Comms.data.options.allowControls) {
 			controls = (
@@ -417,6 +422,16 @@ export default class Player extends React.Component<Props, State> {
 					}}
 				/>
 			</div>
+		);
+	}
+
+	private getHandoutSection(data: string) {
+		return (
+			<img
+				className='nonselectable-image'
+				src={data}
+				alt='handout'
+			/>
 		);
 	}
 
@@ -665,10 +680,12 @@ export default class Player extends React.Component<Props, State> {
 
 			return (
 				<div className='dojo'>
-					<div className='app'>
+					<div className={this.state.sidebar.visible ? 'app with-sidebar' : 'app'}>
 						<ErrorBoundary>
 							<PageHeader
 								breadcrumbs={breadcrumbs}
+								sidebarVisible={this.state.sidebar.visible}
+								onToggleSidebar={() => this.toggleSidebar()}
 							/>
 						</ErrorBoundary>
 						<ErrorBoundary>
@@ -683,6 +700,15 @@ export default class Player extends React.Component<Props, State> {
 							/>
 						</ErrorBoundary>
 					</div>
+					<ErrorBoundary>
+						<PageSidebar
+							sidebar={this.state.sidebar}
+							user='player'
+							onSelectSidebar={type => this.setSidebar(type)}
+							onUpdateSidebar={sidebar => this.setState({ sidebar: sidebar })}
+							editPC={id => this.editPC(id)}
+						/>
+					</ErrorBoundary>
 					<ErrorBoundary>
 						<Drawer
 							closable={false}

@@ -20,7 +20,6 @@ interface Props {
 	maps: Map[];
 	combats: Combat[];
 	explorations: Exploration[];
-	resetAll: () => void;
 }
 
 interface State {

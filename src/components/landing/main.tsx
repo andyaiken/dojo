@@ -329,7 +329,7 @@ export default class Main extends React.Component<Props, State> {
 		CommsDM.onStateChanged = () => this.setState(this.state);
 		CommsDM.onDataChanged = () => this.setState(this.state);
 		CommsDM.onNewConnection = name => {
-			const peopleVisible = this.state.sidebar.visible && (this.state.sidebar.type === 'session') && (this.state.sidebar.subtype === 'people');
+			const peopleVisible = this.state.sidebar.visible && (this.state.sidebar.type === 'session-dm') && (this.state.sidebar.subtype === 'people');
 			if (!peopleVisible) {
 				notification.open({
 					message: (
@@ -342,7 +342,7 @@ export default class Main extends React.Component<Props, State> {
 			}
 		};
 		Comms.onNewMessage = message => {
-			const messagesVisible = this.state.sidebar.visible && (this.state.sidebar.type === 'session') && (this.state.sidebar.subtype === 'messages');
+			const messagesVisible = this.state.sidebar.visible && (this.state.sidebar.type === 'session-dm') && (this.state.sidebar.subtype === 'messages');
 			if (!messagesVisible) {
 				notification.open({
 					message: (
@@ -397,7 +397,7 @@ export default class Main extends React.Component<Props, State> {
 			case 'reference':
 				subtype = 'skills';
 				break;
-			case 'session':
+			case 'session-dm':
 				subtype = 'management';
 				break;
 		}
@@ -2998,6 +2998,7 @@ export default class Main extends React.Component<Props, State> {
 					<ErrorBoundary>
 						<PageSidebar
 							sidebar={this.state.sidebar}
+							user='dm'
 							parties={this.state.parties}
 							library={this.state.library}
 							encounters={this.state.encounters}
@@ -3008,7 +3009,6 @@ export default class Main extends React.Component<Props, State> {
 							currentExploration={this.state.explorations.find(e => e.id === this.state.selectedExplorationID) ?? null}
 							onSelectSidebar={type => this.setSidebar(type)}
 							onUpdateSidebar={sidebar => this.setState({ sidebar: sidebar })}
-							onResetAll={() => this.resetAll()}
 							selectParty={id => this.selectPartyByID(id)}
 							selectMonsterGroup={id => this.selectMonsterGroupByID(id)}
 							selectEncounter={id => this.selectEncounterByID(id)}

@@ -36,7 +36,7 @@ export interface Message {
 }
 
 export interface SharedExperience {
-	type: 'nothing' | 'combat' | 'exploration';
+	type: 'nothing' | 'combat' | 'exploration' | 'handout';
 	data: any;
 	images: SavedImage[];
 	additional: any;
@@ -621,7 +621,7 @@ export class CommsDM {
 		if (this.onDataChanged) {
 			this.onDataChanged();
 		}
-		this.sendSharedDiffUpdate();
+		this.sendSharedUpdate();
 		images.forEach(img => Comms.sentImageIDs.push(img.id));
 	}
 
@@ -648,8 +648,23 @@ export class CommsDM {
 		if (this.onDataChanged) {
 			this.onDataChanged();
 		}
-		this.sendSharedDiffUpdate();
+		this.sendSharedUpdate();
 		images.forEach(img => Comms.sentImageIDs.push(img.id));
+	}
+
+	public static shareHandout(data: string) {
+		Comms.previousSentSharedState = null;
+		Comms.previousReceivedSharedState = null;
+		Comms.data.shared = {
+			type: 'handout',
+			data: data,
+			images: [],
+			additional: {}
+		};
+		if (this.onDataChanged) {
+			this.onDataChanged();
+		}
+		this.sendSharedUpdate();
 	}
 
 	public static askForRoll(type: string) {
