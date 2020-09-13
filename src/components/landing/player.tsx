@@ -308,22 +308,11 @@ export default class Player extends React.Component<Props, State> {
 	}
 
 	private getConnectedView(shared: JSX.Element) {
-		let controls = null;
-		if (Comms.data.options.allowControls) {
-			switch (Comms.data.shared.type) {
-				case 'combat':
-				case 'exploration':
-					controls = (
-						<Col span={6} className='scrollable sidebar sidebar-right'>
-							{this.getControls()}
-						</Col>
-					);
-					break;
-			}
-		}
+		let centralWidth = 24;
 
-		return (
-			<Row className='full-height'>
+		let chat = null;
+		if (Comms.data.options.allowChat) {
+			chat = (
 				<Col span={6} className='full-height sidebar sidebar-left'>
 					<div className='sidebar-container in-page'>
 						<div className='sidebar-content'>
@@ -344,7 +333,29 @@ export default class Player extends React.Component<Props, State> {
 						</div>
 					</div>
 				</Col>
-				<Col span={controls !== null ? 12 : 18} className='full-height'>
+			);
+			centralWidth -= 6;
+		}
+
+		let controls = null;
+		if (Comms.data.options.allowControls) {
+			switch (Comms.data.shared.type) {
+				case 'combat':
+				case 'exploration':
+					controls = (
+						<Col span={6} className='scrollable sidebar sidebar-right'>
+							{this.getControls()}
+						</Col>
+					);
+					centralWidth -= 6;
+					break;
+			}
+		}
+
+		return (
+			<Row className='full-height'>
+				{chat}
+				<Col span={centralWidth} className='full-height'>
 					{shared}
 				</Col>
 				{controls}

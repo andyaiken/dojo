@@ -149,6 +149,11 @@ export default class SessionDMSidebar extends React.Component<Props> {
 						<hr/>
 						<div className='subheading'>options</div>
 						<Checkbox
+							label='allow chat'
+							checked={Comms.data.options.allowChat}
+							onChecked={value => CommsDM.setOption('allowChat', value)}
+						/>
+						<Checkbox
 							label='allow players to control their characters'
 							checked={Comms.data.options.allowControls}
 							onChecked={value => CommsDM.setOption('allowControls', value)}

@@ -48,6 +48,7 @@ export interface CommsData {
 	party: Party | null;
 	shared: SharedExperience;
 	options: {
+		allowChat: boolean,
 		allowControls: boolean
 	};
 }
@@ -76,6 +77,7 @@ export class Comms {
 			party: null,
 			shared: shared,
 			options: {
+				allowChat: true,
 				allowControls: false
 			}
 		};
@@ -426,7 +428,7 @@ export class CommsDM {
 		}
 	}
 
-	public static setOption(option: 'allowControls', value: any) {
+	public static setOption(option: 'allowChat' | 'allowControls', value: any) {
 		Comms.data.options[option] = value;
 		if (this.onDataChanged) {
 			this.onDataChanged();
