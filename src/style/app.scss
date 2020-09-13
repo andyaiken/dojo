@@ -221,6 +221,10 @@ p,
 	width: 100%;
 	object-fit: contain;
 	max-height: 100%;
+
+	&.borderless {
+		border: none;
+	}
 }
 
 .selectable-image {

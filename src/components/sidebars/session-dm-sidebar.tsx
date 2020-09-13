@@ -5,6 +5,7 @@ import { Comms, CommsDM } from '../../utils/comms';
 
 import { Combat } from '../../models/combat';
 import { Exploration } from '../../models/map';
+import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
 import Checkbox from '../controls/checkbox';
@@ -88,6 +89,36 @@ export default class SessionDMSidebar extends React.Component<Props> {
 					/>
 				);
 			case 'management':
+				let sharing = null;
+				switch (Comms.data.shared.type) {
+					case 'nothing':
+						sharing = '(nothing)';
+						break;
+					case 'combat':
+						const combat = Comms.data.shared.data as Combat;
+						sharing = 'encounter (' + combat.encounter.name + ')';
+						break;
+					case 'exploration':
+						const exploration = Comms.data.shared.data as Exploration;
+						sharing = 'map (' + exploration.map.name + ')';
+						break;
+					case 'handout':
+						const handout = Comms.data.shared.data as { title: string, src: string };
+						sharing = 'handout (' + handout.title + ')';
+						break;
+					case 'monster':
+						const monster = Comms.data.shared.data as Monster;
+						sharing = 'monster (' + monster.name + ')';
+						break;
+				}
+
+				let stopSharingBtn = null;
+				if (Comms.data.shared.type !== 'nothing') {
+					stopSharingBtn = (
+						<ConfirmButton text='stop sharing' onConfirm={() => CommsDM.shareNothing()} />
+					);
+				}
+
 				return (
 					<div>
 						<Note>
@@ -111,6 +142,11 @@ export default class SessionDMSidebar extends React.Component<Props> {
 								<CopyOutlined title='copy to clipboard' onClick={e => navigator.clipboard.writeText(playerURL)} />
 							</div>
 						</div>
+						<hr/>
+						<div className='subheading'>currently sharing</div>
+						<div className='section'>{sharing}</div>
+						{stopSharingBtn}
+						<hr/>
 						<div className='subheading'>options</div>
 						<Checkbox
 							label='allow players to control their characters'

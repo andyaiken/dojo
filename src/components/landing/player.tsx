@@ -266,10 +266,22 @@ export default class Player extends React.Component<Props, State> {
 					</Row>
 				);
 			case 'connected':
+				let pc = null;
+				if (Comms.getCharacterID(Comms.getID()) === '') {
+					pc = (
+						<div>
+							<hr/>
+							<p>in the meantime, please select your character</p>
+							<button onClick={() => this.setSidebar('session-player')}>open the sidebar</button>
+						</div>
+					);
+				}
 				let shared = (
 					<Row align='middle' justify='center' className='full-height'>
 						<Note>
 							<p>the dm is not currently sharing anything with you</p>
+							<p>when they do, you'll see it here</p>
+							{pc}
 						</Note>
 					</Row>
 				);
@@ -284,8 +296,8 @@ export default class Player extends React.Component<Props, State> {
 					shared = this.getExplorationSection(exploration, additional);
 				}
 				if (Comms.data.shared.type === 'handout') {
-					const data = Comms.data.shared.data as string;
-					shared = this.getHandoutSection(data);
+					const data = Comms.data.shared.data as { title: string, src: string };
+					shared = this.getHandoutSection(data.src);
 				}
 				if (Comms.data.shared.type === 'monster') {
 					const monster = Comms.data.shared.data as Monster;
@@ -298,11 +310,16 @@ export default class Player extends React.Component<Props, State> {
 	private getConnectedView(shared: JSX.Element) {
 		let controls = null;
 		if (Comms.data.options.allowControls) {
-			controls = (
-				<Col span={6} className='scrollable sidebar sidebar-right'>
-					{this.getControls()}
-				</Col>
-			);
+			switch (Comms.data.shared.type) {
+				case 'combat':
+				case 'exploration':
+					controls = (
+						<Col span={6} className='scrollable sidebar sidebar-right'>
+							{this.getControls()}
+						</Col>
+					);
+					break;
+			}
 		}
 
 		return (
@@ -327,7 +344,7 @@ export default class Player extends React.Component<Props, State> {
 						</div>
 					</div>
 				</Col>
-				<Col span={Comms.data.options.allowControls ? 12 : 18} className='full-height'>
+				<Col span={controls !== null ? 12 : 18} className='full-height'>
 					{shared}
 				</Col>
 				{controls}
@@ -431,7 +448,7 @@ export default class Player extends React.Component<Props, State> {
 	private getHandoutSection(data: string) {
 		return (
 			<img
-				className='nonselectable-image'
+				className='nonselectable-image borderless'
 				src={data}
 				alt='handout'
 			/>
@@ -467,11 +484,9 @@ export default class Player extends React.Component<Props, State> {
 			return (
 				<div>
 					<Note>
-						when you choose your character, you will be able to control it here
+						<p>when you choose your character, you will be able to control it here</p>
+						<button onClick={() => this.setSidebar('session-player')}>select your character</button>
 					</Note>
-					<PlayerStatusPanel
-						editPC={id => this.editPC(id)}
-					/>
 				</div>
 			);
 		}

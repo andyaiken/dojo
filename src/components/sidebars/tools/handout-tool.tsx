@@ -98,7 +98,7 @@ export default class HandoutTool extends React.Component<Props, State> {
 							label='share in session'
 							disabled={CommsDM.getState() !== 'started'}
 							checked={Comms.data.shared.type === 'handout'}
-							onChecked={value => value ? CommsDM.shareHandout(this.state.data as string) : CommsDM.shareNothing()}
+							onChecked={value => value ? CommsDM.shareHandout(this.state.filename as string, this.state.data as string) : CommsDM.shareNothing()}
 						/>
 						<button onClick={() => this.clear()}>change handout</button>
 					</div>

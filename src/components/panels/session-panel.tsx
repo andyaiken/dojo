@@ -746,11 +746,11 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 			let icon = null;
 			if (this.state.mode === 'public') {
 				icon = (
-					<UnlockOutlined title='public' onClick={() => this.setType('settings')} />
+					<UnlockOutlined title='message is public' onClick={() => this.setType('settings')} />
 				);
 			} else {
 				icon = (
-					<LockOutlined title='private' onClick={() => this.setType('settings')} />
+					<LockOutlined title='message is private' onClick={() => this.setType('settings')} />
 				);
 			}
 
