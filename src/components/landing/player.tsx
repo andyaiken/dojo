@@ -33,7 +33,7 @@ import Note from '../panels/note';
 import PageFooter from '../panels/page-footer';
 import PageHeader from '../panels/page-header';
 import PageSidebar, { Sidebar } from '../panels/page-sidebar';
-import { MessagesPanel, PlayerStatusPanel, SendMessagePanel } from '../panels/session-panel';
+import { MessagesPanel, SendMessagePanel } from '../panels/session-panel';
 
 interface Props {
 }
