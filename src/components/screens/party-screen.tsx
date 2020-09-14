@@ -22,6 +22,7 @@ interface Props {
 	editPC: (pc: PC) => void;
 	updatePC: (pc: PC) => void;
 	removePC: (pc: PC) => void;
+	showReference: (party: Party) => void;
 	changeValue: (source: any, field: string, value: any) => void;
 	nudgeValue: (source: any, field: string, value: number) => void;
 }
@@ -84,9 +85,10 @@ export default class PartyScreen extends React.Component<Props> {
 						<PartyInfo
 							party={this.props.party}
 							goBack={() => this.props.goBack()}
+							changeValue={(type, value) => this.props.changeValue(this.props.party, type, value)}
 							addPC={() => this.props.addPC()}
 							importPC={() => this.props.importPC()}
-							changeValue={(type, value) => this.props.changeValue(this.props.party, type, value)}
+							showReference={party => this.props.showReference(party)}
 							removeParty={() => this.props.removeParty()}
 						/>
 					</Col>
@@ -115,6 +117,7 @@ interface PartyInfoProps {
 	changeValue: (field: string, value: string) => void;
 	addPC: () => void;
 	importPC: () => void;
+	showReference: (party: Party) => void;
 	removeParty: () => void;
 }
 
@@ -141,6 +144,7 @@ class PartyInfo extends React.Component<PartyInfoProps> {
 						<button onClick={() => this.props.addPC()}>add a new pc</button>
 						<button onClick={() => this.props.importPC()}>import a pc</button>
 						<button onClick={() => this.export()}>export party</button>
+						<button onClick={() => this.props.showReference(this.props.party)}>show party reference</button>
 						<ConfirmButton text='delete party' onConfirm={() => this.props.removeParty()} />
 						<hr/>
 						<button onClick={() => this.props.goBack()}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>

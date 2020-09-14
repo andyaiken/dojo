@@ -635,12 +635,13 @@ export class CommsDM {
 		images.forEach(img => Comms.sentImageIDs.push(img.id));
 	}
 
-	public static shareHandout(title: string, src: string) {
+	public static shareHandout(type: string, title: string, src: string) {
 		Comms.previousSentSharedState = null;
 		Comms.previousReceivedSharedState = null;
 		Comms.data.shared = {
 			type: 'handout',
 			data: {
+				type: type,
 				title: title,
 				src: src
 			},

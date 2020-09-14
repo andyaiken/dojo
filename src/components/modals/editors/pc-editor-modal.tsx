@@ -127,7 +127,7 @@ export default class PCEditorModal extends React.Component<Props, State> {
 
 			return (
 				<Row className='full-height'>
-					<Col span={12} className='scrollable'>
+					<Col span={12} className='scrollable padded'>
 						<div className='subheading'>character name:</div>
 						<Textbox
 							text={this.state.pc.name}
@@ -182,7 +182,7 @@ export default class PCEditorModal extends React.Component<Props, State> {
 							onNudgeValue={delta => this.nudgeValue(this.state.pc, 'passivePerception', delta)}
 						/>
 					</Col>
-					<Col span={12} className='scrollable'>
+					<Col span={12} className='scrollable padded'>
 						<div className='subheading'>languages:</div>
 						<Textbox
 							text={this.state.pc.languages}

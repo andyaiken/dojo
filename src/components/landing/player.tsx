@@ -33,6 +33,8 @@ import Note from '../panels/note';
 import PageFooter from '../panels/page-footer';
 import PageHeader from '../panels/page-header';
 import PageSidebar, { Sidebar } from '../panels/page-sidebar';
+import PDF from '../panels/pdf';
+import PortraitPanel from '../panels/portrait-panel';
 import { MessagesPanel, SendMessagePanel } from '../panels/session-panel';
 
 interface Props {
@@ -266,25 +268,43 @@ export default class Player extends React.Component<Props, State> {
 					</Row>
 				);
 			case 'connected':
-				let pc = null;
-				if (Comms.getCharacterID(Comms.getID()) === '') {
-					pc = (
-						<div>
-							<hr/>
-							<p>in the meantime, please select your character</p>
-							<button onClick={() => this.setSidebar('session-player')}>open the sidebar</button>
-						</div>
+				let shared = null;
+				if (Comms.data.shared.type === 'nothing') {
+					const characterID = Comms.getCharacterID(Comms.getID());
+					let pcSection = null;
+					if ((characterID === '') && (Comms.data.party !== null)) {
+						const pcs: JSX.Element[] = [];
+						Comms.data.party.pcs.forEach(pc => {
+							const claimed = Comms.data.people.some(person => person.characterID === pc.id);
+							if (!claimed) {
+								pcs.push(
+									<button key={pc.id} onClick={() => CommsPlayer.sendUpdate('', pc.id)}>
+										<div className='section'>
+											<PortraitPanel source={pc} inline={true} />
+											{pc.name}
+										</div>
+										<div className='section small'>{'level ' + pc.level + ' ' + pc.race + ' ' + pc.classes}</div>
+									</button>
+								);
+							}
+						});
+						pcSection = (
+							<div>
+								<hr/>
+								<p>in the meantime, please select your character:</p>
+								{pcs}
+							</div>
+						);
+					}
+					shared = (
+						<Row align='middle' justify='center' className='scrollable'>
+							<Note>
+								<p>the dm is not currently sharing anything with you; when they do, you'll see it here</p>
+								{pcSection}
+							</Note>
+						</Row>
 					);
 				}
-				let shared = (
-					<Row align='middle' justify='center' className='full-height'>
-						<Note>
-							<p>the dm is not currently sharing anything with you</p>
-							<p>when they do, you'll see it here</p>
-							{pc}
-						</Note>
-					</Row>
-				);
 				if (Comms.data.shared.type === 'combat') {
 					const combat = Comms.data.shared.data as Combat;
 					const additional = Comms.data.shared.additional;
@@ -296,71 +316,68 @@ export default class Player extends React.Component<Props, State> {
 					shared = this.getExplorationSection(exploration, additional);
 				}
 				if (Comms.data.shared.type === 'handout') {
-					const data = Comms.data.shared.data as { title: string, src: string };
-					shared = this.getHandoutSection(data.src);
+					const data = Comms.data.shared.data as { type: string, title: string, src: string };
+					shared = this.getHandoutSection(data.type, data.src);
 				}
 				if (Comms.data.shared.type === 'monster') {
 					const monster = Comms.data.shared.data as Monster;
 					shared = this.getMonsterSection(monster);
 				}
-				return this.getConnectedView(shared);
-		}
-	}
 
-	private getConnectedView(shared: JSX.Element) {
-		let centralWidth = 24;
+				let centralWidth = 24;
 
-		let chat = null;
-		if (Comms.data.options.allowChat) {
-			chat = (
-				<Col span={6} className='full-height sidebar sidebar-left'>
-					<div className='sidebar-container in-page'>
-						<div className='sidebar-content'>
-							<MessagesPanel
-								user='player'
-								messages={Comms.data.messages}
-								openImage={data => this.setState({drawer: { type: 'image', data: data }})}
-							/>
-						</div>
-						<div className='sidebar-footer'>
-							<SendMessagePanel
-								user='player'
-								sendMessage={(to, text, language, untranslated) => CommsPlayer.sendMessage(to, text, language, untranslated)}
-								sendLink={(to, url) => CommsPlayer.sendLink(to, url)}
-								sendImage={(to, image) => CommsPlayer.sendImage(to, image)}
-								sendRoll={(to, roll) => CommsPlayer.sendRoll(to, roll)}
-							/>
-						</div>
-					</div>
-				</Col>
-			);
-			centralWidth -= 6;
-		}
-
-		let controls = null;
-		if (Comms.data.options.allowControls) {
-			switch (Comms.data.shared.type) {
-				case 'combat':
-				case 'exploration':
-					controls = (
-						<Col span={6} className='scrollable sidebar sidebar-right'>
-							{this.getControls()}
+				let chat = null;
+				if (Comms.data.options.allowChat) {
+					chat = (
+						<Col span={6} className='full-height sidebar sidebar-left'>
+							<div className='sidebar-container in-page'>
+								<div className='sidebar-content'>
+									<MessagesPanel
+										user='player'
+										messages={Comms.data.messages}
+										openImage={data => this.setState({drawer: { type: 'image', data: data }})}
+									/>
+								</div>
+								<div className='sidebar-footer'>
+									<SendMessagePanel
+										user='player'
+										sendMessage={(to, text, language, untranslated) => CommsPlayer.sendMessage(to, text, language, untranslated)}
+										sendLink={(to, url) => CommsPlayer.sendLink(to, url)}
+										sendImage={(to, image) => CommsPlayer.sendImage(to, image)}
+										sendRoll={(to, roll) => CommsPlayer.sendRoll(to, roll)}
+									/>
+								</div>
+							</div>
 						</Col>
 					);
 					centralWidth -= 6;
-					break;
-			}
-		}
+				}
 
-		return (
-			<Row className='full-height'>
-				{chat}
-				<Col span={centralWidth} className='full-height'>
-					{shared}
-				</Col>
-				{controls}
-			</Row>
-		);
+				let controls = null;
+				if (Comms.data.options.allowControls) {
+					switch (Comms.data.shared.type) {
+						case 'combat':
+						case 'exploration':
+							controls = (
+								<Col span={6} className='scrollable sidebar sidebar-right'>
+									{this.getControls()}
+								</Col>
+							);
+							centralWidth -= 6;
+							break;
+					}
+				}
+
+				return (
+					<Row className='full-height'>
+						{chat}
+						<Col span={centralWidth} className='full-height'>
+							{shared}
+						</Col>
+						{controls}
+					</Row>
+				);
+		}
 	}
 
 	private getCombatSection(combat: Combat, additional: any) {
@@ -456,7 +473,36 @@ export default class Player extends React.Component<Props, State> {
 		);
 	}
 
-	private getHandoutSection(data: string) {
+	private getHandoutSection(type: string, data: string) {
+		switch (type) {
+			case 'image':
+				return (
+					<img
+						className='nonselectable-image borderless'
+						src={data}
+						alt='handout'
+					/>
+				);
+			case 'audio':
+				return (
+					<audio controls={true}>
+						<source src={data} />
+					</audio>
+				);
+			case 'video':
+				return (
+					<video controls={true}>
+						<source src={data} />
+					</video>
+				);
+			case 'pdf':
+				return (
+					<div className='scrollable'>
+						<PDF src={data} />
+					</div>
+				);
+		}
+
 		return (
 			<img
 				className='nonselectable-image borderless'

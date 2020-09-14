@@ -5,15 +5,20 @@ import React from 'react';
 import { Comms, CommsDM } from '../../../utils/comms';
 
 import Checkbox from '../../controls/checkbox';
+import Selector from '../../controls/selector';
 import Note from '../../panels/note';
+import PDF from '../../panels/pdf';
 import Popout from '../../panels/popout';
 
 interface Props {
 }
 
 interface State {
+	mode: string;
 	filename: string | null;
 	data: string | null;
+	pageCount: number;
+	page: number;
 	playerViewOpen: boolean;
 }
 
@@ -22,10 +27,33 @@ export default class HandoutTool extends React.Component<Props, State> {
 		super(props);
 
 		this.state = {
+			mode: 'image',
 			filename: null,
 			data: null,
+			pageCount: 1,
+			page: 1,
 			playerViewOpen: false
 		};
+	}
+
+	private setMode(mode: string) {
+		this.setState({
+			mode: mode
+		});
+	}
+
+	private setPageCount(count: number) {
+		this.setState({
+			pageCount: count
+		});
+	}
+
+	private nudgePage(delta: number) {
+		let page = Math.max(1, this.state.page + delta);
+		page = Math.min(this.state.pageCount, page);
+		this.setState({
+			page: page
+		});
 	}
 
 	private readFile(file: File) {
@@ -62,15 +90,57 @@ export default class HandoutTool extends React.Component<Props, State> {
 		});
 	}
 
-	private getPlayerView() {
-		if (this.state.playerViewOpen) {
-			return (
-				<Popout title='Handout' onCloseWindow={() => this.setPlayerViewOpen(false)}>
+	private getAccept() {
+		switch (this.state.mode) {
+			case 'image':
+				return 'image/*';
+			case 'audio':
+				return 'audio/*';
+			case 'video':
+				return 'video/*';
+			case 'pdf':
+				return '.pdf';
+		}
+
+		return undefined;
+	}
+
+	private getDisplay() {
+		switch (this.state.mode) {
+			case 'image':
+				return (
 					<img
 						className='nonselectable-image'
 						src={this.state.data || ''}
 						alt={this.state.filename || ''}
 					/>
+				);
+			case 'audio':
+				return (
+					<audio controls={true}>
+						<source src={this.state.data || ''} />
+					</audio>
+				);
+			case 'video':
+				return (
+					<video controls={true}>
+						<source src={this.state.data || ''} />
+					</video>
+				);
+			case 'pdf':
+				return (
+					<PDF src={this.state.data || ''} />
+				);
+		}
+
+		return null;
+	}
+
+	private getPlayerView() {
+		if (this.state.playerViewOpen) {
+			return (
+				<Popout title='Handout' onCloseWindow={() => this.setPlayerViewOpen(false)}>
+					{this.getDisplay()}
 				</Popout>
 			);
 		}
@@ -80,15 +150,12 @@ export default class HandoutTool extends React.Component<Props, State> {
 
 	public render() {
 		try {
-			let image = null;
+			let content = null;
 			if (this.state.data) {
-				image = (
+				content = (
 					<div>
-						<img
-							className='nonselectable-image'
-							src={this.state.data || ''}
-							alt={this.state.filename || ''}
-						/>
+						{this.getDisplay()}
+						<hr/>
 						<Checkbox
 							label='share in player view'
 							checked={this.state.playerViewOpen}
@@ -98,18 +165,24 @@ export default class HandoutTool extends React.Component<Props, State> {
 							label='share in session'
 							disabled={CommsDM.getState() !== 'started'}
 							checked={Comms.data.shared.type === 'handout'}
-							onChecked={value => value ? CommsDM.shareHandout(this.state.filename as string, this.state.data as string) : CommsDM.shareNothing()}
+							onChecked={value => value ? CommsDM.shareHandout(this.state.mode, this.state.filename as string, this.state.data as string) : CommsDM.shareNothing()}
 						/>
+						<hr/>
 						<button onClick={() => this.clear()}>change handout</button>
 					</div>
 				);
 			} else {
-				image = (
+				content = (
 					<div>
 						<Note>
-							<p>you can use this tool to select an image and show it to your players</p>
+							<p>you can use this tool to select a file and show it to your players</p>
 						</Note>
-						<Upload.Dragger accept='image/*' showUploadList={false} beforeUpload={file => this.readFile(file)}>
+						<Selector
+							options={['image', 'audio', 'video', 'pdf'].map(o => ({ id: o, text: o }))}
+							selectedID={this.state.mode}
+							onSelect={mode => this.setMode(mode)}
+						/>
+						<Upload.Dragger accept={this.getAccept()} showUploadList={false} beforeUpload={file => this.readFile(file)}>
 							<p className='ant-upload-drag-icon'>
 								<FileOutlined />
 							</p>
@@ -123,7 +196,7 @@ export default class HandoutTool extends React.Component<Props, State> {
 
 			return (
 				<div>
-					{image}
+					{content}
 					{this.getPlayerView()}
 				</div>
 			);

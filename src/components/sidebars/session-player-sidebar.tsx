@@ -10,48 +10,36 @@ interface Props {
 }
 
 export default class SessionPlayerSidebar extends React.Component<Props> {
-	private getContent() {
-		switch (CommsPlayer.getState()) {
-			case 'not connected':
-			case 'connecting':
-				return this.getNotConnectedContent();
-			case 'connected':
-				return this.getConnectedContent();
-		}
-	}
-
-	private getNotConnectedContent() {
-		return (
+	public render() {
+		let content = (
 			<Note>
-				<p>not connected</p>
+				<p>when you are connected, this sidebar will allow you to manage your presence</p>
 			</Note>
 		);
-	}
 
-	private getConnectedContent() {
-		return (
-			<div>
-				<Note>
-					<p>the following people are connected</p>
-				</Note>
-				<ConnectionsPanel
-					user='player'
-					people={Comms.data.people}
-					kick={id => null}
-				/>
-				<hr/>
-				<PlayerStatusPanel
-					editPC={id => this.props.editPC(id)}
-				/>
-			</div>
-		);
-	}
+		if (CommsPlayer.getState() === 'connected') {
+			content = (
+				<div>
+					<Note>
+						<p>the following people are connected</p>
+					</Note>
+					<ConnectionsPanel
+						user='player'
+						people={Comms.data.people}
+						kick={id => null}
+					/>
+					<hr/>
+					<PlayerStatusPanel
+						editPC={id => this.props.editPC(id)}
+					/>
+				</div>
+			);
+		}
 
-	public render() {
 		return (
 			<div className='sidebar-container'>
 				<div className='sidebar-content'>
-					{this.getContent()}
+					{content}
 				</div>
 			</div>
 		);

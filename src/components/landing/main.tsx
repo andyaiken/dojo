@@ -2377,6 +2377,7 @@ export default class Main extends React.Component<Props, State> {
 							editPC={pc => this.editPC(pc)}
 							updatePC={pc => this.updatePC(pc)}
 							removePC={pc => this.removePC(pc)}
+							showReference={party => this.showPartyReference(party)}
 							changeValue={(pc, type, value) => this.changeValue(pc, type, value)}
 							nudgeValue={(pc, type, delta) => this.nudgeValue(pc, type, delta)}
 						/>

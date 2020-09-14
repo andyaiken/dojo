@@ -203,8 +203,21 @@ p,
 		font-size: 16px;
 	}
 
+	&.to-left {
+		text-align: left;
+	}
+
 	&.centered {
 		text-align: center;
+	}
+
+	&.to-right {
+		text-align: right;
+	}
+
+	&.small {
+		font-size: 10px;
+		font-weight: normal;
 	}
 
 	.statistic-value {
@@ -278,4 +291,11 @@ p,
 			background-color: $highlight01;
 		}
 	}
+}
+
+.pdf-document {
+	width: 100%;
+    overflow-x: auto;
+	overflow-y: hidden;
+	margin: 5px 0;
 }
