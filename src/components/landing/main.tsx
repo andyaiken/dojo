@@ -336,7 +336,7 @@ export default class Main extends React.Component<Props, State> {
 		CommsDM.onStateChanged = () => this.setState(this.state);
 		CommsDM.onDataChanged = () => this.setState(this.state);
 		CommsDM.onNewConnection = name => {
-			const peopleVisible = this.state.sidebar.visible && (this.state.sidebar.type === 'session-dm') && (this.state.sidebar.subtype === 'people');
+			const peopleVisible = this.state.sidebar.visible && (this.state.sidebar.type === 'session') && (this.state.sidebar.subtype === 'people');
 			if (!peopleVisible) {
 				notification.open({
 					message: (
@@ -349,7 +349,7 @@ export default class Main extends React.Component<Props, State> {
 			}
 		};
 		Comms.onNewMessage = message => {
-			const messagesVisible = this.state.sidebar.visible && (this.state.sidebar.type === 'session-dm') && (this.state.sidebar.subtype === 'messages');
+			const messagesVisible = this.state.sidebar.visible && (this.state.sidebar.type === 'session') && (this.state.sidebar.subtype === 'messages');
 			if (!messagesVisible) {
 				notification.open({
 					message: (
@@ -403,7 +403,7 @@ export default class Main extends React.Component<Props, State> {
 			case 'reference':
 				subtype = 'skills';
 				break;
-			case 'session-dm':
+			case 'session':
 				subtype = 'management';
 				break;
 		}

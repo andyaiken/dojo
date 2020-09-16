@@ -81,7 +81,7 @@ export default class Dropdown extends React.Component<Props, State> {
 				<div key='selection' className='dropdown-top' title={option ? option.text : this.props.placeholder}>
 					{option ? option.display : null}
 					<div className='item-text'>{option ? option.text : this.props.placeholder}</div>
-					{canClear ? <CloseCircleOutlined onClick={e => this.clear(e)} /> : <EllipsisOutlined />}
+					{canClear ? <CloseCircleOutlined onClick={e => this.clear(e)} /> : <EllipsisOutlined className='ellipsis' />}
 				</div>
 			);
 

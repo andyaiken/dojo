@@ -23,7 +23,6 @@ import Textbox from '../controls/textbox';
 import ConditionModal from '../modals/condition-modal';
 import PCEditorModal from '../modals/editors/pc-editor-modal';
 import StatBlockModal from '../modals/stat-block-modal';
-import CombatControlsPanel from '../panels/combat-controls-panel';
 import DieRollPanel from '../panels/die-roll-panel';
 import DieRollResultPanel from '../panels/die-roll-result-panel';
 import ErrorBoundary from '../panels/error-boundary';
@@ -31,12 +30,10 @@ import GridPanel from '../panels/grid-panel';
 import InitiativeOrder from '../panels/initiative-order';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
-import PageFooter from '../panels/page-footer';
 import PageHeader from '../panels/page-header';
 import PageSidebar, { Sidebar } from '../panels/page-sidebar';
 import PDF from '../panels/pdf';
 import PortraitPanel from '../panels/portrait-panel';
-import { MessagesPanel, SendMessagePanel } from '../panels/session-panel';
 
 interface Props {
 }
@@ -48,6 +45,9 @@ interface State {
 }
 
 export default class Player extends React.Component<Props, State> {
+
+	//#region Constructor
+
 	constructor(props: Props) {
 		super(props);
 
@@ -60,8 +60,8 @@ export default class Player extends React.Component<Props, State> {
 			drawer: null,
 			sidebar: {
 				visible: false,
-				type: 'session-player',
-				subtype: '',
+				type: 'reference',
+				subtype: 'skills',
 				dice: dice,
 				constant: 0,
 				dieRolls: [],
@@ -99,29 +99,9 @@ export default class Player extends React.Component<Props, State> {
 		}
 	}
 
-	private setAddingToMap(adding: boolean) {
-		this.setState({
-			addingToMap: adding
-		});
-	}
+	//#endregion
 
-	private setSidebar(type: string) {
-		let subtype = '';
-		switch (type) {
-			case 'reference':
-				subtype = 'skills';
-				break;
-		}
-
-		const sidebar = this.state.sidebar;
-		sidebar.visible = true;
-		sidebar.type = type;
-		sidebar.subtype = subtype;
-
-		this.setState({
-			sidebar: sidebar
-		});
-	}
+	//#region Lifecycle
 
 	public componentDidMount() {
 		CommsPlayer.onStateChanged = () => this.forceUpdate();
@@ -151,6 +131,51 @@ export default class Player extends React.Component<Props, State> {
 		Comms.onPromptForRoll = null;
 
 		CommsPlayer.disconnect();
+	}
+
+	//#endregion
+
+	//#region Helper methods
+
+	private setAddingToMap(adding: boolean) {
+		this.setState({
+			addingToMap: adding
+		});
+	}
+
+	private setSidebar(type: string) {
+		let subtype = '';
+		switch (type) {
+			case 'reference':
+				subtype = 'skills';
+				break;
+			case 'session':
+				subtype = 'management';
+				break;
+		}
+
+		const sidebar = this.state.sidebar;
+		sidebar.visible = true;
+		sidebar.type = type;
+		sidebar.subtype = subtype;
+
+		this.setState({
+			sidebar: sidebar
+		});
+	}
+
+	private toggleSidebar() {
+		const sidebar = this.state.sidebar;
+		sidebar.visible = !sidebar.visible;
+		this.setState({
+			sidebar: sidebar
+		});
+	}
+
+	private closeDrawer() {
+		this.setState({
+			drawer: null
+		});
 	}
 
 	private editPC(id: string) {
@@ -235,157 +260,47 @@ export default class Player extends React.Component<Props, State> {
 		});
 	}
 
-	private toggleSidebar() {
-		const sidebar = this.state.sidebar;
-		sidebar.visible = !sidebar.visible;
-		this.setState({
-			sidebar: sidebar
-		});
-	}
+	//#endregion
 
-	private closeDrawer() {
-		this.setState({
-			drawer: null
-		});
-	}
+	//#region Rendering helper methods
 
-	private getBeadcrumbs() {
-		return [{
-			id: 'home',
-			text: 'dojo - player',
-			onClick: () => null
-		}];
-	}
+	private getNothingSection() {
+		const characterID = Comms.getCharacterID(Comms.getID());
 
-	private getContent() {
-		switch (CommsPlayer.getState()) {
-			case 'not connected':
-				return (
-					<Row align='middle' justify='center' className='full-height'>
-						<ConnectPanel />
-					</Row>
-				);
-			case 'connecting':
-				return (
-					<Row align='middle' justify='center' className='full-height'>
-						<div className='connection-panel'>
-							<Note>
-								<p>connecting to <span className='app-name'>dojo</span>...</p>
-							</Note>
-						</div>
-					</Row>
-				);
-			case 'connected':
-				let shared = null;
-				if (Comms.data.shared.type === 'nothing') {
-					const characterID = Comms.getCharacterID(Comms.getID());
-					let pcSection = null;
-					if ((characterID === '') && (Comms.data.party !== null)) {
-						const pcs: JSX.Element[] = [];
-						Comms.data.party.pcs.forEach(pc => {
-							const claimed = Comms.data.people.some(person => person.characterID === pc.id);
-							if (!claimed) {
-								pcs.push(
-									<button key={pc.id} onClick={() => CommsPlayer.sendUpdate('', pc.id)}>
-										<div className='section'>
-											<PortraitPanel source={pc} inline={true} />
-											{pc.name}
-										</div>
-										<div className='section small'>{'level ' + pc.level + ' ' + pc.race + ' ' + pc.classes}</div>
-									</button>
-								);
-							}
-						});
-						pcSection = (
-							<div>
-								<hr/>
-								<p>in the meantime, please select your character:</p>
-								{pcs}
+		let pcSection = null;
+		if ((characterID === '') && (Comms.data.party !== null)) {
+			const pcs: JSX.Element[] = [];
+			Comms.data.party.pcs.forEach(pc => {
+				const claimed = Comms.data.people.some(person => person.characterID === pc.id);
+				if (!claimed) {
+					pcs.push(
+						<button key={pc.id} onClick={() => CommsPlayer.sendUpdate('', pc.id)}>
+							<div className='section'>
+								<PortraitPanel source={pc} inline={true} />
+								{pc.name}
 							</div>
-						);
-					}
-					shared = (
-						<Row align='middle' justify='center' className='scrollable'>
-							<Note>
-								<p>the dm is not currently sharing anything with you; when they do, you'll see it here</p>
-								{pcSection}
-							</Note>
-						</Row>
+							<div className='section small'>{'level ' + pc.level + ' ' + pc.race + ' ' + pc.classes}</div>
+						</button>
 					);
 				}
-				if (Comms.data.shared.type === 'combat') {
-					const combat = Comms.data.shared.data as Combat;
-					const additional = Comms.data.shared.additional;
-					shared = this.getCombatSection(combat, additional);
-				}
-				if (Comms.data.shared.type === 'exploration') {
-					const exploration = Comms.data.shared.data as Exploration;
-					const additional = Comms.data.shared.additional;
-					shared = this.getExplorationSection(exploration, additional);
-				}
-				if (Comms.data.shared.type === 'handout') {
-					const handout = Comms.data.shared.data as Handout;
-					shared = this.getHandoutSection(handout);
-				}
-				if (Comms.data.shared.type === 'monster') {
-					const monster = Comms.data.shared.data as Monster;
-					shared = this.getMonsterSection(monster);
-				}
-
-				let centralWidth = 24;
-
-				let chat = null;
-				if (Comms.data.options.allowChat) {
-					chat = (
-						<Col span={6} className='full-height sidebar sidebar-left'>
-							<div className='sidebar-container in-page'>
-								<div className='sidebar-content'>
-									<MessagesPanel
-										user='player'
-										messages={Comms.data.messages}
-										openImage={data => this.setState({drawer: { type: 'image', data: data }})}
-									/>
-								</div>
-								<div className='sidebar-footer'>
-									<SendMessagePanel
-										user='player'
-										sendMessage={(to, text, language, untranslated) => CommsPlayer.sendMessage(to, text, language, untranslated)}
-										sendLink={(to, url) => CommsPlayer.sendLink(to, url)}
-										sendImage={(to, image) => CommsPlayer.sendImage(to, image)}
-										sendRoll={(to, roll) => CommsPlayer.sendRoll(to, roll)}
-									/>
-								</div>
-							</div>
-						</Col>
-					);
-					centralWidth -= 6;
-				}
-
-				let controls = null;
-				if (Comms.data.options.allowControls) {
-					switch (Comms.data.shared.type) {
-						case 'combat':
-						case 'exploration':
-							controls = (
-								<Col span={6} className='scrollable sidebar sidebar-right'>
-									{this.getControls()}
-								</Col>
-							);
-							centralWidth -= 6;
-							break;
-					}
-				}
-
-				return (
-					<Row className='full-height'>
-						{chat}
-						<Col span={centralWidth} className='full-height'>
-							{shared}
-						</Col>
-						{controls}
-					</Row>
-				);
+			});
+			pcSection = (
+				<div>
+					<hr/>
+					<p>in the meantime, please select your character:</p>
+					{pcs}
+				</div>
+			);
 		}
+
+		return (
+			<Row align='middle' justify='center' className='scrollable'>
+				<Note>
+					<p>the dm is not currently sharing anything with you; when they do, you'll see it here</p>
+					{pcSection}
+				</Note>
+			</Row>
+		);
 	}
 
 	private getCombatSection(combat: Combat, additional: any) {
@@ -522,146 +437,66 @@ export default class Player extends React.Component<Props, State> {
 		);
 	}
 
-	private getControls() {
-		let allCombatants: Combatant[] = [];
-		let map: Map | null = null;
+	//#endregion
 
-		if (Comms.data.shared.type === 'combat') {
-			const combat = Comms.data.shared.data as Combat;
-			allCombatants = combat.combatants;
-			map = combat.map;
-		}
-		if (Comms.data.shared.type === 'exploration') {
-			const exploration = Comms.data.shared.data as Exploration;
-			allCombatants = exploration.combatants;
-			map = exploration.map;
-		}
+	//#region Rendering
 
-		const characterID = Comms.getCharacterID(Comms.getID());
-		const current = allCombatants.find(c => c.id === characterID);
-		if (!current) {
-			return (
-				<div>
-					<Note>
-						<p>when you choose your character, you will be able to control it here</p>
-						<button onClick={() => this.setSidebar('session-player')}>select your character</button>
-					</Note>
-				</div>
-			);
-		}
-
-		return (
-			<CombatControlsPanel
-				combatants={[current]}
-				allCombatants={allCombatants}
-				map={map}
-				defaultTab='main'
-				// Main tab
-				toggleTag={(combatants, tag) => {
-					combatants.forEach(c => {
-						if (c.tags.includes(tag)) {
-							c.tags = c.tags.filter(t => t !== tag);
-						} else {
-							c.tags.push(tag);
-						}
-					});
-					CommsPlayer.sendSharedUpdate();
-					this.forceUpdate();
-				}}
-				toggleCondition={(combatants, condition) => {
-					combatants.forEach(c => {
-						if (c.conditions.some(cnd => cnd.name === condition)) {
-							c.conditions = c.conditions.filter(cnd => cnd.name !== condition);
-						} else {
-							const cnd = Factory.createCondition();
-							cnd.name = condition;
-							c.conditions.push(cnd);
-
-							c.conditions = Utils.sort(c.conditions, [{ field: 'name', dir: 'asc' }]);
-						}
-					});
-					CommsPlayer.sendSharedUpdate();
-					this.forceUpdate();
-				}}
-				toggleHidden={combatants => {
-					combatants.forEach(c => c.showOnMap = !c.showOnMap);
-					CommsPlayer.sendSharedUpdate();
-					this.forceUpdate();
-				}}
-				// Cond tab
-				addCondition={combatants => this.addCondition(combatants, allCombatants)}
-				editCondition={(combatant, condition) => this.editCondition(combatant, condition, allCombatants)}
-				removeCondition={(combatant, condition) => {
-					combatant.conditions = combatant.conditions.filter(cnd => cnd.name !== condition.name);
-					CommsPlayer.sendSharedUpdate();
-					this.forceUpdate();
-				}}
-				// Map tab
-				mapAdd={combatant => this.setAddingToMap(!this.state.addingToMap)}
-				mapMove={(combatants, dir) => {
-					const ids = combatants.map(c => c.id);
-					const list = Napoleon.getMountsAndRiders(ids, allCombatants).map(c => c.id);
-					ids.forEach(id => {
-						if (!list.includes(id)) {
-							list.push(id);
-						}
-					});
-					list.forEach(id => Mercator.move(map as Map, id, dir));
-					Napoleon.setMountPositions(allCombatants, map as Map);
-					CommsPlayer.sendSharedUpdate();
-					this.forceUpdate();
-				}}
-				mapRemove={combatants => {
-					const ids = combatants.map(c => c.id);
-					const list = Napoleon.getMountsAndRiders(ids, allCombatants).map(c => c.id);
-					ids.forEach(id => {
-						if (!list.includes(id)) {
-							list.push(id);
-						}
-					});
-					list.forEach(id => Mercator.remove(map as Map, id));
-					CommsPlayer.sendSharedUpdate();
-					this.forceUpdate();
-				}}
-				onChangeAltitude={(combatant, value) => {
-					const list = Napoleon.getMountsAndRiders([combatant.id], allCombatants);
-					list.forEach(c => c.altitude = value);
-					CommsPlayer.sendSharedUpdate();
-					this.forceUpdate();
-				}}
-				// Adv tab
-				addCompanion={companion => {
-					allCombatants.push(Napoleon.convertCompanionToCombatant(companion));
-					Utils.sort(allCombatants, [{ field: 'displayName', dir: 'asc' }]);
-					CommsPlayer.sendSharedUpdate();
-					this.forceUpdate();
-				}}
-				// General
-				changeValue={(source, field, value) => {
-					source[field] = value;
-					CommsPlayer.sendSharedUpdate();
-					this.forceUpdate();
-				}}
-				nudgeValue={(source, field, delta) => {
-					let value = null;
-					switch (field) {
-						case 'displaySize':
-							value = Gygax.nudgeSize(source.displaySize, delta);
-							break;
-						default:
-							value = source[field] + delta;
-							break;
-					}
-					source[field] = value;
-					CommsPlayer.sendSharedUpdate();
-					this.forceUpdate();
-				}}
-			/>
-		);
+	private getBeadcrumbs() {
+		return [{
+			id: 'home',
+			text: 'dojo - player',
+			onClick: () => null
+		}];
 	}
 
-	private getTabs() {
-		return [];
+	private getContent() {
+		switch (CommsPlayer.getState()) {
+			case 'not connected':
+				return (
+					<Row align='middle' justify='center' className='full-height'>
+						<ConnectPanel />
+					</Row>
+				);
+			case 'connecting':
+				return (
+					<Row align='middle' justify='center' className='full-height'>
+						<div className='connection-panel'>
+							<Note>
+								<p>connecting to <span className='app-name'>dojo</span>...</p>
+							</Note>
+						</div>
+					</Row>
+				);
+			case 'connected':
+				let shared = null;
+				if (Comms.data.shared.type === 'nothing') {
+					shared = this.getNothingSection();
+				}
+				if (Comms.data.shared.type === 'combat') {
+					const combat = Comms.data.shared.data as Combat;
+					const additional = Comms.data.shared.additional;
+					shared = this.getCombatSection(combat, additional);
+				}
+				if (Comms.data.shared.type === 'exploration') {
+					const exploration = Comms.data.shared.data as Exploration;
+					const additional = Comms.data.shared.additional;
+					shared = this.getExplorationSection(exploration, additional);
+				}
+				if (Comms.data.shared.type === 'handout') {
+					const handout = Comms.data.shared.data as Handout;
+					shared = this.getHandoutSection(handout);
+				}
+				if (Comms.data.shared.type === 'monster') {
+					const monster = Comms.data.shared.data as Monster;
+					shared = this.getMonsterSection(monster);
+				}
+
+				return (
+					<div className='full-height'>
+						{shared}
+					</div>
+				);
+		}
 	}
 
 	private getDrawer() {
@@ -760,7 +595,6 @@ export default class Player extends React.Component<Props, State> {
 		try {
 			const breadcrumbs = this.getBeadcrumbs();
 			const content = this.getContent();
-			const tabs = this.getTabs();
 			const drawer = this.getDrawer();
 
 			return (
@@ -774,15 +608,9 @@ export default class Player extends React.Component<Props, State> {
 							/>
 						</ErrorBoundary>
 						<ErrorBoundary>
-							<div className='page-content'>
+							<div className='page-content no-footer'>
 								{content}
 							</div>
-						</ErrorBoundary>
-						<ErrorBoundary>
-							<PageFooter
-								tabs={tabs}
-								onSelectView={view => null}
-							/>
 						</ErrorBoundary>
 					</div>
 					<ErrorBoundary>
@@ -792,6 +620,9 @@ export default class Player extends React.Component<Props, State> {
 							onSelectSidebar={type => this.setSidebar(type)}
 							onUpdateSidebar={sidebar => this.setState({ sidebar: sidebar })}
 							editPC={id => this.editPC(id)}
+							addCondition={(combatants, allCombatants) => this.addCondition(combatants, allCombatants)}
+							editCondition={(combatant, condition, allCombatants) => this.editCondition(combatant, condition, allCombatants)}
+							toggleAddingToMap={() => this.setAddingToMap(!this.state.addingToMap)}
 						/>
 					</ErrorBoundary>
 					<ErrorBoundary>
@@ -814,6 +645,8 @@ export default class Player extends React.Component<Props, State> {
 			return <div className='render-error'/>;
 		}
 	}
+
+	//#endregion
 }
 
 //#region ConnectPanel

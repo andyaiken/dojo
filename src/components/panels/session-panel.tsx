@@ -88,7 +88,7 @@ interface PlayerStatusPanelProps {
 
 interface PlayerStatusPanelState {
 	status: string;
-	pc: string;
+	characterID: string;
 }
 
 export class PlayerStatusPanel extends React.Component<PlayerStatusPanelProps, PlayerStatusPanelState> {
@@ -96,7 +96,7 @@ export class PlayerStatusPanel extends React.Component<PlayerStatusPanelProps, P
 		super(props);
 		this.state = {
 			status: '',
-			pc: ''
+			characterID: Comms.getCharacterID(Comms.getID())
 		};
 	}
 
@@ -108,21 +108,20 @@ export class PlayerStatusPanel extends React.Component<PlayerStatusPanelProps, P
 
 	private setPC(id: string) {
 		this.setState({
-			pc: id
+			characterID: id
 		}, () => {
 			this.sendPlayerUpdate();
 		});
 	}
 
 	private sendPlayerUpdate() {
-		CommsPlayer.sendUpdate(this.state.status, this.state.pc);
+		CommsPlayer.sendUpdate(this.state.status, this.state.characterID);
 	}
 
 	public render() {
 		let pcSection = null;
 		if (Comms.data.party) {
-			const characterID = Comms.getCharacterID(Comms.getID());
-			if (characterID === '') {
+			if (this.state.characterID === '') {
 				pcSection = (
 					<Dropdown
 						options={Comms.data.party.pcs.map(p => {
@@ -134,14 +133,13 @@ export class PlayerStatusPanel extends React.Component<PlayerStatusPanelProps, P
 							};
 						})}
 						placeholder={'select your character...'}
-						selectedID={this.state.pc}
 						onSelect={id => this.setPC(id)}
 					/>
 				);
 			} else {
 				pcSection = (
 					<div>
-						<button onClick={() => this.props.editPC(characterID)}>update character stats</button>
+						<button onClick={() => this.props.editPC(this.state.characterID)}>update character stats</button>
 					</div>
 				);
 			}

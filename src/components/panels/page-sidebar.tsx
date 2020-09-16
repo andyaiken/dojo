@@ -6,7 +6,8 @@ import Shakespeare from '../../utils/shakespeare';
 import Svengali from '../../utils/svengali';
 import Utils from '../../utils/utils';
 
-import { Combat } from '../../models/combat';
+import { Combat, Combatant } from '../../models/combat';
+import { Condition } from '../../models/condition';
 import { DieRollResult } from '../../models/dice';
 import { Encounter } from '../../models/encounter';
 import { Exploration, Map } from '../../models/map';
@@ -18,8 +19,7 @@ import AboutSidebar from '../sidebars/about-sidebar';
 import GeneratorsSidebar from '../sidebars/generators-sidebar';
 import ReferenceSidebar from '../sidebars/reference-sidebar';
 import SearchSidebar from '../sidebars/search-sidebar';
-import SessionDMSidebar from '../sidebars/session-dm-sidebar';
-import SessionPlayerSidebar from '../sidebars/session-player-sidebar';
+import SessionSidebar from '../sidebars/session-sidebar';
 import ToolsSidebar from '../sidebars/tools-sidebar';
 
 export interface Sidebar {
@@ -58,6 +58,9 @@ interface Props {
 	selectMap: (id: string) => void;
 	openImage: (data: string) => void;
 	editPC: (id: string) => void;
+	addCondition: (combatants: Combatant[], allCombatants: Combatant[]) => void;
+	editCondition: (combatant: Combatant, condition: Condition, allCombatants: Combatant[]) => void;
+	toggleAddingToMap: () => void;
 }
 
 export default class PageSidebar extends React.Component<Props> {
@@ -76,7 +79,10 @@ export default class PageSidebar extends React.Component<Props> {
 		selectMap: null,
 		openImage: null,
 		openStatBlock: null,
-		editPC: null
+		editPC: null,
+		addCondition: null,
+		editCondition: null,
+		toggleAddingToMap: null
 	};
 
 	public render() {
@@ -86,16 +92,6 @@ export default class PageSidebar extends React.Component<Props> {
 			}
 
 			const options = [];
-			if (this.props.user === 'player') {
-				options.push(
-					<ShareAltOutlined
-						key='session-player'
-						className={this.props.sidebar.type === 'session-player' ? 'sidebar-icon selected' : 'sidebar-icon'}
-						title='session'
-						onClick={() => this.props.onSelectSidebar('session-player')}
-					/>
-				);
-			}
 			if (this.props.user === 'dm') {
 				options.push(
 					<ToolOutlined
@@ -122,15 +118,15 @@ export default class PageSidebar extends React.Component<Props> {
 					onClick={() => this.props.onSelectSidebar('reference')}
 				/>
 			);
+			options.push(
+				<ShareAltOutlined
+					key='session'
+					className={this.props.sidebar.type === 'session' ? 'sidebar-icon selected' : 'sidebar-icon'}
+					title='session'
+					onClick={() => this.props.onSelectSidebar('session')}
+				/>
+			);
 			if (this.props.user === 'dm') {
-				options.push(
-					<ShareAltOutlined
-						key='session-dm'
-						className={this.props.sidebar.type === 'session-dm' ? 'sidebar-icon selected' : 'sidebar-icon'}
-						title='session'
-						onClick={() => this.props.onSelectSidebar('session-dm')}
-					/>
-				);
 				options.push(
 					<SearchOutlined
 						key='search'
@@ -345,26 +341,24 @@ export default class PageSidebar extends React.Component<Props> {
 						/>
 					);
 					break;
-				case 'session-dm':
+				case 'session':
 					content = (
-						<SessionDMSidebar
+						<SessionSidebar
 							view={this.props.sidebar.subtype}
 							setView={view => {
 								const sidebar = this.props.sidebar;
 								sidebar.subtype = view;
 								this.props.onUpdateSidebar(sidebar);
 							}}
+							user={this.props.user}
 							parties={this.props.parties}
 							combat={this.props.currentCombat}
 							exploration={this.props.currentExploration}
 							openImage={data => this.props.openImage(data)}
-						/>
-					);
-					break;
-				case 'session-player':
-					content = (
-						<SessionPlayerSidebar
 							editPC={id => this.props.editPC(id)}
+							addCondition={(combatants, allCombatants) => this.props.addCondition(combatants, allCombatants)}
+							editCondition={(combatant, condition, allCombatants) => this.props.editCondition(combatant, condition, allCombatants)}
+							toggleAddingToMap={() => this.props.toggleAddingToMap()}
 						/>
 					);
 					break;

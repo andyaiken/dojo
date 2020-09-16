@@ -10,6 +10,11 @@ interface Props {
 }
 
 export default class PageFooter extends React.Component<Props> {
+	public static defaultProps = {
+		tabs: [],
+		onSelectView: null
+	};
+
 	public render() {
 		try {
 			const tabs = this.props.tabs.map(tab => (
