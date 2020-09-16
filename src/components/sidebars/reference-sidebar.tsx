@@ -87,6 +87,7 @@ export default class ReferenceSidebar extends React.Component<Props> {
 			return (
 				<div className='sidebar-container'>
 					<div className='sidebar-header'>
+						<div className='heading'>reference</div>
 						<Selector
 							options={options}
 							selectedID={this.props.view}

@@ -159,6 +159,7 @@ export default class AboutSidebar extends React.Component<Props, State> {
 			return (
 				<div className='sidebar-container'>
 					<div className='sidebar-header'>
+						<div className='heading'>about</div>
 						<Selector options={options} selectedID={this.state.view} onSelect={id => this.setView(id)} />
 					</div>
 					<div className='sidebar-content'>

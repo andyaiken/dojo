@@ -41,7 +41,7 @@ export default class SessionDMSidebar extends React.Component<Props> {
 			<div>
 				<Note>
 					<p>select a party, then click the 'start' button to allow your players to connect to the game session</p>
-					<p>you can then send messages and share combat encounters and map explorations</p>
+					<p>you can then send messages and share handouts, combat encounters, and map explorations</p>
 				</Note>
 				<Dropdown
 					placeholder='select a party...'
@@ -174,13 +174,11 @@ export default class SessionDMSidebar extends React.Component<Props> {
 		let footer = null;
 		if (CommsDM.getState() === 'started') {
 			header = (
-				<div className='sidebar-header'>
-					<Selector
-						options={['messages', 'people', 'management'].map(o => ({ id: o, text: o }))}
-						selectedID={this.props.view}
-						onSelect={view => this.props.setView(view)}
-					/>
-				</div>
+				<Selector
+					options={['messages', 'people', 'management'].map(o => ({ id: o, text: o }))}
+					selectedID={this.props.view}
+					onSelect={view => this.props.setView(view)}
+				/>
 			);
 
 			if (this.props.view === 'messages') {
@@ -200,7 +198,10 @@ export default class SessionDMSidebar extends React.Component<Props> {
 
 		return (
 			<div className='sidebar-container'>
-				{header}
+				<div className='sidebar-header'>
+					<div className='heading'>session</div>
+					{header}
+				</div>
 				<div className='sidebar-content'>
 					{this.getContent()}
 				</div>

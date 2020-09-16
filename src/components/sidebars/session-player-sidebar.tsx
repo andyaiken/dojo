@@ -38,6 +38,9 @@ export default class SessionPlayerSidebar extends React.Component<Props> {
 
 		return (
 			<div className='sidebar-container'>
+				<div className='sidebar-header'>
+					<div className='heading'>session</div>
+				</div>
 				<div className='sidebar-content'>
 					{content}
 				</div>
