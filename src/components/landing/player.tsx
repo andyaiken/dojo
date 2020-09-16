@@ -13,6 +13,7 @@ import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { DieRollResult } from '../../models/dice';
 import { Exploration, Map } from '../../models/map';
+import { Handout } from '../../models/misc';
 import { Monster } from '../../models/monster';
 
 import MonsterStatblockCard from '../cards/monster-statblock-card';
@@ -63,6 +64,13 @@ export default class Player extends React.Component<Props, State> {
 				subtype: '',
 				dice: dice,
 				constant: 0,
+				dieRolls: [],
+				handout: null,
+				languagePreset: null,
+				selectedLanguages: [],
+				languageOutput: [],
+				draws: [],
+				npc: null,
 				selectedPartyID: null,
 				selectedMonsterID: null
 			}
@@ -316,8 +324,8 @@ export default class Player extends React.Component<Props, State> {
 					shared = this.getExplorationSection(exploration, additional);
 				}
 				if (Comms.data.shared.type === 'handout') {
-					const data = Comms.data.shared.data as { type: string, title: string, src: string };
-					shared = this.getHandoutSection(data.type, data.src);
+					const handout = Comms.data.shared.data as Handout;
+					shared = this.getHandoutSection(handout);
 				}
 				if (Comms.data.shared.type === 'monster') {
 					const monster = Comms.data.shared.data as Monster;
@@ -473,43 +481,37 @@ export default class Player extends React.Component<Props, State> {
 		);
 	}
 
-	private getHandoutSection(type: string, data: string) {
-		switch (type) {
+	private getHandoutSection(handout: Handout) {
+		switch (handout.type) {
 			case 'image':
 				return (
 					<img
 						className='nonselectable-image borderless'
-						src={data}
+						src={handout.src}
 						alt='handout'
 					/>
 				);
 			case 'audio':
 				return (
 					<audio controls={true}>
-						<source src={data} />
+						<source src={handout.src} />
 					</audio>
 				);
 			case 'video':
 				return (
 					<video controls={true}>
-						<source src={data} />
+						<source src={handout.src} />
 					</video>
 				);
 			case 'pdf':
 				return (
 					<div className='scrollable'>
-						<PDF src={data} />
+						<PDF src={handout.src} />
 					</div>
 				);
 		}
 
-		return (
-			<img
-				className='nonselectable-image borderless'
-				src={data}
-				alt='handout'
-			/>
-		);
+		return null;
 	}
 
 	private getMonsterSection(monster: Monster) {

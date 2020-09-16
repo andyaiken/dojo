@@ -7,7 +7,6 @@ interface Props {
 }
 
 interface State {
-	source: string | null;
 	values: string[];
 }
 
@@ -16,21 +15,14 @@ export default class PlaceNameTool extends React.Component<Props, State> {
 		super(props);
 
 		this.state = {
-			source: null,
 			values: []
 		};
 	}
 
-	private async fetchData() {
+	private async generate() {
 		const response = await fetch('/dojo/data/places.txt');
-		const text = await response.text();
-		this.setState({
-			source: text
-		});
-	}
-
-	private generate() {
-		Shakespeare.initModel([this.state.source as string]);
+		const source = await response.text();
+		Shakespeare.initModel([source]);
 		const values = Shakespeare.generateLines(10);
 		this.setState({
 			values: values
@@ -39,10 +31,6 @@ export default class PlaceNameTool extends React.Component<Props, State> {
 
 	public render() {
 		try {
-			if (!this.state.source) {
-				this.fetchData();
-			}
-
 			const output = [];
 			for (let n = 0; n !== this.state.values.length; ++n) {
 				output.push(

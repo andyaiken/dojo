@@ -1,3 +1,5 @@
+// This utility file deals with P2P communication
+
 import LZString from 'lz-string';
 import Peer, { DataConnection } from 'peerjs';
 import recursivediff from 'recursive-diff';
@@ -8,7 +10,7 @@ import Utils from './utils';
 import { Combat } from '../models/combat';
 import { DieRollResult } from '../models/dice';
 import { Exploration } from '../models/map';
-import { SavedImage } from '../models/misc';
+import { Handout, SavedImage } from '../models/misc';
 import { Monster } from '../models/monster';
 import { Party, PC } from '../models/party';
 
@@ -635,16 +637,12 @@ export class CommsDM {
 		images.forEach(img => Comms.sentImageIDs.push(img.id));
 	}
 
-	public static shareHandout(type: string, title: string, src: string) {
+	public static shareHandout(handout: Handout) {
 		Comms.previousSentSharedState = null;
 		Comms.previousReceivedSharedState = null;
 		Comms.data.shared = {
 			type: 'handout',
-			data: {
-				type: type,
-				title: title,
-				src: src
-			},
+			data: handout,
 			images: [],
 			additional: {}
 		};

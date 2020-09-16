@@ -296,6 +296,13 @@ export default class Main extends React.Component<Props, State> {
 				subtype: 'die',
 				dice: dice,
 				constant: 0,
+				dieRolls: [],
+				handout: null,
+				languagePreset: null,
+				selectedLanguages: [],
+				languageOutput: [],
+				draws: [],
+				npc: null,
 				selectedPartyID: null,
 				selectedMonsterID: null
 			},

@@ -11,107 +11,18 @@ import Selector from '../../controls/selector';
 import GridPanel from '../../panels/grid-panel';
 
 interface Props {
-}
-
-interface State {
-	preset: string | null;
-	languages: string[];
+	languagePreset: string | null;
+	selectedLanguages: string[];
 	output: string[];
+	selectLanguagePreset: (preset: string) => void;
+	addLanguage: (language: string) => void;
+	removeLanguage: (language: string) => void;
+	selectRandomLanguages: () => void;
+	resetLanguages: () => void;
+	generateLanguage: () => void;
 }
 
-export default class LanguageTool extends React.Component<Props, State> {
-	constructor(props: Props) {
-		super(props);
-
-		this.state = {
-			preset: null,
-			languages: [],
-			output: []
-		};
-	}
-
-	private addLanguage(language: string) {
-		this.state.languages.push(language);
-		this.setState({
-			languages: this.state.languages.sort()
-		});
-	}
-
-	private removeLanguage(language: string) {
-		const index = this.state.languages.indexOf(language);
-		this.state.languages.splice(index, 1);
-		this.setState({
-			languages: this.state.languages
-		});
-	}
-
-	private usePreset(preset: string) {
-		let languages: string[] = [];
-		switch (preset) {
-			case 'draconic':
-				languages = ['armenian', 'irish', 'maltese'];
-				break;
-			case 'dwarvish':
-				languages = ['czech', 'german', 'yiddish'];
-				break;
-			case 'elvish':
-				languages = ['finnish', 'spanish', 'welsh'];
-				break;
-			case 'goblin':
-				languages = ['hawaiian', 'kyrgyz', 'somali'];
-				break;
-			case 'orc':
-				languages = ['macedonian', 'russian', 'turkish'];
-				break;
-		}
-
-		this.setState({
-			preset: preset,
-			languages: languages.sort(),
-			output: []
-		});
-	}
-
-	private random() {
-		const languages = Shakespeare.getAllLanguages();
-
-		const selection: string[] = [];
-		while (selection.length !== 3) {
-			const n = Math.floor(Math.random() * languages.length);
-			const lang = languages[n];
-			if (!selection.includes(lang)) {
-				selection.push(lang);
-			}
-		}
-
-		this.setState({
-			languages: selection,
-			output: []
-		});
-	}
-
-	private generate() {
-		const responses = this.state.languages.map(language => fetch('/dojo/data/langs/' + language + '.txt'));
-		Promise.all(responses).then(r => {
-			const data = r.map(response => response.text());
-			Promise.all(data).then(text => {
-				Shakespeare.initModel(text);
-				const lines = Shakespeare.generateLines(5);
-				this.setState({
-					output: lines
-				});
-			});
-		});
-	}
-
-	private reset() {
-		this.setState({
-			preset: null,
-			languages: [],
-			output: []
-		});
-	}
-
+export default class LanguageTool extends React.Component<Props> {
 	public render() {
 		try {
 			const presetOptions = ['draconic', 'dwarvish', 'elvish', 'goblin', 'orc', 'custom'].map(p => {
@@ -121,30 +32,30 @@ export default class LanguageTool extends React.Component<Props, State> {
 				};
 			});
 
-			const allowGenerate = this.state.languages.length > 0;
+			const allowGenerate = this.props.selectedLanguages.length > 0;
 
 			let custom = null;
-			if (this.state.preset === 'custom') {
-				let selectedLanguages = this.state.languages.join(', ');
+			if (this.props.languagePreset === 'custom') {
+				let selectedLanguages = this.props.selectedLanguages.join(', ');
 				if (selectedLanguages === '') {
 					selectedLanguages = 'none';
 				}
 
 				const languages = Shakespeare.getAllLanguages()
 					.map(lang => {
-						const isSelected = this.state.languages.includes(lang);
+						const isSelected = this.props.selectedLanguages.includes(lang);
 						return (
 							<Checkbox
 								key={lang}
 								label={lang}
 								checked={isSelected}
 								display='button'
-								onChecked={value => value ? this.addLanguage(lang) : this.removeLanguage(lang)}
+								onChecked={value => value ? this.props.addLanguage(lang) : this.props.removeLanguage(lang)}
 							/>
 						);
 					});
 
-				const allowReset = allowGenerate || this.state.output.length > 0;
+				const allowReset = allowGenerate || this.props.output.length > 0;
 				custom = (
 					<div className='group-panel'>
 						<Expander text={'selected languages: ' + selectedLanguages}>
@@ -154,10 +65,10 @@ export default class LanguageTool extends React.Component<Props, State> {
 						</Expander>
 						<Row gutter={10}>
 							<Col span={12}>
-								<button onClick={() => this.random()}>random languages</button>
+								<button onClick={() => this.props.selectRandomLanguages()}>random languages</button>
 							</Col>
 							<Col span={12}>
-								<button className={allowReset ? '' : 'disabled'} onClick={() => this.reset()}>reset</button>
+								<button className={allowReset ? '' : 'disabled'} onClick={() => this.props.resetLanguages()}>reset</button>
 							</Col>
 						</Row>
 					</div>
@@ -165,17 +76,17 @@ export default class LanguageTool extends React.Component<Props, State> {
 			}
 
 			const output = [];
-			if (this.state.output.length > 0) {
+			if (this.props.output.length > 0) {
 				output.push(
 					<hr key='div' />
 				);
 			}
-			for (let n = 0; n !== this.state.output.length; ++n) {
+			for (let n = 0; n !== this.props.output.length; ++n) {
 				output.push(
 					<GeneratedText
 						key={n}
-						text={this.state.output[n]}
-						languages={this.state.languages}
+						text={this.props.output[n]}
+						languages={this.props.selectedLanguages}
 					/>
 				);
 			}
@@ -184,13 +95,13 @@ export default class LanguageTool extends React.Component<Props, State> {
 				<div>
 					<Selector
 						options={presetOptions}
-						selectedID={this.state.preset}
+						selectedID={this.props.languagePreset}
 						itemsPerRow={3}
-						onSelect={optionID => this.usePreset(optionID)}
+						onSelect={optionID => this.props.selectLanguagePreset(optionID)}
 					/>
 					{custom}
 					<hr/>
-					<button className={allowGenerate ? '' : 'disabled'} onClick={() => this.generate()}>generate text</button>
+					<button className={allowGenerate ? '' : 'disabled'} onClick={() => this.props.generateLanguage()}>generate text</button>
 					{output}
 				</div>
 			);

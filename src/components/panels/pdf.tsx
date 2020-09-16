@@ -38,11 +38,9 @@ export default class PDF extends React.Component<Props, State> {
 	}
 
 	public render() {
-		return (
-			<div>
-				<Document className='pdf-document' file={this.props.src} onLoadSuccess={({ numPages }) => this.setPageCount(numPages)}>
-					<Page pageNumber={this.state.page} />
-				</Document>
+		let controls = null;
+		if (this.state.pageCount > 1) {
+			controls = (
 				<Row gutter={10}>
 					<Col span={6}>
 						<div className='section centered'>
@@ -60,6 +58,15 @@ export default class PDF extends React.Component<Props, State> {
 						</div>
 					</Col>
 				</Row>
+			);
+		}
+
+		return (
+			<div>
+				<Document className='pdf-document' file={this.props.src} onLoadSuccess={({ numPages }) => this.setPageCount(numPages)}>
+					<Page pageNumber={this.state.page} />
+				</Document>
+				{controls}
 			</div>
 		);
 	}

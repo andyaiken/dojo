@@ -1,3 +1,5 @@
+// This utility file deals with images
+
 import Utils from './utils';
 
 import { Combat } from '../models/combat';

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { NPC } from '../../models/misc';
+
 import Selector from '../controls/selector';
 import NPCGenerator from './generators/npc-generator';
 import PlaceNameGenerator from './generators/place-name-generator';
@@ -7,7 +9,9 @@ import SimpleGenerator from './generators/simple-generator';
 
 interface Props {
 	view: string;
+	npc: NPC | null;
 	setView: (view: string) => void;
+	generateNPC: () => void;
 }
 
 export default class GeneratorsSidebar extends React.Component<Props> {
@@ -69,7 +73,10 @@ export default class GeneratorsSidebar extends React.Component<Props> {
 					break;
 				case 'npc':
 					content = (
-						<NPCGenerator />
+						<NPCGenerator
+							npc={this.props.npc}
+							generateNPC={() => this.props.generateNPC()}
+						/>
 					);
 					break;
 			}

@@ -4,6 +4,8 @@ import React from 'react';
 
 import { Comms, CommsDM } from '../../../utils/comms';
 
+import { Handout } from '../../../models/misc';
+
 import Checkbox from '../../controls/checkbox';
 import Selector from '../../controls/selector';
 import Note from '../../panels/note';
@@ -11,14 +13,12 @@ import PDF from '../../panels/pdf';
 import Popout from '../../panels/popout';
 
 interface Props {
+	handout: Handout | null;
+	setHandout: (handout: Handout | null) => void;
 }
 
 interface State {
 	mode: string;
-	filename: string | null;
-	data: string | null;
-	pageCount: number;
-	page: number;
 	playerViewOpen: boolean;
 }
 
@@ -28,10 +28,6 @@ export default class HandoutTool extends React.Component<Props, State> {
 
 		this.state = {
 			mode: 'image',
-			filename: null,
-			data: null,
-			pageCount: 1,
-			page: 1,
 			playerViewOpen: false
 		};
 	}
@@ -39,20 +35,8 @@ export default class HandoutTool extends React.Component<Props, State> {
 	private setMode(mode: string) {
 		this.setState({
 			mode: mode
-		});
-	}
-
-	private setPageCount(count: number) {
-		this.setState({
-			pageCount: count
-		});
-	}
-
-	private nudgePage(delta: number) {
-		let page = Math.max(1, this.state.page + delta);
-		page = Math.min(this.state.pageCount, page);
-		this.setState({
-			page: page
+		}, () => {
+			this.props.setHandout(null);
 		});
 	}
 
@@ -60,11 +44,10 @@ export default class HandoutTool extends React.Component<Props, State> {
 		const reader = new FileReader();
 		reader.onload = progress => {
 			if (progress.target) {
-				const data = progress.target.result as string;
-
-				this.setState({
+				this.props.setHandout({
+					type: this.state.mode,
 					filename: file.name,
-					data: data
+					src: progress.target.result as string
 				});
 			}
 		};
@@ -84,9 +67,9 @@ export default class HandoutTool extends React.Component<Props, State> {
 		}
 
 		this.setState({
-			filename: null,
-			data: null,
 			playerViewOpen: false
+		}, () => {
+			this.props.setHandout(null);
 		});
 	}
 
@@ -106,30 +89,34 @@ export default class HandoutTool extends React.Component<Props, State> {
 	}
 
 	private getDisplay() {
-		switch (this.state.mode) {
+		if (!this.props.handout) {
+			return null;
+		}
+
+		switch (this.props.handout.type) {
 			case 'image':
 				return (
 					<img
 						className='nonselectable-image'
-						src={this.state.data || ''}
-						alt={this.state.filename || ''}
+						src={this.props.handout.src || ''}
+						alt={this.props.handout.filename || ''}
 					/>
 				);
 			case 'audio':
 				return (
 					<audio controls={true}>
-						<source src={this.state.data || ''} />
+						<source src={this.props.handout.src || ''} />
 					</audio>
 				);
 			case 'video':
 				return (
 					<video controls={true}>
-						<source src={this.state.data || ''} />
+						<source src={this.props.handout.src || ''} />
 					</video>
 				);
 			case 'pdf':
 				return (
-					<PDF src={this.state.data || ''} />
+					<PDF src={this.props.handout.src || ''} />
 				);
 		}
 
@@ -151,7 +138,7 @@ export default class HandoutTool extends React.Component<Props, State> {
 	public render() {
 		try {
 			let content = null;
-			if (this.state.data) {
+			if (this.props.handout) {
 				content = (
 					<div>
 						{this.getDisplay()}
@@ -165,7 +152,7 @@ export default class HandoutTool extends React.Component<Props, State> {
 							label='share in session'
 							disabled={CommsDM.getState() !== 'started'}
 							checked={Comms.data.shared.type === 'handout'}
-							onChecked={value => value ? CommsDM.shareHandout(this.state.mode, this.state.filename as string, this.state.data as string) : CommsDM.shareNothing()}
+							onChecked={value => value ? CommsDM.shareHandout(this.props.handout as Handout) : CommsDM.shareNothing()}
 						/>
 						<hr/>
 						<button onClick={() => this.clear()}>change handout</button>
