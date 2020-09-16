@@ -61,6 +61,7 @@ interface Props {
 	addCondition: (combatants: Combatant[], allCombatants: Combatant[]) => void;
 	editCondition: (combatant: Combatant, condition: Condition, allCombatants: Combatant[]) => void;
 	toggleAddingToMap: () => void;
+	onUpdated: () => void;
 }
 
 export default class PageSidebar extends React.Component<Props> {
@@ -82,7 +83,8 @@ export default class PageSidebar extends React.Component<Props> {
 		editPC: null,
 		addCondition: null,
 		editCondition: null,
-		toggleAddingToMap: null
+		toggleAddingToMap: null,
+		onUpdated: null
 	};
 
 	public render() {
@@ -359,6 +361,7 @@ export default class PageSidebar extends React.Component<Props> {
 							addCondition={(combatants, allCombatants) => this.props.addCondition(combatants, allCombatants)}
 							editCondition={(combatant, condition, allCombatants) => this.props.editCondition(combatant, condition, allCombatants)}
 							toggleAddingToMap={() => this.props.toggleAddingToMap()}
+							onUpdated={() => this.props.onUpdated()}
 						/>
 					);
 					break;

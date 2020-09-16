@@ -34,6 +34,7 @@ interface Props {
 	addCondition: (combatants: Combatant[], allCombatants: Combatant[]) => void;
 	editCondition: (combatant: Combatant, condition: Condition, allCombatants: Combatant[]) => void;
 	toggleAddingToMap: () => void;
+	onUpdated: () => void;
 }
 
 export default class SessionSidebar extends React.Component<Props> {
@@ -260,7 +261,8 @@ export default class SessionSidebar extends React.Component<Props> {
 				combatants={[current]}
 				allCombatants={allCombatants}
 				map={map}
-				defaultTab='main'
+				defaultTab=''
+				showTabs={false}
 				// Main tab
 				toggleTag={(combatants, tag) => {
 					combatants.forEach(c => {
@@ -271,7 +273,7 @@ export default class SessionSidebar extends React.Component<Props> {
 						}
 					});
 					CommsPlayer.sendSharedUpdate();
-					this.forceUpdate();
+					this.props.onUpdated();
 				}}
 				toggleCondition={(combatants, condition) => {
 					combatants.forEach(c => {
@@ -286,12 +288,12 @@ export default class SessionSidebar extends React.Component<Props> {
 						}
 					});
 					CommsPlayer.sendSharedUpdate();
-					this.forceUpdate();
+					this.props.onUpdated();
 				}}
 				toggleHidden={combatants => {
 					combatants.forEach(c => c.showOnMap = !c.showOnMap);
 					CommsPlayer.sendSharedUpdate();
-					this.forceUpdate();
+					this.props.onUpdated();
 				}}
 				// Cond tab
 				addCondition={combatants => this.props.addCondition(combatants, allCombatants)}
@@ -299,7 +301,7 @@ export default class SessionSidebar extends React.Component<Props> {
 				removeCondition={(combatant, condition) => {
 					combatant.conditions = combatant.conditions.filter(cnd => cnd.name !== condition.name);
 					CommsPlayer.sendSharedUpdate();
-					this.forceUpdate();
+					this.props.onUpdated();
 				}}
 				// Map tab
 				mapAdd={combatant => this.props.toggleAddingToMap()}
@@ -314,7 +316,7 @@ export default class SessionSidebar extends React.Component<Props> {
 					list.forEach(id => Mercator.move(map as Map, id, dir));
 					Napoleon.setMountPositions(allCombatants, map as Map);
 					CommsPlayer.sendSharedUpdate();
-					this.forceUpdate();
+					this.props.onUpdated();
 				}}
 				mapRemove={combatants => {
 					const ids = combatants.map(c => c.id);
@@ -326,26 +328,26 @@ export default class SessionSidebar extends React.Component<Props> {
 					});
 					list.forEach(id => Mercator.remove(map as Map, id));
 					CommsPlayer.sendSharedUpdate();
-					this.forceUpdate();
+					this.props.onUpdated();
 				}}
 				onChangeAltitude={(combatant, value) => {
 					const list = Napoleon.getMountsAndRiders([combatant.id], allCombatants);
 					list.forEach(c => c.altitude = value);
 					CommsPlayer.sendSharedUpdate();
-					this.forceUpdate();
+					this.props.onUpdated();
 				}}
 				// Adv tab
 				addCompanion={companion => {
 					allCombatants.push(Napoleon.convertCompanionToCombatant(companion));
 					Utils.sort(allCombatants, [{ field: 'displayName', dir: 'asc' }]);
 					CommsPlayer.sendSharedUpdate();
-					this.forceUpdate();
+					this.props.onUpdated();
 				}}
 				// General
 				changeValue={(source, field, value) => {
 					source[field] = value;
 					CommsPlayer.sendSharedUpdate();
-					this.forceUpdate();
+					this.props.onUpdated();
 				}}
 				nudgeValue={(source, field, delta) => {
 					let value = null;
@@ -363,7 +365,7 @@ export default class SessionSidebar extends React.Component<Props> {
 						Napoleon.sortCombatants(combat);
 					}
 					CommsPlayer.sendSharedUpdate();
-					this.forceUpdate();
+					this.props.onUpdated();
 				}}
 			/>
 		);

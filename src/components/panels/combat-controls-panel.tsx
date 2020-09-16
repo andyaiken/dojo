@@ -25,6 +25,7 @@ interface Props {
 	allCombatants: Combatant[];
 	map: Map | null;
 	defaultTab: string;
+	showTabs: boolean;
 	// Main tab
 	makeCurrent: (combatant: Combatant) => void;
 	makeActive: (combatants: Combatant[]) => void;
@@ -60,6 +61,7 @@ interface State {
 
 export default class CombatControlsPanel extends React.Component<Props, State> {
 	public static defaultProps = {
+		showTabs: true,
 		makeCurrent: null,
 		makeActive: null,
 		makeDefeated: null,
@@ -234,19 +236,6 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 			);
 		}
 
-		let notesSection = null;
-		if (this.props.combatants.length === 1) {
-			const combatant = this.props.combatants[0];
-			notesSection = (
-				<Textbox
-					text={combatant.note}
-					placeholder='notes'
-					multiLine={true}
-					onChange={value => this.props.changeValue(combatant, 'note', value)}
-				/>
-			);
-		}
-
 		return (
 			<div>
 				{actionSection}
@@ -293,7 +282,6 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 					</Tag.CheckableTag>
 				</div>
 				{engagedSection}
-				{notesSection}
 			</div>
 		);
 	}
@@ -624,6 +612,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 		let changeInit = null;
 		let changeFaction = null;
 		let mountedCombat = null;
+		let notes = null;
 		if (this.props.combatants.length === 1) {
 			const combatant = this.props.combatants[0];
 			changeName = (
@@ -722,6 +711,15 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 					</Expander>
 				);
 			}
+
+			notes = (
+				<Textbox
+					text={combatant.note}
+					placeholder='notes'
+					multiLine={true}
+					onChange={value => this.props.changeValue(combatant, 'note', value)}
+				/>
+			);
 		}
 
 		const companions: JSX.Element[] = [];
@@ -746,18 +744,14 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 				{changeFaction}
 				{mountedCombat}
 				{companions}
+				{notes}
 			</div>
 		);
 	}
 
 	public render() {
 		try {
-			const views = ['main', 'hp', 'cond', 'map', 'adv'].map(m => {
-				return {
-					id: m,
-					text: m
-				};
-			});
+			const views = ['main', 'hp', 'cond', 'map', 'adv'];
 			const controlledMounts = this.props.allCombatants
 				.filter(c => !!c.mountID && (c.mountType === 'controlled'))
 				.map(c => c.mountID || '');
@@ -773,9 +767,21 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 				views.splice(1, 1);
 			}
 
+			if (!this.props.showTabs) {
+				return (
+					<div>
+						{views.includes('main') ? this.getMainSection() : null}
+						{views.includes('hp') ? this.getHPSection() : null}
+						{views.includes('cond') ? this.getConditionSection() : null}
+						{views.includes('map') ? this.getMapSection() : null}
+						{views.includes('adv') ? <Expander text=''>{this.getAdvancedSection()}</Expander> : null}
+					</div>
+				);
+			}
+
 			let currentView = this.state.view;
-			if (!views.find(v => v.id === currentView)) {
-				currentView = views[0].id;
+			if (!views.includes(currentView)) {
+				currentView = views[0];
 			}
 
 			let content = null;
@@ -800,7 +806,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 			return (
 				<div>
 					<Tabs
-						options={views}
+						options={views.map(v => ({ id: v, text: v }))}
 						selectedID={currentView}
 						onSelect={option => this.setView(option)}
 					/>

@@ -623,6 +623,7 @@ export default class Player extends React.Component<Props, State> {
 							addCondition={(combatants, allCombatants) => this.addCondition(combatants, allCombatants)}
 							editCondition={(combatant, condition, allCombatants) => this.editCondition(combatant, condition, allCombatants)}
 							toggleAddingToMap={() => this.setAddingToMap(!this.state.addingToMap)}
+							onUpdated={() => this.forceUpdate()}
 						/>
 					</ErrorBoundary>
 					<ErrorBoundary>
