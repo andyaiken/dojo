@@ -1,4 +1,4 @@
-import { FileOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, FileOutlined } from '@ant-design/icons';
 import { Col, notification, Row, Upload } from 'antd';
 import React from 'react';
 
@@ -96,9 +96,9 @@ export default class MapImportModal extends React.Component<Props, State> {
 					// ERROR: Quota exceeded (probably)
 					notification.open({
 						message: 'can\'t upload this image',
-						description: 'not enough storage space for this image ('
-							+ Utils.toData(content.length)
-							+ '); try reducing the resolution or removing unused images'
+						description: 'not enough storage space for this image (' + Utils.toData(content.length) + '); try reducing the resolution or removing unused images',
+						closeIcon: <CloseCircleOutlined />,
+						duration: 5
 					});
 				}
 			}

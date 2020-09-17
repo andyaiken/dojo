@@ -7,11 +7,18 @@ import Svengali from '../../../utils/svengali';
 interface Props {
 	draws: CardDraw[];
 	drawCards: (count: number) => void;
+	resetDraw: () => void;
 }
 
 export default class OracleTool extends React.Component<Props> {
 	public render() {
 		try {
+			if (this.props.draws.length === 0) {
+				return (
+					<button onClick={() => this.props.drawCards(3)}>draw cards</button>
+				);
+			}
+
 			const deck = Svengali.getCards();
 
 			const cards = this.props.draws.map(draw => {
@@ -29,10 +36,10 @@ export default class OracleTool extends React.Component<Props> {
 
 			return (
 				<div>
-					<button onClick={() => this.props.drawCards(3)}>draw cards</button>
 					<Row>
 						{cards}
 					</Row>
+					<button onClick={() => this.props.resetDraw()}>reset</button>
 				</div>
 			);
 		} catch (ex) {
@@ -75,13 +82,14 @@ class Card extends React.Component<CardProps, CardState> {
 						</div>
 						<div className='oracle-card-back'>
 							<div className='oracle-card-name'>
-								{this.props.card.name}
+								<div>{this.props.card.name}</div>
 							</div>
-							<div className='oracle-card-reversed'>
-								{this.props.reversed ? '(reversed)' : ''}
+							<div className='oracle-card-meaning scrollable'>
+								<div>{this.props.reversed ? this.props.card.meanings.reversed : this.props.card.meanings.upright}</div>
 							</div>
-							<div className='oracle-card-meaning'>
-								{this.props.reversed ? this.props.card.meanings.reversed : this.props.card.meanings.upright}
+							<div className='oracle-card-footer'>
+								<div>{this.props.reversed ? '(reversed)' : ''}</div>
+								<div><b>{typeof this.props.card.value === 'number' ? this.props.card.value : ''}</b></div>
 							</div>
 						</div>
 					</div>

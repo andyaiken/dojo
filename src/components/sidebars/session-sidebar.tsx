@@ -261,7 +261,6 @@ export default class SessionSidebar extends React.Component<Props> {
 				combatants={[current]}
 				allCombatants={allCombatants}
 				map={map}
-				defaultTab=''
 				showTabs={false}
 				// Main tab
 				toggleTag={(combatants, tag) => {

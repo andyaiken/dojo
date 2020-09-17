@@ -278,6 +278,11 @@ export default class PageSidebar extends React.Component<Props> {
 								}
 								this.props.onUpdateSidebar(sidebar);
 							}}
+							resetDraw={() => {
+								const sidebar = this.props.sidebar;
+								sidebar.draws = [];
+								this.props.onUpdateSidebar(sidebar);
+							}}
 						/>
 					);
 					break;

@@ -1,3 +1,4 @@
+import { CloseCircleOutlined } from '@ant-design/icons';
 import { Col, Drawer, notification, Row } from 'antd';
 import React from 'react';
 
@@ -34,6 +35,7 @@ import PageHeader from '../panels/page-header';
 import PageSidebar, { Sidebar } from '../panels/page-sidebar';
 import PDF from '../panels/pdf';
 import PortraitPanel from '../panels/portrait-panel';
+import { MessagePanel } from '../panels/session-panel';
 
 interface Props {
 }
@@ -120,8 +122,26 @@ export default class Player extends React.Component<Props, State> {
 				message: (
 					<RollPrompt type={type} notificationKey={key} />
 				),
+				closeIcon: <CloseCircleOutlined />,
 				duration: null
 			});
+		};
+		Comms.onNewMessage = message => {
+			const messagesVisible = this.state.sidebar.visible && (this.state.sidebar.type === 'session') && (this.state.sidebar.subtype === 'messages');
+			if (!messagesVisible) {
+				notification.open({
+					key: message.id,
+					message: (
+						<MessagePanel
+							user='player'
+							message={message}
+							openImage={data => this.setState({drawer: { type: 'image', data: data }})}
+						/>
+					),
+					closeIcon: <CloseCircleOutlined />,
+					duration: 5
+				});
+			}
 		};
 	}
 

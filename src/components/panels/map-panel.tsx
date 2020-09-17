@@ -963,6 +963,11 @@ class MapToken extends React.Component<MapTokenProps> {
 				noteText += '**hidden**';
 			}
 
+			if (this.props.combatant.altitude !== 0) {
+				noteText += '\n\n';
+				noteText += '**altitude**: ' + Math.abs(this.props.combatant.altitude) + ' ft ' + (this.props.combatant.altitude > 0 ? 'up' : 'down');
+			}
+
 			this.props.combatant.tags.forEach(tag => {
 				noteText += '\n\n';
 				noteText += '**' + Gygax.getTagTitle(tag) + '**';
@@ -978,6 +983,11 @@ class MapToken extends React.Component<MapTokenProps> {
 					noteText += '* ' + txt;
 				});
 			});
+
+			if (this.props.combatant.note) {
+				noteText += '\n\n';
+				noteText += this.props.combatant.note;
+			}
 		}
 
 		return noteText.trim();

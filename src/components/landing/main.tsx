@@ -1,3 +1,4 @@
+import { CloseCircleOutlined } from '@ant-design/icons';
 import { Col, Drawer, notification, Row } from 'antd';
 import Mousetrap from 'mousetrap';
 import React from 'react';
@@ -344,6 +345,7 @@ export default class Main extends React.Component<Props, State> {
 							<b>{name}</b> has joined
 						</p>
 					),
+					closeIcon: <CloseCircleOutlined />,
 					duration: 5
 				});
 			}
@@ -359,6 +361,7 @@ export default class Main extends React.Component<Props, State> {
 							openImage={data => this.setState({drawer: { type: 'image', data: data }})}
 						/>
 					),
+					closeIcon: <CloseCircleOutlined />,
 					duration: 5
 				});
 			}
@@ -1655,13 +1658,14 @@ export default class Main extends React.Component<Props, State> {
 											combatant: actor
 										};
 										notification.open({
+											key: n.id,
 											message: (
 												<CombatNotificationPanel
 													notification={n}
 													close={(note, removeCondition) => this.closeNotification(note, removeCondition)}
 												/>
 											),
-											key: n.id,
+											closeIcon: <CloseCircleOutlined />,
 											duration: null
 										});
 									}
@@ -1679,13 +1683,14 @@ export default class Main extends React.Component<Props, State> {
 											combatant: actor
 										};
 										notification.open({
+											key: n.id,
 											message: (
 												<CombatNotificationPanel
 													notification={n}
 													close={(note, removeCondition) => this.closeNotification(note, removeCondition)}
 												/>
 											),
-											key: n.id,
+											closeIcon: <CloseCircleOutlined />,
 											duration: null
 										});
 									}
@@ -1708,13 +1713,14 @@ export default class Main extends React.Component<Props, State> {
 												combatant: actor
 											};
 											notification.open({
+												key: n.id,
 												message: (
 													<CombatNotificationPanel
 														notification={n}
 														close={(note, removeCondition) => this.closeNotification(note, removeCondition)}
 													/>
 												),
-												key: n.id,
+												closeIcon: <CloseCircleOutlined />,
 												duration: null
 											});
 										}
@@ -1740,13 +1746,14 @@ export default class Main extends React.Component<Props, State> {
 							combatant: combatant
 						};
 						notification.open({
+							key: n.id,
 							message: (
 								<CombatNotificationPanel
 									notification={n}
 									close={(note, removeCondition) => this.closeNotification(note, removeCondition)}
 								/>
 							),
-							key: n.id,
+							closeIcon: <CloseCircleOutlined />,
 							duration: null
 						});
 					});
@@ -1907,13 +1914,14 @@ export default class Main extends React.Component<Props, State> {
 										saveNotification.data = c;
 										saveNotification.combatant = actor;
 										notification.open({
+											key: saveNotification.id,
 											message: (
 												<CombatNotificationPanel
 													notification={saveNotification}
 													close={(note, removeCondition) => this.closeNotification(note, removeCondition)}
 												/>
 											),
-											key: saveNotification.id,
+											closeIcon: <CloseCircleOutlined />,
 											duration: null
 										});
 									}
@@ -1929,13 +1937,14 @@ export default class Main extends React.Component<Props, State> {
 										endNotification.data = c;
 										endNotification.combatant = actor;
 										notification.open({
+											key: endNotification.id,
 											message: (
 												<CombatNotificationPanel
 													notification={endNotification}
 													close={(note, removeCondition) => this.closeNotification(note, removeCondition)}
 												/>
 											),
-											key: endNotification.id,
+											closeIcon: <CloseCircleOutlined />,
 											duration: null
 										});
 									}

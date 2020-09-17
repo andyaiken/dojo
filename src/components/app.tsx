@@ -3,6 +3,7 @@ import { HashRouter, Route, Switch } from 'react-router-dom';
 
 import Main from './landing/main';
 import Player from './landing/player';
+import Test from './landing/test';
 
 export default class App extends React.Component {
 	public render() {
@@ -11,6 +12,9 @@ export default class App extends React.Component {
 				<Switch>
 					<Route path='/player'>
 						<Player />
+					</Route>
+					<Route path='/test'>
+						<Test />
 					</Route>
 					<Route>
 						<Main />

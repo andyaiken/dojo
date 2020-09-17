@@ -21,7 +21,9 @@ export interface SavedImage {
 
 export interface OracleCard {
 	id: string;
-	name: string;
+	value: number | string;
+	suit: string | null;
+	name: string | null;
 	meanings: {
 		upright: string,
 		reversed: string

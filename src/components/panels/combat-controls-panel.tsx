@@ -24,8 +24,8 @@ interface Props {
 	combatants: Combatant[];
 	allCombatants: Combatant[];
 	map: Map | null;
-	defaultTab: string;
 	showTabs: boolean;
+	defaultTab: string;
 	// Main tab
 	makeCurrent: (combatant: Combatant) => void;
 	makeActive: (combatants: Combatant[]) => void;
@@ -62,6 +62,7 @@ interface State {
 export default class CombatControlsPanel extends React.Component<Props, State> {
 	public static defaultProps = {
 		showTabs: true,
+		defaultTab: 'main',
 		makeCurrent: null,
 		makeActive: null,
 		makeDefeated: null,
@@ -771,10 +772,35 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 				return (
 					<div>
 						{views.includes('main') ? this.getMainSection() : null}
-						{views.includes('hp') ? this.getHPSection() : null}
-						{views.includes('cond') ? this.getConditionSection() : null}
-						{views.includes('map') ? this.getMapSection() : null}
-						{views.includes('adv') ? <Expander text=''>{this.getAdvancedSection()}</Expander> : null}
+						{views.includes('hp') ? (
+							<div>
+								<hr/>
+								<div className='subheading'>hit points</div>
+								{this.getHPSection()}
+							</div>
+						) : null}
+						{views.includes('cond') ? (
+							<div>
+								<hr/>
+								<div className='subheading'>conditions</div>
+								{this.getConditionSection()}
+							</div>
+						) : null}
+						{views.includes('map') ? (
+							<div>
+								<hr/>
+								<div className='subheading'>map</div>
+								{this.getMapSection()}
+							</div>
+						) : null}
+						{views.includes('adv') ? (
+							<div>
+								<hr/>
+								<Expander text='advanced controls'>
+									{this.getAdvancedSection()}
+								</Expander>
+							</div>
+						) : null}
 					</div>
 				);
 			}

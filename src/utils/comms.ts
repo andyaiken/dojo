@@ -5,6 +5,7 @@ import Peer, { DataConnection } from 'peerjs';
 import recursivediff from 'recursive-diff';
 
 import Matisse from './matisse';
+import Napoleon from './napoleon';
 import Utils from './utils';
 
 import { Combat } from '../models/combat';
@@ -301,6 +302,8 @@ export class Comms {
 						initCombatant.pending = false;
 						initCombatant.active = true;
 					}
+					const combat = Comms.data.shared.data as Combat;
+					Napoleon.sortCombatants(combat);
 				}
 				break;
 			case 'player-shared-update':

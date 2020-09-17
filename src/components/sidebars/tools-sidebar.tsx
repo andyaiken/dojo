@@ -36,6 +36,7 @@ interface Props {
 	// Oracle
 	draws: CardDraw[];
 	drawCards: (count: number) => void;
+	resetDraw: () => void;
 }
 
 export default class ToolsSidebar extends React.Component<Props> {
@@ -103,6 +104,7 @@ export default class ToolsSidebar extends React.Component<Props> {
 						<OracleTool
 							draws={this.props.draws}
 							drawCards={count => this.props.drawCards(count)}
+							resetDraw={() => this.props.resetDraw()}
 						/>
 					);
 					break;

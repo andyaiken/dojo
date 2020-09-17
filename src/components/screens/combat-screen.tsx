@@ -658,7 +658,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 				combatants={selectedCombatants}
 				allCombatants={this.props.combat.combatants}
 				map={this.props.combat.map}
-				defaultTab='main'
 				// Main tab
 				makeCurrent={combatant => this.props.makeCurrent(combatant)}
 				makeActive={combatants => this.props.makeActive(combatants)}

@@ -1,4 +1,4 @@
-import { FileOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, FileOutlined } from '@ant-design/icons';
 import { notification, Upload } from 'antd';
 import React from 'react';
 
@@ -51,7 +51,9 @@ export default class ImageSelectionModal extends React.Component<Props, State> {
 					// ERROR: Quota exceeded (probably)
 					notification.open({
 						message: 'can\'t upload this image',
-						description: 'not enough storage space; try reducing the resolution or removing unused images'
+						description: 'not enough storage space; try reducing the resolution or removing unused images',
+						closeIcon: <CloseCircleOutlined />,
+						duration: 5
 					});
 				}
 			}

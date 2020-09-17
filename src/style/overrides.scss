@@ -250,7 +250,11 @@ button {
 	right: 10px;
 }
 
-.ant-collapse-item-active:hover .ant-collapse-header {
+.ant-collapse-header:hover {
+	background-color: $highlight01;
+}
+
+.ant-collapse-item-active:hover > .ant-collapse-header {
 	background-color: $highlight01;
 }
 
@@ -425,11 +429,11 @@ button {
 
 .ant-notification-notice {
 	width: 400px;
-	padding: 10px;
 	border: 1px solid $control-border;
 	line-height: unset;
 	font-family: 'Open Sans', 'Segoe UI', sans-serif;
 	user-select: none;
+	padding: 10px;
 
 	&.ant-notification-notice-closable {
 
@@ -437,7 +441,7 @@ button {
 			max-height: 250px;
 
 			.ant-notification-notice-message {
-				padding-right: unset;
+				padding-right: 30px;
 				margin-bottom: 0;
 				font-size: 12px;
 				line-height: unset;
@@ -446,7 +450,14 @@ button {
 		}
 
 		.ant-notification-notice-close {
-			display: none;
+			font-size: 20px;
+			top: 5px;
+			right: 10px;
+			background-color: white;
+
+			&:hover {
+				background-color: $highlight01;
+			}
 		}
 	}
 }
