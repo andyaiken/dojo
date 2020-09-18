@@ -2,7 +2,7 @@ import { CaretLeftOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import { Comms, CommsDM } from '../../utils/comms';
+import { Comms, CommsDM } from '../../utils/uhura';
 import Utils from '../../utils/utils';
 
 import { Party, PC } from '../../models/party';

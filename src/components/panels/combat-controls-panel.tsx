@@ -557,6 +557,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 								value={combatant.aura.color}
 								onChange={event => this.props.changeValue(combatant.aura, 'color', event.target.value)}
 							/>
+							<button onClick={() => this.props.changeValue(combatant.aura, 'radius', 0)}>remove aura</button>
 						</div>
 					);
 				}
@@ -714,12 +715,15 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 			}
 
 			notes = (
-				<Textbox
-					text={combatant.note}
-					placeholder='notes'
-					multiLine={true}
-					onChange={value => this.props.changeValue(combatant, 'note', value)}
-				/>
+				<div>
+					<hr/>
+					<Textbox
+						text={combatant.note}
+						placeholder='notes'
+						multiLine={true}
+						onChange={value => this.props.changeValue(combatant, 'note', value)}
+					/>
+				</div>
 			);
 		}
 

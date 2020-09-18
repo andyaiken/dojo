@@ -3,9 +3,9 @@ import { Col, Row, Upload } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
 
-import { Comms, CommsPlayer, Message, Person } from '../../utils/comms';
 import Gygax from '../../utils/gygax';
 import Shakespeare from '../../utils/shakespeare';
+import { Comms, CommsPlayer, Message, Person } from '../../utils/uhura';
 
 import { DieRollResult } from '../../models/dice';
 

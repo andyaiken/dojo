@@ -19,7 +19,7 @@ import { Party, PC } from '../models/party';
 const PULSE_INTERVAL = 60;
 
 export interface Packet {
-	type: 'update' | 'player-info' | 'character-info' | 'message' | 'ask-for-roll' | 'roll-result' | 'player-shared-update';
+	type: 'update' | 'player-info' | 'character-info' | 'message' | 'prompt' | 'roll-result' | 'player-shared-update';
 	payload: any;
 }
 
@@ -64,7 +64,7 @@ export class Comms {
 	public static previousReceivedSharedState: any = null;
 
 	public static onNewMessage: ((message: Message) => void) | null;
-	public static onPromptForRoll: ((type: string) => void) | null;
+	public static onPrompt: ((type: string, characterID: string) => void) | null;
 
 	public static getDefaultData() {
 		const shared: SharedExperience = {
@@ -287,9 +287,11 @@ export class Comms {
 					}
 				}
 				break;
-			case 'ask-for-roll':
-				if (this.onPromptForRoll) {
-					this.onPromptForRoll(packet.payload['roll']);
+			case 'prompt':
+				if (this.onPrompt) {
+					const prompt = packet.payload['prompt'];
+					const characterID = packet.payload['characterID'];
+					this.onPrompt(prompt, characterID);
 				}
 				break;
 			case 'roll-result':
@@ -302,8 +304,10 @@ export class Comms {
 						initCombatant.pending = false;
 						initCombatant.active = true;
 					}
-					const combat = Comms.data.shared.data as Combat;
-					Napoleon.sortCombatants(combat);
+					if (Comms.data.shared.type === 'combat') {
+						const combat = Comms.data.shared.data as Combat;
+						Napoleon.sortCombatants(combat);
+					}
 				}
 				break;
 			case 'player-shared-update':
@@ -670,11 +674,12 @@ export class CommsDM {
 		this.sendSharedUpdate();
 	}
 
-	public static askForRoll(type: string) {
+	public static prompt(type: string, characterID: string = '') {
 		const packet: Packet = {
-			type: 'ask-for-roll',
+			type: 'prompt',
 			payload: {
-				roll: type
+				prompt: type,
+				characterID: characterID
 			}
 		};
 		this.broadcast(packet);
@@ -750,10 +755,14 @@ export class CommsPlayer {
 					this.disconnect();
 				});
 				conn.on('data', data => {
-					const packet = Comms.stringToPacket(data);
-					Comms.processPacket(packet);
-					if (this.onDataChanged) {
-						this.onDataChanged();
+					try {
+						const packet = Comms.stringToPacket(data);
+						Comms.processPacket(packet);
+						if (this.onDataChanged) {
+							this.onDataChanged();
+						}
+					} catch (ex) {
+						console.error(ex);
 					}
 				});
 			}

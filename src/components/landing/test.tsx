@@ -1,4 +1,4 @@
-import { CloseCircleOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { notification } from 'antd';
 import React from 'react';
 
@@ -8,7 +8,11 @@ import PageHeader from '../panels/page-header';
 export default class Test extends React.Component {
 	private testNotification() {
 		notification.open({
-			message: <div>MSG</div>,
+			message: (
+				<div className='section large'>
+					<ExclamationCircleOutlined style={{ paddingRight: '5px' }} /> your turn
+				</div>
+			),
 			closeIcon: <CloseCircleOutlined />,
 			duration: null
 		});

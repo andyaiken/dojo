@@ -2,7 +2,7 @@ import { FileOutlined } from '@ant-design/icons';
 import { Upload } from 'antd';
 import React from 'react';
 
-import { Comms, CommsDM } from '../../../utils/comms';
+import { Comms, CommsDM } from '../../../utils/uhura';
 
 import { Handout } from '../../../models/misc';
 

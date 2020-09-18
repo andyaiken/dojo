@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Comms, CommsDM } from '../../../utils/comms';
+import { Comms, CommsDM } from '../../../utils/uhura';
 
 import { Monster } from '../../../models/monster';
 

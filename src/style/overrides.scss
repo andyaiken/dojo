@@ -428,32 +428,36 @@ button {
 }
 
 .ant-notification-notice {
-	width: 400px;
-	border: 1px solid $control-border;
-	line-height: unset;
-	font-family: 'Open Sans', 'Segoe UI', sans-serif;
-	user-select: none;
-	padding: 10px;
 
 	&.ant-notification-notice-closable {
+		width: 400px;
+		border: 1px solid $control-border;
+		line-height: unset;
+		font-family: 'Open Sans', 'Segoe UI', sans-serif;
+		user-select: none;
+		padding: 10px;
+		display: flex;
+		align-items: center;
 
 		.ant-notification-notice-content {
 			max-height: 250px;
+			flex: 1 1 0;
 
 			.ant-notification-notice-message {
-				padding-right: 30px;
+				padding-right: 5px;
 				margin-bottom: 0;
 				font-size: 12px;
 				line-height: unset;
 				width: 100%;
+				color: rgba(0, 0, 0, 0.65);
 			}
 		}
 
 		.ant-notification-notice-close {
 			font-size: 20px;
-			top: 5px;
-			right: 10px;
+			position: unset;
 			background-color: white;
+			color: rgba(0, 0, 0, 0.65);
 
 			&:hover {
 				background-color: $highlight01;

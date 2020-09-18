@@ -3,10 +3,10 @@ import { Col, Row } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
 
-import { Comms, CommsDM } from '../../utils/comms';
 import Factory from '../../utils/factory';
 import Mercator from '../../utils/mercator';
 import Napoleon from '../../utils/napoleon';
+import { Comms, CommsDM } from '../../utils/uhura';
 import Utils from '../../utils/utils';
 
 import { Combat, Combatant } from '../../models/combat';
@@ -774,9 +774,9 @@ export default class CombatScreen extends React.Component<Props, State> {
 			));
 			if (pending.length !== 0) {
 				let ask = null;
-				if ((CommsDM.getState() === 'started') && (Comms.data.people.some(p => p.characterID !== ''))) {
+				if ((CommsDM.getState() === 'started') && (Comms.data.shared.type === 'combat') && (Comms.data.people.some(p => p.characterID !== ''))) {
 					ask = (
-						<button onClick={() => CommsDM.askForRoll('initiative')}>ask for initiative rolls</button>
+						<button onClick={() => CommsDM.prompt('initiative')}>ask for initiative rolls</button>
 					);
 				}
 				pendingList.unshift(

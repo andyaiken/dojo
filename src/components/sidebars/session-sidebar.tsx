@@ -1,11 +1,11 @@
 import { CopyOutlined } from '@ant-design/icons';
 import React from 'react';
 
-import { Comms, CommsDM, CommsPlayer } from '../../utils/comms';
 import Factory from '../../utils/factory';
 import Gygax from '../../utils/gygax';
 import Mercator from '../../utils/mercator';
 import Napoleon from '../../utils/napoleon';
+import { Comms, CommsDM, CommsPlayer } from '../../utils/uhura';
 import Utils from '../../utils/utils';
 
 import { Combat, Combatant } from '../../models/combat';
@@ -195,6 +195,7 @@ export default class SessionSidebar extends React.Component<Props> {
 	private getNotConnectedContent() {
 		return (
 			<Note>
+				<p>you're not yet connected to the session</p>
 				<p>when you are connected, this sidebar will allow you to manage your presence</p>
 			</Note>
 		);

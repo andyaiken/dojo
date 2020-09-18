@@ -215,6 +215,10 @@ p,
 		text-align: right;
 	}
 
+	&.large {
+		font-size: 15px;
+	}
+
 	&.small {
 		font-size: 10px;
 		font-weight: normal;

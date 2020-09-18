@@ -1,13 +1,13 @@
-import { CloseCircleOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Col, Drawer, notification, Row } from 'antd';
 import React from 'react';
 
-import { Comms, CommsPlayer } from '../../utils/comms';
 import Factory from '../../utils/factory';
 import Gygax from '../../utils/gygax';
 import Matisse from '../../utils/matisse';
 import Mercator from '../../utils/mercator';
 import Napoleon from '../../utils/napoleon';
+import { Comms, CommsPlayer } from '../../utils/uhura';
 import Utils from '../../utils/utils';
 
 import { Combat, Combatant } from '../../models/combat';
@@ -111,20 +111,43 @@ export default class Player extends React.Component<Props, State> {
 			Comms.data.shared.images.forEach(img => Matisse.saveImage(img.id, img.name, img.data));
 			this.forceUpdate();
 		};
-		Comms.onPromptForRoll = type => {
-			if (Comms.getCharacterID(Comms.getID()) === '') {
-				return;
-			}
+		Comms.onPrompt = (type, characterID) => {
+			switch (type) {
+				case 'initiative':
+					if (Comms.data.shared.type === 'combat') {
+						if (Comms.getCharacterID(Comms.getID()) === '') {
+							return;
+						}
 
-			const key = Utils.guid();
-			notification.open({
-				key: key,
-				message: (
-					<RollPrompt type={type} notificationKey={key} />
-				),
-				closeIcon: <CloseCircleOutlined />,
-				duration: null
-			});
+						const key = Utils.guid();
+						notification.open({
+							key: key,
+							message: (
+								<RollPrompt type='initiative' notificationKey={key} />
+							),
+							closeIcon: <CloseCircleOutlined />,
+							duration: null
+						});
+					}
+					break;
+				case 'new-turn':
+					if (Comms.data.shared.type === 'combat') {
+						if ((characterID === Comms.getCharacterID(Comms.getID()))) {
+							const key = Utils.guid();
+							notification.open({
+								key: key,
+								message: (
+									<div className='section large'>
+										<ExclamationCircleOutlined style={{ paddingRight: '5px' }} /> it's your turn now
+									</div>
+								),
+								closeIcon: <CloseCircleOutlined />,
+								duration: 5
+							});
+						}
+					}
+					break;
+			}
 		};
 		Comms.onNewMessage = message => {
 			const messagesVisible = this.state.sidebar.visible && (this.state.sidebar.type === 'session') && (this.state.sidebar.subtype === 'messages');
@@ -148,7 +171,7 @@ export default class Player extends React.Component<Props, State> {
 	public componentWillUnmount() {
 		CommsPlayer.onStateChanged = null;
 		CommsPlayer.onDataChanged = null;
-		Comms.onPromptForRoll = null;
+		Comms.onPrompt = null;
 
 		CommsPlayer.disconnect();
 	}

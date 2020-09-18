@@ -3,13 +3,13 @@ import { Col, Drawer, notification, Row } from 'antd';
 import Mousetrap from 'mousetrap';
 import React from 'react';
 
-import { Comms, CommsDM } from '../../utils/comms';
 import Factory from '../../utils/factory';
 import Frankenstein from '../../utils/frankenstein';
 import Gygax from '../../utils/gygax';
 import Matisse from '../../utils/matisse';
 import Mercator from '../../utils/mercator';
 import Napoleon from '../../utils/napoleon';
+import { Comms, CommsDM } from '../../utils/uhura';
 import Utils from '../../utils/utils';
 
 import { Combat, Combatant, CombatSetup, Notification } from '../../models/combat';
@@ -1777,6 +1777,10 @@ export default class Main extends React.Component<Props, State> {
 
 			this.setState({
 				combats: this.state.combats
+			}, () => {
+				if (combatant) {
+					CommsDM.prompt('new-turn', combatant.id);
+				}
 			});
 		}
 	}

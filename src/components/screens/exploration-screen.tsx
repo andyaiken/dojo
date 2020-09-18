@@ -1,9 +1,9 @@
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import { Comms, CommsDM } from '../../utils/comms';
 import Gygax from '../../utils/gygax';
 import Mercator from '../../utils/mercator';
+import { Comms, CommsDM } from '../../utils/uhura';
 
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
