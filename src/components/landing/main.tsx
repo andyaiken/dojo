@@ -409,6 +409,9 @@ export default class Main extends React.Component<Props, State> {
 			case 'session':
 				subtype = 'management';
 				break;
+			case 'about':
+				subtype = 'dojo';
+				break;
 		}
 
 		const sidebar = this.state.sidebar;
@@ -1777,10 +1780,6 @@ export default class Main extends React.Component<Props, State> {
 
 			this.setState({
 				combats: this.state.combats
-			}, () => {
-				if (combatant) {
-					CommsDM.prompt('new-turn', combatant.id);
-				}
 			});
 		}
 	}

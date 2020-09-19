@@ -520,6 +520,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 		if (allOnMap) {
 			let altitude = null;
 			let aura = null;
+			let place = null;
 			if (this.props.combatants.length === 1) {
 				const combatant = this.props.combatants[0];
 				altitude = (
@@ -572,6 +573,9 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 						{auraDetails}
 					</Expander>
 				);
+				place = (
+					<button key='mapPlace' onClick={() => this.props.mapAdd(combatant)}>place on a different square</button>
+				);
 			}
 
 			return (
@@ -580,6 +584,7 @@ export default class CombatControlsPanel extends React.Component<Props, State> {
 					<hr/>
 					{altitude}
 					{aura}
+					{place}
 					<button onClick={() => this.props.mapRemove(this.props.combatants)}>remove from map</button>
 				</div>
 			);

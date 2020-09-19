@@ -80,7 +80,7 @@ export class Comms {
 			party: null,
 			shared: shared,
 			options: {
-				allowChat: true,
+				allowChat: false,
 				allowControls: false
 			}
 		};

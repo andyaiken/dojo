@@ -48,6 +48,7 @@ interface Props {
 
 interface State {
 	playerViewOpen: boolean;
+	addingToMapID: string | null;
 	editFog: boolean;
 	highlightMapSquare: boolean;
 	highlightedSquare: { x: number, y: number} | null;
@@ -60,6 +61,7 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 		super(props);
 		this.state = {
 			playerViewOpen: false,
+			addingToMapID: null,
 			editFog: false,
 			highlightMapSquare: false,
 			highlightedSquare: null,
@@ -75,7 +77,7 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 	}
 
 	public componentDidUpdate() {
-		if (Comms.data.shared.type === 'combat') {
+		if (Comms.data.shared.type === 'exploration') {
 			Comms.data.shared.additional = {
 				selectedAreaID: this.state.selectedAreaID,
 				highlightedSquare: this.state.highlightedSquare
@@ -87,6 +89,15 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 	private setPlayerViewOpen(open: boolean) {
 		this.setState({
 			playerViewOpen: open
+		});
+	}
+
+	private setAddingToMapID(id: string | null) {
+		this.setState({
+			addingToMapID: id,
+			editFog: false,
+			highlightMapSquare: false,
+			highlightedSquare: null
 		});
 	}
 
@@ -177,10 +188,13 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 	}
 
 	private gridSquareClicked(x: number, y: number, playerView: boolean) {
-		const combatant = this.props.exploration.combatants.find(c => c.id === this.state.selectedCombatantIDs[0]);
-		const mapItem = this.props.exploration.map.items.find(i => i.id === this.state.selectedCombatantIDs[0]);
-		if (combatant && !mapItem) {
-			this.props.mapAdd(combatant, x, y);
+		if (this.state.addingToMapID) {
+			const combatant = this.props.exploration.combatants.find(c => c.id === this.state.addingToMapID);
+			if (combatant) {
+				this.props.mapAdd(combatant, x, y);
+			}
+
+			this.setAddingToMapID(null);
 		}
 
 		if (this.state.editFog && !playerView) {
@@ -203,15 +217,13 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 	}
 
 	private getMap(playerView: boolean) {
-		const adding = (this.state.selectedCombatantIDs.length === 1) && !this.props.exploration.map.items.find(i => i.id === this.state.selectedCombatantIDs[0]);
-
 		return (
 			<MapPanel
 				map={this.props.exploration.map}
 				mode={playerView ? 'combat-player' : 'combat'}
 				viewport={Mercator.getViewport(this.props.exploration.map, this.state.selectedAreaID)}
 				combatants={this.props.exploration.combatants}
-				showGrid={(adding || this.state.editFog || this.state.highlightMapSquare) && !playerView}
+				showGrid={((this.state.addingToMapID !== null) || this.state.editFog || this.state.highlightMapSquare) && !playerView}
 				selectedItemIDs={this.state.selectedCombatantIDs}
 				fog={this.props.exploration.fog}
 				focussedSquare={this.state.highlightedSquare}
@@ -330,7 +342,7 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 							editCondition={(combatant, condition) => this.props.editCondition(combatant, condition)}
 							removeCondition={(combatant, condition) => this.props.removeCondition(combatant, condition)}
 							// Map tab
-							mapAdd={combatant => null}
+							mapAdd={combatant => this.setAddingToMapID(this.state.addingToMapID ? null : combatant.id)}
 							mapMove={(combatants, dir) => this.props.mapMove(combatants.map(c => c.id), dir)}
 							mapRemove={combatants => this.mapRemove(combatants)}
 							onChangeAltitude={(combatant, value) => this.props.onChangeAltitude(combatant, value)}
@@ -352,7 +364,7 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 							<NotOnMapInitiativeEntry
 								key={pc.id}
 								combatant={pc}
-								addToMap={() => this.setSelectedCombatantIDs([pc.id])}
+								addToMap={() => this.setAddingToMapID(pc.id)}
 							/>
 						);
 					});

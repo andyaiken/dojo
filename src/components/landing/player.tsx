@@ -1,4 +1,4 @@
-import { CloseCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined } from '@ant-design/icons';
 import { Col, Drawer, notification, Row } from 'antd';
 import React from 'react';
 
@@ -130,27 +130,10 @@ export default class Player extends React.Component<Props, State> {
 						});
 					}
 					break;
-				case 'new-turn':
-					if (Comms.data.shared.type === 'combat') {
-						if ((characterID === Comms.getCharacterID(Comms.getID()))) {
-							const key = Utils.guid();
-							notification.open({
-								key: key,
-								message: (
-									<div className='section large'>
-										<ExclamationCircleOutlined style={{ paddingRight: '5px' }} /> it's your turn now
-									</div>
-								),
-								closeIcon: <CloseCircleOutlined />,
-								duration: 5
-							});
-						}
-					}
-					break;
 			}
 		};
 		Comms.onNewMessage = message => {
-			const messagesVisible = this.state.sidebar.visible && (this.state.sidebar.type === 'session') && (this.state.sidebar.subtype === 'messages');
+			const messagesVisible = this.state.sidebar.visible && (this.state.sidebar.type === 'session-chat');
 			if (!messagesVisible) {
 				notification.open({
 					key: message.id,
@@ -192,8 +175,8 @@ export default class Player extends React.Component<Props, State> {
 			case 'reference':
 				subtype = 'skills';
 				break;
-			case 'session':
-				subtype = 'management';
+			case 'about':
+				subtype = 'dojo';
 				break;
 		}
 
@@ -351,6 +334,16 @@ export default class Player extends React.Component<Props, State> {
 		const selectedAreaID = additional['selectedAreaID'] as string ?? '';
 		const highlightedSquare = additional['highlightedSquare'] as { x: number, y: number} | null ?? null;
 
+		let banner = null;
+		const current = combat.combatants.find(c => c.current);
+		if (current && (current.id === characterID)) {
+			banner = (
+				<Note>
+					<p>you are the current initiative holder</p>
+				</Note>
+			);
+		}
+
 		const initList = (
 			<InitiativeOrder
 				combat={combat}
@@ -392,6 +385,7 @@ export default class Player extends React.Component<Props, State> {
 
 		return (
 			<div className='scrollable'>
+				{banner}
 				<GridPanel
 					heading='encounter map'
 					content={[map]}
