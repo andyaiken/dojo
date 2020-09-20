@@ -1,12 +1,12 @@
 {
 	"name": "dojo",
-	"version": "10.8.0",
+	"version": "10.8.1",
 	"license": "MIT",
 	"repository": "https://github.com/andyaiken/dojo.git",
 	"homepage": "https://andyaiken.github.io/dojo/",
 	"dependencies": {
 		"@ant-design/icons": "^4.2.2",
-		"antd": "^4.6.4",
+		"antd": "^4.6.5",
 		"lz-string": "^1.4.4",
 		"mousetrap": "^1.6.5",
 		"peerjs": "^1.3.1",
@@ -25,7 +25,7 @@
 		"@types/mousetrap": "^1.6.3",
 		"@types/react": "^16.9.49",
 		"@types/react-dom": "^16.9.8",
-		"@types/react-pdf": "^4.0.5",
+		"@types/react-pdf": "^4.0.6",
 		"@types/react-router-dom": "^5.1.5",
 		"@types/showdown": "^1.9.3",
 		"@types/uuid": "^8.3.0",

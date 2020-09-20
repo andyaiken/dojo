@@ -305,7 +305,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 
 		if (this.state.addingOverlay) {
 			const overlay = Factory.createMapItem();
-			overlay.type = 'overlay';
+			overlay.type = 'token';
 			overlay.x = x;
 			overlay.y = y;
 			overlay.width = 1;
@@ -323,29 +323,46 @@ export default class CombatScreen extends React.Component<Props, State> {
 		}
 
 		if (this.state.editFog) {
-			this.toggleFog(x, y, x, y);
+			this.gridRectangleSelected(x, y, x, y);
 		}
 	}
 
-	private toggleFog(x1: number, y1: number, x2: number, y2: number) {
-		if (!this.state.editFog) {
-			return;
+	private gridRectangleSelected(x1: number, y1: number, x2: number, y2: number) {
+		if (this.state.addingOverlay) {
+			const overlay = Factory.createMapItem();
+			overlay.type = 'overlay';
+			overlay.x = x1;
+			overlay.y = y1;
+			overlay.width = (x2 - x1) + 1;
+			overlay.height = (y2 - y1) + 1;
+			overlay.color = '#005080';
+			overlay.opacity = 127;
+			overlay.style = 'square';
+
+			this.props.addOverlay(overlay);
+			this.setState({
+				addingOverlay: false,
+				addingToMapID: null,
+				selectedItemIDs: [overlay.id]
+			});
 		}
 
-		const fog = this.props.combat.fog;
+		if (this.state.editFog) {
+			const fog = this.props.combat.fog;
 
-		for (let x = x1; x <= x2; ++x) {
-			for (let y = y1; y <= y2; ++y) {
-				const index = fog.findIndex(i => (i.x === x) && (i.y === y));
-				if (index === -1) {
-					fog.push({ x: x, y: y });
-				} else {
-					fog.splice(index, 1);
+			for (let x = x1; x <= x2; ++x) {
+				for (let y = y1; y <= y2; ++y) {
+					const index = fog.findIndex(i => (i.x === x) && (i.y === y));
+					if (index === -1) {
+						fog.push({ x: x, y: y });
+					} else {
+						fog.splice(index, 1);
+					}
 				}
 			}
-		}
 
-		this.props.setFog(fog);
+			this.props.setFog(fog);
+		}
 	}
 
 	//#region Rendering helper methods
@@ -475,7 +492,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 					{pcs}
 					{monsters}
 					<Checkbox
-						label={this.state.addingOverlay ? 'click on the map to add the item, or click here to cancel' : 'add token / overlay'}
+						label={this.state.addingOverlay ? 'click on a map square to add a token, select a rectangle to add an overlay, or click here to cancel' : 'add token / overlay'}
 						display='button'
 						checked={this.state.addingOverlay}
 						onChecked={() => this.toggleAddingOverlay()}
@@ -872,7 +889,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 							areaSelected={id => this.setSelectedAreaID(id)}
 							gridSquareEntered={(x, y) => this.setHighlightedSquare(x, y)}
 							gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
-							gridRectangleSelected={(x1, y1, x2, y2) => this.toggleFog(x1, y1, x2, y2)}
+							gridRectangleSelected={(x1, y1, x2, y2) => this.gridRectangleSelected(x1, y1, x2, y2)}
 						/>
 					</div>
 				);
