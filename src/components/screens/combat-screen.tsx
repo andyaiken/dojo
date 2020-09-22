@@ -66,7 +66,7 @@ interface Props {
 	toggleTag: (combatants: Combatant[], tag: string) => void;
 	toggleCondition: (combatants: Combatant[], condition: string) => void;
 	toggleHidden: (combatants: Combatant[]) => void;
-	scatterCombatants: (type: 'pc' | 'monster', areaID: string | null) => void;
+	scatterCombatants: (combatants: Combatant[], areaID: string | null) => void;
 	rotateMap: () => void;
 	setFog: (fog: { x: number, y: number }[]) => void;
 	addOverlay: (overlay: MapItem) => void;
@@ -474,23 +474,9 @@ export default class CombatScreen extends React.Component<Props, State> {
 
 		let map = null;
 		if (this.props.combat.map) {
-			let pcs = null;
-			if (this.props.combat.combatants.some(c => c.type === 'pc')) {
-				pcs = (
-					<button onClick={() => this.props.scatterCombatants('pc', this.state.selectedAreaID)}>scatter pcs</button>
-				);
-			}
-			let monsters = null;
-			if (this.props.combat.combatants.some(c => c.type === 'monster')) {
-				monsters = (
-					<button onClick={() => this.props.scatterCombatants('monster', this.state.selectedAreaID)}>scatter monsters</button>
-				);
-			}
 			map = (
 				<div>
 					<div className='subheading'>map</div>
-					{pcs}
-					{monsters}
 					<Checkbox
 						label={this.state.addingOverlay ? 'click on a map square to add a token, select a rectangle to add an overlay, or click here to cancel' : 'add token / overlay'}
 						display='button'
@@ -839,32 +825,42 @@ export default class CombatScreen extends React.Component<Props, State> {
 			} else {
 				currentSection = (
 					<Note>
-						<div className='section'>when you're ready to begin the encounter, press the <b>start combat</b> button (above)</div>
-						<div className='section'>the current initiative holder will be displayed here</div>
+						<div className='section'>
+							when you're ready to begin the encounter, press the <b>start combat</b> button (above)
+						</div>
+						<div className='section'>
+							the current initiative holder will be displayed here
+						</div>
 					</Note>
 				);
 
 				if (this.props.combat.map) {
 					const notOnMap = Napoleon.getActiveCombatants(this.props.combat, false, this.state.showDefeatedCombatants)
-						.filter(c => this.props.combat.map && !this.props.combat.map.items.find(i => i.id === c.id))
-						.map(c => {
-							return (
-								<NotOnMapInitiativeEntry
-									key={c.id}
-									combatant={c}
-									addToMap={() => this.setAddingToMapID(c.id)}
-								/>
-							);
-						});
+						.filter(c => this.props.combat.map && !this.props.combat.map.items.find(i => i.id === c.id));
 					if (notOnMap.length > 0) {
 						/* tslint:disable:max-line-length */
 						notOnMapSection = (
 							<div>
 								<Note>
-									<div className='section'>these combatants are in the initiative order, but have not yet been placed on the map (which you'll find in the middle column)</div>
-									<div className='section'>to place one on the map, click the <b>place on map</b> button and then click on a map square</div>
+									<div className='section'>
+										these combatants are in the initiative order, but have not yet been placed on the map (which you'll find in the middle column)
+									</div>
+									<div className='section'>
+										to place one on the map, click the <b>place on map</b> button and then click on a map square
+									</div>
+									<div className='section'>
+										or click <button className='link' onClick={() => this.props.scatterCombatants(notOnMap, this.state.selectedAreaID)}>here</button> to scatter them randomly
+									</div>
 								</Note>
-								{notOnMap}
+								{
+									notOnMap.map(c => (
+										<NotOnMapInitiativeEntry
+											key={c.id}
+											combatant={c}
+											addToMap={() => this.setAddingToMapID(c.id)}
+										/>
+									))
+								}
 							</div>
 						);
 						/* tslint:enable:max-line-length */

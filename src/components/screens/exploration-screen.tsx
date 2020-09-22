@@ -40,6 +40,7 @@ interface Props {
 	mapMove: (ids: string[], dir: string) => void;
 	mapRemove: (ids: string[]) => void;
 	onChangeAltitude: (combatant: Combatant, value: number) => void;
+	scatterCombatants: (combatants: Combatant[], areaID: string | null) => void;
 	rotateMap: () => void;
 	getMonster: (id: string) => Monster | null;
 	pauseExploration: () => void;
@@ -359,24 +360,32 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 			} else {
 				const notOnMap = this.props.exploration.combatants.filter(pc => !this.props.exploration.map.items.find(i => i.id === pc.id));
 				if (notOnMap.length) {
-					const missing = notOnMap.map(pc => {
-						return (
-							<NotOnMapInitiativeEntry
-								key={pc.id}
-								combatant={pc}
-								addToMap={() => this.setAddingToMapID(pc.id)}
-							/>
-						);
-					});
+					/* tslint:disable:max-line-length */
 					const section = (
 						<div>
 							<Note>
-								<div className='section'>these pcs have not yet been placed on the map</div>
-								<div className='section'>to place one on the map, click the <b>place on map</b> button and then click on a map square</div>
+								<div className='section'>
+									these pcs have not yet been placed on the map
+								</div>
+								<div className='section'>
+									to place one on the map, click the <b>place on map</b> button and then click on a map square
+								</div>
+								<div className='section'>
+									or click <button className='link' onClick={() => this.props.scatterCombatants(notOnMap, this.state.selectedAreaID)}>here</button> to scatter them randomly
+								</div>
 							</Note>
-							{missing}
+							{
+								notOnMap.map(pc => (
+									<NotOnMapInitiativeEntry
+										key={pc.id}
+										combatant={pc}
+										addToMap={() => this.setAddingToMapID(pc.id)}
+									/>
+								))
+							}
 						</div>
 					);
+					/* tslint:enable:max-line-length */
 					rightSidebar = (
 						<GridPanel
 							heading='not on the map'

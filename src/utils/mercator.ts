@@ -5,20 +5,16 @@ import Gygax from './gygax';
 import Shakespeare from './shakespeare';
 import Utils from './utils';
 
-import { Combat, Combatant } from '../models/combat';
+import { Combatant } from '../models/combat';
 import { DOORWAY_TYPES, Map, MapItem } from '../models/map';
 
 export default class Mercator {
-	public static scatterCombatants(combat: Combat, type: 'pc' | 'monster', areaID: string | null) {
-		if (!combat.map) {
-			return;
-		}
-
-		// Remove all monsters from the map
-		combat.map.items = combat.map.items.filter(item => item.type !== type);
+	public static scatterCombatants(map: Map, combatants: Combatant[], areaID: string | null) {
+		// Remove these combatants from the map
+		map.items = map.items.filter(item => !combatants.map(c => c.id).includes(item.id));
 
 		// Find map dimensions
-		const tiles = combat.map.items.filter(item => item.type === 'tile');
+		const tiles = map.items.filter(item => item.type === 'tile');
 		if (tiles.length > 0) {
 			let areaDimensions: {
 				minX: number;
@@ -27,7 +23,7 @@ export default class Mercator {
 				maxY: number;
 			} | null = null;
 			if (areaID) {
-				const area = combat.map.areas.find(a => a.id === areaID);
+				const area = map.areas.find(a => a.id === areaID);
 				if (area) {
 					areaDimensions = {
 						minX: area.x,
@@ -37,36 +33,35 @@ export default class Mercator {
 					};
 				}
 			}
-			const dimensions = areaDimensions || Mercator.mapDimensions(combat.map.items);
+			const dimensions = areaDimensions || Mercator.mapDimensions(map.items);
 			if (dimensions) {
-				const monsters = combat.combatants.filter(combatant => combatant.type === type);
-				monsters.forEach(combatant => {
+				combatants.forEach(combatant => {
 					const candidateSquares: {x: number, y: number}[] = [];
 
 					// Find all squares that we could add this monster to
 					for (let x = dimensions.minX; x <= dimensions.maxX; ++x) {
 						for (let y = dimensions.minY; y <= dimensions.maxY; ++y) {
 							// Could we add this monster to this square?
-							const canAddHere = Mercator.canAddMonsterHere(combat.map as Map, combatant, x, y);
+							const canAddHere = Mercator.canAddMonsterHere(map, combatant, x, y);
 							if (canAddHere) {
 								candidateSquares.push({x: x, y: y});
 							}
 						}
 					}
 
-					if ((candidateSquares.length > 0) && combat.map) {
+					if (candidateSquares.length > 0) {
 						const index = Math.floor(Math.random() * candidateSquares.length);
 						const square = candidateSquares[index];
 						const size = Gygax.miniSize(combatant.displaySize);
 
 						const item = Factory.createMapItem();
 						item.id = combatant.id;
-						item.type = type;
+						item.type = combatant.type as ('pc' | 'monster' | 'companion');
 						item.x = square.x;
 						item.y = square.y;
 						item.height = size;
 						item.width = size;
-						combat.map.items.push(item);
+						map.items.push(item);
 					}
 				});
 			}

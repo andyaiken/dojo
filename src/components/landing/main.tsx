@@ -2013,18 +2013,6 @@ export default class Main extends React.Component<Props, State> {
 
 	// Map methods
 
-	private scatterCombatants(type: 'pc' | 'monster', areaID: string | null) {
-		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-		if (combat && combat.map) {
-			Mercator.scatterCombatants(combat, type, areaID);
-			Napoleon.setMountPositions(combat.combatants, combat.map);
-
-			this.setState({
-				combats: this.state.combats
-			});
-		}
-	}
-
 	private setFog(fog: { x: number, y: number }[]) {
 		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
 		if (combat) {
@@ -2168,6 +2156,16 @@ export default class Main extends React.Component<Props, State> {
 
 	private removeCondition(combatant: Combatant, condition: Condition) {
 		combatant.conditions = combatant.conditions.filter(cnd => cnd.name !== condition.name);
+
+		this.setState({
+			combats: this.state.combats,
+			explorations: this.state.explorations
+		});
+	}
+
+	private scatterCombatants(combatants: Combatant[], allCombatants: Combatant[], map: Map, areaID: string | null) {
+		Mercator.scatterCombatants(map, combatants, areaID);
+		Napoleon.setMountPositions(allCombatants, map);
 
 		this.setState({
 			combats: this.state.combats,
@@ -2507,7 +2505,10 @@ export default class Main extends React.Component<Props, State> {
 							toggleTag={(combatants, tag) => this.toggleTag(combatants, tag)}
 							toggleCondition={(combatants, condition) => this.toggleCondition(combatants, condition)}
 							toggleHidden={combatants => this.toggleHidden(combatants)}
-							scatterCombatants={(type, areaID) => this.scatterCombatants(type, areaID)}
+							scatterCombatants={(combatants, areaID) => {
+								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
+								this.scatterCombatants(combatants, combat.combatants, combat.map as Map, areaID);
+							}}
 							rotateMap={() => {
 								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
 								this.rotateMap(combat.map as Map);
@@ -2589,6 +2590,10 @@ export default class Main extends React.Component<Props, State> {
 							onChangeAltitude={(combatant, value) => {
 								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
 								this.setAltitude(combatant, value, ex.combatants);
+							}}
+							scatterCombatants={(combatants, areaID) => {
+								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
+								this.scatterCombatants(combatants, ex.combatants, ex.map, areaID);
 							}}
 							rotateMap={() => {
 								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;

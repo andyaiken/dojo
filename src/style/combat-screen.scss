@@ -1,26 +1,17 @@
 .combat-top-row {
 	height: 50px;
-	background-color: rgb(110, 110, 110);
+	background-color: #f0f0f0;
+	border-bottom: 1px solid $control-border;
 
 	.action {
 		padding: 0 10px;
-	}
-
-	.statistic {
-		color: $header-foreground;
 	}
 
 	.menu {
 		padding: 0 10px;
 		text-align: right;
 		font-size: 26px;
-		color: $header-foreground;
 	}
-}
-
-.combat-options-row {
-	background-color: rgb(110, 110, 110);
-	column-count: 3;
 }
 
 .combat-main {
