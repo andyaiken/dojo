@@ -512,7 +512,6 @@ export default class Gygax {
 				];
 			case 'petrified':
 				return [
-					/* tslint:disable-next-line:max-line-length */
 					'a petrified creature is transformed, along with any nonmagical objects it is wearing or carrying, into a solid inanimate substance (usually stone)',
 					'its weight increases by a factor of ten, and it ceases aging',
 					'the creature is incapacitated (can’t take actions or reactions), can’t move or speak, and is unaware of its surroundings',
@@ -529,7 +528,6 @@ export default class Gygax {
 				return [
 					'a prone creature’s only movement option is to crawl, unless it stands up (using half its speed) and thereby ends the condition',
 					'the creature has disadvantage on attack rolls',
-					/* tslint:disable-next-line:max-line-length */
 					'an attack roll against the creature has advantage if the attacker is Within 5 feet of the creature; otherwise, the attack roll has disadvantage'
 				];
 			case 'restrained':

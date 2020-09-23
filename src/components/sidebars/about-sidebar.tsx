@@ -6,9 +6,11 @@ import Utils from '../../utils/utils';
 
 import { Combat } from '../../models/combat';
 import { Exploration, Map } from '../../models/map';
+import { Options } from '../../models/misc';
 import { MonsterGroup } from '../../models/monster';
 import { Party } from '../../models/party';
 
+import Checkbox from '../controls/checkbox';
 import Selector from '../controls/selector';
 import Note from '../panels/note';
 
@@ -20,6 +22,8 @@ interface Props {
 	maps: Map[];
 	combats: Combat[];
 	explorations: Exploration[];
+	options: Options;
+	setOption: (option: string, value: any) => void;
 }
 
 interface State {
@@ -55,7 +59,6 @@ export default class AboutSidebar extends React.Component<Props, State> {
 			let content = null;
 			switch (this.state.view) {
 				case 'dojo':
-					/* tslint:disable:max-line-length */
 					content = (
 						<div>
 							<div className='section'>
@@ -72,7 +75,6 @@ export default class AboutSidebar extends React.Component<Props, State> {
 							</div>
 						</div>
 					);
-					/* tslint:enable:max-line-length */
 					break;
 				case 'settings':
 					let data = 0;
@@ -93,6 +95,16 @@ export default class AboutSidebar extends React.Component<Props, State> {
 					}
 					content = (
 						<div>
+							<Note>
+							<div className='section'>
+									turn this setting on to add die roll buttons to monster stat blocks
+								</div>
+							</Note>
+							<Checkbox
+								label='show monster die rolls'
+								checked={this.props.options.showMonsterDieRolls}
+								onChecked={checked => this.props.setOption('showMonsterDieRolls', checked)}
+							/>
 							<Note>
 								<div className='section'>
 									the browser has a limited amount of image storage space

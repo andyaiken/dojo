@@ -11,7 +11,7 @@
 		"jsx-no-lambda": false,
 		"jsx-no-multiline-js": false,
 		"max-classes-per-file": false,
-		"max-line-length": [true, 160],
+		"max-line-length": [true, 200],
 		"member-ordering": [true, "fields-first"],
 		"no-console": [true, "log"],
 		"no-empty-interface": false,

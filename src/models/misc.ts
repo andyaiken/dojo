@@ -1,3 +1,26 @@
+import { DieRollResult } from './dice';
+
+export interface Options {
+	showMonsterDieRolls: boolean;
+}
+
+export interface Sidebar {
+	visible: boolean;
+	type: string;
+	subtype: string;
+	dice: { [sides: number]: number };
+	constant: number;
+	dieRolls: DieRollResult[];
+	handout: Handout | null;
+	languagePreset: string | null;
+	selectedLanguages: string[];
+	languageOutput: string[];
+	draws: CardDraw[];
+	npc: NPC | null;
+	selectedPartyID: string | null;
+	selectedMonsterID: string | null;
+}
+
 export interface NPC {
 	age: string;
 	profession: string;

@@ -90,7 +90,6 @@ export default class TraitsPanel extends React.Component<Props> {
 						}
 					}
 					if (type === 'legendary') {
-						/* tslint:disable:max-line-length */
 						info = (
 							<Note white={true}>
 								{count}
@@ -100,16 +99,13 @@ export default class TraitsPanel extends React.Component<Props> {
 								{usage}
 							</Note>
 						);
-						/* tslint:enable:max-line-length */
 					}
 					if (type === 'mythic') {
-						/* tslint:disable:max-line-length */
 						info = (
 							<Note white={true}>
 								while the monster's mythic trait is active, the following can be used as legendary actions
 							</Note>
 						);
-						/* tslint:enable:max-line-length */
 					}
 					break;
 				case 'lair':

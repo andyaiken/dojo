@@ -1,4 +1,3 @@
-import { MinusCircleOutlined } from '@ant-design/icons';
 import { Tag } from 'antd';
 import React from 'react';
 
@@ -6,8 +5,7 @@ import Frankenstein from '../../utils/frankenstein';
 import Gygax from '../../utils/gygax';
 
 import { Combatant } from '../../models/combat';
-import { Encounter } from '../../models/encounter';
-import { Monster, MonsterGroup, Trait } from '../../models/monster';
+import { Monster, Trait } from '../../models/monster';
 
 import AbilityScorePanel from '../panels/ability-score-panel';
 import PortraitPanel from '../panels/portrait-panel';
@@ -15,14 +13,8 @@ import TraitsPanel from '../panels/traits-panel';
 
 interface Props {
 	monster: Monster | (Monster & Combatant);
-	mode: 'full' | 'template';
-	section: string;
 	combat: boolean;
 	showRollButtons: boolean;
-	library: MonsterGroup[];
-	encounters: Encounter[];
-	copyTrait: (trait: Trait) => void;
-	deselectMonster: (monster: Monster) => void;
 	useTrait: (trait: Trait) => void;
 	rechargeTrait: (trait: Trait) => void;
 	onRollDice: (count: number, sides: number, constant: number) => void;
@@ -30,14 +22,8 @@ interface Props {
 
 export default class MonsterStatblockCard extends React.Component<Props> {
 	public static defaultProps = {
-		mode: 'full',
-		section: null,
 		combat: false,
 		showRollButtons: false,
-		library: null,
-		encounters: null,
-		copyTrait: null,
-		deselectMonster: null,
 		useTrait: null,
 		rechargeTrait: null,
 		onRollDice: null
@@ -140,54 +126,6 @@ export default class MonsterStatblockCard extends React.Component<Props> {
 	}
 
 	private getStats() {
-		if (this.props.mode === 'template') {
-			switch (this.props.section) {
-				case 'overview':
-					return (
-						<div className='stats'>
-							<PortraitPanel source={this.props.monster} />
-							<div className='section centered'>
-								{this.getTags()}
-							</div>
-							<hr/>
-							{this.statSection('speed', this.props.monster.speed)}
-							{this.statSection('senses', this.props.monster.senses)}
-							{this.statSection('languages', this.props.monster.languages)}
-							{this.statSection('equipment', this.props.monster.equipment)}
-						</div>
-					);
-				case 'abilities':
-					return (
-						<div className='stats'>
-							<div className='section'>
-								<AbilityScorePanel combatant={this.props.monster} />
-							</div>
-							{this.statSection('saving throws', this.props.monster.savingThrows)}
-							{this.statSection('skills', this.props.monster.skills)}
-						</div>
-					);
-				case 'cbt-stats':
-					return (
-						<div className='stats'>
-							{this.statSection('ac', this.getAC())}
-							{this.statSection('hp', this.getHP())}
-							{this.statSection('damage resistances', this.props.monster.damage.resist)}
-							{this.statSection('damage vulnerabilities', this.props.monster.damage.vulnerable)}
-							{this.statSection('damage immunities', this.props.monster.damage.immune)}
-							{this.statSection('condition immunities', this.props.monster.conditionImmunities)}
-						</div>
-					);
-				case 'actions':
-					return (
-						<TraitsPanel
-							combatant={this.props.monster}
-							mode='template'
-							copyTrait={trait => this.props.copyTrait(trait)}
-						/>
-					);
-			}
-		}
-
 		return (
 			<div className='stats'>
 				<PortraitPanel source={this.props.monster} />
@@ -227,16 +165,6 @@ export default class MonsterStatblockCard extends React.Component<Props> {
 		);
 	}
 
-	private getIcon() {
-		if (this.props.mode === 'template') {
-			return (
-				<MinusCircleOutlined onClick={() => this.props.deselectMonster(this.props.monster)} />
-			);
-		}
-
-		return null;
-	}
-
 	public render() {
 		try {
 			const name = (this.props.monster as Combatant ? (this.props.monster as Combatant).displayName : null)
@@ -249,7 +177,6 @@ export default class MonsterStatblockCard extends React.Component<Props> {
 						<div className='title' title={name}>
 							{name}
 						</div>
-						{this.getIcon()}
 					</div>
 					<div className='card-content'>
 						{this.getStats()}

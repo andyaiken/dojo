@@ -1,16 +1,21 @@
+import { CloseCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
+import Factory from '../../utils/factory';
 import Gygax from '../../utils/gygax';
 import Mercator from '../../utils/mercator';
 import { Comms, CommsDM } from '../../utils/uhura';
+import Utils from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
-import { Exploration } from '../../models/map';
-import { Monster } from '../../models/monster';
+import { Exploration, MapItem } from '../../models/map';
+import { Options } from '../../models/misc';
+import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, PC } from '../../models/party';
 
+import MapItemCard from '../cards/map-item-card';
 import MonsterStatblockCard from '../cards/monster-statblock-card';
 import PCCard from '../cards/pc-card';
 import Checkbox from '../controls/checkbox';
@@ -21,9 +26,12 @@ import { NotOnMapInitiativeEntry } from '../panels/initiative-entry';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 import Popout from '../panels/popout';
+import TraitsPanel from '../panels/traits-panel';
 
 interface Props {
 	exploration: Exploration;
+	library: MonsterGroup[];
+	options: Options;
 	startCombat: (exploration: Exploration) => void;
 	toggleTag: (combatants: Combatant[], tag: string) => void;
 	toggleCondition: (combatants: Combatant[], condition: string) => void;
@@ -32,9 +40,6 @@ interface Props {
 	editCondition: (combatant: Combatant, condition: Condition) => void;
 	removeCondition: (combatant: Combatant, condition: Condition) => void;
 	changeValue: (source: any, field: string, value: any) => void;
-	fillFog: () => void;
-	clearFog: () => void;
-	toggleFog: (x1: number, y1: number, x2: number, y2: number) => void;
 	addCompanion: (companion: Companion) => void;
 	mapAdd: (combatant: Combatant, x: number, y: number) => void;
 	mapMove: (ids: string[], dir: string) => void;
@@ -43,17 +48,24 @@ interface Props {
 	scatterCombatants: (combatants: Combatant[], areaID: string | null) => void;
 	rotateMap: () => void;
 	getMonster: (id: string) => Monster | null;
+	useTrait: (trait: Trait) => void;
+	rechargeTrait: (trait: Trait) => void;
+	setFog: (fog: { x: number, y: number }[]) => void;
+	addOverlay: (overlay: MapItem) => void;
+	onRollDice: (count: number, sides: number, constant: number) => void;
 	pauseExploration: () => void;
 	endExploration: (exploration: Exploration) => void;
 }
 
 interface State {
+	showOptions: boolean;
 	playerViewOpen: boolean;
 	addingToMapID: string | null;
+	addingOverlay: boolean;
 	editFog: boolean;
 	highlightMapSquare: boolean;
 	highlightedSquare: { x: number, y: number} | null;
-	selectedCombatantIDs: string[];
+	selectedItemIDs: string[];
 	selectedAreaID: string | null;
 }
 
@@ -61,12 +73,14 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {
+			showOptions: false,
 			playerViewOpen: false,
 			addingToMapID: null,
+			addingOverlay: false,
 			editFog: false,
 			highlightMapSquare: false,
 			highlightedSquare: null,
-			selectedCombatantIDs: [],
+			selectedItemIDs: [],
 			selectedAreaID: null
 		};
 	}
@@ -87,6 +101,12 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 		}
 	}
 
+	private toggleShowOptions() {
+		this.setState({
+			showOptions: !this.state.showOptions
+		});
+	}
+
 	private setPlayerViewOpen(open: boolean) {
 		this.setState({
 			playerViewOpen: open
@@ -96,6 +116,7 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 	private setAddingToMapID(id: string | null) {
 		this.setState({
 			addingToMapID: id,
+			addingOverlay: false,
 			editFog: false,
 			highlightMapSquare: false,
 			highlightedSquare: null
@@ -104,8 +125,19 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 
 	private toggleEditFog() {
 		this.setState({
+			addingOverlay: false,
 			editFog: !this.state.editFog,
-			selectedCombatantIDs: [],
+			selectedItemIDs: [],
+			highlightMapSquare: false,
+			highlightedSquare: null
+		});
+	}
+
+	private toggleAddingOverlay() {
+		this.setState({
+			addingOverlay: !this.state.addingOverlay,
+			editFog: false,
+			selectedItemIDs: [],
 			highlightMapSquare: false,
 			highlightedSquare: null
 		});
@@ -113,8 +145,9 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 
 	private toggleHighlightMapSquare() {
 		this.setState({
+			addingOverlay: false,
 			editFog: false,
-			selectedCombatantIDs: [],
+			selectedItemIDs: [],
 			highlightMapSquare: !this.state.highlightMapSquare,
 			highlightedSquare: null
 		});
@@ -131,10 +164,10 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 		}
 	}
 
-	private setSelectedCombatantIDs(ids: string[]) {
+	private setSelectedItemIDs(ids: string[]) {
 		this.setState({
 			editFog: (ids.length > 0) ? false : this.state.editFog,
-			selectedCombatantIDs: ids
+			selectedItemIDs: ids
 		});
 	}
 
@@ -146,28 +179,28 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 
 	private addCompanion(companion: Companion) {
 		this.setState({
-			selectedCombatantIDs: [companion.id]
+			selectedItemIDs: [companion.id]
 		}, () => this.props.addCompanion(companion));
 	}
 
 	private toggleItemSelection(id: string | null, ctrl: boolean) {
 		if (id && ctrl) {
-			const ids = this.state.selectedCombatantIDs;
+			const ids = this.state.selectedItemIDs;
 			if (ids.includes(id)) {
 				const index = ids.indexOf(id);
 				ids.splice(index, 1);
 			} else {
 				ids.push(id);
 			}
-			this.setSelectedCombatantIDs(ids);
+			this.setSelectedItemIDs(ids);
 		} else {
-			this.setSelectedCombatantIDs(id ? [id] : []);
+			this.setSelectedItemIDs(id ? [id] : []);
 		}
 	}
 
 	private mapRemove(combatants: Combatant[]) {
 		this.setState({
-			selectedCombatantIDs: []
+			selectedItemIDs: []
 		}, () => this.props.mapRemove(combatants.map(c => c.id)));
 	}
 
@@ -188,6 +221,25 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 		this.props.changeValue(source, field, value);
 	}
 
+	private fillFog() {
+		if (this.props.exploration.map) {
+			const fog: { x: number, y: number }[] = [];
+			const dims = Mercator.mapDimensions(this.props.exploration.map.items);
+			if (dims) {
+				for (let x = dims.minX; x <= dims.maxX; ++x) {
+					for (let y = dims.minY; y <= dims.maxY; ++y) {
+						fog.push({ x: x, y: y });
+					}
+				}
+				this.props.setFog(fog);
+			}
+		}
+	}
+
+	private clearFog() {
+		this.props.setFog([]);
+	}
+
 	private gridSquareClicked(x: number, y: number, playerView: boolean) {
 		if (this.state.addingToMapID) {
 			const combatant = this.props.exploration.combatants.find(c => c.id === this.state.addingToMapID);
@@ -198,8 +250,65 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 			this.setAddingToMapID(null);
 		}
 
+		if (this.state.addingOverlay) {
+			const token = Factory.createMapItem();
+			token.type = 'token';
+			token.x = x;
+			token.y = y;
+			token.width = 1;
+			token.height = 1;
+			token.color = '#005080';
+			token.opacity = 127;
+			token.style = 'square';
+
+			this.props.addOverlay(token);
+			this.setState({
+				addingOverlay: false,
+				addingToMapID: null,
+				selectedItemIDs: [token.id]
+			});
+		}
+
 		if (this.state.editFog && !playerView) {
-			this.props.toggleFog(x, y, x, y);
+			this.gridRectangleSelected(x, y, x, y);
+		}
+	}
+
+	private gridRectangleSelected(x1: number, y1: number, x2: number, y2: number) {
+		if (this.state.addingOverlay) {
+			const overlay = Factory.createMapItem();
+			overlay.type = 'overlay';
+			overlay.x = x1;
+			overlay.y = y1;
+			overlay.width = (x2 - x1) + 1;
+			overlay.height = (y2 - y1) + 1;
+			overlay.color = '#005080';
+			overlay.opacity = 127;
+			overlay.style = 'square';
+
+			this.props.addOverlay(overlay);
+			this.setState({
+				addingOverlay: false,
+				addingToMapID: null,
+				selectedItemIDs: [overlay.id]
+			});
+		}
+
+		if (this.state.editFog) {
+			const fog = this.props.exploration.fog;
+
+			for (let x = x1; x <= x2; ++x) {
+				for (let y = y1; y <= y2; ++y) {
+					const index = fog.findIndex(i => (i.x === x) && (i.y === y));
+					if (index === -1) {
+						fog.push({ x: x, y: y });
+					} else {
+						fog.splice(index, 1);
+					}
+				}
+			}
+
+			this.props.setFog(fog);
 		}
 	}
 
@@ -217,6 +326,69 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 		return null;
 	}
 
+	private getOptions() {
+		if (!this.state.showOptions) {
+			return null;
+		}
+
+		const options = (
+			<div>
+				<div className='subheading'>exploration</div>
+				<button onClick={() => this.props.startCombat(this.props.exploration)}>stop exploring and start combat</button>
+				<button onClick={() => this.props.pauseExploration()}>pause exploration</button>
+				<ConfirmButton text='end exploration' onConfirm={() => this.props.endExploration(this.props.exploration)} />
+				<div className='subheading'>map</div>
+				<Checkbox label='add token / overlay' checked={this.state.addingOverlay} onChecked={() => this.toggleAddingOverlay()} />
+				<div className='group-panel' style={{ display: this.state.addingOverlay ? '' : 'none' }}>
+					<Note>
+						<p>click on a map square to add a token, or select a rectangle to add an overlay</p>
+					</Note>
+				</div>
+				<Checkbox label='highlight map square' checked={this.state.highlightMapSquare} onChecked={() => this.toggleHighlightMapSquare()} />
+				<div className='group-panel' style={{ display: this.state.highlightMapSquare ? '' : 'none' }}>
+					<Note>
+						<p>use your mouse to indicate a square on the map</p>
+						<p>that square will be highlighted on the shared map as well</p>
+					</Note>
+				</div>
+				<Checkbox label='edit fog of war' checked={this.state.editFog} onChecked={() => this.toggleEditFog()} />
+				<div className='group-panel' style={{ display: this.state.editFog ? '' : 'none' }}>
+					<Note>
+						<p>click on map squares to turn fog of war on and off</p>
+						<p>you can also click and drag to select an area</p>
+					</Note>
+					<button onClick={() => this.fillFog()}>
+						fill fog of war
+					</button>
+					<button className={this.props.exploration.fog.length === 0 ? 'disabled' : ''} onClick={() => this.clearFog()}>
+						clear fog of war
+					</button>
+				</div>
+				<button onClick={() => this.props.rotateMap()}>rotate map</button>
+				<div className='subheading'>sharing</div>
+				<Checkbox
+					label='share in player view'
+					checked={this.state.playerViewOpen}
+					onChecked={value => this.setPlayerViewOpen(value)}
+				/>
+				<Checkbox
+					label='share in session'
+					disabled={CommsDM.getState() !== 'started'}
+					checked={Comms.data.shared.type === 'exploration'}
+					onChecked={value => value ? CommsDM.shareExploration(this.props.exploration) : CommsDM.shareNothing()}
+				/>
+			</div>
+		);
+
+		return (
+			<GridPanel
+				heading='options'
+				content={[options]}
+				columns={1}
+			/>
+		);
+	}
+
 	private getMap(playerView: boolean) {
 		return (
 			<MapPanel
@@ -224,199 +396,283 @@ export default class ExplorationScreen extends React.Component<Props, State> {
 				mode={playerView ? 'combat-player' : 'combat'}
 				viewport={Mercator.getViewport(this.props.exploration.map, this.state.selectedAreaID)}
 				combatants={this.props.exploration.combatants}
-				showGrid={((this.state.addingToMapID !== null) || this.state.editFog || this.state.highlightMapSquare) && !playerView}
-				selectedItemIDs={this.state.selectedCombatantIDs}
+				showGrid={((this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.editFog || this.state.highlightMapSquare) && !playerView}
+				selectedItemIDs={this.state.selectedItemIDs}
 				fog={this.props.exploration.fog}
 				focussedSquare={this.state.highlightedSquare}
 				gridSquareEntered={(x, y) => this.setHighlightedSquare(x, y, playerView)}
 				gridSquareClicked={(x, y) => this.gridSquareClicked(x, y, playerView)}
-				gridRectangleSelected={(x1, y1, x2, y2) => this.props.toggleFog(x1, y1, x2, y2)}
+				gridRectangleSelected={(x1, y1, x2, y2) => this.gridRectangleSelected(x1, y1, x2, y2)}
 				itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
 				areaSelected={id => this.setSelectedAreaID(id)}
 			/>
 		);
 	}
 
-	public render() {
-		try {
-			let highlightSection = null;
-			if (this.state.highlightMapSquare) {
-				highlightSection = (
-					<Note>
-						<p>use your mouse to indicate a square on the map</p>
-						<p>that square will be highlighted on the player view map as well</p>
-					</Note>
-				);
-			}
+	private getSelectedCombatants() {
+		// Find which combatants we've selected
+		const combatants = this.state.selectedItemIDs
+			.map(id => this.props.exploration.combatants.find(c => c.id === id))
+			.filter(c => !!c) as Combatant[];
+		Utils.sort(combatants, [{ field: 'displayName', dir: 'asc' }]);
 
-			let fogSection = null;
-			if (this.state.editFog) {
-				fogSection = (
-					<div>
-						<Note>
-							<p>click on map squares to turn fog of war on and off</p>
-							<p>you can also click and drag to select an area</p>
-						</Note>
-						<button onClick={() => this.props.fillFog()}>
-							fill fog of war
-						</button>
-						<button className={this.props.exploration.fog.length === 0 ? 'disabled' : ''} onClick={() => this.props.clearFog()}>
-							clear fog of war
-						</button>
-					</div>
-				);
-			}
-
-			const leftSidebar = (
+		// Have we selected any placeholders?
+		// If we have, just show the info for the first one
+		const selectedPlaceholders = combatants.filter(c => c.type === 'placeholder');
+		if (selectedPlaceholders.length > 0) {
+			return (
 				<div>
-					<Checkbox label='highlight map square' checked={this.state.highlightMapSquare} onChecked={() => this.toggleHighlightMapSquare()} />
-					{highlightSection}
-					<Checkbox label='edit fog of war' checked={this.state.editFog} onChecked={() => this.toggleEditFog()} />
-					{fogSection}
-					<hr/>
-					<button onClick={() => this.props.startCombat(this.props.exploration)}>start combat</button>
-					<button onClick={() => this.props.rotateMap()}>rotate map</button>
-					<hr/>
-					<Checkbox
-						label='share in player view'
-						checked={this.state.playerViewOpen}
-						onChecked={value => this.setPlayerViewOpen(value)}
-					/>
-					<Checkbox
-						label='share in session'
-						disabled={CommsDM.getState() !== 'started'}
-						checked={Comms.data.shared.type === 'exploration'}
-						onChecked={value => value ? CommsDM.shareExploration(this.props.exploration) : CommsDM.shareNothing()}
-					/>
-					<hr />
-					<div className='section'>
-						<button onClick={() => this.props.pauseExploration()}>pause exploration</button>
-						<ConfirmButton text='end exploration' onConfirm={() => this.props.endExploration(this.props.exploration)} />
-					</div>
+					{this.createCard(selectedPlaceholders[0])}
 				</div>
 			);
+		}
 
-			let rightSidebar = null;
-
-			const selection = this.props.exploration.combatants.filter(c => this.state.selectedCombatantIDs.includes(c.id));
-			const items = this.props.exploration.map.items.filter(i => this.state.selectedCombatantIDs.includes(i.id));
-			if ((selection.length > 0) && (items.length === selection.length)) {
-				let statblock = null;
-				if (selection.length === 1) {
-					switch (selection[0].type) {
-						case 'pc':
-							statblock = (
-								<PCCard pc={selection[0] as Combatant & PC} />
-							);
-							break;
-						case 'companion':
-							const companion = selection[0] as Combatant & Companion;
-							if (companion.monsterID) {
-								const monster = this.props.getMonster(companion.monsterID);
-								if (monster) {
-									statblock = (
-										<MonsterStatblockCard monster={monster} />
-									);
-								}
-							}
-							break;
-					}
-				}
-				rightSidebar = (
+		// Have we selected only the current combatant?
+		if ((combatants.length > 0) && combatants.every(c => c.current)) {
+			return (
+				<Note>
 					<div className='section'>
-						<CombatControlsPanel
-							combatants={selection}
-							allCombatants={this.props.exploration.combatants}
-							map={this.props.exploration.map}
-							defaultTab='map'
-							// Main tab
-							makeCurrent={combatant => null}
-							makeActive={combatants => null}
-							makeDefeated={combatants => null}
-							toggleTag={(combatants, tag) => this.props.toggleTag(combatants, tag)}
-							toggleCondition={(combatants, condition) => this.props.toggleCondition(combatants, condition)}
-							toggleHidden={combatants => this.props.toggleHidden(combatants)}
-							// HP tab
-							changeHP={values => null}
-							// Cond tab
-							addCondition={combatants => this.props.addCondition(combatants)}
-							editCondition={(combatant, condition) => this.props.editCondition(combatant, condition)}
-							removeCondition={(combatant, condition) => this.props.removeCondition(combatant, condition)}
-							// Map tab
-							mapAdd={combatant => this.setAddingToMapID(this.state.addingToMapID ? null : combatant.id)}
-							mapMove={(combatants, dir) => this.props.mapMove(combatants.map(c => c.id), dir)}
-							mapRemove={combatants => this.mapRemove(combatants)}
-							onChangeAltitude={(combatant, value) => this.props.onChangeAltitude(combatant, value)}
-							// Adv tab
-							removeCombatants={null}
-							addCompanion={companion => this.addCompanion(companion)}
-							// General
-							changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
-							nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
-						/>
-						{statblock}
+						you've selected the current initiative holder
 					</div>
+				</Note>
+			);
+		}
+
+		// Have we selected a single combatant?
+		if (combatants.length === 1) {
+			return (
+				<div>
+					{this.createControls(combatants)}
+					<hr/>
+					{this.createCard(combatants[0])}
+				</div>
+			);
+		}
+
+		// Have we selected multiple combatants?
+		if (combatants.length > 1) {
+			return (
+				<div>
+					<Note>
+						<div className='section'>multiple combatants are selected:</div>
+						{combatants.map(c => (
+							<div key={c.id} className='group-panel'>
+								{c.displayName}
+								<CloseCircleOutlined
+									style={{ float: 'right', padding: '2px 0', fontSize: '14px' }}
+									onClick={() => this.toggleItemSelection(c.id, true)}
+								/>
+							</div>
+						))}
+					</Note>
+					{this.createControls(combatants)}
+				</div>
+			);
+		}
+
+		// Have we selected a map item?
+		if (this.props.exploration.map) {
+			const mapItem = this.props.exploration.map.items.find(i => i.id === this.state.selectedItemIDs[0]);
+			if (mapItem) {
+				return (
+					<MapItemCard
+						item={mapItem}
+						move={(item, dir) => this.props.mapMove([item.id], dir)}
+						remove={item => this.props.mapRemove([item.id])}
+						changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
+						nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
+					/>
 				);
-			} else {
-				const notOnMap = this.props.exploration.combatants.filter(pc => !this.props.exploration.map.items.find(i => i.id === pc.id));
-				if (notOnMap.length) {
-					/* tslint:disable:max-line-length */
-					const section = (
-						<div>
-							<Note>
-								<div className='section'>
-									these pcs have not yet been placed on the map
+			}
+		}
+
+		return (
+			<Note>
+				<div className='section'>
+					select a map token to see its details here
+				</div>
+			</Note>
+		);
+	}
+
+	private createControls(selectedCombatants: Combatant[]) {
+		if (selectedCombatants.some(c => c.type === 'placeholder')) {
+			return null;
+		}
+
+		return (
+			<CombatControlsPanel
+				combatants={selectedCombatants}
+				allCombatants={this.props.exploration.combatants}
+				map={this.props.exploration.map}
+				defaultTab='map'
+				// Main tab
+				makeCurrent={combatant => null}
+				makeActive={combatants => null}
+				makeDefeated={combatants => null}
+				toggleTag={(combatants, tag) => this.props.toggleTag(combatants, tag)}
+				toggleCondition={(combatants, condition) => this.props.toggleCondition(combatants, condition)}
+				toggleHidden={combatants => this.props.toggleHidden(combatants)}
+				// HP tab
+				changeHP={values => null}
+				// Cond tab
+				addCondition={combatants => this.props.addCondition(combatants)}
+				editCondition={(combatant, condition) => this.props.editCondition(combatant, condition)}
+				removeCondition={(combatant, condition) => this.props.removeCondition(combatant, condition)}
+				// Map tab
+				mapAdd={combatant => this.setAddingToMapID(this.state.addingToMapID ? null : combatant.id)}
+				mapMove={(combatants, dir) => this.props.mapMove(combatants.map(c => c.id), dir)}
+				mapRemove={combatants => this.mapRemove(combatants)}
+				onChangeAltitude={(combatant, value) => this.props.onChangeAltitude(combatant, value)}
+				// Adv tab
+				removeCombatants={null}
+				addCompanion={companion => this.addCompanion(companion)}
+				// General
+				changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
+				nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
+			/>
+		);
+}
+
+	private createCard(combatant: Combatant) {
+		switch (combatant.type) {
+			case 'pc':
+				return (
+					<PCCard pc={combatant as Combatant & PC} />
+				);
+			case 'monster':
+				return (
+					<MonsterStatblockCard
+						monster={combatant as Combatant & Monster}
+						combat={true}
+						showRollButtons={this.props.options.showMonsterDieRolls}
+						useTrait={trait => this.props.useTrait(trait)}
+						rechargeTrait={trait => this.props.rechargeTrait(trait)}
+						onRollDice={(count, sides, constant) => this.props.onRollDice(count, sides, constant)}
+					/>
+				);
+			case 'companion':
+				let card = null;
+				const comp = combatant as Combatant & Companion;
+				if (comp.monsterID) {
+					this.props.library.forEach(group => {
+						const monster = group.monsters.find(m => m.id === comp.monsterID);
+						if (monster) {
+							card = (
+								<MonsterStatblockCard
+									monster={monster}
+									combat={true}
+									showRollButtons={this.props.options.showMonsterDieRolls}
+									useTrait={trait => this.props.useTrait(trait)}
+									rechargeTrait={trait => this.props.rechargeTrait(trait)}
+									onRollDice={(count, sides, constant) => this.props.onRollDice(count, sides, constant)}
+								/>
+							);
+						}
+					});
+				}
+				return card;
+			case 'placeholder':
+				const lair: JSX.Element[] = [];
+				this.props.exploration.combatants.forEach(c => {
+					const monster = c as (Combatant & Monster);
+					if (monster && monster.traits && monster.traits.some(t => t.type === 'lair')) {
+						lair.push(
+							<div className='card monster' key={'lair ' + monster.id}>
+								<div className='heading'>
+									<div className='title'>{monster.name}</div>
 								</div>
-								<div className='section'>
-									to place one on the map, click the <b>place on map</b> button and then click on a map square
-								</div>
-								<div className='section'>
-									or click <button className='link' onClick={() => this.props.scatterCombatants(notOnMap, this.state.selectedAreaID)}>here</button> to scatter them randomly
-								</div>
-							</Note>
-							{
-								notOnMap.map(pc => (
-									<NotOnMapInitiativeEntry
-										key={pc.id}
-										combatant={pc}
-										addToMap={() => this.setAddingToMapID(pc.id)}
+								<div className='card-content'>
+									<TraitsPanel
+										combatant={monster}
+										mode='lair'
+										useTrait={trait => this.props.useTrait(trait)}
+										rechargeTrait={trait => this.props.rechargeTrait(trait)}
 									/>
-								))
-							}
-						</div>
-					);
-					/* tslint:enable:max-line-length */
-					rightSidebar = (
-						<GridPanel
-							heading='not on the map'
-							columns={1}
-							content={[section]}
-						/>
-					);
-				} else {
-					rightSidebar = (
+								</div>
+							</div>
+						);
+					}
+				});
+				return lair;
+		}
+
+		return null;
+	}
+
+	public render() {
+		try {
+			let notOnMapSection = null;
+			const notOnMap = this.props.exploration.combatants
+				.filter(c => !this.props.exploration.map.items.find(i => i.id === c.id));
+			if (notOnMap.length > 0) {
+				notOnMapSection = (
+					<div>
 						<Note>
 							<div className='section'>
-								select a map token to see its details here
+								these pcs have not yet been placed on the map
+							</div>
+							<div className='section'>
+								to place one on the map, click the <b>place on map</b> button and then click on a map square
+							</div>
+							<div className='section'>
+								or click <button className='link' onClick={() => this.props.scatterCombatants(notOnMap, this.state.selectedAreaID)}>here</button> to scatter them randomly
 							</div>
 						</Note>
-					);
-				}
+						{
+							notOnMap.map(c => (
+								<NotOnMapInitiativeEntry
+									key={c.id}
+									combatant={c}
+									addToMap={() => this.setAddingToMapID(c.id)}
+								/>
+							))
+						}
+					</div>
+				);
+			}
+
+			let options = null;
+			if (this.state.showOptions) {
+				options = (
+					<Col span={6} className='scrollable'>
+						{this.getOptions()}
+					</Col>
+				);
 			}
 
 			return (
-				<Row className='full-height'>
-					<Col span={6} className='scrollable sidebar sidebar-left'>
-						{leftSidebar}
-					</Col>
-					<Col span={12} className='scrollable both-ways'>
-						{this.getMap(false)}
-					</Col>
-					<Col span={6} className='scrollable'>
-						{rightSidebar}
-					</Col>
-					{this.getPlayerView()}
-				</Row>
+				<div className='full-height'>
+					<Row align='middle' className='combat-top-row'>
+						<Col span={6}>
+							<div className='menu' onClick={() => this.toggleShowOptions()}>
+								<SettingOutlined title='options' />
+								<span>options</span>
+							</div>
+						</Col>
+						<Col span={18} />
+					</Row>
+					<Row className='combat-main'>
+						{options}
+						<Col span={this.state.showOptions ? 12 : 18} className='scrollable both-ways'>
+							{this.getMap(false)}
+						</Col>
+						<Col span={6} className='scrollable'>
+							<GridPanel
+								heading='not on the map'
+								content={[notOnMapSection]}
+								columns={1}
+								showToggle={true}
+							/>
+							<GridPanel
+								heading='selected'
+								content={[this.getSelectedCombatants()]}
+								columns={1}
+							/>
+						</Col>
+						{this.getPlayerView()}
+					</Row>
+				</div>
 			);
 		} catch (ex) {
 			console.error(ex);

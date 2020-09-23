@@ -13,6 +13,7 @@ import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { Encounter } from '../../models/encounter';
 import { MapItem } from '../../models/map';
+import { Options } from '../../models/misc';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, Party, PC } from '../../models/party';
 
@@ -40,13 +41,14 @@ interface Props {
 	parties: Party[];
 	library: MonsterGroup[];
 	encounters: Encounter[];
+	options: Options;
 	pauseCombat: () => void;
 	endCombat: (combat: Combat, goToMap: boolean) => void;
 	makeCurrent: (combatant: Combatant) => void;
 	makeActive: (combatants: Combatant[]) => void;
 	makeDefeated: (combatants: Combatant[]) => void;
-	useTrait: (combatant: Combatant & Monster, trait: Trait) => void;
-	rechargeTrait: (combatant: Combatant & Monster, trait: Trait) => void;
+	useTrait: (trait: Trait) => void;
+	rechargeTrait: (trait: Trait) => void;
 	removeCombatants: (combatants: Combatant[]) => void;
 	addCombatants: () => void;
 	addCompanion: (companion: Companion | null) => void;
@@ -76,7 +78,6 @@ interface Props {
 interface State {
 	showOptions: boolean;
 	showDefeatedCombatants: boolean;
-	showRollButtons: boolean;
 	selectedItemIDs: string[];
 	selectedAreaID: string | null;
 	addingToMapID: string | null;
@@ -95,7 +96,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 		this.state = {
 			showOptions: false,
 			showDefeatedCombatants: false,
-			showRollButtons: false,
 			selectedItemIDs: [],			// The IDs of the combatants or map items that are selected
 			selectedAreaID: null,			// The ID of the selected map area
 			addingToMapID: null,			// The ID of the combatant we're adding to the map
@@ -133,12 +133,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 	private toggleShowDefeatedCombatants() {
 		this.setState({
 			showDefeatedCombatants: !this.state.showDefeatedCombatants
-		});
-	}
-
-	private toggleShowRollButtons() {
-		this.setState({
-			showRollButtons: !this.state.showRollButtons
 		});
 	}
 
@@ -435,7 +429,7 @@ export default class CombatScreen extends React.Component<Props, State> {
 		let exitToMap = null;
 		if (this.props.combat.map) {
 			exitToMap = (
-				<ConfirmButton text='end combat and continue exploration' onConfirm={() => this.props.endCombat(this.props.combat, true)} />
+				<ConfirmButton text='end combat and start exploring' onConfirm={() => this.props.endCombat(this.props.combat, true)} />
 			);
 		}
 
@@ -477,23 +471,33 @@ export default class CombatScreen extends React.Component<Props, State> {
 			map = (
 				<div>
 					<div className='subheading'>map</div>
-					<Checkbox
-						label={this.state.addingOverlay ? 'click on a map square to add a token, select a rectangle to add an overlay, or click here to cancel' : 'add token / overlay'}
-						display='button'
-						checked={this.state.addingOverlay}
-						onChecked={() => this.toggleAddingOverlay()}
-					/>
+					<Checkbox label='add token / overlay' checked={this.state.addingOverlay} onChecked={() => this.toggleAddingOverlay()} />
+					<div className='group-panel' style={{ display: this.state.addingOverlay ? '' : 'none' }}>
+						<Note>
+							<p>click on a map square to add a token, or select a rectangle to add an overlay</p>
+						</Note>
+					</div>
 					<Checkbox
 						label='highlight map square'
 						checked={this.state.highlightMapSquare}
 						onChecked={() => this.toggleHighlightMapSquare()}
 					/>
+					<div className='group-panel' style={{ display: this.state.highlightMapSquare ? '' : 'none' }}>
+						<Note>
+							<p>use your mouse to indicate a square on the map</p>
+							<p>that square will be highlighted on the shared map as well</p>
+						</Note>
+					</div>
 					<Checkbox
 						label='edit fog of war'
 						checked={this.state.editFog}
 						onChecked={() => this.toggleEditFog()}
 					/>
 					<div style={{ display: this.state.editFog ? '' : 'none' }}>
+						<Note>
+							<p>click on map squares to turn fog of war on and off</p>
+							<p>you can also click and drag to select an area</p>
+						</Note>
 						<button onClick={() => this.fillFog()}>
 							fill fog of war
 						</button>
@@ -501,72 +505,70 @@ export default class CombatScreen extends React.Component<Props, State> {
 							clear fog of war
 						</button>
 					</div>
+					<button onClick={() => this.props.rotateMap()}>rotate map</button>
 				</div>
 			);
 		}
 
+		const options = (
+			<div key='options'>
+				<div>
+					<div className='subheading'>encounter</div>
+					{notes}
+					<button onClick={() => this.props.pauseCombat()}>pause combat</button>
+					<ConfirmButton text='end combat' onConfirm={() => this.props.endCombat(this.props.combat, false)} />
+					{exitToMap}
+				</div>
+				<div>
+					<div className='subheading'>combatants</div>
+					<button onClick={() => this.props.addCombatants()}>add combatants</button>
+					{addPCs}
+					{addWave}
+					<button onClick={() => this.props.addCompanion(null)}>add a companion</button>
+				</div>
+				{map}
+				<div>
+					<div className='subheading'>sharing</div>
+					<Checkbox
+						label='share in player view'
+						checked={this.state.playerViewOpen}
+						onChecked={value => this.setPlayerViewOpen(value)}
+					/>
+					<Checkbox
+						label='share in session'
+						disabled={CommsDM.getState() !== 'started'}
+						checked={Comms.data.shared.type === 'combat'}
+						onChecked={value => value ? CommsDM.shareCombat(this.props.combat) : CommsDM.shareNothing()}
+					/>
+				</div>
+				<div>
+					<div className='subheading'>layout</div>
+					<Checkbox
+						label='show defeated combatants'
+						checked={this.state.showDefeatedCombatants}
+						onChecked={() => this.toggleShowDefeatedCombatants()}
+					/>
+					<NumberSpin
+						value='middle column size'
+						downEnabled={this.state.middleColumnWidth > 4}
+						upEnabled={this.state.middleColumnWidth < 14}
+						onNudgeValue={delta => this.nudgeMiddleColumnWidth(delta * 2)}
+					/>
+				</div>
+			</div>
+		);
+
 		return (
 			<GridPanel
 				heading='options'
-				content={[
-					<div key='options'>
-						<div>
-							<div className='subheading'>encounter</div>
-							{notes}
-							<button onClick={() => this.props.pauseCombat()}>pause combat</button>
-							<ConfirmButton text='end combat' onConfirm={() => this.props.endCombat(this.props.combat, false)} />
-							{exitToMap}
-						</div>
-						<div>
-							<div className='subheading'>combatants</div>
-							<button onClick={() => this.props.addCombatants()}>add combatants</button>
-							{addPCs}
-							{addWave}
-							<button onClick={() => this.props.addCompanion(null)}>add a companion</button>
-						</div>
-						{map}
-						<div>
-							<div className='subheading'>sharing</div>
-							<Checkbox
-								label='share in player view'
-								checked={this.state.playerViewOpen}
-								onChecked={value => this.setPlayerViewOpen(value)}
-							/>
-							<Checkbox
-								label='share in session'
-								disabled={CommsDM.getState() !== 'started'}
-								checked={Comms.data.shared.type === 'combat'}
-								onChecked={value => value ? CommsDM.shareCombat(this.props.combat) : CommsDM.shareNothing()}
-							/>
-						</div>
-						<div>
-							<div className='subheading'>layout</div>
-							<Checkbox
-								label='show defeated combatants'
-								checked={this.state.showDefeatedCombatants}
-								onChecked={() => this.toggleShowDefeatedCombatants()}
-							/>
-							<Checkbox
-								label='show monster die rolls'
-								checked={this.state.showRollButtons}
-								onChecked={() => this.toggleShowRollButtons()}
-							/>
-							<NumberSpin
-								value='middle column size'
-								downEnabled={this.state.middleColumnWidth > 4}
-								upEnabled={this.state.middleColumnWidth < 14}
-								onNudgeValue={delta => this.nudgeMiddleColumnWidth(delta * 2)}
-							/>
-						</div>
-					</div>
-				]}
+				content={[options]}
 				columns={1}
 			/>
 		);
 	}
 
-	private getSelectedCombatant() {
-		// Find which combatants we've selected, ignoring the current initiative holder
+	private getSelectedCombatants() {
+		// Find which combatants we've selected
 		const combatants = this.state.selectedItemIDs
 			.map(id => this.props.combat.combatants.find(c => c.id === id))
 			.filter(c => !!c) as Combatant[];
@@ -700,9 +702,9 @@ export default class CombatScreen extends React.Component<Props, State> {
 					<MonsterStatblockCard
 						monster={combatant as Combatant & Monster}
 						combat={true}
-						showRollButtons={this.state.showRollButtons}
-						useTrait={trait => this.props.useTrait(combatant as Combatant & Monster, trait)}
-						rechargeTrait={trait => this.props.rechargeTrait(combatant as Combatant & Monster, trait)}
+						showRollButtons={this.props.options.showMonsterDieRolls}
+						useTrait={trait => this.props.useTrait(trait)}
+						rechargeTrait={trait => this.props.rechargeTrait(trait)}
 						onRollDice={(count, sides, constant) => this.props.onRollDice(count, sides, constant)}
 					/>
 				);
@@ -716,7 +718,10 @@ export default class CombatScreen extends React.Component<Props, State> {
 							card = (
 								<MonsterStatblockCard
 									monster={monster}
-									showRollButtons={this.state.showRollButtons}
+									combat={true}
+									showRollButtons={this.props.options.showMonsterDieRolls}
+									useTrait={trait => this.props.useTrait(trait)}
+									rechargeTrait={trait => this.props.rechargeTrait(trait)}
 									onRollDice={(count, sides, constant) => this.props.onRollDice(count, sides, constant)}
 								/>
 							);
@@ -738,8 +743,8 @@ export default class CombatScreen extends React.Component<Props, State> {
 									<TraitsPanel
 										combatant={monster}
 										mode='lair'
-										useTrait={trait => this.props.useTrait(monster, trait)}
-										rechargeTrait={trait => this.props.rechargeTrait(monster, trait)}
+										useTrait={trait => this.props.useTrait(trait)}
+										rechargeTrait={trait => this.props.rechargeTrait(trait)}
 									/>
 								</div>
 							</div>
@@ -793,14 +798,12 @@ export default class CombatScreen extends React.Component<Props, State> {
 
 			let initHelp = null;
 			if (!initHolder) {
-				/* tslint:disable:max-line-length */
 				initHelp = (
 					<Note key='init-help'>
 						<div className='section'>these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right)</div>
 						<div className='section'>they are listed in initiative order (with the highest initiative score at the top of the list, and the lowest at the bottom)</div>
 					</Note>
 				);
-				/* tslint:enable:max-line-length */
 			}
 			const initList = (
 				<InitiativeOrder
@@ -814,11 +817,11 @@ export default class CombatScreen extends React.Component<Props, State> {
 			);
 
 			let currentSection = null;
-			let notOnMapSection = null;
 			if (initHolder) {
 				currentSection = (
 					<div>
 						{this.createControls([initHolder])}
+						<hr/>
 						{this.createCard(initHolder)}
 					</div>
 				);
@@ -826,45 +829,45 @@ export default class CombatScreen extends React.Component<Props, State> {
 				currentSection = (
 					<Note>
 						<div className='section'>
-							when you're ready to begin the encounter, press the <b>start combat</b> button (above)
+							when you're ready to begin the encounter, press the <b>start combat</b> button
 						</div>
 						<div className='section'>
 							the current initiative holder will be displayed here
 						</div>
+						<button onClick={() => this.nextTurn()}>start combat</button>
 					</Note>
 				);
+			}
 
-				if (this.props.combat.map) {
-					const notOnMap = Napoleon.getActiveCombatants(this.props.combat, false, this.state.showDefeatedCombatants)
-						.filter(c => this.props.combat.map && !this.props.combat.map.items.find(i => i.id === c.id));
-					if (notOnMap.length > 0) {
-						/* tslint:disable:max-line-length */
-						notOnMapSection = (
-							<div>
-								<Note>
-									<div className='section'>
-										these combatants are in the initiative order, but have not yet been placed on the map (which you'll find in the middle column)
-									</div>
-									<div className='section'>
-										to place one on the map, click the <b>place on map</b> button and then click on a map square
-									</div>
-									<div className='section'>
-										or click <button className='link' onClick={() => this.props.scatterCombatants(notOnMap, this.state.selectedAreaID)}>here</button> to scatter them randomly
-									</div>
-								</Note>
-								{
-									notOnMap.map(c => (
-										<NotOnMapInitiativeEntry
-											key={c.id}
-											combatant={c}
-											addToMap={() => this.setAddingToMapID(c.id)}
-										/>
-									))
-								}
-							</div>
-						);
-						/* tslint:enable:max-line-length */
-					}
+			let notOnMapSection = null;
+			if (this.props.combat.map) {
+				const notOnMap = Napoleon.getActiveCombatants(this.props.combat, false, this.state.showDefeatedCombatants)
+					.filter(c => this.props.combat.map && !this.props.combat.map.items.find(i => i.id === c.id));
+				if (notOnMap.length > 0) {
+					notOnMapSection = (
+						<div>
+							<Note>
+								<div className='section'>
+									these combatants are in the initiative order, but have not yet been placed on the map (which you'll find in the middle column)
+								</div>
+								<div className='section'>
+									to place one on the map, click the <b>place on map</b> button and then click on a map square
+								</div>
+								<div className='section'>
+									or click <button className='link' onClick={() => this.props.scatterCombatants(notOnMap, this.state.selectedAreaID)}>here</button> to scatter them randomly
+								</div>
+							</Note>
+							{
+								notOnMap.map(c => (
+									<NotOnMapInitiativeEntry
+										key={c.id}
+										combatant={c}
+										addToMap={() => this.setAddingToMapID(c.id)}
+									/>
+								))
+							}
+						</div>
+					);
 				}
 			}
 
@@ -906,8 +909,8 @@ export default class CombatScreen extends React.Component<Props, State> {
 									<TraitsPanel
 										combatant={monster}
 										mode='legendary'
-										useTrait={trait => this.props.useTrait(monster, trait)}
-										rechargeTrait={trait => this.props.rechargeTrait(monster, trait)}
+										useTrait={trait => this.props.useTrait(trait)}
+										rechargeTrait={trait => this.props.rechargeTrait(trait)}
 									/>
 								</div>
 							</div>
@@ -922,13 +925,23 @@ export default class CombatScreen extends React.Component<Props, State> {
 				<div className='full-height'>
 					<Row align='middle' className='combat-top-row'>
 						<Col span={sideWidth}>
-							<div className='action'>
-								<button onClick={() => this.nextTurn()}>
-									{this.props.combat.combatants.find(c => c.current) ? 'next turn' : 'start combat'}
-								</button>
+							<div className='menu' onClick={() => this.toggleShowOptions()}>
+								<SettingOutlined title='options' />
+								<span>options</span>
 							</div>
 						</Col>
 						<Col span={middleWidth}>
+							{
+								this.props.combat.combatants.find(c => c.current)
+								?
+								<div className='action'>
+									<button onClick={() => this.nextTurn()}>next turn</button>
+								</div>
+								:
+								null
+							}
+						</Col>
+						<Col span={sideWidth}>
 							<Row>
 								<Col span={12}>
 									<div className='statistic'>
@@ -944,20 +957,10 @@ export default class CombatScreen extends React.Component<Props, State> {
 								</Col>
 							</Row>
 						</Col>
-						<Col span={sideWidth}>
-							<div className='menu'>
-								{
-									this.state.showOptions
-									?
-									<CloseCircleOutlined title='close options' onClick={() => this.toggleShowOptions()} />
-									:
-									<SettingOutlined title='options' onClick={() => this.toggleShowOptions()} />
-								}
-							</div>
-						</Col>
 					</Row>
 					<Row className='combat-main'>
 						<Col span={sideWidth} className='scrollable'>
+							{this.getOptions()}
 							<GridPanel
 								heading='initiative holder'
 								content={[currentSection]}
@@ -992,7 +995,6 @@ export default class CombatScreen extends React.Component<Props, State> {
 							/>
 						</Col>
 						<Col span={sideWidth} className='scrollable'>
-							{this.getOptions()}
 							<GridPanel
 								heading='not on the map'
 								content={[notOnMapSection]}
@@ -1000,8 +1002,8 @@ export default class CombatScreen extends React.Component<Props, State> {
 								showToggle={true}
 							/>
 							<GridPanel
-								heading='selected combatant'
-								content={[this.getSelectedCombatant()]}
+								heading='selected'
+								content={[this.getSelectedCombatants()]}
 								columns={1}
 							/>
 						</Col>

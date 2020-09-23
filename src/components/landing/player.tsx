@@ -14,7 +14,7 @@ import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { DieRollResult } from '../../models/dice';
 import { Exploration, Map } from '../../models/map';
-import { Handout } from '../../models/misc';
+import { Handout, Options, Sidebar } from '../../models/misc';
 import { Monster } from '../../models/monster';
 
 import MonsterStatblockCard from '../cards/monster-statblock-card';
@@ -32,7 +32,7 @@ import InitiativeOrder from '../panels/initiative-order';
 import MapPanel from '../panels/map-panel';
 import Note from '../panels/note';
 import PageHeader from '../panels/page-header';
-import PageSidebar, { Sidebar } from '../panels/page-sidebar';
+import PageSidebar from '../panels/page-sidebar';
 import PDF from '../panels/pdf';
 import PortraitPanel from '../panels/portrait-panel';
 import { MessagePanel } from '../panels/session-panel';
@@ -44,6 +44,7 @@ interface State {
 	addingToMap: boolean;
 	drawer: any;
 	sidebar: Sidebar;
+	options: Options;
 }
 
 export default class Player extends React.Component<Props, State> {
@@ -52,6 +53,18 @@ export default class Player extends React.Component<Props, State> {
 
 	constructor(props: Props) {
 		super(props);
+
+		let options: Options = {
+			showMonsterDieRolls: false
+		};
+		try {
+			const str = window.localStorage.getItem('data-options');
+			if (str) {
+				options = JSON.parse(str);
+			}
+		} catch (ex) {
+			console.error('Could not parse JSON: ', ex);
+		}
 
 		const dice: { [sides: number]: number } = {};
 		[4, 6, 8, 10, 12, 20, 100].forEach(n => dice[n] = 0);
@@ -75,7 +88,8 @@ export default class Player extends React.Component<Props, State> {
 				npc: null,
 				selectedPartyID: null,
 				selectedMonsterID: null
-			}
+			},
+			options: options
 		};
 
 		let maps: Map[] = [];
@@ -654,6 +668,7 @@ export default class Player extends React.Component<Props, State> {
 						<PageSidebar
 							sidebar={this.state.sidebar}
 							user='player'
+							options={this.state.options}
 							onSelectSidebar={type => this.setSidebar(type)}
 							onUpdateSidebar={sidebar => this.setState({ sidebar: sidebar })}
 							editPC={id => this.editPC(id)}
@@ -661,6 +676,13 @@ export default class Player extends React.Component<Props, State> {
 							editCondition={(combatant, condition, allCombatants) => this.editCondition(combatant, condition, allCombatants)}
 							toggleAddingToMap={() => this.setAddingToMap(!this.state.addingToMap)}
 							onUpdated={() => this.forceUpdate()}
+							setOption={(option, value) => {
+								const options = this.state.options as any;
+								options[option] = value;
+								this.setState({
+									options: options
+								});
+							}}
 						/>
 					</ErrorBoundary>
 					<ErrorBoundary>

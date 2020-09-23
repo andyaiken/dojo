@@ -9,10 +9,9 @@ import Utils from '../../utils/utils';
 
 import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
-import { DieRollResult } from '../../models/dice';
 import { Encounter } from '../../models/encounter';
 import { Exploration, Map } from '../../models/map';
-import { CardDraw, Handout, NPC } from '../../models/misc';
+import { Options, Sidebar } from '../../models/misc';
 import { Monster, MonsterGroup } from '../../models/monster';
 import { Party } from '../../models/party';
 
@@ -26,23 +25,6 @@ import SessionPlayerSidebar from '../sidebars/session-player-sidebar';
 import SessionSidebar from '../sidebars/session-sidebar';
 import ToolsSidebar from '../sidebars/tools-sidebar';
 
-export interface Sidebar {
-	visible: boolean;
-	type: string;
-	subtype: string;
-	dice: { [sides: number]: number };
-	constant: number;
-	dieRolls: DieRollResult[];
-	handout: Handout | null;
-	languagePreset: string | null;
-	selectedLanguages: string[];
-	languageOutput: string[];
-	draws: CardDraw[];
-	npc: NPC | null;
-	selectedPartyID: string | null;
-	selectedMonsterID: string | null;
-}
-
 interface Props {
 	sidebar: Sidebar;
 	user: 'dm' | 'player';
@@ -52,6 +34,7 @@ interface Props {
 	maps: Map[];
 	combats: Combat[];
 	explorations: Exploration[];
+	options: Options;
 	currentCombat: Combat | null;
 	currentExploration: Exploration | null;
 	onSelectSidebar: (type: string) => void;
@@ -66,6 +49,7 @@ interface Props {
 	editCondition: (combatant: Combatant, condition: Condition, allCombatants: Combatant[]) => void;
 	toggleAddingToMap: () => void;
 	onUpdated: () => void;
+	setOption: (option: string, value: any) => void;
 }
 
 export default class PageSidebar extends React.Component<Props> {
@@ -470,6 +454,8 @@ export default class PageSidebar extends React.Component<Props> {
 							maps={this.props.maps}
 							combats={this.props.combats}
 							explorations={this.props.explorations}
+							options={this.props.options}
+							setOption={(option, value) => this.props.setOption(option, value)}
 						/>
 					);
 					break;

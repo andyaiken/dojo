@@ -100,7 +100,6 @@ export default class InitiativeEntry extends React.Component<Props> {
 						</div>
 					);
 				}
-				/* tslint:disable:max-line-length */
 				notes.push(
 					<Note key='mount'>
 						<div> mounted on: {btn}</div>
@@ -113,7 +112,6 @@ export default class InitiativeEntry extends React.Component<Props> {
 						</div>
 					</Note>
 				);
-				/* tslint:enable:max-line-length */
 			}
 		}
 

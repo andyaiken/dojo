@@ -16,6 +16,7 @@ import { Combat, Combatant, CombatSetup, Notification } from '../../models/comba
 import { Condition } from '../../models/condition';
 import { Encounter } from '../../models/encounter';
 import { Exploration, Map, MapItem } from '../../models/map';
+import { Options, Sidebar } from '../../models/misc';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, Party, PC } from '../../models/party';
 
@@ -37,7 +38,7 @@ import CombatNotificationPanel from '../panels/combat-notification-panel';
 import ErrorBoundary from '../panels/error-boundary';
 import PageFooter from '../panels/page-footer';
 import PageHeader from '../panels/page-header';
-import PageSidebar, { Sidebar } from '../panels/page-sidebar';
+import PageSidebar from '../panels/page-sidebar';
 import { MessagePanel } from '../panels/session-panel';
 import CombatScreen from '../screens/combat-screen';
 import EncounterListScreen from '../screens/encounter-list-screen';
@@ -65,6 +66,7 @@ interface State {
 	maps: Map[];
 	combats: Combat[];
 	explorations: Exploration[];
+	options: Options;
 
 	selectedPartyID: string | null;
 	selectedMonsterGroupID: string | null;
@@ -284,6 +286,18 @@ export default class Main extends React.Component<Props, State> {
 			console.error('Could not parse JSON: ', ex);
 		}
 
+		let options: Options = {
+			showMonsterDieRolls: false
+		};
+		try {
+			const str = window.localStorage.getItem('data-options');
+			if (str) {
+				options = JSON.parse(str);
+			}
+		} catch (ex) {
+			console.error('Could not parse JSON: ', ex);
+		}
+
 		const dice: { [sides: number]: number } = {};
 		[4, 6, 8, 10, 12, 20, 100].forEach(n => dice[n] = 0);
 		dice[20] = 1;
@@ -313,6 +327,7 @@ export default class Main extends React.Component<Props, State> {
 			maps: maps,
 			combats: combats,
 			explorations: explorations,
+			options: options,
 			selectedPartyID: null,
 			selectedMonsterGroupID: null,
 			selectedEncounterID: null,
@@ -1250,54 +1265,6 @@ export default class Main extends React.Component<Props, State> {
 		});
 	}
 
-	private fillFog() {
-		const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID);
-		if (ex) {
-			const fog: { x: number, y: number }[] = [];
-			const dims = Mercator.mapDimensions(ex.map.items);
-			if (dims) {
-				for (let x = dims.minX; x <= dims.maxX; ++x) {
-					for (let y = dims.minY; y <= dims.maxY; ++y) {
-						fog.push({ x: x, y: y });
-					}
-				}
-				ex.fog = fog;
-				this.setState({
-					explorations: this.state.explorations
-				});
-			}
-		}
-	}
-
-	private clearFog() {
-		const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID);
-		if (ex) {
-			ex.fog = [];
-			this.setState({
-				explorations: this.state.explorations
-			});
-		}
-	}
-
-	private toggleFog(x1: number, y1: number, x2: number, y2: number) {
-		const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID);
-		if (ex) {
-			for (let x = x1; x <= x2; ++x) {
-				for (let y = y1; y <= y2; ++y) {
-					const index = ex.fog.findIndex(i => (i.x === x) && (i.y === y));
-					if (index === -1) {
-						ex.fog.push({ x: x, y: y });
-					} else {
-						ex.fog.splice(index, 1);
-					}
-				}
-			}
-			this.setState({
-				explorations: this.state.explorations
-			});
-		}
-	}
-
 	private addCompanionToExploration(companion: Companion) {
 		const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID);
 		if (ex) {
@@ -1848,22 +1815,6 @@ export default class Main extends React.Component<Props, State> {
 		}
 	}
 
-	private useTrait(combatant: Combatant & Monster, trait: Trait) {
-		trait.uses += 1;
-
-		this.setState({
-			combats: this.state.combats
-		});
-	}
-
-	private rechargeTrait(combatant: Combatant & Monster, trait: Trait) {
-		trait.uses = 0;
-
-		this.setState({
-			combats: this.state.combats
-		});
-	}
-
 	private removeCombatants(combatants: Combatant[]) {
 		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
 		if (combat) {
@@ -2004,30 +1955,6 @@ export default class Main extends React.Component<Props, State> {
 					combatant.hpTemp = v.temp;
 				}
 			});
-
-			this.setState({
-				combats: this.state.combats
-			});
-		}
-	}
-
-	// Map methods
-
-	private setFog(fog: { x: number, y: number }[]) {
-		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-		if (combat) {
-			combat.fog = fog;
-
-			this.setState({
-				combats: this.state.combats
-			});
-		}
-	}
-
-	private addMapItem(item: MapItem) {
-		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
-		if (combat && combat.map) {
-			combat.map.items.push(item);
 
 			this.setState({
 				combats: this.state.combats
@@ -2233,6 +2160,33 @@ export default class Main extends React.Component<Props, State> {
 		});
 	}
 
+	private addMapItem(item: MapItem, map: Map) {
+		map.items.push(item);
+
+		this.setState({
+			combats: this.state.combats,
+			explorations: this.state.explorations
+		});
+	}
+
+	private useTrait(trait: Trait) {
+		trait.uses += 1;
+
+		this.setState({
+			combats: this.state.combats,
+			explorations: this.state.explorations
+		});
+	}
+
+	private rechargeTrait(trait: Trait) {
+		trait.uses = 0;
+
+		this.setState({
+			combats: this.state.combats,
+			explorations: this.state.explorations
+		});
+	}
+
 	//#endregion
 
 	//#region Saving
@@ -2256,6 +2210,8 @@ export default class Main extends React.Component<Props, State> {
 				this.saveKey(this.state.explorations, 'data-explorations');
 				break;
 		}
+
+		this.saveKey(this.state.options, 'data-options');
 	}
 
 	private saveAll() {
@@ -2265,6 +2221,7 @@ export default class Main extends React.Component<Props, State> {
 		this.saveKey(this.state.maps, 'data-maps');
 		this.saveKey(this.state.combats, 'data-combats');
 		this.saveKey(this.state.explorations, 'data-explorations');
+		this.saveKey(this.state.options, 'data-options');
 	}
 
 	private saveKey(obj: any, key: string) {
@@ -2461,6 +2418,7 @@ export default class Main extends React.Component<Props, State> {
 							parties={this.state.parties}
 							library={this.state.library}
 							encounters={this.state.encounters}
+							options={this.state.options}
 							pauseCombat={() => this.pauseCombat()}
 							endCombat={(combat, goToMap) => this.endCombat(combat, goToMap)}
 							nudgeValue={(combatant, type, delta) => this.nudgeValue(combatant, type, delta)}
@@ -2468,8 +2426,8 @@ export default class Main extends React.Component<Props, State> {
 							makeCurrent={combatant => this.makeCurrent(combatant, false)}
 							makeActive={combatants => this.makeActive(combatants)}
 							makeDefeated={combatants => this.makeDefeated(combatants)}
-							useTrait={(combatant, trait) => this.useTrait(combatant, trait)}
-							rechargeTrait={(combatant, trait) => this.rechargeTrait(combatant, trait)}
+							useTrait={trait => this.useTrait(trait)}
+							rechargeTrait={trait => this.rechargeTrait(trait)}
 							removeCombatants={combatants => this.removeCombatants(combatants)}
 							addCombatants={() => this.openAddCombatantModal()}
 							addCompanion={companion => this.addCompanionToEncounter(companion)}
@@ -2513,8 +2471,17 @@ export default class Main extends React.Component<Props, State> {
 								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
 								this.rotateMap(combat.map as Map);
 							}}
-							setFog={fog => this.setFog(fog)}
-							addOverlay={overlay => this.addMapItem(overlay)}
+							setFog={fog => {
+								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
+								combat.fog = fog;
+								this.setState({
+									combats: this.state.combats
+								});
+							}}
+							addOverlay={overlay => {
+								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
+								this.addMapItem(overlay, combat.map as Map);
+							}}
 							onRollDice={(count, sides, constant) => this.setDice(count, sides, constant)}
 						/>
 					);
@@ -2557,6 +2524,8 @@ export default class Main extends React.Component<Props, State> {
 					return (
 						<ExplorationScreen
 							exploration={this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration}
+							library={this.state.library}
+							options={this.state.options}
 							startCombat={ex => this.createCombat(null, ex.partyID, ex.map, ex.fog, ex.combatants)}
 							toggleTag={(combatants, tag) => this.toggleTag(combatants, tag)}
 							toggleCondition={(combatants, condition) => this.toggleCondition(combatants, condition)}
@@ -2571,9 +2540,6 @@ export default class Main extends React.Component<Props, State> {
 							}}
 							removeCondition={(combatant, condition) => this.removeCondition(combatant, condition)}
 							changeValue={(source, field, value) => this.changeValue(source, field, value)}
-							fillFog={() => this.fillFog()}
-							clearFog={() => this.clearFog()}
-							toggleFog={(x1, y1, x2, y2) => this.toggleFog(x1, y1, x2, y2)}
 							addCompanion={companion => this.addCompanionToExploration(companion)}
 							mapAdd={(combatant, x, y) => {
 								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
@@ -2600,6 +2566,20 @@ export default class Main extends React.Component<Props, State> {
 								this.rotateMap(ex.map);
 							}}
 							getMonster={id => this.getMonster(id)}
+							useTrait={trait => this.useTrait(trait)}
+							rechargeTrait={trait => this.rechargeTrait(trait)}
+							setFog={fog => {
+								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
+								ex.fog = fog;
+								this.setState({
+									explorations: this.state.explorations
+								});
+							}}
+							addOverlay={overlay => {
+								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
+								this.addMapItem(overlay, ex.map);
+							}}
+							onRollDice={(count, sides, constant) => this.setDice(count, sides, constant)}
 							pauseExploration={() => this.pauseExploration()}
 							endExploration={exploration => this.endExploration(exploration)}
 						/>
@@ -3029,6 +3009,7 @@ export default class Main extends React.Component<Props, State> {
 							maps={this.state.maps}
 							combats={this.state.combats}
 							explorations={this.state.explorations}
+							options={this.state.options}
 							currentCombat={this.state.combats.find(c => c.id === this.state.selectedCombatID) ?? null}
 							currentExploration={this.state.explorations.find(e => e.id === this.state.selectedExplorationID) ?? null}
 							onSelectSidebar={type => this.setSidebar(type)}
@@ -3038,6 +3019,13 @@ export default class Main extends React.Component<Props, State> {
 							selectEncounter={id => this.selectEncounterByID(id)}
 							selectMap={id => this.selectMapByID(id)}
 							openImage={data => this.setState({drawer: { type: 'image', data: data }})}
+							setOption={(option, value) => {
+								const options = this.state.options as any;
+								options[option] = value;
+								this.setState({
+									options: options
+								});
+							}}
 						/>
 					</ErrorBoundary>
 					<ErrorBoundary>

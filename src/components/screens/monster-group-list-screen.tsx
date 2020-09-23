@@ -25,7 +25,6 @@ export default class MonsterGroupListScreen extends React.Component<Props> {
 	public render() {
 		try {
 			if (!this.props.hasMonsters) {
-				/* tslint:disable:max-line-length */
 				return (
 					<Row align='middle' justify='center' className='scrollable'>
 						<div style={{ width: '400px' }}>
@@ -39,7 +38,6 @@ export default class MonsterGroupListScreen extends React.Component<Props> {
 						</div>
 					</Row>
 				);
-				/* tslint:enable:max-line-length */
 			}
 
 			const groups = this.props.library;

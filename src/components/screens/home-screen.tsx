@@ -7,7 +7,6 @@ interface Props {
 export default class HomeScreen extends React.Component<Props> {
 	public render() {
 		try {
-			/* tslint:disable:max-line-length */
 			const carousel = (
 				<Carousel autoplay={true} autoplaySpeed={10 * 1000}>
 					<div key='prologue'>
@@ -68,7 +67,6 @@ export default class HomeScreen extends React.Component<Props> {
 					</div>
 				</Carousel>
 			);
-			/* tslint:enable:max-line-length */
 
 			return (
 				<Row align='middle' justify='center' className='full-height'>

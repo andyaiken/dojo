@@ -1,5 +1,5 @@
 import { MenuOutlined, PlusCircleOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Col, Drawer, Row } from 'antd';
+import { Col, Row } from 'antd';
 import React from 'react';
 import { List } from 'react-movable';
 
@@ -15,6 +15,7 @@ import { CATEGORY_TYPES, Monster, MonsterGroup, Trait, TRAIT_TYPES } from '../..
 
 import MonsterCard from '../../cards/monster-card';
 import MonsterStatblockCard from '../../cards/monster-statblock-card';
+import MonsterTemplateCard from '../../cards/monster-template-card';
 import Checkbox from '../../controls/checkbox';
 import ConfirmButton from '../../controls/confirm-button';
 import Dropdown from '../../controls/dropdown';
@@ -27,7 +28,6 @@ import AbilityScorePanel from '../../panels/ability-score-panel';
 import FilterPanel from '../../panels/filter-panel';
 import Note from '../../panels/note';
 import PortraitPanel from '../../panels/portrait-panel';
-import ImageSelectionModal from '../image-selection-modal';
 
 interface Props {
 	monster: Monster;
@@ -51,7 +51,6 @@ interface State {
 	};
 	scratchpadFilter: MonsterFilter;
 	scratchpadList: Monster[];
-	showImageSelection: boolean;
 }
 
 export default class MonsterEditorModal extends React.Component<Props, State> {
@@ -72,8 +71,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 				challenge: true
 			},
 			scratchpadFilter: Factory.createMonsterFilter(),
-			scratchpadList: [],
-			showImageSelection: false
+			scratchpadList: []
 		};
 	}
 
@@ -96,12 +94,6 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 		filter[type] = !filter[type];
 		this.setState({
 			similarFilter: filter
-		});
-	}
-
-	private toggleImageSelection() {
-		this.setState({
-			showImageSelection: !this.state.showImageSelection
 		});
 	}
 
@@ -281,8 +273,7 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 		Frankenstein.changeValue(this.state.monster, field, value);
 		this.recalculateRole();
 		this.setState({
-			monster: this.state.monster,
-			showImageSelection: false
+			monster: this.state.monster
 		});
 	}
 
@@ -616,7 +607,6 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
 				let emptyScratchpadNote = null;
 				if (this.state.scratchpadList.length === 0) {
-					/* tslint:disable:max-line-length */
 					emptyScratchpadNote = (
 						<Note>
 							<div className='section'>
@@ -633,7 +623,6 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 							</div>
 						</Note>
 					);
-					/* tslint:enable:max-line-length */
 				}
 				let emptyListNote = null;
 				if (monsters.length === 0) {
@@ -702,9 +691,8 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 			if (selected) {
 				return (
 					<div className='section' key={m.id}>
-						<MonsterStatblockCard
+						<MonsterTemplateCard
 							monster={m}
-							mode='template'
 							section={this.state.page}
 							copyTrait={trait => this.copyTrait(trait)}
 							deselectMonster={monster => this.removeFromScratchpad(monster)}
@@ -754,7 +742,6 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 					content = (
 						<OverviewTab
 							monster={this.state.monster}
-							toggleImageSelection={() => this.toggleImageSelection()}
 							changeValue={(field, value) => this.changeValue(field, value)}
 							nudgeValue={(field, delta) => this.nudgeValue(field, delta)}
 						/>
@@ -834,12 +821,6 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 						{help}
 					</Col>
 					{this.getSidebar()}
-					<Drawer visible={this.state.showImageSelection} closable={false} onClose={() => this.toggleImageSelection()}>
-						<ImageSelectionModal
-							select={id => this.changeValue('portrait', id)}
-							cancel={() => this.toggleImageSelection()}
-						/>
-					</Drawer>
 				</Row>
 			);
 		} catch (e) {
@@ -851,7 +832,6 @@ export default class MonsterEditorModal extends React.Component<Props, State> {
 
 interface OverviewTabProps {
 	monster: Monster;
-	toggleImageSelection: () => void;
 	changeValue: (field: string, value: any) => void;
 	nudgeValue: (field: string, delta: number) => void;
 }
@@ -1019,15 +999,12 @@ class CombatTab extends React.Component<CombatTabProps> {
 							onNudgeValue={delta => this.props.nudgeValue('hitDice', delta)}
 						/>
 						<div className='subheading'>hit points</div>
+						<Note>
+							<p>to calculate hit points, the die type is based on the monster's size, and the die roll is modified by the monster's constitution modifier</p>
+						</Note>
 						<div className='hp-value'>
 							{Frankenstein.getTypicalHP(this.props.monster) + ' hp (' + Frankenstein.getTypicalHPString(this.props.monster) + ')'}
 						</div>
-						<div className='subheading'>legendary actions</div>
-						<NumberSpin
-							value={this.props.monster.legendaryActions}
-							downEnabled={this.props.monster.legendaryActions > 0}
-							onNudgeValue={delta => this.props.nudgeValue('legendaryActions', delta)}
-						/>
 					</Col>
 					<Col span={12}>
 						<div className='subheading'>damage resistances</div>
@@ -1049,6 +1026,12 @@ class CombatTab extends React.Component<CombatTabProps> {
 						<Textbox
 							text={this.props.monster.conditionImmunities}
 							onChange={value => this.props.changeValue('conditionImmunities', value)}
+						/>
+						<div className='subheading'>legendary actions</div>
+						<NumberSpin
+							value={this.props.monster.legendaryActions}
+							downEnabled={this.props.monster.legendaryActions > 0}
+							onNudgeValue={delta => this.props.nudgeValue('legendaryActions', delta)}
 						/>
 					</Col>
 				</Row>
