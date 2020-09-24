@@ -65,6 +65,9 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
 	public render() {
 		try {
 			let name: string = this.props.condition.name || 'condition';
+			if (name === 'custom') {
+				name = this.props.condition.text || 'custom condition';
+			}
 			if (this.props.condition.name === 'exhaustion') {
 				name += ' (' + this.props.condition.level + ')';
 			}
@@ -95,9 +98,11 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
 					</div>
 				);
 			}
-			const text = Gygax.conditionText(this.props.condition);
-			for (let n = 0; n !== text.length; ++n) {
-				description.push(<div key={n} className='section'>{text[n]}</div>);
+			if (this.props.condition.name !== 'custom') {
+				const text = Gygax.conditionText(this.props.condition);
+				for (let n = 0; n !== text.length; ++n) {
+					description.push(<div key={n} className='section'>{text[n]}</div>);
+				}
 			}
 
 			return (

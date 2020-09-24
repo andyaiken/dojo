@@ -40,21 +40,21 @@ export class CombatNotificationPanel extends React.Component<Props> {
 	public render() {
 		try {
 			const combatant = this.props.notification.combatant as (Combatant & Monster);
-			const condition = this.props.notification.data as Condition;
-			const trait = this.props.notification.data as Trait;
-
 			const name = combatant.displayName || combatant.name || 'unnamed monster';
+
 			switch (this.props.notification.type) {
 				case 'condition-save':
-					const duration = condition.duration as ConditionDurationSaves;
-					let saveType = duration.saveType.toString();
+					const saveCondition = this.props.notification.data as Condition;
+					const saveConditionName = saveCondition.name === 'custom' ? saveCondition.text : saveCondition.name;
+					const saveConditionDuration = saveCondition.duration as ConditionDurationSaves;
+					let saveType = saveConditionDuration.saveType.toString();
 					if (saveType !== 'death') {
 						saveType = saveType.toUpperCase();
 					}
 					return (
 						<div>
 							<div className='section'>
-								<b>{name}</b> must make a {saveType} save against dc {duration.saveDC}
+							<b>{name}</b> (<i>{saveConditionName}</i>) must make a {saveType} save against dc {saveConditionDuration.saveDC}
 							</div>
 							<Row gutter={10}>
 								<Col span={12}>
@@ -67,15 +67,18 @@ export class CombatNotificationPanel extends React.Component<Props> {
 						</div>
 					);
 				case 'condition-end':
+					const endCondition = this.props.notification.data as Condition;
+					const endConditionName = endCondition.name === 'custom' ? endCondition.text : endCondition.name;
 					return (
 						<div>
 							<div className='section'>
-								<b>{name}</b> is no longer affected by condition <b>{condition.name}</b>
+								<b>{name}</b> is no longer affected by condition <b>{endConditionName}</b>
 								<button onClick={() => this.close(false)}>close</button>
 							</div>
 						</div>
 					);
 				case 'trait-recharge':
+					const trait = this.props.notification.data as Trait;
 					return (
 						<div>
 							<div className='section'>

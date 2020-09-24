@@ -14,6 +14,7 @@ import { Dropdown } from '../controls/dropdown';
 import { NumberSpin } from '../controls/number-spin';
 import { RadioGroup } from '../controls/radio-group';
 import { Selector } from '../controls/selector';
+import { Textbox } from '../controls/textbox';
 
 interface Props {
 	condition: Condition;
@@ -33,10 +34,10 @@ export class ConditionModal extends React.Component<Props, State> {
 		};
 	}
 
-	private setCondition(conditionName: string) {
-		if (this.state.condition.name !== conditionName) {
+	private setCondition(name: string) {
+		if (this.state.condition.name !== name) {
 			const c = this.state.condition;
-			c.name = conditionName;
+			c.name = name;
 			c.level = 1;
 			c.text = '';
 
@@ -44,6 +45,14 @@ export class ConditionModal extends React.Component<Props, State> {
 				condition: c
 			});
 		}
+	}
+
+	private setCustomText(text: string) {
+		const c = this.state.condition;
+		c.text = text;
+		this.setState({
+			condition: c
+		});
 	}
 
 	private setDuration(durationType: 'saves' | 'combatant' | 'rounds') {
@@ -101,13 +110,12 @@ export class ConditionModal extends React.Component<Props, State> {
 	public render() {
 		try {
 			const conditions = CONDITION_TYPES.map(condition => {
-				const controls = [];
+				let controls = null;
 				const description = [];
 				if (condition === this.state.condition.name) {
 					if (condition === 'exhaustion') {
-						controls.push(
+						controls = (
 							<NumberSpin
-								key='exhaustion-spin'
 								value={this.props.condition.level}
 								label='exhaustion'
 								downEnabled={this.props.condition.level > 1}
@@ -116,9 +124,20 @@ export class ConditionModal extends React.Component<Props, State> {
 							/>
 						);
 					}
-					const text = Gygax.conditionText(this.state.condition);
-					for (let n = 0; n !== text.length; ++n) {
-						description.push(<li key={n} className='section'>{text[n]}</li>);
+					if (condition === 'custom') {
+						controls = (
+							<Textbox
+								text={this.state.condition.text}
+								placeholder=''
+								onChange={text => this.setCustomText(text)}
+							/>
+						);
+					}
+					if (this.state.condition.name !== 'custom') {
+						const text = Gygax.conditionText(this.state.condition);
+						for (let n = 0; n !== text.length; ++n) {
+							description.push(<li key={n} className='section'>{text[n]}</li>);
+						}
 					}
 				}
 

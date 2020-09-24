@@ -40,5 +40,6 @@ export const CONDITION_TYPES = [
 	'prone',
 	'restrained',
 	'stunned',
-	'unconscious'
+	'unconscious',
+	'custom'
 ];

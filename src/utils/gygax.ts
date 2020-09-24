@@ -550,6 +550,8 @@ export class Gygax {
 					'attack rolls against the creature have advantage',
 					'any attack that hits the creature is a critical hit if the attacker is within 5 feet of the creature'
 				];
+			case 'custom':
+				return [condition.text];
 			default:
 				return [];
 		}

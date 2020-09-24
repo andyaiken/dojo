@@ -976,12 +976,15 @@ class MapToken extends React.Component<MapTokenProps> {
 			});
 
 			this.props.combatant.conditions.forEach(condition => {
-				noteText += '\n\n';
-				noteText += '**' + condition.name + '**';
-				Gygax.conditionText(condition).forEach(txt => {
+				if (condition.name === 'custom') {
+					Gygax.conditionText(condition).forEach(txt => {
+						noteText += '\n\n';
+						noteText += '* ' + txt;
+					});
+				} else {
 					noteText += '\n\n';
-					noteText += '* ' + txt;
-				});
+					noteText += '* ' + condition.name;
+				}
 			});
 
 			if (this.props.combatant.note) {

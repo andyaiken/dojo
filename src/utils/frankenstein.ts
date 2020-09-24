@@ -748,9 +748,11 @@ export class Frankenstein {
 		// Note that this only looks for the appearance of conditions in the text
 		let count = 0;
 		CONDITION_TYPES.forEach(condition => {
-			const includes = monster.traits.some(t => t.text.toLowerCase().includes(condition.toLowerCase()));
-			if (includes) {
-				count += 1;
+			if (condition !== 'custom') {
+				const includes = monster.traits.some(t => t.text.toLowerCase().includes(condition.toLowerCase()));
+				if (includes) {
+					count += 1;
+				}
 			}
 		});
 		if (count >= 2) {

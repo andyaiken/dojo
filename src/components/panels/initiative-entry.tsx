@@ -185,6 +185,12 @@ export class InitiativeEntry extends React.Component<Props> {
 				if (c.duration) {
 					name += ' ' + Gygax.conditionDurationText(c, this.props.combat.combatants);
 				}
+				let heading = null;
+				if (c.name !== 'custom') {
+					heading = (
+						<div className='note-heading'>{name}</div>
+					);
+				}
 				const description = [];
 				const text = Gygax.conditionText(c);
 				for (let n = 0; n !== text.length; ++n) {
@@ -192,7 +198,7 @@ export class InitiativeEntry extends React.Component<Props> {
 				}
 				notes.push(
 					<Note key={c.id}>
-						<div className='note-heading'>{name}</div>
+						{heading}
 						{description}
 					</Note>
 				);
