@@ -77,7 +77,7 @@ class RadioGroupItem extends React.Component<RadioGroupItemProps> {
 			}
 
 			return (
-				<div className={style} onClick={e => this.click(e)}>
+				<div className={style} onClick={e => this.click(e)} role='button'>
 					<div className='radio-item-top'>
 						<div className='radio-item-text'>{this.props.item.text}</div>
 						<div className='radio-item-info'>{this.props.item.info}</div>

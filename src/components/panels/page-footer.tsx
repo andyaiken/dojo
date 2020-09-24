@@ -18,7 +18,7 @@ export class PageFooter extends React.Component<Props> {
 	public render() {
 		try {
 			const tabs = this.props.tabs.map(tab => (
-				<div key={tab.id} className={tab.selected ? 'navigator-item selected' : 'navigator-item'} onClick={() => this.props.onSelectView(tab.id)}>
+				<div key={tab.id} className={tab.selected ? 'navigator-item selected' : 'navigator-item'} onClick={() => this.props.onSelectView(tab.id)} role='button'>
 					{tab.text}
 				</div>
 			));

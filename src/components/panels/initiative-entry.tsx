@@ -237,7 +237,7 @@ export class InitiativeEntry extends React.Component<Props> {
 			}
 
 			return (
-				<div className={style} onClick={e => this.onClick(e)}>
+				<div className={style} onClick={e => this.onClick(e)} role='button'>
 					<div className='header'>
 						{portrait}
 						<div className='name'>

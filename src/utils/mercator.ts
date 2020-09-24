@@ -50,7 +50,7 @@ export class Mercator {
 					}
 
 					if (candidateSquares.length > 0) {
-						const index = Math.floor(Math.random() * candidateSquares.length);
+						const index = Utils.randomNumber(candidateSquares.length);
 						const square = candidateSquares[index];
 						const size = Gygax.miniSize(combatant.displaySize);
 
@@ -240,7 +240,7 @@ export class Mercator {
 				}
 			}
 			if (candidates.length > 0) {
-				const index = Math.floor(Math.random() * candidates.length);
+				const index = Utils.randomNumber(candidates.length);
 				room.x = candidates[index].x;
 				room.y = candidates[index].y;
 			} else {
@@ -296,7 +296,7 @@ export class Mercator {
 			});
 
 			if (corridors.length > 0) {
-				const index = Math.floor(Math.random() * corridors.length);
+				const index = Utils.randomNumber(corridors.length);
 				const corridor = corridors[index];
 
 				if ((!corridor.horizontal && (corridor.tile.height === 1)) || (corridor.horizontal && (corridor.tile.width === 1))) {
@@ -481,7 +481,7 @@ export class Mercator {
 	}
 
 	private static getRandomDoorwayStyle() {
-		const index = Math.floor(Math.random() * DOORWAY_TYPES.length);
+		const index = Utils.randomNumber(DOORWAY_TYPES.length);
 		return DOORWAY_TYPES[index];
 	}
 

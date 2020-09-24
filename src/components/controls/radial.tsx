@@ -31,46 +31,46 @@ export class Radial extends React.Component<Props> {
 				<div className={style}>
 					<div className='cell' style={{ display: showDiag ? 'none' : 'inline-block' }} />
 					<div className='cell' style={{ display: showDiag ? 'inline-block' : 'none' }}>
-						<div className='arrow diag' onClick={e => this.click(e, 'NW')}>
+						<div className='arrow diag' onClick={e => this.click(e, 'NW')} role='button'>
 							<ArrowUpOutlined rotate={-45} />
 						</div>
 					</div>
 					<div className='cell'>
-						<div className='arrow vertical' onClick={e => this.click(e, 'N')}>
+						<div className='arrow vertical' onClick={e => this.click(e, 'N')} role='button'>
 							<ArrowUpOutlined />
 						</div>
 					</div>
 					<div className='cell' style={{ display: showDiag ? 'none' : 'inline-block' }} />
 					<div className='cell' style={{ display: showDiag ? 'inline-block' : 'none' }}>
-						<div className='arrow diag' onClick={e => this.click(e, 'NE')}>
+						<div className='arrow diag' onClick={e => this.click(e, 'NE')} role='button'>
 							<ArrowUpOutlined rotate={45} />
 						</div>
 					</div>
 					<div className='cell'>
-						<div className='arrow horizontal' onClick={e => this.click(e, 'W')}>
+						<div className='arrow horizontal' onClick={e => this.click(e, 'W')} role='button'>
 							<ArrowLeftOutlined />
 						</div>
 					</div>
 					<div className='cell' />
 					<div className='cell'>
-						<div className='arrow horizontal' onClick={e => this.click(e, 'E')}>
+						<div className='arrow horizontal' onClick={e => this.click(e, 'E')} role='button'>
 							<ArrowRightOutlined />
 						</div>
 					</div>
 					<div className='cell' style={{ display: showDiag ? 'none' : 'inline-block' }} />
 					<div className='cell' style={{ display: showDiag ? 'inline-block' : 'none' }}>
-						<div className='arrow diag' onClick={e => this.click(e, 'SW')}>
+						<div className='arrow diag' onClick={e => this.click(e, 'SW')} role='button'>
 							<ArrowDownOutlined rotate={45} />
 						</div>
 					</div>
 					<div className='cell'>
-						<div className='arrow vertical' onClick={e => this.click(e, 'S')}>
+						<div className='arrow vertical' onClick={e => this.click(e, 'S')} role='button'>
 							<ArrowDownOutlined />
 						</div>
 					</div>
 					<div className='cell' style={{ display: showDiag ? 'none' : 'inline-block' }} />
 					<div className='cell' style={{ display: showDiag ? 'inline-block' : 'none' }}>
-						<div className='arrow diag' onClick={e => this.click(e, 'SE')}>
+						<div className='arrow diag' onClick={e => this.click(e, 'SE')} role='button'>
 							<ArrowDownOutlined rotate={-45} />
 						</div>
 					</div>

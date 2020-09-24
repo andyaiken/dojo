@@ -79,7 +79,7 @@ export class EncounterCard extends React.Component<Props, State> {
 	public render() {
 		try {
 			const slots = this.props.encounter.slots.map(slot => (
-				<div key={slot.id} className='combatant-row' onClick={() => this.props.openStatBlock(slot)}>
+				<div key={slot.id} className='combatant-row' onClick={() => this.props.openStatBlock(slot)} role='button'>
 					{this.getPortrait(slot)}
 					{this.getText(slot)}
 					{this.getValue(slot)}
@@ -93,7 +93,7 @@ export class EncounterCard extends React.Component<Props, State> {
 				slots.push(<div key={'name ' + wave.id} className='section subheading'>{wave.name || 'unnamed wave'}</div>);
 				wave.slots.forEach(slot => {
 					slots.push(
-						<div key={slot.id} className='combatant-row' onClick={() => this.props.openStatBlock(slot)}>
+						<div key={slot.id} className='combatant-row' onClick={() => this.props.openStatBlock(slot)} role='button'>
 							{this.getPortrait(slot)}
 							{this.getText(slot)}
 							{this.getValue(slot)}

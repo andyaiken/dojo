@@ -75,7 +75,7 @@ class Card extends React.Component<CardProps, CardState> {
 	public render() {
 		try {
 			return (
-				<div className={this.state.flipped ? 'oracle-card flipped' : 'oracle-card'} onClick={() => this.flip()}>
+				<div className={this.state.flipped ? 'oracle-card flipped' : 'oracle-card'} onClick={() => this.flip()} role='button'>
 					<div className='oracle-card-inner'>
 						<div className='oracle-card-front'>
 							?

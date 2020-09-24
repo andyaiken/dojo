@@ -25,71 +25,32 @@ export class FilterPanel extends React.Component<Props> {
 
 	public render() {
 		try {
-			let crSection = null;
-			if (true) {
-				crSection = (
-					<Slider
-						range={true}
-						min={0}
-						max={30}
-						value={[this.props.filter.challengeMin, this.props.filter.challengeMax]}
-						onChange={value => this.props.changeValue('challenge', value)}
-					/>
-				);
+			const sizeOptions = ['all sizes'].concat(SIZE_TYPES).map(size => ({ id: size, text: size }));
+
+			const catOptions = ['all types'].concat(CATEGORY_TYPES).map(cat => ({ id: cat, text: cat }));
+			const aberr = catOptions.find(o => o.id === 'aberration');
+			if (aberr) {
+				aberr.text = 'aberr.';
 			}
-
-			let sizeSection = null;
-			if (true) {
-				const sizes = ['all sizes'].concat(SIZE_TYPES);
-				const sizeOptions = sizes.map(size => ({ id: size, text: size }));
-
-				sizeSection = (
-					<Dropdown
-						options={sizeOptions}
-						placeholder='filter by size...'
-						selectedID={this.props.filter.size}
-						onSelect={optionID => this.props.changeValue('size', optionID)}
-					/>
-				);
+			const celest = catOptions.find(o => o.id === 'celestial');
+			if (celest) {
+				celest.text = 'celest.';
 			}
-
-			let catSection = null;
-			if (true) {
-				const categories = ['all types'].concat(CATEGORY_TYPES);
-				const catOptions = categories.map(cat => ({ id: cat, text: cat }));
-				const aberr = catOptions.find(o => o.id === 'aberration');
-				if (aberr) {
-					aberr.text = 'aberr.';
-				}
-				const celest = catOptions.find(o => o.id === 'celestial');
-				if (celest) {
-					celest.text = 'celest.';
-				}
-				const constr = catOptions.find(o => o.id === 'construct');
-				if (constr) {
-					constr.text = 'const.';
-				}
-				const elem = catOptions.find(o => o.id === 'elemental');
-				if (elem) {
-					elem.text = 'elem.';
-				}
-				const human = catOptions.find(o => o.id === 'humanoid');
-				if (human) {
-					human.text = 'human.';
-				}
-				const monst = catOptions.find(o => o.id === 'monstrosity');
-				if (monst) {
-					monst.text = 'monst.';
-				}
-
-				catSection = (
-					<Selector
-						options={catOptions}
-						selectedID={this.props.filter.category}
-						itemsPerRow={3}
-						onSelect={optionID => this.props.changeValue('category', optionID)}
-					/>
-				);
+			const constr = catOptions.find(o => o.id === 'construct');
+			if (constr) {
+				constr.text = 'const.';
+			}
+			const elem = catOptions.find(o => o.id === 'elemental');
+			if (elem) {
+				elem.text = 'elem.';
+			}
+			const human = catOptions.find(o => o.id === 'humanoid');
+			if (human) {
+				human.text = 'human.';
+			}
+			const monst = catOptions.find(o => o.id === 'monstrosity');
+			if (monst) {
+				monst.text = 'monst.';
 			}
 
 			let roleSection = null;
@@ -117,9 +78,25 @@ export class FilterPanel extends React.Component<Props> {
 						onChange={value => this.props.changeValue('name', value)}
 					/>
 					<Expander text={'showing ' + Napoleon.getFilterDescription(this.props.filter)}>
-						{crSection}
-						{sizeSection}
-						{catSection}
+						<Slider
+							range={true}
+							min={0}
+							max={30}
+							value={[this.props.filter.challengeMin, this.props.filter.challengeMax]}
+							onChange={value => this.props.changeValue('challenge', value)}
+						/>
+						<Dropdown
+							options={sizeOptions}
+							placeholder='filter by size...'
+							selectedID={this.props.filter.size}
+							onSelect={optionID => this.props.changeValue('size', optionID)}
+						/>
+						<Selector
+							options={catOptions}
+							selectedID={this.props.filter.category}
+							itemsPerRow={3}
+							onSelect={optionID => this.props.changeValue('category', optionID)}
+						/>
 						{roleSection}
 						<hr/>
 						<div className='section'>

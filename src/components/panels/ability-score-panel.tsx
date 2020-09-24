@@ -64,7 +64,7 @@ export class AbilityScorePanel extends React.Component<Props, State> {
 
 		if (this.props.showRollButtons) {
 			return (
-				<div className='ability-score link' onClick={e => this.roll(e, ability)}>
+				<div className='ability-score link' onClick={e => this.roll(e, ability)} role='button'>
 					{content}
 				</div>
 			);
@@ -124,7 +124,7 @@ export class AbilityScorePanel extends React.Component<Props, State> {
 				);
 			} else {
 				result = (
-					<div className='ability-scores' onClick={() => this.toggleAbilityScores()}>
+					<div className='ability-scores' onClick={() => this.toggleAbilityScores()} role='button'>
 						{this.getAbilityScore('str')}
 						{this.getAbilityScore('dex')}
 						{this.getAbilityScore('con')}

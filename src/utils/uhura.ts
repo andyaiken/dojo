@@ -219,8 +219,7 @@ export class Comms {
 
 	public static packetToString(packet: Packet) {
 		const str = JSON.stringify(packet);
-		const s = LZString.compressToUTF16(str);
-		return s;
+		return LZString.compressToUTF16(str);
 	}
 
 	public static stringToPacket(str: string): Packet {

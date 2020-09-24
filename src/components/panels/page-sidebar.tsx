@@ -278,7 +278,7 @@ export class PageSidebar extends React.Component<Props> {
 								const sidebar = this.props.sidebar;
 								sidebar.selectedLanguages = [];
 								while (sidebar.selectedLanguages.length !== 3) {
-									const n = Math.floor(Math.random() * languages.length);
+									const n = Utils.randomNumber(languages.length);
 									const lang = languages[n];
 									if (!sidebar.selectedLanguages.includes(lang)) {
 										sidebar.selectedLanguages.push(lang);

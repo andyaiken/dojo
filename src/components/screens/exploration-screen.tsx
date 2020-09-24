@@ -645,7 +645,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				<div className='full-height'>
 					<Row align='middle' className='combat-top-row'>
 						<Col span={6}>
-							<div className='menu' onClick={() => this.toggleShowOptions()}>
+							<div className='menu' onClick={() => this.toggleShowOptions()} role='button'>
 								<SettingOutlined title='options' />
 								<span>options</span>
 							</div>

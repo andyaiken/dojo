@@ -262,7 +262,7 @@ class TraitPanel extends React.Component<TraitPanelProps> {
 					);
 				case 'template':
 					return (
-						<div key={this.props.trait.id} className='section trait trait-template' onClick={() => this.props.copyTrait(this.props.trait)}>
+						<div key={this.props.trait.id} className='section trait trait-template' onClick={() => this.props.copyTrait(this.props.trait)} role='button'>
 							<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(markdown) }} />
 						</div>
 					);

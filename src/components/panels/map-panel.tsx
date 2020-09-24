@@ -511,6 +511,7 @@ export class MapPanel extends React.Component<Props, State> {
 					className={style}
 					style={{ width: mapWidth + 'px', height: mapHeight + 'px' }}
 					onClick={() => this.props.itemSelected ? this.props.itemSelected(null, false) : null}
+					role='button'
 				>
 					{controls}
 					<div className='grid'>
@@ -671,6 +672,7 @@ class GridSquare extends React.Component<GridSquareProps> {
 					onMouseUp={e => this.mouseUp(e)}
 					onMouseEnter={e => this.mouseEnter(e)}
 					onDoubleClick={e => this.doubleClick(e)}
+					role='button'
 				/>
 			);
 		} catch (ex) {
@@ -888,6 +890,7 @@ class MapTile extends React.Component<MapTileProps> {
 					className={style}
 					style={this.props.style}
 					onClick={e => this.select(e)}
+					role='button'
 				>
 					{customImage}
 					{content}
@@ -925,6 +928,7 @@ class MapOverlay extends React.Component<MapOverlayProps> {
 					className={style}
 					style={this.props.style}
 					onClick={e => this.select(e)}
+					role='button'
 				/>
 			);
 		} catch (ex) {
@@ -1091,6 +1095,7 @@ class MapToken extends React.Component<MapTokenProps> {
 					className={style}
 					style={this.props.style}
 					onClick={e => this.select(e)}
+					role='button'
 				>
 					{content}
 					{hpGauge}

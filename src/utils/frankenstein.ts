@@ -33,11 +33,11 @@ export class Frankenstein {
 		let source: any = target;
 		let value: any = null;
 		const tokens = field.split('.');
-		tokens.forEach(token => {
-			if (token === tokens[tokens.length - 1]) {
-				value = source[token];
+		tokens.forEach(tkn => {
+			if (tkn === tokens[tokens.length - 1]) {
+				value = source[tkn];
 			} else {
-				source = source[token];
+				source = source[tkn];
 			}
 		});
 
@@ -61,11 +61,11 @@ export class Frankenstein {
 	public static changeValue(target: Monster, field: string, value: any) {
 		let source: any = target;
 		const tokens = field.split('.');
-		tokens.forEach(token => {
-			if (token === tokens[tokens.length - 1]) {
-				source[token] = value;
+		tokens.forEach(tkn => {
+			if (tkn === tokens[tokens.length - 1]) {
+				source[tkn] = value;
 			} else {
-				source = source[token];
+				source = source[tkn];
 			}
 		});
 	}
@@ -598,7 +598,7 @@ export class Frankenstein {
 
 			const avg = traits.length / monsters.length;
 			while (target.traits.filter(t => t.type === type).length < avg) {
-				const index = Math.floor(Math.random() * distinct.length);
+				const index = Utils.randomNumber(distinct.length);
 				const t = distinct[index].trait;
 				this.copyTrait(target, t);
 				distinct.splice(index, 1);
@@ -613,17 +613,17 @@ export class Frankenstein {
 	}
 
 	public static setRandomValue(target: Monster, field: string, monsters: Monster[]) {
-		const index = Math.floor(Math.random() * monsters.length);
+		const index = Utils.randomNumber(monsters.length);
 		const m = monsters[index];
 
 		let source: any = m;
 		let value = null;
 		const tokens = field.split('.');
-		tokens.forEach(token => {
-			if (token === tokens[tokens.length - 1]) {
-				value = source[token];
+		tokens.forEach(tkn => {
+			if (tkn === tokens[tokens.length - 1]) {
+				value = source[tkn];
 			} else {
-				source = source[token];
+				source = source[tkn];
 			}
 		});
 
@@ -639,7 +639,7 @@ export class Frankenstein {
 				});
 		});
 
-		const index = Math.floor(Math.random() * traits.length);
+		const index = Utils.randomNumber(traits.length);
 		const trait = traits[index];
 
 		this.copyTrait(target, trait);

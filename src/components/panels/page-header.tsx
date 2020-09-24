@@ -23,7 +23,7 @@ export class PageHeader extends React.Component<Props> {
 		try {
 			const breadcrumbs = this.props.breadcrumbs.map(bc => {
 				return (
-					<div key={bc.id} className='breadcrumb' onClick={() => bc.onClick()}>
+					<div key={bc.id} className='breadcrumb' onClick={() => bc.onClick()} role='button'>
 						{bc.text}
 					</div>
 				);

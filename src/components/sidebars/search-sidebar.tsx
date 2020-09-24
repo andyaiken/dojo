@@ -63,7 +63,7 @@ export class SearchSidebar extends React.Component<Props, State> {
 						);
 					});
 					results.push(
-						<div key={party.id} className='group-panel clickable' onClick={() => this.props.openParty(party.id)}>
+						<div key={party.id} className='group-panel clickable' onClick={() => this.props.openParty(party.id)} role='button'>
 							<div className='section'>{party.name}</div>
 							{pcs}
 						</div>
@@ -89,7 +89,7 @@ export class SearchSidebar extends React.Component<Props, State> {
 						);
 					});
 					results.push(
-						<div key={group.id} className='group-panel clickable' onClick={() => this.props.openGroup(group.id)}>
+						<div key={group.id} className='group-panel clickable' onClick={() => this.props.openGroup(group.id)} role='button'>
 							<div className='section'>{group.name}</div>
 							{monsters}
 						</div>
@@ -123,7 +123,7 @@ export class SearchSidebar extends React.Component<Props, State> {
 						);
 					});
 					results.push(
-						<div key={encounter.id} className='group-panel clickable' onClick={() => this.props.openEncounter(encounter.id)}>
+						<div key={encounter.id} className='group-panel clickable' onClick={() => this.props.openEncounter(encounter.id)} role='button'>
 							<div className='section'>{encounter.name}</div>
 							{slots}
 							{waves}
@@ -141,7 +141,7 @@ export class SearchSidebar extends React.Component<Props, State> {
 						);
 					});
 					results.push(
-						<div key={map.id} className='group-panel clickable' onClick={() => this.props.openMap(map.id)}>
+						<div key={map.id} className='group-panel clickable' onClick={() => this.props.openMap(map.id)} role='button'>
 							<div className='section'>{map.name}</div>
 							{areas}
 						</div>

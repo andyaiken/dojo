@@ -39,7 +39,7 @@ export class Checkbox extends React.Component<Props> {
 			}
 
 			return (
-				<div className={style} onClick={e => this.click(e)}>
+				<div className={style} onClick={e => this.click(e)} role='button'>
 					<div className='checkbox-label'>{this.props.label}</div>
 					{toggle}
 				</div>

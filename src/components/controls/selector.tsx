@@ -79,7 +79,7 @@ class SelectorOption extends React.Component<SelectorOptionProps> {
 			}
 
 			return (
-				<div key={this.props.option.id} className={style} title={this.props.option.text} onClick={e => this.click(e)}>
+				<div key={this.props.option.id} className={style} title={this.props.option.text} onClick={e => this.click(e)} role='button'>
 					{this.props.option.text}
 				</div>
 			);

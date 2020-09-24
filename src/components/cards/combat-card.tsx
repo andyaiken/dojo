@@ -56,7 +56,7 @@ export class CombatCard extends React.Component<Props> {
 				.filter(c => c.active)
 				.filter(c => c.type !== 'placeholder')
 				.map(c => (
-					<div key={c.id} className='combatant-row' onClick={() => this.props.openStatBlock(c)}>
+					<div key={c.id} className='combatant-row' onClick={() => this.props.openStatBlock(c)} role='button'>
 						<PortraitPanel source={c as (Combatant & PC) | (Combatant & Monster)} inline={true}/>
 						<div className='name'>{c.displayName}</div>
 						{this.getValue(c)}

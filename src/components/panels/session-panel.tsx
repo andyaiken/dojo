@@ -314,7 +314,7 @@ export class MessagePanel extends React.Component<MessagePanelProps> {
 				case 'image':
 					const image = this.props.message.data['image'];
 					content = (
-						<img className='selectable-image' src={image} alt='' onClick={() => this.props.openImage(image)} />
+						<img className='selectable-image' src={image} alt='shared-image' onClick={() => this.props.openImage(image)} />
 					);
 					break;
 				case 'roll':
@@ -647,7 +647,7 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 				if (this.state.image !== '') {
 					return (
 						<div>
-							<img className='nonselectable-image' src={this.state.image} alt='' />
+							<img className='nonselectable-image' src={this.state.image} alt='shared-image' />
 							<Row gutter={10}>
 								<Col span={12}>
 									<button onClick={() => this.setImage('')}>clear</button>

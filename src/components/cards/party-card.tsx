@@ -34,7 +34,7 @@ export class PartyCard extends React.Component<Props> {
 		}
 
 		return this.props.party.pcs.map(pc => (
-			<div key={pc.id} className={pc.active ? 'combatant-row' : 'combatant-row inactive'} onClick={() => this.props.openStatBlock(pc)}>
+			<div key={pc.id} className={pc.active ? 'combatant-row' : 'combatant-row inactive'} onClick={() => this.props.openStatBlock(pc)} role='button'>
 				<PortraitPanel source={pc} inline={true}/>
 				<div className='name'>{this.getText(pc)}</div>
 				<div className='value'>lvl {pc.level}</div>

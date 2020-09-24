@@ -91,7 +91,7 @@ export class Dropdown extends React.Component<Props, State> {
 				let filter = null;
 				if (this.props.options.length > 15) {
 					filter = (
-						<div className='dropdown-filter' onClick={e => e.stopPropagation()}>
+						<div className='dropdown-filter' onClick={e => e.stopPropagation()} role='button'>
 							<Textbox
 								text={this.state.filterText}
 								placeholder='search this list...'
@@ -130,7 +130,7 @@ export class Dropdown extends React.Component<Props, State> {
 			}
 
 			return (
-				<div className={style} onClick={e => this.toggleOpen(e)}>
+				<div className={style} onClick={e => this.toggleOpen(e)} role='button'>
 					{content}
 				</div>
 			);
@@ -166,7 +166,7 @@ class DropdownOption extends React.Component<DropdownOptionProps> {
 			}
 
 			return (
-				<div className={style} onClick={e => this.click(e)}>
+				<div className={style} onClick={e => this.click(e)} role='button'>
 					{this.props.option.display}
 					{this.props.option.text}
 				</div>

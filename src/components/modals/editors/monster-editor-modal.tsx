@@ -354,11 +354,11 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 				const tokens = field.split('.');
 				let source: any = m;
 				let value = null;
-				tokens.forEach(token => {
-					if (token === tokens[tokens.length - 1]) {
-						value = source[token];
+				tokens.forEach(tkn => {
+					if (tkn === tokens[tokens.length - 1]) {
+						value = source[tkn];
 					} else {
-						source = source[token];
+						source = source[tkn];
 					}
 				});
 				if ((dataType === 'text') && (value === '')) {
@@ -1169,7 +1169,7 @@ class TraitBarPanel extends React.Component<TraitBarProps> {
 	public render() {
 		try {
 			return (
-				<div className={this.props.isSelected ? 'trait-bar selected' : 'trait-bar'} onClick={() => this.props.select(this.props.trait.id)}>
+				<div className={this.props.isSelected ? 'trait-bar selected' : 'trait-bar'} onClick={() => this.props.select(this.props.trait.id)} role='button'>
 					<MenuOutlined className='grabber' data-movable-handle={true} />
 					<div className='name'>
 						{this.props.trait.name || 'unnamed ' + Gygax.traitType(this.props.trait.type, false)}

@@ -100,7 +100,7 @@ export class Napoleon {
 		while (Napoleon.getAdjustedEncounterXP(encounter, null, id => getMonster(id)) <= xp) {
 			if ((encounter.slots.length > 0) && (Gygax.dieRoll(3) > 1)) {
 				// Increment a slot
-				const index = Math.floor(Math.random() * encounter.slots.length);
+				const index = Utils.randomNumber(encounter.slots.length);
 				const slot = encounter.slots[index];
 				slot.count += 1;
 			} else {
@@ -113,7 +113,7 @@ export class Napoleon {
 						.forEach(monster => candidates.push({ id: monster.id, monsterName: monster.name, groupName: group.name }));
 				});
 				if (candidates.length > 0) {
-					const index = Math.floor(Math.random() * candidates.length);
+					const index = Utils.randomNumber(candidates.length);
 					const slot = Factory.createEncounterSlot();
 					slot.monsterID = candidates[index].id;
 					slot.monsterName = candidates[index].monsterName;
@@ -129,7 +129,7 @@ export class Napoleon {
 
 		// Split into waves
 		while ((encounter.slots.length > 1) && (Gygax.dieRoll(10) === 10)) {
-			const index = Math.floor(Math.random() * encounter.slots.length);
+			const index = Utils.randomNumber(encounter.slots.length);
 			const slot = encounter.slots[index];
 			encounter.slots = encounter.slots.filter(s => s.id !== slot.id);
 			const wave = Factory.createEncounterWave();
@@ -210,7 +210,7 @@ export class Napoleon {
 		return !!ids.find(id => id === monsterID);
 	}
 
-	public static convertPCToCombatant(pc: PC) {
+	public static convertPCToCombatant(pc: PC): Combatant {
 		const combatant = JSON.parse(JSON.stringify(pc)) as Combatant & PC;
 
 		combatant.current = false;
@@ -237,7 +237,7 @@ export class Napoleon {
 		return combatant;
 	}
 
-	public static convertMonsterToCombatant(monster: Monster, init: number, hp: number, name: string, faction: 'foe' | 'neutral' | 'ally') {
+	public static convertMonsterToCombatant(monster: Monster, init: number, hp: number, name: string, faction: 'foe' | 'neutral' | 'ally'): Combatant {
 		const combatant = JSON.parse(JSON.stringify(monster)) as Combatant & Monster;
 		combatant.id = Utils.guid();
 
@@ -266,7 +266,7 @@ export class Napoleon {
 		return combatant;
 	}
 
-	public static convertCompanionToCombatant(companion: Companion | null) {
+	public static convertCompanionToCombatant(companion: Companion | null): Combatant {
 		const combatant = (companion ? JSON.parse(JSON.stringify(companion)) : {}) as Combatant & Companion;
 		combatant.id = companion ? companion.id : Utils.guid();
 		combatant.type = 'companion';
@@ -296,8 +296,8 @@ export class Napoleon {
 		return combatant;
 	}
 
-	public static convertPlaceholderToCombatant() {
-		const combatant: Combatant = {
+	public static convertPlaceholderToCombatant(): Combatant {
+		return {
 			id: Utils.guid(),
 			type: 'placeholder',
 
@@ -322,8 +322,6 @@ export class Napoleon {
 			mountID: null,
 			mountType: 'controlled'
 		};
-
-		return combatant;
 	}
 
 	public static encounterTemplates() {
@@ -393,7 +391,7 @@ export class Napoleon {
 			.filter(c => !!c.mountID && (c.mountType === 'controlled'))
 			.map(c => c.mountID || '');
 
-		const list = combat.combatants
+		return combat.combatants
 			.filter(c => !controlledMounts.includes(c.id))
 			.filter(c => c.active || (c.defeated && showDefeated))
 			.filter(c => {
@@ -417,8 +415,6 @@ export class Napoleon {
 				}
 				return true;
 			});
-
-		return list;
 	}
 
 	public static getMountsAndRiders(ids: string[], combatants: Combatant[]) {

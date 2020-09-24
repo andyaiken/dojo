@@ -1,5 +1,7 @@
 // This utility file deals with speech
 
+import { Utils } from './utils';
+
 export class Ustinov {
 	public static async say(text: string, languages: string[]) {
 		// If we're already saying something, stop it
@@ -28,7 +30,7 @@ export class Ustinov {
 			candidates = voices;
 		}
 
-		const index = Math.floor(Math.random() * candidates.length);
+		const index = Utils.randomNumber(candidates.length);
 		return candidates[index];
 	}
 
@@ -114,7 +116,7 @@ export class Ustinov {
 	}
 
 	private static randomValue(min: number, max: number) {
-		const x = (Math.random() + Math.random() + Math.random()) / 3;
+		const x = (Utils.randomDecimal() + Utils.randomDecimal() + Utils.randomDecimal()) / 3;
 		const range = max - min;
 		return min + (x * range);
 	}

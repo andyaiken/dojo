@@ -360,7 +360,7 @@ export class MapEditorModal extends React.Component<Props, State> {
 					);
 				} else {
 					const areas = this.state.map.areas.map(a => (
-						<div key={a.id} className='group-panel clickable' onClick={() => this.setSelectedAreaID(a.id)}>
+						<div key={a.id} className='group-panel clickable' onClick={() => this.setSelectedAreaID(a.id)} role='button'>
 							{a.name}
 						</div>
 					));

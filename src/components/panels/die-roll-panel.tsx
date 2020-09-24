@@ -19,6 +19,7 @@ export class DieRollPanel extends React.Component<Props> {
 				className={count > 0 ? 'die-type' : 'die-type none'}
 				onClick={e => this.dieTypeClicked(e, sides, true && !e.ctrlKey)}
 				onContextMenu={e => this.dieTypeClicked(e, sides, false)}
+				role='button'
 			>
 				<div className='die-type-name'>d{sides === 100 ? '%' : sides}</div>
 				<div className='die-type-value'>{count}</div>
@@ -33,6 +34,7 @@ export class DieRollPanel extends React.Component<Props> {
 				className={count > 0 ? 'die-type' : 'die-type none'}
 				onClick={e => this.dieTypeClicked(e, 0, true && !e.ctrlKey)}
 				onContextMenu={e => this.dieTypeClicked(e, 0, false)}
+				role='button'
 			>
 				<div className='die-type-name'>+/-</div>
 				<div className='die-type-value'>{count}</div>

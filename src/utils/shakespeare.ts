@@ -94,9 +94,9 @@ export class Shakespeare {
 	private static extractLine() {
 		let line = String.fromCharCode(0, 1);
 
+		// tslint:disable-next-line: no-constant-condition
 		while (true) {
 			const prev = line.substr(line.length - 2, 2);
-
 			const item = Shakespeare.model.find(x => x.prev === prev);
 			if (item) {
 				let candidates = '';
@@ -104,7 +104,7 @@ export class Shakespeare {
 					candidates += freq.char.repeat(freq.count);
 				});
 
-				const index = Math.floor(Math.random() * candidates.length);
+				const index = Utils.randomNumber(candidates.length);
 				let char = candidates[index];
 				if (char === String.fromCharCode(2)) {
 					line = line.substr(2);
@@ -114,7 +114,7 @@ export class Shakespeare {
 						const groups = ['bdg', 'ptk', 'sz', 'aeiouy', 'lr', 'ckq', 'vf'];
 						groups.forEach(g => {
 							if (g.includes(char)) {
-								const n = Math.floor(Math.random() * g.length);
+								const n = Utils.randomNumber(g.length);
 								char = g[n];
 							}
 						});
@@ -246,7 +246,7 @@ export class Shakespeare {
 		const chars = str.split('');
 
 		for (let i = chars.length - 1; i > 0; i--) {
-			const j = Math.floor(Math.random() * (i + 1));
+			const j = Utils.randomNumber(i + 1);
 			const tmp = chars[i];
 			chars[i] = chars[j];
 			chars[j] = tmp;
@@ -297,18 +297,17 @@ export class Shakespeare {
 			femaleHuman, femaleDwarf, femaleElf, femaleHalfling, femaleDragonborn, femaleMisc
 		].join(' ').toLowerCase().split(' ');
 
-		const startIndex = Math.floor(Math.random() * starts.length);
-		const endIndex = Math.floor(Math.random() * ends.length);
+		const startIndex = Utils.randomNumber(starts.length);
+		const endIndex = Utils.randomNumber(ends.length);
 
 		let separator = '';
 		if (Gygax.dieRoll(10) === 1) {
 			const separators = ['-', '\'', ' '];
-			const sepIndex = Math.floor(Math.random() * separators.length);
+			const sepIndex = Utils.randomNumber(separators.length);
 			separator = separators[sepIndex];
 		}
 
-		const name = starts[startIndex] + separator + ends[endIndex];
-		return name;
+		return starts[startIndex] + separator + ends[endIndex];
 	}
 
 	public static generatePotion() {

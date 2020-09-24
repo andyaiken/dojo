@@ -71,7 +71,7 @@ class Tab extends React.Component<TabProps> {
 			}
 
 			return (
-				<div key={this.props.option.id} className={style} title={this.props.option.text} onClick={e => this.click(e)}>
+				<div key={this.props.option.id} className={style} title={this.props.option.text} onClick={e => this.click(e)} role='button'>
 					{content}
 				</div>
 			);

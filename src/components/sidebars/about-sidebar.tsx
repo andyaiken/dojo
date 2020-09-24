@@ -68,10 +68,10 @@ export class AboutSidebar extends React.Component<Props, State> {
 								version <b>{pkg.version}</b>
 							</div>
 							<div className='section'>
-								if you would like to raise a bug or request a new feature, you can do so <a href='https://github.com/andyaiken/dojo' target='_blank' rel='noopener noreferrer'>here</a>
+								if you would like to raise a bug or request a new feature, you can do so here: <a href='https://github.com/andyaiken/dojo' target='_blank' rel='noopener noreferrer'>repository</a>
 							</div>
 							<div className='section'>
-								the roadmap for planned new features can be found <a href='https://github.com/andyaiken/dojo/projects/8?fullscreen=true' target='_blank' rel='noopener noreferrer'>here</a>
+								the roadmap for planned new features can be found here: <a href='https://github.com/andyaiken/dojo/projects/8?fullscreen=true' target='_blank' rel='noopener noreferrer'>roadmap</a>
 							</div>
 						</div>
 					);

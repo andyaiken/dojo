@@ -49,6 +49,7 @@ export class NumberSpin extends React.Component<Props> {
 						className={factor === 1 ? 'spin-button' : 'spin-button multiple'}
 						onTouchEnd={e => this.touchEnd(e, -1 * factor)}
 						onClick={e => this.click(e, -1 * factor)}
+						role='button'
 					>
 						{factor === 1 ? <MinusOutlined /> : <div>{factor}</div>}
 					</div>
@@ -60,6 +61,7 @@ export class NumberSpin extends React.Component<Props> {
 						className={factor === 1 ? 'spin-button' : 'spin-button multiple'}
 						onTouchEnd={e => this.touchEnd(e, +1 * factor)}
 						onClick={e => this.click(e, +1 * factor)}
+						role='button'
 					>
 						{factor === 1 ? <PlusOutlined /> : <div>{factor}</div>}
 					</div>

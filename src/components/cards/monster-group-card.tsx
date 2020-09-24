@@ -23,7 +23,7 @@ export class MonsterGroupCard extends React.Component<Props> {
 		}
 
 		return this.props.group.monsters.map(m => (
-			<div key={m.id} className='combatant-row' onClick={() => this.props.openStatBlock(m)}>
+			<div key={m.id} className='combatant-row' onClick={() => this.props.openStatBlock(m)} role='button'>
 				<PortraitPanel source={m} inline={true}/>
 				<div className='name'>{m.name || 'unnamed monster'}</div>
 				<div className='value'>cr {Gygax.challenge(m.challenge)}</div>

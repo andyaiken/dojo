@@ -72,10 +72,15 @@ export class Utils {
 			return 0;
 		}
 
+		// tslint:disable-next-line: insecure-random
 		return Math.floor(Math.random() * max);
 	}
 
 	public static randomBoolean() {
 		return Utils.randomNumber(2) === 0;
+	}
+
+	public static randomDecimal() {
+		return Utils.randomNumber(100) / 100;
 	}
 }
